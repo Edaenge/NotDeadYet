@@ -95,9 +95,10 @@ inline float RadianToDegrees(float radian)
 {
 	return (180 / PI) * radian;
 }
+
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
-#pragma comment (lib,"dxerr.lib")
+#pragma comment(lib, "dxerr.lib")
 
 #ifdef _DEBUG
 	/*! Graphic debug libs */

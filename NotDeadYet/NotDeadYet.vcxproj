@@ -188,11 +188,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>../../NotDeadYetBin/</OutDir>
-    <IntDir>../../NotDeadYetIntermediate/</IntDir>
-    <ExecutablePath>..\Source\External\D3D\Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>..\Source\SoundEngine\Include;..\Source\GraphicsEngine\MaloWLib;..\Source\MaloWLib;..\Source\GraphicsEngine;..\Source;..\Source\External\D3D\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\Source\SoundEngine\Lib\x86;..\Source\External\D3D\Lib\x86;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)\WorkingDir\</OutDir>
+    <IntDir>$(ProjectDir)\Debug\</IntDir>
+    <ExecutablePath>..\Source\External\D3D\Utilities\bin\x86;$(ProjectDir)\;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>..\Source\SoundEngine\Include;..\Source\GraphicsEngine\MaloWLib;..\Source\MaloWLib;..\Source\GraphicsEngine;..\Source;$(SolutionDir)\Source\External\D3D\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\Source\SoundEngine\Lib\x86;$(SolutionDir)\Source\External\D3D\Lib\x86;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)D32</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -206,8 +206,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>../../NotDeadYetBin/</OutDir>
-    <IntDir>../../NotDeadYetIntermediate/</IntDir>
+    <OutDir>$(SolutionDir)\WorkingDir\</OutDir>
+    <IntDir>$(ProjectDir)\Release</IntDir>
     <ExecutablePath>..\Source\External\D3D\Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
     <IncludePath>..\Source\SoundEngine\Include;..\Source\GraphicsEngine\MaloWLib;..\Source\MaloWLib;..\Source\GraphicsEngine;..\Source;..\Source\External\D3D\Include;$(IncludePath)</IncludePath>
     <LibraryPath>..\Source\SoundEngine\Lib\x86;..\Source\External\D3D\Lib\x86;$(LibraryPath)</LibraryPath>
@@ -233,6 +233,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
