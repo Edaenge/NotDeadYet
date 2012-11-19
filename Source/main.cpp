@@ -20,7 +20,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 	GraphicsEngine* ge = new GraphicsEngine(params, hInstance, nCmdShow);
 	gfxeng::eng = ge; // Set the global eng to our engine so that GetGraphicsEngine(); can work.
 	ge->CreateSkyBox("Media/skymap.dds");
-
+	
 	test();	// tester
 
 	// IMPLEMENT MAIN PROGRAM HERE.
