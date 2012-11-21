@@ -5,6 +5,7 @@ Game::Game()
 {
 	this->zClient = NULL;
 	this->zHost = NULL;
+	this->zHosting = false;
 }
 
 Game::~Game()
@@ -15,7 +16,10 @@ Game::~Game()
 
 void Game::Run()
 {
+	if(zHosting)
+		this->zHost->Start();
 	
+	this->zClient->Start();
 }
 
 int Game::InitGameClient(std::string ip, int port)
@@ -37,7 +41,14 @@ int Game::InitGameHost(int port, int nrOfClients)
 	if(!this->zHost)
 		this->zHost = new Host();
 
+<<<<<<< HEAD
 	code = this->zHost->InitHost(port)
+=======
+	code = this->zHost->InitHost(port);
+>>>>>>> Fixed errors and added some functionality
 
+	this->zHosting = true;
+	
 	return code;
 }
+

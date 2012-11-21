@@ -20,4 +20,5 @@ class Game
 	private:
 		Client* zClient;
 		Host*	zHost; 
+		bool	zHosting;
 };

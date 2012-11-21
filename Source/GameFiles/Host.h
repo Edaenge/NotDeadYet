@@ -3,7 +3,8 @@
 #include "stdafx.h"
 #include "Process.h"
 
-class Host : MaloW::Process
+
+class Host : public MaloW::Process
 {
 public:
 	Host();

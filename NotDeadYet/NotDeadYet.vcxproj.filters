@@ -27,6 +27,9 @@
     <Filter Include="Sound Engine Files">
       <UniqueIdentifier>{a4843cc2-979d-4f6c-9809-013d07a66b92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{9e096803-19e6-4e23-ba16-98558781c92e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\main.cpp">
@@ -145,6 +148,24 @@
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\MainMenu.cpp">
       <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Client.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Game.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Host.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Network\ClientChannel.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Network\NetworkServer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Network\ServerChannel.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -288,6 +309,27 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\MainMenu.h">
       <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Client.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Game.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Host.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Network\ClientChannel.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Network\NetworkPacket.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Network\NetworkServer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Network\ServerChannel.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
