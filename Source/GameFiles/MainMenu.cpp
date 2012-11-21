@@ -9,6 +9,6 @@ MainMenu::MainMenu()
 
 MainMenu::~MainMenu()
 {
-	SAFE_DELETE(zGame);
+	SAFE_DELETE(this->zGame);
 }
 

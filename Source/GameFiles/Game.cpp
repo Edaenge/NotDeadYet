@@ -9,8 +9,8 @@ Game::Game()
 
 Game::~Game()
 {
-	SAFE_DELETE(zClient);
-	SAFE_DELETE(zHost);
+	SAFE_DELETE(this->zClient);
+	SAFE_DELETE(this->zHost);
 }
 
 void Game::Run()
@@ -22,10 +22,10 @@ int Game::InitGameClient(std::string ip, int port)
 {
 	int code;
 
-	if(!zClient)
-		zClient = new Client();
+	if(!this->zClient)
+		this->zClient = new Client();
 
-	code = zClient->Connect(ip, port);
+	code = this->zClient->Connect(ip, port);
 
 	return code;
 }
@@ -34,10 +34,10 @@ int Game::InitGameHost(int port, int nrOfClients)
 {
 	int code;
 
-	if(!zHost)
-		zHost = new Host();
+	if(!this->zHost)
+		this->zHost = new Host();
 
-	code = zHost->InitHost(port)
+	code = this->zHost->InitHost(port)
 
 	return code;
 }
