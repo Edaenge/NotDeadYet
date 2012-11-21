@@ -49,9 +49,9 @@ void test()
 	eng->GetCamera()->LookAt(D3DXVECTOR3(30, 10, 10));
 
 	eng->CreateTerrain(D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
-	StaticMesh* scaleHuman = eng->CreateStaticMesh("Media/scale.obj", D3DXVECTOR3(5, -6, 15));
-	StaticMesh* bth = eng->CreateStaticMesh("Media/bth.obj", D3DXVECTOR3(5, 20, 15));
-	scaleHuman->Scale(0.025f);
+	StaticMesh* scaleHuman = eng->CreateStaticMesh("Media/Fern_02_v01.obj", D3DXVECTOR3(5, -6, 15));
+	//StaticMesh* bth = eng->CreateStaticMesh("Media/bth.obj", D3DXVECTOR3(5, 20, 15));
+	//scaleHuman->Scale(1.0f);
 	Light* testLight = eng->CreateLight(D3DXVECTOR3(15, 30, 15));
 
 	SoundEngine* seng = eng->GetSoundEngine();

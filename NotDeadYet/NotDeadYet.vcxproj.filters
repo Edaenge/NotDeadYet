@@ -143,6 +143,9 @@
     <ClCompile Include="..\Source\SoundEngine\SoundEffect.cpp">
       <Filter>Sound Engine Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\MainMenu.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\stdafx.h">
@@ -282,6 +285,9 @@
     </ClInclude>
     <ClInclude Include="resource1.h">
       <Filter>Graphics Engine Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\MainMenu.h">
+      <Filter>Game Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

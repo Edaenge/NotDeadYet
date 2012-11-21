@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\GameFiles\MainMenu.cpp" />
     <ClCompile Include="..\Source\GraphicsEngine\AnimatedMesh.cpp" />
     <ClCompile Include="..\Source\GraphicsEngine\FXAA.cpp" />
     <ClCompile Include="..\Source\GraphicsEngine\GraphicsEngine.cpp" />
@@ -59,6 +60,7 @@
     <ClCompile Include="..\Source\SoundEngine\SoundSong.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\GameFiles\MainMenu.h" />
     <ClInclude Include="..\Source\GraphicsEngine\AnimatedMesh.h" />
     <ClInclude Include="..\Source\GraphicsEngine\CursorControl.h" />
     <ClInclude Include="..\Source\GraphicsEngine\FXAA.h" />
