@@ -26,7 +26,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 	test();	// tester
 
 	// IMPLEMENT MAIN PROGRAM HERE.
-	MainMenu menu = MainMenu();
+	//MainMenu menu = MainMenu();
 
 	delete ge;
 	gfxeng::eng = NULL;
