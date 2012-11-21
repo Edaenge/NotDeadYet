@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "GraphicsEngine.h"
 #include "SoundEngine\SoundEngine.h"
+#include "GameFiles\MainMenu.h"
+
 
 void test();
 
@@ -24,6 +26,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 	test();	// tester
 
 	// IMPLEMENT MAIN PROGRAM HERE.
+	MainMenu menu = MainMenu();
 
 	delete ge;
 	gfxeng::eng = NULL;
