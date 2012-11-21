@@ -13,7 +13,7 @@ Host::Host()
 
 }
 
-int Host::InitHost()
+int Host::InitHost(int port)
 {
 
 }

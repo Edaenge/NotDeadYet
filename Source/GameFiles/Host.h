@@ -10,7 +10,7 @@ public:
 	virtual ~Host();
 	/*! Creates a Server locally
 	returns a code that describes error or success*/
-	int InitHost();
+	int InitHost(int port);
 	void Life();
 
 private:
