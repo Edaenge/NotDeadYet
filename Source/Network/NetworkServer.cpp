@@ -2,41 +2,10 @@
 
 using namespace MaloW;
 
-NetworkServer::NetworkServer(int port)
+NetworkServer::NetworkServer()
 {
-	this->port = port;
-	this->stayAlive = true;
-
-	WSADATA wsaData;
-	int retCode = WSAStartup(MAKEWORD(2,2), &wsaData);
-	if(retCode != 0) 
-	{
-		this->stayAlive = false;
-		MaloW::Debug("Failed to init Winsock library. Error: " + MaloW::convertNrToString(WSAGetLastError()));
-		WSACleanup();
-	}
-
-	// open a socket
-	this->sock = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
-	if(this->sock == INVALID_SOCKET) 
-	{
-		this->stayAlive = false;
-		MaloW::Debug("Invalid socket, failed to create socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
-		WSACleanup();
-	}
-
-	// bind socket's name
-	sockaddr_in saListen;
-	saListen.sin_port = htons(port);
-	saListen.sin_addr.s_addr = htonl(INADDR_ANY);
-	saListen.sin_family = AF_INET;
-	retCode = bind(this->sock, (sockaddr*)&saListen, sizeof(sockaddr));
-	if(retCode == SOCKET_ERROR) 
-	{
-		this->stayAlive = false;
-		MaloW::Debug("Failed to bind socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
-		WSACleanup();
-	}
+	this->port = 0;
+	this->stayAlive = false;
 }
 
 NetworkServer::~NetworkServer()
@@ -109,4 +78,48 @@ void NetworkServer::CloseSpecific()
 	retCode = closesocket(this->sock);
 	if(retCode == SOCKET_ERROR) 
 		MaloW::Debug("Failed to close socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+}
+
+int MaloW::NetworkServer::InitConnection(int port)
+{
+	this->port = port;
+	this->stayAlive = true;
+
+	int returnCode = 0;
+
+	WSADATA wsaData;
+	int retCode = WSAStartup(MAKEWORD(2,2), &wsaData);
+	if(retCode != 0) 
+	{
+		returnCode = 2;
+		this->stayAlive = false;
+		MaloW::Debug("Failed to init Winsock library. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		WSACleanup();
+	}
+
+	// open a socket
+	this->sock = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+	if(this->sock == INVALID_SOCKET) 
+	{
+		returnCode = 3;
+		this->stayAlive = false;
+		MaloW::Debug("Invalid socket, failed to create socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		WSACleanup();
+	}
+
+	// bind socket's name
+	sockaddr_in saListen;
+	saListen.sin_port = htons(port);
+	saListen.sin_addr.s_addr = htonl(INADDR_ANY);
+	saListen.sin_family = AF_INET;
+	retCode = bind(this->sock, (sockaddr*)&saListen, sizeof(sockaddr));
+	if(retCode == SOCKET_ERROR) 
+	{
+		returnCode = 1;
+		this->stayAlive = false;
+		MaloW::Debug("Failed to bind socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		WSACleanup();
+	}
+
+	return returnCode;
 }

@@ -30,9 +30,10 @@ namespace MaloW
 		virtual void CloseSpecific();
 
 	public:
-		NetworkServer(int port);
+		NetworkServer();
 		virtual ~NetworkServer();
 		
+		int InitConnection(int port);
 		ClientChannel* ListenForNewClients();
 
 		void Life();

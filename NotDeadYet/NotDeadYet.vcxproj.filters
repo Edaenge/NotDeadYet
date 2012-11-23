@@ -167,6 +167,12 @@
     <ClCompile Include="..\Source\Network\ServerChannel.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Player.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Network\NewPlayerEvent.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\stdafx.h">
@@ -329,6 +335,12 @@
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\Network\ServerChannel.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Player.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Network\NewPlayerEvent.h">
       <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>

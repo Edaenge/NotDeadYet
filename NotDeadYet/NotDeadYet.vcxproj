@@ -23,6 +23,7 @@
     <ClCompile Include="..\Source\GameFiles\Game.cpp" />
     <ClCompile Include="..\Source\GameFiles\Host.cpp" />
     <ClCompile Include="..\Source\GameFiles\MainMenu.cpp" />
+    <ClCompile Include="..\Source\GameFiles\Player.cpp" />
     <ClCompile Include="..\Source\GraphicsEngine\AnimatedMesh.cpp" />
     <ClCompile Include="..\Source\GraphicsEngine\FXAA.cpp" />
     <ClCompile Include="..\Source\GraphicsEngine\GraphicsEngine.cpp" />
@@ -60,6 +61,7 @@
     <ClCompile Include="..\Source\MaloWLib\TCBSpline.cpp" />
     <ClCompile Include="..\Source\Network\ClientChannel.cpp" />
     <ClCompile Include="..\Source\Network\NetworkServer.cpp" />
+    <ClCompile Include="..\Source\Network\NewPlayerEvent.cpp" />
     <ClCompile Include="..\Source\Network\ServerChannel.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundEffect.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundEngine.cpp" />
@@ -70,6 +72,7 @@
     <ClInclude Include="..\Source\GameFiles\Game.h" />
     <ClInclude Include="..\Source\GameFiles\Host.h" />
     <ClInclude Include="..\Source\GameFiles\MainMenu.h" />
+    <ClInclude Include="..\Source\GameFiles\Player.h" />
     <ClInclude Include="..\Source\GraphicsEngine\AnimatedMesh.h" />
     <ClInclude Include="..\Source\GraphicsEngine\CursorControl.h" />
     <ClInclude Include="..\Source\GraphicsEngine\FXAA.h" />
@@ -113,6 +116,7 @@
     <ClInclude Include="..\Source\Network\ClientChannel.h" />
     <ClInclude Include="..\Source\Network\NetworkPacket.h" />
     <ClInclude Include="..\Source\Network\NetworkServer.h" />
+    <ClInclude Include="..\Source\Network\NewPlayerEvent.h" />
     <ClInclude Include="..\Source\Network\ServerChannel.h" />
     <ClInclude Include="..\Source\SoundEngine\SoundEffect.h" />
     <ClInclude Include="..\Source\SoundEngine\SoundEngine.h" />

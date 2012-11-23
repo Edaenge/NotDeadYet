@@ -9,6 +9,7 @@ ServerChannel::ServerChannel()
 }
 int ServerChannel::InitConnection(std::string IP, int port)
 {
+	int returnCode = 0;
 	this->stayAlive = true;
 	this->notifier = NULL;
 
@@ -16,6 +17,7 @@ int ServerChannel::InitConnection(std::string IP, int port)
 	int retCode = WSAStartup(MAKEWORD(2,2), &wsaData);
 	if(retCode != 0) 
 	{
+		returnCode = 2;
 		this->stayAlive = false;
 		MaloW::Debug("Failed to init Winsock library. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
@@ -25,6 +27,7 @@ int ServerChannel::InitConnection(std::string IP, int port)
 	this->sock = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
 	if(this->sock == INVALID_SOCKET) 
 	{
+		returnCode = 3;
 		this->stayAlive = false;
 		MaloW::Debug("Invalid socket, failed to create socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
@@ -38,6 +41,7 @@ int ServerChannel::InitConnection(std::string IP, int port)
 	retCode = connect(this->sock, (sockaddr*)&saServer, sizeof(sockaddr));
 	if(retCode == SOCKET_ERROR)
 	{
+		returnCode = 1;
 		this->stayAlive = false;
 		MaloW::Debug("Connection to server failed. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
@@ -46,7 +50,7 @@ int ServerChannel::InitConnection(std::string IP, int port)
 	this->buffer = "";
 	this->unImportantFilter = "";
 
-	return retCode;
+	return returnCode;
 }
 ServerChannel::~ServerChannel()
 {
