@@ -47,11 +47,25 @@ void FPSCamera::updateSpecific(float delta)
 				angleX += 2 * PI;
 			
 			this->forward.x = cos(angleX);
-			this->forward.z = sin(angleX);
 			this->forward.y = sin(angleY);
+			this->forward.z = sin(angleX);
 			
 			this->forward = this->NormalizeVector(this->forward);
 			
+			//calc new up
+			//crossproduct between y-axis & forward vector
+			MaloW::Vector3 yAxis = MaloW::Vector3(0, 1, 0);
+			MaloW::Vector3 rightVec = yAxis.GetCrossProduct(this->forward);
+			//crossproduct between forward & right vector 
+			//MaloW::Vector3
+			MaloW::Vector3 tmpForward = MaloW::Vector3(this->forward);
+			MaloW::Vector3 tmpUp = MaloW::Vector3(0, 0, 0);
+			tmpUp = tmpForward.GetCrossProduct(rightVec);
+			this->up.x = tmpUp.x;
+			this->up.y = tmpUp.y;
+			this->up.z = tmpUp.z;
+
+
 			POINT np;
 			np.x = this->params.windowWidth/2;
 			np.y = this->params.windowHeight/2;
