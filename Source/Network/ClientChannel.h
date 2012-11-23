@@ -1,16 +1,14 @@
 #ifndef CLIENTCHANNEL_H
 #define CLIENTCHANNEL_H
 
-#include <winsock2.h>
 #include <iostream>
-#include <process.h>
 #include <stdio.h>
 #include <tchar.h>
-#include <windows.h>
 #include <string>
+#ifndef _WINSOCKAPI_
+	#include <winsock2.h>
+#endif
 
-#include "MaloW.h"
-#include "Process.h"
 #include "NetworkPacket.h"
 
 #pragma comment(lib, "WS2_32.lib")

@@ -41,7 +41,7 @@ int Game::InitGameHost(int port, int nrOfClients)
 	if(!this->zHost)
 		this->zHost = new Host();
 
-	code = this->zHost->InitHost(port);
+	code = this->zHost->InitHost(port, nrOfClients);
 
 	this->zHosting = true;
 	

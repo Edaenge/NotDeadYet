@@ -7,6 +7,15 @@
 #include "Host.h"
 #include "stdafx.h"
 
+enum NETWORK_ERROR_CODE
+{
+	CONNECTION_SUCCESS, 
+	CONNECTION_FAILED,
+	CONNECTION_WINSOCK_FAIL,
+	CONNECTION_INVALID_SOCKET
+
+};
+
 class Game
 {
 	public:
