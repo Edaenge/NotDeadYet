@@ -43,14 +43,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 
 void test()
 {
-	// Example of GE useage
+	// Example of GE usage
 	GraphicsEngine* eng = GetGraphicsEngine();
 	eng->GetCamera()->setPosition(D3DXVECTOR3(0, 15, -15.6f));
 	eng->GetCamera()->LookAt(D3DXVECTOR3(30, 10, 10));
 
 	eng->CreateTerrain(D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
 	StaticMesh* scaleHuman = eng->CreateStaticMesh("Media/Fern_02_v01.obj", D3DXVECTOR3(5, -6, 15));
-	scaleHuman->UseInvisibilityEffect(true);
+	//scaleHuman->UseInvisibilityEffect(true);
 	//StaticMesh* bth = eng->CreateStaticMesh("Media/bth.obj", D3DXVECTOR3(5, 20, 15));
 	//scaleHuman->Scale(1.0f);
 	Light* testLight = eng->CreateLight(D3DXVECTOR3(15, 30, 15));
@@ -73,6 +73,7 @@ void test()
 		
 	while(eng->isRunning() && go)	// Returns true as long as ESC hasnt been pressed, if it's pressed the game engine will shut down itself (to be changed)
 	{
+		//Sleep(1);
 		float diff = eng->Update();	// Updates camera etc, does NOT render the frame, another process is doing that, so diff should be very low.
 		CursorControl cc;
 
