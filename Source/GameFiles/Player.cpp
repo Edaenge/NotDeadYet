@@ -34,3 +34,8 @@ int Player::GetPlayerState()
 	return this->zPlayerState;
 }
 
+StaticMesh* Player::GetPlayerMesh()
+{
+	return this->zPlayerMesh;
+}
+

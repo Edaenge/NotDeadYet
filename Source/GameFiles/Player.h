@@ -24,6 +24,8 @@ public:
 	int GetClientID();
 	/*! Returns Current Player State */
 	int GetPlayerState();
+	/*!	Returns Pointer to the Player Mesh*/
+	StaticMesh* GetPlayerMesh();
 	/*! Returns Player Model Scale */
 	D3DXVECTOR3 GetPlayerScale();
 	/*! Returns Player Model Position */

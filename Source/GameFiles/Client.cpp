@@ -72,6 +72,19 @@ void Client::Life()
 				player->SetQuaternion(rotation);
 				player->Scale(scale);
 			}
+			PlayerUpdateEvent* pue = dynamic_cast<PlayerUpdateEvent*>(ev);
+			if(pue != NULL)
+			{
+				int clientID = pue->GetClientID();
+				for (int i = 0; i < this->zPlayers.size(); i++)
+				{
+					if (clientID == this->zPlayers.get(i)->GetClientID())
+					{
+						this->zPlayers.get(i)->GetPlayerMesh();
+					}
+					
+				}
+			}
 		}
 		if (this->zEng->GetKeyListener()->IsPressed('W'))
 		{
