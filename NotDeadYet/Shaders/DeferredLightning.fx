@@ -235,8 +235,6 @@ float4 PSScene(PSSceneIn input) : SV_Target
 		finalColor = float4(0.5, 0.5, 0.5, 1.0f);
 	*/
 	
-	//temp:
-	//ev. todo: if player is on red team, reduce redness and increase blueness**
 	
 	
 	uint TeamColor = (uint)Texture.Sample(linearSampler, input.tex).w;

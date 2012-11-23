@@ -50,6 +50,7 @@ void test()
 
 	eng->CreateTerrain(D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
 	StaticMesh* scaleHuman = eng->CreateStaticMesh("Media/Fern_02_v01.obj", D3DXVECTOR3(5, -6, 15));
+	scaleHuman->UseInvisibilityEffect(true);
 	//StaticMesh* bth = eng->CreateStaticMesh("Media/bth.obj", D3DXVECTOR3(5, 20, 15));
 	//scaleHuman->Scale(1.0f);
 	Light* testLight = eng->CreateLight(D3DXVECTOR3(15, 30, 15));
@@ -64,8 +65,6 @@ void test()
 	
 	eng->LoadingScreen("Media/LoadingScreen/StartScreen.png", "", 0.0f, 1.0f, 1.0f, 1.0f);
 	Text* text = eng->CreateText("Lol ", D3DXVECTOR2(500, 500), 1.0f, "Media/Fonts/1");
-	
-	//Image* testImg = eng->CreateImage(D3DXVECTOR2(50, 50), D3DXVECTOR2(500, 75), "Media/PowerBall.png");	
 	
 	bool sw = true;
 	float size = 1.0f;

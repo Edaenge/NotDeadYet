@@ -9,7 +9,7 @@
 //	Global variables (non-numeric values cannot be added to a constantbuffer.)
 //-----------------------------------------------------------------------------------------
 Texture2D sceneTex;
-Texture2D ballTex;
+Texture2D stripTex; //old: ballTex
 
 //-----------------------------------------------------------------------------------------
 // Input and Output Structures
@@ -23,7 +23,7 @@ cbuffer PerFrame
 cbuffer PerMesh
 {
 	matrix WVP;
-	bool ballOwner;
+	bool modelOwner;	//old: ballOwner
 	uint teamColor;
 };
 cbuffer PerStrip
@@ -84,7 +84,7 @@ float4 PSScene(PSIn input) : SV_Target
 	//make it slightly more visible by ever so slightly reduce the brightness
 	blurColor.xyz -= 0.025f;
 
-	if(ballOwner)
+	if(modelOwner) //old: ballOwner
 	{
 		if(teamColor != 0)
 		{
@@ -103,7 +103,7 @@ float4 PSScene(PSIn input) : SV_Target
 		}
 		if(textured)
 		{
-			blurColor.xyz += ballTex.Sample(LinearWrapSampler, input.tex).xyz;
+			blurColor.xyz += stripTex.Sample(LinearWrapSampler, input.tex).xyz; //old: ballTex.Sample(..)
 			blurColor.xyz *= 0.5f;
 		}
 	}
