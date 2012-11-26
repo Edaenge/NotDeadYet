@@ -47,11 +47,13 @@ private:
 	D3DXVECTOR3 zPosition;
 	D3DXQUATERNION zRotation;
 	std::string zFilename;
+	bool zNewFile;
 public:
 	PlayerUpdateEvent()
 	{
 		this->zScale	= D3DXVECTOR3(1,1,1);
 		this->zFilename = "";
+		this->zNewFile = false;
 		this->zPosition = D3DXVECTOR3(0,0,0);
 		this->zRotation = D3DXQUATERNION(0,0,0,1);
 		this->zClientID = 0;
@@ -60,10 +62,15 @@ public:
 
 	void SetClientID(int clientID){this->zClientID = clientID;}
 	void SetPlayerScale(D3DXVECTOR3 scale){this->zScale = scale;}
-	void SetFilename(std::string filename){this->zFilename = filename;}
+	void SetFilename(std::string filename)
+	{
+		this->zFilename = filename;
+		this->zNewFile = true;
+	}
 	void SetPlayerPosition(D3DXVECTOR3 position){this->zPosition = position;}
 	void SetPlayerRotation(D3DXQUATERNION rotation){this->zRotation = rotation;}
 
+	bool HasNewFile(){return this->zNewFile;}
 	int GetClientID(){return this->zClientID;}
 	D3DXVECTOR3 GetPlayerScale(){return this->zScale;}
 	std::string GetFilename(){return this->zFilename;}

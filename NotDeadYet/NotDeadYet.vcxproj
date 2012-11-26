@@ -63,7 +63,6 @@
     <ClCompile Include="..\Source\Network\ClientConnectedEvent.cpp" />
     <ClCompile Include="..\Source\Network\NetworkMessageConverter.cpp" />
     <ClCompile Include="..\Source\Network\NetworkServer.cpp" />
-    <ClCompile Include="..\Source\Network\NewPlayerEvent.cpp" />
     <ClCompile Include="..\Source\Network\ServerChannel.cpp" />
     <ClCompile Include="..\Source\Network\ServerListener.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundEffect.cpp" />

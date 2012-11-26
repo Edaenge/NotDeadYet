@@ -170,9 +170,6 @@
     <ClCompile Include="..\Source\GameFiles\Player.cpp">
       <Filter>Game Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Network\NewPlayerEvent.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Network\ClientConnectedEvent.cpp">
       <Filter>Network</Filter>
     </ClCompile>

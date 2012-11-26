@@ -1,6 +1,8 @@
 #include "GameFiles/Client.h"
 #include "Network/NewPlayerEvent.h"
 
+using namespace MaloW;
+
 Client::Client()
 {
 	this->zIP = "";
@@ -15,7 +17,7 @@ int Client::Connect(std::string ip, int port)
 	this->zIP = ip;
 	this->zPort = port;
 	this->zEng = GetGraphicsEngine();
-	this->zServerChannel = new MaloW::ServerChannel();
+	this->zServerChannel = new ServerChannel();
 	//Tries to Connect to a server with the specified Ip and Port
 	code = this->zServerChannel->InitConnection(ip, port);
 	
@@ -41,8 +43,9 @@ void Client::Life()
 	this->zEng->CreateTerrain(D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
 	
 	StaticMesh* scaleHuman = this->zEng->CreateStaticMesh("Media/scale.obj", D3DXVECTOR3(5, -6, 15));
-
 	scaleHuman->Scale(0.1f);
+	this->zEng->GetCamera()->FollowMesh(scaleHuman);
+
 	Light* testLight = this->zEng->CreateLight(D3DXVECTOR3(15, 30, 15));
 	testLight->SetIntensity(50);
 	//SoundEngine* seng = eng->GetSoundEngine();
@@ -54,6 +57,8 @@ void Client::Life()
 	player->AddStaticMesh(scaleHuman);
 	this->zPlayers.add(player);
 
+	//todo Skicka meddelanden till server och få reda på self id
+
 	while(this->stayAlive)
 	{
 		float diff = this->zEng->Update();
@@ -64,13 +69,18 @@ void Client::Life()
 			NewPlayerEvent* npe = dynamic_cast<NewPlayerEvent*>(ev);
 			if(npe != NULL)
 			{
+				Player* newPlayer = new Player();
 				D3DXVECTOR3 position = npe->GetPlayerPosition();
 				D3DXVECTOR3 scale = npe->GetPlayerScale();
 				D3DXQUATERNION rotation = npe->GetPlayerRotation();
 				string filename = npe->GetFilename();
-				StaticMesh* player = this->zEng->CreateStaticMesh(filename, position);
-				player->SetQuaternion(rotation);
-				player->Scale(scale);
+
+				StaticMesh* playerMesh = this->zEng->CreateStaticMesh(filename, position);
+				playerMesh->SetQuaternion(rotation);
+				playerMesh->Scale(scale);
+
+				newPlayer->AddStaticMesh(playerMesh);
+				this->zPlayers.add(newPlayer);
 			}
 			PlayerUpdateEvent* pue = dynamic_cast<PlayerUpdateEvent*>(ev);
 			if(pue != NULL)
@@ -80,7 +90,19 @@ void Client::Life()
 				{
 					if (clientID == this->zPlayers.get(i)->GetClientID())
 					{
-						this->zPlayers.get(i)->GetPlayerMesh();
+						if (clientID == 0)
+						{
+							
+						}
+						StaticMesh* playerMesh = this->zPlayers.get(i)->GetPlayerMesh();
+						playerMesh->SetQuaternion(pue->GetPlayerRotation());
+						playerMesh->SetPosition(pue->GetPlayerPosition());
+						bool newMesh = pue->HasNewFile();
+						if (newMesh)
+						{
+							std::string filename = pue->GetFilename();
+							this->zPlayers.get(i)->GetPlayerMesh()->LoadFromFile(filename);
+						}
 					}
 					
 				}

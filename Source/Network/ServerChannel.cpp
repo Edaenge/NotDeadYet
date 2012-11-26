@@ -2,6 +2,8 @@
 
 using namespace MaloW;
 
+#include "Network/NetworkMessageConverter.h"
+
 ServerChannel::ServerChannel()
 {
 	this->stayAlive = false;
@@ -158,6 +160,7 @@ void ServerChannel::sendData(string msg)
 
 void ServerChannel::Life()
 {
+	NetworkMessageConverter converter = NetworkMessageConverter();
 	while(this->stayAlive)
 	{
 		string msg = this->receiveData();
@@ -165,20 +168,47 @@ void ServerChannel::Life()
 		{
 			if(this->notifier && this->stayAlive)
 			{
-				NetworkPacket* np = new NetworkPacket(msg, 0);
+				//NetworkPacket* np = new NetworkPacket(msg, 0);
 
-				if(this->unImportantFilter != "")
+				//if(this->unImportantFilter != "")
+				//{
+				//	// Filter traffic that isnt important
+				//	int res = msg.find(this->unImportantFilter);
+				//	bool important = true;
+				//	if(res != -1)
+				//		important = false;
+
+				//	this->notifier->PutEvent(np, important);
+				//}
+				//else
+				//	this->notifier->PutEvent(np);
+				std::string subMsg = "";
+				int currentPos = 0;
+				int subPos = 0;
+				while(currentPos < msg.length())
 				{
-					// Filter traffic that isnt important
-					int res = msg.find(this->unImportantFilter);
-					bool important = true;
-					if(res != -1)
-						important = false;
+					while (msg.at(currentPos) != '*')
+					{
+						subMsg += msg.at(currentPos);
 
-					this->notifier->PutEvent(np, important);
+						currentPos++;
+					}
+					char key[10];
+					subPos = 0;
+					while (subMsg.at(subPos) != ':')
+					{
+						key[subPos] = subMsg.at(subPos);
+						subPos++;
+					}
+					if (strcmp(key, PLAYER_UPDATE.c_str()) == 0)
+					{
+
+					}
+					else if (strcmp(key, NEW_PLAYER.c_str()) == 0)
+					{
+
+					}
 				}
-				else
-					this->notifier->PutEvent(np);
 			}
 		}
 	}

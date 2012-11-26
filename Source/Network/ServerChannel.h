@@ -1,24 +1,13 @@
 #ifndef SERVERCHANNEL_H
 #define SERVERCHANNEL_H
 
-
-
-
-//#include <winsock2.h>
-//#include <winsock.h>
 #include <iostream>
 #include <stdio.h>
 #include <tchar.h>
 #include <string>
-//#ifndef _WINSOCKAPI_
-	#include <winsock2.h>
-	//#include <winsock.h>
-//#endif
-//#include <windows.h>
+#include <winsock2.h>
 
-//#include "MaloW.h"
 #include "NetworkPacket.h"
-//#include "MaloWFileDebug.h"
 
 #pragma comment(lib, "WS2_32.lib")
 
