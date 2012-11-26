@@ -36,6 +36,7 @@ namespace MaloW
 		static long NextCID;
 		long id;
 
+
 		string receiveData();
 
 	protected:
