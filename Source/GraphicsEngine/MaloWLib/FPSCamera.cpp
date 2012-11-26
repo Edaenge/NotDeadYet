@@ -56,14 +56,16 @@ void FPSCamera::updateSpecific(float delta)
 			//crossproduct between y-axis & forward vector
 			MaloW::Vector3 yAxis = MaloW::Vector3(0, 1, 0);
 			MaloW::Vector3 rightVec = yAxis.GetCrossProduct(this->forward);
+			rightVec.normalize();
 			//crossproduct between forward & right vector 
 			//MaloW::Vector3
 			MaloW::Vector3 tmpForward = MaloW::Vector3(this->forward);
-			MaloW::Vector3 tmpUp = MaloW::Vector3(0, 0, 0);
+			MaloW::Vector3 tmpUp = MaloW::Vector3();
 			tmpUp = tmpForward.GetCrossProduct(rightVec);
 			this->up.x = tmpUp.x;
 			this->up.y = tmpUp.y;
 			this->up.z = tmpUp.z;
+			this->up = this->NormalizeVector(this->up);
 
 
 			POINT np;
