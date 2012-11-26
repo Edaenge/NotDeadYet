@@ -2,7 +2,7 @@
 
 Player::Player()
 {
-	this ->zPlayerState = IDLE;
+	this->zPlayerState = IDLE;
 	this->zPlayerMesh = NULL;
 }
 Player::~Player()
@@ -33,7 +33,6 @@ int Player::GetPlayerState()
 {
 	return this->zPlayerState;
 }
-
 StaticMesh* Player::GetPlayerMesh()
 {
 	return this->zPlayerMesh;

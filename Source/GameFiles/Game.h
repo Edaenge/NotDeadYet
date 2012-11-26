@@ -20,7 +20,9 @@ class Game
 {
 	public:
 		Game();
+		/*! Creates a Client that connects to the Ip and Port in the Parameters*/
 		int InitGameClient(std::string ip, int port);
+		/*! Creates a Host that listens on the given Port*/
 		int InitGameHost(int port, int nrOfClients);
 		virtual ~Game();
 

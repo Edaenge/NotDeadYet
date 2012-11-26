@@ -66,6 +66,7 @@ void Client::Life()
 		
 		if (MaloW::ProcessEvent* ev = this->PeekEvent())
 		{
+			//Check if a New Player has connected
 			NewPlayerEvent* npe = dynamic_cast<NewPlayerEvent*>(ev);
 			if(npe != NULL)
 			{
@@ -82,6 +83,7 @@ void Client::Life()
 				newPlayer->AddStaticMesh(playerMesh);
 				this->zPlayers.add(newPlayer);
 			}
+			//Check if a Player has updated
 			PlayerUpdateEvent* pue = dynamic_cast<PlayerUpdateEvent*>(ev);
 			if(pue != NULL)
 			{
@@ -92,21 +94,29 @@ void Client::Life()
 					{
 						if (clientID == 0)
 						{
-							
+							//Todo something
 						}
 						StaticMesh* playerMesh = this->zPlayers.get(i)->GetPlayerMesh();
-						playerMesh->SetQuaternion(pue->GetPlayerRotation());
-						playerMesh->SetPosition(pue->GetPlayerPosition());
-						bool newMesh = pue->HasNewFile();
-						if (newMesh)
+						//Check if Value has Been added
+						if (pue->HasNewRotation())
 						{
-							std::string filename = pue->GetFilename();
-							this->zPlayers.get(i)->GetPlayerMesh()->LoadFromFile(filename);
+							playerMesh->SetQuaternion(pue->GetPlayerRotation());
+						}
+						if (pue->HasNewPosition())
+						{
+							playerMesh->SetPosition(pue->GetPlayerPosition());
+						}
+						
+						if (pue->HasNewFile())
+						{
+							this->zPlayers.get(i)->GetPlayerMesh()->LoadFromFile(pue->GetFilename());
 						}
 					}
 					
 				}
 			}
+			delete ev;
+			ev = NULL;
 		}
 		if (this->zEng->GetKeyListener()->IsPressed('W'))
 		{
