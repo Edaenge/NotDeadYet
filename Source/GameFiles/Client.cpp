@@ -183,7 +183,7 @@ void Client::Ping()
 }
 void Client::HandlePingEvent(NetworkPacket* ev)
 {
-	if (zTimeSinceLastPing < 10.0f)
+	if (zTimeSinceLastPing > 10.0f)
 	{
 		//todo close serverClient etc
 		this->Close();
