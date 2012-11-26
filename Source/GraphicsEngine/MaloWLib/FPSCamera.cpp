@@ -46,6 +46,14 @@ void FPSCamera::updateSpecific(float delta)
 			if(angleX < 0)
 				angleX += 2 * PI;
 			
+			/*if(angleY > PI)
+				angleY = PI;
+			if(angleY < -PI)
+				angleY = -PI;
+			this->forward.x = cos(angleX);
+			this->forward.y = angleY;
+			this->forward.z = sin(angleX);*/
+
 			this->forward.x = cos(angleX);
 			this->forward.y = sin(angleY);
 			this->forward.z = sin(angleX);
