@@ -103,6 +103,9 @@ std::string NetworkMessageConverter::Convert(int ID)
 	case MESSAGE_TYPE_SERVER_FULL:
 		ss << SERVER_FULL << "*";
 		break;
+	case  MESSAGE_TYPE_KICKED:
+		ss << KICKED << "*";
+		break;
 	default:
 		ss << "";
 		break;
@@ -110,6 +113,7 @@ std::string NetworkMessageConverter::Convert(int ID)
 
 	return ss.str();
 }
+
 vector<std::string> NetworkMessageConverter::SplitMessage(std::string msg)
 {
 	std::string subMsg = "";
@@ -125,6 +129,7 @@ vector<std::string> NetworkMessageConverter::SplitMessage(std::string msg)
 	}
 	return msgArray;
 }
+
 D3DXVECTOR3 NetworkMessageConverter::ConvertStringToVector(std::string type, std::string msg)
 {
 	float x = 0.0f;
@@ -137,6 +142,7 @@ D3DXVECTOR3 NetworkMessageConverter::ConvertStringToVector(std::string type, std
 	
 	return vec;
 }
+
 D3DXQUATERNION NetworkMessageConverter::ConvertStringToQuaternion(std::string type, std::string msg)
 {
 	float x;
@@ -149,6 +155,7 @@ D3DXQUATERNION NetworkMessageConverter::ConvertStringToQuaternion(std::string ty
 
 	return quaternion;
 }
+
 int NetworkMessageConverter::ConvertStringToInt(std::string type, std::string msg)
 {
 	int value;
@@ -156,6 +163,7 @@ int NetworkMessageConverter::ConvertStringToInt(std::string type, std::string ms
 
 	return value;
 }
+
 std::string NetworkMessageConverter::ConvertStringToSubstring(std::string type, std::string msg)
 {
 	char subString[100];

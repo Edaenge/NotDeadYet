@@ -73,7 +73,12 @@ public:
 	void BroadCastServerShutdown();
 	/*! Pings the clients.*/
 	void PingClients();
+	/*! Updates the server clock.*/
 	float Update();
+	/*! Kicks client. Sends a message if reason is given.
+		If sendAMessage is false, the client will not be notified.
+	*/
+	bool KickClient(int ID, bool sendAMessage = false, std::string reason = "");
 
 private:
 	/*Handles new incoming connections.*/

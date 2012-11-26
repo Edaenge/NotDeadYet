@@ -135,6 +135,38 @@ void Host::HandleRecivedMessages()
 	if(this->GetEventQueueSize() == 0)
 		return;
 
+	//Fetch event
+	MaloW::ProcessEvent* pe = PeekEvent();
+
+	//If null, return
+	if(!pe)
+		return;
+
+	MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(pe);
+
+	if(!np)
+	{
+		SAFE_DELETE(pe);
+		return;
+	}
+
+	//Implement here
+	std::vector<std::string> msgArray;
+	msgArray = this->zMessageConverter.SplitMessage(np->getMessage()); 
+
+	if(!msgArray.empty())
+	{
+		if(strcmp(msgArray[0].c_str(), PING.c_str()) == 0)
+		{
+			int index = SearchForClient(np->getID());
+
+			ClientData* cd;
+			cd = zClients->get(index);
+
+			cd->zPinged = false;
+			cd->zCurrentPingTime = 0.0f;
+		}
+	}
 
 }
 
@@ -172,15 +204,37 @@ void Host::PingClients()
 		return;
 
 	ClientData* cd; 
+
 	for(int i = 0; i < zClients->size(); i++)
 	{
 		cd = zClients->get(i);
 
+		//If client has not been pinged.
 		if(!cd->zPinged)
 		{
-			cd->zCurrentPingTime = 0.0f;
-			cd->zClient->sendData(PING);
-			cd->zPinged = true;
+			//If it was x sec ago we sent a ping, don't send a ping.
+			if(cd->zCurrentPingTime < 3.0f) //hard coded
+				cd->IncPingTime(zDeltaTime);
+
+			//else send ping.
+			else
+			{
+				cd->zCurrentPingTime = 0.0f;
+				cd->zClient->sendData(PING);
+				cd->zPinged = true;
+			}
+		}
+		//If he have sent a ping.
+		else
+		{
+			//If we sent a ping x sec ago, drop the client.
+			if(cd->zCurrentPingTime > 10.0f)
+			{
+				KickClient(cd->zClient->getClientID());
+			}
+			else
+				cd->IncPingTime(zDeltaTime);
+
 		}
 	}
 }
@@ -200,5 +254,30 @@ float Host::Update()
 
 	return this->zDeltaTime;
 }
+
+bool Host::KickClient( int ID, bool sendAMessage /*= false*/, std::string reason /*= ""*/ )
+{
+	int index = SearchForClient(ID);
+
+	if(index == -1)
+	{
+		MaloW::Debug("Can't find client to kick in KickClient in Host.cpp.");
+		return false;
+	}
+
+	if(sendAMessage)
+	{
+		std::string mess;
+
+		mess = zMessageConverter.Convert(MESSAGE_TYPE_KICKED);
+		mess += reason;
+
+		this->zClients->get(index)->zClient->sendData(mess);
+	}
+
+
+	return this->zClients->remove(index);
+}
+
 
 

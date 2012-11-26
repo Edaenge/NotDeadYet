@@ -22,7 +22,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_NEW_PLAYER,
 	MESSAGE_TYPE_KEY_PRESS,
 	MESSAGE_TYPE_PING,
-	MESSAGE_TYPE_SELF_ID
+	MESSAGE_TYPE_SELF_ID,
+	MESSAGE_TYPE_KICKED
 };
 
 static const std::string POSITION			= "P ";
@@ -39,6 +40,7 @@ static const std::string PLAYER_UPDATE		= "PU ";
 static const std::string KEY_PRESS			= "KP ";
 static const std::string PING				= "Ping ";
 static const std::string SELF_ID			= "Self ";
+static const std::string KICKED				= "K ";
 
 /*
 This class creates string messages used for communication
