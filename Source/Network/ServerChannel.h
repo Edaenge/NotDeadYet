@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <string>
+#include <vector>
 #include <winsock2.h>
 
 #include "NetworkPacket.h"
@@ -42,10 +43,13 @@ namespace MaloW
 		void sendData(string msg);
 		int InitConnection(std::string ip, int port);
 
-		void setNotifier(Process* notifier) { this->notifier = notifier; }
+		void setNotifier(Process* notifier) {this->notifier = notifier;}
 		void Life();
-		void setUnImportantFilter(string filter) { this->unImportantFilter = filter; }
+		void setUnImportantFilter(string filter) {this->unImportantFilter = filter;}
 		
+		void HandleMessage(std::string msg);
+		std::vector<std::string> SplitMessage(std::string msg);
+		void HandleSubMessage(std::string msg);
 	};
 }
 

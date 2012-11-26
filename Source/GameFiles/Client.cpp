@@ -1,5 +1,5 @@
 #include "GameFiles/Client.h"
-#include "Network/NewPlayerEvent.h"
+#include "Network/NetworkMessageConverter.h"
 
 using namespace MaloW;
 
@@ -9,6 +9,7 @@ Client::Client()
 	this->zPort = 0;
 	this->zEng = NULL;
 	this->zServerChannel = NULL;
+	this->zTimeSinceLastPing = 0.0f;
 }
 int Client::Connect(std::string ip, int port)
 {
@@ -62,74 +63,135 @@ void Client::Life()
 	while(this->stayAlive)
 	{
 		float diff = this->zEng->Update();
+		zTimeSinceLastPing += diff;
 		CursorControl cc;
-		
 		if (MaloW::ProcessEvent* ev = this->PeekEvent())
 		{
 			//Check if a New Player has connected
 			NewPlayerEvent* npe = dynamic_cast<NewPlayerEvent*>(ev);
 			if(npe != NULL)
 			{
-				Player* newPlayer = new Player();
-				D3DXVECTOR3 position = npe->GetPlayerPosition();
-				D3DXVECTOR3 scale = npe->GetPlayerScale();
-				D3DXQUATERNION rotation = npe->GetPlayerRotation();
-				string filename = npe->GetFilename();
-
-				StaticMesh* playerMesh = this->zEng->CreateStaticMesh(filename, position);
-				playerMesh->SetQuaternion(rotation);
-				playerMesh->Scale(scale);
-
-				newPlayer->AddStaticMesh(playerMesh);
-				this->zPlayers.add(newPlayer);
+				this->HandleNewPlayerEvent(npe);
 			}
 			//Check if a Player has updated
 			PlayerUpdateEvent* pue = dynamic_cast<PlayerUpdateEvent*>(ev);
 			if(pue != NULL)
 			{
-				int clientID = pue->GetClientID();
-				for (int i = 0; i < this->zPlayers.size(); i++)
-				{
-					if (clientID == this->zPlayers.get(i)->GetClientID())
-					{
-						if (clientID == 0)
-						{
-							//Todo something
-						}
-						StaticMesh* playerMesh = this->zPlayers.get(i)->GetPlayerMesh();
-						//Check if Value has Been added
-						if (pue->HasNewRotation())
-						{
-							playerMesh->SetQuaternion(pue->GetPlayerRotation());
-						}
-						if (pue->HasNewPosition())
-						{
-							playerMesh->SetPosition(pue->GetPlayerPosition());
-						}
-						
-						if (pue->HasNewFile())
-						{
-							this->zPlayers.get(i)->GetPlayerMesh()->LoadFromFile(pue->GetFilename());
-						}
-					}
-					
-				}
+				this->HandlePlayerUpdateEvent(pue);
+			}
+			//Check if Client has recieved a Ping
+			NetworkPacket* np = dynamic_cast<NetworkPacket*>(ev);
+			if (np != NULL)
+			{
+				this->HandlePingEvent(np);
 			}
 			delete ev;
 			ev = NULL;
 		}
-		if (this->zEng->GetKeyListener()->IsPressed('W'))
-		{
-			this->zEng->GetCamera()->moveForward(diff);
-			this->zServerChannel->sendData("");
-		}
+		this->HandleKeyboardInput();
+	}
+}
+bool Client::IsAlive()
+{
+	return stayAlive;
+}
+void Client::HandleNewPlayerEvent(NewPlayerEvent* ev)
+{
+	Player* newPlayer = new Player();
+	D3DXVECTOR3 position = ev->GetPlayerPosition();
+	D3DXVECTOR3 scale = ev->GetPlayerScale();
+	D3DXQUATERNION rotation = ev->GetPlayerRotation();
+	string filename = ev->GetFilename();
+	int clientID = ev->GetClientID();
 
+	StaticMesh* playerMesh = this->zEng->CreateStaticMesh(filename, position);
+	playerMesh->SetQuaternion(rotation);
+	playerMesh->Scale(scale);
 
-		if (this->zEng->GetKeyListener()->IsPressed(VK_ESCAPE))
+	newPlayer->AddStaticMesh(playerMesh);
+	newPlayer->SetClientID(clientID);
+	bool found = false;
+	for (int i = 0; i < this->zPlayers.size(); i++)
+	{
+		if (this->zPlayers.get(i)->GetClientID() == clientID)
 		{
-			this->zServerChannel->sendData("CC");
-			
-			this->Close();
+			found = true;
 		}
 	}
+	this->zPlayers.add(newPlayer);
+}
+void Client::HandlePlayerUpdateEvent(PlayerUpdateEvent* ev)
+{
+	int clientID = ev->GetClientID();
+	for (int i = 0; i < this->zPlayers.size(); i++)
+	{
+		if (clientID == this->zPlayers.get(i)->GetClientID())
+		{
+			if(clientID == 0)
+			{
+				//Todo something....
+			}
+			StaticMesh* playerMesh = this->zPlayers.get(i)->GetPlayerMesh();
+			//Check if Value has Been added
+			if (ev->HasNewRotation())
+			{
+				playerMesh->SetQuaternion(ev->GetPlayerRotation());
+			}
+			if (ev->HasNewPosition())
+			{
+				playerMesh->SetPosition(ev->GetPlayerPosition());
+			}
+			if (ev->HasNewFile())
+			{
+				this->zPlayers.get(i)->GetPlayerMesh()->LoadFromFile(ev->GetFilename());
+			}
+		}
+	}
+}
+void Client::HandleKeyboardInput()
+{
+	if (this->zEng->GetKeyListener()->IsPressed('W'))
+	{
+		//this->zEng->GetCamera()->moveForward(diff);
+		this->zServerChannel->sendData("BP W");
+	}
+	if(this->zEng->GetKeyListener()->IsPressed('A'))
+	{
+		//this->zEng->GetCamera()->moveLeft(diff);
+		this->zServerChannel->sendData("BP A");
+	}
+	if(this->zEng->GetKeyListener()->IsPressed('S'))	
+	{
+		//this->zEng->GetCamera()->moveBackward(diff);
+		this->zServerChannel->sendData("BP S");
+	}
+	if(this->zEng->GetKeyListener()->IsPressed('D'))	
+	{
+		//this->zEng->GetCamera()->moveRight(diff);
+		this->zServerChannel->sendData("BP D");
+	}
+	if (this->zEng->GetKeyListener()->IsPressed(VK_ESCAPE))
+	{
+		this->zServerChannel->sendData("CC");
+
+		this->Close();
+	}
+}
+void Client::Ping()
+{
+	this->zServerChannel->sendData(PING);
+}
+void Client::HandlePingEvent(NetworkPacket* ev)
+{
+	if (zTimeSinceLastPing < 10.0f)
+	{
+		//todo close serverClient etc
+		this->Close();
+	}
+	else
+	{
+		this->zTimeSinceLastPing = 0;
+		this->Ping();
+	}
+	
 }

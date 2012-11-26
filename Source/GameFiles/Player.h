@@ -1,6 +1,6 @@
 /*
-	Made by Jensen Christopher 
-	for project desperation* at Blekinge tekniska högskola.
+	Made by Jensen Christopher Datum(23/11/12 created) 
+	for project Not Dead Yet at Blekinge tekniska högskola
 */
 #pragma once
 
@@ -34,6 +34,8 @@ public:
 	D3DXQUATERNION GetPlayerRotation();
 	/*! Adds a Pointer to the Player Model Mesh */
 	void AddStaticMesh(StaticMesh* mesh);
+	/*!  */
+	void SetClientID(int clientID);
 private:
 	StaticMesh* zPlayerMesh;
 	int zPlayerState;

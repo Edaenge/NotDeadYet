@@ -38,3 +38,8 @@ StaticMesh* Player::GetPlayerMesh()
 	return this->zPlayerMesh;
 }
 
+void Player::SetClientID(int clientID)
+{
+	this->zClientID = clientID;
+}
+
