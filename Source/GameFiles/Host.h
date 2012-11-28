@@ -16,10 +16,16 @@ struct PlayerInfo
 	{
 		this->zID = id;
 		zState = 0;
+		zScale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+		zPos = D3DXVECTOR3(0,0,0);
 	}
 
 	D3DXVECTOR3 zPos;
+	D3DXVECTOR3 zScale;
+	D3DXVECTOR3 zDir;
 	D3DXQUATERNION zRot;
+
+	std::string zMeshModel;
 
 	int zState;
 	int zID;
@@ -77,18 +83,26 @@ public:
 	float Update();
 	/*! Kicks client. Sends a message if reason is given.
 		If sendAMessage is false, the client will not be notified.
+		This function notifies all the other clients to remove this player.
 	*/
-	bool KickClient(int ID, bool sendAMessage = false, std::string reason = "");
-	/*Checks if the server is alive.*/
+	bool KickClient(const int ID, bool sendAMessage = false, std::string reason = "");
+	/*! Checks if the server is alive.*/
 	bool IsAlive() const;
 
 private:
-	/*Handles new incoming connections.*/
+	/*! Handles new incoming connections.*/
 	void HandleNewConnections();
-	/*Handles messages from clients.*/
+	/*! Handles messages from clients. This function will call the following functions:
+	HandlePingMsg
+	HandleCloseConnectionMsg
+	*/
 	void HandleRecivedMessages();
-	/*Search for a client. Returns -1 if none was found.*/
-	int SearchForClient(int ID);
+	/*! Handles ping messages.*/
+	void HandlePingMsg(const int CLIENT_ID);
+	/*! Search for a client. Returns -1 if none was found.*/
+	int SearchForClient(const int ID);
+	/*! Creates a new player and notifies all clients.*/
+	void CreateNewPlayer(const int ID, std::string mesh);
 	
 private:
 	ServerListener* zServerListener;

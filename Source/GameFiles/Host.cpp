@@ -58,6 +58,7 @@ void Host::Life()
 
 		HandleNewConnections();
 		HandleRecivedMessages();
+		PingClients();
 		
 	}
 }
@@ -105,19 +106,20 @@ void Host::HandleNewConnections()
 
 		cce->GetClientChannel()->sendData(message);
 		SAFE_DELETE(pe);
+
+		return;
 	}
 
 	std::string message = "";
 
 	MaloW::ClientChannel* client = cce->GetClientChannel();
-	
-	//Here the server should send player data to
-	//all clients
 
-	
 	client->setNotifier(this);
 	this->zPlayers->add(new PlayerInfo(client->getClientID()));
 	this->zClients->add(new ClientData(client));
+
+	message = this->zMessageConverter.Convert(MESSAGE_TYPE_SELF_ID, client->getClientID());
+	client->sendData(message);
 
 	SAFE_DELETE(pe);
 }
@@ -169,24 +171,39 @@ void Host::HandleRecivedMessages()
 		return;
 	}
 
-	//Implement here
 	std::vector<std::string> msgArray;
 	msgArray = this->zMessageConverter.SplitMessage(np->getMessage()); 
 
-	if(!msgArray.empty())
+	if(msgArray.empty())
+		return;
+
+	char key[512];
+	sscanf(msgArray[0].c_str(), "%s ", key);
+
+	if(strcmp(key, PING.c_str()) == 0)
 	{
-		if(strcmp(msgArray[0].c_str(), PING.c_str()) == 0)
-		{
-			int index = SearchForClient(np->getID());
-
-			ClientData* cd;
-			cd = zClients->get(index);
-
-			cd->zPinged = false;
-			cd->zCurrentPingTime = 0.0f;
-		}
+		HandlePingMsg(np->getID());
+	}
+	else if(strcmp(key, USER_DATA.c_str()) == 0)
+	{
+		CreateNewPlayer(np->getID(),msgArray[0]);
+	}
+	else if(strcmp(key, CONNECTION_CLOSED.c_str()) == 0)
+	{
+		KickClient(np->getID());
 	}
 
+}
+
+void Host::HandlePingMsg( const int CLIENT_ID )
+{
+	int index = SearchForClient(CLIENT_ID);
+
+	ClientData* cd;
+	cd = this->zClients->get(index);
+
+	cd->zPinged = false;
+	cd->zCurrentPingTime = 0.0f;
 }
 
 inline int Host::GetPort() const
@@ -194,7 +211,7 @@ inline int Host::GetPort() const
 	return this->zPort;
 }
 
-int Host::SearchForClient( int ID )
+int Host::SearchForClient( const int ID )
 {
 
 	if(!HasPlayers())
@@ -274,9 +291,11 @@ float Host::Update()
 	return this->zDeltaTime;
 }
 
-bool Host::KickClient( int ID, bool sendAMessage /*= false*/, std::string reason /*= ""*/ )
+bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string reason /*= ""*/ )
 {
 	int index = SearchForClient(ID);
+	std::string mess;
+	bool removed = false;
 
 	if(index == -1)
 	{
@@ -286,22 +305,84 @@ bool Host::KickClient( int ID, bool sendAMessage /*= false*/, std::string reason
 
 	if(sendAMessage)
 	{
-		std::string mess;
-
-		mess = zMessageConverter.Convert(MESSAGE_TYPE_KICKED);
-		mess += reason;
+		mess = this->zMessageConverter.Convert(MESSAGE_TYPE_KICKED, reason);
 
 		this->zClients->get(index)->zClient->sendData(mess);
 	}
 
+	//create a remove player message.
+	mess = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_PLAYER, ID);
 
-	return this->zClients->remove(index);
+	//remove the player
+	this->zPlayers->remove(index);
+	removed = this->zClients->remove(index);
+
+	//Notify clients
+	this->SendToAllClients(mess);
+
+	return removed;
 }
 
 inline bool Host::IsAlive() const
 {
 	return this->stayAlive;
 }
+
+void Host::CreateNewPlayer( const int ID, std::string mesh )
+{
+	std::string uModel, mess;
+	PlayerInfo* pi = new PlayerInfo(ID);
+
+	uModel = this->zMessageConverter.ConvertStringToSubstring(USER_DATA, mesh);
+
+	pi->zID = ID;
+	pi->zMeshModel = uModel;
+	this->zPlayers->add(pi);
+
+	//Create a new player message
+	PlayerInfo* temp_PI;
+	std::vector<std::string> temp;
+	int newPlayerindex = 0;
+
+	for (int i = 0; i < this->zPlayers->size(); i++)
+	{
+		temp_PI = this->zPlayers->get(i);
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, temp_PI->zID);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, temp_PI->zPos.x, temp_PI->zPos.y, temp_PI->zPos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, temp_PI->zScale.x, temp_PI->zScale.y, temp_PI->zScale.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, temp_PI->zRot.x, temp_PI->zRot.y, temp_PI->zRot.z, temp_PI->zRot.w);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, temp_PI->zMeshModel);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, temp_PI->zState);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, temp_PI->zDir.x, temp_PI->zDir.y, temp_PI->zDir.z);
+
+		temp.push_back(mess);
+
+		if(temp_PI->zID == ID)
+			newPlayerindex = i;
+	}
+
+	//Send players to new player
+	int clientIndex = SearchForClient(ID);
+	MaloW::ClientChannel* cc = this->zClients->get(clientIndex)->zClient;
+
+	std::vector<std::string>::iterator it;
+	for (it = temp.begin(); it < temp.end(); it++)
+	{
+		cc->sendData(*it);
+	}
+
+	//Send new player to players
+	for (int i = 0; i < this->zClients->size(); i++)
+	{
+		if(i != clientIndex)
+			this->zClients->get(i)->zClient->sendData(temp[newPlayerindex]);
+	}
+
+	
+}
+
+
 
 
 
