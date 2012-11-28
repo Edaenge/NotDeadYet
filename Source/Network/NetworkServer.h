@@ -38,6 +38,7 @@ namespace MaloW
 
 		void Life();
 		
+		virtual bool IsAlive() const;
 
 		virtual void ClientConnected(ClientChannel* cc) = 0;
 	};

@@ -37,6 +37,25 @@ void Host::Life()
 	{
 		Update();
 
+		//Checks if ServerListener is still working
+		if(!this->zServerListener->IsAlive())
+		{
+			int code;
+
+			SAFE_DELETE(this->zServerListener);
+			this->zServerListener = new ServerListener();
+			code = this->zServerListener->InitListener(this->zPort);
+
+			if(code == 0)
+				this->zServerListener->Start();
+
+			else
+			{
+				MaloW::Debug("Failed to restart ServerListener. Error: " + MaloW::convertNrToString(code));
+				this->Close();
+			}
+		}
+
 		HandleNewConnections();
 		HandleRecivedMessages();
 		
@@ -52,7 +71,7 @@ int Host::InitHost( int port, int maxClients )
 	else
 	{
 		SAFE_DELETE(this->zServerListener);
-		this->zServerListener;
+		this->zServerListener = new ServerListener();
 	}
 	
 	code = this->zServerListener->InitListener(port);
@@ -277,6 +296,11 @@ bool Host::KickClient( int ID, bool sendAMessage /*= false*/, std::string reason
 
 
 	return this->zClients->remove(index);
+}
+
+inline bool Host::IsAlive() const
+{
+	return this->stayAlive;
 }
 
 

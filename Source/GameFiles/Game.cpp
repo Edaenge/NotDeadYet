@@ -21,9 +21,11 @@ void Game::Run()
 		this->zHost->Start();
 	
 	this->zClient->Start();
-	
-	
 
+	while(this->zClient->IsAlive())
+	{
+		Sleep(100);
+	}
 	
 }
 

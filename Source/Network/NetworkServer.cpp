@@ -123,3 +123,8 @@ int MaloW::NetworkServer::InitConnection(int port)
 
 	return returnCode;
 }
+
+inline bool MaloW::NetworkServer::IsAlive() const
+{
+	return this->stayAlive;
+}

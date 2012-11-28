@@ -79,6 +79,8 @@ public:
 		If sendAMessage is false, the client will not be notified.
 	*/
 	bool KickClient(int ID, bool sendAMessage = false, std::string reason = "");
+	/*Checks if the server is alive.*/
+	bool IsAlive() const;
 
 private:
 	/*Handles new incoming connections.*/
