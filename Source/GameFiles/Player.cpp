@@ -7,6 +7,7 @@ Player::Player()
 }
 Player::~Player()
 {
+	//this->zPlayerMesh = NULL;
 	//SAFE_DELETE(this->zPlayerMesh);
 }
 D3DXVECTOR3 Player::GetPlayerPosition()
@@ -37,9 +38,24 @@ StaticMesh* Player::GetPlayerMesh()
 {
 	return this->zPlayerMesh;
 }
-
 void Player::SetClientID(int clientID)
 {
 	this->zClientID = clientID;
+}
+void Player::SetPlayerState(int state)
+{
+	this->zPlayerState = state;
+}
+void Player::SetPlayerPosition(D3DXVECTOR3 pos)
+{
+	this->zPlayerMesh->SetPosition(pos);
+}
+void Player::SetPlayerScale(D3DXVECTOR3 scale)
+{
+	this->zPlayerMesh->Scale(scale);
+}
+void Player::SetPlayerRotation(D3DXQUATERNION rot)
+{
+	this->zPlayerMesh->SetQuaternion(rot);
 }
 

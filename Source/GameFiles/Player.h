@@ -34,8 +34,14 @@ public:
 	D3DXQUATERNION GetPlayerRotation();
 	/*! Adds a Pointer to the Player Model Mesh */
 	void AddStaticMesh(StaticMesh* mesh);
-	/*!  */
+	/*!  Sets the Client Id given from the server*/
 	void SetClientID(int clientID);
+	/*! Sets the Player State*/
+	void SetPlayerState(int state);
+	/*! Sets Player Mesh data */
+	void SetPlayerPosition(D3DXVECTOR3 pos);
+	void SetPlayerScale(D3DXVECTOR3 scale);
+	void SetPlayerRotation(D3DXQUATERNION rot);
 private:
 	StaticMesh* zPlayerMesh;
 	int zPlayerState;

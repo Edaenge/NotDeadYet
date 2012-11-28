@@ -161,7 +161,6 @@ void ServerChannel::sendData(string msg)
 
 void ServerChannel::Life()
 {
-	NetworkMessageConverter converter = NetworkMessageConverter();
 	while(this->stayAlive)
 	{
 		string msg = this->receiveData();
@@ -169,7 +168,8 @@ void ServerChannel::Life()
 		{
 			if(this->notifier && this->stayAlive)
 			{
-				this->HandleMessage(msg);
+				NetworkPacket* np = new NetworkPacket(msg, 0);
+				this->PutEvent(np);
 			}
 		}
 	}
@@ -190,92 +190,4 @@ void ServerChannel::CloseSpecific()
 		}
 	}
 	this->sock = 0;
-}
-void ServerChannel::HandleMessage(std::string msg)
-{
-	NetworkMessageConverter msgHandler = NetworkMessageConverter();
-	std::vector<std::string> msgArray;
-	msgArray = msgHandler.SplitMessage(msg);
-	if (msgArray.size() > 0)
-	{
-		if(strcmp(msgArray[0].c_str(), PLAYER_UPDATE.c_str()) == 0)
-		{
-			PlayerUpdateEvent* pue = new PlayerUpdateEvent();
-			char key[512];
-			for(int i = 0; i < msgArray.size(); i++)
-			{
-				sscanf(msgArray[i].c_str(), "%s ", key);
-
-				if(strcmp(key, PLAYER_UPDATE.c_str()) == 0)
-				{
-					int id = msgHandler.ConvertStringToInt(PLAYER_UPDATE, msgArray[i]);
-				}
-				else if(strcmp(key, POSITION.c_str()) == 0)
-				{
-					D3DXVECTOR3 position = msgHandler.ConvertStringToVector(POSITION, msgArray[i]);
-					pue->SetPlayerPosition(position);
-				}
-				else if(strcmp(key, ROTATION.c_str()) == 0)
-				{
-					D3DXQUATERNION rotation = msgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
-					pue->SetPlayerRotation(rotation);
-				}
-				else if(strcmp(key, STATE.c_str()) == 0)
-				{
-					int state = msgHandler.ConvertStringToInt(STATE, msgArray[i]);
-					pue->SetPlayerState(state);
-				}
-				else if(strcmp(key, MESH_MODEL.c_str()) == 0)
-				{
-					std::string filename = msgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
-					pue->SetFilename(filename);
-				}
-			}
-			this->notifier->PutEvent(pue);
-		}
-		else if (strcmp(msgArray[0].c_str(), NEW_PLAYER.c_str()) == 0)
-		{
-			NewPlayerEvent* npe = new NewPlayerEvent();
-			char key[512];
-
-			for(int i = 0; i < msgArray.size(); i++)
-			{
-				sscanf(msgArray[i].c_str(), "%s ", key);
-
-				if(strcmp(key, PLAYER_UPDATE.c_str()) == 0)
-				{
-					int id = msgHandler.ConvertStringToInt(NEW_PLAYER, msgArray[i]);
-					npe->SetClientID(id);
-				}
-				else if(strcmp(key, POSITION.c_str()) == 0)
-				{
-					D3DXVECTOR3 position = msgHandler.ConvertStringToVector(POSITION, msgArray[i]);
-					npe->SetPlayerPosition(position);
-				}
-				else if(strcmp(key, ROTATION.c_str()) == 0)
-				{
-					D3DXQUATERNION rotation = msgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
-					npe->SetPlayerRotation(rotation);
-				}
-				else if(strcmp(key, STATE.c_str()) == 0)
-				{
-					int state = msgHandler.ConvertStringToInt(STATE, msgArray[i]);
-					npe->SetPlayerState(state);
-				}
-				else if(strcmp(key, MESH_MODEL.c_str()) == 0)
-				{
-					std::string filename = msgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
-					npe->SetFilename(filename);
-				}
-			}
-			this->notifier->PutEvent(npe);
-		}
-		else if(strcmp(msgArray[0].c_str(), PING.c_str()) == 0)
-		{
-			//Todo fixa kanske ID
-			NetworkPacket* np = new NetworkPacket(msgArray[0], 0);
-
-			this->notifier->PutEvent(np);
-		}
-	}
 }

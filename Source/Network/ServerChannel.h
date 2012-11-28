@@ -46,10 +46,6 @@ namespace MaloW
 		void setNotifier(Process* notifier) {this->notifier = notifier;}
 		void Life();
 		void setUnImportantFilter(string filter) {this->unImportantFilter = filter;}
-		
-		void HandleMessage(std::string msg);
-		std::vector<std::string> SplitMessage(std::string msg);
-		void HandleSubMessage(std::string msg);
 	};
 }
 
