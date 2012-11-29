@@ -214,7 +214,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\WorkingDir\</OutDir>
     <IntDir>$(ProjectDir)\Debug\</IntDir>
-    <ExecutablePath>..\Source\External\D3D\Utilities\bin\x86;$(ProjectDir)\;$(ExecutablePath)</ExecutablePath>
+    <ExecutablePath>..\Source\External\D3D\Utilities\bin\x86;$(ProjectDir)\;$(SolutionDir)\Source\External\Visual Leak Detector\bin\Win32;$(SolutionDir)\Source\External\Visual Leak Detector\bin\Win64;$(ExecutablePath)</ExecutablePath>
     <IncludePath>..\Source\SoundEngine\Include;..\Source\GraphicsEngine\MaloWLib;..\Source\MaloWLib;..\Source\GraphicsEngine;..\Source;$(SolutionDir)\Source\External\D3D\include\;$(SolutionDir)\Source\External\Visual Leak Detector\include\;$(IncludePath)</IncludePath>
     <LibraryPath>..\Source\SoundEngine\Lib\x86;$(SolutionDir)\Source\External\D3D\Lib\x86;$(SolutionDir)\Source\External\Visual Leak Detector\lib\Win32;$(SolutionDir)\Source\External\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)D32</TargetName>
