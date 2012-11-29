@@ -100,7 +100,9 @@ private:
 	/*! Handles ping messages.*/
 	void HandlePingMsg(const int CLIENT_ID);
 	/*! Search for a client. Returns -1 if none was found.*/
-	int SearchForClient(const int ID);
+	int SearchForClient(const int ID) const;
+	/*! Search for a player. Returns -1 if none was found.*/
+	int SearchForPlayer(const int ID) const;
 	/*! Creates a new player and notifies all clients.*/
 	void CreateNewPlayer(const int ID, std::string mesh);
 	

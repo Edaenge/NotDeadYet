@@ -13,11 +13,10 @@ MainMenu::MainMenu()
 	// Initializes the Client and returns a code that explains what happend
 	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 8080);
 
-	if(hostErrorCode == 0 && hostErrorCode == 0)
+	if(hostErrorCode == 0 && clientErrorCode == 0)
 	{
 		//Start threads and run client and host
-
-		//this->zGame->Run();
+		this->zGame->Run();
 	}
 }
 

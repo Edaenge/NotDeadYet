@@ -211,7 +211,7 @@ inline int Host::GetPort() const
 	return this->zPort;
 }
 
-int Host::SearchForClient( const int ID )
+int Host::SearchForClient( const int ID ) const
 {
 
 	if(!HasPlayers())
@@ -228,7 +228,23 @@ int Host::SearchForClient( const int ID )
 	return -1;
 }
 
-inline void Host::BroadCastServerShutdown()
+int Host::SearchForPlayer(const int ID) const
+{
+	if(!HasPlayers())
+		return -1;
+
+	for (int i = 0; i < 0; i++)
+	{
+		if(this->zPlayers->get(i)->zID == ID)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void Host::BroadCastServerShutdown()
 {
 	std::string mess = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_SHUTDOWN);
 	SendToAllClients(mess);
@@ -314,8 +330,11 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 	mess = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_PLAYER, ID);
 
 	//remove the player
+	int pIndex = SearchForPlayer(ID);
 	this->zPlayers->remove(index);
-	removed = this->zClients->remove(index);
+
+	if(pIndex == -1)
+		removed = this->zClients->remove(pIndex);
 
 	//Notify clients
 	this->SendToAllClients(mess);
