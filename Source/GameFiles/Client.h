@@ -19,7 +19,7 @@ private:
 	GraphicsEngine* zEng;
 	float zTimeSinceLastPing;
 	std::vector<Player*> zPlayers;
-	NetworkMessageConverter msgHandler;
+	NetworkMessageConverter zMsgHandler;
 	MaloW::ServerChannel* zServerChannel;
 private:
 	/*! Handle Keyboard Input */

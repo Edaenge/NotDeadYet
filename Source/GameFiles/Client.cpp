@@ -5,7 +5,8 @@
 
 using namespace MaloW;
 
-static const float TIMEOUT_VALUE; 
+static const float TIMEOUT_VALUE = 10000.0f; 
+
 Client::Client()
 {
 	this->zIP = "";
@@ -13,7 +14,7 @@ Client::Client()
 	this->zEng = NULL;
 	this->zServerChannel = NULL;
 	this->zTimeSinceLastPing = 0.0f;
-	this->msgHandler = NetworkMessageConverter();
+	this->zMsgHandler = NetworkMessageConverter();
 
 	zMeshID = "Media/scale.obj";
 }
@@ -47,10 +48,6 @@ Client::~Client()
 
 void Client::initClient()
 {
-	this->zServerChannel->setNotifier(this);
-
-	this->zServerChannel->Start();
-
 	this->zEng->GetCamera()->SetPosition( Vector3(0, 15, -15.6f) );
 	this->zEng->GetCamera()->LookAt( Vector3(30, 10, 10) );
 
@@ -71,6 +68,12 @@ void Client::initClient()
 
 void Client::Life()
 {
+	this->zServerChannel->setNotifier(this);
+
+	this->zServerChannel->Start();
+
+	this->initClient();
+
 	while(this->stayAlive)
 	{
 		float diff = this->zEng->Update();
@@ -104,22 +107,22 @@ void Client::HandleKeyboardInput()
 	if (this->zEng->GetKeyListener()->IsPressed('W'))
 	{
 		//this->zEng->GetCamera()->moveForward(diff);
-		this->zServerChannel->sendData(KEY_PRESS+"W");
+		this->zServerChannel->sendData(KEY_DOWN+"W");
 	}
-	if(this->zEng->GetKeyListener()->IsPressed('A'))
-	{
-		//this->zEng->GetCamera()->moveLeft(diff);
-		this->zServerChannel->sendData(KEY_PRESS+"A");
-	}
-	if(this->zEng->GetKeyListener()->IsPressed('S'))	
+	else if(this->zEng->GetKeyListener()->IsPressed('S'))	
 	{
 		//this->zEng->GetCamera()->moveBackward(diff);
-		this->zServerChannel->sendData(KEY_PRESS+"S");
+		this->zServerChannel->sendData(KEY_DOWN+"S");
 	}
 	if(this->zEng->GetKeyListener()->IsPressed('D'))	
 	{
 		//this->zEng->GetCamera()->moveRight(diff);
-		this->zServerChannel->sendData(KEY_PRESS+"D");
+		this->zServerChannel->sendData(KEY_DOWN+"D");
+	}
+	else if(this->zEng->GetKeyListener()->IsPressed('A'))
+	{
+		//this->zEng->GetCamera()->moveLeft(diff);
+		this->zServerChannel->sendData(KEY_DOWN+"A");
 	}
 	if (this->zEng->GetKeyListener()->IsPressed(VK_ESCAPE))
 	{
@@ -135,7 +138,7 @@ void Client::Ping()
 	if (zTimeSinceLastPing <= TIMEOUT_VALUE)
 	{
 		this->zTimeSinceLastPing = 0.0f;
-		this->zServerChannel->sendData(PING);
+		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
 	}
 	else
 	{
@@ -147,7 +150,7 @@ void Client::Ping()
 void Client::HandleNetworkMessage(std::string msg)
 {
 	std::vector<std::string> msgArray;
-	msgArray = this->msgHandler.SplitMessage(msg);
+	msgArray = this->zMsgHandler.SplitMessage(msg);
 	char key[1024];
 	if(msgArray.size() > 0)
 	{
@@ -172,10 +175,10 @@ void Client::HandleNetworkMessage(std::string msg)
 		}
 		else if(strcmp(key, SELF_ID.c_str()) == 0)
 		{
-			this->zID = this->msgHandler.ConvertStringToInt(SELF_ID, msgArray[0]);
+			this->zID = this->zMsgHandler.ConvertStringToInt(SELF_ID, msgArray[0]);
 			
 			std::string serverMessage = "";
-			serverMessage = this->msgHandler.Convert(MESSAGE_TYPE_USER_DATA, this->zMeshID);
+			serverMessage = this->zMsgHandler.Convert(MESSAGE_TYPE_USER_DATA, this->zMeshID);
 			this->zServerChannel->sendData(serverMessage);
 		}
 		else if(strcmp(key, SERVER_FULL.c_str()) == 0)
@@ -189,6 +192,10 @@ void Client::HandleNetworkMessage(std::string msg)
 		else if(strcmp(key, SERVER_SHUTDOWN.c_str()) == 0)
 		{
 			this->CloseConnection("Server Shutdown");
+		}
+		else
+		{
+			MaloW::Debug("Unknown Message Was sent from server");
 		}
 	}
 }
@@ -220,27 +227,31 @@ void Client::HandleNewPlayer(const std::vector<std::string>& msgArray)
 
 		if(strcmp(key, NEW_PLAYER.c_str()) == 0)
 		{
-			clientID = this->msgHandler.ConvertStringToInt(NEW_PLAYER, msgArray[i]);
+			clientID = this->zMsgHandler.ConvertStringToInt(NEW_PLAYER, msgArray[i]);
 		}
 		else if(strcmp(key, POSITION.c_str()) == 0)
 		{
-			position = this->msgHandler.ConvertStringToVector(POSITION, msgArray[i]);
+			position = this->zMsgHandler.ConvertStringToVector(POSITION, msgArray[i]);
 		}
 		else if(strcmp(key, ROTATION.c_str()) == 0)
 		{
-			rotation = this->msgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
+			rotation = this->zMsgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
 		}
 		else if(strcmp(key, STATE.c_str()) == 0)
 		{
-			state = this->msgHandler.ConvertStringToInt(STATE, msgArray[i]);
+			state = this->zMsgHandler.ConvertStringToInt(STATE, msgArray[i]);
 		}
 		else if(strcmp(key, SCALE.c_str()) == 0)
 		{
-			scale = this->msgHandler.ConvertStringToVector(SCALE, msgArray[i]);
+			scale = this->zMsgHandler.ConvertStringToVector(SCALE, msgArray[i]);
 		}
 		else if(strcmp(key, MESH_MODEL.c_str()) == 0)
 		{
-			filename = this->msgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
+			filename = this->zMsgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
+		}
+		else
+		{
+			MaloW::Debug("Unknown Message Was sent from server");
 		}
 	}
 	if (clientID != -1)
@@ -276,10 +287,7 @@ void Client::HandleNewPlayer(const std::vector<std::string>& msgArray)
 		}
 	}
 }
-
-
-void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray)
-{
+void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray){
 	char key[512];
 
 	int clientID = -1;
@@ -291,7 +299,7 @@ void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray)
 
 		if(strcmp(key, PLAYER_UPDATE.c_str()) == 0)
 		{
-			clientID = this->msgHandler.ConvertStringToInt(PLAYER_UPDATE, msgArray[i]);
+			clientID = this->zMsgHandler.ConvertStringToInt(PLAYER_UPDATE, msgArray[i]);
 
 			ClientPosition = i;
 			clientFound = true;
@@ -319,12 +327,12 @@ void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray)
 			}
 			else if(strcmp(key, STATE.c_str()) == 0)
 			{
-				int playerState = this->msgHandler.ConvertStringToInt(STATE, msgArray[i]);
+				int playerState = this->zMsgHandler.ConvertStringToInt(STATE, msgArray[i]);
 				playerPointer->SetPlayerState(playerState);
 			}
 			else if(strcmp(key, MESH_MODEL.c_str()) == 0)
 			{
-				std::string filename = this->msgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
+				std::string filename = this->zMsgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
 				
 				//Create a new Mesh with the current values
 				iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), playerPointer->GetPlayerPosition());
@@ -334,6 +342,10 @@ void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray)
 				mesh->Scale(scale);
 				mesh->SetQuaternion(Vector4(quat.x,quat.y,quat.z,0.0f));
 				playerPointer->AddStaticMesh(mesh);
+			}
+			else
+			{
+				MaloW::Debug("Unknown Message Was sent from server");
 			}
 		}
 		//Copy over new Values to the vector
@@ -353,7 +365,7 @@ void Client::HandleRemovePlayer(const std::vector<std::string>& msgArray)
 
 		if(strcmp(key, REMOVE_PLAYER.c_str()) == 0)
 		{
-			clientID = this->msgHandler.ConvertStringToInt(REMOVE_PLAYER, msgArray[i]);
+			clientID = this->zMsgHandler.ConvertStringToInt(REMOVE_PLAYER, msgArray[i]);
 		}
 	}
 	//Check if client was found in the array

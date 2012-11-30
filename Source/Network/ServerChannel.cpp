@@ -147,13 +147,14 @@ string ServerChannel::receiveData()
 		}
 		while(goAgain && this->stayAlive);
 	}
-
+	MaloW::Debug("Recieved from Server " + msg);
 	return msg;
 }
 
 
 void ServerChannel::sendData(string msg)
 {
+	MaloW::Debug("Sent to Server " + msg);
 	msg += 10;
 	char bufs[1024] = {0};
 	for(unsigned int i = 0; i < msg.length(); i++)
@@ -178,7 +179,7 @@ void ServerChannel::Life()
 			if(this->notifier && this->stayAlive)
 			{
 				NetworkPacket* np = new NetworkPacket(msg, 0);
-				this->PutEvent(np);
+				this->notifier->PutEvent(np);
 			}
 		}
 	}

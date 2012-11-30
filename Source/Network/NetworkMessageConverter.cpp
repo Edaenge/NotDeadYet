@@ -19,13 +19,13 @@ std::string NetworkMessageConverter::Convert(const int ID, const float x, const 
 	switch (ID)
 	{
 	case MESSAGE_TYPE_POSITION:
-		ss << POSITION << x << " " << y << " " << z <<"*";
+		ss << POSITION << " " << x << " " << y << " " << z <<"*";
 		break;
 	case MESSAGE_TYPE_SCALE:
-		ss << SCALE << x << " " << y << " " << z <<"*";
+		ss << SCALE << " " << x << " " << y << " " << z <<"*";
 		break;
 	case MESSAGE_TYPE_DIRECTION:
-		ss << DIRECTION << x << " " << y << " " << z <<"*";
+		ss << DIRECTION << " " << x << " " << y << " " << z <<"*";
 		break;
 	default:
 		ss << "";
@@ -43,7 +43,7 @@ std::string NetworkMessageConverter::Convert(const int ID, const float x, const 
 	switch (ID)
 	{
 	case MESSAGE_TYPE_ROTATION:
-		ss << ROTATION << x << " " << y << " "<<
+		ss << ROTATION << " " << x << " " << y << " "<<
 			z << " " << w << "*";
 		break;
 	default:
@@ -62,16 +62,19 @@ std::string NetworkMessageConverter::Convert(const int ID, const std::string wor
 	switch (ID)
 	{
 	case MESSAGE_TYPE_MESH_MODEL:
-		ss << MESH_MODEL << word << "*";
+		ss << MESH_MODEL << " " << word << "*";
 		break;
-	case MESSAGE_TYPE_KEY_PRESS:
-		ss << KEY_PRESS << word << "*";
+	case MESSAGE_TYPE_KEY_DOWN:
+		ss << KEY_DOWN << " " << word << "*";
+		break;
+	case MESSAGE_TYPE_KEY_UP:
+		ss << KEY_UP << " " << word << "*";
 		break;
 	case  MESSAGE_TYPE_KICKED:
-		ss << KICKED << word <<"*";
+		ss << KICKED << " " << word <<"*";
 		break;
 	case MESSAGE_TYPE_USER_DATA:
-		ss << USER_DATA << word << "*";
+		ss << USER_DATA << " " << word << "*";
 		break;
 	default:
 		ss << "";
@@ -89,22 +92,22 @@ std::string NetworkMessageConverter::Convert(const int ID, const int state_ID)
 	switch (ID)
 	{
 	case MESSAGE_TYPE_PLAYER_UPDATE:
-		ss << PLAYER_UPDATE << state_ID << "*";
+		ss << PLAYER_UPDATE << " " << state_ID << "*";
 		break;
 	case MESSAGE_TYPE_STATE:
-		ss << STATE << state_ID << "*";
+		ss << STATE << " " << state_ID << "*";
 		break;
 	case MESSAGE_TYPE_NEW_PLAYER:
-		ss << NEW_PLAYER << state_ID << "*";
+		ss << NEW_PLAYER << " " << state_ID << "*";
 		break;
 	case MESSAGE_TYPE_REMOVE_PLAYER:
-		ss << REMOVE_PLAYER << state_ID << "*";
+		ss << REMOVE_PLAYER << " " << state_ID << "*";
 		break;
 	case MESSAGE_TYPE_CONNECTION_CLOSED:
-		ss << CONNECTION_CLOSED << state_ID << "*";
+		ss << CONNECTION_CLOSED << " " << state_ID << "*";
 		break;
 	case MESSAGE_TYPE_SELF_ID:
-		ss << SELF_ID << state_ID << "*";
+		ss << SELF_ID << " " << state_ID << "*";
 		break;
 	default:
 		ss << "";
