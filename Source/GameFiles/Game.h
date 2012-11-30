@@ -20,9 +20,11 @@ class Game
 {
 	public:
 		Game();
-		/*! Creates a Client that connects to the Ip and Port in the Parameters*/
+		/*! Creates a Client that connects to the Ip and Port in the Parameters.
+			The function will start the thread if succeeded.*/
 		int InitGameClient(std::string ip, int port);
-		/*! Creates a Host that listens on the given Port*/
+		/*! Creates a Host that listens on the given Port
+			The function will start the thread if succeeded.*/
 		int InitGameHost(int port, int nrOfClients);
 		virtual ~Game();
 
@@ -31,5 +33,4 @@ class Game
 	private:
 		Client* zClient;
 		Host*	zHost; 
-		bool	zHosting;
 };

@@ -5,7 +5,6 @@ Game::Game()
 {
 	this->zClient = NULL;
 	this->zHost = NULL;
-	this->zHosting = false;
 }
 
 Game::~Game()
@@ -16,12 +15,8 @@ Game::~Game()
 
 void Game::Run()
 {
-	//If a Host has been Initiated Start the host
-	if(zHosting)
-		this->zHost->Start();
-	
-	this->zClient->Start();
 
+	//Waits for client to exit.
 	while(this->zClient->IsAlive())
 	{
 		Sleep(100);
@@ -45,6 +40,9 @@ int Game::InitGameClient(std::string ip, int port)
 	//Connects to a Host With the Ip and port in the parameters
 	code = this->zClient->Connect(ip, port);
 
+	if(code == CONNECTION_SUCCESS)
+		this->zClient->Start();
+
 	return code;
 }
 
@@ -64,7 +62,8 @@ int Game::InitGameHost(int port, int nrOfClients)
 	//Creates a host to listen on the given port
 	code = this->zHost->InitHost(port, nrOfClients);
 
-	this->zHosting = true;
+	if(code == CONNECTION_SUCCESS)
+		this->zHost->Start();
 	
 	return code;
 }

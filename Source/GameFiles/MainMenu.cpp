@@ -15,7 +15,6 @@ MainMenu::MainMenu()
 
 	if(hostErrorCode == 0 && clientErrorCode == 0)
 	{
-		//Start threads and run client and host
 		this->zGame->Run();
 	}
 }
