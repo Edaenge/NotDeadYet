@@ -14,7 +14,7 @@ Player::~Player()
 }
 
 
-const Vector3 Player::GetPlayerPosition()
+Vector3 Player::GetPlayerPosition() const
 {
 	return zPlayerMesh->GetPosition();
 }
@@ -26,32 +26,32 @@ void Player::AddStaticMesh(iMesh* mesh)
 }
 
 
-const Vector3 Player::GetPlayerScale()
+Vector3 Player::GetPlayerScale() const
 {
 	return this->zPlayerMesh->GetScaling();
 }
 
 
-const Vector3 Player::GetPlayerRotation()
+Vector3 Player::GetPlayerRotation() const
 {
 	// NOTE: GetRotation does not work correctly
 	return this->zPlayerMesh->GetRotation();
 }
 
 
-const int Player::GetClientID()
+int Player::GetClientID() const
 {
 	return this->zClientID;
 }
 
 
-const int Player::GetPlayerState()
+int Player::GetPlayerState() const
 {
 	return this->zPlayerState;
 }
 
 
-iMesh* Player::GetPlayerMesh()
+iMesh* Player::GetPlayerMesh() const
 {
 	return this->zPlayerMesh;
 }
@@ -69,19 +69,19 @@ void Player::SetPlayerState(const int state)
 }
 
 
-void Player::SetPlayerPosition(Vector3 pos)
+void Player::SetPlayerPosition( const Vector3& pos )
 {
 	this->zPlayerMesh->SetPosition(pos);
 }
 
 
-void Player::SetPlayerScale(Vector3 scale)
+void Player::SetPlayerScale( const Vector3& scale )
 {
 	this->zPlayerMesh->Scale(scale);
 }
 
 
-void Player::SetPlayerRotation(Vector4 rot)
+void Player::SetPlayerRotation( const Vector4& rot )
 {
 	this->zPlayerMesh->SetQuaternion(rot);
 }

@@ -5,15 +5,9 @@
 #pragma once
 
 #include <iMesh.h>
+#include "GameFiles/AnimationStates.h"
 
-/*! Animation states*/
-enum PlayerState
-{
-	IDLE,
-	WALKING,
-	RUNNING,
-	CROUCHING
-};
+
 //Keeps track of player Info
 class Player
 {
@@ -21,17 +15,17 @@ public:
 	Player();
 	virtual ~Player();
 	/*! Returns the Client ID*/
-	const int GetClientID();
+	int GetClientID() const;
 	/*! Returns Current Player State*/
-	const int GetPlayerState();
+	int GetPlayerState() const;
 	/*!	Returns Pointer to the Player Mesh*/
-	iMesh* GetPlayerMesh();
+	iMesh* GetPlayerMesh() const;
 	/*! Returns Player Model Scale*/
-	const Vector3 GetPlayerScale();
+	Vector3 GetPlayerScale() const;
 	/*! Returns Player Model Position*/
-	const Vector3 GetPlayerPosition();
+	Vector3 GetPlayerPosition() const;
 	/*! Returns Player Model Rotation*/
-	const Vector3 GetPlayerRotation();
+	Vector3 GetPlayerRotation() const;
 	/*! Adds a Pointer to the Player Model Mesh*/
 	void AddStaticMesh(iMesh* mesh);
 	/*!  Sets the Client Id given from the server*/
@@ -39,9 +33,9 @@ public:
 	/*! Sets the Player State*/
 	void SetPlayerState(const int state);
 	/*! Sets Player Mesh data*/
-	void SetPlayerPosition(Vector3 pos);
-	void SetPlayerScale(Vector3 scale);
-	void SetPlayerRotation(Vector4 rot);
+	void SetPlayerPosition(const Vector3& pos);
+	void SetPlayerScale(const Vector3& scale);
+	void SetPlayerRotation(const Vector4& rot);
 private:
 	iMesh* zPlayerMesh;
 	int zPlayerState;

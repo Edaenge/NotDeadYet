@@ -1,19 +1,16 @@
 #include "Host.h"
-#include "Safe.h"
-
 
 Host::Host()
 {
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
 	this->zClients = new MaloW::Array<ClientData *>(); 
-	this->zPlayers = new MaloW::Array<PlayerInfo *>();
+	this->zPlayers = new MaloW::Array<PlayerActor *>();
 
-	this->zStartime = 0;
+	this->zStartime = 0.0f;
 	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
 }
-
 
 Host::~Host()
 {
@@ -24,7 +21,6 @@ Host::~Host()
 	SAFE_DELETE(this->zClients);
 	SAFE_DELETE(this->zPlayers);
 }
-
 
 void Host::Life()
 {
@@ -67,7 +63,6 @@ void Host::Life()
 	}
 }
 
-
 int Host::InitHost( int port, int maxClients )
 {
 	int code = 0;
@@ -87,7 +82,6 @@ int Host::InitHost( int port, int maxClients )
 	
 	return code;
 }
-
 
 void Host::HandleNewConnections()
 {
@@ -121,17 +115,17 @@ void Host::HandleNewConnections()
 	MaloW::ClientChannel* client = cce->GetClientChannel();
 
 	client->setNotifier(this);
-	this->zPlayers->add(new PlayerInfo(client->getClientID()));
+	this->zPlayers->add(new PlayerActor(client->getClientID()));
 	this->zClients->add(new ClientData(client));
 
 	message = this->zMessageConverter.Convert(MESSAGE_TYPE_SELF_ID, client->getClientID());
 	client->sendData(message);
+	client->Start();
 
 	SAFE_DELETE(pe);
 }
 
-
-void Host::SendToAllClients( std::string message )
+void Host::SendToAllClients( const std::string& message )
 {
 	if(this->zClients->isEmpty())
 		return;
@@ -142,8 +136,7 @@ void Host::SendToAllClients( std::string message )
 	}
 }
 
-
-void Host::SendToClient( int clientID, std::string message )
+void Host::SendToClient( int clientID, const std::string& message )
 {
 	int pos = SearchForClient(clientID);
 
@@ -153,12 +146,10 @@ void Host::SendToClient( int clientID, std::string message )
 	this->zClients->get(pos)->zClient->sendData(message);
 }
 
-
 inline bool Host::HasPlayers() const
 {
-	return this->zClients->isEmpty();
+	return !this->zClients->isEmpty();
 }
-
 
 void Host::HandleRecivedMessages()
 {
@@ -190,13 +181,17 @@ void Host::HandleRecivedMessages()
 	char key[512];
 	sscanf_s(msgArray[0].c_str(), "%s ", key);
 
-	if(strcmp(key, PING.c_str()) == 0)
+	if(strcmp(key, KEY_DOWN.c_str()) == 0)
+	{
+
+	}
+	else if(strcmp(key, PING.c_str()) == 0)
 	{
 		HandlePingMsg(np->getID());
 	}
 	else if(strcmp(key, USER_DATA.c_str()) == 0)
 	{
-		CreateNewPlayer(np->getID(),msgArray[0]);
+		CreateNewPlayer(np->getID(), msgArray);
 	}
 	else if(strcmp(key, CONNECTION_CLOSED.c_str()) == 0)
 	{
@@ -205,6 +200,32 @@ void Host::HandleRecivedMessages()
 
 }
 
+void Host::HandleKeyPress( const int CLIENT_ID, const std::string& key )
+{
+	//Hard coded for test
+	std::string keyz = this->zMessageConverter.ConvertStringToSubstring(KEY_DOWN, key);
+	int index = SearchForPlayer(CLIENT_ID);
+
+	PlayerActor* player = this->zPlayers->get(index);
+
+	if(keyz == "W")
+	{
+		
+	}
+	else if(keyz == "S")
+	{
+
+	}
+	if(keyz == "A")
+	{
+
+	}
+	if(keyz == "D")
+	{
+		
+	}
+
+}
 
 void Host::HandlePingMsg( const int CLIENT_ID )
 {
@@ -217,12 +238,10 @@ void Host::HandlePingMsg( const int CLIENT_ID )
 	cd->zCurrentPingTime = 0.0f;
 }
 
-
 inline int Host::GetPort() const
 {
 	return this->zPort;
 }
-
 
 int Host::SearchForClient( const int ID ) const
 {
@@ -230,7 +249,7 @@ int Host::SearchForClient( const int ID ) const
 	if(!HasPlayers())
 		return -1;
 
-	for (int i = 0; i < 0; i++)
+	for (int i = 0; i < this->zClients->size(); i++)
 	{
 		if(this->zClients->get(i)->zClient->getClientID() == ID)
 		{
@@ -241,15 +260,14 @@ int Host::SearchForClient( const int ID ) const
 	return -1;
 }
 
-
 int Host::SearchForPlayer(const int ID) const
 {
 	if(!HasPlayers())
 		return -1;
 
-	for (int i = 0; i < 0; i++)
+	for (int i = 0; i < this->zPlayers->size(); i++)
 	{
-		if(this->zPlayers->get(i)->zID == ID)
+		if(this->zPlayers->get(i)->GetID() == ID)
 		{
 			return i;
 		}
@@ -258,13 +276,11 @@ int Host::SearchForPlayer(const int ID) const
 	return -1;
 }
 
-
 void Host::BroadCastServerShutdown()
 {
 	std::string mess = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_SHUTDOWN);
 	SendToAllClients(mess);
 }
-
 
 void Host::PingClients()
 {
@@ -288,7 +304,7 @@ void Host::PingClients()
 			else
 			{
 				cd->zCurrentPingTime = 0.0f;
-				cd->zClient->sendData(PING);
+				cd->zClient->sendData(this->zMessageConverter.Convert(MESSAGE_TYPE_PING));
 				cd->zPinged = true;
 			}
 		}
@@ -307,7 +323,6 @@ void Host::PingClients()
 	}
 }
 
-
 float Host::Update()
 {
 	INT64 currentTime;
@@ -323,7 +338,6 @@ float Host::Update()
 
 	return this->zDeltaTime;
 }
-
 
 bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string reason /*= ""*/ )
 {
@@ -360,26 +374,23 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 	return removed;
 }
 
-
 inline bool Host::IsAlive() const
 {
 	return this->stayAlive;
 }
 
-
-void Host::CreateNewPlayer( const int ID, std::string mesh )
+void Host::CreateNewPlayer( const int ID, std::vector<std::string> &mesh)
 {
 	std::string uModel, mess;
-	PlayerInfo* pi = new PlayerInfo(ID);
+	PlayerActor* pi = new PlayerActor(ID);
 
-	uModel = this->zMessageConverter.ConvertStringToSubstring(USER_DATA, mesh);
+	uModel = this->zMessageConverter.ConvertStringToSubstring(USER_DATA, mesh[0]);
 
-	pi->zID = ID;
-	pi->zMeshModel = uModel;
+	pi->SetPlayerModel(uModel);
 	this->zPlayers->add(pi);
 
 	//Create a new player message
-	PlayerInfo* temp_PI;
+	PlayerActor* temp_PI;
 	std::vector<std::string> temp;
 	int newPlayerindex = 0;
 
@@ -387,17 +398,22 @@ void Host::CreateNewPlayer( const int ID, std::string mesh )
 	{
 		temp_PI = this->zPlayers->get(i);
 
-		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, temp_PI->zID);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, temp_PI->zPos.x, temp_PI->zPos.y, temp_PI->zPos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, temp_PI->zScale.x, temp_PI->zScale.y, temp_PI->zScale.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, temp_PI->zRot.x, temp_PI->zRot.y, temp_PI->zRot.z, temp_PI->zRot.w);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, temp_PI->zMeshModel);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, temp_PI->zState);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, temp_PI->zDir.x, temp_PI->zDir.y, temp_PI->zDir.z);
+		Vector3 pos = temp_PI->GetPosition();
+		Vector3 scale = temp_PI->GetScale();
+		Vector3 dir = temp_PI->GetDirection();
+		Vector4 rot = temp_PI->GetRotation();
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, temp_PI->GetID());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, temp_PI->GetPlayerModel());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, temp_PI->GetState());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
 
 		temp.push_back(mess);
 
-		if(temp_PI->zID == ID)
+		if(temp_PI->GetID() == ID)
 			newPlayerindex = i;
 	}
 

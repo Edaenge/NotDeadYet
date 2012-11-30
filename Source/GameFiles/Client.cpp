@@ -317,12 +317,12 @@ void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray){
 
 			if(strcmp(key, POSITION.c_str()) == 0)
 			{
-				Vector3 position = this->msgHandler.ConvertStringToVector(POSITION, msgArray[i]);
+				Vector3 position = this->zMsgHandler.ConvertStringToVector(POSITION, msgArray[i]);
 				playerPointer->SetPlayerPosition(position);
 			}
 			else if(strcmp(key, ROTATION.c_str()) == 0)
 			{
-				Vector4 rotation = this->msgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
+				Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
 				playerPointer->SetPlayerRotation(rotation);
 			}
 			else if(strcmp(key, STATE.c_str()) == 0)

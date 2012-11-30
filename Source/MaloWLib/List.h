@@ -176,6 +176,8 @@ namespace MaloW
 
 			return e->data;
 		}
+
+		return e->data;
 	}
 
 	template <typename T>

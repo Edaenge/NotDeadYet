@@ -76,6 +76,9 @@
     <ClCompile Include="..\Source\GameFiles\Graphics.cpp">
       <Filter>Game Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\PlayerActor.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -182,6 +185,15 @@
     </ClInclude>
     <ClInclude Include="..\Source\SoundEngine\fmod.h">
       <Filter>Sound Engine Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Actor.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\AnimationStates.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\PlayerActor.h">
+      <Filter>Game Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

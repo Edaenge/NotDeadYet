@@ -8,28 +8,9 @@ for project desperation* at Blekinge tekniska högskola.
 #include "Process.h"
 #include "Network/ServerListener.h"
 #include "Network/NetworkMessageConverter.h"
+#include "GameFiles/PlayerActor.h"
+#include "Safe.h"
 
-struct PlayerInfo
-{
-	PlayerInfo(int id)
-	{
-		this->zID = id;
-		zState = 0;
-		zScale = Vector3(1.0f, 1.0f, 1.0f);
-		zPos = Vector3(0,0,0);
-	}
-
-	Vector3 zPos;
-	Vector3 zScale;
-	Vector3 zDir;
-	Vector4 zRot;
-
-	std::string zMeshModel;
-
-	int zState;
-	int zID;
-
-};
 
 struct ClientData
 {
@@ -42,7 +23,7 @@ struct ClientData
 
 	~ClientData()
 	{
-		if ( zClient ) delete zClient, zClient=0;
+		SAFE_DELETE(zClient);
 	}
 
 	void IncPingTime(float dt)
@@ -71,9 +52,9 @@ public:
 	/*! Returns the port*/
 	int GetPort() const;
 	/*! Sends a message to all connected clients.*/
-	void SendToAllClients(std::string message);
+	void SendToAllClients(const std::string& message);
 	/*! Sends to a specific client.*/
-	void SendToClient(int clientID, std::string message);
+	void SendToClient(int clientID, const std::string& message);
 	/*! Notifies all clients, the server is shutting down.*/
 	void BroadCastServerShutdown();
 	/*! Pings the clients.*/
@@ -94,22 +75,26 @@ private:
 	/*! Handles messages from clients. This function will call the following functions:
 	HandlePingMsg
 	HandleCloseConnectionMsg
+	HandleKeyPress
+	CreateNewPlayer
 	*/
 	void HandleRecivedMessages();
 	/*! Handles ping messages.*/
 	void HandlePingMsg(const int CLIENT_ID);
+	/*! Handles clients key press.*/
+	void HandleKeyPress(const int CLIENT_ID, const std::string& key);
 	/*! Search for a client. Returns -1 if none was found.*/
 	int SearchForClient(const int ID) const;
 	/*! Search for a player. Returns -1 if none was found.*/
 	int SearchForPlayer(const int ID) const;
 	/*! Creates a new player and notifies all clients.*/
-	void CreateNewPlayer(const int ID, std::string mesh);
+	void CreateNewPlayer(const int ID, std::vector<std::string> &mesh);
 	
 private:
 	ServerListener* zServerListener;
 
 	MaloW::Array<ClientData*>* zClients;
-	MaloW::Array<PlayerInfo*>* zPlayers;
+	MaloW::Array<PlayerActor*>* zPlayers;
 	
 	NetworkMessageConverter zMessageConverter;
 
