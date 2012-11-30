@@ -25,7 +25,7 @@ MainMenu::~MainMenu()
 	SAFE_DELETE(this->zGame);
 }
 
-void MainMenu::printClientError( int code )
+void MainMenu::printClientError(const int code )
 {
 	std::string errorMessage = "";
 	switch (code)
@@ -49,7 +49,7 @@ void MainMenu::printClientError( int code )
 	printToScreen(errorMessage);
 }
 
-void MainMenu::printHostError( int code )
+void MainMenu::printHostError(const int code )
 {
 	std::string errorMessage = "";
 
@@ -74,7 +74,7 @@ void MainMenu::printHostError( int code )
 	printToScreen(errorMessage);
 }
 
-void MainMenu::printToScreen( std::string msg )
+void MainMenu::printToScreen(const std::string msg )
 {
 
 }

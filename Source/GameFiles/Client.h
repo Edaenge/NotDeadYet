@@ -24,9 +24,6 @@ private:
 	NetworkMessageConverter msgHandler;
 	MaloW::ServerChannel* zServerChannel;
 private:
-	/*! Handle Events */
-	//void HandleNewPlayerEvent(NewPlayerEvent* ev);
-	//void HandlePlayerUpdateEvent(PlayerUpdateEvent* ev);
 	/*! Handle Keyboard Input */
 	void HandleKeyboardInput();
 	void HandleNetworkMessage(std::string msg);
@@ -35,16 +32,17 @@ private:
 	void HandleRemovePlayer(std::vector<std::string> msgArray);
 public:
 	Client();
-	/*! Connects to a Host with the specified parameters  */
+	/*! Connects to a Host with the specified parameters*/
 	int Connect(const std::string ip, const int port);
 	virtual ~Client();
 	void Life();
 
-	/*! Checks if Thread is alive */
+	/*! Checks if Thread is alive*/
 	bool IsAlive();
 
 	/*! Pings client to check if server is still running*/
 	void Ping();
+	/*! Initializes the graphic stuff*/
 	void initClient();
 	/*! Close the connection and print the reason to the client*/
 	void CloseConnection(const std::string reason);

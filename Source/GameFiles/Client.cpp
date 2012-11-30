@@ -59,9 +59,6 @@ void Client::initClient()
 }
 void Client::Life()
 {
-	
-	//todo Skicka meddelanden till server och få reda på self id
-
 	while(this->stayAlive)
 	{
 		float diff = this->zEng->Update();
@@ -130,7 +127,7 @@ void Client::Ping()
 void Client::HandleNetworkMessage(std::string msg)
 {
 	std::vector<std::string> msgArray;
-	msgArray = msgHandler.SplitMessage(msg);
+	msgArray = this->msgHandler.SplitMessage(msg);
 	char key[1024];
 	if(msgArray.size() > 0)
 	{
@@ -154,10 +151,10 @@ void Client::HandleNetworkMessage(std::string msg)
 		}
 		else if(strcmp(key, SELF_ID.c_str()) == 0)
 		{
-			this->zID = msgHandler.ConvertStringToInt(SELF_ID, msgArray[0]);
+			this->zID = this->msgHandler.ConvertStringToInt(SELF_ID, msgArray[0]);
 			
 			std::string serverMessage = "";
-			serverMessage = msgHandler.Convert(MESSAGE_TYPE_USER_DATA, zMeshID);
+			serverMessage = this->msgHandler.Convert(MESSAGE_TYPE_USER_DATA, this->zMeshID);
 			this->zServerChannel->sendData(serverMessage);
 		}
 		else if(strcmp(key, SERVER_FULL.c_str()) == 0)
@@ -176,6 +173,7 @@ void Client::HandleNetworkMessage(std::string msg)
 }
 void Client::CloseConnection(const std::string reason)
 {
+	//To do printa till client vilket reason som gavs
 	this->zServerChannel->Close();
 	this->Close();
 }
@@ -197,27 +195,27 @@ void Client::HandleNewPlayer(std::vector<std::string> msgArray)
 
 		if(strcmp(key, NEW_PLAYER.c_str()) == 0)
 		{
-			clientID = msgHandler.ConvertStringToInt(NEW_PLAYER, msgArray[i]);
+			clientID = this->msgHandler.ConvertStringToInt(NEW_PLAYER, msgArray[i]);
 		}
 		else if(strcmp(key, POSITION.c_str()) == 0)
 		{
-			position = msgHandler.ConvertStringToVector(POSITION, msgArray[i]);
+			position = this->msgHandler.ConvertStringToVector(POSITION, msgArray[i]);
 		}
 		else if(strcmp(key, ROTATION.c_str()) == 0)
 		{
-			rotation = msgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
+			rotation = this->msgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
 		}
 		else if(strcmp(key, STATE.c_str()) == 0)
 		{
-			state = msgHandler.ConvertStringToInt(STATE, msgArray[i]);
+			state = this->msgHandler.ConvertStringToInt(STATE, msgArray[i]);
 		}
 		else if(strcmp(key, SCALE.c_str()) == 0)
 		{
-			scale = msgHandler.ConvertStringToVector(SCALE, msgArray[i]);
+			scale = this->msgHandler.ConvertStringToVector(SCALE, msgArray[i]);
 		}
 		else if(strcmp(key, MESH_MODEL.c_str()) == 0)
 		{
-			filename = msgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
+			filename = this->msgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
 		}
 	}
 	if (clientID != -1)
@@ -265,7 +263,7 @@ void Client::HandlePlayerUpdate(std::vector<std::string> msgArray)
 
 		if(strcmp(key, PLAYER_UPDATE.c_str()) == 0)
 		{
-			clientID = msgHandler.ConvertStringToInt(PLAYER_UPDATE, msgArray[i]);
+			clientID = this->msgHandler.ConvertStringToInt(PLAYER_UPDATE, msgArray[i]);
 
 			ClientPosition = i;
 			clientFound = true;
@@ -281,22 +279,22 @@ void Client::HandlePlayerUpdate(std::vector<std::string> msgArray)
 
 			if(strcmp(key, POSITION.c_str()) == 0)
 			{
-				D3DXVECTOR3 position = msgHandler.ConvertStringToVector(POSITION, msgArray[i]);
+				D3DXVECTOR3 position = this->msgHandler.ConvertStringToVector(POSITION, msgArray[i]);
 				playerPointer->SetPlayerPosition(position);
 			}
 			else if(strcmp(key, ROTATION.c_str()) == 0)
 			{
-				D3DXQUATERNION rotation = msgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
+				D3DXQUATERNION rotation = this->msgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
 				playerPointer->SetPlayerRotation(rotation);
 			}
 			else if(strcmp(key, STATE.c_str()) == 0)
 			{
-				int playerState = msgHandler.ConvertStringToInt(STATE, msgArray[i]);
+				int playerState = this->msgHandler.ConvertStringToInt(STATE, msgArray[i]);
 				playerPointer->SetPlayerState(playerState);
 			}
 			else if(strcmp(key, MESH_MODEL.c_str()) == 0)
 			{
-				std::string filename = msgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
+				std::string filename = this->msgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
 				
 				//Create a new Mesh with the current values
 				StaticMesh* mesh = this->zEng->CreateStaticMesh(filename, playerPointer->GetPlayerPosition());
@@ -323,7 +321,7 @@ void Client::HandleRemovePlayer(std::vector<std::string> msgArray)
 
 		if(strcmp(key, REMOVE_PLAYER.c_str()) == 0)
 		{
-			clientID = msgHandler.ConvertStringToInt(REMOVE_PLAYER, msgArray[i]);
+			clientID = this->msgHandler.ConvertStringToInt(REMOVE_PLAYER, msgArray[i]);
 		}
 	}
 	//Check if client was found in the array

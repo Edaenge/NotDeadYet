@@ -15,7 +15,7 @@ private:
 	bool zClientConnected;
 	bool zHostCreated;
 private:
-	void printClientError(int code);
-	void printHostError(int code);
-	void printToScreen(std::string msg);
+	void printClientError(const int code);
+	void printHostError(const int code);
+	void printToScreen(const std::string msg);
 };
