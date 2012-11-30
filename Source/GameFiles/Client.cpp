@@ -17,6 +17,7 @@ Client::Client()
 	this->zMsgHandler = NetworkMessageConverter();
 
 	zMeshID = "Media/scale.obj";
+
 }
 
 
@@ -48,17 +49,20 @@ Client::~Client()
 
 void Client::initClient()
 {
+	this->zEng->CreateSkyBox("Media/skymap.dds");
 	this->zEng->GetCamera()->SetPosition( Vector3(0, 15, -15.6f) );
 	this->zEng->GetCamera()->LookAt( Vector3(30, 10, 10) );
 
-	this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
+	this->zEng->StartRendering();
+
+	//this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
 
 	//StaticMesh* scaleHuman = this->zEng->CreateStaticMesh("Media/scale.obj", D3DXVECTOR3(5, -6, 15));
 	//scaleHuman->Scale(0.1f);
 	//this->zEng->GetCamera()->FollowMesh(scaleHuman);
 
-	iLight* testLight = this->zEng->CreateLight(Vector3(15, 30, 15));
-	testLight->SetIntensity(50);
+	//iLight* testLight = this->zEng->CreateLight(Vector3(15, 30, 15));
+	//testLight->SetIntensity(50);
 	//SoundEngine* seng = eng->GetSoundEngine();
 	//seng->SetMasterVolume(0.5f);
 
@@ -74,14 +78,14 @@ void Client::Life()
 
 	this->initClient();
 
-	while(this->stayAlive)
+	while(this->zEng->IsRunning() && this->stayAlive)
 	{
-		float diff = this->zEng->Update();
+		float diff = GetGraphics()->Update(); //this->zEng->Update();
 		zTimeSinceLastPing += diff;
 
 		if (MaloW::ProcessEvent* ev = this->PeekEvent())
 		{
-			//Check if Client has recieved a Message
+			//Check if Client has received a Message
 			NetworkPacket* np = dynamic_cast<NetworkPacket*>(ev);
 			if (np != NULL)
 			{
@@ -154,7 +158,7 @@ void Client::HandleNetworkMessage(std::string msg)
 	char key[1024];
 	if(msgArray.size() > 0)
 	{
-		sscanf_s(msgArray[0].c_str(), "%s ", key);
+		sscanf(msgArray[0].c_str(), "%s ", key);
 
 		//Checks what type of message was sent
 		if(strcmp(key, PING.c_str()) == 0)
@@ -223,7 +227,7 @@ void Client::HandleNewPlayer(const std::vector<std::string>& msgArray)
 	Player* newPlayer = new Player();
 	for(unsigned int i = 0; i < msgArray.size(); i++)
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", key);
+		sscanf(msgArray[i].c_str(), "%s ", key);
 
 		if(strcmp(key, NEW_PLAYER.c_str()) == 0)
 		{
@@ -287,7 +291,8 @@ void Client::HandleNewPlayer(const std::vector<std::string>& msgArray)
 		}
 	}
 }
-void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray){
+void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray)
+{
 	char key[512];
 
 	int clientID = -1;
@@ -295,7 +300,7 @@ void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray){
 	bool clientFound = false;
 	for( unsigned int i=0; i <msgArray.size(); ++i )
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", key);
+		sscanf(msgArray[i].c_str(), "%s ", key);
 
 		if(strcmp(key, PLAYER_UPDATE.c_str()) == 0)
 		{
@@ -313,7 +318,7 @@ void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray){
 		Player* playerPointer = this->zPlayers[ClientPosition];
 		for(unsigned int i = 0; i < msgArray.size(); i++)
 		{
-			sscanf_s(msgArray[i].c_str(), "%s ", key);
+			sscanf(msgArray[i].c_str(), "%s ", key);
 
 			if(strcmp(key, POSITION.c_str()) == 0)
 			{
@@ -361,7 +366,7 @@ void Client::HandleRemovePlayer(const std::vector<std::string>& msgArray)
 	int clientID = -1;
 	for(unsigned int i = 0; i < msgArray.size(); i++)
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", key);
+		sscanf(msgArray[i].c_str(), "%s ", key);
 
 		if(strcmp(key, REMOVE_PLAYER.c_str()) == 0)
 		{

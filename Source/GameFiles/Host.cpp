@@ -7,7 +7,7 @@ Host::Host()
 	this->zClients = new MaloW::Array<ClientData *>(); 
 	this->zPlayers = new MaloW::Array<PlayerActor *>();
 
-	this->zStartime = 0.0f;
+	this->zStartime = 0;
 	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
 }
@@ -146,7 +146,7 @@ void Host::SendToClient( int clientID, const std::string& message )
 	this->zClients->get(pos)->zClient->sendData(message);
 }
 
-inline bool Host::HasPlayers() const
+bool Host::HasPlayers() const
 {
 	return !this->zClients->isEmpty();
 }
@@ -238,7 +238,7 @@ void Host::HandlePingMsg( const int CLIENT_ID )
 	cd->zCurrentPingTime = 0.0f;
 }
 
-inline int Host::GetPort() const
+int Host::GetPort() const
 {
 	return this->zPort;
 }
@@ -249,7 +249,7 @@ int Host::SearchForClient( const int ID ) const
 	if(!HasPlayers())
 		return -1;
 
-	for (int i = 0; i < this->zClients->size(); i++)
+	for (unsigned int i = 0; i < (unsigned int)this->zClients->size(); i++)
 	{
 		if(this->zClients->get(i)->zClient->getClientID() == ID)
 		{
@@ -265,7 +265,7 @@ int Host::SearchForPlayer(const int ID) const
 	if(!HasPlayers())
 		return -1;
 
-	for (int i = 0; i < this->zPlayers->size(); i++)
+	for (unsigned int i = 0; i < (unsigned int)this->zPlayers->size(); i++)
 	{
 		if(this->zPlayers->get(i)->GetID() == ID)
 		{
@@ -289,7 +289,7 @@ void Host::PingClients()
 
 	ClientData* cd; 
 
-	for(int i = 0; i < zClients->size(); i++)
+	for(unsigned int i = 0; i < (unsigned int)zClients->size(); i++)
 	{
 		cd = zClients->get(i);
 
@@ -374,7 +374,7 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 	return removed;
 }
 
-inline bool Host::IsAlive() const
+bool Host::IsAlive() const
 {
 	return this->stayAlive;
 }
@@ -394,7 +394,7 @@ void Host::CreateNewPlayer( const int ID, std::vector<std::string> &mesh)
 	std::vector<std::string> temp;
 	int newPlayerindex = 0;
 
-	for (int i = 0; i < this->zPlayers->size(); i++)
+	for (unsigned int i = 0; i < (unsigned int)this->zPlayers->size(); i++)
 	{
 		temp_PI = this->zPlayers->get(i);
 
@@ -418,7 +418,7 @@ void Host::CreateNewPlayer( const int ID, std::vector<std::string> &mesh)
 	}
 
 	//Send players to new player
-	int clientIndex = SearchForClient(ID);
+	unsigned int clientIndex = SearchForClient(ID);
 	MaloW::ClientChannel* cc = this->zClients->get(clientIndex)->zClient;
 
 	std::vector<std::string>::iterator it;
@@ -428,7 +428,7 @@ void Host::CreateNewPlayer( const int ID, std::vector<std::string> &mesh)
 	}
 
 	//Send new player to players
-	for (int i = 0; i < this->zClients->size(); i++)
+	for (unsigned int i = 0; i < (unsigned int)this->zClients->size(); i++)
 	{
 		if(i != clientIndex)
 			this->zClients->get(i)->zClient->sendData(temp[newPlayerindex]);
