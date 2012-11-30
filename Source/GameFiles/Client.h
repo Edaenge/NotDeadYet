@@ -20,7 +20,7 @@ private:
 	GraphicsEngine* zEng;
 	float zTimeSinceLastPing;
 	MaloW::Array<Player*> zPlayers;
-	NetworkMessageConverter msgHandler;
+	NetworkMessageConverter zMsgHandler;
 	MaloW::ServerChannel* zServerChannel;
 private:
 	/*! Handle Keyboard Input */
@@ -28,9 +28,9 @@ private:
 	/*! Splits Network Message and detects what type was sent*/
 	void HandleNetworkMessage(std::string msg);
 	/*! Handles Message type*/
-	void HandleNewPlayer(std::vector<std::string> msgArray);
-	void HandlePlayerUpdate(std::vector<std::string> msgArray);
-	void HandleRemovePlayer(std::vector<std::string> msgArray);
+	void HandleNewPlayer(std::vector<std::string> &msgArray);
+	void HandlePlayerUpdate(std::vector<std::string> &msgArray);
+	void HandleRemovePlayer(std::vector<std::string> &msgArray);
 	/*! Pings client to check if server is still running*/
 	void Ping();
 	/*! Close the connection and print the reason to the client*/
