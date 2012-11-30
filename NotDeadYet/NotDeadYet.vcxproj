@@ -120,7 +120,6 @@
     <ClInclude Include="..\Source\Network\NetworkMessageConverter.h" />
     <ClInclude Include="..\Source\Network\NetworkPacket.h" />
     <ClInclude Include="..\Source\Network\NetworkServer.h" />
-    <ClInclude Include="..\Source\Network\NewPlayerEvent.h" />
     <ClInclude Include="..\Source\Network\ServerChannel.h" />
     <ClInclude Include="..\Source\Network\ServerListener.h" />
     <ClInclude Include="..\Source\SoundEngine\SoundEffect.h" />

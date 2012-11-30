@@ -346,9 +346,6 @@
     <ClInclude Include="..\Source\GameFiles\Player.h">
       <Filter>Game Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Network\NewPlayerEvent.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Network\ClientConnectedEvent.h">
       <Filter>Network</Filter>
     </ClInclude>

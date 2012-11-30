@@ -7,7 +7,6 @@
 #include "Process.h"
 #include "GraphicsEngine.h"
 #include "Network/ServerChannel.h"
-#include "Network/NewPlayerEvent.h"
 #include "GameFiles/Player.h"
 #include "Network/NetworkMessageConverter.h"
 

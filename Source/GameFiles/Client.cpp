@@ -134,7 +134,11 @@ void Client::HandleNetworkMessage(std::string msg)
 		sscanf(msgArray[0].c_str(), "%s ", key);
 
 		//Checks what type of message was sent
-		if(strcmp(key, PLAYER_UPDATE.c_str()) == 0)
+		if(strcmp(key, PING.c_str()) == 0)
+		{
+			this->Ping();
+		}
+		else if(strcmp(key, PLAYER_UPDATE.c_str()) == 0)
 		{
 			this->HandlePlayerUpdate(msgArray);
 		}
@@ -145,10 +149,6 @@ void Client::HandleNetworkMessage(std::string msg)
 		else if(strcmp(key, REMOVE_PLAYER.c_str()) == 0)
 		{
 			this->HandleRemovePlayer(msgArray);
-		}
-		else if(strcmp(key, PING.c_str()) == 0)
-		{
-			this->Ping();
 		}
 		else if(strcmp(key, SELF_ID.c_str()) == 0)
 		{
@@ -228,6 +228,7 @@ void Client::HandleNewPlayer(std::vector<std::string> msgArray)
 			if(clientID == id)
 			{
 				found = true;
+				MaloW::Debug("Duplicate ID from server");
 			}
 		}
 		if (!found)

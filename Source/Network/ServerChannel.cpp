@@ -3,7 +3,6 @@
 using namespace MaloW;
 
 #include "Network/NetworkMessageConverter.h"
-#include "Network/NewPlayerEvent.h"
 
 ServerChannel::ServerChannel()
 {
