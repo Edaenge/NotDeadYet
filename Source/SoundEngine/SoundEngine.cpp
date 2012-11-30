@@ -1,4 +1,5 @@
 #include "SoundEngine.h"
+#include <windows.h>
 
 //private
 void SoundEngine::ERRCHECK(FMOD_RESULT result)
@@ -45,26 +46,29 @@ SoundEngine::SoundEngine()
 	*/
 	ERRCHECK(this->mResult = FMOD::Debug_SetLevel(0));
 }
+
+
 SoundEngine::~SoundEngine()
 {
 	//sound effects (2d)
-	while(this->mEffects2D.size() > 0)
-		delete this->mEffects2D.getAndRemove(0);
+	for( unsigned int x=0; x<mEffects2D.size(); ++x )
+	{
+		delete mEffects2D[x];
+	}
 
-	//songs
-	while(this->mSongs.size() > 0)
-		delete this->mSongs.getAndRemove(0);
-
-	SAFE_DELETE(this->mMasterVolume);
+	if ( this->mMasterVolume ) delete mMasterVolume;
 
 	//system
-	SAFE_DELETE(this->mName);
+	if ( this->mName ) delete mName, mName = 0;
+
 	if(this->mSystem)
 	{
 		ERRCHECK(this->mResult = this->mSystem->close());
 		ERRCHECK(this->mResult = this->mSystem->release());
 	}
 }
+
+
 int SoundEngine::Init()
 {
 	//system
@@ -146,22 +150,22 @@ void SoundEngine::SetMasterVolume(float volume)
 {
 	*this->mMasterVolume = volume;
 
-
 	// Update all songs and effects channels
-	for(int i = 0; i < this->mSongs.size(); i++)
-		this->mSongs.get(i)->SetVolume(this->mSongs.get(i)->GetVolume());
+	for(unsigned int i = 0; i < this->mSongs.size(); i++)
+		this->mSongs[i]->SetVolume(this->mSongs[i]->GetVolume());
 
-	for(int i = 0; i < this->mEffects2D.size(); i++)
-		this->mEffects2D.get(i)->SetVolume(this->mEffects2D.get(i)->GetVolume());
+	for(unsigned int i = 0; i < this->mEffects2D.size(); i++)
+		this->mEffects2D[i]->SetVolume(this->mEffects2D[i]->GetVolume());
 }
+
 
 void SoundEngine::SetDebugLevel(unsigned int level)
 {
 	ERRCHECK(this->mResult = FMOD::Debug_SetLevel(level));
 }
 
-//other
-SoundEffect* SoundEngine::LoadSoundEffect(string filename, bool as3D)
+
+SoundEffect* SoundEngine::LoadSoundEffect(std::string filename, bool as3D)
 {
 	//SoundEffect* se = new SoundEffect(this->mSystem, this->mSoundFXChannel2D, this->mMasterVolume);
 	SoundEffect* se = new SoundEffect(this->mSystem, this->mMasterVolume);
@@ -196,12 +200,12 @@ SoundEffect* SoundEngine::LoadSoundEffect(string filename, bool as3D)
 		ERRCHECK(this->mResult = this->mSystem->createSound(filename.c_str(), FMOD_HARDWARE | FMOD_2D | FMOD_LOOP_OFF, NULL, &s));
 		se->SetSound(s);
 	}
-	this->mEffects2D.add(se);
+	this->mEffects2D.push_back(se);
 
 	return se;
 }
 
-SoundSong* SoundEngine::LoadSong(string filename, bool loop)
+SoundSong* SoundEngine::LoadSong(std::string filename, bool loop)
 {
 	SoundSong* ss = new SoundSong(this->mSystem, this->mMasterVolume);
 
@@ -213,7 +217,7 @@ SoundSong* SoundEngine::LoadSong(string filename, bool loop)
 	FMOD::Sound* s = ss->GetSound();
 	ERRCHECK(this->mResult = this->mSystem->createStream(filename.c_str(), mode, NULL, &s));
 	ss->SetSound(s);
-	this->mSongs.add(ss);
+	this->mSongs.push_back(ss);
 
 	return ss;
 }

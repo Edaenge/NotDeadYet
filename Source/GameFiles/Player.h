@@ -4,8 +4,7 @@
 */
 #pragma once
 
-#include "stdafx.h"
-#include "StaticMesh.h"
+#include <iMesh.h>
 
 /*! Animation states*/
 enum PlayerState
@@ -26,25 +25,25 @@ public:
 	/*! Returns Current Player State*/
 	const int GetPlayerState();
 	/*!	Returns Pointer to the Player Mesh*/
-	StaticMesh* GetPlayerMesh();
+	iMesh* GetPlayerMesh();
 	/*! Returns Player Model Scale*/
-	const D3DXVECTOR3 GetPlayerScale();
+	const Vector3 GetPlayerScale();
 	/*! Returns Player Model Position*/
-	const D3DXVECTOR3 GetPlayerPosition();
+	const Vector3 GetPlayerPosition();
 	/*! Returns Player Model Rotation*/
-	const D3DXQUATERNION GetPlayerRotation();
+	const Vector3 GetPlayerRotation();
 	/*! Adds a Pointer to the Player Model Mesh*/
-	void AddStaticMesh(StaticMesh* mesh);
+	void AddStaticMesh(iMesh* mesh);
 	/*!  Sets the Client Id given from the server*/
 	void SetClientID(const int clientID);
 	/*! Sets the Player State*/
 	void SetPlayerState(const int state);
 	/*! Sets Player Mesh data*/
-	void SetPlayerPosition(D3DXVECTOR3 pos);
-	void SetPlayerScale(D3DXVECTOR3 scale);
-	void SetPlayerRotation(D3DXQUATERNION rot);
+	void SetPlayerPosition(Vector3 pos);
+	void SetPlayerScale(Vector3 scale);
+	void SetPlayerRotation(Vector4 rot);
 private:
-	StaticMesh* zPlayerMesh;
+	iMesh* zPlayerMesh;
 	int zPlayerState;
 	int zClientID;
 };

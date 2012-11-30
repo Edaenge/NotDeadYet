@@ -5,7 +5,6 @@ for project desperation* at Blekinge tekniska högskola.
 
 #pragma once
 
-#include "stdafx.h"
 #include "Process.h"
 #include "Network/ServerListener.h"
 #include "Network/NetworkMessageConverter.h"
@@ -16,14 +15,14 @@ struct PlayerInfo
 	{
 		this->zID = id;
 		zState = 0;
-		zScale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
-		zPos = D3DXVECTOR3(0,0,0);
+		zScale = Vector3(1.0f, 1.0f, 1.0f);
+		zPos = Vector3(0,0,0);
 	}
 
-	D3DXVECTOR3 zPos;
-	D3DXVECTOR3 zScale;
-	D3DXVECTOR3 zDir;
-	D3DXQUATERNION zRot;
+	Vector3 zPos;
+	Vector3 zScale;
+	Vector3 zDir;
+	Vector4 zRot;
 
 	std::string zMeshModel;
 
@@ -43,7 +42,7 @@ struct ClientData
 
 	~ClientData()
 	{
-		SAFE_DELETE(zClient);
+		if ( zClient ) delete zClient, zClient=0;
 	}
 
 	void IncPingTime(float dt)

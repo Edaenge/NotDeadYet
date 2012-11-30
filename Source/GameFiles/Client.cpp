@@ -1,4 +1,7 @@
-#include "GameFiles/Client.h"
+#include "Client.h"
+#include "Graphics.h"
+#include "Safe.h"
+#include "NetworkPacket.h"
 
 using namespace MaloW;
 
@@ -14,56 +17,65 @@ Client::Client()
 
 	zMeshID = "Media/scale.obj";
 }
-int Client::Connect(const std::string ip, const int port)
+
+
+int Client::Connect(const std::string& ip, const int port)
 {
 	int code = 0;
 
 	this->zIP = ip;
 	this->zPort = port;
-	this->zEng = GetGraphicsEngine();
+	this->zEng = GetGraphics();
 	this->zServerChannel = new ServerChannel();
 	//Tries to Connect to a server with the specified Ip and Port
 	code = this->zServerChannel->InitConnection(ip, port);
 	
 	return code;
 }
+
+
 Client::~Client()
 {
-	while (this->zPlayers.size() > 0)
+	for( auto x = zPlayers.begin(); x < zPlayers.end(); ++x )
 	{
-		this->zPlayers.remove(0);
+		delete *x;
 	}
+
 	SAFE_DELETE(this->zServerChannel);
 }
+
+
 void Client::initClient()
 {
 	this->zServerChannel->setNotifier(this);
 
 	this->zServerChannel->Start();
 
-	this->zEng->GetCamera()->setPosition(D3DXVECTOR3(0, 15, -15.6f));
-	this->zEng->GetCamera()->LookAt(D3DXVECTOR3(30, 10, 10));
+	this->zEng->GetCamera()->SetPosition( Vector3(0, 15, -15.6f) );
+	this->zEng->GetCamera()->LookAt( Vector3(30, 10, 10) );
 
-	this->zEng->CreateTerrain(D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
+	this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
 
 	//StaticMesh* scaleHuman = this->zEng->CreateStaticMesh("Media/scale.obj", D3DXVECTOR3(5, -6, 15));
 	//scaleHuman->Scale(0.1f);
 	//this->zEng->GetCamera()->FollowMesh(scaleHuman);
 
-	Light* testLight = this->zEng->CreateLight(D3DXVECTOR3(15, 30, 15));
+	iLight* testLight = this->zEng->CreateLight(Vector3(15, 30, 15));
 	testLight->SetIntensity(50);
 	//SoundEngine* seng = eng->GetSoundEngine();
 	//seng->SetMasterVolume(0.5f);
 
-	this->zEng->LoadingScreen("Media/LoadingScreen/StartScreen.png", "", 0.0f, 1.0f, 1.0f, 1.0f);
+	//this->zEng->LoadingScreen("Media/LoadingScreen/StartScreen.png", "", 0.0f, 1.0f, 1.0f, 1.0f);
 }
+
+
 void Client::Life()
 {
 	while(this->stayAlive)
 	{
 		float diff = this->zEng->Update();
 		zTimeSinceLastPing += diff;
-		CursorControl cc;
+
 		if (MaloW::ProcessEvent* ev = this->PeekEvent())
 		{
 			//Check if Client has recieved a Message
@@ -75,13 +87,18 @@ void Client::Life()
 			delete ev;
 			ev = NULL;
 		}
+
 		this->HandleKeyboardInput();
 	}
 }
+
+
 bool Client::IsAlive()
 {
 	return stayAlive;
 }
+
+
 void Client::HandleKeyboardInput()
 {
 	if (this->zEng->GetKeyListener()->IsPressed('W'))
@@ -111,6 +128,8 @@ void Client::HandleKeyboardInput()
 		this->Close();
 	}
 }
+
+
 void Client::Ping()
 {
 	if (zTimeSinceLastPing <= TIMEOUT_VALUE)
@@ -122,8 +141,9 @@ void Client::Ping()
 	{
 		this->CloseConnection("Connection timeout");
 	}
-	
 }
+
+
 void Client::HandleNetworkMessage(std::string msg)
 {
 	std::vector<std::string> msgArray;
@@ -131,7 +151,7 @@ void Client::HandleNetworkMessage(std::string msg)
 	char key[1024];
 	if(msgArray.size() > 0)
 	{
-		sscanf(msgArray[0].c_str(), "%s ", key);
+		sscanf_s(msgArray[0].c_str(), "%s ", key);
 
 		//Checks what type of message was sent
 		if(strcmp(key, PING.c_str()) == 0)
@@ -172,27 +192,31 @@ void Client::HandleNetworkMessage(std::string msg)
 		}
 	}
 }
+
+
 void Client::CloseConnection(const std::string reason)
 {
 	//To do printa till client vilket reason som gavs
 	this->zServerChannel->Close();
 	this->Close();
 }
-void Client::HandleNewPlayer(std::vector<std::string> msgArray)
+
+
+void Client::HandleNewPlayer(const std::vector<std::string>& msgArray)
 {
 	char key[512];
 
-	D3DXVECTOR3 position;
-	D3DXVECTOR3 scale;
-	D3DXQUATERNION rotation;
+	Vector3 position;
+	Vector3 scale;
+	Vector4 rotation;
 	std::string filename;
 	int clientID = -1;
 	int state = 0;
 
 	Player* newPlayer = new Player();
-	for(int i = 0; i < msgArray.size(); i++)
+	for(unsigned int i = 0; i < msgArray.size(); i++)
 	{
-		sscanf(msgArray[i].c_str(), "%s ", key);
+		sscanf_s(msgArray[i].c_str(), "%s ", key);
 
 		if(strcmp(key, NEW_PLAYER.c_str()) == 0)
 		{
@@ -222,9 +246,9 @@ void Client::HandleNewPlayer(std::vector<std::string> msgArray)
 	if (clientID != -1)
 	{
 		bool found = false;
-		for (int i = 0; i < this->zPlayers.size(); i++)
+		for (unsigned int i = 0; i < this->zPlayers.size(); i++)
 		{
-			int id = this->zPlayers.get(i)->GetClientID();
+			int id = this->zPlayers[i]->GetClientID();
 			if(clientID == id)
 			{
 				found = true;
@@ -234,7 +258,7 @@ void Client::HandleNewPlayer(std::vector<std::string> msgArray)
 		if (!found)
 		{
 			//Creates a StaticMesh from the given Filename
-			StaticMesh* playerMesh = this->zEng->CreateStaticMesh(filename, position);
+			iMesh* playerMesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 			playerMesh->SetQuaternion(rotation);
 			playerMesh->Scale(scale);
 
@@ -247,22 +271,23 @@ void Client::HandleNewPlayer(std::vector<std::string> msgArray)
 			newPlayer->SetClientID(clientID);
 			newPlayer->SetPlayerState(state);
 
-			this->zPlayers.add(newPlayer);
+			this->zPlayers.push_back(newPlayer);
 			newPlayer = NULL;
 		}
 	}
 }
-void Client::HandlePlayerUpdate(std::vector<std::string> msgArray)
+
+
+void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray)
 {
 	char key[512];
 
 	int clientID = -1;
 	int ClientPosition = -1;
 	bool clientFound = false;
-	int i = 0;
-	while(!clientFound || i < msgArray.size())
+	for( unsigned int i=0; i <msgArray.size(); ++i )
 	{
-		sscanf(msgArray[i].c_str(), "%s ", key);
+		sscanf_s(msgArray[i].c_str(), "%s ", key);
 
 		if(strcmp(key, PLAYER_UPDATE.c_str()) == 0)
 		{
@@ -270,24 +295,26 @@ void Client::HandlePlayerUpdate(std::vector<std::string> msgArray)
 
 			ClientPosition = i;
 			clientFound = true;
+			break;
 		}
 		i++;
 	}
+
 	if(clientFound)
 	{
-		Player* playerPointer = this->zPlayers.get(ClientPosition);
-		for(int i = 0; i < msgArray.size(); i++)
+		Player* playerPointer = this->zPlayers[ClientPosition];
+		for(unsigned int i = 0; i < msgArray.size(); i++)
 		{
-			sscanf(msgArray[i].c_str(), "%s ", key);
+			sscanf_s(msgArray[i].c_str(), "%s ", key);
 
 			if(strcmp(key, POSITION.c_str()) == 0)
 			{
-				D3DXVECTOR3 position = this->msgHandler.ConvertStringToVector(POSITION, msgArray[i]);
+				Vector3 position = this->msgHandler.ConvertStringToVector(POSITION, msgArray[i]);
 				playerPointer->SetPlayerPosition(position);
 			}
 			else if(strcmp(key, ROTATION.c_str()) == 0)
 			{
-				D3DXQUATERNION rotation = this->msgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
+				Vector4 rotation = this->msgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
 				playerPointer->SetPlayerRotation(rotation);
 			}
 			else if(strcmp(key, STATE.c_str()) == 0)
@@ -300,27 +327,29 @@ void Client::HandlePlayerUpdate(std::vector<std::string> msgArray)
 				std::string filename = this->msgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
 				
 				//Create a new Mesh with the current values
-				StaticMesh* mesh = this->zEng->CreateStaticMesh(filename, playerPointer->GetPlayerPosition());
+				iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), playerPointer->GetPlayerPosition());
 				float scale = playerPointer->GetPlayerScale().x;
-				D3DXQUATERNION quat = playerPointer->GetPlayerRotation();
+				Vector3 quat = playerPointer->GetPlayerRotation();
 				
 				mesh->Scale(scale);
-				mesh->SetQuaternion(quat);
+				mesh->SetQuaternion(Vector4(quat.x,quat.y,quat.z,0.0f));
 				playerPointer->AddStaticMesh(mesh);
 			}
 		}
 		//Copy over new Values to the vector
-		this->zPlayers.get(ClientPosition) = playerPointer;
+		this->zPlayers[ClientPosition] = playerPointer;
 		playerPointer = NULL;
 	}
 }
-void Client::HandleRemovePlayer(std::vector<std::string> msgArray)
+
+
+void Client::HandleRemovePlayer(const std::vector<std::string>& msgArray)
 {
 	char key[512];
 	int clientID = -1;
-	for(int i = 0; i < msgArray.size(); i++)
+	for(unsigned int i = 0; i < msgArray.size(); i++)
 	{
-		sscanf(msgArray[i].c_str(), "%s ", key);
+		sscanf_s(msgArray[i].c_str(), "%s ", key);
 
 		if(strcmp(key, REMOVE_PLAYER.c_str()) == 0)
 		{
@@ -333,9 +362,9 @@ void Client::HandleRemovePlayer(std::vector<std::string> msgArray)
 		int temporaryClientID = -1;
 		int pos = -1;
 		bool isClient = false;
-		for (int i = 0; i < this->zPlayers.size(); i++)
+		for (unsigned int i = 0; i < this->zPlayers.size(); i++)
 		{
-			temporaryClientID = this->zPlayers.get(i)->GetClientID();
+			temporaryClientID = this->zPlayers[i]->GetClientID();
 			if (temporaryClientID == clientID)
 			{
 				//check if the player being removed is the client
@@ -353,7 +382,8 @@ void Client::HandleRemovePlayer(std::vector<std::string> msgArray)
 			{
 				this->CloseConnection("Unknown reason");
 			}
-			this->zPlayers.remove(pos);
+
+			this->zPlayers.erase( zPlayers.begin() + pos);
 		}
 	}
 }

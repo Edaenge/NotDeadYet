@@ -16,7 +16,7 @@ namespace MaloW
 		~Queue();
 
 		void Enqueue(T obj);
-		T& Dequeue();
+		T Dequeue();
 		T& Peek();
 
 		int size();
@@ -43,7 +43,7 @@ namespace MaloW
 	}
 
 	template <typename T>
-	T& Queue<T>::Dequeue()
+	T Queue<T>::Dequeue()
 	{
 		return this->list->getAndRemove(0);
 	}

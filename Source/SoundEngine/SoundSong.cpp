@@ -1,4 +1,6 @@
 #include "SoundSong.h"
+#include <windows.h>
+
 
 void SoundSong::ERRCHECK(FMOD_RESULT result)
 {
@@ -11,7 +13,6 @@ void SoundSong::ERRCHECK(FMOD_RESULT result)
 }
 
 
-
 SoundSong::SoundSong(FMOD::System* sys, float* masterVol)
 {
 	this->mSongVolume = 1.0f;
@@ -21,11 +22,13 @@ SoundSong::SoundSong(FMOD::System* sys, float* masterVol)
 	this->masterVol = masterVol;
 }
 
+
 SoundSong::~SoundSong()
 {
 	if(this->mSound)
 		this->mSound->release();
 }
+
 
 void SoundSong::Play()
 {
@@ -41,6 +44,7 @@ void SoundSong::Play()
 	}
 }
 
+
 void SoundSong::SetVolume(float volume) 
 { 
 	FMOD_RESULT fr;
@@ -49,22 +53,28 @@ void SoundSong::SetVolume(float volume)
 		ERRCHECK(fr = this->mSongChannel->setVolume(this->mSongVolume * *this->masterVol)); //set volume of channel
 }
 
+
 void SoundSong::Mute()
 {
 	FMOD_RESULT fr;
 	ERRCHECK(fr = this->mSongChannel->setMute(true));
 }
+
+
 void SoundSong::Unmute()
 {
 	FMOD_RESULT fr;
 	ERRCHECK(fr = this->mSongChannel->setMute(false));
 }
 
+
 void SoundSong::Pause()
 {
 	FMOD_RESULT fr;
 	ERRCHECK(fr = this->mSongChannel->setPaused(true));
 }
+
+
 void SoundSong::Unpause()
 {
 	FMOD_RESULT fr;

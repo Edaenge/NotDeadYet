@@ -1,6 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
 #include <fmod.h> 
 #include <fmod.hpp>
 #include <fmod_errors.h>

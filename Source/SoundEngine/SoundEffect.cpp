@@ -1,4 +1,5 @@
 #include "SoundEffect.h"
+#include <windows.h>
 
 void SoundEffect::ERRCHECK(FMOD_RESULT result)
 {

@@ -1,14 +1,19 @@
 #include "ServerChannel.h"
+#include "NetworkPacket.h"
+#include "Winsock.h"
+#include "NetworkMessageConverter.h"
 
 using namespace MaloW;
 
-#include "Network/NetworkMessageConverter.h"
+
 
 ServerChannel::ServerChannel()
 {
 	this->stayAlive = false;
 	this->notifier = NULL;
 }
+
+
 int ServerChannel::InitConnection(std::string IP, int port)
 {
 	int returnCode = 0;
@@ -54,13 +59,15 @@ int ServerChannel::InitConnection(std::string IP, int port)
 
 	return returnCode;
 }
+
+
 ServerChannel::~ServerChannel()
 {
 	this->stayAlive = false;
 	if(this->sock != 0)
 	{
 		// shutdown socket
-		int retCode = shutdown(this->sock, SD_BOTH);
+		int retCode = shutdown(this->sock, 2); // 2 = SD_BOTH
 		if(retCode == SOCKET_ERROR) 
 		{
 			MaloW::Debug("Error trying to perform shutdown on socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
@@ -79,6 +86,7 @@ ServerChannel::~ServerChannel()
 		MaloW::Debug("Error cleaning up Winsock Library. Error: " + MaloW::convertNrToString(WSAGetLastError()));;
 	}
 }
+
 
 string ServerChannel::receiveData()
 {
@@ -143,11 +151,12 @@ string ServerChannel::receiveData()
 	return msg;
 }
 
+
 void ServerChannel::sendData(string msg)
 {
 	msg += 10;
 	char bufs[1024] = {0};
-	for(int i = 0; i < msg.length(); i++)
+	for(unsigned int i = 0; i < msg.length(); i++)
 	{
 		bufs[i] = msg[i];
 	}
@@ -157,6 +166,7 @@ void ServerChannel::sendData(string msg)
 		MaloW::Debug("Error sending data. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 	}
 }
+
 
 void ServerChannel::Life()
 {
@@ -174,11 +184,12 @@ void ServerChannel::Life()
 	}
 }
 
+
 void ServerChannel::CloseSpecific()
 {
 	if(this->sock != 0)
 	{
-		int retCode = shutdown(this->sock, SD_BOTH);
+		int retCode = shutdown(this->sock, 2); // 2 = SD_BOTH
 		if(retCode == SOCKET_ERROR) 
 			MaloW::Debug("Error trying to perform shutdown on socket from a ->Close() call. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 	

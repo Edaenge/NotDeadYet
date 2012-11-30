@@ -1,4 +1,6 @@
 #include "MainMenu.h"
+#include "Safe.h"
+
 
 MainMenu::MainMenu()
 {
@@ -19,10 +21,12 @@ MainMenu::MainMenu()
 	}
 }
 
+
 MainMenu::~MainMenu()
 {
 	SAFE_DELETE(this->zGame);
 }
+
 
 void MainMenu::printClientError(const int code )
 {
@@ -48,6 +52,7 @@ void MainMenu::printClientError(const int code )
 	printToScreen(errorMessage);
 }
 
+
 void MainMenu::printHostError(const int code )
 {
 	std::string errorMessage = "";
@@ -72,6 +77,7 @@ void MainMenu::printHostError(const int code )
 	}
 	printToScreen(errorMessage);
 }
+
 
 void MainMenu::printToScreen(const std::string msg )
 {

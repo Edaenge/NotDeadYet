@@ -5,13 +5,8 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <string>
-#ifndef _WINSOCKAPI_
-	#include <winsock2.h>
-#endif
 
 #include "NetworkPacket.h"
-
-#pragma comment(lib, "WS2_32.lib")
 
 using namespace std;
 

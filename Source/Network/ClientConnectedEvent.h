@@ -7,7 +7,7 @@ for project desperation* at Blekinge tekniska högskola.
 #pragma once
 
 #include "Process.h"
-#include "Network/ClientChannel.h"
+#include "ClientChannel.h"
 
 /*
 This class is used when a client connects to the server.

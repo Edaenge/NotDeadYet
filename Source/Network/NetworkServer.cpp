@@ -71,7 +71,7 @@ void NetworkServer::Life()
 
 void NetworkServer::CloseSpecific()
 {
-	int retCode = shutdown(this->sock, SD_BOTH);
+	int retCode = shutdown(this->sock, 2); // 2 = SD_BOTH
 	if(retCode == SOCKET_ERROR) 
 		MaloW::Debug("Error trying to perform shutdown on socket from a ->Close() call from another thread.");
 

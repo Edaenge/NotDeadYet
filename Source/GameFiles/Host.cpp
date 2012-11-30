@@ -1,4 +1,6 @@
 #include "Host.h"
+#include "Safe.h"
+
 
 Host::Host()
 {
@@ -7,10 +9,11 @@ Host::Host()
 	this->zClients = new MaloW::Array<ClientData *>(); 
 	this->zPlayers = new MaloW::Array<PlayerInfo *>();
 
-	this->zStartime = 0.0f;
+	this->zStartime = 0;
 	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
 }
+
 
 Host::~Host()
 {
@@ -21,6 +24,7 @@ Host::~Host()
 	SAFE_DELETE(this->zClients);
 	SAFE_DELETE(this->zPlayers);
 }
+
 
 void Host::Life()
 {
@@ -63,6 +67,7 @@ void Host::Life()
 	}
 }
 
+
 int Host::InitHost( int port, int maxClients )
 {
 	int code = 0;
@@ -82,6 +87,7 @@ int Host::InitHost( int port, int maxClients )
 	
 	return code;
 }
+
 
 void Host::HandleNewConnections()
 {
@@ -124,6 +130,7 @@ void Host::HandleNewConnections()
 	SAFE_DELETE(pe);
 }
 
+
 void Host::SendToAllClients( std::string message )
 {
 	if(this->zClients->isEmpty())
@@ -135,6 +142,7 @@ void Host::SendToAllClients( std::string message )
 	}
 }
 
+
 void Host::SendToClient( int clientID, std::string message )
 {
 	int pos = SearchForClient(clientID);
@@ -145,10 +153,12 @@ void Host::SendToClient( int clientID, std::string message )
 	this->zClients->get(pos)->zClient->sendData(message);
 }
 
+
 inline bool Host::HasPlayers() const
 {
 	return this->zClients->isEmpty();
 }
+
 
 void Host::HandleRecivedMessages()
 {
@@ -178,7 +188,7 @@ void Host::HandleRecivedMessages()
 		return;
 
 	char key[512];
-	sscanf(msgArray[0].c_str(), "%s ", key);
+	sscanf_s(msgArray[0].c_str(), "%s ", key);
 
 	if(strcmp(key, PING.c_str()) == 0)
 	{
@@ -195,6 +205,7 @@ void Host::HandleRecivedMessages()
 
 }
 
+
 void Host::HandlePingMsg( const int CLIENT_ID )
 {
 	int index = SearchForClient(CLIENT_ID);
@@ -206,10 +217,12 @@ void Host::HandlePingMsg( const int CLIENT_ID )
 	cd->zCurrentPingTime = 0.0f;
 }
 
+
 inline int Host::GetPort() const
 {
 	return this->zPort;
 }
+
 
 int Host::SearchForClient( const int ID ) const
 {
@@ -228,6 +241,7 @@ int Host::SearchForClient( const int ID ) const
 	return -1;
 }
 
+
 int Host::SearchForPlayer(const int ID) const
 {
 	if(!HasPlayers())
@@ -244,11 +258,13 @@ int Host::SearchForPlayer(const int ID) const
 	return -1;
 }
 
+
 void Host::BroadCastServerShutdown()
 {
 	std::string mess = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_SHUTDOWN);
 	SendToAllClients(mess);
 }
+
 
 void Host::PingClients()
 {
@@ -291,6 +307,7 @@ void Host::PingClients()
 	}
 }
 
+
 float Host::Update()
 {
 	INT64 currentTime;
@@ -306,6 +323,7 @@ float Host::Update()
 
 	return this->zDeltaTime;
 }
+
 
 bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string reason /*= ""*/ )
 {
@@ -342,10 +360,12 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 	return removed;
 }
 
+
 inline bool Host::IsAlive() const
 {
 	return this->stayAlive;
 }
+
 
 void Host::CreateNewPlayer( const int ID, std::string mesh )
 {

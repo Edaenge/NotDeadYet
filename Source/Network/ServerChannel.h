@@ -6,18 +6,14 @@
 #include <tchar.h>
 #include <string>
 #include <vector>
-#include <winsock2.h>
-
-#include "NetworkPacket.h"
-
-#pragma comment(lib, "WS2_32.lib")
+#include "Process.h"
 
 using namespace std;
 
 /*
 Implement your own client class with this class as an object for sending / recieving data.
 1. Create ServerChannel Object.
-2. Use setNotifier to set which process recivied data will be sent to.
+2. Use setNotifier to set which process recieved data will be sent to.
 3. Call on ->Start
 This class will create a channel to a server that has a process that will read data from the
 server and you can also send data to the server.s

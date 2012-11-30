@@ -1,15 +1,20 @@
 #include "NetworkMessageConverter.h"
 #include <sstream>
 
+
 NetworkMessageConverter::NetworkMessageConverter()
 {
 }
+
+
 NetworkMessageConverter::~NetworkMessageConverter()
 {
 }
+
+
 std::string NetworkMessageConverter::Convert(const int ID, const float x, const float y, const float z)
 {
-	stringstream ss;
+	std::stringstream ss;
 
 	switch (ID)
 	{
@@ -29,6 +34,8 @@ std::string NetworkMessageConverter::Convert(const int ID, const float x, const 
 
 	return ss.str();
 }
+
+
 std::string NetworkMessageConverter::Convert(const int ID, const float x, const float y, const float z, const float w)
 {
 	std::stringstream ss;
@@ -46,6 +53,8 @@ std::string NetworkMessageConverter::Convert(const int ID, const float x, const 
 
 	return ss.str();
 }
+
+
 std::string NetworkMessageConverter::Convert(const int ID, const std::string word)
 {
 	std::stringstream ss;
@@ -71,6 +80,8 @@ std::string NetworkMessageConverter::Convert(const int ID, const std::string wor
 
 	return ss.str();
 }
+
+
 std::string NetworkMessageConverter::Convert(const int ID, const int state_ID)
 {
 	std::stringstream ss;
@@ -102,6 +113,8 @@ std::string NetworkMessageConverter::Convert(const int ID, const int state_ID)
 
 	return ss.str();
 }
+
+
 std::string NetworkMessageConverter::Convert(const int ID)
 {
 	std::stringstream ss;
@@ -120,20 +133,24 @@ std::string NetworkMessageConverter::Convert(const int ID)
 
 	return ss.str();
 }
-std::string NetworkMessageConverter::CombineMessage(std::vector<std::string> msgArray)
+
+
+std::string NetworkMessageConverter::CombineMessage(const std::vector<std::string>& msgArray)
 {
 	std::string msg = "";
-	for(int i = 0; i < msgArray.size(); i++)
+	for(unsigned int i = 0; i < msgArray.size(); i++)
 	{
 		msg += msgArray[i] + "*";
 	}
 	return msg;
 }
-vector<std::string> NetworkMessageConverter::SplitMessage(std::string msg)
+
+
+std::vector<std::string> NetworkMessageConverter::SplitMessage(std::string msg)
 {
 	std::string subMsg = "";
 	std::vector<std::string> msgArray;
-	for(int i = 0; i < msg.length(); i++)
+	for(unsigned int i = 0; i < msg.length(); i++)
 	{
 		subMsg = "";
 		while (msg.at(i) != '*')
@@ -144,7 +161,9 @@ vector<std::string> NetworkMessageConverter::SplitMessage(std::string msg)
 	}
 	return msgArray;
 }
-D3DXVECTOR3 NetworkMessageConverter::ConvertStringToVector(const std::string type, std::string msg)
+
+
+Vector3 NetworkMessageConverter::ConvertStringToVector(const std::string& type, std::string msg)
 {
 	float x = 0.0f;
 	float y = 0.0f;
@@ -152,11 +171,13 @@ D3DXVECTOR3 NetworkMessageConverter::ConvertStringToVector(const std::string typ
 
 	sscanf_s(msg.c_str(), (type + "%f %f %f").c_str(), &x, &y, &z);
 
-	D3DXVECTOR3 vec = D3DXVECTOR3(x, y, z);
+	Vector3 vec = Vector3(x, y, z);
 	
 	return vec;
 }
-D3DXQUATERNION NetworkMessageConverter::ConvertStringToQuaternion(const std::string type, std::string msg)
+
+
+Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& type, std::string msg)
 {
 	float x;
 	float y;
@@ -164,22 +185,23 @@ D3DXQUATERNION NetworkMessageConverter::ConvertStringToQuaternion(const std::str
 	float w;
 	sscanf_s(msg.c_str(), (type + "%f %f %f %f").c_str(), &x, &y, &z, &w);
 
-	D3DXQUATERNION quaternion = D3DXQUATERNION(x, y, z, w);
+	Vector4 quaternion = Vector4(x, y, z, w);
 
 	return quaternion;
 }
-int NetworkMessageConverter::ConvertStringToInt(const std::string type, std::string msg)
+
+
+int NetworkMessageConverter::ConvertStringToInt(const std::string& type, std::string msg)
 {
 	int value;
 	sscanf_s(msg.c_str(), (type + "%d").c_str(), &value);
-
 	return value;
 }
-std::string NetworkMessageConverter::ConvertStringToSubstring(const std::string type, std::string msg)
+
+
+std::string NetworkMessageConverter::ConvertStringToSubstring(const std::string& type, std::string msg)
 {
 	char subString[100];
-
-	sscanf(msg.c_str(), (type + "%s").c_str(), &subString);
-
+	sscanf_s(msg.c_str(), (type + "%s").c_str(), &subString);
 	return subString;
 }

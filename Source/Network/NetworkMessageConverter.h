@@ -5,7 +5,9 @@
 
 #pragma once
 
-#include "stdafx.h"
+#include <Vector.h>
+#include <vector>
+#include <string>
 
 enum MESSAGE_TYPE
 {
@@ -63,12 +65,12 @@ public:
 	std::string Convert(const int ID, const float x, const float y, const float z);
 	std::string Convert(const int ID, const float x, const float y, const float z, const float w);
 	
-	std::string CombineMessage(std::vector<std::string> msgArray);
+	std::string CombineMessage(const std::vector<std::string>& msgArray);
 	std::vector<std::string> SplitMessage(std::string msg);
-	D3DXVECTOR3 ConvertStringToVector(const std::string type, std::string msg);
-	D3DXQUATERNION ConvertStringToQuaternion(const std::string type, std::string msg);
-	int ConvertStringToInt(const std::string type, std::string msg);
-	std::string ConvertStringToSubstring(const std::string type, std::string msg);
+	Vector3 ConvertStringToVector(const std::string& type, std::string msg);
+	Vector4 ConvertStringToQuaternion(const std::string& type, std::string msg);
+	int ConvertStringToInt(const std::string& type, std::string msg);
+	std::string ConvertStringToSubstring(const std::string& type, std::string msg);
 private:
 
 

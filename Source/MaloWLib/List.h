@@ -33,7 +33,7 @@ namespace MaloW
 		void insertFirst(T data);
 		bool isEmpty() const;
 		T& elementAt(int pos) const;
-		T& getAndRemove(int pos);
+		T getAndRemove(int pos);
 		void removeFirst();
 		void removeLast();
 		void removeAt(int pos);
@@ -159,24 +159,27 @@ namespace MaloW
 	template <typename T>
 	T& List<T>::elementAt(int pos) const
 	{
-		T data;
+		if ( pos > this->nrOfNodes )
+			throw("Out of bounds exception");
+
 		if(pos > this->nrOfNodes)
 			pos = this->nrOfNodes;
 		if(pos < 1)
 			pos = 1;
 	
 		Node *e = this->first;
+
 		if(e)
 		{
 			for(int i = 0; i < pos-1; i++)
 				e = e->next;
-			data = e->data;
+
+			return e->data;
 		}
-		return data;
 	}
 
 	template <typename T>
-	T& List<T>::getAndRemove(int pos)
+	T List<T>::getAndRemove(int pos)
 	{
 		T retval = this->elementAt(pos);
 		this->removeAt(pos);

@@ -3,7 +3,6 @@
 
 #include "ClientChannel.h"
 #include "Array.h"
-//#include "MaloW.h"
 #include "MaloWFileDebug.h"
 
 using namespace std;

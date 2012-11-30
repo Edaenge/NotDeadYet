@@ -1,4 +1,5 @@
 #include "ClientChannel.h"
+#include "Winsock.h"
 
 using namespace MaloW;
 
@@ -38,7 +39,9 @@ string ClientChannel::receiveData()
 		bool goAgain = true;
 		do
 		{
-			char bufs[1024] = {255};
+			char bufs[1024];
+			std::fill(bufs,bufs+1024,255);
+
 			int retCode = 0;
 			retCode = recv(this->sock, bufs, sizeof(bufs), 0);
 			if(retCode == SOCKET_ERROR)
@@ -88,7 +91,7 @@ void ClientChannel::sendData(string msg)
 {
 	msg += 10;
 	char bufs[1024] = {0};
-	for(int i = 0; i < msg.length(); i++)
+	for(unsigned int i = 0; i < msg.length(); i++)
 		bufs[i] = msg[i];
 
 	int retCode = send(this->sock, bufs, sizeof(bufs), 0);
@@ -116,7 +119,7 @@ void ClientChannel::Life()
 
 void ClientChannel::CloseSpecific()
 {
-	int retCode = shutdown(this->sock, SD_BOTH);
+	int retCode = shutdown(this->sock, 2); // 2 = SD_BOTH
 	if(retCode == SOCKET_ERROR) 
 		MaloW::Debug("Error trying to perform shutdown on socket from a ->Close() call. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 }

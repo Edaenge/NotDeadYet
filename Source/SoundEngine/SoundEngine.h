@@ -5,21 +5,15 @@
 
 #pragma once
 
-#include "..\stdafx.h"
-#include <fmod.h> 
-#include <fmod.hpp>
-#include <fmod_errors.h>
-#include <fmod_codec.h>
-#include <fmod_output.h>
-#include <fmod_dsp.h>
 #include "SoundEffect.h"
 #include "SoundSong.h"
+#include <vector>
 
 
 class SoundEngine
 {
 	private:
-		//system
+		// System
 		FMOD::System*		mSystem;
 		FMOD_RESULT			mResult;		//default value: FMOD_ERR_NOTREADY.
 		unsigned int		mVersion;
@@ -28,14 +22,13 @@ class SoundEngine
 		FMOD_CAPS			mCaps;			//default value: FMOD_CAPS_NONE.
 		char*				mName;
 
-		//all sound
+		// All sound
 		float*				mMasterVolume;	//default value: 1.0f
 
-		
-		//sound effects 2D
-		MaloW::Array<SoundEffect*> mEffects2D;
+		// Sound effects 2D
+		std::vector<SoundEffect*> mEffects2D;
 
-		//sound effects 3D todo**
+		// Sound effects 3D todo**
 		/*
 		unsigned int		mNrOfSoundFX3D;
 		unsigned int		mSoundFXCap3D;
@@ -45,8 +38,8 @@ class SoundEngine
 		float				mDistanceFactor;//default value: 100.0f. Units per meter (100 cm).
 		*/
 
-		//songs (2D)
-		MaloW::Array<SoundSong*> mSongs;
+		// Songs (2D)
+		std::vector<SoundSong*> mSongs;
 
 	private:
 		void ERRCHECK(FMOD_RESULT result);
@@ -69,12 +62,12 @@ class SoundEngine
 
 		//Sound effects
 		/*! Load sound effect from soundfile. **3D currently unavailable** */
-		SoundEffect* LoadSoundEffect(string filename, bool as3D = false);
+		SoundEffect* LoadSoundEffect(std::string filename, bool as3D = false);
 
 		
 		//Song
 		/*! Load song from soundfile. */
-		SoundSong* LoadSong(string filename, bool loop);
+		SoundSong* LoadSong(std::string filename, bool loop);
 
 
 		//**todo**
