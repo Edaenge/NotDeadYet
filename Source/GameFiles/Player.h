@@ -7,6 +7,7 @@
 #include "stdafx.h"
 #include "StaticMesh.h"
 
+/*! Animation states*/
 enum PlayerState
 {
 	IDLE,

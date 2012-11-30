@@ -46,9 +46,9 @@ static const std::string USER_DATA			= "UD ";
 static const std::string PING				= "Ping ";
 static const std::string SELF_ID			= "Self ";
 /*
-This class creates string messages used for communication
-between sockets.
-Returns an empty string if wrong function is used.
+	This class creates string messages used for communication
+	between sockets.
+	Returns an empty string if wrong function is used.
 */
 class NetworkMessageConverter
 {

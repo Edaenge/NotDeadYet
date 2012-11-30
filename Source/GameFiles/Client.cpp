@@ -115,7 +115,7 @@ void Client::Ping()
 {
 	if (zTimeSinceLastPing <= TIMEOUT_VALUE)
 	{
-		this->zTimeSinceLastPing = 0;
+		this->zTimeSinceLastPing = 0.0f;
 		this->zServerChannel->sendData(PING);
 	}
 	else
@@ -133,6 +133,7 @@ void Client::HandleNetworkMessage(std::string msg)
 	{
 		sscanf(msgArray[0].c_str(), "%s ", key);
 
+		//Checks what type of message was sent
 		if(strcmp(key, PLAYER_UPDATE.c_str()) == 0)
 		{
 			this->HandlePlayerUpdate(msgArray);
@@ -246,6 +247,7 @@ void Client::HandleNewPlayer(std::vector<std::string> msgArray)
 			newPlayer->SetPlayerState(state);
 
 			this->zPlayers.add(newPlayer);
+			newPlayer = NULL;
 		}
 	}
 }
