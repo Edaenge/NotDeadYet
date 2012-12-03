@@ -378,8 +378,14 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 
 	if(index != -1 && pIndex != -1)
 	{
-		SAFE_DELETE(this->zClients.erase(zClients.begin() + index));
-		SAFE_DELETE(this->zPlayers.erase(zPlayers.begin() + pIndex));
+		ClientData* temp_c = zClients.at(index);
+		PlayerActor* temp_p = zPlayers.at(pIndex);
+
+		this->zClients.erase(zClients.begin() + index);
+		this->zPlayers.erase(zPlayers.begin() + pIndex);
+
+		SAFE_DELETE(temp_c);
+		SAFE_DELETE(temp_p);
 
 		removed = true;
 	}
