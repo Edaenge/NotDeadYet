@@ -4,21 +4,12 @@
 
 MainMenu::MainMenu()
 {
-	int hostErrorCode;
-	int clientErrorCode;
+
 	
 	zClientConnected = false;
 	zHostCreated	 = false;
 	this->zGame		 = new Game();
-	// Initializes the host and returns a code that explains what happend
-	hostErrorCode    = this->zGame->InitGameHost(8080, 1);
-	// Initializes the Client and returns a code that explains what happend
-	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 8080);
 
-	if(hostErrorCode == 0 && clientErrorCode == 0)
-	{
-		this->zGame->Run();
-	}
 }
 
 
@@ -82,5 +73,20 @@ void MainMenu::printHostError(const int code )
 void MainMenu::printToScreen(const std::string msg )
 {
 
+}
+
+void MainMenu::run()
+{
+	int hostErrorCode;
+	int clientErrorCode;
+	// Initializes the host and returns a code that explains what happend
+	hostErrorCode    = this->zGame->InitGameHost(8080, 1);
+	// Initializes the Client and returns a code that explains what happend
+	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 8080);
+
+	if(hostErrorCode == 0 && clientErrorCode == 0)
+	{
+		this->zGame->Run();
+	}
 }
 

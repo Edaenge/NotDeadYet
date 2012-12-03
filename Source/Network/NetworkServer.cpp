@@ -23,7 +23,7 @@ NetworkServer::~NetworkServer()
 
 	retCode = WSACleanup();
 	if(retCode == SOCKET_ERROR) 
-		MaloW::Debug("Error cleaning up Winsock Library. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("NS: Error cleaning up Winsock Library. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 }
 
 ClientChannel* NetworkServer::ListenForNewClients()
@@ -35,7 +35,7 @@ ClientChannel* NetworkServer::ListenForNewClients()
 	if(retCode == SOCKET_ERROR)
 	{
 		this->stayAlive = false;
-		MaloW::Debug("Failed to Listen for new connections. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("NS: Failed to Listen for new connections. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
 	}
 
@@ -49,7 +49,7 @@ ClientChannel* NetworkServer::ListenForNewClients()
 	if(hClient == INVALID_SOCKET) 
 	{
 		this->stayAlive = false;
-		MaloW::Debug("Invalid client socket, connection failed. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("NS: Invalid client socket, connection failed. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
 	}
 	else
@@ -73,11 +73,11 @@ void NetworkServer::CloseSpecific()
 {
 	int retCode = shutdown(this->sock, 2); // 2 = SD_BOTH
 	if(retCode == SOCKET_ERROR) 
-		MaloW::Debug("Error trying to perform shutdown on socket from a ->Close() call from another thread.");
+		MaloW::Debug("NS: Error trying to perform shutdown on socket from a ->Close() call from another thread.");
 
 	retCode = closesocket(this->sock);
 	if(retCode == SOCKET_ERROR) 
-		MaloW::Debug("Failed to close socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("NS: Failed to close socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 }
 
 int MaloW::NetworkServer::InitConnection(int port)
@@ -93,7 +93,7 @@ int MaloW::NetworkServer::InitConnection(int port)
 	{
 		returnCode = 2;
 		this->stayAlive = false;
-		MaloW::Debug("Failed to init Winsock library. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("NS: Failed to init Winsock library. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
 	}
 
@@ -103,7 +103,7 @@ int MaloW::NetworkServer::InitConnection(int port)
 	{
 		returnCode = 3;
 		this->stayAlive = false;
-		MaloW::Debug("Invalid socket, failed to create socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("NS: Invalid socket, failed to create socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
 	}
 
@@ -117,7 +117,7 @@ int MaloW::NetworkServer::InitConnection(int port)
 	{
 		returnCode = 1;
 		this->stayAlive = false;
-		MaloW::Debug("Failed to bind socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("NS: Failed to bind socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
 	}
 

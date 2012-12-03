@@ -26,7 +26,7 @@ int ServerChannel::InitConnection(std::string IP, int port)
 	{
 		returnCode = 2;
 		this->stayAlive = false;
-		MaloW::Debug("Failed to init Winsock library. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("SC: Failed to init Winsock library. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
 	}
 
@@ -36,7 +36,7 @@ int ServerChannel::InitConnection(std::string IP, int port)
 	{
 		returnCode = 3;
 		this->stayAlive = false;
-		MaloW::Debug("Invalid socket, failed to create socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("SC: Invalid socket, failed to create socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
 	}
 
@@ -50,7 +50,7 @@ int ServerChannel::InitConnection(std::string IP, int port)
 	{
 		returnCode = 1;
 		this->stayAlive = false;
-		MaloW::Debug("Connection to server failed. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("SC: Connection to server failed. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
 	}
 
@@ -70,20 +70,20 @@ ServerChannel::~ServerChannel()
 		int retCode = shutdown(this->sock, 2); // 2 = SD_BOTH
 		if(retCode == SOCKET_ERROR) 
 		{
-			MaloW::Debug("Error trying to perform shutdown on socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+			MaloW::Debug("SC: Error trying to perform shutdown on socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		}
 		// close server socket
 		retCode = closesocket(this->sock);
 		if(retCode == SOCKET_ERROR) 
 		{
-			MaloW::Debug("Error failed to close socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+			MaloW::Debug("SC: Error failed to close socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		}
 	}
 	// Release WinSock DLL
 	int retCode = WSACleanup();
 	if(retCode == SOCKET_ERROR) 
 	{
-		MaloW::Debug("Error cleaning up Winsock Library. Error: " + MaloW::convertNrToString(WSAGetLastError()));;
+		MaloW::Debug("SC: Error cleaning up Winsock Library. Error: " + MaloW::convertNrToString(WSAGetLastError()));;
 	}
 }
 
@@ -112,12 +112,12 @@ string ServerChannel::receiveData()
 			if(retCode == SOCKET_ERROR)
 			{
 				this->Close();
-				MaloW::Debug("Error receiving data. Error: " + MaloW::convertNrToString(WSAGetLastError()) + ". Probably due to crash/improper disconnect");
+				MaloW::Debug("SC: Error receiving data. Error: " + MaloW::convertNrToString(WSAGetLastError()) + ". Probably due to crash/improper disconnect");
 			}
 			else if(retCode == 0)
 			{
 				this->Close();
-				MaloW::Debug("Server disconnected, closing.");
+				MaloW::Debug("SC: Server disconnected, closing.");
 			}
 			else
 			{
@@ -147,7 +147,7 @@ string ServerChannel::receiveData()
 		}
 		while(goAgain && this->stayAlive);
 	}
-	MaloW::Debug("Received from Server " + msg);
+	MaloW::Debug("SC: Received from Server " + msg);
 	return msg;
 }
 
@@ -164,7 +164,7 @@ void ServerChannel::sendData(string msg)
 	int retCode = send(this->sock, bufs, sizeof(bufs), 0);
 	if(retCode == SOCKET_ERROR)
 	{
-		MaloW::Debug("Error sending data. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("SC: Error sending data. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 	}
 }
 
@@ -192,12 +192,12 @@ void ServerChannel::CloseSpecific()
 	{
 		int retCode = shutdown(this->sock, 2); // 2 = SD_BOTH
 		if(retCode == SOCKET_ERROR) 
-			MaloW::Debug("Error trying to perform shutdown on socket from a ->Close() call. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+			MaloW::Debug("SC: Error trying to perform shutdown on socket from a ->Close() call. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 	
 		retCode = closesocket(this->sock);
 		if(retCode == SOCKET_ERROR) 
 		{
-			MaloW::Debug("Error failed to close socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+			MaloW::Debug("SC: Error failed to close socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		}
 	}
 	this->sock = 0;

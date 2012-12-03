@@ -66,6 +66,7 @@ void Host::Life()
 		HandleRecivedMessages();
 		PingClients();
 		
+		Sleep(50);
 	}
 }
 
@@ -353,6 +354,13 @@ float Host::Update()
 bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string reason /*= ""*/ )
 {
 	int index = SearchForClient(ID);
+	int pIndex = SearchForPlayer(ID);
+
+	ClientData* temp_c = zClients.at(index);
+	PlayerActor* temp_p = zPlayers.at(pIndex);
+
+	temp_c->zClient->Close();
+
 	std::string mess;
 	bool removed = false;
 
@@ -366,21 +374,17 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 	{
 		mess = this->zMessageConverter.Convert(MESSAGE_TYPE_KICKED, reason);
 
-		this->zClients.at(index)->zClient->sendData(mess);
+		temp_c->zClient->sendData(mess);
 	}
 
 	//create a remove player message.
 	mess = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_PLAYER, ID);
 
 	//remove the player
-	int pIndex = SearchForPlayer(ID);
-	
+
 
 	if(index != -1 && pIndex != -1)
 	{
-		ClientData* temp_c = zClients.at(index);
-		PlayerActor* temp_p = zPlayers.at(pIndex);
-
 		this->zClients.erase(zClients.begin() + index);
 		this->zPlayers.erase(zPlayers.begin() + pIndex);
 

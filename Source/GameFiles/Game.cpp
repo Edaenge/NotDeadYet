@@ -20,7 +20,7 @@ void Game::Run()
 	while(this->zClient->IsAlive())
 	{
 		eng->Update();
-		Sleep(10);
+		Sleep(5);
 	}
 	
 }

@@ -9,6 +9,7 @@ class MainMenu
 public:
 	MainMenu();
 	virtual ~MainMenu();
+	void run();
 
 private:
 	Game* zGame;

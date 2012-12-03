@@ -1,7 +1,7 @@
 #include "Graphics.h"
 #include "SoundEngine.h"
 #include "MainMenu.h"
-// #include <vld.h>
+//#include <vld.h>
 
 void test();
 
@@ -20,7 +20,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 	test();
 
 	// IMPLEMENT MAIN PROGRAM HERE.
-	//MainMenu menu = MainMenu();
+	//MainMenu *menu = MainMenu();
+	//delete menu;
+	//menu->run();
 
 	// Free Graphics
 	FreeGraphics();
