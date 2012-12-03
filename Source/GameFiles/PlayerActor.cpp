@@ -8,7 +8,7 @@ PlayerActor::PlayerActor( const int ID )
 	this->zVelocity = 5;
 	this->zState = 0;
 	this->zPos = Vector3(1,0,1);
-	this->zScale = Vector3(1,1,1);
+	this->zScale = Vector3(0.05,0.05,0.05);
 	this->zPlayerModel = "none";
 }
 
@@ -20,7 +20,7 @@ PlayerActor::PlayerActor( const int ID, const Vector3& startPos )
 
 	this->zVelocity = 5;
 	this->zState = IDLE;
-	this->zScale = Vector3(1,1,1);
+	this->zScale = Vector3(0.05,0.05,0.05);
 	this->zPlayerModel = "none";
 }
 
@@ -33,7 +33,7 @@ PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& 
 	this->zVelocity = 5;
 	this->zState = IDLE;
 	this->zPos = Vector3(1,0,1);
-	this->zScale = Vector3(1,1,1);
+	this->zScale = Vector3(0.05,0.05,0.05);
 	this->zPlayerModel = "none";
 }
 

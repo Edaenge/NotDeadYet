@@ -16,8 +16,16 @@ Host::~Host()
 {
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
-
 	SAFE_DELETE(this->zServerListener);
+
+	for(auto x = zPlayers.begin(); x < zPlayers.end(); x++)
+	{
+		SAFE_DELETE(*x);
+	}
+	for(auto x = zClients.begin(); x < zClients.end(); x++)
+	{
+		SAFE_DELETE(*x);
+	}
 }
 
 void Host::Life()
@@ -196,6 +204,10 @@ void Host::HandleRecivedMessages()
 	{
 		KickClient(np->getID());
 	}
+	else
+	{
+		MaloW::Debug("Warning: The host cannot handle the message \""+np->getMessage()+"\" in HandleRecivedMessages.");
+	}
 
 }
 
@@ -366,8 +378,8 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 
 	if(index != -1 && pIndex != -1)
 	{
-		this->zClients.erase(zClients.begin() + index);
-		this->zPlayers.erase(zPlayers.begin() + pIndex);
+		SAFE_DELETE(this->zClients.erase(zClients.begin() + index));
+		SAFE_DELETE(this->zPlayers.erase(zPlayers.begin() + pIndex));
 
 		removed = true;
 	}
@@ -385,7 +397,8 @@ bool Host::IsAlive() const
 
 void Host::CreateNewPlayer( const int ID, std::vector<std::string> &mesh)
 {
-	std::string uModel, mess;
+	std::string uModel;
+	std::string mess;
 	PlayerActor* pi = new PlayerActor(ID);
 
 	uModel = this->zMessageConverter.ConvertStringToSubstring(USER_DATA, mesh[0]);
