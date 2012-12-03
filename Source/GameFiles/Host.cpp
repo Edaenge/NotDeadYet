@@ -4,8 +4,8 @@ Host::Host()
 {
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
-	this->zClients = new MaloW::Array<ClientData *>(); 
-	this->zPlayers = new MaloW::Array<PlayerActor *>();
+	this->zClients = std::vector<ClientData *>(); 
+	this->zPlayers = std::vector<PlayerActor *>();
 
 	this->zStartime = 0;
 	this->zSecsPerCnt = 0.0f;
@@ -18,8 +18,6 @@ Host::~Host()
 	BroadCastServerShutdown();
 
 	SAFE_DELETE(this->zServerListener);
-	SAFE_DELETE(this->zClients);
-	SAFE_DELETE(this->zPlayers);
 }
 
 void Host::Life()
@@ -63,7 +61,7 @@ void Host::Life()
 	}
 }
 
-int Host::InitHost( int port, int maxClients )
+int Host::InitHost( int port, unsigned int maxClients )
 {
 	int code = 0;
 
@@ -98,7 +96,7 @@ void Host::HandleNewConnections()
 		return;
 	}
 
-	if(this->zClients->size() > zMaxClients)
+	if((unsigned int)this->zClients.size() > zMaxClients)
 	{
 		std::string message;
 
@@ -115,8 +113,8 @@ void Host::HandleNewConnections()
 	MaloW::ClientChannel* client = cce->GetClientChannel();
 
 	client->setNotifier(this);
-	this->zPlayers->add(new PlayerActor(client->getClientID()));
-	this->zClients->add(new ClientData(client));
+	this->zPlayers.push_back(new PlayerActor(client->getClientID()));
+	this->zClients.push_back(new ClientData(client));
 
 	message = this->zMessageConverter.Convert(MESSAGE_TYPE_SELF_ID, client->getClientID());
 	client->sendData(message);
@@ -127,12 +125,14 @@ void Host::HandleNewConnections()
 
 void Host::SendToAllClients( const std::string& message )
 {
-	if(this->zClients->isEmpty())
+	if(this->zClients.empty())
 		return;
 
-	for(int i = 0; i < zClients->size(); i++)
+	std::vector<ClientData*>::iterator it;
+
+	for(it = zClients.begin(); it < zClients.end(); it++)
 	{
-		zClients->get(i)->zClient->sendData(message);
+		(*it)->zClient->sendData(message);
 	}
 }
 
@@ -143,12 +143,12 @@ void Host::SendToClient( int clientID, const std::string& message )
 	if(pos == -1)
 		return;
 
-	this->zClients->get(pos)->zClient->sendData(message);
+	this->zClients.at(pos)->zClient->sendData(message);
 }
 
 bool Host::HasPlayers() const
 {
-	return !this->zClients->isEmpty();
+	return !this->zClients.empty();
 }
 
 void Host::HandleRecivedMessages()
@@ -206,7 +206,7 @@ void Host::HandleKeyPress( const int CLIENT_ID, const std::string& key )
 	std::string keyz = this->zMessageConverter.ConvertStringToSubstring(KEY_DOWN, key);
 	int index = SearchForPlayer(CLIENT_ID);
 
-	PlayerActor* player = this->zPlayers->get(index);
+	PlayerActor* player = this->zPlayers.at(index);
 
 	if(keyz == "W")
 	{
@@ -232,7 +232,7 @@ void Host::HandlePingMsg( const int CLIENT_ID )
 	int index = SearchForClient(CLIENT_ID);
 
 	ClientData* cd;
-	cd = this->zClients->get(index);
+	cd = this->zClients.at(index);
 
 	cd->zPinged = false;
 	cd->zCurrentPingTime = 0.0f;
@@ -249,9 +249,9 @@ int Host::SearchForClient( const int ID ) const
 	if(!HasPlayers())
 		return -1;
 
-	for (unsigned int i = 0; i < (unsigned int)this->zClients->size(); i++)
+	for (unsigned int i = 0; i < (unsigned int)this->zClients.size(); i++)
 	{
-		if(this->zClients->get(i)->zClient->getClientID() == ID)
+		if(this->zClients.at(i)->zClient->getClientID() == ID)
 		{
 			return i;
 		}
@@ -265,9 +265,9 @@ int Host::SearchForPlayer(const int ID) const
 	if(!HasPlayers())
 		return -1;
 
-	for (unsigned int i = 0; i < (unsigned int)this->zPlayers->size(); i++)
+	for (unsigned int i = 0; i < (unsigned int)this->zPlayers.size(); i++)
 	{
-		if(this->zPlayers->get(i)->GetID() == ID)
+		if(this->zPlayers.at(i)->GetID() == ID)
 		{
 			return i;
 		}
@@ -289,9 +289,9 @@ void Host::PingClients()
 
 	ClientData* cd; 
 
-	for(unsigned int i = 0; i < (unsigned int)zClients->size(); i++)
+	for(unsigned int i = 0; i < (unsigned int)zClients.size(); i++)
 	{
-		cd = zClients->get(i);
+		cd = zClients.at(i);
 
 		//If client has not been pinged.
 		if(!cd->zPinged)
@@ -355,7 +355,7 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 	{
 		mess = this->zMessageConverter.Convert(MESSAGE_TYPE_KICKED, reason);
 
-		this->zClients->get(index)->zClient->sendData(mess);
+		this->zClients.at(index)->zClient->sendData(mess);
 	}
 
 	//create a remove player message.
@@ -363,10 +363,15 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 
 	//remove the player
 	int pIndex = SearchForPlayer(ID);
-	this->zPlayers->remove(index);
+	
 
-	if(pIndex == -1)
-		removed = this->zClients->remove(pIndex);
+	if(index != -1 && pIndex != -1)
+	{
+		this->zClients.erase(zClients.begin() + index);
+		this->zPlayers.erase(zPlayers.begin() + pIndex);
+
+		removed = true;
+	}
 
 	//Notify clients
 	this->SendToAllClients(mess);
@@ -387,16 +392,16 @@ void Host::CreateNewPlayer( const int ID, std::vector<std::string> &mesh)
 	uModel = this->zMessageConverter.ConvertStringToSubstring(USER_DATA, mesh[0]);
 
 	pi->SetPlayerModel(uModel);
-	this->zPlayers->add(pi);
+	this->zPlayers.push_back(pi);
 
 	//Create a new player message
 	PlayerActor* temp_PI;
 	std::vector<std::string> temp;
 	int newPlayerindex = 0;
 
-	for (unsigned int i = 0; i < (unsigned int)this->zPlayers->size(); i++)
+	for (unsigned int i = 0; i < (unsigned int)this->zPlayers.size(); i++)
 	{
-		temp_PI = this->zPlayers->get(i);
+		temp_PI = this->zPlayers.at(i);
 
 		Vector3 pos = temp_PI->GetPosition();
 		Vector3 scale = temp_PI->GetScale();
@@ -419,7 +424,7 @@ void Host::CreateNewPlayer( const int ID, std::vector<std::string> &mesh)
 
 	//Send players to new player
 	unsigned int clientIndex = SearchForClient(ID);
-	MaloW::ClientChannel* cc = this->zClients->get(clientIndex)->zClient;
+	MaloW::ClientChannel* cc = this->zClients.at(clientIndex)->zClient;
 
 	std::vector<std::string>::iterator it;
 	for (it = temp.begin(); it < temp.end(); it++)
@@ -428,10 +433,10 @@ void Host::CreateNewPlayer( const int ID, std::vector<std::string> &mesh)
 	}
 
 	//Send new player to players
-	for (unsigned int i = 0; i < (unsigned int)this->zClients->size(); i++)
+	for (unsigned int i = 0; i < (unsigned int)this->zClients.size(); i++)
 	{
 		if(i != clientIndex)
-			this->zClients->get(i)->zClient->sendData(temp[newPlayerindex]);
+			this->zClients.at(i)->zClient->sendData(temp[newPlayerindex]);
 	}
 
 	

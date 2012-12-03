@@ -44,7 +44,7 @@ public:
 	virtual ~Host();
 	/*! Creates a Server locally
 	returns a code that describes error or success*/
-	int InitHost(int port, int maxClients);
+	int InitHost(int port, unsigned int maxClients);
 	/*! Main loop for this thread*/
 	void Life();
 	/*! Checks if the server have players connected.*/
@@ -93,12 +93,12 @@ private:
 private:
 	ServerListener* zServerListener;
 
-	MaloW::Array<ClientData*>* zClients;
-	MaloW::Array<PlayerActor*>* zPlayers;
+	std::vector<ClientData*> zClients;
+	std::vector<PlayerActor*> zPlayers;
 	
 	NetworkMessageConverter zMessageConverter;
 
-	int	zMaxClients;
+	unsigned int zMaxClients;
 	int zPort;
 	
 	INT64 zStartime;

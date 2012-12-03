@@ -17,10 +17,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 	}
 
 	// Tester
-	test();
+	//test();
 
 	// IMPLEMENT MAIN PROGRAM HERE.
-	// MainMenu menu = MainMenu();
+	MainMenu menu = MainMenu();
 
 	// Free Graphics
 	FreeGraphics();
