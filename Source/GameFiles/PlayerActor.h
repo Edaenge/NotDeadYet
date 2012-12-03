@@ -1,5 +1,5 @@
 /*
-Made by Edänge Simon 
+Made by Edänge Simon Datum(30/11/12 created) 
 for project desperation* at Blekinge tekniska högskola.
 */
 

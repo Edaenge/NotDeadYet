@@ -5,7 +5,8 @@
 
 using namespace MaloW;
 
-static const float TIMEOUT_VALUE = 10000.0f; 
+//Timeout_value = 10 sek
+static const float TIMEOUT_VALUE = 10.0f; 
 
 Client::Client()
 {
@@ -80,7 +81,7 @@ void Client::Life()
 
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
-		float diff = GetGraphics()->Update(); //this->zEng->Update();
+		float diff = this->zEng->Update();
 		zTimeSinceLastPing += diff;
 
 		if (MaloW::ProcessEvent* ev = this->PeekEvent())
@@ -91,8 +92,7 @@ void Client::Life()
 			{
 				this->HandleNetworkMessage(np->getMessage());
 			}
-			delete ev;
-			ev = NULL;
+			SAFE_DELETE(ev);
 		}
 
 		this->HandleKeyboardInput();
@@ -111,26 +111,26 @@ void Client::HandleKeyboardInput()
 	if (this->zEng->GetKeyListener()->IsPressed('W'))
 	{
 		//this->zEng->GetCamera()->moveForward(diff);
-		this->zServerChannel->sendData(KEY_DOWN+"W");
+		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, "W"));
 	}
 	else if(this->zEng->GetKeyListener()->IsPressed('S'))	
 	{
 		//this->zEng->GetCamera()->moveBackward(diff);
-		this->zServerChannel->sendData(KEY_DOWN+"S");
+		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, "S"));
 	}
 	if(this->zEng->GetKeyListener()->IsPressed('D'))	
 	{
 		//this->zEng->GetCamera()->moveRight(diff);
-		this->zServerChannel->sendData(KEY_DOWN+"D");
+		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, "D"));
 	}
 	else if(this->zEng->GetKeyListener()->IsPressed('A'))
 	{
 		//this->zEng->GetCamera()->moveLeft(diff);
-		this->zServerChannel->sendData(KEY_DOWN+"A");
+		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, "A"));
 	}
 	if (this->zEng->GetKeyListener()->IsPressed(VK_ESCAPE))
 	{
-		this->zServerChannel->sendData(CONNECTION_CLOSED + MaloW::convertNrToString((float)this->zID));
+		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, this->zID));
 
 		this->Close();
 	}
@@ -207,7 +207,7 @@ void Client::HandleNetworkMessage(std::string msg)
 
 void Client::CloseConnection(const std::string reason)
 {
-	//To do printa till client vilket reason som gavs
+	//Todo Skriv ut vilket reason som gavs
 	this->zServerChannel->Close();
 	this->Close();
 }
@@ -298,7 +298,7 @@ void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray)
 	int clientID = -1;
 	int ClientPosition = -1;
 	bool clientFound = false;
-	for( unsigned int i=0; i <msgArray.size(); ++i )
+	for(unsigned int i=0; i <msgArray.size(); ++i)
 	{
 		sscanf(msgArray[i].c_str(), "%s ", key);
 
