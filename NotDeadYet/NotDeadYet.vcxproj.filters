@@ -79,6 +79,12 @@
     <ClCompile Include="..\Source\GameFiles\PlayerActor.cpp">
       <Filter>Game Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Keybinds.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\KeyHandler.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -193,6 +199,12 @@
       <Filter>Game Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\PlayerActor.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Keybinds.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\KeyHandler.h">
       <Filter>Game Files</Filter>
     </ClInclude>
   </ItemGroup>

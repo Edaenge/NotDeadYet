@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "Safe.h"
 #include "NetworkPacket.h"
+#include "GameFiles/Keybinds.h"
 
 using namespace MaloW;
 
@@ -13,6 +14,7 @@ Client::Client()
 	this->zIP = "";
 	this->zPort = 0;
 	this->zEng = NULL;
+	this->zKeyInfo = KeyHandler();
 	this->zServerChannel = NULL;
 	this->zTimeSinceLastPing = 0.0f;
 	this->zMsgHandler = NetworkMessageConverter();
@@ -43,7 +45,7 @@ Client::~Client()
 {
 	for( auto x = zPlayers.begin(); x < zPlayers.end(); ++x )
 	{
-		delete *x;
+		SAFE_DELETE(*x);
 	}
 
 	SAFE_DELETE(this->zServerChannel);
@@ -119,33 +121,45 @@ bool Client::IsAlive()
 {
 	return stayAlive;
 }
+void Client::CheckKey(unsigned int ID)
+{
+	char key = this->zKeyInfo.GetKey(BACKWARD);
+
+	if (this->zEng->GetKeyListener()->IsPressed(key))
+	{
+		if (!this->zKeyInfo.GetKeyState(ID))
+		{
+			this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, key));
+		}
+		this->zKeyInfo.SetKeyState(ID, true);
+	}
+	else 
+	{
+		if (this->zKeyInfo.GetKeyState(ID))
+		{
+			this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, key));
+		}
+		this->zKeyInfo.SetKeyState(ID, false);
+	}
+}
 void Client::HandleKeyboardInput()
 {
-	if (this->zEng->GetKeyListener()->IsPressed('W'))
-	{
-		//this->zEng->GetCamera()->moveForward(diff);
-		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, "W"));
-	}
-	else if(this->zEng->GetKeyListener()->IsPressed('S'))	
-	{
-		//this->zEng->GetCamera()->moveBackward(diff);
-		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, "S"));
-	}
-	if(this->zEng->GetKeyListener()->IsPressed('D'))	
-	{
-		//this->zEng->GetCamera()->moveRight(diff);
-		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, "D"));
-	}
-	else if(this->zEng->GetKeyListener()->IsPressed('A'))
-	{
-		//this->zEng->GetCamera()->moveLeft(diff);
-		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, "A"));
-	}
-	if (this->zEng->GetKeyListener()->IsPressed(VK_ESCAPE))
+	//this->CheckKey(FORWARD);
+
+	//this->CheckKey(BACKWARD);
+
+	//this->CheckKey(LEFT);
+
+	//this->CheckKey(RIGHT);
+
+	//this->CheckKey(SPRINT);
+
+	//this->CheckKey(DUCK);
+
+	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(MENU)))
 	{
 		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, this->zID));
-
-		this->Close();
+		this->CloseConnection("Escape was pressed");
 	}
 }
 void Client::Ping()

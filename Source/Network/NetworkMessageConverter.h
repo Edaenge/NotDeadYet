@@ -63,6 +63,7 @@ public:
 	//Converts parameters to correctly formated strings sent between client and server
 	std::string Convert(const int ID);
 	std::string Convert(const int ID, const int state_ID);
+	std::string Convert(const int ID, const char key);
 	std::string Convert(const int ID, const std::string word);
 	std::string Convert(const int ID, const float x, const float y, const float z);
 	std::string Convert(const int ID, const float x, const float y, const float z, const float w);

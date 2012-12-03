@@ -23,6 +23,8 @@
     <ClCompile Include="..\Source\GameFiles\Game.cpp" />
     <ClCompile Include="..\Source\GameFiles\Graphics.cpp" />
     <ClCompile Include="..\Source\GameFiles\Host.cpp" />
+    <ClCompile Include="..\Source\GameFiles\Keybinds.cpp" />
+    <ClCompile Include="..\Source\GameFiles\KeyHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\MainMenu.cpp" />
     <ClCompile Include="..\Source\GameFiles\Player.cpp" />
     <ClCompile Include="..\Source\GameFiles\PlayerActor.cpp" />
@@ -56,6 +58,8 @@
     <ClInclude Include="..\Source\GameFiles\Game.h" />
     <ClInclude Include="..\Source\GameFiles\Graphics.h" />
     <ClInclude Include="..\Source\GameFiles\Host.h" />
+    <ClInclude Include="..\Source\GameFiles\Keybinds.h" />
+    <ClInclude Include="..\Source\GameFiles\KeyHandler.h" />
     <ClInclude Include="..\Source\GameFiles\MainMenu.h" />
     <ClInclude Include="..\Source\GameFiles\Player.h" />
     <ClInclude Include="..\Source\GameFiles\PlayerActor.h" />

@@ -5,13 +5,9 @@
 NetworkMessageConverter::NetworkMessageConverter()
 {
 }
-
-
 NetworkMessageConverter::~NetworkMessageConverter()
 {
 }
-
-
 std::string NetworkMessageConverter::Convert(const int ID, const float x, const float y, const float z)
 {
 	std::stringstream ss;
@@ -34,8 +30,6 @@ std::string NetworkMessageConverter::Convert(const int ID, const float x, const 
 
 	return ss.str();
 }
-
-
 std::string NetworkMessageConverter::Convert(const int ID, const float x, const float y, const float z, const float w)
 {
 	std::stringstream ss;
@@ -53,8 +47,6 @@ std::string NetworkMessageConverter::Convert(const int ID, const float x, const 
 
 	return ss.str();
 }
-
-
 std::string NetworkMessageConverter::Convert(const int ID, const std::string word)
 {
 	std::stringstream ss;
@@ -83,8 +75,25 @@ std::string NetworkMessageConverter::Convert(const int ID, const std::string wor
 
 	return ss.str();
 }
+std::string NetworkMessageConverter::Convert( const int ID, const char key )
+{
+	std::stringstream ss;
 
+	switch (ID)
+	{
+	case MESSAGE_TYPE_KEY_DOWN:
+		ss << KEY_DOWN << " " << key << "*";
+		break;
+	case MESSAGE_TYPE_KEY_UP:
+		ss << KEY_UP << " " << key << "*";
+		break;
+	default:
+		ss << "";
+		break;
+	}
 
+	return ss.str();
+}
 std::string NetworkMessageConverter::Convert(const int ID, const int state_ID)
 {
 	std::stringstream ss;
@@ -116,8 +125,6 @@ std::string NetworkMessageConverter::Convert(const int ID, const int state_ID)
 
 	return ss.str();
 }
-
-
 std::string NetworkMessageConverter::Convert(const int ID)
 {
 	std::stringstream ss;
@@ -136,8 +143,6 @@ std::string NetworkMessageConverter::Convert(const int ID)
 
 	return ss.str();
 }
-
-
 std::string NetworkMessageConverter::CombineMessage(const std::vector<std::string>& msgArray)
 {
 	std::string msg = "";
@@ -147,8 +152,6 @@ std::string NetworkMessageConverter::CombineMessage(const std::vector<std::strin
 	}
 	return msg;
 }
-
-
 std::vector<std::string> NetworkMessageConverter::SplitMessage(std::string msg)
 {
 	std::string subMsg = "";
@@ -164,8 +167,6 @@ std::vector<std::string> NetworkMessageConverter::SplitMessage(std::string msg)
 	}
 	return msgArray;
 }
-
-
 Vector3 NetworkMessageConverter::ConvertStringToVector(const std::string& type, std::string msg)
 {
 	float x = 0.0f;
@@ -178,8 +179,6 @@ Vector3 NetworkMessageConverter::ConvertStringToVector(const std::string& type, 
 	
 	return vec;
 }
-
-
 Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& type, std::string msg)
 {
 	float x;
@@ -192,16 +191,12 @@ Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& ty
 
 	return quaternion;
 }
-
-
 int NetworkMessageConverter::ConvertStringToInt(const std::string& type, std::string msg)
 {
 	int value;
 	sscanf_s(msg.c_str(), (type + "%d").c_str(), &value);
 	return value;
 }
-
-
 std::string NetworkMessageConverter::ConvertStringToSubstring(const std::string& type, std::string msg)
 {
 	char subString[100];
