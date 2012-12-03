@@ -113,7 +113,6 @@ void Host::HandleNewConnections()
 	MaloW::ClientChannel* client = cce->GetClientChannel();
 
 	client->setNotifier(this);
-	this->zPlayers.push_back(new PlayerActor(client->getClientID()));
 	this->zClients.push_back(new ClientData(client));
 
 	message = this->zMessageConverter.Convert(MESSAGE_TYPE_SELF_ID, client->getClientID());
@@ -179,7 +178,7 @@ void Host::HandleRecivedMessages()
 		return;
 
 	char key[512];
-	sscanf_s(msgArray[0].c_str(), "%s ", key);
+	sscanf(msgArray[0].c_str(), "%s ", key);
 
 	if(strcmp(key, KEY_DOWN.c_str()) == 0)
 	{

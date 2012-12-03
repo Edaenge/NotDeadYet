@@ -205,6 +205,6 @@ int NetworkMessageConverter::ConvertStringToInt(const std::string& type, std::st
 std::string NetworkMessageConverter::ConvertStringToSubstring(const std::string& type, std::string msg)
 {
 	char subString[100];
-	sscanf_s(msg.c_str(), (type + "%s").c_str(), &subString);
+	sscanf(msg.c_str(), (type + "%s").c_str(), &subString);
 	return subString;
 }

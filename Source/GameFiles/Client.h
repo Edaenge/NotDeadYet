@@ -13,11 +13,19 @@ class Client : public MaloW::Process
 {
 private:
 	int zID;
+
 	int	zPort;
 	std::string zIP;
+
+	INT64 zStartime;
+	float zDeltaTime;
+	float zSecsPerCnt;
+
 	std::string zMeshID;
 	GraphicsEngine* zEng;
+
 	float zTimeSinceLastPing;
+
 	std::vector<Player*> zPlayers;
 	NetworkMessageConverter zMsgHandler;
 	MaloW::ServerChannel* zServerChannel;
@@ -36,6 +44,7 @@ private:
 	void CloseConnection(const std::string reason);
 	/*! Initializes the graphic stuff*/
 	void initClient();
+	float Update();
 public:
 	Client();
 	/*! Connects to a Host with the specified parameters*/

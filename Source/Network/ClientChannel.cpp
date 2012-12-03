@@ -47,12 +47,12 @@ string ClientChannel::receiveData()
 			if(retCode == SOCKET_ERROR)
 			{
 				this->Close();
-				MaloW::Debug("Error recieving data. Error: " + MaloW::convertNrToString(WSAGetLastError()) + ". Probably due to crash/improper dissconnect");
+				MaloW::Debug("Error receiving data. Error: " + MaloW::convertNrToString(WSAGetLastError()) + ". Probably due to crash/improper disconnect");
 			}
 			else if(retCode == 0)
 			{
 				this->Close();
-				MaloW::Debug("Client dissconnected, closing.");
+				MaloW::Debug("Client disconnected, closing.");
 			}
 			else
 			{
@@ -83,7 +83,7 @@ string ClientChannel::receiveData()
 		}
 		while(goAgain && this->stayAlive);
 	}
-
+	MaloW::Debug("Received from Client " + msg);
 	return msg;
 }
 
@@ -99,6 +99,7 @@ void ClientChannel::sendData(string msg)
 	{
 		MaloW::Debug("Error sending data. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 	}
+	MaloW::Debug("Sent to Client " + msg);
 }
 
 void ClientChannel::Life()

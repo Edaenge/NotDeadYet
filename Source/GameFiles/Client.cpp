@@ -19,9 +19,13 @@ Client::Client()
 
 	zMeshID = "Media/scale.obj";
 
+	INT64 frequency;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
+
+	this->zSecsPerCnt = 1.0f / (float)(frequency);
+
+	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
 }
-
-
 int Client::Connect(const std::string& ip, const int port)
 {
 	int code = 0;
@@ -35,8 +39,6 @@ int Client::Connect(const std::string& ip, const int port)
 	
 	return code;
 }
-
-
 Client::~Client()
 {
 	for( auto x = zPlayers.begin(); x < zPlayers.end(); ++x )
@@ -46,8 +48,21 @@ Client::~Client()
 
 	SAFE_DELETE(this->zServerChannel);
 }
+float Client::Update()
+{
+	INT64 currentTime;
+	float timeDifference;
 
+	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
 
+	timeDifference = (float)(currentTime - this->zStartime);
+
+	this->zDeltaTime = timeDifference * this->zSecsPerCnt;
+
+	this->zStartime = currentTime;
+
+	return this->zDeltaTime;
+}
 void Client::initClient()
 {
 	this->zEng->CreateSkyBox("Media/skymap.dds");
@@ -69,10 +84,9 @@ void Client::initClient()
 
 	//this->zEng->LoadingScreen("Media/LoadingScreen/StartScreen.png", "", 0.0f, 1.0f, 1.0f, 1.0f);
 }
-
-
 void Client::Life()
 {
+	this->Update();
 	this->zServerChannel->setNotifier(this);
 
 	this->zServerChannel->Start();
@@ -81,8 +95,8 @@ void Client::Life()
 
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
-		float diff = this->zEng->Update();
-		zTimeSinceLastPing += diff;
+		float dt = this->Update();
+		zTimeSinceLastPing += dt;
 
 		if (MaloW::ProcessEvent* ev = this->PeekEvent())
 		{
@@ -94,18 +108,17 @@ void Client::Life()
 			}
 			SAFE_DELETE(ev);
 		}
-
+		if (this->zTimeSinceLastPing > TIMEOUT_VALUE)
+		{
+			this->CloseConnection("Timeout");
+		}
 		this->HandleKeyboardInput();
 	}
 }
-
-
 bool Client::IsAlive()
 {
 	return stayAlive;
 }
-
-
 void Client::HandleKeyboardInput()
 {
 	if (this->zEng->GetKeyListener()->IsPressed('W'))
@@ -135,8 +148,6 @@ void Client::HandleKeyboardInput()
 		this->Close();
 	}
 }
-
-
 void Client::Ping()
 {
 	if (zTimeSinceLastPing <= TIMEOUT_VALUE)
@@ -149,8 +160,6 @@ void Client::Ping()
 		this->CloseConnection("Connection timeout");
 	}
 }
-
-
 void Client::HandleNetworkMessage(std::string msg)
 {
 	std::vector<std::string> msgArray;
@@ -203,16 +212,12 @@ void Client::HandleNetworkMessage(std::string msg)
 		}
 	}
 }
-
-
 void Client::CloseConnection(const std::string reason)
 {
 	//Todo Skriv ut vilket reason som gavs
 	this->zServerChannel->Close();
 	this->Close();
 }
-
-
 void Client::HandleNewPlayer(const std::vector<std::string>& msgArray)
 {
 	char key[512];
@@ -220,6 +225,7 @@ void Client::HandleNewPlayer(const std::vector<std::string>& msgArray)
 	Vector3 position;
 	Vector3 scale;
 	Vector4 rotation;
+	Vector3 direction;
 	std::string filename;
 	int clientID = -1;
 	int state = 0;
@@ -252,6 +258,10 @@ void Client::HandleNewPlayer(const std::vector<std::string>& msgArray)
 		else if(strcmp(key, MESH_MODEL.c_str()) == 0)
 		{
 			filename = this->zMsgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
+		}
+		else if (strcmp(key, DIRECTION.c_str()) == 0)
+		{
+			direction = this->zMsgHandler.ConvertStringToVector(DIRECTION, msgArray[i]);
 		}
 		else
 		{
@@ -358,8 +368,6 @@ void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray)
 		playerPointer = NULL;
 	}
 }
-
-
 void Client::HandleRemovePlayer(const std::vector<std::string>& msgArray)
 {
 	char key[512];

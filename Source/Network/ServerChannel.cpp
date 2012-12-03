@@ -112,12 +112,12 @@ string ServerChannel::receiveData()
 			if(retCode == SOCKET_ERROR)
 			{
 				this->Close();
-				MaloW::Debug("Error recieving data. Error: " + MaloW::convertNrToString(WSAGetLastError()) + ". Probably due to crash/improper dissconnect");
+				MaloW::Debug("Error receiving data. Error: " + MaloW::convertNrToString(WSAGetLastError()) + ". Probably due to crash/improper disconnect");
 			}
 			else if(retCode == 0)
 			{
 				this->Close();
-				MaloW::Debug("Server dissconnected, closing.");
+				MaloW::Debug("Server disconnected, closing.");
 			}
 			else
 			{
@@ -147,7 +147,7 @@ string ServerChannel::receiveData()
 		}
 		while(goAgain && this->stayAlive);
 	}
-	MaloW::Debug("Recieved from Server " + msg);
+	MaloW::Debug("Received from Server " + msg);
 	return msg;
 }
 

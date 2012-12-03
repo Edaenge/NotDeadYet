@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "Safe.h"
-
+#include "Graphics.h"
 Game::Game()
 {
 	this->zClient = NULL;
@@ -15,11 +15,12 @@ Game::~Game()
 
 void Game::Run()
 {
-
+	GraphicsEngine* eng = GetGraphics();
 	//Waits for client to exit.
 	while(this->zClient->IsAlive())
 	{
-		Sleep(100);
+		eng->Update();
+		Sleep(10);
 	}
 	
 }
