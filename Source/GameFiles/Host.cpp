@@ -249,7 +249,7 @@ int Host::SearchForClient( const int ID ) const
 	if(!HasPlayers())
 		return -1;
 
-	for (unsigned int i = 0; i < (unsigned int)this->zClients.size(); i++)
+	for (unsigned int i = 0; i < this->zClients.size(); i++)
 	{
 		if(this->zClients.at(i)->zClient->getClientID() == ID)
 		{
@@ -265,7 +265,7 @@ int Host::SearchForPlayer(const int ID) const
 	if(!HasPlayers())
 		return -1;
 
-	for (unsigned int i = 0; i < (unsigned int)this->zPlayers.size(); i++)
+	for (unsigned int i = 0; i < this->zPlayers.size(); i++)
 	{
 		if(this->zPlayers.at(i)->GetID() == ID)
 		{
@@ -395,41 +395,42 @@ void Host::CreateNewPlayer( const int ID, std::vector<std::string> &mesh)
 	this->zPlayers.push_back(pi);
 
 	//Create a new player message
-	PlayerActor* temp_PI;
 	std::vector<std::string> temp;
 	int newPlayerindex = 0;
+	int count = 0;
 
-	for (unsigned int i = 0; i < (unsigned int)this->zPlayers.size(); i++)
+	std::vector<PlayerActor*>::iterator it;
+	for (it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
 	{
-		temp_PI = this->zPlayers.at(i);
+		Vector3 pos = (*it)->GetPosition();
+		Vector3 scale = (*it)->GetScale();
+		Vector3 dir = (*it)->GetDirection();
+		Vector4 rot = (*it)->GetRotation();
 
-		Vector3 pos = temp_PI->GetPosition();
-		Vector3 scale = temp_PI->GetScale();
-		Vector3 dir = temp_PI->GetDirection();
-		Vector4 rot = temp_PI->GetRotation();
-
-		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, temp_PI->GetID());
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, (*it)->GetID());
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, temp_PI->GetPlayerModel());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, temp_PI->GetState());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetPlayerModel());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (*it)->GetState());
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
 
 		temp.push_back(mess);
 
-		if(temp_PI->GetID() == ID)
-			newPlayerindex = i;
+		if((*it)->GetID() == ID)
+			newPlayerindex = count;
+
+		count++;
 	}
 
 	//Send players to new player
 	unsigned int clientIndex = SearchForClient(ID);
 	MaloW::ClientChannel* cc = this->zClients.at(clientIndex)->zClient;
 
-	std::vector<std::string>::iterator it;
-	for (it = temp.begin(); it < temp.end(); it++)
+	std::vector<std::string>::iterator sIt;
+	for (sIt = temp.begin(); sIt < temp.end(); sIt++)
 	{
-		cc->sendData(*it);
+		cc->sendData(*sIt);
 	}
 
 	//Send new player to players
