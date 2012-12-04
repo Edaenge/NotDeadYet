@@ -27,7 +27,6 @@ Host::~Host()
 	}
 	for(auto x = zClients.begin(); x < zClients.end(); x++)
 	{
-		(*x)->zClient->WaitUntillDone();
 		SAFE_DELETE(*x);
 	}
 }
@@ -316,7 +315,7 @@ void Host::PingClients()
 		if(!cd->zPinged)
 		{
 			//If it was x sec ago we sent a ping, don't send a ping.
-			if(cd->zCurrentPingTime < 3.0f) //hard coded
+			if(cd->zCurrentPingTime < 5.0f) //hard coded
 				cd->IncPingTime(zDeltaTime);
 
 			//else send ping.

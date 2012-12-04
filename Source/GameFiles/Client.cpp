@@ -116,6 +116,8 @@ void Client::Life()
 			this->CloseConnection("Timeout");
 		}
 		this->HandleKeyboardInput();
+
+		Sleep(50);
 	}
 }
 bool Client::IsAlive()

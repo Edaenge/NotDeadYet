@@ -8,12 +8,7 @@ Sent to Client NP 0*P 1 0 1*Sc 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*St 0*D
 SC: Received from Server NP 0*P 1 0 1*Sc 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*St 0*D 0 0 0*
 Sent to Client Ping*
 
-SC: Received from Server Ping*
-Sent to Server Ping*
-CC: Received from Client Ping*
-Sent to Client Ping*
-
-SC: Received from Server Ping*
+ Ping*
 Sent to Server Ping*
 CC: Received from Client Ping*
 Sent to Server CC 0*
@@ -22,7 +17,7 @@ CC: Client disconnected, closing.
 CC: Received from Client 
 SC: Server disconnected, closing.
 SC: Received from Server 
+NS: Error trying to perform shutdown on socket from a ->Close() call from another thread.
 NS: Invalid client socket, connection failed. Error: 10004
-e() call from another thread.
 NS: Failed to close socket. Error: 10093
 NS: Error cleaning up Winsock Library. Error: 10093
