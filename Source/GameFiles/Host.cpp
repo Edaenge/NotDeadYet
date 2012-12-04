@@ -16,6 +16,9 @@ Host::~Host()
 {
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
+
+	this->zServerListener->Close();
+	this->zServerListener->WaitUntillDone();
 	SAFE_DELETE(this->zServerListener);
 
 	for(auto x = zPlayers.begin(); x < zPlayers.end(); x++)
@@ -24,6 +27,7 @@ Host::~Host()
 	}
 	for(auto x = zClients.begin(); x < zClients.end(); x++)
 	{
+		(*x)->zClient->WaitUntillDone();
 		SAFE_DELETE(*x);
 	}
 }
@@ -47,6 +51,9 @@ void Host::Life()
 		if(!this->zServerListener->IsAlive())
 		{
 			int code;
+
+			this->zServerListener->Close();
+			this->zServerListener->WaitUntillDone();
 
 			SAFE_DELETE(this->zServerListener);
 			this->zServerListener = new ServerListener();
@@ -385,6 +392,7 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 
 	if(index != -1 && pIndex != -1)
 	{
+		temp_c->zClient->WaitUntillDone();
 		this->zClients.erase(zClients.begin() + index);
 		this->zPlayers.erase(zPlayers.begin() + pIndex);
 

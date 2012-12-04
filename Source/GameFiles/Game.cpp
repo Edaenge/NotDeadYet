@@ -22,7 +22,7 @@ void Game::Run()
 		eng->Update();
 		Sleep(5);
 	}
-	
+
 }
 
 int Game::InitGameClient(std::string ip, int port)

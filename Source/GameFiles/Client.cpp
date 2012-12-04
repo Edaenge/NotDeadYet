@@ -48,6 +48,7 @@ Client::~Client()
 		SAFE_DELETE(*x);
 	}
 
+	this->zServerChannel->WaitUntillDone();
 	SAFE_DELETE(this->zServerChannel);
 }
 float Client::Update()
@@ -230,7 +231,7 @@ void Client::CloseConnection(const std::string reason)
 {
 	//Todo Skriv ut vilket reason som gavs
 	this->zServerChannel->Close();
-	this->Close();
+	this->stayAlive = false;
 }
 void Client::HandleNewPlayer(const std::vector<std::string>& msgArray)
 {
