@@ -16,6 +16,6 @@ public:
 	/*! Returns true if the key is pressed*/
 	bool GetKeyState(const unsigned int key) const;
 	/*! Change the value for the Key State*/
-	void SetKeyState(const unsigned int key, const bool value)
+	void SetKeyState(const unsigned int key, const bool value);
 
 };
