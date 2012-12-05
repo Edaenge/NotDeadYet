@@ -16,7 +16,7 @@ Keybinds::Keybinds()
 Keybinds::~Keybinds()
 {
 }
-char Keybinds::GetKey(unsigned int key)
+char Keybinds::GetKey(const unsigned int key)
 {
 	char returnValue;
 	switch (key)
@@ -49,7 +49,7 @@ char Keybinds::GetKey(unsigned int key)
 		returnValue = this->zMenuKey;
 		break;
 	default:
-		returnValue = ' ';
+		returnValue = '-1';
 		break;
 	}
 

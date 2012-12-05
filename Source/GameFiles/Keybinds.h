@@ -4,24 +4,13 @@
 */
 #pragma once
 
-enum KEY_BINDINGS
-{
-	FORWARD,
-	BACKWARD,
-	LEFT,
-	RIGHT,
-	SPRINT,
-	JUMP,
-	DUCK,
-	INTERACT,
-	MENU
-};
+#include "GameFiles/KeyValues.h"
 class Keybinds
 {
 public:
 	Keybinds();
 	virtual ~Keybinds();
-	char GetKey(unsigned int key);
+	char GetKey(const unsigned int key);
 private:
 	char zForwardKey;
 	char zBackwardKey;

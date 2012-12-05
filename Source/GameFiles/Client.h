@@ -10,6 +10,8 @@
 #include "Network/ServerChannel.h"
 #include "Network/NetworkMessageConverter.h"
 
+using namespace MaloW;
+
 class Client : public MaloW::Process
 {
 private:
@@ -30,7 +32,7 @@ private:
 
 	std::vector<Player*> zPlayers;
 	NetworkMessageConverter zMsgHandler;
-	MaloW::ServerChannel* zServerChannel;
+	ServerChannel* zServerChannel;
 private:
 	/*! Handle Keyboard Input */
 	void HandleKeyboardInput();

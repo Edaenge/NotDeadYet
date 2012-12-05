@@ -8,7 +8,7 @@ NetworkMessageConverter::NetworkMessageConverter()
 NetworkMessageConverter::~NetworkMessageConverter()
 {
 }
-std::string NetworkMessageConverter::Convert(const int ID, const float x, const float y, const float z)
+std::string NetworkMessageConverter::Convert(const unsigned int ID, const float x, const float y, const float z)
 {
 	std::stringstream ss;
 
@@ -30,7 +30,7 @@ std::string NetworkMessageConverter::Convert(const int ID, const float x, const 
 
 	return ss.str();
 }
-std::string NetworkMessageConverter::Convert(const int ID, const float x, const float y, const float z, const float w)
+std::string NetworkMessageConverter::Convert(const unsigned int ID, const float x, const float y, const float z, const float w)
 {
 	std::stringstream ss;
 
@@ -47,7 +47,7 @@ std::string NetworkMessageConverter::Convert(const int ID, const float x, const 
 
 	return ss.str();
 }
-std::string NetworkMessageConverter::Convert(const int ID, const std::string word)
+std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::string word)
 {
 	std::stringstream ss;
 
@@ -75,26 +75,7 @@ std::string NetworkMessageConverter::Convert(const int ID, const std::string wor
 
 	return ss.str();
 }
-std::string NetworkMessageConverter::Convert( const int ID, const char key )
-{
-	std::stringstream ss;
-
-	switch (ID)
-	{
-	case MESSAGE_TYPE_KEY_DOWN:
-		ss << KEY_DOWN << " " << key << "*";
-		break;
-	case MESSAGE_TYPE_KEY_UP:
-		ss << KEY_UP << " " << key << "*";
-		break;
-	default:
-		ss << "";
-		break;
-	}
-
-	return ss.str();
-}
-std::string NetworkMessageConverter::Convert(const int ID, const int state_ID)
+std::string NetworkMessageConverter::Convert(const unsigned int ID, const unsigned int state_ID)
 {
 	std::stringstream ss;
 
@@ -102,6 +83,12 @@ std::string NetworkMessageConverter::Convert(const int ID, const int state_ID)
 	{
 	case MESSAGE_TYPE_PLAYER_UPDATE:
 		ss << PLAYER_UPDATE << " " << state_ID << "*";
+		break;
+	case MESSAGE_TYPE_KEY_DOWN:
+		ss << KEY_DOWN << " " << state_ID << "*";
+		break;
+	case MESSAGE_TYPE_KEY_UP:
+		ss << KEY_UP << " " << state_ID << "*";
 		break;
 	case MESSAGE_TYPE_STATE:
 		ss << STATE << " " << state_ID << "*";
@@ -125,7 +112,7 @@ std::string NetworkMessageConverter::Convert(const int ID, const int state_ID)
 
 	return ss.str();
 }
-std::string NetworkMessageConverter::Convert(const int ID)
+std::string NetworkMessageConverter::Convert(const unsigned int ID)
 {
 	std::stringstream ss;
 	switch (ID)

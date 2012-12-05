@@ -43,6 +43,8 @@ int Client::Connect(const std::string& ip, const int port)
 }
 Client::~Client()
 {
+	this->Close();
+	this->WaitUntillDone();
 	for( auto x = zPlayers.begin(); x < zPlayers.end(); ++x )
 	{
 		SAFE_DELETE(*x);
@@ -126,13 +128,13 @@ bool Client::IsAlive()
 }
 void Client::CheckKey(unsigned int ID)
 {
-	char key = this->zKeyInfo.GetKey(BACKWARD);
+	char key = this->zKeyInfo.GetKey(ID);
 
 	if (this->zEng->GetKeyListener()->IsPressed(key))
 	{
 		if (!this->zKeyInfo.GetKeyState(ID))
 		{
-			this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, key));
+			this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, ID));
 		}
 		this->zKeyInfo.SetKeyState(ID, true);
 	}
@@ -140,24 +142,24 @@ void Client::CheckKey(unsigned int ID)
 	{
 		if (this->zKeyInfo.GetKeyState(ID))
 		{
-			this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, key));
+			this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, ID));
 		}
 		this->zKeyInfo.SetKeyState(ID, false);
 	}
 }
 void Client::HandleKeyboardInput()
 {
-	//this->CheckKey(FORWARD);
+	this->CheckKey(FORWARD);
 
-	//this->CheckKey(BACKWARD);
+	this->CheckKey(BACKWARD);
 
-	//this->CheckKey(LEFT);
+	this->CheckKey(LEFT);
 
-	//this->CheckKey(RIGHT);
+	this->CheckKey(RIGHT);
 
-	//this->CheckKey(SPRINT);
+	this->CheckKey(SPRINT);
 
-	//this->CheckKey(DUCK);
+	this->CheckKey(DUCK);
 
 	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(MENU)))
 	{

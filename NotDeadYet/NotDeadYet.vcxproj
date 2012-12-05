@@ -60,6 +60,7 @@
     <ClInclude Include="..\Source\GameFiles\Host.h" />
     <ClInclude Include="..\Source\GameFiles\Keybinds.h" />
     <ClInclude Include="..\Source\GameFiles\KeyHandler.h" />
+    <ClInclude Include="..\Source\GameFiles\KeyValues.h" />
     <ClInclude Include="..\Source\GameFiles\MainMenu.h" />
     <ClInclude Include="..\Source\GameFiles\Player.h" />
     <ClInclude Include="..\Source\GameFiles\PlayerActor.h" />

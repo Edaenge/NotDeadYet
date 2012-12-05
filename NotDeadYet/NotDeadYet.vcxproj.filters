@@ -207,6 +207,9 @@
     <ClInclude Include="..\Source\GameFiles\KeyHandler.h">
       <Filter>Game Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\KeyValues.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameIcon.ico" />

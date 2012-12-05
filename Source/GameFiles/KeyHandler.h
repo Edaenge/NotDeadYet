@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Keybinds.h"
+#include "GameFiles/Keybinds.h"
 
 class KeyHandler
 {
@@ -15,10 +15,11 @@ private:
 	bool zInteractPressed;
 	bool zMenuPressed;
 	Keybinds zBinds;
+	bool zKeyState[CAP];
 public:
 	KeyHandler();
 	~KeyHandler();
 	bool GetKeyState(const unsigned int key);
 	char GetKey(const unsigned int key);
-	void SetKeyState(const unsigned int key, bool value);
+	void SetKeyState(const unsigned int key, const bool value);
 };
