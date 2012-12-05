@@ -6,8 +6,8 @@
 #include "Process.h"
 #include "GraphicsEngine.h"
 #include "GameFiles/Player.h"
-#include "GameFiles/KeyHandler.h"
 #include "Network/ServerChannel.h"
+#include "GameFiles/KeyUtil/KeyHandler.h"
 #include "Network/NetworkMessageConverter.h"
 
 using namespace MaloW;
@@ -49,7 +49,7 @@ private:
 	/*! Initializes the graphic stuff*/
 	void initClient();
 	float Update();
-	void CheckKey(unsigned int ID);
+	bool CheckKey(const unsigned int ID);
 public:
 	Client();
 	/*! Connects to a Host with the specified parameters*/

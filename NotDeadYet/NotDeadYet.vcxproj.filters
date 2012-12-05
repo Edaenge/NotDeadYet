@@ -23,6 +23,9 @@
     <Filter Include="External\Graphics">
       <UniqueIdentifier>{90262206-d2b8-4843-ac00-c2904e9ec0c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Files\KeyUtil">
+      <UniqueIdentifier>{f47f98b2-1160-44cb-afb3-7b2908837955}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\main.cpp">
@@ -79,11 +82,14 @@
     <ClCompile Include="..\Source\GameFiles\PlayerActor.cpp">
       <Filter>Game Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\Keybinds.cpp">
-      <Filter>Game Files</Filter>
+    <ClCompile Include="..\Source\GameFiles\KeyUtil\Keybinds.cpp">
+      <Filter>Game Files\KeyUtil</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\KeyHandler.cpp">
-      <Filter>Game Files</Filter>
+    <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyHandler.cpp">
+      <Filter>Game Files\KeyUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyStates.cpp">
+      <Filter>Game Files\KeyUtil</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -201,14 +207,17 @@
     <ClInclude Include="..\Source\GameFiles\PlayerActor.h">
       <Filter>Game Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\Keybinds.h">
-      <Filter>Game Files</Filter>
+    <ClInclude Include="..\Source\GameFiles\KeyUtil\Keybinds.h">
+      <Filter>Game Files\KeyUtil</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\KeyHandler.h">
-      <Filter>Game Files</Filter>
+    <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyHandler.h">
+      <Filter>Game Files\KeyUtil</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\KeyValues.h">
-      <Filter>Game Files</Filter>
+    <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyStates.h">
+      <Filter>Game Files\KeyUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyValues.h">
+      <Filter>Game Files\KeyUtil</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,6 @@
-#include "GameFiles/Keybinds.h"
+#include "GameFiles/KeyUtil/Keybinds.h"
+
+#include "GameFiles/KeyUtil/KeyValues.h"
 
 #include <windows.h>
 Keybinds::Keybinds()
@@ -21,35 +23,35 @@ char Keybinds::GetKey(const unsigned int key)
 	char returnValue;
 	switch (key)
 	{
-	case FORWARD:
+	case KEY_FORWARD:
 		returnValue = this->zForwardKey;
 		break;
-	case BACKWARD:
+	case KEY_BACKWARD:
 		returnValue = this->zBackwardKey;
 		break;
-	case LEFT:
+	case KEY_LEFT:
 		returnValue = this->zLeftKey;
 		break;
-	case RIGHT:
+	case KEY_RIGHT:
 		returnValue = this->zRightKey;
 		break;
-	case SPRINT:
+	case KEY_SPRINT:
 		returnValue = this->zSprintKey;
 		break;
-	case JUMP:
+	case KEY_JUMP:
 		returnValue = this->zJumpKey;
 		break;
-	case DUCK:
+	case KEY_DUCK:
 		returnValue = this->zDuckKey;
 		break;
-	case INTERACT:
+	case KEY_INTERACT:
 		returnValue = this->zInteractKey;
 		break;
-	case MENU:
+	case KEY_MENU:
 		returnValue = this->zMenuKey;
 		break;
 	default:
-		returnValue = '-1';
+		returnValue = ' ';
 		break;
 	}
 

@@ -4,7 +4,8 @@
 */
 #pragma once
 
-#include "GameFiles/KeyValues.h"
+#include "GameFiles/KeyUtil/KeyValues.h"
+
 class Keybinds
 {
 public:

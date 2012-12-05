@@ -2,7 +2,6 @@
 #include "Graphics.h"
 #include "Safe.h"
 #include "NetworkPacket.h"
-#include "GameFiles/Keybinds.h"
 
 using namespace MaloW;
 
@@ -11,6 +10,7 @@ static const float TIMEOUT_VALUE = 10.0f;
 
 Client::Client()
 {
+	this->zID = -1;
 	this->zIP = "";
 	this->zPort = 0;
 	this->zEng = NULL;
@@ -126,8 +126,9 @@ bool Client::IsAlive()
 {
 	return stayAlive;
 }
-void Client::CheckKey(unsigned int ID)
+bool Client::CheckKey(const unsigned int ID)
 {
+	bool result = false;
 	char key = this->zKeyInfo.GetKey(ID);
 
 	if (this->zEng->GetKeyListener()->IsPressed(key))
@@ -137,6 +138,7 @@ void Client::CheckKey(unsigned int ID)
 			this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, ID));
 		}
 		this->zKeyInfo.SetKeyState(ID, true);
+		result = true;
 	}
 	else 
 	{
@@ -145,23 +147,28 @@ void Client::CheckKey(unsigned int ID)
 			this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, ID));
 		}
 		this->zKeyInfo.SetKeyState(ID, false);
+		result = false;
 	}
+	return result;
 }
 void Client::HandleKeyboardInput()
 {
-	this->CheckKey(FORWARD);
+	bool pressed = false;
+	pressed = this->CheckKey(KEY_FORWARD);
+	if (!pressed)
+		this->CheckKey(KEY_BACKWARD);
 
-	this->CheckKey(BACKWARD);
+	pressed = this->CheckKey(KEY_LEFT);
 
-	this->CheckKey(LEFT);
+	if(!pressed)
+		this->CheckKey(KEY_RIGHT);
+	
 
-	this->CheckKey(RIGHT);
+	pressed = this->CheckKey(KEY_SPRINT);
 
-	this->CheckKey(SPRINT);
+	this->CheckKey(KEY_DUCK);
 
-	this->CheckKey(DUCK);
-
-	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(MENU)))
+	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 	{
 		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, this->zID));
 		this->CloseConnection("Escape was pressed");
@@ -227,7 +234,7 @@ void Client::HandleNetworkMessage(std::string msg)
 		}
 		else
 		{
-			MaloW::Debug("Unknown Message Was sent from server");
+			MaloW::Debug("Unknown Message Was sent from server \ " + msgArray[0] + " / ");
 		}
 	}
 }
