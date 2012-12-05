@@ -10,7 +10,7 @@ static const float TIMEOUT_VALUE = 10.0f;
 
 Client::Client()
 {
-	this->zID = -1;
+	this->zID = 0;
 	this->zIP = "";
 	this->zPort = 0;
 	this->zEng = NULL;
@@ -234,7 +234,7 @@ void Client::HandleNetworkMessage(std::string msg)
 		}
 		else
 		{
-			MaloW::Debug("Unknown Message Was sent from server \ " + msgArray[0] + " / ");
+			MaloW::Debug("Unknown Message Was sent from server \"" + msgArray[0] + "/ ");
 		}
 	}
 }

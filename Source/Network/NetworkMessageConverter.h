@@ -28,7 +28,10 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_SELF_ID,
 	MESSAGE_TYPE_KICKED,
 	MESSAGE_TYPE_REMOVE_PLAYER,
-	MESSAGE_TYPE_USER_DATA
+	MESSAGE_TYPE_USER_DATA,
+	MESSAGE_TYPE_NEW_OBJECT,
+	MESSAGE_TYPE_REMOVE_OBJECT,
+	MESSAGE_TYPE_UPDATE_OBJECT
 };
 
 static const std::string POSITION			= "P";
@@ -43,12 +46,16 @@ static const std::string SERVER_FULL		= "SF";
 static const std::string SERVER_SHUTDOWN	= "SS";
 static const std::string NEW_PLAYER			= "NP";
 static const std::string PLAYER_UPDATE		= "PU";
+static const std::string REMOVE_PLAYER		= "RP";
+static const std::string NEW_OBJECT			= "NO";
+static const std::string REMOVE_OBJECT		= "RO";
+static const std::string UPDATE_OBJECT		= "UO";
 static const std::string KEY_DOWN			= "KD";
 static const std::string KEY_UP				= "KU";
-static const std::string REMOVE_PLAYER		= "RP";
 static const std::string USER_DATA			= "UD";
 static const std::string PING				= "Ping";
 static const std::string SELF_ID			= "Self";
+
 /*
 	This class creates string messages used for communication
 	between sockets.
