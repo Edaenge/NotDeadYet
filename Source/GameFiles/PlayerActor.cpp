@@ -46,7 +46,7 @@ PlayerActor::~PlayerActor()
 
 void PlayerActor::Update()
 {
-
+	
 }
 
 

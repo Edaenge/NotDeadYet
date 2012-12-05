@@ -1,5 +1,4 @@
 #include "GameFiles/Host.h"
-#include "GameFiles/KeyUtil/KeyValues.h"
 
 Host::Host()
 {
@@ -76,7 +75,7 @@ void Host::Life()
 		HandleRecivedMessages();
 		PingClients();
 		
-		Sleep(50);
+		Sleep(10);
 	}
 }
 
@@ -238,21 +237,31 @@ void Host::HandleKeyPress( const int CLIENT_ID, const std::string& key )
 
 	PlayerActor* player = this->zPlayers.at(index);
 
-	if(keyz == KEY_FORWARD)
+	switch (keyz)
 	{
-		
-	}
-	if(keyz == KEY_BACKWARD)
-	{
-
-	}
-	if(keyz == KEY_LEFT)
-	{
-
-	}
-	if(keyz == KEY_RIGHT)
-	{
-		
+	case KEY_FORWARD:
+		player->SetKeyState(KEY_FORWARD, true);
+		break;
+	case KEY_BACKWARD:
+		player->SetKeyState(KEY_BACKWARD, true);
+		break;
+	case KEY_LEFT:
+		player->SetKeyState(KEY_LEFT, true);
+		break;
+	case KEY_RIGHT:
+		player->SetKeyState(KEY_RIGHT, true);
+		break;
+	case KEY_SPRINT:
+		player->SetKeyState(KEY_SPRINT, true);
+		break;
+	case KEY_DUCK:
+		player->SetKeyState(KEY_DUCK, true);
+		break;
+	case KEY_JUMP:
+		player->SetKeyState(KEY_JUMP, true);
+		break;
+	default:
+		break;
 	}
 
 }
@@ -377,8 +386,6 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 	ClientData* temp_c = zClients.at(index);
 	PlayerActor* temp_p = zPlayers.at(pIndex);
 
-	temp_c->zClient->Close();
-
 	std::string mess;
 	bool removed = false;
 
@@ -403,7 +410,6 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 
 	if(index != -1 && pIndex != -1)
 	{
-		temp_c->zClient->WaitUntillDone();
 		this->zClients.erase(zClients.begin() + index);
 		this->zPlayers.erase(zPlayers.begin() + pIndex);
 
@@ -411,6 +417,7 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 		SAFE_DELETE(temp_p);
 
 		removed = true;
+		MaloW::Debug("Client"+MaloW::convertNrToString(ID)+" removed from server.");
 	}
 
 	//Notify clients

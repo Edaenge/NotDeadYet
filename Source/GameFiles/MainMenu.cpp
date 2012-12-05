@@ -80,10 +80,9 @@ void MainMenu::run()
 	int hostErrorCode = 0;
 	int clientErrorCode = 0;
 	// Initializes the host and returns a code that explains what happend
-//	hostErrorCode    = this->zGame->InitGameHost(8888, 5);
+	hostErrorCode    = this->zGame->InitGameHost(10000, 5);
 	// Initializes the Client and returns a code that explains what happend
-	//clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 8888);
-	clientErrorCode  = this->zGame->InitGameClient("5", 8888);
+	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 10000);
 
 	if(hostErrorCode == 0 && clientErrorCode == 0)
 	{
