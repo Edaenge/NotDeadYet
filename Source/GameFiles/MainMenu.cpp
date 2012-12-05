@@ -72,21 +72,27 @@ void MainMenu::printHostError(const int code )
 
 void MainMenu::printToScreen(const std::string msg )
 {
-
+	MaloW::Debug(msg);
 }
 
 void MainMenu::run()
 {
-	int hostErrorCode;
-	int clientErrorCode;
+	int hostErrorCode = 0;
+	int clientErrorCode = 0;
 	// Initializes the host and returns a code that explains what happend
-	hostErrorCode    = this->zGame->InitGameHost(8080, 1);
+//	hostErrorCode    = this->zGame->InitGameHost(8888, 5);
 	// Initializes the Client and returns a code that explains what happend
-	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 8080);
+	//clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 8888);
+	clientErrorCode  = this->zGame->InitGameClient("5", 8888);
 
 	if(hostErrorCode == 0 && clientErrorCode == 0)
 	{
 		this->zGame->Run();
+	}
+	else
+	{
+		printClientError(clientErrorCode);
+		printHostError(hostErrorCode);
 	}
 }
 

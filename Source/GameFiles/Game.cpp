@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Safe.h"
 #include "Graphics.h"
+
 Game::Game()
 {
 	this->zClient = NULL;
@@ -49,6 +50,7 @@ int Game::InitGameClient(std::string ip, int port)
 
 int Game::InitGameHost(int port, int nrOfClients)
 {
+
 	int code;
 
 	//if a Host hasn't been created yet Create one

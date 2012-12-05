@@ -55,6 +55,7 @@ ClientChannel* NetworkServer::ListenForNewClients()
 	{
 		cc = new ClientChannel(hClient);
 	}
+
 	return cc;
 }
 

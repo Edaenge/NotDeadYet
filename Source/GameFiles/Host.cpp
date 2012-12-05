@@ -1,4 +1,5 @@
-#include "Host.h"
+#include "GameFiles/Host.h"
+#include "GameFiles/KeyUtil/KeyValues.h"
 
 Host::Host()
 {
@@ -114,6 +115,8 @@ void Host::HandleNewConnections()
 		return;
 	}
 
+	MaloW::Debug("New Player Connected.");
+
 	if((unsigned int)this->zClients.size() > zMaxClients)
 	{
 		std::string message;
@@ -125,6 +128,8 @@ void Host::HandleNewConnections()
 
 		return;
 	}
+
+	MaloW::Debug("New Player Accepted.");
 
 	std::string message = "";
 
@@ -200,6 +205,10 @@ void Host::HandleRecivedMessages()
 
 	if(strcmp(key, KEY_DOWN.c_str()) == 0)
 	{
+		HandleKeyPress(np->getID(), msgArray[0]);
+	}
+	else if(strcmp(key, KEY_UP.c_str()) == 0)
+	{
 
 	}
 	else if(strcmp(key, PING.c_str()) == 0)
@@ -224,24 +233,24 @@ void Host::HandleRecivedMessages()
 void Host::HandleKeyPress( const int CLIENT_ID, const std::string& key )
 {
 	//Hard coded for test
-	std::string keyz = this->zMessageConverter.ConvertStringToSubstring(KEY_DOWN, key);
+	int keyz = this->zMessageConverter.ConvertStringToInt(KEY_DOWN, key);
 	int index = SearchForPlayer(CLIENT_ID);
 
 	PlayerActor* player = this->zPlayers.at(index);
 
-	if(keyz == "W")
+	if(keyz == KEY_FORWARD)
 	{
 		
 	}
-	else if(keyz == "S")
+	if(keyz == KEY_BACKWARD)
 	{
 
 	}
-	if(keyz == "A")
+	if(keyz == KEY_LEFT)
 	{
 
 	}
-	if(keyz == "D")
+	if(keyz == KEY_RIGHT)
 	{
 		
 	}
@@ -424,6 +433,8 @@ void Host::CreateNewPlayer( const int ID, std::vector<std::string> &mesh)
 	uModel = this->zMessageConverter.ConvertStringToSubstring(USER_DATA, mesh[0]);
 
 	pi->SetPlayerModel(uModel);
+	//Debug Pos
+	pi->SetPosition(Vector3(ID*25,0,1)); 
 	this->zPlayers.push_back(pi);
 
 	//Create a new player message

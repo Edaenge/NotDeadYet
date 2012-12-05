@@ -45,7 +45,7 @@ int ServerChannel::InitConnection(std::string IP, int port)
 	saServer.sin_port = htons(port);
 	saServer.sin_addr.s_addr = inet_addr(IP.c_str());
 	saServer.sin_family = AF_INET;
-	retCode = connect(this->sock, (sockaddr*)&saServer, sizeof(sockaddr));
+	retCode = connect(this->sock, (sockaddr*)&saServer, sizeof(saServer));
 	if(retCode == SOCKET_ERROR)
 	{
 		returnCode = 1;
