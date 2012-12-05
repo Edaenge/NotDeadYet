@@ -18,7 +18,7 @@ Keybinds::Keybinds()
 Keybinds::~Keybinds()
 {
 }
-char Keybinds::GetKey(const unsigned int key)
+char Keybinds::GetKey(const unsigned int key) const
 {
 	char returnValue;
 	switch (key)

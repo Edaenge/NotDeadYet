@@ -119,7 +119,7 @@ void Client::Life()
 		}
 		this->HandleKeyboardInput();
 
-		Sleep(50);
+		Sleep(10);
 	}
 }
 bool Client::IsAlive()
@@ -315,7 +315,7 @@ void Client::HandleNewPlayer(const std::vector<std::string>& msgArray)
 
 			if (clientID == this->zID)
 			{
-				this->zEng->GetCamera()->FollowMesh(playerMesh);
+				//this->zEng->GetCamera()->FollowMesh(playerMesh);
 			}
 			//Create player data
 			newPlayer->AddStaticMesh(playerMesh);
@@ -433,8 +433,8 @@ void Client::HandleRemovePlayer(const std::vector<std::string>& msgArray)
 			{
 				this->CloseConnection("Unknown reason");
 			}
-
-			this->zPlayers.erase( zPlayers.begin() + pos);
+			this->zEng->DeleteMesh(this->zPlayers[pos]->GetPlayerMesh());
+			this->zPlayers.erase(zPlayers.begin() + pos);
 		}
 	}
 }

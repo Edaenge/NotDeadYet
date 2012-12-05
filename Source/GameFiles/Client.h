@@ -38,7 +38,7 @@ private:
 	void HandleKeyboardInput();
 	/*! Splits Network Message and detects what type was sent*/
 	void HandleNetworkMessage(std::string msg);
-	/*! Handles Message type*/
+	/*! Handles Message types*/
 	void HandleNewPlayer(const std::vector<std::string>& msgArray);
 	void HandlePlayerUpdate(const std::vector<std::string>& msgArray);
 	void HandleRemovePlayer(const std::vector<std::string>& msgArray);
@@ -49,6 +49,7 @@ private:
 	/*! Initializes the graphic stuff*/
 	void initClient();
 	float Update();
+	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
 public:
 	Client();

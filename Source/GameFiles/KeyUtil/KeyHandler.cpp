@@ -8,11 +8,11 @@ KeyHandler::KeyHandler()
 KeyHandler::~KeyHandler()
 {
 }
-char KeyHandler::GetKey(const unsigned int key)
+char KeyHandler::GetKey(const unsigned int key) const
 {
 	return this->zBinds.GetKey(key);
 }
-bool KeyHandler::GetKeyState(const unsigned int key)
+bool KeyHandler::GetKeyState(const unsigned int key) const
 {
 	return this->zStates.GetKeyState(key);
 }

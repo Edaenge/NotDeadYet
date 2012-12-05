@@ -11,7 +11,11 @@ private:
 public:
 	KeyHandler();
 	virtual ~KeyHandler();
-	char GetKey(const unsigned int key);
-	bool GetKeyState(const unsigned int key);
-	void SetKeyState(const unsigned int key, const bool value);
+	/*! Returns the binding for the Key eg. 'w' or 's'*/
+	char GetKey(const unsigned int key) const;
+	/*! Returns true if the key is pressed*/
+	bool GetKeyState(const unsigned int key) const;
+	/*! Change the value for the Key State*/
+	void SetKeyState(const unsigned int key, const bool value)
+
 };

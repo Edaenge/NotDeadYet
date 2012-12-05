@@ -10,7 +10,7 @@ KeyStates::KeyStates()
 KeyStates::~KeyStates()
 {
 }
-bool KeyStates::GetKeyState(const unsigned int key)
+bool KeyStates::GetKeyState(const unsigned int key) const
 {
 	return this->zKeyState[key];
 }

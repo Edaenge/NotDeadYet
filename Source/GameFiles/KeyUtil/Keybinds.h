@@ -11,7 +11,8 @@ class Keybinds
 public:
 	Keybinds();
 	virtual ~Keybinds();
-	char GetKey(const unsigned int key);
+	/*! Returns the binding for the Key eg. 'w' or 's'*/
+	char GetKey(const unsigned int key) const;
 private:
 	char zForwardKey;
 	char zBackwardKey;

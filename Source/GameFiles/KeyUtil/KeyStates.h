@@ -10,7 +10,9 @@ class KeyStates
 public:
 	KeyStates();
 	virtual ~KeyStates();
-	bool GetKeyState(const unsigned int key);
+	/*! Returns true if the key is pressed*/
+	bool GetKeyState(const unsigned int key) const;
+	/*! Change the value for the Key State*/
 	void SetKeyState(const unsigned int key, const bool value);
 private:
 	bool zKeyState[KEY_CAP];
