@@ -23,7 +23,6 @@ struct ClientData
 
 	~ClientData()
 	{
-		zClient->WaitUntillDone();
 		SAFE_DELETE(zClient);
 	}
 

@@ -63,7 +63,9 @@ int ServerChannel::InitConnection(std::string IP, int port)
 
 ServerChannel::~ServerChannel()
 {
-	this->stayAlive = false;
+	this->Close();
+	this->WaitUntillDone();
+
 	int retCode = 0;
 
 	if(this->sock != 0)

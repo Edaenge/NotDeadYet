@@ -16,7 +16,8 @@ ClientChannel::ClientChannel(SOCKET sock)
 
 ClientChannel::~ClientChannel()
 {
-	this->stayAlive = false;
+	this->Close();
+	this->WaitUntillDone();
 
 	int retCode = 0;
 

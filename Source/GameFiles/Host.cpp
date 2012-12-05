@@ -17,6 +17,9 @@ Host::~Host()
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 
+	this->Close();
+	this->WaitUntillDone();
+
 	this->zServerListener->Close();
 	this->zServerListener->WaitUntillDone();
 	SAFE_DELETE(this->zServerListener);
