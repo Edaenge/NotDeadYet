@@ -1,23 +1,37 @@
+New Player Connected.
+New Player Accepted.
 Sent to Client Self 0*
 
 SC: Received from Server Self 0*
 Sent to Server UD Media/scale.obj*
 CC: Received from Client UD Media/scale.obj*
-Sent to Client NP 0*P 1 0 1*Sc 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*St 0*D 0 0 0*
+Sent to Client NP 0*P 0 0 1*Sc 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*St 0*D 0 0 0*
 
-SC: Received from Server NP 0*P 1 0 1*Sc 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*St 0*D 0 0 0*
-Sent to Client Ping*
-
- Ping*
-Sent to Server Ping*
-CC: Received from Client Ping*
+SC: Received from Server NP 0*P 0 0 1*Sc 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*St 0*D 0 0 0*
+Sent to Server KD 0*
+CC: Received from Client KD 0*
+Sent to Server KU 0*
+CC: Received from Client KU 0*
+Sent to Server KD 0*
+CC: Received from Client KD 0*
+Sent to Server KU 0*
+CC: Received from Client KU 0*
+Sent to Server KD 3*
+CC: Received from Client KD 3*
+Sent to Server KD 2*
+CC: Received from Client KD 2*
+Sent to Server KU 2*
+Sent to Server KU 3*
+CC: Received from Client KU 2*
+CC: Received from Client KU 3*
 Sent to Server CC 0*
 CC: Received from Client CC 0*
 CC: Client disconnected, closing.
 CC: Received from Client 
 SC: Server disconnected, closing.
 SC: Received from Server 
-NS: Error trying to perform shutdown on socket from a ->Close() call from another thread.
+Client0 removed from server.
 NS: Invalid client socket, connection failed. Error: 10004
+NS: Error trying to perform shutdown on socket from a ->Close() call from another thread.
 NS: Failed to close socket. Error: 10093
 NS: Error cleaning up Winsock Library. Error: 10093

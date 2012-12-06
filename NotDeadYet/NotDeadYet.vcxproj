@@ -53,8 +53,10 @@
     <ClInclude Include="..\External\NDYGFX\Include\iText.h" />
     <ClInclude Include="..\External\NDYGFX\Include\Vector.h" />
     <ClInclude Include="..\Source\GameFiles\AnimationStates.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientSide\Animal.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\Client.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\Player.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientSide\StaticObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObject.h" />
     <ClInclude Include="..\Source\GameFiles\Game.h" />
     <ClInclude Include="..\Source\GameFiles\Graphics.h" />

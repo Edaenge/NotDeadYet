@@ -5,10 +5,12 @@
 #pragma once
 #include "Process.h"
 #include "GraphicsEngine.h"
-#include "GameFiles/ClientSide/Player.h"
 #include "Network/ServerChannel.h"
+#include "GameFiles/ClientSide/Player.h"
+#include "GameFiles/ClientSide/Animal.h"
 #include "GameFiles/KeyUtil/KeyHandler.h"
 #include "Network/NetworkMessageConverter.h"
+#include "GameFiles/ClientSide/StaticObject.h"
 
 using namespace MaloW;
 
@@ -31,6 +33,8 @@ private:
 	float zTimeSinceLastPing;
 
 	std::vector<Player*> zPlayers;
+	std::vector<Animal*> zAnimals;
+	std::vector<StaticObject*> zStaticObjects;
 	NetworkMessageConverter zMsgHandler;
 	ServerChannel* zServerChannel;
 private:
@@ -39,9 +43,9 @@ private:
 	/*! Splits Network Message and detects what type was sent*/
 	void HandleNetworkMessage(std::string msg);
 	/*! Handles Message types*/
-	void HandleNewPlayer(const std::vector<std::string>& msgArray);
-	void HandlePlayerUpdate(const std::vector<std::string>& msgArray);
-	void HandleRemovePlayer(const std::vector<std::string>& msgArray);
+	//void HandleNewPlayer(const std::vector<std::string>& msgArray);
+	//void HandlePlayerUpdate(const std::vector<std::string>& msgArray);
+	//void HandleRemovePlayer(const std::vector<std::string>& msgArray);
 	/*! Pings client to check if server is still running*/
 	void Ping();
 	/*! Close the connection and print the reason to the client*/
@@ -51,6 +55,13 @@ private:
 	float Update();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
+	int SearchForPlayer(const int id);
+	int SearchForAnimal(const int id);
+	int SearchForObject(const int id);
+	int FindObject(const int id, const unsigned int type);
+	void HandleUpdateObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
+	void HandleNewObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
+	void HandleRemoveObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
 public:
 	Client();
 	/*! Connects to a Host with the specified parameters*/

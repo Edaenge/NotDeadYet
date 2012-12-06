@@ -225,6 +225,12 @@
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObject.h">
       <Filter>Game Files\ClientSide</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ClientSide\Animal.h">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ClientSide\StaticObject.h">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameIcon.ico" />

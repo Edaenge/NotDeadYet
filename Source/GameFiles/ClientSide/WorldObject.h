@@ -1,3 +1,7 @@
+/*
+	Made by Jensen Christopher Datum(06/12/12 created) 
+	for project Not Dead Yet at Blekinge tekniska högskola
+*/
 #pragma once
 
 #include "iMesh.h"
@@ -5,17 +9,36 @@
 class WorldObject
 {
 public:
+	WorldObject(){this->zMesh = NULL; this->zID = -1;}
+	~WorldObject(){}
 	/*!	Returns Pointer to the Player Mesh*/
-	iMesh* GetPlayerMesh() const {return this->zMesh;}
+	iMesh* GetObjectMesh() const {return this->zMesh;}
 	/*! Returns Player Model Scale*/
-	Vector3 GetPlayerScale() const {return this->zMesh->GetScaling();}
+	Vector3 GetObjectScale() const {return this->zMesh->GetScaling();}
 	/*! Returns Player Model Position*/
-	inline Vector3 GetPlayerPosition() const {return this->zMesh->GetPosition();}
+	inline Vector3 GetObjectPosition() const {return this->zMesh->GetPosition();}
 	/*! Returns Player Model Rotation*/
-	inline Vector3 GetPlayerRotation() const {return this->zMesh->GetRotation();}
+	inline Vector3 GetObjectRotation() const {return this->zMesh->GetRotation();}
+	/*! Sets object Mesh data*/
+	inline void SetObjectPosition(const Vector3& pos) {this->zMesh->SetPosition(pos);}
+	void SetObjectScale(const Vector3& scale) {this->zMesh->Scale(scale);}
+	inline void SetObjectRotation(const Vector4& rot) {this->zMesh->SetQuaternion(rot);}
+	/*! Returns the object ID*/
+	inline int GetID() const {return this->zID;}
+	/*! Adds a Pointer to the Player Model Mesh*/
+	void AddStaticMesh(iMesh* mesh) {this->zMesh = mesh;}
+	bool HasMesh() const 
+	{
+		if(this->zMesh != NULL) 
+			return true;
+		else 
+			return false;
+	}
+	/*!  Sets the Client Id given from the server*/
+	inline void SetID(const int clientID) {this->zID = clientID;}
 
 	virtual void Update(float dt) = 0;
-private:
+protected:
 	iMesh* zMesh;
-	int zId;
+	int zID;
 };

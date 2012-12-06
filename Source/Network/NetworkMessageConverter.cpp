@@ -81,8 +81,8 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const unsign
 
 	switch (ID)
 	{
-	case MESSAGE_TYPE_PLAYER_UPDATE:
-		ss << PLAYER_UPDATE << " " << state_ID << "*";
+	case MESSAGE_TYPE_UPDATE_PLAYER:
+		ss << UPDATE_PLAYER << " " << state_ID << "*";
 		break;
 	case MESSAGE_TYPE_KEY_DOWN:
 		ss << KEY_DOWN << " " << state_ID << "*";
