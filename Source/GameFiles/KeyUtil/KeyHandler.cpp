@@ -2,7 +2,7 @@
 
 KeyHandler::KeyHandler()
 {
-	this->zBinds = Keybinds();
+	this->zBinds =  Keybinds();
 	this->zStates = KeyStates();
 }
 KeyHandler::~KeyHandler()
@@ -20,3 +20,9 @@ void KeyHandler::SetKeyState(const unsigned int key, const bool value)
 {
 	this->zStates.SetKeyState(key, value);
 }
+
+void KeyHandler::InitKeyBinds()
+{
+	this->zBinds.ReadKeyBinds();
+}
+

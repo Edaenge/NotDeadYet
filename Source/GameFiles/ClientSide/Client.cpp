@@ -20,6 +20,7 @@ Client::Client()
 	this->zPort = 0;
 	this->zEng = NULL;
 	this->zKeyInfo = KeyHandler();
+	this->zKeyInfo.InitKeyBinds();
 	this->zServerChannel = NULL;
 	this->zTimeSinceLastPing = 0.0f;
 	this->zMsgHandler = NetworkMessageConverter();

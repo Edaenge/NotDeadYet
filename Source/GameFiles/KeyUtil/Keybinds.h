@@ -11,16 +11,10 @@ class Keybinds
 public:
 	Keybinds();
 	virtual ~Keybinds();
+	/*! Reads the key binds from .ini file.*/
+	void ReadKeyBinds();
 	/*! Returns the binding for the Key eg. 'w' or 's'*/
 	char GetKey(const unsigned int key) const;
 private:
-	char zForwardKey;
-	char zBackwardKey;
-	char zLeftKey;
-	char zRightKey;
-	char zSprintKey;
-	char zJumpKey;
-	char zDuckKey;
-	char zInteractKey;
-	char zMenuKey;
+	char zKeyBindings[KEY_CAP];
 };

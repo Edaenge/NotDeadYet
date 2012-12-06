@@ -11,7 +11,7 @@
 class Animal : public WorldObject
 {
 public:
-	Animal() : WorldObject(){this->zAnimalState = IDLE;}
+	Animal() : WorldObject(){this->zAnimalState = STATE_IDLE;}
 	virtual ~Animal(){}
 	/*! Sets the Player State*/
 	inline void SetAnimalState(const int state) {this->zAnimalState = state;}

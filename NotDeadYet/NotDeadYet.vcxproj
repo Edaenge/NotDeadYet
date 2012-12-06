@@ -22,6 +22,7 @@
     <ClCompile Include="..\Source\GameFiles\ClientSide\Client.cpp" />
     <ClCompile Include="..\Source\GameFiles\Game.cpp" />
     <ClCompile Include="..\Source\GameFiles\Graphics.cpp" />
+    <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyBindConfig.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\Keybinds.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyStates.cpp" />
@@ -60,6 +61,7 @@
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObject.h" />
     <ClInclude Include="..\Source\GameFiles\Game.h" />
     <ClInclude Include="..\Source\GameFiles\Graphics.h" />
+    <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyBindConfig.h" />
     <ClInclude Include="..\Source\GameFiles\KeyUtil\Keybinds.h" />
     <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyHandler.h" />
     <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyStates.h" />

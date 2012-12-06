@@ -11,7 +11,7 @@
 class Player : public WorldObject
 {
 public:
-	Player():WorldObject(){this->zPlayerState = IDLE;}
+	Player():WorldObject(){this->zPlayerState = STATE_IDLE;}
 	virtual ~Player(){}
 	/*! Sets the Player State*/
 	inline void SetPlayerState(const int state) {this->zPlayerState = state;}

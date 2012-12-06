@@ -19,7 +19,7 @@ PlayerActor::PlayerActor( const int ID, const Vector3& startPos )
 	this->zPos = startPos;
 
 	this->zVelocity = 5;
-	this->zState = IDLE;
+	this->zState = STATE_IDLE;
 	this->zScale = Vector3(0.05,0.05,0.05);
 	this->zPlayerModel = "none";
 }
@@ -31,7 +31,7 @@ PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& 
 	this->zRot = startRot;
 
 	this->zVelocity = 5;
-	this->zState = IDLE;
+	this->zState = STATE_IDLE;
 	this->zPos = Vector3(1,0,1);
 	this->zScale = Vector3(0.05,0.05,0.05);
 	this->zPlayerModel = "none";

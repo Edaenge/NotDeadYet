@@ -94,6 +94,9 @@
     <ClCompile Include="..\Source\GameFiles\ServerSide\PlayerActor.cpp">
       <Filter>Game Files\ServerSide</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyBindConfig.cpp">
+      <Filter>Game Files\KeyUtil</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -230,6 +233,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ClientSide\StaticObject.h">
       <Filter>Game Files\ClientSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyBindConfig.h">
+      <Filter>Game Files\KeyUtil</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
