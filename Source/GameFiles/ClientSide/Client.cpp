@@ -1,7 +1,7 @@
-#include "Client.h"
+#include "GameFiles/ClientSide/Client.h"
 #include "Graphics.h"
 #include "Safe.h"
-#include "NetworkPacket.h"
+#include "Network/NetworkPacket.h"
 
 using namespace MaloW;
 

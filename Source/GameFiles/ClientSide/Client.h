@@ -5,7 +5,7 @@
 #pragma once
 #include "Process.h"
 #include "GraphicsEngine.h"
-#include "GameFiles/Player.h"
+#include "GameFiles/ClientSide/Player.h"
 #include "Network/ServerChannel.h"
 #include "GameFiles/KeyUtil/KeyHandler.h"
 #include "Network/NetworkMessageConverter.h"

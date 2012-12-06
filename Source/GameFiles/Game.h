@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "Client.h"
-#include "Host.h"
+#include "GameFiles/ClientSide/Client.h"
+#include "GameFiles/ServerSide/Host.h"
 
 
 enum NETWORK_ERROR_CODE

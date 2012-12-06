@@ -19,16 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\GameFiles\Client.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ClientSide\Client.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ClientSide\Player.cpp" />
     <ClCompile Include="..\Source\GameFiles\Game.cpp" />
     <ClCompile Include="..\Source\GameFiles\Graphics.cpp" />
-    <ClCompile Include="..\Source\GameFiles\Host.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\Keybinds.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyStates.cpp" />
     <ClCompile Include="..\Source\GameFiles\MainMenu.cpp" />
-    <ClCompile Include="..\Source\GameFiles\Player.cpp" />
-    <ClCompile Include="..\Source\GameFiles\PlayerActor.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ServerSide\Host.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ServerSide\PlayerActor.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
     <ClCompile Include="..\Source\MaloWLib\Process.cpp" />
     <ClCompile Include="..\Source\Network\ClientChannel.cpp" />
@@ -53,19 +53,19 @@
     <ClInclude Include="..\External\NDYGFX\Include\iTerrain.h" />
     <ClInclude Include="..\External\NDYGFX\Include\iText.h" />
     <ClInclude Include="..\External\NDYGFX\Include\Vector.h" />
-    <ClInclude Include="..\Source\GameFiles\Actor.h" />
     <ClInclude Include="..\Source\GameFiles\AnimationStates.h" />
-    <ClInclude Include="..\Source\GameFiles\Client.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientSide\Client.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientSide\Player.h" />
     <ClInclude Include="..\Source\GameFiles\Game.h" />
     <ClInclude Include="..\Source\GameFiles\Graphics.h" />
-    <ClInclude Include="..\Source\GameFiles\Host.h" />
     <ClInclude Include="..\Source\GameFiles\KeyUtil\Keybinds.h" />
     <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyHandler.h" />
     <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyStates.h" />
     <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyValues.h" />
     <ClInclude Include="..\Source\GameFiles\MainMenu.h" />
-    <ClInclude Include="..\Source\GameFiles\Player.h" />
-    <ClInclude Include="..\Source\GameFiles\PlayerActor.h" />
+    <ClInclude Include="..\Source\GameFiles\ServerSide\Actor.h" />
+    <ClInclude Include="..\Source\GameFiles\ServerSide\Host.h" />
+    <ClInclude Include="..\Source\GameFiles\ServerSide\PlayerActor.h" />
     <ClInclude Include="..\Source\MaloWLib\Array.h" />
     <ClInclude Include="..\Source\MaloWLib\List.h" />
     <ClInclude Include="..\Source\MaloWLib\MaloW.h" />
