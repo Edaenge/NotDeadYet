@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\GameFiles\ClientSide\Client.cpp" />
-    <ClCompile Include="..\Source\GameFiles\ClientSide\Player.cpp" />
     <ClCompile Include="..\Source\GameFiles\Game.cpp" />
     <ClCompile Include="..\Source\GameFiles\Graphics.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\Keybinds.cpp" />
@@ -56,6 +55,7 @@
     <ClInclude Include="..\Source\GameFiles\AnimationStates.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\Client.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\Player.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObject.h" />
     <ClInclude Include="..\Source\GameFiles\Game.h" />
     <ClInclude Include="..\Source\GameFiles\Graphics.h" />
     <ClInclude Include="..\Source\GameFiles\KeyUtil\Keybinds.h" />

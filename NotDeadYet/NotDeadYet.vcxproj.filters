@@ -88,9 +88,6 @@
     <ClCompile Include="..\Source\GameFiles\ClientSide\Client.cpp">
       <Filter>Game Files\ClientSide</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ClientSide\Player.cpp">
-      <Filter>Game Files\ClientSide</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\GameFiles\ServerSide\Host.cpp">
       <Filter>Game Files\ServerSide</Filter>
     </ClCompile>
@@ -224,6 +221,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ServerSide\PlayerActor.h">
       <Filter>Game Files\ServerSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObject.h">
+      <Filter>Game Files\ClientSide</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
