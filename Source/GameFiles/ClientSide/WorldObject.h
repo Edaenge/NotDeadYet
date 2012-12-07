@@ -5,6 +5,7 @@
 #pragma once
 
 #include "iMesh.h"
+/*! Base class for World Objects*/
 class WorldObject
 {
 public:

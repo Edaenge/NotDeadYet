@@ -7,7 +7,7 @@
 
 #include "GameFiles/ClientSide/WorldObject.h"
 #include "GameFiles/AnimationStates.h"
-
+/*! Class to Handle Animals*/
 class Animal : public WorldObject
 {
 public:

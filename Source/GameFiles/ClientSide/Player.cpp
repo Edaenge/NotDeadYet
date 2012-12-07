@@ -4,8 +4,14 @@ void Player::Update(float deltaTime)
 {
 	Vector3 currentPosition = this->zMesh->GetPosition();
 	
+	//Cosine
+	//float t = (-cos(PI * deltaTime) * 0.5f) + 0.5f;
+
 	//Acceleration
-	float t = (-cos(PI * deltaTime) * 0.5f) + 0.5f;//pow(deltaTime, 2);
+	//float t = pow(deltaTime, 2);
+
+	//Smooth Step
+	float t = pow(deltaTime, 2) * (3 - 2 * deltaTime);
 	LinearInterpolation(currentPosition, this->zEndPosition, t);
 	this->SetObjectPosition(currentPosition);
 }

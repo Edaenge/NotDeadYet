@@ -73,4 +73,5 @@ public:
 	void Life();
 	/*! Checks if Thread is alive*/
 	bool IsAlive();
+	void UpdateCameraPos();
 };

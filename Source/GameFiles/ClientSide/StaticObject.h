@@ -6,7 +6,7 @@
 #pragma once
 
 #include "GameFiles/ClientSide/WorldObject.h"
-
+/*! Class to Handle Static Objects*/
 class StaticObject : public WorldObject
 {
 public:
