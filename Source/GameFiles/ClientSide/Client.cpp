@@ -57,7 +57,6 @@ Client::~Client()
 		SAFE_DELETE(*x);
 	}
 
-	this->zServerChannel->WaitUntillDone();
 	SAFE_DELETE(this->zServerChannel);
 }
 float Client::Update()
@@ -380,7 +379,7 @@ void Client::CloseConnection(const std::string reason)
 {
 	//Todo Skriv ut vilket reason som gavs
 	this->zServerChannel->Close();
-	this->stayAlive = false;
+	this->Close();
 	MaloW::Debug(reason);
 }
 int Client::SearchForPlayer(const int id)
