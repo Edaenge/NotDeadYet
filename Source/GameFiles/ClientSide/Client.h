@@ -23,9 +23,10 @@ private:
 	std::string zIP;
 
 	INT64 zStartime;
+	float zFrameTime;
 	float zDeltaTime;
 	float zSecsPerCnt;
-
+	
 	KeyHandler zKeyInfo;
 	std::string zMeshID;
 	GraphicsEngine* zEng;
@@ -42,10 +43,6 @@ private:
 	void HandleKeyboardInput();
 	/*! Splits Network Message and detects what type was sent*/
 	void HandleNetworkMessage(std::string msg);
-	/*! Handles Message types*/
-	//void HandleNewPlayer(const std::vector<std::string>& msgArray);
-	//void HandlePlayerUpdate(const std::vector<std::string>& msgArray);
-	//void HandleRemovePlayer(const std::vector<std::string>& msgArray);
 	/*! Pings client to check if server is still running*/
 	void Ping();
 	/*! Close the connection and print the reason to the client*/
@@ -55,10 +52,16 @@ private:
 	float Update();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
+	void UpdateWorldObjects();
+	/*! Search for the object with the correct ID and returns a Position if found*/
 	int SearchForPlayer(const int id);
+	/*! Search for the object with the correct ID and returns a Position if found*/
 	int SearchForAnimal(const int id);
+	/*! Search for the object with the correct ID and returns a Position if found*/
 	int SearchForObject(const int id);
+
 	int FindObject(const int id, const unsigned int type);
+	/*! Handles Message types*/
 	void HandleUpdateObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
 	void HandleNewObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
 	void HandleRemoveObject(const std::vector<std::string>& msgArray, const unsigned int objectType);

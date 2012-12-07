@@ -11,14 +11,21 @@
 class Player : public WorldObject
 {
 public:
-	Player():WorldObject(){this->zPlayerState = STATE_IDLE;}
+	Player();
 	virtual ~Player(){}
 	/*! Sets the Player State*/
 	inline void SetPlayerState(const int state) {this->zPlayerState = state;}
 	/*! Returns Current Player State*/
 	inline int GetPlayerState() const {return this->zPlayerState;}
-	/*! Updates the play*/
-	void Update(float dt){};
+	/*! Sets the New Player Position*/
+	inline void SetPlayerNextPosition(const Vector3 position) {this->zEndPosition = position;}
+	/*! Returns New Player Position*/
+	Vector3 GetPlayerNextPosition() const {return this->zEndPosition;}
+	/*! Updates the player*/
+	void Update(float dt);
+	void LinearInterpolation(Vector3& PrevPos, const Vector3& newPos, float dt);
 private:
 	int zPlayerState;
+	Vector3 zEndPosition;
+	float zVelocity;
 };

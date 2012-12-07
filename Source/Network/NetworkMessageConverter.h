@@ -31,7 +31,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_USER_DATA,
 	MESSAGE_TYPE_NEW_OBJECT,
 	MESSAGE_TYPE_REMOVE_OBJECT,
-	MESSAGE_TYPE_UPDATE_OBJECT
+	MESSAGE_TYPE_UPDATE_OBJECT,
+	MESSAGE_TYPE_FRAME_TIME
 };
 //Data Messages
 static const std::string POSITION			= "P";
@@ -66,7 +67,7 @@ static const std::string USER_DATA			= "UD";
 static const std::string SELF_ID			= "Self";
 //Ping Message
 static const std::string PING				= "Ping";
-
+static const std::string FRAME_TIME			= "FT";
 /*
 	This class creates string messages used for communication
 	between sockets.
@@ -80,17 +81,19 @@ public:
 
 	//Converts parameters to correctly formated strings sent between client and server
 	std::string Convert(const unsigned int ID);
-	std::string Convert(const unsigned int ID, const unsigned int state_ID);
+	//std::string Convert(const unsigned int ID, const unsigned int state_ID);
+	std::string Convert(const unsigned int ID, const float time);
 	std::string Convert(const unsigned int ID, const std::string word);
 	std::string Convert(const unsigned int ID, const float x, const float y, const float z);
 	std::string Convert(const unsigned int ID, const float x, const float y, const float z, const float w);
 	
 	std::string CombineMessage(const std::vector<std::string>& msgArray);
-	std::vector<std::string> SplitMessage(std::string msg);
-	Vector3 ConvertStringToVector(const std::string& type, std::string msg);
-	Vector4 ConvertStringToQuaternion(const std::string& type, std::string msg);
-	int ConvertStringToInt(const std::string& type, std::string msg);
-	std::string ConvertStringToSubstring(const std::string& type, std::string msg);
+	std::vector<std::string> SplitMessage(const std::string& msg);
+	Vector3 ConvertStringToVector(const std::string& type, const std::string& msg);
+	Vector4 ConvertStringToQuaternion(const std::string& type, const std::string& msg);
+	int ConvertStringToInt(const std::string& type, const std::string& msg);
+	float ConvertStringToFloat(const std::string& type, const std::string& msg);
+	std::string ConvertStringToSubstring(const std::string& type, const std::string& msg);
 private:
 
 

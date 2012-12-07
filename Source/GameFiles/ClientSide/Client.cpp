@@ -19,6 +19,7 @@ Client::Client()
 	this->zIP = "";
 	this->zPort = 0;
 	this->zEng = NULL;
+	this->zFrameTime = 0.0f;
 	this->zKeyInfo = KeyHandler();
 	this->zKeyInfo.InitKeyBinds();
 	this->zServerChannel = NULL;
@@ -72,13 +73,15 @@ float Client::Update()
 
 	this->zStartime = currentTime;
 
+	this->zFrameTime += this->zDeltaTime;
+
 	return this->zDeltaTime;
 }
 void Client::initClient()
 {
 	this->zEng->CreateSkyBox("Media/skymap.dds");
-	this->zEng->GetCamera()->SetPosition( Vector3(0, 15, -15.6f) );
-	this->zEng->GetCamera()->LookAt( Vector3(30, 10, 10) );
+	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
+	this->zEng->GetCamera()->LookAt( Vector3(10, 10, 10) );
 
 	this->zEng->StartRendering();
 
@@ -119,18 +122,31 @@ void Client::Life()
 			}
 			SAFE_DELETE(ev);
 		}
-		if (this->zTimeSinceLastPing > TIMEOUT_VALUE)
+		if (this->zTimeSinceLastPing > TIMEOUT_VALUE * 3.0f)
 		{
 			this->CloseConnection("Timeout");
 		}
+		else if (this->zTimeSinceLastPing > TIMEOUT_VALUE)
+		{
+			//Print a Timeout Message to Client
+		}
 		this->HandleKeyboardInput();
 
-		Sleep(10);
+		this->UpdateWorldObjects();
+
+		Sleep(5);
+	}
+}
+void Client::UpdateWorldObjects()
+{
+	for (unsigned int i = 0; i < this->zPlayers.size(); i++)
+	{
+		this->zPlayers[i]->Update(this->zDeltaTime);
 	}
 }
 bool Client::IsAlive()
 {
-	return stayAlive;
+	return this->stayAlive;
 }
 bool Client::CheckKey(const unsigned int ID)
 {
@@ -141,7 +157,11 @@ bool Client::CheckKey(const unsigned int ID)
 	{
 		if (!this->zKeyInfo.GetKeyState(ID))
 		{
-			this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, ID));
+			std::string msg = "";
+			msg += this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, ID);
+			msg += this->zMsgHandler.Convert(MESSAGE_TYPE_FRAME_TIME, zFrameTime);
+
+			this->zServerChannel->sendData(msg);
 		}
 		this->zKeyInfo.SetKeyState(ID, true);
 		result = true;
@@ -159,21 +179,94 @@ bool Client::CheckKey(const unsigned int ID)
 }
 void Client::HandleKeyboardInput()
 {
+	float mSpeed = 10.0f;
 	bool pressed = false;
 	pressed = this->CheckKey(KEY_FORWARD);
-	if (!pressed)
-		this->CheckKey(KEY_BACKWARD);
+	if (pressed)
+	{
+		int pos = this->SearchForPlayer(this->zID);
+		Vector3 camForward = this->zEng->GetCamera()->GetForward();
+		camForward.y = 0;
+		if (pos != -1)
+		{
+			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
+			Vector3 newPos = position + (camForward * this->zDeltaTime * mSpeed);
+			this->zPlayers.at(pos)->SetPlayerNextPosition(newPos);
+		}
+	}
+	else
+	{
+		pressed = this->CheckKey(KEY_BACKWARD);
+		if (pressed)
+		{
+			int pos = this->SearchForPlayer(this->zID);
+			Vector3 camBackwards = this->zEng->GetCamera()->GetForward() * -1;
+			camBackwards.y = 0;
+			if (pos != -1)
+			{
+				Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
+				Vector3 newPos = position + (camBackwards * this->zDeltaTime * mSpeed);
+				
+				this->zPlayers.at(pos)->SetPlayerNextPosition(newPos);
+			}
+		}
+	}
 
 	pressed = this->CheckKey(KEY_LEFT);
-
-	if(!pressed)
-		this->CheckKey(KEY_RIGHT);
-	
-
+	if (pressed)
+	{
+		int pos = this->SearchForPlayer(this->zID);
+		Vector3 camForward = this->zEng->GetCamera()->GetForward();
+		camForward.y = 0;
+		Vector3 camUp = Vector3(0,1,0);
+		Vector3 camRight = camForward.GetCrossProduct(camUp);
+		camRight.y = 0;
+		if (pos != -1)
+		{
+			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
+			Vector3 newPos = Vector3(10, 0, 10);
+			newPos = position + (camRight * this->zDeltaTime * mSpeed);
+			this->zPlayers.at(pos)->SetPlayerNextPosition(newPos);
+		}
+	}
+	else
+	{
+		pressed = this->CheckKey(KEY_RIGHT);
+		if (pressed)
+		{
+			int pos = this->SearchForPlayer(this->zID);
+			Vector3 camForward = this->zEng->GetCamera()->GetForward();
+			camForward.y = 0;
+			Vector3 camUp = Vector3(0,1,0);
+			Vector3 camRight = camForward.GetCrossProduct(camUp) * -1;
+			camRight.y = 0;
+			if (pos != -1)
+			{
+				Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
+				Vector3 newPos = Vector3(10, 0, 10);
+				newPos = position + (camRight * this->zDeltaTime * mSpeed);
+				this->zPlayers.at(pos)->SetPlayerNextPosition(newPos);
+			}
+		}
+	}
 	pressed = this->CheckKey(KEY_SPRINT);
-
-	this->CheckKey(KEY_DUCK);
-
+	if (pressed)
+	{
+		int pos = this->SearchForPlayer(this->zID);
+		if (pos != -1)
+		{
+			this->zPlayers[pos]->SetPlayerState(STATE_RUNNING);
+		}
+	}
+	pressed = this->CheckKey(KEY_DUCK);
+	if (pressed)
+	{
+		int pos = this->SearchForPlayer(this->zID);
+		if (pos != -1)
+		{
+			this->zPlayers[pos]->SetPlayerState(STATE_CROUCHING);
+		}
+	}
 	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 	{
 		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, this->zID));
@@ -182,15 +275,8 @@ void Client::HandleKeyboardInput()
 }
 void Client::Ping()
 {
-	if (zTimeSinceLastPing <= TIMEOUT_VALUE)
-	{
-		this->zTimeSinceLastPing = 0.0f;
-		this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
-	}
-	else
-	{
-		this->CloseConnection("Connection timeout");
-	}
+	this->zTimeSinceLastPing = 0.0f;
+	this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
 }
 void Client::HandleNetworkMessage(std::string msg)
 {
@@ -276,6 +362,7 @@ void Client::CloseConnection(const std::string reason)
 	//Todo Skriv ut vilket reason som gavs
 	this->zServerChannel->Close();
 	this->stayAlive = false;
+	MaloW::Debug(reason);
 }
 int Client::SearchForPlayer(const int id)
 {
@@ -349,11 +436,11 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 {
 	char key[512];
 
-	Vector3 position;
-	Vector3 scale;
-	Vector4 rotation;
-	Vector3 direction;
-	std::string filename;
+	Vector3 position = Vector3(0, 0, 0);
+	Vector3 scale = Vector3(0.05f, 0.05f, 0.05f);
+	Vector4 rotation = Vector4(0, 0, 0, 0);
+	Vector3 direction = Vector3(0, 0, 0);
+	std::string filename = "";
 	int clientID = -1;
 	int state = 0;
 
@@ -445,10 +532,10 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 			iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 			mesh->SetQuaternion(rotation);
 			mesh->Scale(scale);
-
+			
 			if (clientID == this->zID)
 			{
-				//this->zEng->GetCamera()->FollowMesh(playerMesh);
+				//this->zEng->GetCamera()->FollowMesh(mesh);
 			}
 			//Create player data
 			newWorldObject->AddStaticMesh(mesh);
@@ -456,6 +543,7 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 			switch (objectType)
 			{
 			case PLAYER:
+				dynamic_cast<Player*>(newWorldObject)->SetPlayerNextPosition(position);
 				dynamic_cast<Player*>(newWorldObject)->SetPlayerState(state);
 				this->zPlayers.push_back(dynamic_cast<Player*>(newWorldObject));
 				break;
@@ -478,7 +566,6 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 }
 void Client::HandleRemoveObject(const std::vector<std::string>& msgArray, const unsigned int objectType )
 {
-	char key[512];
 	int ID = -1;
 	int pos = -1;
 	switch(objectType)
@@ -569,6 +656,17 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 		default:
 			break;
 		}
+		Vector3 position;
+		Vector4 rotation;
+		int state;
+		std::string filename;
+
+		bool bState = false;
+		bool bPos = false;
+		bool bRot = false;
+		bool bFile = false;
+		bool bTime = false;
+		float serverTime = 0.0f;
 		if (worldObjectPointer != NULL)
 		{
 			worldObjectPointer->SetID(ID);
@@ -578,51 +676,91 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 
 				if(strcmp(key, POSITION.c_str()) == 0)
 				{
-					Vector3 position = this->zMsgHandler.ConvertStringToVector(POSITION, msgArray[i]);
-					worldObjectPointer->SetObjectPosition(position);
+					position = this->zMsgHandler.ConvertStringToVector(POSITION, msgArray[i]);
+					
+					bPos = true;
 				}
 				else if(strcmp(key, ROTATION.c_str()) == 0)
 				{
-					Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
+					rotation = this->zMsgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
+
+					bRot = true;
 					worldObjectPointer->SetObjectRotation(rotation);
 				}
 				else if(strcmp(key, STATE.c_str()) == 0)
 				{
-					int state = this->zMsgHandler.ConvertStringToInt(STATE, msgArray[i]);
-					switch (objectType)
-					{
-					case PLAYER:
-						dynamic_cast<Player*>(worldObjectPointer)->SetPlayerState(state);
-						break;
-					case ANIMAL:
-						dynamic_cast<Animal*>(worldObjectPointer)->SetAnimalState(state);
-						break;
-					default:
-						break;
-					}
+					state = this->zMsgHandler.ConvertStringToInt(STATE, msgArray[i]);
+
+					bState = true;
+				}
+				else if(strcmp(key, FRAME_TIME.c_str()) == 0)
+				{
+					bTime = true;
+					serverTime = this->zMsgHandler.ConvertStringToFloat(FRAME_TIME, msgArray[i]);
 				}
 				else if(strcmp(key, MESH_MODEL.c_str()) == 0)
 				{
-					std::string filename = this->zMsgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
-
-					//Create a new Mesh with the current values
-					iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), worldObjectPointer->GetObjectPosition());
-					float scale = worldObjectPointer->GetObjectScale().x;
-					Vector3 quat = worldObjectPointer->GetObjectRotation();
-
-					mesh->Scale(scale);
-					mesh->SetQuaternion(Vector4(quat.x,quat.y,quat.z,0.0f));
-					if (worldObjectPointer->HasMesh())
-					{
-						this->zEng->DeleteMesh(worldObjectPointer->GetObjectMesh());
-					}
-					worldObjectPointer->AddStaticMesh(mesh);
+					bFile = true;
+					filename = this->zMsgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
 				}
 				else
 				{
 					MaloW::Debug("Unknown Message Was sent from server");
 				}
 			}
+			if (bPos)
+			{
+				if (bTime)
+				{
+					if (serverTime > this->zFrameTime + 10 || serverTime < this->zFrameTime - 10.0f)
+					{
+						switch (objectType)
+						{
+						case PLAYER:
+							dynamic_cast<Player*>(worldObjectPointer)->SetPlayerNextPosition(position);
+							break;
+						case ANIMAL:
+							worldObjectPointer->SetObjectPosition(position);
+							break;
+						case STATIC_OBJECT:
+							worldObjectPointer->SetObjectPosition(position);
+							break;
+						default:
+							break;
+						}
+					}
+				}
+			}
+			if (bState)
+			{
+				switch (objectType)
+				{
+				case PLAYER:
+					dynamic_cast<Player*>(worldObjectPointer)->SetPlayerState(state);
+					break;
+				case ANIMAL:
+					dynamic_cast<Animal*>(worldObjectPointer)->SetAnimalState(state);
+					break;
+				default:
+					break;
+				}
+			}
+			if (bFile)
+			{
+				//Create a new Mesh with the current values
+				iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), worldObjectPointer->GetObjectPosition());
+				float scale = worldObjectPointer->GetObjectScale().y;
+				Vector3 quat = worldObjectPointer->GetObjectRotation();
+
+				mesh->Scale(scale);
+				mesh->SetQuaternion(Vector4(quat.x,quat.y,quat.z,0.0f));
+				if (worldObjectPointer->HasMesh())
+				{
+					this->zEng->DeleteMesh(worldObjectPointer->GetObjectMesh());
+				}
+				worldObjectPointer->AddStaticMesh(mesh);
+			}
+
 			//Copy over new Values to the vector
 			switch (objectType)
 			{
@@ -641,213 +779,3 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 		}
 	}
 }
-//void Client::HandleRemovePlayer(const std::vector<std::string>& msgArray)
-//{
-//	char key[512];
-//	int clientID = this->zMsgHandler.ConvertStringToInt(REMOVE_PLAYER, msgArray[0]);
-//
-//	int ClientPosition = SearchForPlayer(clientID);
-//
-//	//Check if client was found in the array
-//	if(ClientPosition != -1)
-//	{
-//			if(ClientPosition == this->zID)
-//			{
-//				this->CloseConnection("Unknown reason possible Kicked");
-//			}
-//			this->zEng->DeleteMesh(this->zPlayers[ClientPosition]->GetObjectMesh());
-//			this->zPlayers.erase(zPlayers.begin() + ClientPosition);
-//	}
-//}
-//void Client::HandleNewPlayer(const std::vector<std::string>& msgArray)
-//{
-//	char key[512];
-//
-//	Vector3 position;
-//	Vector3 scale;
-//	Vector4 rotation;
-//	Vector3 direction;
-//	std::string filename;
-//	int clientID = -1;
-//	int state = 0;
-//
-//	Player* newPlayer = new Player();
-//	for(unsigned int i = 0; i < msgArray.size(); i++)
-//	{
-//		sscanf(msgArray[i].c_str(), "%s ", key);
-//
-//		if(strcmp(key, NEW_PLAYER.c_str()) == 0)
-//		{
-//			clientID = this->zMsgHandler.ConvertStringToInt(NEW_PLAYER, msgArray[i]);
-//		}
-//		else if(strcmp(key, POSITION.c_str()) == 0)
-//		{
-//			position = this->zMsgHandler.ConvertStringToVector(POSITION, msgArray[i]);
-//		}
-//		else if(strcmp(key, ROTATION.c_str()) == 0)
-//		{
-//			rotation = this->zMsgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
-//		}
-//		else if(strcmp(key, STATE.c_str()) == 0)
-//		{
-//			state = this->zMsgHandler.ConvertStringToInt(STATE, msgArray[i]);
-//		}
-//		else if(strcmp(key, SCALE.c_str()) == 0)
-//		{
-//			scale = this->zMsgHandler.ConvertStringToVector(SCALE, msgArray[i]);
-//		}
-//		else if(strcmp(key, MESH_MODEL.c_str()) == 0)
-//		{
-//			filename = this->zMsgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
-//		}
-//		else if (strcmp(key, DIRECTION.c_str()) == 0)
-//		{
-//			direction = this->zMsgHandler.ConvertStringToVector(DIRECTION, msgArray[i]);
-//		}
-//		else
-//		{
-//			MaloW::Debug("Unknown Message Was sent from server");
-//		}
-//	}
-//	if (clientID != -1)
-//	{
-//		bool found = false;
-//		for (unsigned int i = 0; i < this->zPlayers.size(); i++)
-//		{
-//			int id = this->zPlayers[i]->GetID();
-//			if(clientID == id)
-//			{
-//				found = true;
-//				MaloW::Debug("Duplicate ID from server");
-//			}
-//		}
-//		if (!found)
-//		{
-//			//Creates a StaticMesh from the given Filename
-//			iMesh* playerMesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
-//			playerMesh->SetQuaternion(rotation);
-//			playerMesh->Scale(scale);
-//
-//			if (clientID == this->zID)
-//			{
-//				//this->zEng->GetCamera()->FollowMesh(playerMesh);
-//			}
-//			//Create player data
-//			newPlayer->AddStaticMesh(playerMesh);
-//			newPlayer->SetID(clientID);
-//			newPlayer->SetPlayerState(state);
-//
-//			this->zPlayers.push_back(newPlayer);
-//			newPlayer = NULL;
-//		}
-//	}
-//}
-//void Client::HandlePlayerUpdate(const std::vector<std::string>& msgArray)
-//{
-//	char key[512];
-//
-//	int clientID = -1;
-//	int ClientPosition = SearchForPlayer(msgArray[0], UPDATE_PLAYER, clientID);
-//
-//	if(ClientPosition != -1)
-//	{
-//		WorldObject* playerPointer = this->zPlayers[ClientPosition];
-//		playerPointer->SetID(clientID);
-//		for(unsigned int i = 0; i < msgArray.size(); i++)
-//		{
-//			sscanf(msgArray[i].c_str(), "%s ", key);
-//
-//			if(strcmp(key, POSITION.c_str()) == 0)
-//			{
-//				Vector3 position = this->zMsgHandler.ConvertStringToVector(POSITION, msgArray[i]);
-//				playerPointer->SetObjectPosition(position);
-//			}
-//			else if(strcmp(key, ROTATION.c_str()) == 0)
-//			{
-//				Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
-//				playerPointer->SetObjectRotation(rotation);
-//			}
-//			else if(strcmp(key, STATE.c_str()) == 0)
-//			{
-//				int playerState = this->zMsgHandler.ConvertStringToInt(STATE, msgArray[i]);
-//				dynamic_cast<Player*>(playerPointer)->SetPlayerState(playerState);
-//			}
-//			else if(strcmp(key, MESH_MODEL.c_str()) == 0)
-//			{
-//				std::string filename = this->zMsgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
-//				
-//				//Create a new Mesh with the current values
-//				iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), playerPointer->GetObjectPosition());
-//				float scale = playerPointer->GetObjectScale().x;
-//				Vector3 quat = playerPointer->GetObjectRotation();
-//				
-//				mesh->Scale(scale);
-//				mesh->SetQuaternion(Vector4(quat.x,quat.y,quat.z,0.0f));
-//				if (playerPointer->HasMesh())
-//				{
-//					this->zEng->DeleteMesh(playerPointer->GetObjectMesh());
-//				}
-//				playerPointer->AddStaticMesh(mesh);
-//			}
-//			else
-//			{
-//				MaloW::Debug("Unknown Message Was sent from server");
-//			}
-//		}
-//		//Copy over new Values to the vector
-//		this->zPlayers[ClientPosition] = dynamic_cast<Player*>(playerPointer);
-//		playerPointer = NULL;
-//	}
-//}
-//void Client::HandleObjectUpdate(const std::vector<std::string>& msgArray)
-//{
-//	char key[512];
-//
-//	int ID = -1;
-//	int objectPosition = SearchForObject(msgArray[0], UPDATE_OBJECT, ID);
-//
-//	if(objectPosition != -1)
-//	{
-//		WorldObject* objectPointer = this->zStaticObjects[objectPosition];
-//		objectPointer->SetID(ID);
-//		for(unsigned int i = 0; i < msgArray.size(); i++)
-//		{
-//			sscanf(msgArray[i].c_str(), "%s ", key);
-//
-//			if(strcmp(key, POSITION.c_str()) == 0)
-//			{
-//				Vector3 position = this->zMsgHandler.ConvertStringToVector(POSITION, msgArray[i]);
-//				objectPointer->SetObjectPosition(position);
-//			}
-//			else if(strcmp(key, ROTATION.c_str()) == 0)
-//			{
-//				Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(ROTATION, msgArray[i]);
-//				objectPointer->SetObjectRotation(rotation);
-//			}
-//			else if(strcmp(key, MESH_MODEL.c_str()) == 0)
-//			{
-//				std::string filename = this->zMsgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
-//
-//				//Create a new Mesh with the current values
-//				iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), objectPointer->GetObjectPosition());
-//				float scale = objectPointer->GetObjectScale().x;
-//				Vector3 quat = objectPointer->GetObjectRotation();
-//
-//				mesh->Scale(scale);
-//				mesh->SetQuaternion(Vector4(quat.x,quat.y,quat.z,0.0f));
-//				if (objectPointer->HasMesh())
-//				{
-//					this->zEng->DeleteMesh(objectPointer->GetObjectMesh());
-//				}
-//				objectPointer->AddStaticMesh(mesh);
-//			}
-//			else
-//			{
-//				MaloW::Debug("Unknown Message Was sent from server");
-//			}
-//		}
-//		//Copy over new Values to the vector
-//		this->zStaticObjects[objectPosition] = dynamic_cast<StaticObject*>(objectPointer);
-//		objectPointer = NULL;
-//	}
-//}

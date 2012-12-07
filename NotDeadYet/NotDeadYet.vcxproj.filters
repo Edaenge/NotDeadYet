@@ -100,6 +100,9 @@
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyConverter.cpp">
       <Filter>Game Files\KeyUtil</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\Player.cpp">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">

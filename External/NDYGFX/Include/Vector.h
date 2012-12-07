@@ -138,6 +138,18 @@ public:
         y *= scalar;
         z *= scalar;
     }
+	bool operator!=(const Vector3& v)
+	{
+		if(v.x != this->x && v.y != this->y && v.z != this->z)
+			return true;
+		return false;
+	}
+	bool operator==(const Vector3& v)
+	{
+		if(v.x == this->x && v.y == this->y && v.z == this->z)
+			return true;
+		return false;
+	}
 	float GetLengthSquared()
 	{
 		return this->GetDotProduct(*this);

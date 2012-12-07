@@ -5,11 +5,10 @@
 #pragma once
 
 #include "iMesh.h"
-
 class WorldObject
 {
 public:
-	WorldObject(){this->zMesh = NULL; this->zID = -1;}
+	WorldObject(){this->zMesh = 0; this->zID = -1;}
 	~WorldObject(){}
 	/*!	Returns Pointer to the Player Mesh*/
 	iMesh* GetObjectMesh() const {return this->zMesh;}
@@ -29,7 +28,7 @@ public:
 	void AddStaticMesh(iMesh* mesh) {this->zMesh = mesh;}
 	bool HasMesh() const 
 	{
-		if(this->zMesh != NULL) 
+		if(this->zMesh != 0) 
 			return true;
 		else 
 			return false;

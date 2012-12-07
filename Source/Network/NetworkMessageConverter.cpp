@@ -75,35 +75,38 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 
 	return ss.str();
 }
-std::string NetworkMessageConverter::Convert(const unsigned int ID, const unsigned int state_ID)
+std::string NetworkMessageConverter::Convert(const unsigned int ID, const float fp)
 {
 	std::stringstream ss;
 
 	switch (ID)
 	{
 	case MESSAGE_TYPE_UPDATE_PLAYER:
-		ss << UPDATE_PLAYER << " " << state_ID << "*";
+		ss << UPDATE_PLAYER << " " << fp << "*";
 		break;
 	case MESSAGE_TYPE_KEY_DOWN:
-		ss << KEY_DOWN << " " << state_ID << "*";
+		ss << KEY_DOWN << " " << fp << "*";
 		break;
 	case MESSAGE_TYPE_KEY_UP:
-		ss << KEY_UP << " " << state_ID << "*";
+		ss << KEY_UP << " " << fp << "*";
+		break;
+	case MESSAGE_TYPE_FRAME_TIME:
+		ss << FRAME_TIME << " " << fp << "*";
 		break;
 	case MESSAGE_TYPE_STATE:
-		ss << STATE << " " << state_ID << "*";
+		ss << STATE << " " << fp << "*";
 		break;
 	case MESSAGE_TYPE_NEW_PLAYER:
-		ss << NEW_PLAYER << " " << state_ID << "*";
+		ss << NEW_PLAYER << " " << fp << "*";
 		break;
 	case MESSAGE_TYPE_REMOVE_PLAYER:
-		ss << REMOVE_PLAYER << " " << state_ID << "*";
+		ss << REMOVE_PLAYER << " " << fp << "*";
 		break;
 	case MESSAGE_TYPE_CONNECTION_CLOSED:
-		ss << CONNECTION_CLOSED << " " << state_ID << "*";
+		ss << CONNECTION_CLOSED << " " << fp << "*";
 		break;
 	case MESSAGE_TYPE_SELF_ID:
-		ss << SELF_ID << " " << state_ID << "*";
+		ss << SELF_ID << " " << fp << "*";
 		break;
 	default:
 		ss << "";
@@ -139,7 +142,7 @@ std::string NetworkMessageConverter::CombineMessage(const std::vector<std::strin
 	}
 	return msg;
 }
-std::vector<std::string> NetworkMessageConverter::SplitMessage(std::string msg)
+std::vector<std::string> NetworkMessageConverter::SplitMessage(const std::string& msg)
 {
 	std::string subMsg = "";
 	std::vector<std::string> msgArray;
@@ -148,13 +151,13 @@ std::vector<std::string> NetworkMessageConverter::SplitMessage(std::string msg)
 		subMsg = "";
 		while (msg.at(i) != '*')
 		{
-			subMsg += msg.at(i++);
+			subMsg += msg[i++];
 		}
 		msgArray.push_back(subMsg);
 	}
 	return msgArray;
 }
-Vector3 NetworkMessageConverter::ConvertStringToVector(const std::string& type, std::string msg)
+Vector3 NetworkMessageConverter::ConvertStringToVector(const std::string& type, const std::string& msg)
 {
 	float x = 0.0f;
 	float y = 0.0f;
@@ -166,7 +169,7 @@ Vector3 NetworkMessageConverter::ConvertStringToVector(const std::string& type, 
 	
 	return vec;
 }
-Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& type, std::string msg)
+Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& type, const std::string& msg)
 {
 	float x;
 	float y;
@@ -178,15 +181,58 @@ Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& ty
 
 	return quaternion;
 }
-int NetworkMessageConverter::ConvertStringToInt(const std::string& type, std::string msg)
+int NetworkMessageConverter::ConvertStringToInt(const std::string& type, const std::string& msg)
 {
 	int value;
 	sscanf_s(msg.c_str(), (type + "%d").c_str(), &value);
 	return value;
 }
-std::string NetworkMessageConverter::ConvertStringToSubstring(const std::string& type, std::string msg)
+float NetworkMessageConverter::ConvertStringToFloat(const std::string& type, const std::string& msg)
+{
+	float value;
+	sscanf_s(msg.c_str(), (type + "%f").c_str(), &value);
+	return value;
+}
+std::string NetworkMessageConverter::ConvertStringToSubstring(const std::string& type, const std::string& msg)
 {
 	char subString[100];
 	sscanf(msg.c_str(), (type + "%s").c_str(), &subString);
 	return subString;
 }
+//std::string NetworkMessageConverter::Convert(const unsigned int ID, const unsigned int state_ID)
+//{
+//	std::stringstream ss;
+//
+//	switch (ID)
+//	{
+//	case MESSAGE_TYPE_UPDATE_PLAYER:
+//		ss << UPDATE_PLAYER << " " << state_ID << "*";
+//		break;
+//	case MESSAGE_TYPE_KEY_DOWN:
+//		ss << KEY_DOWN << " " << state_ID << "*";
+//		break;
+//	case MESSAGE_TYPE_KEY_UP:
+//		ss << KEY_UP << " " << state_ID << "*";
+//		break;
+//	case MESSAGE_TYPE_STATE:
+//		ss << STATE << " " << state_ID << "*";
+//		break;
+//	case MESSAGE_TYPE_NEW_PLAYER:
+//		ss << NEW_PLAYER << " " << state_ID << "*";
+//		break;
+//	case MESSAGE_TYPE_REMOVE_PLAYER:
+//		ss << REMOVE_PLAYER << " " << state_ID << "*";
+//		break;
+//	case MESSAGE_TYPE_CONNECTION_CLOSED:
+//		ss << CONNECTION_CLOSED << " " << state_ID << "*";
+//		break;
+//	case MESSAGE_TYPE_SELF_ID:
+//		ss << SELF_ID << " " << state_ID << "*";
+//		break;
+//	default:
+//		ss << "";
+//		break;
+//	}
+//
+//	return ss.str();
+//}
