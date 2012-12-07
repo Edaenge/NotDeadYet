@@ -10,7 +10,7 @@ NetworkServer::NetworkServer()
 
 NetworkServer::~NetworkServer()
 {
-	this->stayAlive = false;
+	this->Close();
 
 	// close server socket
 	int retCode = 0;

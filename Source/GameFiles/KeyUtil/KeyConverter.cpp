@@ -2,15 +2,15 @@
 #include <windows.h>
 #include <sstream>
 //Common Keys
-static const std::string K_SPACE = "Space";
-static const std::string K_SHIFT = "Shift";
-static const std::string K_ESCAPE = "Escape";
-static const std::string K_CONTROL = "Ctrl";
-static const std::string K_RETURN = "Return";
-static const std::string K_LEFT = "Left";
-static const std::string K_RIGHT = "Right";
-static const std::string K_UP = "Up";
-static const std::string K_DOWN = "Down";
+static const std::string K_SPACE = "SPACE";
+static const std::string K_SHIFT = "SHIFT";
+static const std::string K_ESCAPE = "ESCAPE";
+static const std::string K_CONTROL = "CTRL";
+static const std::string K_RETURN = "RETURN";
+static const std::string K_LEFT = "LEFT";
+static const std::string K_RIGHT = "RIGHT";
+static const std::string K_UP = "UP";
+static const std::string K_DOWN = "DOWN";
 //Numpad Keys 0-9
 static const std::string NP_0 = "NP_0";
 static const std::string NP_1 = "NP_1";
@@ -55,12 +55,15 @@ static const std::string U_HELP = "HELP";
 static const std::string U_SLEEP = "SLEEP";
 static const std::string U_SNAPSHOT = "SNAPSHOT";
 static const std::string U_SELECT = "SELECT";
+
 KeyConverter::KeyConverter()
 {
 }
+
 KeyConverter::~KeyConverter()
 {
 }
+
 std::string KeyConverter::ConvertToString(const char key) const
 {
 	std::string returnValue = "";
@@ -91,6 +94,7 @@ std::string KeyConverter::ConvertToString(const char key) const
 	returnValue = ss.str();
 	return returnValue;
 }
+
 bool KeyConverter::CheckNumPad(std::string& ret, const char key) const
 {
 	bool found = true;
@@ -150,6 +154,7 @@ bool KeyConverter::CheckNumPad(std::string& ret, const char key) const
 	}
 	return found;
 }
+
 bool KeyConverter::CheckFKeys(std::string& ret, const char key ) const
 {
 	bool found = true;
@@ -198,6 +203,7 @@ bool KeyConverter::CheckFKeys(std::string& ret, const char key ) const
 	return found;
 
 }
+
 bool KeyConverter::CheckCommonKeys(std::string& ret, const char key) const
 {
 	bool found = true;
@@ -236,6 +242,7 @@ bool KeyConverter::CheckCommonKeys(std::string& ret, const char key) const
 	}
 	return found;
 }
+
 bool KeyConverter::CheckUncommonKeys(std::string& ret, const char key) const
 {
 	bool found = true;
@@ -283,9 +290,10 @@ bool KeyConverter::CheckUncommonKeys(std::string& ret, const char key) const
 	}
 	return found;
 }
+
 char KeyConverter::ConvertToChar(const std::string& key) const
 {
-	char returnValue;
+	char returnValue = '\0';
 	//Common Keys
 	if(key == K_ESCAPE)
 		returnValue = VK_ESCAPE;
@@ -388,5 +396,6 @@ char KeyConverter::ConvertToChar(const std::string& key) const
 		returnValue = VK_SNAPSHOT;
 	else if(key == U_SELECT)
 		returnValue = VK_SELECT;
+
 	return returnValue;
 }

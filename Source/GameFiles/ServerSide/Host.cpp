@@ -10,6 +10,7 @@ Host::Host()
 	this->zStartime = 0;
 	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
+	this->zTimeOut = 15.0f;
 }
 
 Host::~Host()
@@ -52,28 +53,12 @@ void Host::Life()
 		//Checks if ServerListener is still working
 		if(!this->zServerListener->IsAlive())
 		{
-			int code;
-
-			this->zServerListener->Close();
-			this->zServerListener->WaitUntillDone();
-
-			SAFE_DELETE(this->zServerListener);
-			this->zServerListener = new ServerListener();
-			code = this->zServerListener->InitListener(this->zPort);
-
-			if(code == 0)
-				this->zServerListener->Start();
-
-			else
-			{
-				MaloW::Debug("Failed to restart ServerListener. Error: " + MaloW::convertNrToString(code));
-				this->Close();
-			}
+			MaloW::Debug("Server Listener has died.");
 		}
 
 		HandleNewConnections();
-		HandleRecivedMessages();
 		PingClients();
+		HandleRecivedMessages();
 		
 		Sleep(10);
 	}
@@ -167,6 +152,26 @@ void Host::SendToClient( int clientID, const std::string& message )
 	this->zClients.at(pos)->zClient->sendData(message);
 }
 
+void Host::SendPlayerUpdates()
+{
+	std::vector<std::string> playerData;
+	std::string mess = "";
+
+	std::vector<PlayerActor*>::iterator it;
+	for (it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
+	{
+		Vector3 pos = (*it)->GetPosition();
+		Vector3 dir = (*it)->GetDirection();
+		Vector4 rot = (*it)->GetRotation();
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_PLAYER, (*it)->GetID());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (*it)->GetState());
+	}
+}
+
 bool Host::HasPlayers() const
 {
 	return !this->zClients.empty();
@@ -208,7 +213,7 @@ void Host::HandleRecivedMessages()
 	}
 	else if(strcmp(key, KEY_UP.c_str()) == 0)
 	{
-
+		HandleKeyRelease(np->getID(), msgArray[0]);
 	}
 	else if(strcmp(key, PING.c_str()) == 0)
 	{
@@ -266,6 +271,42 @@ void Host::HandleKeyPress( const int CLIENT_ID, const std::string& key )
 
 }
 
+void Host::HandleKeyRelease( const int CLIENT_ID, const std::string& key )
+{
+	//Hard coded for test
+	int keyz = this->zMessageConverter.ConvertStringToInt(KEY_UP, key);
+	int index = SearchForPlayer(CLIENT_ID);
+
+	PlayerActor* player = this->zPlayers.at(index);
+
+	switch (keyz)
+	{
+	case KEY_FORWARD:
+		player->SetKeyState(KEY_FORWARD, false);
+		break;
+	case KEY_BACKWARD:
+		player->SetKeyState(KEY_BACKWARD, false);
+		break;
+	case KEY_LEFT:
+		player->SetKeyState(KEY_LEFT, false);
+		break;
+	case KEY_RIGHT:
+		player->SetKeyState(KEY_RIGHT, false);
+		break;
+	case KEY_SPRINT:
+		player->SetKeyState(KEY_SPRINT, false);
+		break;
+	case KEY_DUCK:
+		player->SetKeyState(KEY_DUCK, false);
+		break;
+	case KEY_JUMP:
+		player->SetKeyState(KEY_JUMP, false);
+		break;
+	default:
+		break;
+	}
+}
+
 void Host::HandlePingMsg( const int CLIENT_ID )
 {
 	int index = SearchForClient(CLIENT_ID);
@@ -273,13 +314,16 @@ void Host::HandlePingMsg( const int CLIENT_ID )
 	ClientData* cd;
 	cd = this->zClients.at(index);
 
+	cd->zTotalPingTime += cd->zCurrentPingTime;
+	cd->zNrOfPings++;
+
 	cd->zPinged = false;
 	cd->zCurrentPingTime = 0.0f;
-}
 
-int Host::GetPort() const
-{
-	return this->zPort;
+	//Hard coded
+	if(cd->zTotalPingTime > 60.0f)
+		cd->ResetPingCounter();
+	
 }
 
 int Host::SearchForClient( const int ID ) const
@@ -351,7 +395,7 @@ void Host::PingClients()
 		else
 		{
 			//If we sent a ping x sec ago, drop the client.
-			if(cd->zCurrentPingTime > 10.0f)
+			if(cd->zCurrentPingTime > zTimeOut)
 			{
 				KickClient(cd->zClient->getClientID());
 			}

@@ -24,14 +24,14 @@ public:
 	virtual ~PlayerActor();
 
 	/*! Updates players pos, states etc.*/
-	void Update();
+	void Update(float deltaTime);
 	
-	int GetID() const;
-	float GetVelocity() const;
-	int GetState() const;
-	const std::string& GetPlayerModel() const;
-	const Vector3& GetDirection() const;
-
+	inline int GetID() const {return this->zID;}
+	inline float GetVelocity() const {return this->zVelocity;}
+	inline int GetState() const {return this->zState;}
+	inline const std::string& GetPlayerModel() const {return this->zPlayerModel;}
+	inline const Vector3& GetDirection() const {return this->zDir;}
+	inline float GetLatency() const {return this->zLatency;}
 	/*! Gets the current key state. This function is used
 		to see which buttons are pressed right now.
 		Key is an enum defined in header KeyValues.
@@ -49,15 +49,17 @@ public:
 	/*! Sets the player state.
 		Enum is defined in AnimationStates.h.
 	*/
-	void SetState(int state);
-	void SetVelocity(float velocity);
-	void SetDirection(const Vector3& dir);
-	void SetPlayerModel(const std::string& model);
+	inline void SetState(const int state){this->zState = state;}
+	inline void SetVelocity(const float velocity){this->zVelocity = velocity;}
+	inline void SetDirection(const Vector3& dir){this->zDir = dir;}
+	inline void SetPlayerModel(const std::string& model){this->zPlayerModel = model;}
+	inline void SetLatency(const float latency){this->zLatency = latency;}
 
 private:
 	int		zID;
 	int		zState;
 	float	zVelocity;
+	float	zLatency;
 
 	std::string zPlayerModel;
 	KeyStates zKeyStates;

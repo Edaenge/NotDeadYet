@@ -19,6 +19,8 @@ struct ClientData
 		zClient = cc;
 		zPinged = false;
 		zCurrentPingTime = 0.0f;
+		zTotalPingTime = 0.0f;
+		zNrOfPings = 0;
 	}
 
 	~ClientData()
@@ -26,13 +28,20 @@ struct ClientData
 		SAFE_DELETE(zClient);
 	}
 
-	void IncPingTime(float dt)
+	inline void IncPingTime(float dt)
 	{
 		zCurrentPingTime += dt;
+	}
+	inline void ResetPingCounter()
+	{
+		zPinged = 0;
+		zTotalPingTime = 0.0f;
 	}
 
 	bool zPinged;
 	float zCurrentPingTime;
+	float zTotalPingTime;
+	int zNrOfPings;
 	MaloW::ClientChannel* zClient;
 
 };
@@ -50,11 +59,13 @@ public:
 	/*! Checks if the server have players connected.*/
 	bool HasPlayers() const;
 	/*! Returns the port*/
-	int GetPort() const;
+	inline int GetPort() const{return this->zPort;}
 	/*! Sends a message to all connected clients.*/
 	void SendToAllClients(const std::string& message);
 	/*! Sends to a specific client.*/
 	void SendToClient(int clientID, const std::string& message);
+	/*! Sends player updates to clients.*/
+	void SendPlayerUpdates();
 	/*! Notifies all clients, the server is shutting down.*/
 	void BroadCastServerShutdown();
 	/*! Pings the clients.*/
@@ -83,6 +94,8 @@ private:
 	void HandlePingMsg(const int CLIENT_ID);
 	/*! Handles clients key press.*/
 	void HandleKeyPress(const int CLIENT_ID, const std::string& key);
+	/*! Handles clients key releases.*/
+	void HandleKeyRelease(const int CLIENT_ID, const std::string& key);
 	/*! Search for a client. Returns -1 if none was found.*/
 	int SearchForClient(const int ID) const;
 	/*! Search for a player. Returns -1 if none was found.*/
@@ -104,6 +117,7 @@ private:
 	INT64 zStartime;
 	float zSecsPerCnt;
 	float zDeltaTime;
+	float zTimeOut;
 
 
 

@@ -1,23 +1,21 @@
 #include "GameFiles/ServerSide/PlayerActor.h"
 
 
-PlayerActor::PlayerActor( const int ID )
+PlayerActor::PlayerActor( const int ID ) : Actor()
 {
 	this->zID = ID;
 
 	this->zVelocity = 5;
-	this->zState = 0;
+	this->zState = STATE_IDLE;
 	this->zPos = Vector3(1,0,1);
 	this->zScale = Vector3(0.05,0.05,0.05);
 	this->zPlayerModel = "none";
 }
 
 
-PlayerActor::PlayerActor( const int ID, const Vector3& startPos )
+PlayerActor::PlayerActor( const int ID, const Vector3& startPos ) : Actor(startPos, Vector4())
 {
 	this->zID = ID;
-	this->zPos = startPos;
-
 	this->zVelocity = 5;
 	this->zState = STATE_IDLE;
 	this->zScale = Vector3(0.05,0.05,0.05);
@@ -25,14 +23,11 @@ PlayerActor::PlayerActor( const int ID, const Vector3& startPos )
 }
 
 
-PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& startRot )
+PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& startRot ) : Actor(startPos, startRot)
 {
 	this->zID = ID;
-	this->zRot = startRot;
-
 	this->zVelocity = 5;
 	this->zState = STATE_IDLE;
-	this->zPos = Vector3(1,0,1);
 	this->zScale = Vector3(0.05,0.05,0.05);
 	this->zPlayerModel = "none";
 }
@@ -44,62 +39,10 @@ PlayerActor::~PlayerActor()
 }
 
 
-void PlayerActor::Update()
+void PlayerActor::Update(float deltaTime)
 {
-	
+	if(this->zKeyStates.GetKeyState(KEY_FORWARD))
+	{
+		//this->zPos = 
+	}
 }
-
-
-int PlayerActor::GetID() const
-{
-	return this->zID;
-}
-
-
-float PlayerActor::GetVelocity() const
-{
-	return this->zVelocity;
-}
-
-
-int PlayerActor::GetState() const
-{
-	return this->zState;
-}
-
-
-const std::string& PlayerActor::GetPlayerModel() const
-{
-	return this->zPlayerModel;
-}
-
-
-const Vector3& PlayerActor::GetDirection() const
-{
-	return this->zDir;
-}
-
-
-void PlayerActor::SetState( int state )
-{
-	this->zState = state;
-}
-
-
-void PlayerActor::SetVelocity( float velocity )
-{
-	this->zVelocity = velocity;
-}
-
-
-void PlayerActor::SetDirection( const Vector3& dir )
-{
-	this->zDir = dir;
-}
-
-
-void PlayerActor::SetPlayerModel( const std::string& model )
-{
-	this->zPlayerModel = model;
-}
-

@@ -11,7 +11,12 @@ class Actor
 {
 public:
 	Actor(){}
-	Actor(const Vector3& pos, const Vector4& rot) {zPos = pos; zRot = rot;}
+	Actor(const Vector3& pos, const Vector4& rot) 
+	{
+		zPos = pos; 
+		zRot = rot;
+		zScale = Vector3(1.0f,1.0f,1.0f);
+	}
 	virtual ~Actor(){}
 	
 	inline const Vector3& GetPosition() const {return zPos;}
@@ -22,7 +27,7 @@ public:
 	inline void SetRotation(const Vector4& rot) {zRot = rot;}
 	inline void SetScale(const Vector3& scale) {zScale = scale;}
 
-	virtual void Update() = 0;
+	virtual void Update(float deltaTime) = 0;
 
 protected:
 	Vector3 zPos;
