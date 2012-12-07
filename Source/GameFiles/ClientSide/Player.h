@@ -18,11 +18,12 @@ public:
 	/*! Returns Current Player State*/
 	inline int GetPlayerState() const {return this->zPlayerState;}
 	/*! Sets the New Player Position*/
-	inline void SetPlayerNextPosition(const Vector3 position) {this->zEndPosition = position;}
+	inline void SetNextPosition(const Vector3 position) {this->zEndPosition = position;}
 	/*! Returns New Player Position*/
-	Vector3 GetPlayerNextPosition() const {return this->zEndPosition;}
+	Vector3 GetNextPosition() const {return this->zEndPosition;}
 	/*! Updates the player*/
-	void Update(float dt);
+	void Update(float deltaTime);
+private:
 	void LinearInterpolation(Vector3& PrevPos, const Vector3& newPos, float dt);
 private:
 	int zPlayerState;

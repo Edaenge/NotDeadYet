@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\Animal.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\Client.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\Player.cpp" />
     <ClCompile Include="..\Source\GameFiles\Game.cpp" />

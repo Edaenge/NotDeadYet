@@ -1,17 +1,17 @@
-#include "GameFiles/ClientSide/Player.h"
+#include "GameFiles/ClientSide/Animal.h"
 
 #define PI 3.14159265358979323846f
 
-Player::Player() : WorldObject()
+Animal::Animal() : WorldObject()
 {
-	this->zPlayerState = STATE_IDLE;
+	this->zAnimalState = STATE_IDLE;
 	this->zEndPosition = Vector3(0,0,0);
 	this->zVelocity = 1000.0f;
 }
-void Player::Update(float deltaTime)
+void Animal::Update(float deltaTime)
 {
 	Vector3 currentPosition = this->zMesh->GetPosition();
-	
+
 	//Cosine
 	//float t = (-cos(PI * deltaTime) * 0.5f) + 0.5f;
 
@@ -24,9 +24,9 @@ void Player::Update(float deltaTime)
 	this->LinearInterpolation(currentPosition, this->zEndPosition, t);
 	this->SetObjectPosition(currentPosition);
 }
-void Player::LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t)
+void Animal::LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t)
 {
 	Vector3 temp = CurrPos + (newPos - CurrPos) * t * zVelocity;
-	
+
 	CurrPos = temp;
 }

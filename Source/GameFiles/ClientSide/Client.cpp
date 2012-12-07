@@ -154,6 +154,11 @@ void Client::UpdateWorldObjects()
 	{
 		this->zPlayers[i]->Update(this->zDeltaTime);
 	}
+
+	for (unsigned int i = 0; i < this->zAnimals.size(); i++)
+	{
+		this->zAnimals[i]->Update(this->zDeltaTime);
+	}
 }
 bool Client::IsAlive()
 {
@@ -202,7 +207,7 @@ void Client::HandleKeyboardInput()
 		{
 			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 			Vector3 newPos = position + (camForward * this->zDeltaTime * mSpeed);
-			this->zPlayers.at(pos)->SetPlayerNextPosition(newPos);
+			this->zPlayers.at(pos)->SetNextPosition(newPos);
 		}
 	}
 	else
@@ -218,7 +223,7 @@ void Client::HandleKeyboardInput()
 				Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 				Vector3 newPos = position + (camBackwards * this->zDeltaTime * mSpeed);
 				
-				this->zPlayers.at(pos)->SetPlayerNextPosition(newPos);
+				this->zPlayers.at(pos)->SetNextPosition(newPos);
 			}
 		}
 	}
@@ -237,7 +242,7 @@ void Client::HandleKeyboardInput()
 			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 			Vector3 newPos = Vector3(10, 0, 10);
 			newPos = position + (camRight * this->zDeltaTime * mSpeed);
-			this->zPlayers.at(pos)->SetPlayerNextPosition(newPos);
+			this->zPlayers.at(pos)->SetNextPosition(newPos);
 		}
 	}
 	else
@@ -256,7 +261,7 @@ void Client::HandleKeyboardInput()
 				Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 				Vector3 newPos = Vector3(10, 0, 10);
 				newPos = position + (camRight * this->zDeltaTime * mSpeed);
-				this->zPlayers.at(pos)->SetPlayerNextPosition(newPos);
+				this->zPlayers.at(pos)->SetNextPosition(newPos);
 			}
 		}
 	}
@@ -448,8 +453,6 @@ int Client::FindObject(const int id, const unsigned int objectType)
 }
 void Client::HandleNewObject(const std::vector<std::string>& msgArray, const unsigned int objectType )
 {
-	char key[512];
-
 	Vector3 position = Vector3(0, 0, 0);
 	Vector3 scale = Vector3(0.05f, 0.05f, 0.05f);
 	Vector4 rotation = Vector4(0, 0, 0, 0);
@@ -458,6 +461,7 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 	int clientID = -1;
 	int state = 0;
 
+	char key[512];
 	for(unsigned int i = 0; i < msgArray.size(); i++)
 	{
 		sscanf(msgArray[i].c_str(), "%s ", key);
@@ -510,7 +514,7 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 	}
 	if (clientID != -1)
 	{
-		int pos = -1;
+		int pos;
 		switch (objectType)
 		{
 		case PLAYER:
@@ -523,6 +527,7 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 			pos = this->SearchForObject(clientID);
 			break;
 		default:
+			pos = -1;
 			break;
 		}
 		if (pos == -1)
@@ -553,7 +558,7 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 			switch (objectType)
 			{
 			case PLAYER:
-				dynamic_cast<Player*>(newWorldObject)->SetPlayerNextPosition(position);
+				dynamic_cast<Player*>(newWorldObject)->SetNextPosition(position);
 				dynamic_cast<Player*>(newWorldObject)->SetPlayerState(state);
 				this->zPlayers.push_back(dynamic_cast<Player*>(newWorldObject));
 				break;
@@ -561,6 +566,7 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 				this->zStaticObjects.push_back(dynamic_cast<StaticObject*>(newWorldObject));
 				break;
 			case ANIMAL:
+				dynamic_cast<Animal*>(newWorldObject)->SetNextPosition(position);
 				dynamic_cast<Animal*>(newWorldObject)->SetAnimalState(state);
 				this->zAnimals.push_back(dynamic_cast<Animal*>(newWorldObject));
 				break;
@@ -723,9 +729,10 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 						switch (objectType)
 						{
 						case PLAYER:
-							dynamic_cast<Player*>(worldObjectPointer)->SetPlayerNextPosition(position);
+							dynamic_cast<Player*>(worldObjectPointer)->SetNextPosition(position);
 							break;
 						case ANIMAL:
+							dynamic_cast<Animal*>(worldObjectPointer)->SetNextPosition(position);
 							worldObjectPointer->SetObjectPosition(position);
 							break;
 						case STATIC_OBJECT:
