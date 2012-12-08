@@ -138,6 +138,10 @@ void Client::Life()
 		Sleep(5);
 	}
 }
+void Client::SendClientUpdate()
+{
+
+}
 void Client::UpdateCameraPos()
 {
 	int pos = this->SearchForPlayer(this->zID);
@@ -239,8 +243,8 @@ void Client::HandleKeyboardInput()
 		if (pos != -1)
 		{
 			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
-			Vector3 newPos = Vector3(10, 0, 10);
-			newPos = position + (camRight * this->zDeltaTime * mSpeed);
+			Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
+			
 			this->zPlayers.at(pos)->SetNextPosition(newPos);
 		}
 	}
@@ -258,8 +262,7 @@ void Client::HandleKeyboardInput()
 			if (pos != -1)
 			{
 				Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
-				Vector3 newPos = Vector3(10, 0, 10);
-				newPos = position + (camRight * this->zDeltaTime * mSpeed);
+				Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
 				this->zPlayers.at(pos)->SetNextPosition(newPos);
 			}
 		}

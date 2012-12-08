@@ -52,7 +52,10 @@ private:
 	float Update();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
+	/*! Updates The Positions*/
 	void UpdateWorldObjects();
+	/*! Updates the camera position to follow the mesh*/
+	void UpdateCameraPos();
 	/*! Search for the object with the correct ID and returns a Position if found*/
 	int SearchForPlayer(const int id);
 	/*! Search for the object with the correct ID and returns a Position if found*/
@@ -65,6 +68,7 @@ private:
 	void HandleUpdateObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
 	void HandleNewObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
 	void HandleRemoveObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
+	void SendClientUpdate();
 public:
 	Client();
 	/*! Connects to a Host with the specified parameters*/
@@ -73,5 +77,4 @@ public:
 	void Life();
 	/*! Checks if Thread is alive*/
 	bool IsAlive();
-	void UpdateCameraPos();
 };

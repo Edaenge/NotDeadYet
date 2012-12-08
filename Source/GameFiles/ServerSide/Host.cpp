@@ -169,6 +169,8 @@ void Host::SendPlayerUpdates()
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (*it)->GetState());
+
+		playerData.push_back(mess);
 	}
 }
 
@@ -234,7 +236,7 @@ void Host::HandleRecivedMessages()
 
 }
 
-void Host::HandleKeyPress( const int CLIENT_ID, const std::string& key )
+void Host::HandleKeyPress(const int CLIENT_ID, const std::string& key)
 {
 	//Hard coded for test
 	int keyz = this->zMessageConverter.ConvertStringToInt(KEY_DOWN, key);
@@ -271,7 +273,7 @@ void Host::HandleKeyPress( const int CLIENT_ID, const std::string& key )
 
 }
 
-void Host::HandleKeyRelease( const int CLIENT_ID, const std::string& key )
+void Host::HandleKeyRelease(const int CLIENT_ID, const std::string& key)
 {
 	//Hard coded for test
 	int keyz = this->zMessageConverter.ConvertStringToInt(KEY_UP, key);
@@ -307,7 +309,7 @@ void Host::HandleKeyRelease( const int CLIENT_ID, const std::string& key )
 	}
 }
 
-void Host::HandlePingMsg( const int CLIENT_ID )
+void Host::HandlePingMsg(const int CLIENT_ID)
 {
 	int index = SearchForClient(CLIENT_ID);
 
@@ -326,7 +328,7 @@ void Host::HandlePingMsg( const int CLIENT_ID )
 	
 }
 
-int Host::SearchForClient( const int ID ) const
+int Host::SearchForClient(const int ID) const
 {
 
 	if(!HasPlayers())
@@ -422,7 +424,7 @@ float Host::Update()
 	return this->zDeltaTime;
 }
 
-bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string reason /*= ""*/ )
+bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 {
 	int index = SearchForClient(ID);
 	int pIndex = SearchForPlayer(ID);
@@ -536,8 +538,3 @@ void Host::CreateNewPlayer( const int ID, std::vector<std::string> &mesh)
 
 	
 }
-
-
-
-
-
