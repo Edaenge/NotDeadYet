@@ -5,7 +5,7 @@ PlayerActor::PlayerActor( const int ID ) : Actor()
 {
 	this->zID = ID;
 
-	this->zVelocity = 5;
+	this->zVelocity = V_WALK_SPEED;
 	this->zState = STATE_IDLE;
 
 	this->zPos = Vector3(1,0,1);
@@ -60,6 +60,22 @@ PlayerActor::~PlayerActor()
 void PlayerActor::Update(float deltaTime)
 {
 	this->zFrameTime += deltaTime;
+
+	switch (this->zState)
+	{
+	case STATE_WALKING:
+		this->zVelocity = V_WALK_SPEED;
+		break;
+	case STATE_RUNNING:
+		this->zVelocity = V_RUN_SPEED;
+	case STATE_CROUCHING:
+		this->zVelocity = V_CROUCH_SPEED;
+		break;
+	case STATE_IDLE:
+		break;
+	default:
+		break;
+	}
 
 	if(this->zKeyStates.GetKeyState(KEY_FORWARD))
 	{

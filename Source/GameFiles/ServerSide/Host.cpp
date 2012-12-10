@@ -72,7 +72,7 @@ void Host::Life()
 			waitTimer = 0.0f;
 		}
 
-		Sleep(10);
+		Sleep(5);
 	}
 }
 
@@ -274,12 +274,6 @@ void Host::HandleRecivedMessages()
 		//Handles key presses from client.
 		else if(strcmp(key, KEY_DOWN.c_str()) == 0)
 		{
-			if(msgArray.size() == 2)
-			{
-				float frameTime = this->zMessageConverter.ConvertStringToFloat(FRAME_TIME, msgArray[1]);
-				this->zPlayers[p_index]->SetFrameTime(frameTime);
-			}
-
 			HandleKeyPress(this->zPlayers[p_index], msgArray[0]);
 		}
 		//Handles key releases from client.
@@ -414,6 +408,11 @@ void Host::HandlePlayerUpdate( PlayerActor* pl, ClientData* cd, const std::vecto
 		{
 			Vector4 rot = this->zMessageConverter.ConvertStringToQuaternion(ROTATION, (*it));
 			pl->SetRotation(rot);
+		}
+		else if(strcmp(key, FRAME_TIME.c_str()) == 0)
+		{
+				float frameTime = this->zMessageConverter.ConvertStringToFloat(FRAME_TIME, (*it));
+				pl->SetFrameTime(frameTime);
 		}
 		else
 			MaloW::Debug("Unknown message in HandlePlayerUpdate.");
