@@ -72,6 +72,8 @@ public:
 	void PingClients();
 	/*! Updates the server clock.*/
 	float Update();
+	/*! Updates the players.*/
+	void UpdatePl();
 	/*! Kicks client. Sends a message if reason is given.
 		If sendAMessage is false, the client will not be notified.
 		This function notifies all the other clients to remove this player.
@@ -90,24 +92,29 @@ private:
 	CreateNewPlayer
 	*/
 	void HandleRecivedMessages();
+	/*! Read messages from queue and saves them in*/
+	void ReadMessages(); 
 	/*! Handles ping messages.*/
-	void HandlePingMsg(const int CLIENT_ID);
+	void HandlePingMsg(ClientData* cd);
 	/*! Handles clients key press.*/
-	void HandleKeyPress(const int CLIENT_ID, const std::string& key);
+	void HandleKeyPress(PlayerActor* pl, const std::string& key);
 	/*! Handles clients key releases.*/
-	void HandleKeyRelease(const int CLIENT_ID, const std::string& key);
+	void HandleKeyRelease(PlayerActor* pl, const std::string& key);
+	/*! Handles incoming data from player, such as Direction, Up vector and Rotation.*/
+	void HandlePlayerUpdate(PlayerActor* pl, ClientData* cd, const std::vector<std::string> &data);
 	/*! Search for a client. Returns -1 if none was found.*/
 	int SearchForClient(const int ID) const;
 	/*! Search for a player. Returns -1 if none was found.*/
 	int SearchForPlayer(const int ID) const;
 	/*! Creates a new player and notifies all clients.*/
-	void CreateNewPlayer(const int ID, std::vector<std::string> &mesh);
+	void CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data);
 	
 private:
 	ServerListener* zServerListener;
 
-	std::vector<ClientData*> zClients;
-	std::vector<PlayerActor*> zPlayers;
+	std::vector<ClientData*>			zClients;
+	std::vector<PlayerActor*>			zPlayers;
+	std::vector<MaloW::NetworkPacket*>	zMessages;
 	
 	NetworkMessageConverter zMessageConverter;
 
@@ -118,6 +125,8 @@ private:
 	float zSecsPerCnt;
 	float zDeltaTime;
 	float zTimeOut;
+	float zUpdateDelay;
+	float zPingMessageInterval;
 
 
 

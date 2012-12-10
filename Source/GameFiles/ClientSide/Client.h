@@ -17,16 +17,19 @@ using namespace MaloW;
 class Client : public MaloW::Process
 {
 private:
+	/*! Current Client ID*/
 	int zID;
 
 	int	zPort;
 	std::string zIP;
-
+	bool zRunning;
 	INT64 zStartime;
-	float zWaitTimer;
-	float zFrameTime;
 	float zDeltaTime;
 	float zSecsPerCnt;
+	/*! Counter*/
+	float zWaitTimer;
+	/*! Total Runtime*/
+	float zFrameTime;
 	KeyHandler zKeyInfo;
 	std::string zMeshID;
 	GraphicsEngine* zEng;
@@ -42,11 +45,11 @@ private:
 	/*! Handle Keyboard Input */
 	void HandleKeyboardInput();
 	/*! Splits Network Message and detects what type was sent*/
-	void HandleNetworkMessage(std::string msg);
+	void HandleNetworkMessage(const std::string& msg);
 	/*! Pings client to check if server is still running*/
 	void Ping();
 	/*! Close the connection and print the reason to the client*/
-	void CloseConnection(const std::string reason);
+	void CloseConnection(const std::string& reason);
 	/*! Initializes the graphic stuff*/
 	void initClient();
 	float Update();
@@ -68,6 +71,7 @@ private:
 	void HandleUpdateObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
 	void HandleNewObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
 	void HandleRemoveObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
+	/*! Send Camera Info and Rotation to Server*/
 	void SendClientUpdate();
 public:
 	Client();

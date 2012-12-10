@@ -32,6 +32,8 @@ public:
 	inline const std::string& GetPlayerModel() const {return this->zPlayerModel;}
 	inline const Vector3& GetDirection() const {return this->zDir;}
 	inline float GetLatency() const {return this->zLatency;}
+	inline float GetFrameTime() const {return this->zFrameTime;}
+	inline const Vector3& GetUpVector() const {return this->zUp;}
 	/*! Gets the current key state. This function is used
 		to see which buttons are pressed right now.
 		Key is an enum defined in header KeyValues.
@@ -53,15 +55,21 @@ public:
 	inline void SetVelocity(const float velocity){this->zVelocity = velocity;}
 	inline void SetDirection(const Vector3& dir){this->zDir = dir;}
 	inline void SetPlayerModel(const std::string& model){this->zPlayerModel = model;}
+	inline void SetFrameTime(const float frameTime){this->zFrameTime = frameTime;}
 	inline void SetLatency(const float latency){this->zLatency = latency;}
+	inline void SetUpVector(const Vector3& up){this->zUp = up;}
+
 
 private:
 	int		zID;
 	int		zState;
 	float	zVelocity;
 	float	zLatency;
+	float	zFrameTime;
 
 	std::string zPlayerModel;
 	KeyStates zKeyStates;
+
 	Vector3 zDir;
+	Vector3	zUp;
 };

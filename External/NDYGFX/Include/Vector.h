@@ -140,7 +140,7 @@ public:
     }
 	bool operator!=(const Vector3& v)
 	{
-		if(v.x != this->x && v.y != this->y && v.z != this->z)
+		if(v.x != this->x || v.y != this->y || v.z != this->z)
 			return true;
 		return false;
 	}

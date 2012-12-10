@@ -8,6 +8,7 @@ using namespace MaloW;
 //Timeout_value = 10 sek
 static const float TIMEOUT_VALUE = 10.0f; 
 static const float UPDATE_DELAY = 0.05f;
+
 enum MSG_TYPE
 {
 	PLAYER,
@@ -20,6 +21,7 @@ Client::Client()
 	this->zIP = "";
 	this->zPort = 0;
 	this->zEng = NULL;
+	this->zRunning = true;
 	this->zFrameTime = 0.0f;
 	this->zWaitTimer = 0.0f;
 	this->zKeyInfo = KeyHandler();
@@ -107,7 +109,7 @@ void Client::Life()
 	this->zServerChannel->Start();
 
 	this->initClient();
-
+	Sleep(1000);
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->Update();
@@ -116,37 +118,40 @@ void Client::Life()
 		this->zTimeSinceLastPing += this->zDeltaTime;
 
 		this->HandleKeyboardInput();
-
-		this->UpdateCameraPos();
-
-		this->UpdateWorldObjects();
-
-		if (MaloW::ProcessEvent* ev = this->PeekEvent())
+		if (this->stayAlive)
 		{
-			//Check if Client has received a Message
-			NetworkPacket* np = dynamic_cast<NetworkPacket*>(ev);
-			if (np != NULL)
+			this->UpdateCameraPos();
+
+			this->UpdateWorldObjects();
+
+			if (MaloW::ProcessEvent* ev = this->PeekEvent())
 			{
-				this->HandleNetworkMessage(np->getMessage());
+				//Check if Client has received a Message
+				NetworkPacket* np = dynamic_cast<NetworkPacket*>(ev);
+				if (np != NULL)
+				{
+					this->HandleNetworkMessage(np->getMessage());
+				}
+				SAFE_DELETE(ev);
 			}
-			SAFE_DELETE(ev);
+			if (this->zTimeSinceLastPing > TIMEOUT_VALUE * 3.0f)
+			{
+				this->CloseConnection("Timeout");
+			}
+			else if (this->zTimeSinceLastPing > TIMEOUT_VALUE)
+			{
+				//Print a Timeout Message to Client
+			}
+			
+			if(this->zWaitTimer >= UPDATE_DELAY)
+			{
+				this->zWaitTimer = 0.0f;
+				this->SendClientUpdate();
+			}
+			Sleep(5);
 		}
-		if (this->zTimeSinceLastPing > TIMEOUT_VALUE * 3.0f)
-		{
-			this->CloseConnection("Timeout");
-		}
-		else if (this->zTimeSinceLastPing > TIMEOUT_VALUE)
-		{
-			//Print a Timeout Message to Client
-		}
-
-		if(this->zWaitTimer >= UPDATE_DELAY)
-		{
-			this->zWaitTimer = 0.0f;
-			this->SendClientUpdate();
-		}
-		Sleep(5);
 	}
+	this->zRunning = false;
 }
 void Client::SendClientUpdate()
 {
@@ -157,7 +162,7 @@ void Client::SendClientUpdate()
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CLIENT_DATA);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, up.x, up.y, up.z);
-	//msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ROTATION, );
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ROTATION, 0, 0, 0, 0);
 
 	this->zServerChannel->sendData(msg);
 }
@@ -186,15 +191,16 @@ void Client::UpdateWorldObjects()
 }
 bool Client::IsAlive()
 {
-	return this->stayAlive;
+	return this->zRunning;
 }
 bool Client::CheckKey(const unsigned int ID)
 {
 	bool result = false;
 	char key = this->zKeyInfo.GetKey(ID);
-
+	//Check if key is pressed
 	if (this->zEng->GetKeyListener()->IsPressed(key))
 	{
+		//Check if the Key was pressed last frame
 		if (!this->zKeyInfo.GetKeyState(ID))
 		{
 			std::string msg = "";
@@ -208,6 +214,7 @@ bool Client::CheckKey(const unsigned int ID)
 	}
 	else 
 	{
+		//Check if the Key was pressed last frame
 		if (this->zKeyInfo.GetKeyState(ID))
 		{
 			this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, ID));
@@ -222,57 +229,51 @@ void Client::HandleKeyboardInput()
 	float mSpeed = V_WALK_SPEED;
 	bool pressed = false;
 	pressed = this->CheckKey(KEY_FORWARD);
-	if (pressed)
+
+	int pos = this->SearchForPlayer(this->zID);
+	if (pos != -1)
 	{
-		int pos = this->SearchForPlayer(this->zID);
-		if (pos != -1)
+		Player* player = this->zPlayers[pos];
+		switch (player->GetPlayerState())
 		{
-			Player* tempPlayer = this->zPlayers[pos];
-			switch (tempPlayer->GetPlayerState())
-			{
-			case STATE_WALKING:
-				mSpeed = V_WALK_SPEED;
-				break;
-			case STATE_RUNNING:
-				mSpeed = V_RUN_SPEED;
-				break;
-			case STATE_CROUCHING:
-				mSpeed = V_CROUCH_SPEED;
-				break;
-			default:
-				mSpeed = V_WALK_SPEED;
-				break;
-			}
+		case STATE_WALKING:
+			mSpeed = V_WALK_SPEED;
+			break;
+		case STATE_RUNNING:
+			mSpeed = V_RUN_SPEED;
+			break;
+		case STATE_CROUCHING:
+			mSpeed = V_CROUCH_SPEED;
+			break;
+		default:
+			mSpeed = V_WALK_SPEED;
+			break;
+		}
+		if (pressed)
+		{
 			Vector3 camForward = this->zEng->GetCamera()->GetForward();
 
 			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 			Vector3 newPos = position + (camForward * this->zDeltaTime * mSpeed);
-			this->zPlayers.at(pos)->SetNextPosition(newPos);
+			player->SetNextPosition(newPos);
+
 		}
-	}
-	else
-	{
-		pressed = this->CheckKey(KEY_BACKWARD);
-		if (pressed)
+		else
 		{
-			int pos = this->SearchForPlayer(this->zID);
-			if (pos != -1)
+			pressed = this->CheckKey(KEY_BACKWARD);
+			if (pressed)
 			{
 				Vector3 camBackwards = this->zEng->GetCamera()->GetForward() * -1;
 
-				Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
+				Vector3 position = player->GetObjectPosition();
 				Vector3 newPos = position + (camBackwards * this->zDeltaTime * mSpeed);
-				
-				this->zPlayers.at(pos)->SetNextPosition(newPos);
+
+				player->SetNextPosition(newPos);
 			}
 		}
-	}
 
-	pressed = this->CheckKey(KEY_LEFT);
-	if (pressed)
-	{
-		int pos = this->SearchForPlayer(this->zID);
-		if (pos != -1)
+		pressed = this->CheckKey(KEY_LEFT);
+		if (pressed)
 		{
 			Vector3 camForward = this->zEng->GetCamera()->GetForward();
 			Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
@@ -280,17 +281,13 @@ void Client::HandleKeyboardInput()
 
 			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 			Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
-			
-			this->zPlayers.at(pos)->SetNextPosition(newPos);
+
+			player->SetNextPosition(newPos);
 		}
-	}
-	else
-	{
-		pressed = this->CheckKey(KEY_RIGHT);
-		if (pressed)
+		else
 		{
-			int pos = this->SearchForPlayer(this->zID);
-			if (pos != -1)
+			pressed = this->CheckKey(KEY_RIGHT);
+			if (pressed)
 			{
 				Vector3 camForward = this->zEng->GetCamera()->GetForward();
 				Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
@@ -298,29 +295,24 @@ void Client::HandleKeyboardInput()
 
 				Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 				Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
-				this->zPlayers.at(pos)->SetNextPosition(newPos);
+				player->SetNextPosition(newPos);
 			}
 		}
-	}
 
-	pressed = this->CheckKey(KEY_SPRINT);
-	if (pressed)
-	{
-		int pos = this->SearchForPlayer(this->zID);
-		if (pos != -1)
+		pressed = this->CheckKey(KEY_SPRINT);
+		if (pressed)
 		{
-			if (this->zPlayers[pos]->GetPlayerState() != STATE_RUNNING)
-				this->zPlayers[pos]->SetPlayerState(STATE_RUNNING);
-			else
-				this->zPlayers[pos]->SetPlayerState(STATE_WALKING);
+			if (this->zKeyInfo.GetKeyState(KEY_SPRINT))
+			{
+				if (this->zPlayers[pos]->GetPlayerState() != STATE_RUNNING)
+					this->zPlayers[pos]->SetPlayerState(STATE_RUNNING);
+				else
+					this->zPlayers[pos]->SetPlayerState(STATE_WALKING);
+			}
 		}
-	}
 
-	pressed = this->CheckKey(KEY_DUCK);
-	if (pressed)
-	{
-		int pos = this->SearchForPlayer(this->zID);
-		if (pos != -1)
+		pressed = this->CheckKey(KEY_DUCK);
+		if (pressed)
 		{
 			if (this->zPlayers[pos]->GetPlayerState() != STATE_CROUCHING)
 				this->zPlayers[pos]->SetPlayerState(STATE_CROUCHING);
@@ -340,7 +332,7 @@ void Client::Ping()
 	this->zTimeSinceLastPing = 0.0f;
 	this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
 }
-void Client::HandleNetworkMessage(std::string msg)
+void Client::HandleNetworkMessage(const std::string& msg)
 {
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
@@ -397,8 +389,15 @@ void Client::HandleNetworkMessage(std::string msg)
 		{
 			this->zID = this->zMsgHandler.ConvertStringToInt(SELF_ID, msgArray[0]);
 			
+			Vector3 camDir = this->zEng->GetCamera()->GetForward();
+			Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
+
 			std::string serverMessage = "";
-			serverMessage = this->zMsgHandler.Convert(MESSAGE_TYPE_USER_DATA, this->zMeshID);
+			serverMessage = this->zMsgHandler.Convert(MESSAGE_TYPE_USER_DATA);
+			serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_MESH_MODEL, this->zMeshID);
+			serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, camDir.x, camDir.y, camDir.z);
+			serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, camUp.x, camUp.y, camUp.z);
+
 			this->zServerChannel->sendData(serverMessage);
 		}
 		else if(strcmp(key, SERVER_FULL.c_str()) == 0)
@@ -415,16 +414,16 @@ void Client::HandleNetworkMessage(std::string msg)
 		}
 		else
 		{
-			MaloW::Debug("Unknown Message Was sent from server \"" + msgArray[0] + "/ ");
+			MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[0] + " in HandleNetworkMessage");
 		}
 	}
 }
-void Client::CloseConnection(const std::string reason)
+void Client::CloseConnection(const std::string& reason)
 {
+	MaloW::Debug(reason);
 	//Todo Skriv ut vilket reason som gavs
 	this->zServerChannel->Close();
 	this->Close();
-	MaloW::Debug(reason);
 }
 int Client::SearchForPlayer(const int id)
 {
@@ -499,7 +498,7 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 	Vector3 position = Vector3(0, 0, 0);
 	Vector3 scale = Vector3(0.05f, 0.05f, 0.05f);
 	Vector4 rotation = Vector4(0, 0, 0, 0);
-	Vector3 direction = Vector3(0, 0, 0);
+	Vector3 direction = Vector3(1, 0, 0);
 	std::string filename = "";
 	int clientID = -1;
 	int state = 0;
@@ -552,7 +551,7 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 		}
 		else
 		{
-			MaloW::Debug("Unknown Message Was sent from server");
+			MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[i] + " in HandleNewObject");
 		}
 	}
 	if (clientID != -1)
@@ -674,6 +673,7 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 {
 	int ID = -1;
 	int pos = -1;
+	//Get ID and Position Depending on type
 	switch (objectType)
 	{
 	case PLAYER:
@@ -693,6 +693,7 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 		MaloW::Debug("Wrong ObjectType in Client::HandleUpdate()");
 		break;
 	}
+	//Check if object was found
 	if(pos != -1)
 	{
 		WorldObject* worldObjectPointer = NULL;
@@ -721,12 +722,12 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 		bool bRot = false;
 		bool bFile = false;
 		bool bTime = false;
-
+		bool bDir = false;
 		if (worldObjectPointer != NULL)
 		{
 			char key[512];
 			worldObjectPointer->SetID(ID);
-			for(unsigned int i = 0; i < msgArray.size(); i++)
+			for(unsigned int i = 1; i < msgArray.size(); i++)
 			{
 				sscanf(msgArray[i].c_str(), "%s ", key);
 
@@ -758,16 +759,22 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 					bFile = true;
 					filename = this->zMsgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
 				}
+				else if(strcmp(key, DIRECTION.c_str()) == 0)
+				{
+					bDir = true;
+				}
 				else
 				{
-					MaloW::Debug("Unknown Message Was sent from server");
+					MaloW::Debug("C: Unknown Message Was sent from server -" + msgArray[i] + "- in HandleUpdatePlayer");
 				}
 			}
 			if (bPos)
 			{
 				if (bTime)
 				{
-					if (serverTime > this->zFrameTime + 10 || serverTime < this->zFrameTime - 10.0f)
+					float maxLimit = this->zFrameTime + 5;
+					float minLimit = this->zFrameTime - 5;
+					if (serverTime < maxLimit && serverTime > minLimit)
 					{
 						switch (objectType)
 						{
@@ -776,7 +783,6 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 							break;
 						case ANIMAL:
 							dynamic_cast<Animal*>(worldObjectPointer)->SetNextPosition(position);
-							worldObjectPointer->SetObjectPosition(position);
 							break;
 						case STATIC_OBJECT:
 							worldObjectPointer->SetObjectPosition(position);

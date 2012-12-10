@@ -68,9 +68,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	case  MESSAGE_TYPE_KICKED:
 		ss << KICKED << " " << word <<"*";
 		break;
-	case MESSAGE_TYPE_USER_DATA:
-		ss << USER_DATA << " " << word << "*";
-		break;
 	default:
 		ss << "";
 		break;
@@ -126,11 +123,14 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	case MESSAGE_TYPE_CLIENT_DATA:
 		ss << CLIENT_DATA << "*";
 		break;
+	case MESSAGE_TYPE_PING:
+		ss << PING << "*";
+		break;
 	case MESSAGE_TYPE_SERVER_FULL:
 		ss << SERVER_FULL << "*";
 		break;
-	case MESSAGE_TYPE_PING:
-		ss << PING << "*";
+	case MESSAGE_TYPE_USER_DATA:
+		ss << USER_DATA << "*";
 		break;
 	default:
 		ss << "";
