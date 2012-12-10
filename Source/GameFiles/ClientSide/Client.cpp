@@ -176,7 +176,7 @@ void Client::UpdateCameraPos()
 	if (pos != -1)
 	{
 		Vector3 position = this->zPlayers[pos]->GetObjectPosition();
-		//position.y += 2;
+		position.y += 2.5f;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
 }
@@ -426,7 +426,7 @@ void Client::HandleNetworkMessage(const std::string& msg)
 }
 void Client::CloseConnection(const std::string& reason)
 {
-	MaloW::Debug(reason);
+	MaloW::Debug("Client Shutdown:" + reason);
 	//Todo Skriv ut vilket reason som gavs
 	this->zServerChannel->Close();
 	this->Close();
@@ -773,7 +773,7 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 				}
 				else
 				{
-					MaloW::Debug("C: Unknown Message Was sent from server -" + msgArray[i] + "- in HandleUpdatePlayer");
+					MaloW::Debug("C: Unknown Message Was sent from server -" + msgArray[i] + "- in HandleUpdateObject");
 				}
 			}
 			if (bPos)
