@@ -11,14 +11,10 @@ MainMenu::MainMenu()
 	this->zGame		 = new Game();
 
 }
-
-
 MainMenu::~MainMenu()
 {
 	SAFE_DELETE(this->zGame);
 }
-
-
 void MainMenu::printClientError(const int code )
 {
 	std::string errorMessage = "";
@@ -42,8 +38,6 @@ void MainMenu::printClientError(const int code )
 	}
 	printToScreen(errorMessage);
 }
-
-
 void MainMenu::printHostError(const int code )
 {
 	std::string errorMessage = "";
@@ -68,13 +62,10 @@ void MainMenu::printHostError(const int code )
 	}
 	printToScreen(errorMessage);
 }
-
-
 void MainMenu::printToScreen(const std::string msg )
 {
 	MaloW::Debug(msg);
 }
-
 void MainMenu::run()
 {
 	int hostErrorCode = 0;

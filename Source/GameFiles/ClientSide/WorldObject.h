@@ -36,7 +36,6 @@ public:
 	}
 	/*!  Sets the Client Id given from the server*/
 	inline void SetID(const int clientID) {this->zID = clientID;}
-
 	virtual void Update(float dt) = 0;
 protected:
 	iMesh* zMesh;
