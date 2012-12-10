@@ -183,9 +183,9 @@ void Host::SendPlayerUpdates()
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_PLAYER, (*it_Player)->GetID());
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_FRAME_TIME, (*it_Player)->GetFrameTime());
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (*it_Player)->GetState());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
 
 		playerData.push_back(mess);
 	}
@@ -267,17 +267,17 @@ void Host::HandleRecivedMessages()
 		p_index = SearchForPlayer((*it)->getID());
 
 		//Handles upadtes from client.
-		if(strcmp(key, CLIENT_DATA.c_str()) == 0)
+		if(strcmp(key, CLIENT_DATA.c_str()) == 0 && (p_index != -1))
 		{
 			HandlePlayerUpdate(this->zPlayers[p_index], this->zClients[c_index], msgArray);
 		}
 		//Handles key presses from client.
-		else if(strcmp(key, KEY_DOWN.c_str()) == 0)
+		else if(strcmp(key, KEY_DOWN.c_str()) == 0 && (p_index != -1))
 		{
 			HandleKeyPress(this->zPlayers[p_index], msgArray[0]);
 		}
 		//Handles key releases from client.
-		else if(strcmp(key, KEY_UP.c_str()) == 0)
+		else if(strcmp(key, KEY_UP.c_str()) == 0 && (p_index != -1))
 		{
 			HandleKeyRelease(this->zPlayers[p_index], msgArray[0]);
 		}
