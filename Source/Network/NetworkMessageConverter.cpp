@@ -14,14 +14,17 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 
 	switch (ID)
 	{
+	case MESSAGE_TYPE_UP:
+		ss << UP << " " << x << " " << y << " " << z <<"*";
+		break;
+	case MESSAGE_TYPE_DIRECTION:
+		ss << DIRECTION << " " << x << " " << y << " " << z <<"*";
+		break;
 	case MESSAGE_TYPE_POSITION:
 		ss << POSITION << " " << x << " " << y << " " << z <<"*";
 		break;
 	case MESSAGE_TYPE_SCALE:
 		ss << SCALE << " " << x << " " << y << " " << z <<"*";
-		break;
-	case MESSAGE_TYPE_DIRECTION:
-		ss << DIRECTION << " " << x << " " << y << " " << z <<"*";
 		break;
 	default:
 		ss << "";
@@ -120,6 +123,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	std::stringstream ss;
 	switch (ID)
 	{
+	case MESSAGE_TYPE_CLIENT_DATA:
+		ss << CLIENT_DATA << "*";
+		break;
 	case MESSAGE_TYPE_SERVER_FULL:
 		ss << SERVER_FULL << "*";
 		break;
@@ -199,40 +205,3 @@ std::string NetworkMessageConverter::ConvertStringToSubstring(const std::string&
 	sscanf(msg.c_str(), (type + "%s").c_str(), &subString);
 	return subString;
 }
-//std::string NetworkMessageConverter::Convert(const unsigned int ID, const unsigned int state_ID)
-//{
-//	std::stringstream ss;
-//
-//	switch (ID)
-//	{
-//	case MESSAGE_TYPE_UPDATE_PLAYER:
-//		ss << UPDATE_PLAYER << " " << state_ID << "*";
-//		break;
-//	case MESSAGE_TYPE_KEY_DOWN:
-//		ss << KEY_DOWN << " " << state_ID << "*";
-//		break;
-//	case MESSAGE_TYPE_KEY_UP:
-//		ss << KEY_UP << " " << state_ID << "*";
-//		break;
-//	case MESSAGE_TYPE_STATE:
-//		ss << STATE << " " << state_ID << "*";
-//		break;
-//	case MESSAGE_TYPE_NEW_PLAYER:
-//		ss << NEW_PLAYER << " " << state_ID << "*";
-//		break;
-//	case MESSAGE_TYPE_REMOVE_PLAYER:
-//		ss << REMOVE_PLAYER << " " << state_ID << "*";
-//		break;
-//	case MESSAGE_TYPE_CONNECTION_CLOSED:
-//		ss << CONNECTION_CLOSED << " " << state_ID << "*";
-//		break;
-//	case MESSAGE_TYPE_SELF_ID:
-//		ss << SELF_ID << " " << state_ID << "*";
-//		break;
-//	default:
-//		ss << "";
-//		break;
-//	}
-//
-//	return ss.str();
-//}

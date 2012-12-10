@@ -7,6 +7,7 @@ using namespace MaloW;
 
 //Timeout_value = 10 sek
 static const float TIMEOUT_VALUE = 10.0f; 
+static const float UPDATE_DELAY = 0.05f;
 enum MSG_TYPE
 {
 	PLAYER,
@@ -20,6 +21,7 @@ Client::Client()
 	this->zPort = 0;
 	this->zEng = NULL;
 	this->zFrameTime = 0.0f;
+	this->zWaitTimer = 0.0f;
 	this->zKeyInfo = KeyHandler();
 	this->zKeyInfo.InitKeyBinds();
 	this->zServerChannel = NULL;
@@ -108,11 +110,13 @@ void Client::Life()
 
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
-		float dt = this->Update();
-		zTimeSinceLastPing += dt;
+		this->Update();
+
+		this->zWaitTimer += this->zDeltaTime;
+		this->zTimeSinceLastPing += this->zDeltaTime;
 
 		this->HandleKeyboardInput();
-		
+
 		this->UpdateCameraPos();
 
 		this->UpdateWorldObjects();
@@ -135,12 +139,27 @@ void Client::Life()
 		{
 			//Print a Timeout Message to Client
 		}
+
+		if(this->zWaitTimer >= UPDATE_DELAY)
+		{
+			this->zWaitTimer = 0.0f;
+			this->SendClientUpdate();
+		}
 		Sleep(5);
 	}
 }
 void Client::SendClientUpdate()
 {
+	std::string msg;
+	Vector3 dir = this->zEng->GetCamera()->GetForward();
+	Vector3 up = this->zEng->GetCamera()->GetUpVector();
 
+	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CLIENT_DATA);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, up.x, up.y, up.z);
+	//msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ROTATION, );
+
+	this->zServerChannel->sendData(msg);
 }
 void Client::UpdateCameraPos()
 {
@@ -153,14 +172,16 @@ void Client::UpdateCameraPos()
 }
 void Client::UpdateWorldObjects()
 {
-	for (unsigned int i = 0; i < this->zPlayers.size(); i++)
+	std::vector<Player*>::iterator itp;
+	for (itp = this->zPlayers.begin(); itp < this->zPlayers.end(); itp++)
 	{
-		this->zPlayers[i]->Update(this->zDeltaTime);
+		(*itp)->Update(this->zDeltaTime);
 	}
 
-	for (unsigned int i = 0; i < this->zAnimals.size(); i++)
+	std::vector<Animal*>::iterator ita;
+	for (ita = this->zAnimals.begin(); ita < this->zAnimals.end(); ita++)
 	{
-		this->zAnimals[i]->Update(this->zDeltaTime);
+		(*ita)->Update(this->zDeltaTime);
 	}
 }
 bool Client::IsAlive()
@@ -198,16 +219,32 @@ bool Client::CheckKey(const unsigned int ID)
 }
 void Client::HandleKeyboardInput()
 {
-	float mSpeed = 10.0f;
+	float mSpeed = V_WALK_SPEED;
 	bool pressed = false;
 	pressed = this->CheckKey(KEY_FORWARD);
 	if (pressed)
 	{
 		int pos = this->SearchForPlayer(this->zID);
-		Vector3 camForward = this->zEng->GetCamera()->GetForward();
-		camForward.y = 0;
 		if (pos != -1)
 		{
+			Player* tempPlayer = this->zPlayers[pos];
+			switch (tempPlayer->GetPlayerState())
+			{
+			case STATE_WALKING:
+				mSpeed = V_WALK_SPEED;
+				break;
+			case STATE_RUNNING:
+				mSpeed = V_RUN_SPEED;
+				break;
+			case STATE_CROUCHING:
+				mSpeed = V_CROUCH_SPEED;
+				break;
+			default:
+				mSpeed = V_WALK_SPEED;
+				break;
+			}
+			Vector3 camForward = this->zEng->GetCamera()->GetForward();
+
 			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 			Vector3 newPos = position + (camForward * this->zDeltaTime * mSpeed);
 			this->zPlayers.at(pos)->SetNextPosition(newPos);
@@ -219,10 +256,10 @@ void Client::HandleKeyboardInput()
 		if (pressed)
 		{
 			int pos = this->SearchForPlayer(this->zID);
-			Vector3 camBackwards = this->zEng->GetCamera()->GetForward() * -1;
-			camBackwards.y = 0;
 			if (pos != -1)
 			{
+				Vector3 camBackwards = this->zEng->GetCamera()->GetForward() * -1;
+
 				Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 				Vector3 newPos = position + (camBackwards * this->zDeltaTime * mSpeed);
 				
@@ -235,13 +272,12 @@ void Client::HandleKeyboardInput()
 	if (pressed)
 	{
 		int pos = this->SearchForPlayer(this->zID);
-		Vector3 camForward = this->zEng->GetCamera()->GetForward();
-		camForward.y = 0;
-		Vector3 camUp = Vector3(0,1,0);
-		Vector3 camRight = camForward.GetCrossProduct(camUp);
-		camRight.y = 0;
 		if (pos != -1)
 		{
+			Vector3 camForward = this->zEng->GetCamera()->GetForward();
+			Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
+			Vector3 camRight = camForward.GetCrossProduct(camUp);
+
 			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 			Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
 			
@@ -254,13 +290,12 @@ void Client::HandleKeyboardInput()
 		if (pressed)
 		{
 			int pos = this->SearchForPlayer(this->zID);
-			Vector3 camForward = this->zEng->GetCamera()->GetForward();
-			camForward.y = 0;
-			Vector3 camUp = Vector3(0,1,0);
-			Vector3 camRight = camForward.GetCrossProduct(camUp) * -1;
-			camRight.y = 0;
 			if (pos != -1)
 			{
+				Vector3 camForward = this->zEng->GetCamera()->GetForward();
+				Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
+				Vector3 camRight = camForward.GetCrossProduct(camUp) * -1;
+
 				Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 				Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
 				this->zPlayers.at(pos)->SetNextPosition(newPos);
@@ -274,7 +309,10 @@ void Client::HandleKeyboardInput()
 		int pos = this->SearchForPlayer(this->zID);
 		if (pos != -1)
 		{
-			this->zPlayers[pos]->SetPlayerState(STATE_RUNNING);
+			if (this->zPlayers[pos]->GetPlayerState() != STATE_RUNNING)
+				this->zPlayers[pos]->SetPlayerState(STATE_RUNNING);
+			else
+				this->zPlayers[pos]->SetPlayerState(STATE_WALKING);
 		}
 	}
 
@@ -284,7 +322,10 @@ void Client::HandleKeyboardInput()
 		int pos = this->SearchForPlayer(this->zID);
 		if (pos != -1)
 		{
-			this->zPlayers[pos]->SetPlayerState(STATE_CROUCHING);
+			if (this->zPlayers[pos]->GetPlayerState() != STATE_CROUCHING)
+				this->zPlayers[pos]->SetPlayerState(STATE_CROUCHING);
+			else
+				this->zPlayers[pos]->SetPlayerState(STATE_WALKING);
 		}
 	}
 

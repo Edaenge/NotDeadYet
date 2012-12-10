@@ -13,6 +13,7 @@ enum MESSAGE_TYPE
 {
 	MESSAGE_TYPE_POSITION,
 	MESSAGE_TYPE_DIRECTION,
+	MESSAGE_TYPE_UP,
 	MESSAGE_TYPE_SCALE,
 	MESSAGE_TYPE_ROTATION,
 	MESSAGE_TYPE_STATE,
@@ -32,12 +33,14 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_NEW_OBJECT,
 	MESSAGE_TYPE_REMOVE_OBJECT,
 	MESSAGE_TYPE_UPDATE_OBJECT,
-	MESSAGE_TYPE_FRAME_TIME
+	MESSAGE_TYPE_FRAME_TIME,
+	MESSAGE_TYPE_CLIENT_DATA
 };
 //Data Messages
 static const std::string POSITION			= "P";
 static const std::string ROTATION			= "R";
 static const std::string DIRECTION			= "D";
+static const std::string UP					= "U";
 static const std::string MESH_MODEL			= "M";
 static const std::string KICKED				= "K";
 static const std::string SCALE				= "Sc";
@@ -47,6 +50,7 @@ static const std::string CONNECTION_CLOSED	= "CC";
 static const std::string SERVER_FULL		= "SF";
 static const std::string SERVER_SHUTDOWN	= "SS";
 //Player Messages
+static const std::string CLIENT_DATA		= "CD";
 static const std::string NEW_PLAYER			= "NP";
 static const std::string UPDATE_PLAYER		= "UP";
 static const std::string REMOVE_PLAYER		= "RP";

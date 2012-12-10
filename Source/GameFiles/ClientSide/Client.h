@@ -23,10 +23,10 @@ private:
 	std::string zIP;
 
 	INT64 zStartime;
+	float zWaitTimer;
 	float zFrameTime;
 	float zDeltaTime;
 	float zSecsPerCnt;
-	
 	KeyHandler zKeyInfo;
 	std::string zMeshID;
 	GraphicsEngine* zEng;
