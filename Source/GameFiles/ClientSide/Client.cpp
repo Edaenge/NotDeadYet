@@ -7,7 +7,7 @@ using namespace MaloW;
 
 //Timeout_value = 10 sek
 static const float TIMEOUT_VALUE = 10.0f; 
-static const float UPDATE_DELAY = 0.05f;
+static const float UPDATE_DELAY = 0.0333f;
 
 enum MSG_TYPE
 {
@@ -30,7 +30,7 @@ Client::Client()
 	this->zTimeSinceLastPing = 0.0f;
 	this->zMsgHandler = NetworkMessageConverter();
 
-	zMeshID = "Media/Fern_02_v01.obj";
+	zMeshID = "Media/scale.obj";
 
 	INT64 frequency;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
@@ -160,6 +160,7 @@ void Client::SendClientUpdate()
 	Vector3 up = this->zEng->GetCamera()->GetUpVector();
 
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CLIENT_DATA);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_FRAME_TIME, this->zFrameTime);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, up.x, up.y, up.z);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ROTATION, 0, 0, 0, 0);
@@ -204,8 +205,7 @@ bool Client::CheckKey(const unsigned int ID)
 		if (!this->zKeyInfo.GetKeyState(ID))
 		{
 			std::string msg = "";
-			msg += this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, ID);
-			msg += this->zMsgHandler.Convert(MESSAGE_TYPE_FRAME_TIME, zFrameTime);
+			msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, ID);
 
 			this->zServerChannel->sendData(msg);
 		}
@@ -256,7 +256,6 @@ void Client::HandleKeyboardInput()
 			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 			Vector3 newPos = position + (camForward * this->zDeltaTime * mSpeed);
 			player->SetNextPosition(newPos);
-
 		}
 		else
 		{
@@ -302,7 +301,7 @@ void Client::HandleKeyboardInput()
 		pressed = this->CheckKey(KEY_SPRINT);
 		if (pressed)
 		{
-			if (this->zKeyInfo.GetKeyState(KEY_SPRINT))
+			if (!this->zKeyInfo.GetKeyState(KEY_SPRINT))
 			{
 				if (this->zPlayers[pos]->GetPlayerState() != STATE_RUNNING)
 					this->zPlayers[pos]->SetPlayerState(STATE_RUNNING);
@@ -314,10 +313,13 @@ void Client::HandleKeyboardInput()
 		pressed = this->CheckKey(KEY_DUCK);
 		if (pressed)
 		{
-			if (this->zPlayers[pos]->GetPlayerState() != STATE_CROUCHING)
-				this->zPlayers[pos]->SetPlayerState(STATE_CROUCHING);
-			else
-				this->zPlayers[pos]->SetPlayerState(STATE_WALKING);
+			if (!this->zKeyInfo.GetKeyState(KEY_DUCK))
+			{
+				if (this->zPlayers[pos]->GetPlayerState() != STATE_CROUCHING)
+					this->zPlayers[pos]->SetPlayerState(STATE_CROUCHING);
+				else
+					this->zPlayers[pos]->SetPlayerState(STATE_WALKING);
+			}
 		}
 	}
 
