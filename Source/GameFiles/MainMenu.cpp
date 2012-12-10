@@ -5,7 +5,7 @@
 MainMenu::MainMenu()
 {
 
-	
+
 	zClientConnected = false;
 	zHostCreated	 = false;
 	this->zGame		 = new Game();
@@ -83,7 +83,7 @@ void MainMenu::run()
 	hostErrorCode    = this->zGame->InitGameHost(10000, 5);
 	// Initializes the Client and returns a code that explains what happend
 	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 10000);
-
+	//clientErrorCode  = this->zGame->InitGameClient("194.47.150.20", 10000);
 	if(hostErrorCode == 0 && clientErrorCode == 0)
 	{
 		this->zGame->Run();

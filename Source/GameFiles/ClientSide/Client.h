@@ -19,7 +19,7 @@ class Client : public MaloW::Process
 private:
 	/*! Current Client ID*/
 	int zID;
-
+	bool zCreated;
 	int	zPort;
 	std::string zIP;
 	bool zRunning;

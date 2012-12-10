@@ -21,6 +21,7 @@ Client::Client()
 	this->zIP = "";
 	this->zPort = 0;
 	this->zEng = NULL;
+	this->zCreated = false;
 	this->zRunning = true;
 	this->zFrameTime = 0.0f;
 	this->zWaitTimer = 0.0f;
@@ -142,11 +143,13 @@ void Client::Life()
 			{
 				//Print a Timeout Message to Client
 			}
-			
-			if(this->zWaitTimer >= UPDATE_DELAY)
+			if(this->zCreated)
 			{
-				this->zWaitTimer = 0.0f;
-				this->SendClientUpdate();
+				if(this->zWaitTimer >= UPDATE_DELAY)
+				{
+					this->zWaitTimer = 0.0f;
+					this->SendClientUpdate();
+				}
 			}
 			Sleep(5);
 		}
@@ -173,6 +176,7 @@ void Client::UpdateCameraPos()
 	if (pos != -1)
 	{
 		Vector3 position = this->zPlayers[pos]->GetObjectPosition();
+		//position.y += 2;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
 }
@@ -556,6 +560,13 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 			MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[i] + " in HandleNewObject");
 		}
 	}
+	if (!this->zCreated)
+	{
+		if (clientID == this->zID)
+		{
+			this->zCreated = true;
+		}
+	}
 	if (clientID != -1)
 	{
 		int pos;
@@ -724,7 +735,6 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 		bool bRot = false;
 		bool bFile = false;
 		bool bTime = false;
-		bool bDir = false;
 		if (worldObjectPointer != NULL)
 		{
 			char key[512];
@@ -761,10 +771,6 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 					bFile = true;
 					filename = this->zMsgHandler.ConvertStringToSubstring(MESH_MODEL, msgArray[i]);
 				}
-				else if(strcmp(key, DIRECTION.c_str()) == 0)
-				{
-					bDir = true;
-				}
 				else
 				{
 					MaloW::Debug("C: Unknown Message Was sent from server -" + msgArray[i] + "- in HandleUpdatePlayer");
@@ -772,12 +778,12 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 			}
 			if (bPos)
 			{
-				if (bTime)
-				{
-					float maxLimit = this->zFrameTime + 5;
-					float minLimit = this->zFrameTime - 5;
-					if (serverTime < maxLimit && serverTime > minLimit)
-					{
+				//if (bTime)
+				//{
+					//float maxLimit = this->zFrameTime + 5;
+					//float minLimit = this->zFrameTime - 5;
+					//if (serverTime < maxLimit && serverTime > minLimit)
+					//{
 						switch (objectType)
 						{
 						case PLAYER:
@@ -792,8 +798,8 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 						default:
 							break;
 						}
-					}
-				}
+					//}
+				//}
 			}
 			if (bRot)
 			{
