@@ -259,7 +259,7 @@ void Client::HandleKeyboardInput()
 
 			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 			Vector3 newPos = position + (camForward * this->zDeltaTime * mSpeed);
-			player->SetNextPosition(newPos);
+			//player->SetNextPosition(newPos);
 		}
 		else
 		{
@@ -271,7 +271,7 @@ void Client::HandleKeyboardInput()
 				Vector3 position = player->GetObjectPosition();
 				Vector3 newPos = position + (camBackwards * this->zDeltaTime * mSpeed);
 
-				player->SetNextPosition(newPos);
+				//player->SetNextPosition(newPos);
 			}
 		}
 
@@ -285,7 +285,7 @@ void Client::HandleKeyboardInput()
 			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 			Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
 
-			player->SetNextPosition(newPos);
+			//player->SetNextPosition(newPos);
 		}
 		else
 		{
@@ -298,7 +298,7 @@ void Client::HandleKeyboardInput()
 
 				Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
 				Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
-				player->SetNextPosition(newPos);
+				//player->SetNextPosition(newPos);
 			}
 		}
 
