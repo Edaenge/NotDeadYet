@@ -8,6 +8,7 @@
 
 #include "Vector.h"
 #include "iMesh.h"
+#include "iGraphicsEngineParams.h"
 //#include "iTerrain.h"
 
 extern "C"
@@ -51,5 +52,11 @@ extern "C"
 		virtual float GetDistanceFromTarget() const = 0;
 		
 		virtual void SetUpdateCamera(bool update) = 0;
+
+		virtual void SetActiveWindowDisabling(bool dis) = 0;
+
+		virtual Vector3 Get3DPickingRay() = 0;
+
+		virtual CameraType GetCameraType() const = 0;
 	};
 }

@@ -816,10 +816,10 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 				//Create a new Mesh with the current values
 				iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), worldObjectPointer->GetObjectPosition());
 				float scale = worldObjectPointer->GetObjectScale().y;
-				Vector3 quat = worldObjectPointer->GetObjectRotation();
+				Vector4 quat = worldObjectPointer->GetObjectRotation();
 
 				mesh->Scale(scale);
-				mesh->SetQuaternion(Vector4(quat.x,quat.y,quat.z,0.0f));
+				mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
 				if (worldObjectPointer->HasMesh())
 				{
 					this->zEng->DeleteMesh(worldObjectPointer->GetObjectMesh());

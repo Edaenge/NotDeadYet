@@ -18,7 +18,7 @@ public:
 	/*! Returns Player Model Position*/
 	inline Vector3 GetObjectPosition() const {return this->zMesh->GetPosition();}
 	/*! Returns Player Model Rotation*/
-	inline Vector3 GetObjectRotation() const {return this->zMesh->GetRotation();}
+	inline Vector4 GetObjectRotation() const {return this->zMesh->GetRotationQuaternion();}
 	/*! Sets object Mesh data*/
 	inline void SetObjectPosition(const Vector3& pos) {this->zMesh->SetPosition(pos);}
 	void SetObjectScale(const Vector3& scale) {this->zMesh->Scale(scale);}

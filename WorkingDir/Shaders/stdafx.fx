@@ -32,6 +32,13 @@ struct Light
 	matrix LightViewProj;
 };
 
+struct SunLight
+{
+	float4 Direction;
+	float4 LightColor;
+	float LightIntensity;
+};
+
 
 //------------------------------------------------------------------------------------------------------
 //	Constant buffers
@@ -43,6 +50,10 @@ cbuffer EveryFrame
 	
 	float NrOfLights;
 	Light lights[10];
+	float4 SceneAmbientLight;
+	
+	bool UseSun;
+	SunLight sun;
 	//float SMAP_DX;
 	//float PCF_SIZE;
 	//float PCF_SIZE_SQUARED;
@@ -51,6 +62,8 @@ cbuffer EveryFrame
 
 	uint windowWidth;
 	uint windowHeight;
+	float NearClip;
+	float FarClip;
 };
 
 //------------------------------------------------------------------------------------------------------
@@ -107,6 +120,10 @@ SamplerState AnisotropicClampSampler
 RasterizerState BackCulling
 {
 	CullMode = Back;
+};
+RasterizerState FrontCulling
+{
+	CullMode = Front;
 };
 
 //------------------------------------------------------------------------------------------------------
