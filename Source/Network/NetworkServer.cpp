@@ -11,14 +11,12 @@ NetworkServer::NetworkServer()
 NetworkServer::~NetworkServer()
 {
 	this->Close();
-
 	// close server socket
 	int retCode = 0;
 	
 	retCode = closesocket(this->sock);
 	if(retCode == SOCKET_ERROR) 
 		MaloW::Debug("NS: Failed to close socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
-	
 	//Release WinSock DLL
 	retCode = WSACleanup();
 	if(retCode == SOCKET_ERROR) 
@@ -71,11 +69,11 @@ void NetworkServer::Life()
 
 void NetworkServer::CloseSpecific()
 {
-	int retCode;
+	//int retCode;
 
-	retCode = shutdown(this->sock, 2); // 2 = SD_BOTH
-	if(retCode == SOCKET_ERROR) 
-		MaloW::Debug("NS: Error trying to perform shutdown on socket from a ->Close() call from another thread.");
+	//retCode = shutdown(this->sock, SD_BOTH); // 2 = SD_BOTH
+	//if(retCode == SOCKET_ERROR) 
+	//	MaloW::Debug("NS: Error trying to perform shutdown on socket from a ->Close() call from another thread.");
 }
 
 int MaloW::NetworkServer::InitConnection(int port)

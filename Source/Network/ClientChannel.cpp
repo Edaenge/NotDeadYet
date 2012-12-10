@@ -27,12 +27,12 @@ ClientChannel::~ClientChannel()
 		if(retCode == SOCKET_ERROR) 
 			MaloW::Debug("CC: Error failed to close socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 	}
-	// Release WinSock DLL
-	retCode = WSACleanup();
-	if(retCode == SOCKET_ERROR) 
-	{
-		MaloW::Debug("CC: Error cleaning up Winsock Library. Error: " + MaloW::convertNrToString(WSAGetLastError()));;
-	}
+	//// Release WinSock DLL
+	//retCode = WSACleanup();
+	//if(retCode == SOCKET_ERROR) 
+	//{
+	//	MaloW::Debug("CC: Error cleaning up Winsock Library. Error: " + MaloW::convertNrToString(WSAGetLastError()));;
+	//}
 }
 
 string ClientChannel::receiveData()
@@ -134,7 +134,7 @@ void ClientChannel::Life()
 
 void ClientChannel::CloseSpecific()
 {
-	int retCode = shutdown(this->sock, SD_RECEIVE);
+	int retCode = shutdown(this->sock, SD_BOTH);
 	if(retCode == SOCKET_ERROR) 
 		MaloW::Debug("CC: Error trying to perform shutdown on socket from a ->Close() call. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 }

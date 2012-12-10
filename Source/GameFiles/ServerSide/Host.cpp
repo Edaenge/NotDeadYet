@@ -24,7 +24,6 @@ Host::~Host()
 	this->WaitUntillDone();
 
 	this->zServerListener->Close();
-	this->zServerListener->WaitUntillDone();
 	SAFE_DELETE(this->zServerListener);
 
 	for(auto x = zPlayers.begin(); x < zPlayers.end(); x++)
@@ -185,7 +184,7 @@ void Host::SendPlayerUpdates()
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (*it_Player)->GetState());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
+		//mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
 
 		playerData.push_back(mess);
 	}
@@ -282,12 +281,12 @@ void Host::HandleRecivedMessages()
 			HandleKeyRelease(this->zPlayers[p_index], msgArray[0]);
 		}
 		//Handles Pings from client.
-		else if(strcmp(key, PING.c_str()) == 0)
+		else if(strcmp(key, PING.c_str()) == 0 && (c_index != -1))
 		{
 			HandlePingMsg(this->zClients[c_index]);
 		}
 		//Handles user data from client. Used when the player is new.
-		else if(strcmp(key, USER_DATA.c_str()) == 0)
+		else if(strcmp(key, USER_DATA.c_str()) == 0 && (c_index != -1))
 		{
 			CreateNewPlayer(this->zClients[c_index], msgArray);
 		}

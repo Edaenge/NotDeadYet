@@ -59,7 +59,7 @@ PlayerActor::~PlayerActor()
 
 void PlayerActor::Update(float deltaTime)
 {
-	this->zFrameTime += deltaTime;
+	this->zFrameTime += deltaTime + this->zLatency;
 
 	switch (this->zState)
 	{
@@ -85,14 +85,14 @@ void PlayerActor::Update(float deltaTime)
 	{
 		this->zPos = this->zPos + this->zDir * -1 * deltaTime * this->zVelocity;
 	}
-	if(this->zKeyStates.GetKeyState(KEY_LEFT))
+	if(this->zKeyStates.GetKeyState(KEY_RIGHT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDir);
-		this->zPos = this->zPos + right * -1 * deltaTime * this->zVelocity;
+		this->zPos = this->zPos + (right * -1 * deltaTime * this->zVelocity);
 	}
 	if(this->zKeyStates.GetKeyState(KEY_LEFT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDir);
-		this->zPos = this->zPos + right * deltaTime * this->zVelocity;
+		this->zPos = this->zPos + (right * deltaTime * this->zVelocity);
 	}
 }
