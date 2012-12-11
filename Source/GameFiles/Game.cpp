@@ -70,4 +70,3 @@ int Game::InitGameHost(int port, int nrOfClients)
 	
 	return code;
 }
-

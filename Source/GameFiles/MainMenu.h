@@ -9,13 +9,13 @@ class MainMenu
 public:
 	MainMenu();
 	virtual ~MainMenu();
-	void run();
+	void Run();
 
 private:
-	void printClientError(const int code);
-	void printHostError(const int code);
+	void PrintClientError(const int code);
+	void PrintHostError(const int code);
 	/*! Prints the error message to the client*/
-	void printToScreen(const std::string msg);
+	void PrintToScreen(const std::string msg);
 
 private:
 	Game* zGame;
