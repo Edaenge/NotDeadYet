@@ -4,7 +4,7 @@
 
 Animal::Animal() : WorldObject()
 {
-	this->zAnimalState = STATE_IDLE;
+	this->zState = STATE_IDLE;
 	this->zEndPosition = Vector3(0,0,0);
 	this->zVelocity = 1000.0f;
 }
@@ -23,7 +23,7 @@ void Animal::Update(float deltaTime)
 	float t = pow(deltaTime, 2) * (3 - 2 * deltaTime);
 
 	this->LinearInterpolation(currentPosition, this->zEndPosition, t);
-	this->SetObjectPosition(currentPosition);
+	this->SetPosition(currentPosition);
 }
 
 void Animal::LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t)

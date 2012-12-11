@@ -12,17 +12,17 @@ public:
 	WorldObject(){this->zMesh = 0; this->zID = -1;}
 	~WorldObject(){}
 	/*!	Returns Pointer to the Player Mesh*/
-	iMesh* GetObjectMesh() const {return this->zMesh;}
-	/*! Returns Player Model Scale*/
-	Vector3 GetObjectScale() const {return this->zMesh->GetScaling();}
-	/*! Returns Player Model Position*/
-	inline Vector3 GetObjectPosition() const {return this->zMesh->GetPosition();}
-	/*! Returns Player Model Rotation*/
-	inline Vector4 GetObjectRotation() const {return this->zMesh->GetRotationQuaternion();}
+	iMesh* GetMesh() const {return this->zMesh;}
+	/*! Returns Object Model Scale*/
+	Vector3 GetScale() const {return this->zMesh->GetScaling();}
+	/*! Returns Object Model Position*/
+	inline Vector3 GetPosition() const {return this->zMesh->GetPosition();}
+	/*! Returns Object Model Rotation*/
+	inline Vector4 GetRotation() const {return this->zMesh->GetRotationQuaternion();}
 	/*! Sets object Mesh data*/
-	inline void SetObjectPosition(const Vector3& pos) {this->zMesh->SetPosition(pos);}
-	void SetObjectScale(const Vector3& scale) {this->zMesh->Scale(scale);}
-	inline void SetObjectRotation(const Vector4& rot) {this->zMesh->SetQuaternion(rot);}
+	inline void SetPosition(const Vector3& pos) {this->zMesh->SetPosition(pos);}
+	void SetScale(const Vector3& scale) {this->zMesh->Scale(scale);}
+	inline void SetRotation(const Vector4& rot) {this->zMesh->SetQuaternion(rot);}
 	/*! Returns the object ID*/
 	inline int GetID() const {return this->zID;}
 	/*! Adds a Pointer to the Player Model Mesh*/
@@ -35,7 +35,7 @@ public:
 			return false;
 	}
 	/*!  Sets the Client Id given from the server*/
-	inline void SetID(const int clientID) {this->zID = clientID;}
+	void SetID(const int clientID) {this->zID = clientID;}
 	virtual void Update(float dt) = 0;
 
 protected:

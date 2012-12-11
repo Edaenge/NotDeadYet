@@ -4,7 +4,7 @@
 
 Player::Player() : WorldObject()
 {
-	this->zPlayerState = STATE_IDLE;
+	this->zState = STATE_IDLE;
 	this->zEndPosition = Vector3(0,0,0);
 	this->zVelocity = 1000.0f;
 }
@@ -18,13 +18,13 @@ void Player::Update(float deltaTime)
 	//t = (-cos(PI * deltaTime) * 0.5f) + 0.5f;
 
 	//Acceleration
-	t = pow(deltaTime, 2);
+	//t = pow(deltaTime, 2);
 
 	//Smooth Step
-	//t = pow(deltaTime, 2) * (3 - 2 * deltaTime);
+	t = pow(deltaTime, 2) * (3 - 2 * deltaTime);
 
 	this->LinearInterpolation(currentPosition, this->zEndPosition, t);
-	this->SetObjectPosition(currentPosition);
+	this->SetPosition(currentPosition);
 }
 
 void Player::LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t)

@@ -4,8 +4,8 @@
 */
 #pragma once
 
-#include "GameFiles/ClientSide/WorldObject.h"
 #include "GameFiles/AnimationStates.h"
+#include "GameFiles/ClientSide/WorldObject.h"
 
 /*! Class to Handle Animals*/
 class Animal : public WorldObject
@@ -13,22 +13,23 @@ class Animal : public WorldObject
 public:
 	Animal();
 	virtual ~Animal(){}
-	/*! Sets the Animal State*/
-	inline void SetAnimalState(const int state) {this->zAnimalState = state;}
-	/*! Returns Current Animal State*/
-	inline int GetAnimalState() const {return this->zAnimalState;}
-	/*! Sets the New Animal Position*/
+	/*! Sets the State*/
+	inline void SetState(const int state) {this->zState = state;}
+	/*! Returns Current State*/
+	inline int GetState() const {return this->zState;}
+	/*! Sets the New Position*/
 	inline void SetNextPosition(const Vector3 position) {this->zEndPosition = position;}
-	/*! Returns New Animal Position*/
+	/*! Returns New Position*/
 	Vector3 GetNextPosition() const {return this->zEndPosition;}
-	/*! Updates the Animal data*/
+	/*! Updates the Animal*/
 	void Update(float deltaTime);
 
 private:
+	/*! Interpolates the position*/
 	void LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float dt);
 
 private:
-	int zAnimalState;
+	int zState;
 	Vector3 zEndPosition;
 	float zVelocity;
 };

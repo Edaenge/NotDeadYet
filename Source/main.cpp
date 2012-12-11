@@ -5,7 +5,6 @@
 
 void test();
 
-
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) 
 {
 	MaloW::ClearDebug();
@@ -29,7 +28,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 	
 	return 0;
 }
-
 
 void test()
 {
