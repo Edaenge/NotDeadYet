@@ -1,9 +1,13 @@
 #include "GameFiles/Inventory/Inventory.h"
-#include "Safe.h"
 
 Inventory::Inventory()
 {
-	this->zItemCap  = 10;
+	this->zInventoryCap  = 10;
+	for (unsigned int i = 0; i < this->zInventoryCap; i++)
+	{
+		this->zInventorySlotUsed[i] = false;
+	}
+	this->zSlotsAvailable = this->zInventoryCap;
 }
 
 Inventory::~Inventory()
@@ -15,21 +19,28 @@ Inventory::~Inventory()
 	}
 }
 
-std::vector<Item*> Inventory::GetItems()
+const std::vector<Item*>& Inventory::GetItems()
 {
 	return this->zItems;
 }
 
 bool Inventory::AddItem(Item* item)
 {
-	if(this->zItems.size() < this->zInventoryCap)
+	int weight = item->GetWeight();
+	if(this->zItems.size() + weight < this->zInventoryCap)
 	{
-		this->zWeightTotal += item->GetWeight();
-		this->zItems.push_back(item);
+		if (zSlotsAvailable > weight)
+		{
+			this->zWeightTotal += weight;
+			for (int i = 0; i < weight; i++)
+			{
+				zInventorySlotUsed[this->zSlotsAvailable--] = true;
+			}
+			this->zItems.push_back(item);
 
-		return true;
+			return true;
+		}
 	}
-
 	return false;
 }
 
@@ -49,7 +60,7 @@ Item* Inventory::GetItem(unsigned int position)
 	return 0;
 }
 
-int Inventory::Search(unsigned int ID)
+int Inventory::Search(const unsigned int ID)
 {
 	for (unsigned int i = 0; i < this->zItems.size(); i++)
 	{
@@ -62,11 +73,16 @@ int Inventory::Search(unsigned int ID)
 	return -1;
 }
 
-bool Inventory::RemoveItem(unsigned int position)
+bool Inventory::RemoveItem(const unsigned int position)
 {
 	if (position < this->zItems.size() && position > -1)
 	{
-		this->zWeightTotal -= this->zItems[position]->GetWeight();
+		int weight = this->zItems[position]->GetWeight();
+		this->zWeightTotal -= weight;
+		for (int i = 0; i < zSlotsAvailable + weight; i++)
+		{
+			this->zInventorySlotUsed[i] = false;
+		}
 		this->zItems.erase(this->zItems.begin() + position);
 
 		return true;

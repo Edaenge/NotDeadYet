@@ -8,6 +8,7 @@
 class Item
 {
 public:
+	Item(){this->zID = 0; this->zWeight = 0;}
 	Item(const int id){this->zID = id; this->zWeight = 0;}
 	Item(const unsigned int id, const unsigned int weight){this->zID = id; this->zWeight = weight;}
 	virtual ~Item(){}
