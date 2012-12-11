@@ -10,27 +10,42 @@ for project desperation* at Blekinge tekniska högskola.
 class Actor
 {
 public:
-	Actor(){}
-	Actor(const Vector3& pos, const Vector4& rot) 
+	Actor(const int ID)
 	{
-		zPos = pos; 
-		zRot = rot;
-		zScale = Vector3(1.0f,1.0f,1.0f);
+		this->zID = ID;
+		this->zScale = Vector3(0.05,0.05,0.05);
+	}
+	Actor(const int ID, const Vector3& pos)
+	{
+		this->zID = ID;
+		this->zPos = pos;
+		this->zScale = Vector3(0.05,0.05,0.05);
+	}
+	Actor(const int ID, const Vector3& pos, const Vector4& rot) 
+	{
+		this->zPos = pos; 
+		this->zRot = rot;
+		this->zScale = Vector3(0.05,0.05,0.05);
+		this->zID = ID;
 	}
 	virtual ~Actor(){}
 	
 	inline const Vector3& GetPosition() const {return zPos;}
-	inline const Vector3& GetScale() const {return zScale;}
+	const Vector3& GetScale() const {return zScale;}
 	inline const Vector4& GetRotation() const {return zRot;}
+	inline int  GetID() const {return this->zID;}
 
-	inline void SetPosition(const Vector3& pos) {zPos = pos;}
-	inline void SetRotation(const Vector4& rot) {zRot = rot;}
-	inline void SetScale(const Vector3& scale) {zScale = scale;}
+	void SetPosition(const Vector3& pos) {zPos = pos;}
+	void SetRotation(const Vector4& rot) {zRot = rot;}
+	void SetScale(const Vector3& scale) {zScale = scale;}
+	void SetID(const int id) {this->zID;}
 
 	virtual void Update(float deltaTime) = 0;
 
 protected:
+	int zID;
 	Vector3 zPos;
 	Vector3 zScale;
 	Vector4 zRot;
+	
 };

@@ -30,6 +30,8 @@
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyStates.cpp" />
     <ClCompile Include="..\Source\GameFiles\MainMenu.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ServerSide\AnimalActor.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ServerSide\BioActor.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\Host.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\PlayerActor.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
@@ -72,6 +74,8 @@
     <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyValues.h" />
     <ClInclude Include="..\Source\GameFiles\MainMenu.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\Actor.h" />
+    <ClInclude Include="..\Source\GameFiles\ServerSide\AnimalActor.h" />
+    <ClInclude Include="..\Source\GameFiles\ServerSide\BioActor.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\Host.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\PlayerActor.h" />
     <ClInclude Include="..\Source\MaloWLib\Array.h" />

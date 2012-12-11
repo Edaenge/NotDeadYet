@@ -1,48 +1,19 @@
 #include "GameFiles/ServerSide/PlayerActor.h"
 
-PlayerActor::PlayerActor( const int ID ) : Actor()
+PlayerActor::PlayerActor( const int ID ) : BioActor(ID)
 {
-	this->zID = ID;
-
-	this->zVelocity = V_WALK_SPEED;
-	this->zState = STATE_IDLE;
-
-	this->zPos = Vector3(1,0,1);
-	this->zDir = Vector3(1, 0, 0);
-	this->zScale = Vector3(0.05,0.05,0.05);
-	this->zUp	= Vector3(0.0f, 0.0f, 0.0f);
-
-	this->zPlayerModel = "none";
 	this->zFrameTime = 0.0f;
 	this->zLatency = 0.0f;
 }
 
-PlayerActor::PlayerActor( const int ID, const Vector3& startPos ) : Actor(startPos, Vector4())
+PlayerActor::PlayerActor( const int ID, const Vector3& startPos ) : BioActor(ID, startPos)
 {
-	this->zID = ID;
-	this->zVelocity = 5;
-	this->zState = STATE_IDLE;
-
-	this->zDir = Vector3(1, 0, 0);
-	this->zScale = Vector3(0.05,0.05,0.05);
-	this->zUp	= Vector3(0.0f, 0.0f, 0.0f);
-
-	this->zPlayerModel = "none";
 	this->zFrameTime = 0.0f;
 	this->zLatency = 0.0f;
 }
 
-PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& startRot ) : Actor(startPos, startRot)
+PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& startRot ) : BioActor(ID, startPos, startRot)
 {
-	this->zID = ID;
-	this->zVelocity = 5;
-	this->zState = STATE_IDLE;
-
-	this->zDir = Vector3(1, 0, 0);
-	this->zScale = Vector3(0.05,0.05,0.05);
-	this->zUp	= Vector3(0.0f, 0.0f, 0.0f);
-
-	this->zPlayerModel = "none";
 	this->zFrameTime = 0.0f;
 	this->zLatency = 0.0f;
 }
@@ -67,16 +38,16 @@ void PlayerActor::Update(float deltaTime)
 	}
 	if(this->zKeyStates.GetKeyState(KEY_DUCK))
 	{
-		if (zState != KEY_DUCK)
+		if (zState != STATE_CROUCHING)
 		{
-			this->zState = KEY_DUCK;
+			this->zState = STATE_CROUCHING;
 		}
 		else
 		{
 			this->zState = STATE_WALKING;
 		}
 	}
-	float dt = deltaTime + this->zLatency * 2.0f;
+	float dt = deltaTime + this->zLatency;
 
 	this->zFrameTime += dt;
 	switch (this->zState)
