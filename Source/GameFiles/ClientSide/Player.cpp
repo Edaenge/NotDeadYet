@@ -8,6 +8,7 @@ Player::Player() : WorldObject()
 	this->zEndPosition = Vector3(0,0,0);
 	this->zVelocity = 1000.0f;
 }
+
 void Player::Update(float deltaTime)
 {
 	Vector3 currentPosition = this->zMesh->GetPosition();
@@ -25,6 +26,7 @@ void Player::Update(float deltaTime)
 	this->LinearInterpolation(currentPosition, this->zEndPosition, t);
 	this->SetObjectPosition(currentPosition);
 }
+
 void Player::LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t)
 {
 	Vector3 temp = CurrPos + (newPos - CurrPos) * t * zVelocity;
