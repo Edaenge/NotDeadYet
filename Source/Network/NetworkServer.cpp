@@ -105,7 +105,7 @@ int MaloW::NetworkServer::InitConnection(int port)
 
 	// bind socket's name
 	sockaddr_in saListen;
-	saListen.sin_port = htons(port);
+	saListen.sin_port = htons((u_short)port);
 	saListen.sin_addr.s_addr = htonl(INADDR_ANY);
 	saListen.sin_family = AF_INET;
 	retCode = bind(this->sock, (sockaddr*)&saListen, sizeof(sockaddr));

@@ -280,23 +280,6 @@ void Client::HandleKeyboardInput()
 	int pos = this->SearchForPlayer(this->zID);
 	if (pos != -1)
 	{
-		Player* player = this->zPlayers[pos];
-		//switch (player->GetState())
-		//{
-		//case STATE_WALKING:
-		//	mSpeed = V_WALK_SPEED;
-		//	break;
-		//case STATE_RUNNING:
-		//	mSpeed = V_RUN_SPEED;
-		//	break;
-		//case STATE_CROUCHING:
-		//	mSpeed = V_CROUCH_SPEED;
-		//	break;
-		//default:
-		//	mSpeed = V_WALK_SPEED;
-		//	break;
-		//}
-
 		pressed = this->CheckKey(KEY_FORWARD);
 		if (!pressed)
 		{
@@ -310,28 +293,12 @@ void Client::HandleKeyboardInput()
 		}
 
 		pressed = this->CheckKey(KEY_SPRINT);
-		//if (pressed)
-		//{
-		//	if (!this->zKeyInfo.GetKeyState(KEY_SPRINT))
-		//	{
-		//		if (this->zPlayers[pos]->GetState() != STATE_RUNNING)
-		//			this->zPlayers[pos]->SetState(STATE_RUNNING);
-		//		else
-		//			this->zPlayers[pos]->SetState(STATE_WALKING);
-		//	}
-		//}
 
 		pressed = this->CheckKey(KEY_DUCK);
-		//if (pressed)
-		//{
-		//	if (!this->zKeyInfo.GetKeyState(KEY_DUCK))
-		//	{
-		//		if (this->zPlayers[pos]->GetState() != STATE_CROUCHING)
-		//			this->zPlayers[pos]->SetState(STATE_CROUCHING);
-		//		else
-		//			this->zPlayers[pos]->SetState(STATE_WALKING);
-		//	}
-		//}
+	}
+	else
+	{
+		MaloW::Debug("Something Went Wrong. This player cannot be found. In function Client::HandleKeyBoardInput");
 	}
 
 	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
@@ -354,7 +321,7 @@ void Client::HandleNetworkMessage(const std::string& msg)
 	char key[1024];
 	if(msgArray.size() > 0)
 	{
-		sscanf(msgArray[0].c_str(), "%s ", key);
+		sscanf_s(msgArray[0].c_str(), "%s ", &key, sizeof(key));
 
 		//Checks what type of message was sent
 		if(strcmp(key, PING.c_str()) == 0)
@@ -565,7 +532,7 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 	char key[512];
 	for(unsigned int i = 1; i < msgArray.size(); i++)
 	{
-		sscanf(msgArray[i].c_str(), "%s ", key);
+		sscanf_s(msgArray[i].c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, NEW_PLAYER.c_str()) == 0)
 		{
@@ -807,7 +774,7 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 			worldObjectPointer->SetID(ID);
 			for(unsigned int i = 1; i < msgArray.size(); i++)
 			{
-				sscanf(msgArray[i].c_str(), "%s ", key);
+				sscanf_s(msgArray[i].c_str(), "%s ", &key, sizeof(key));
 
 				if(strcmp(key, POSITION.c_str()) == 0)
 				{

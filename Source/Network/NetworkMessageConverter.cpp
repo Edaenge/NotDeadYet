@@ -229,6 +229,7 @@ float NetworkMessageConverter::ConvertStringToFloat(const std::string& type, con
 std::string NetworkMessageConverter::ConvertStringToSubstring(const std::string& type, const std::string& msg)
 {
 	char subString[100];
-	sscanf(msg.c_str(), (type + "%s").c_str(), &subString);
+	sscanf_s(msg.c_str(), (type + "%s").c_str(), &subString, sizeof(subString));
 	return subString;
+
 }

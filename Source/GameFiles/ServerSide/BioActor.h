@@ -43,7 +43,7 @@ public:
 
 	virtual ~BioActor(){};
 
-	virtual void Update(){};
+	virtual void Update(float deltaTime){};
 
 	int GetState() const {return this->zState;}
 	float GetVelocity() const {return this->zVelocity;}

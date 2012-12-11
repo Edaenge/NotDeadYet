@@ -16,7 +16,7 @@ public:
 	AnimalActor(const int ID, const Vector3& startPos, const Vector4& rot);
 	virtual ~AnimalActor();
 
-	virtual void Update();
+	virtual void Update(float deltaTime);
 
 
 

@@ -91,7 +91,6 @@ bool KeyBindConfig::WriteToFile( const std::string path, const char* data )
 
 bool KeyBindConfig::ConvertKey( std::string& ret, const char key ) const
 {
-	bool test;
 	KeyConverter kc;
 
 
@@ -125,13 +124,13 @@ bool KeyBindConfig::ReadFromFile( const std::string path, char* data )
 	while(!read.eof() && count < KEY_CAP)
 	{
 		char line[256]; 
-		char key[10];
-		char command[20];
+		char key[52];
+		char command[52];
 
 		read.getline(line,256);
 		TrimAndSet(line);
-		sscanf(line, "%s = ", key);
-		sscanf(line, (std::string(key) + " = %s").c_str(), command);
+		sscanf_s(line, "%s = ", &key, sizeof(key));
+		sscanf_s(line, (std::string(key) + " = %s").c_str(), &command, sizeof(command));
 
 		index = GetKeyValue(command);
 

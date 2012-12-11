@@ -259,8 +259,8 @@ void Host::HandleRecivedMessages()
 		if(msgArray.empty())
 			continue;
 
-		char key[512];
-		sscanf(msgArray[0].c_str(), "%s ", key);
+		char key[128];
+		sscanf_s(msgArray[0].c_str(), "%s ", &key, sizeof(key));
 		
 		c_index = SearchForClient((*it)->getID());
 		p_index = SearchForPlayer((*it)->getID());
@@ -390,8 +390,8 @@ void Host::HandlePlayerUpdate( PlayerActor* pl, ClientData* cd, const std::vecto
 	
 	for(auto it = data.begin() + 1; it < data.end(); it++)
 	{
-		char key[1024];
-		sscanf((*it).c_str(), "%s ", key);
+		char key[512];
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 		
 		if(strcmp(key, DIRECTION.c_str()) == 0)
 		{
@@ -597,7 +597,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	for (auto it_m = data.begin() + 1; it_m < data.end(); it_m++)
 	{
 		char key[512];
-		sscanf((*it_m).c_str(), "%s ", key);
+		sscanf_s((*it_m).c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, MESH_MODEL.c_str()) == 0)
 		{

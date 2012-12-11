@@ -20,7 +20,7 @@ AnimalActor::~AnimalActor()
 
 }
 
-void AnimalActor::Update()
+void AnimalActor::Update(float deltaTime)
 {
 
 }
