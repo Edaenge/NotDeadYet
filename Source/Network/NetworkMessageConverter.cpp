@@ -84,6 +84,15 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_UPDATE_PLAYER:
 		ss << UPDATE_PLAYER << " " << fp << "*";
 		break;
+	case MESSAGE_TYPE_UPDATE_STATIC_OBJECT:
+		ss << UPDATE_STATIC_OBJECT << " " << fp << "*";
+		break;
+	case MESSAGE_TYPE_UPDATE_DYNAMIC_OBJECT:
+		ss << UPDATE_DYNAMIC_OBJECT << " " << fp << "*";
+		break;
+	case MESSAGE_TYPE_UPDATE_ANIMAL:
+		ss << UPDATE_ANIMAL << " " << fp << "*";
+		break;
 	case MESSAGE_TYPE_KEY_DOWN:
 		ss << KEY_DOWN << " " << fp << "*";
 		break;
@@ -99,8 +108,26 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_NEW_PLAYER:
 		ss << NEW_PLAYER << " " << fp << "*";
 		break;
+	case MESSAGE_TYPE_NEW_STATIC_OBJECT:
+		ss << NEW_STATIC_OBJECT << " " << fp << "*";
+		break;
+	case MESSAGE_TYPE_NEW_DYNAMIC_OBJECT:
+		ss << NEW_DYNAMIC_OBJECT << " " << fp << "*";
+		break;
+	case MESSAGE_TYPE_NEW_ANIMAL:
+		ss << NEW_ANIMAL << " " << fp << "*";
+		break;
 	case MESSAGE_TYPE_REMOVE_PLAYER:
 		ss << REMOVE_PLAYER << " " << fp << "*";
+		break;
+	case MESSAGE_TYPE_REMOVE_STATIC_OBJECT:
+		ss << REMOVE_STATIC_OBJECT << " " << fp << "*";
+		break;
+	case MESSAGE_TYPE_REMOVE_ANIMAL:
+		ss << REMOVE_ANIMAL << " " << fp << "*";
+		break;
+	case MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT:
+		ss << REMOVE_DYNAMIC_OBJECT << " " << fp << "*";
 		break;
 	case MESSAGE_TYPE_CONNECTION_CLOSED:
 		ss << CONNECTION_CLOSED << " " << fp << "*";

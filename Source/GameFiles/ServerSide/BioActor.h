@@ -13,7 +13,7 @@ for project desperation* at Blekinge tekniska högskola.
 class BioActor : public Actor
 {
 public:
-	BioActor(const int ID) : Actor(ID)
+	BioActor() : Actor()
 	{
 		this->zState = STATE_IDLE;
 		this->zVelocity = V_WALK_SPEED;
@@ -22,7 +22,7 @@ public:
 		this->zUp = Vector3(0,1,0);
 		this->zActorModel = "none";
 	}
-	BioActor(const int ID, const Vector3& startPos) : Actor(ID, startPos)
+	BioActor(const Vector3& startPos) : Actor(startPos)
 	{
 		this->zState = STATE_IDLE;
 		this->zVelocity = V_WALK_SPEED;
@@ -31,7 +31,7 @@ public:
 		this->zUp = Vector3(0,1,0);
 		this->zActorModel = "none";
 	}
-	BioActor(const int ID, const Vector3& startPos, const Vector4& rot) : Actor(ID, startPos, rot)
+	BioActor(const Vector3& startPos, const Vector4& rot) : Actor(startPos, rot)
 	{
 		this->zState = STATE_IDLE;
 		this->zVelocity = V_WALK_SPEED;

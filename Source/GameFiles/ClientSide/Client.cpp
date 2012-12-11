@@ -13,6 +13,7 @@ enum MSG_TYPE
 {
 	PLAYER,
 	STATIC_OBJECT,
+	DYNAMIC_OBJECT,
 	ANIMAL
 };
 
@@ -60,7 +61,22 @@ Client::~Client()
 {
 	this->Close();
 	this->WaitUntillDone();
-	for( auto x = zPlayers.begin(); x < zPlayers.end(); ++x )
+	for(auto x = zPlayers.begin(); x < zPlayers.end(); x++)
+	{
+		SAFE_DELETE(*x);
+	}
+
+	for(auto x = zAnimals.begin(); x < zAnimals.end(); x++)
+	{
+		SAFE_DELETE(*x);
+	}
+
+	for(auto x = zStaticObjects.begin(); x < zStaticObjects.end(); x++)
+	{
+		SAFE_DELETE(*x);
+	}
+
+	for(auto x = zDynamicObjects.begin(); x < zDynamicObjects.end(); x++)
 	{
 		SAFE_DELETE(*x);
 	}
@@ -258,28 +274,28 @@ bool Client::CheckKey(const unsigned int ID)
 
 void Client::HandleKeyboardInput()
 {
-	float mSpeed = V_WALK_SPEED;
+	//float mSpeed = V_WALK_SPEED;
 	bool pressed = false;
 	
 	int pos = this->SearchForPlayer(this->zID);
 	if (pos != -1)
 	{
 		Player* player = this->zPlayers[pos];
-		switch (player->GetState())
-		{
-		case STATE_WALKING:
-			mSpeed = V_WALK_SPEED;
-			break;
-		case STATE_RUNNING:
-			mSpeed = V_RUN_SPEED;
-			break;
-		case STATE_CROUCHING:
-			mSpeed = V_CROUCH_SPEED;
-			break;
-		default:
-			mSpeed = V_WALK_SPEED;
-			break;
-		}
+		//switch (player->GetState())
+		//{
+		//case STATE_WALKING:
+		//	mSpeed = V_WALK_SPEED;
+		//	break;
+		//case STATE_RUNNING:
+		//	mSpeed = V_RUN_SPEED;
+		//	break;
+		//case STATE_CROUCHING:
+		//	mSpeed = V_CROUCH_SPEED;
+		//	break;
+		//default:
+		//	mSpeed = V_WALK_SPEED;
+		//	break;
+		//}
 
 		pressed = this->CheckKey(KEY_FORWARD);
 		if (!pressed)
@@ -294,28 +310,28 @@ void Client::HandleKeyboardInput()
 		}
 
 		pressed = this->CheckKey(KEY_SPRINT);
-		if (pressed)
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_SPRINT))
-			{
-				if (this->zPlayers[pos]->GetState() != STATE_RUNNING)
-					this->zPlayers[pos]->SetState(STATE_RUNNING);
-				else
-					this->zPlayers[pos]->SetState(STATE_WALKING);
-			}
-		}
+		//if (pressed)
+		//{
+		//	if (!this->zKeyInfo.GetKeyState(KEY_SPRINT))
+		//	{
+		//		if (this->zPlayers[pos]->GetState() != STATE_RUNNING)
+		//			this->zPlayers[pos]->SetState(STATE_RUNNING);
+		//		else
+		//			this->zPlayers[pos]->SetState(STATE_WALKING);
+		//	}
+		//}
 
 		pressed = this->CheckKey(KEY_DUCK);
-		if (pressed)
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_DUCK))
-			{
-				if (this->zPlayers[pos]->GetState() != STATE_CROUCHING)
-					this->zPlayers[pos]->SetState(STATE_CROUCHING);
-				else
-					this->zPlayers[pos]->SetState(STATE_WALKING);
-			}
-		}
+		//if (pressed)
+		//{
+		//	if (!this->zKeyInfo.GetKeyState(KEY_DUCK))
+		//	{
+		//		if (this->zPlayers[pos]->GetState() != STATE_CROUCHING)
+		//			this->zPlayers[pos]->SetState(STATE_CROUCHING);
+		//		else
+		//			this->zPlayers[pos]->SetState(STATE_WALKING);
+		//	}
+		//}
 	}
 
 	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
@@ -356,19 +372,34 @@ void Client::HandleNetworkMessage(const std::string& msg)
 			this->HandleUpdateObject(msgArray, ANIMAL);
 		}
 		//Static Object
-		else if(strcmp(key, UPDATE_OBJECT.c_str()) == 0)
+		else if(strcmp(key, UPDATE_STATIC_OBJECT.c_str()) == 0)
 		{
 			this->HandleUpdateObject(msgArray, STATIC_OBJECT);
 		}
 		//Static Object
-		else if(strcmp(key, NEW_OBJECT.c_str()) == 0)
+		else if(strcmp(key, NEW_STATIC_OBJECT.c_str()) == 0)
 		{
 			this->HandleNewObject(msgArray, STATIC_OBJECT);
 		}
 		//Static Object
-		else if(strcmp(key, REMOVE_OBJECT.c_str()) == 0)
+		else if(strcmp(key, REMOVE_STATIC_OBJECT.c_str()) == 0)
 		{
 			this->HandleRemoveObject(msgArray, STATIC_OBJECT);
+		}
+		//Dynamic Object
+		else if(strcmp(key, UPDATE_DYNAMIC_OBJECT.c_str()) == 0)
+		{
+			this->HandleUpdateObject(msgArray, DYNAMIC_OBJECT);
+		}
+		//Dynamic Object
+		else if(strcmp(key, NEW_DYNAMIC_OBJECT.c_str()) == 0)
+		{
+			this->HandleNewObject(msgArray, DYNAMIC_OBJECT);
+		}
+		//Dynamic Object
+		else if(strcmp(key, REMOVE_DYNAMIC_OBJECT.c_str()) == 0)
+		{
+			this->HandleRemoveObject(msgArray, DYNAMIC_OBJECT);
 		}
 		//Player
 		else if(strcmp(key, NEW_PLAYER.c_str()) == 0)
@@ -444,11 +475,23 @@ int Client::SearchForPlayer(const int id)
 	return -1;;
 }
 
-int Client::SearchForObject(const int id)
+int Client::SearchForStaticObject(const int id)
 {
 	for (unsigned int i = 0; i < this->zStaticObjects.size(); i++)
 	{
 		if (this->zStaticObjects[i]->GetID() == id)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Client::SearchForDynamicObject( const int id )
+{
+	for (unsigned int i = 0; i < this->zStaticObjects.size(); i++)
+	{
+		if (this->zDynamicObjects[i]->GetID() == id)
 		{
 			return i;
 		}
@@ -480,7 +523,10 @@ int Client::FindObject(const int id, const unsigned int objectType)
 		position = SearchForAnimal(id);
 		break;
 	case STATIC_OBJECT:
-		position = SearchForObject(id);
+		position = SearchForStaticObject(id);
+		break;
+	case DYNAMIC_OBJECT:
+		position = SearchForDynamicObject(id);
 		break;
 	default:
 		position = -1;
@@ -499,27 +545,31 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 	int clientID = -1;
 	int state = 0;
 
+	switch (objectType)
+	{
+	case PLAYER:
+		clientID = this->zMsgHandler.ConvertStringToInt(NEW_PLAYER, msgArray[0]);
+		break;
+	case ANIMAL:
+		clientID = this->zMsgHandler.ConvertStringToInt(NEW_ANIMAL, msgArray[0]);
+		break;
+	case STATIC_OBJECT:
+		clientID = this->zMsgHandler.ConvertStringToInt(NEW_STATIC_OBJECT, msgArray[0]);
+		break;
+	case DYNAMIC_OBJECT:
+		clientID = this->zMsgHandler.ConvertStringToInt(NEW_DYNAMIC_OBJECT, msgArray[0]);
+		break;
+	default:
+		break;
+	}
 	char key[512];
-	for(unsigned int i = 0; i < msgArray.size(); i++)
+	for(unsigned int i = 1; i < msgArray.size(); i++)
 	{
 		sscanf(msgArray[i].c_str(), "%s ", key);
 
 		if(strcmp(key, NEW_PLAYER.c_str()) == 0)
 		{
-			switch (objectType)
-			{
-			case PLAYER:
-				clientID = this->zMsgHandler.ConvertStringToInt(NEW_PLAYER, msgArray[i]);
-				break;
-			case ANIMAL:
-				clientID = this->zMsgHandler.ConvertStringToInt(NEW_ANIMAL, msgArray[i]);
-				break;
-			case STATIC_OBJECT:
-				clientID = this->zMsgHandler.ConvertStringToInt(NEW_OBJECT, msgArray[i]);
-				break;
-			default:
-				break;
-			}
+			
 		}
 		else if(strcmp(key, POSITION.c_str()) == 0)
 		{
@@ -569,7 +619,10 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 			pos = this->SearchForAnimal(clientID);
 			break;
 		case STATIC_OBJECT:
-			pos = this->SearchForObject(clientID);
+			pos = this->SearchForStaticObject(clientID);
+			break;
+		case DYNAMIC_OBJECT:
+			pos = this->SearchForStaticObject(clientID);
 			break;
 		default:
 			pos = -1;
@@ -587,6 +640,9 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 				newWorldObject = new Animal();
 				break;
 			case STATIC_OBJECT:
+				newWorldObject = new StaticObject();
+				break;
+			case DYNAMIC_OBJECT:
 				newWorldObject = new StaticObject();
 				break;
 			default:
@@ -609,6 +665,9 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 				break;
 			case STATIC_OBJECT:
 				this->zStaticObjects.push_back(dynamic_cast<StaticObject*>(newWorldObject));
+				break;
+			case DYNAMIC_OBJECT:
+				//Implement here
 				break;
 			case ANIMAL:
 				dynamic_cast<Animal*>(newWorldObject)->SetNextPosition(position);
@@ -641,8 +700,12 @@ void Client::HandleRemoveObject(const std::vector<std::string>& msgArray, const 
 		pos = SearchForAnimal(ID);
 		break;
 	case STATIC_OBJECT:
-		ID = this->zMsgHandler.ConvertStringToInt(REMOVE_OBJECT, msgArray[0]);
-		pos = SearchForObject(ID);
+		ID = this->zMsgHandler.ConvertStringToInt(REMOVE_STATIC_OBJECT, msgArray[0]);
+		pos = SearchForStaticObject(ID);
+		break;
+	case DYNAMIC_OBJECT:
+		ID = this->zMsgHandler.ConvertStringToInt(REMOVE_DYNAMIC_OBJECT, msgArray[0]);
+		pos = SearchForDynamicObject(ID);
 		break;
 	default:
 		break;
@@ -668,6 +731,10 @@ void Client::HandleRemoveObject(const std::vector<std::string>& msgArray, const 
 			this->zEng->DeleteMesh(this->zStaticObjects[pos]->GetMesh());
 			this->zStaticObjects.erase(zStaticObjects.begin() + pos);
 			break;
+		case DYNAMIC_OBJECT:
+			this->zEng->DeleteMesh(this->zDynamicObjects[pos]->GetMesh());
+			this->zDynamicObjects.erase(zDynamicObjects.begin() + pos);
+			break;
 		default:
 			break;
 		}
@@ -690,8 +757,12 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 		pos = SearchForAnimal(ID);
 		break;
 	case STATIC_OBJECT:
-		ID = this->zMsgHandler.ConvertStringToInt(UPDATE_OBJECT, msgArray[0]);
-		pos = SearchForObject(ID);
+		ID = this->zMsgHandler.ConvertStringToInt(UPDATE_STATIC_OBJECT, msgArray[0]);
+		pos = SearchForStaticObject(ID);
+		break;
+	case DYNAMIC_OBJECT:
+		ID = this->zMsgHandler.ConvertStringToInt(UPDATE_DYNAMIC_OBJECT, msgArray[0]);
+		pos = SearchForDynamicObject(ID);
 		break;
 	default:
 		pos = -1;
@@ -712,6 +783,9 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 			break;
 		case STATIC_OBJECT:
 			worldObjectPointer = this->zStaticObjects[pos];
+			break;
+		case DYNAMIC_OBJECT:
+			worldObjectPointer = this->zDynamicObjects[pos];
 			break;
 		default:
 			break;
@@ -782,6 +856,9 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 				case STATIC_OBJECT:
 					worldObjectPointer->SetPosition(position);
 					break;
+				case DYNAMIC_OBJECT:
+					dynamic_cast<DynamicObject*>(worldObjectPointer)->SetPosition(position);
+					break;
 				default:
 					break;
 				}
@@ -801,6 +878,9 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 					break;
 				case ANIMAL:
 					dynamic_cast<Animal*>(worldObjectPointer)->SetState(state);
+					break;
+				case DYNAMIC_OBJECT:
+					dynamic_cast<DynamicObject*>(worldObjectPointer)->SetState(state);
 					break;
 				default:
 					break;
@@ -833,6 +913,9 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 				break;
 			case STATIC_OBJECT:
 				this->zStaticObjects[pos] = dynamic_cast<StaticObject*>(worldObjectPointer);
+				break;
+			case DYNAMIC_OBJECT:
+				this->zDynamicObjects[pos] = dynamic_cast<DynamicObject*>(worldObjectPointer);
 				break;
 			default:
 				break;

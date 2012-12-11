@@ -6,27 +6,37 @@ for project desperation* at Blekinge tekniska högskola.
 
 #include <vector.h>
 
-/* This is an abstract base class for objects in the game.*/
+/* This is an abstract base class for objects in the game.
+   Every time an actor is created, an ID will be generated in this class. This id should be used for this actor.
+   An exception is Players. They have the same ID as the ClientChannel.
+*/
+
+
 class Actor
 {
 public:
-	Actor(const int ID)
+	Actor()
 	{
-		this->zID = ID;
+		this->zID = this->zNextAID;
+		this->zNextAID++;
 		this->zScale = Vector3(0.05,0.05,0.05);
 	}
-	Actor(const int ID, const Vector3& pos)
+	Actor(const Vector3& pos)
 	{
-		this->zID = ID;
+		this->zID = this->zNextAID;
+		this->zNextAID++;
+
 		this->zPos = pos;
 		this->zScale = Vector3(0.05,0.05,0.05);
 	}
-	Actor(const int ID, const Vector3& pos, const Vector4& rot) 
+	Actor(const Vector3& pos, const Vector4& rot) 
 	{
+		this->zID = this->zNextAID;
+		this->zNextAID++;
+
 		this->zPos = pos; 
 		this->zRot = rot;
 		this->zScale = Vector3(0.05,0.05,0.05);
-		this->zID = ID;
 	}
 	virtual ~Actor(){}
 	
@@ -47,5 +57,7 @@ protected:
 	Vector3 zPos;
 	Vector3 zScale;
 	Vector4 zRot;
+private:
+	static long zNextAID;
 	
 };

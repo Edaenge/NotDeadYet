@@ -9,6 +9,7 @@ for project desperation* at Blekinge tekniska högskola.
 #include "Network/ServerListener.h"
 #include "Network/NetworkMessageConverter.h"
 #include "GameFiles/ServerSide/PlayerActor.h"
+
 #include "Safe.h"
 
 
@@ -89,6 +90,7 @@ private:
 	HandlePingMsg
 	HandleCloseConnectionMsg
 	HandleKeyPress
+	HandleKeyRelease
 	CreateNewPlayer
 	*/
 	void HandleRecivedMessages();
@@ -108,7 +110,7 @@ private:
 	int SearchForPlayer(const int ID) const;
 	/*! Creates a new player and notifies all clients.*/
 	void CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data);
-	
+
 private:
 	ServerListener* zServerListener;
 

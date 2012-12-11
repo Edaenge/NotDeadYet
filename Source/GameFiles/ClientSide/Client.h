@@ -11,6 +11,7 @@
 #include "GameFiles/KeyUtil/KeyHandler.h"
 #include "Network/NetworkMessageConverter.h"
 #include "GameFiles/ClientSide/StaticObject.h"
+#include "GameFiles/ClientSide/DynamicObject.h"
 
 using namespace MaloW;
 
@@ -39,6 +40,7 @@ private:
 	std::vector<Player*> zPlayers;
 	std::vector<Animal*> zAnimals;
 	std::vector<StaticObject*> zStaticObjects;
+	std::vector<DynamicObject*> zDynamicObjects;
 	NetworkMessageConverter zMsgHandler;
 	ServerChannel* zServerChannel;
 private:
@@ -65,7 +67,9 @@ private:
 	/*! Search for the object with the correct ID and returns a Position if found*/
 	int SearchForAnimal(const int id);
 	/*! Search for the object with the correct ID and returns a Position if found*/
-	int SearchForObject(const int id);
+	int SearchForStaticObject(const int id);
+	/*! Search for the object with the correct ID and returns a Position if found*/
+	int SearchForDynamicObject(const int id);
 
 	int FindObject(const int id, const unsigned int type);
 	/*! Handles Message types*/

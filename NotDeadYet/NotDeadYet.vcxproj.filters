@@ -109,8 +109,11 @@
     <ClCompile Include="..\Source\GameFiles\ServerSide\AnimalActor.cpp">
       <Filter>Game Files\ServerSide</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\BioActor.cpp">
+    <ClCompile Include="..\Source\GameFiles\ServerSide\Actor.cpp">
       <Filter>Game Files\ServerSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\DynamicObject.cpp">
+      <Filter>Game Files\ClientSide</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -260,6 +263,12 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ServerSide\BioActor.h">
       <Filter>Game Files\ServerSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ServerSide\AnimalHandler.h">
+      <Filter>Game Files\ServerSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\gamefiles\clientside\DynamicObject.h">
+      <Filter>Game Files\ClientSide</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

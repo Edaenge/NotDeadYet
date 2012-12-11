@@ -15,10 +15,13 @@ for project desperation* at Blekinge tekniska högskola.
 class PlayerActor : public BioActor
 {
 public:
-	PlayerActor();
+	/*! ID should be the same ID as in ClientChannel.*/
 	PlayerActor(const int ID);
+	/*! ID should be the same ID as in ClientChannel.*/
 	PlayerActor(const int ID, const Vector3& startPos);
+	/*! ID should be the same ID as in ClientChannel.*/
 	PlayerActor(const int ID, const Vector3& startPos, const Vector4& startRot);
+
 	virtual ~PlayerActor();
 
 	/*! Updates players pos, states etc.*/
