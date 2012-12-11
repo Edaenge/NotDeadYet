@@ -32,6 +32,9 @@
     <Filter Include="Game Files\ServerSide">
       <UniqueIdentifier>{c11d50e1-d8b2-43e4-b39c-56796bd3fc0e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Files\Inventory">
+      <UniqueIdentifier>{84d54727-12de-4411-907d-382ca95e5889}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\main.cpp">
@@ -114,6 +117,18 @@
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\ClientSide\DynamicObject.cpp">
       <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Inventory\Equipment.cpp">
+      <Filter>Game Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Inventory\Inventory.cpp">
+      <Filter>Game Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Inventory\MeleeWeapon.cpp">
+      <Filter>Game Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Inventory\RangedWeapon.cpp">
+      <Filter>Game Files\Inventory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +284,24 @@
     </ClInclude>
     <ClInclude Include="..\source\gamefiles\clientside\DynamicObject.h">
       <Filter>Game Files\ClientSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Inventory\Equipment.h">
+      <Filter>Game Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Inventory\Inventory.h">
+      <Filter>Game Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Inventory\Item.h">
+      <Filter>Game Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Inventory\MeleeWeapon.h">
+      <Filter>Game Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Inventory\RangedWeapon.h">
+      <Filter>Game Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Inventory\Weapon.h">
+      <Filter>Game Files\Inventory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
