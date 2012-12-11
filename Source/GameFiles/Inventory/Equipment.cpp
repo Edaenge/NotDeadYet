@@ -7,7 +7,11 @@ Equipment::Equipment()
 
 Equipment::~Equipment()
 {
-	delete this->zActiveWeapon;
+	if (this->zActiveWeapon)
+	{
+		delete this->zActiveWeapon;
+		this->zActiveWeapon = 0;
+	}
 }
 
 void Equipment::ChangeWeapon(Weapon* weapon)

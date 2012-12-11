@@ -2,24 +2,39 @@
 
 Inventory::Inventory()
 {
-	this->zInventoryCap  = 10;
+	this->zInventoryCap = 20;
+	this->zWeightTotal = 0;
+	
+	this->zInventorySlotBlocked = new MaloW::Array<bool>();
+	this->zItems = new MaloW::Array<Item*>();
+
 	for (unsigned int i = 0; i < this->zInventoryCap; i++)
 	{
-		this->zInventorySlotUsed[i] = false;
+		this->zInventorySlotBlocked->add(false);
 	}
 	this->zSlotsAvailable = this->zInventoryCap;
 }
 
 Inventory::~Inventory()
 {
-	//Remove Item Array
-	for (auto x = this->zItems.begin(); x < this->zItems.end(); x++)
+	//Remove Item Arrays
+	while (this->zItems->size() > 0)
 	{
-		delete (*x);
+		delete this->zItems->getAndRemove(0);
 	}
+	delete this->zItems;
+	this->zItems = 0;
+
+
+	if (this->zInventorySlotBlocked)
+	{
+		delete this->zInventorySlotBlocked;
+		this->zInventorySlotBlocked = 0;
+	}
+	
 }
 
-const std::vector<Item*>& Inventory::GetItems()
+MaloW::Array<Item*>* Inventory::GetItems() const
 {
 	return this->zItems;
 }
@@ -27,46 +42,47 @@ const std::vector<Item*>& Inventory::GetItems()
 bool Inventory::AddItem(Item* item)
 {
 	int weight = item->GetWeight();
-	if(this->zItems.size() + weight < this->zInventoryCap)
+	if(this->zWeightTotal + weight <= this->zInventoryCap)
 	{
-		if (zSlotsAvailable > weight)
+		this->zWeightTotal += weight;
+		for (int i = 0; i < weight - 1; i++)
 		{
-			this->zWeightTotal += weight;
-			for (int i = 0; i < weight; i++)
-			{
-				zInventorySlotUsed[this->zSlotsAvailable--] = true;
-			}
-			this->zItems.push_back(item);
+			zInventorySlotBlocked->get(this->zSlotsAvailable-1) = true;
 
-			return true;
+			//Decrease slot size to mark blocked
+			this->zSlotsAvailable--;
 		}
+		this->zItems->add(item);
+
+		return true;
 	}
 	return false;
 }
 
-Item* Inventory::SearchAndGetItem(unsigned int ID)
+Item* Inventory::SearchAndGetItem(unsigned int ID) const
 {
 	int position = this->Search(ID);
 
 	return this->GetItem(position);
 }
 
-Item* Inventory::GetItem(unsigned int position)
+Item* Inventory::GetItem(const unsigned int position) const
 {
-	if (position < this->zItems.size())
+	if (position < this->zItems->size())
 	{
-		return this->zItems[position];
+		return this->zItems->get(position);
 	}
 	return 0;
 }
 
-int Inventory::Search(const unsigned int ID)
+int Inventory::Search(const unsigned int ID) const
 {
-	for (unsigned int i = 0; i < this->zItems.size(); i++)
+	for (int i = 0; i < this->zItems->size(); i++)
 	{
-		if (this->zItems[i])
+		Item* temp = this->zItems->get(i);
+		if (temp)
 		{
-			if (ID == this->zItems[i]->GetID())
+			if (ID == temp->GetID())
 				return i;
 		}
 	}
@@ -75,15 +91,19 @@ int Inventory::Search(const unsigned int ID)
 
 bool Inventory::RemoveItem(const unsigned int position)
 {
-	if (position < this->zItems.size() && position > -1)
+	if (position < this->zItems->size())
 	{
-		int weight = this->zItems[position]->GetWeight();
+		int weight = GetItem(position)->GetWeight();
 		this->zWeightTotal -= weight;
-		for (int i = 0; i < zSlotsAvailable + weight; i++)
+
+		for (int i = 0; i < weight; i++)
 		{
-			this->zInventorySlotUsed[i] = false;
+			this->zInventorySlotBlocked->get(zSlotsAvailable++) = false;
 		}
-		this->zItems.erase(this->zItems.begin() + position);
+
+		Item* item = this->zItems->getAndRemove(position);
+		delete item;
+		item = 0;
 
 		return true;
 	}
@@ -93,6 +113,24 @@ bool Inventory::RemoveItem(const unsigned int position)
 bool Inventory::RemoveItem(Item* item)
 {
 	int position = this->Search(item->GetID());
+	if (position != -1)
+	{
+		return this->RemoveItem(position);
+	}
+	return false;
+}
 
-	return this->RemoveItem(position);
+MaloW::Array<bool>* Inventory::GetBlockedSlots() const
+{
+	return this->zInventorySlotBlocked;
+}
+
+bool Inventory::GetBlockedSlot(unsigned int position) const
+{
+	return this->zInventorySlotBlocked->get(position);
+}
+
+int Inventory::GetInventoryCapacity() const
+{
+	return this->zInventoryCap;
 }
