@@ -195,6 +195,11 @@ int KeyBindConfig::GetKeyValue( std::string CC )
 		return KEY_SPRINT;
 	}
 
+	if(CC == COMMAND_DUCK)
+	{
+		return KEY_DUCK;
+	}
+
 	return -1;
 }
 
