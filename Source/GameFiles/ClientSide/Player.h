@@ -23,8 +23,10 @@ public:
 	Vector3 GetNextPosition() const {return this->zEndPosition;}
 	/*! Updates the player*/
 	void Update(float deltaTime);
+
 private:
 	void LinearInterpolation(Vector3& PrevPos, const Vector3& newPos, float dt);
+
 private:
 	int zPlayerState;
 	Vector3 zEndPosition;

@@ -8,6 +8,7 @@ Animal::Animal() : WorldObject()
 	this->zEndPosition = Vector3(0,0,0);
 	this->zVelocity = 1000.0f;
 }
+
 void Animal::Update(float deltaTime)
 {
 	Vector3 currentPosition = this->zMesh->GetPosition();
@@ -24,6 +25,7 @@ void Animal::Update(float deltaTime)
 	this->LinearInterpolation(currentPosition, this->zEndPosition, t);
 	this->SetObjectPosition(currentPosition);
 }
+
 void Animal::LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t)
 {
 	Vector3 temp = CurrPos + (newPos - CurrPos) * t * zVelocity;

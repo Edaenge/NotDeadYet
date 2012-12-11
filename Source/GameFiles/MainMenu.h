@@ -12,12 +12,13 @@ public:
 	void run();
 
 private:
-	Game* zGame;
-	bool zClientConnected;
-	bool zHostCreated;
-private:
 	void printClientError(const int code);
 	void printHostError(const int code);
 	/*! Prints the error message to the client*/
 	void printToScreen(const std::string msg);
+
+private:
+	Game* zGame;
+	bool zClientConnected;
+	bool zHostCreated;
 };

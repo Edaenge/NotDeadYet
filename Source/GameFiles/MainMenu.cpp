@@ -1,7 +1,6 @@
 #include "MainMenu.h"
 #include "Safe.h"
 
-
 MainMenu::MainMenu()
 {
 
@@ -11,11 +10,13 @@ MainMenu::MainMenu()
 	this->zGame		 = new Game();
 
 }
+
 MainMenu::~MainMenu()
 {
 	SAFE_DELETE(this->zGame);
 }
-void MainMenu::printClientError(const int code )
+
+void MainMenu::PrintClientError(const int code )
 {
 	std::string errorMessage = "";
 	switch (code)
@@ -36,9 +37,10 @@ void MainMenu::printClientError(const int code )
 	default:
 		break;
 	}
-	printToScreen(errorMessage);
+	PrintToScreen(errorMessage);
 }
-void MainMenu::printHostError(const int code )
+
+void MainMenu::PrintHostError(const int code )
 {
 	std::string errorMessage = "";
 
@@ -60,13 +62,15 @@ void MainMenu::printHostError(const int code )
 	default:
 		break;
 	}
-	printToScreen(errorMessage);
+	PrintToScreen(errorMessage);
 }
-void MainMenu::printToScreen(const std::string msg )
+
+void MainMenu::PrintToScreen(const std::string msg )
 {
 	MaloW::Debug(msg);
 }
-void MainMenu::run()
+
+void MainMenu::Run()
 {
 	int hostErrorCode = 0;
 	int clientErrorCode = 0;
@@ -81,8 +85,7 @@ void MainMenu::run()
 	}
 	else
 	{
-		printClientError(clientErrorCode);
-		printHostError(hostErrorCode);
+		PrintClientError(clientErrorCode);
+		PrintHostError(hostErrorCode);
 	}
 }
-

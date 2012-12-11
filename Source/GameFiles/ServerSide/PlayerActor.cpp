@@ -1,6 +1,5 @@
 #include "GameFiles/ServerSide/PlayerActor.h"
 
-
 PlayerActor::PlayerActor( const int ID ) : Actor()
 {
 	this->zID = ID;
@@ -18,7 +17,6 @@ PlayerActor::PlayerActor( const int ID ) : Actor()
 	this->zLatency = 0.0f;
 }
 
-
 PlayerActor::PlayerActor( const int ID, const Vector3& startPos ) : Actor(startPos, Vector4())
 {
 	this->zID = ID;
@@ -33,7 +31,6 @@ PlayerActor::PlayerActor( const int ID, const Vector3& startPos ) : Actor(startP
 	this->zFrameTime = 0.0f;
 	this->zLatency = 0.0f;
 }
-
 
 PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& startRot ) : Actor(startPos, startRot)
 {
@@ -50,17 +47,38 @@ PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& 
 	this->zLatency = 0.0f;
 }
 
-
 PlayerActor::~PlayerActor()
 {
 
 }
 
-
 void PlayerActor::Update(float deltaTime)
 {
-	this->zFrameTime += deltaTime + this->zLatency;
+	if(this->zKeyStates.GetKeyState(KEY_SPRINT))
+	{
+		if (zState != STATE_RUNNING)
+		{
+			this->zState = STATE_RUNNING;
+		}
+		else
+		{
+			this->zState = STATE_WALKING;
+		}
+	}
+	if(this->zKeyStates.GetKeyState(KEY_DUCK))
+	{
+		if (zState != KEY_DUCK)
+		{
+			this->zState = KEY_DUCK;
+		}
+		else
+		{
+			this->zState = STATE_WALKING;
+		}
+	}
+	float dt = deltaTime + this->zLatency * 2.0f;
 
+	this->zFrameTime += dt;
 	switch (this->zState)
 	{
 	case STATE_WALKING:
@@ -79,20 +97,20 @@ void PlayerActor::Update(float deltaTime)
 
 	if(this->zKeyStates.GetKeyState(KEY_FORWARD))
 	{
-		this->zPos = this->zPos + this->zDir * deltaTime * this->zVelocity;
+		this->zPos = this->zPos + this->zDir * dt * this->zVelocity;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
 	{
-		this->zPos = this->zPos + this->zDir * -1 * deltaTime * this->zVelocity;
+		this->zPos = this->zPos + this->zDir * -1 * dt * this->zVelocity;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_RIGHT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDir);
-		this->zPos = this->zPos + (right * -1 * deltaTime * this->zVelocity);
+		this->zPos = this->zPos + (right * dt * this->zVelocity);
 	}
 	if(this->zKeyStates.GetKeyState(KEY_LEFT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDir);
-		this->zPos = this->zPos + (right * deltaTime * this->zVelocity);
+		this->zPos = this->zPos + (right * -1 * dt * this->zVelocity);
 	}
 }

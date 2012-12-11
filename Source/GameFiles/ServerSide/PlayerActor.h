@@ -59,7 +59,6 @@ public:
 	inline void SetLatency(const float latency){this->zLatency = latency;}
 	inline void SetUpVector(const Vector3& up){this->zUp = up;}
 
-
 private:
 	int		zID;
 	int		zState;

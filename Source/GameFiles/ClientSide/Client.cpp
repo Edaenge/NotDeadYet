@@ -15,14 +15,15 @@ enum MSG_TYPE
 	STATIC_OBJECT,
 	ANIMAL
 };
+
 Client::Client()
 {
 	this->zID = 0;
 	this->zIP = "";
 	this->zPort = 0;
 	this->zEng = NULL;
-	this->zCreated = false;
 	this->zRunning = true;
+	this->zCreated = false;
 	this->zFrameTime = 0.0f;
 	this->zWaitTimer = 0.0f;
 	this->zKeyInfo = KeyHandler();
@@ -40,6 +41,7 @@ Client::Client()
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
 }
+
 int Client::Connect(const std::string& ip, const int port)
 {
 	int code = 0;
@@ -53,6 +55,7 @@ int Client::Connect(const std::string& ip, const int port)
 	
 	return code;
 }
+
 Client::~Client()
 {
 	this->Close();
@@ -64,6 +67,7 @@ Client::~Client()
 
 	SAFE_DELETE(this->zServerChannel);
 }
+
 float Client::Update()
 {
 	INT64 currentTime;
@@ -81,12 +85,14 @@ float Client::Update()
 
 	return this->zDeltaTime;
 }
-void Client::initClient()
+
+void Client::InitGraphics()
 {
 	this->zEng->CreateSkyBox("Media/skymap.dds");
 	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
-	this->zEng->GetCamera()->LookAt( Vector3(10, 10, 10) );
+	this->zEng->GetCamera()->LookAt( Vector3(0, 0, 0) );
 
+	this->zEng->CreateStaticMesh("Media/Fern_02_v01.obj", Vector3(5, 5, 5));
 	this->zEng->StartRendering();
 
 	//this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
@@ -102,6 +108,7 @@ void Client::initClient()
 
 	//this->zEng->LoadingScreen("Media/LoadingScreen/StartScreen.png", "", 0.0f, 1.0f, 1.0f, 1.0f);
 }
+
 void Client::Life()
 {
 	this->Update();
@@ -109,8 +116,9 @@ void Client::Life()
 
 	this->zServerChannel->Start();
 
-	this->initClient();
 	Sleep(1000);
+	this->InitGraphics();
+
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->Update();
@@ -135,12 +143,13 @@ void Client::Life()
 				}
 				SAFE_DELETE(ev);
 			}
-			if (this->zTimeSinceLastPing > TIMEOUT_VALUE * 3.0f)
+			if (this->zTimeSinceLastPing > TIMEOUT_VALUE * 2.0f)
 			{
 				this->CloseConnection("Timeout");
 			}
 			else if (this->zTimeSinceLastPing > TIMEOUT_VALUE)
 			{
+				MaloW::Debug("Timeout From Server");
 				//Print a Timeout Message to Client
 			}
 			if(this->zCreated)
@@ -156,6 +165,7 @@ void Client::Life()
 	}
 	this->zRunning = false;
 }
+
 void Client::SendClientUpdate()
 {
 	std::string msg;
@@ -170,6 +180,7 @@ void Client::SendClientUpdate()
 
 	this->zServerChannel->sendData(msg);
 }
+
 void Client::UpdateCameraPos()
 {
 	int pos = this->SearchForPlayer(this->zID);
@@ -180,6 +191,7 @@ void Client::UpdateCameraPos()
 		this->zEng->GetCamera()->SetPosition(position);
 	}
 }
+
 void Client::UpdateWorldObjects()
 {
 	std::vector<Player*>::iterator itp;
@@ -194,10 +206,12 @@ void Client::UpdateWorldObjects()
 		(*ita)->Update(this->zDeltaTime);
 	}
 }
+
 bool Client::IsAlive()
 {
 	return this->zRunning;
 }
+
 bool Client::CheckKey(const unsigned int ID)
 {
 	bool result = false;
@@ -228,12 +242,12 @@ bool Client::CheckKey(const unsigned int ID)
 	}
 	return result;
 }
+
 void Client::HandleKeyboardInput()
 {
 	float mSpeed = V_WALK_SPEED;
 	bool pressed = false;
-	pressed = this->CheckKey(KEY_FORWARD);
-
+	
 	int pos = this->SearchForPlayer(this->zID);
 	if (pos != -1)
 	{
@@ -253,54 +267,55 @@ void Client::HandleKeyboardInput()
 			mSpeed = V_WALK_SPEED;
 			break;
 		}
-		if (pressed)
-		{
-			Vector3 camForward = this->zEng->GetCamera()->GetForward();
+		pressed = this->CheckKey(KEY_FORWARD);
+		//if (pressed)
+		//{
+		//	Vector3 camForward = this->zEng->GetCamera()->GetForward();
 
-			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
-			Vector3 newPos = position + (camForward * this->zDeltaTime * mSpeed);
-			//player->SetNextPosition(newPos);
-		}
-		else
-		{
+		//	Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
+		//	Vector3 newPos = position + (camForward * this->zDeltaTime * mSpeed);
+		//	//player->SetNextPosition(newPos);
+		//}
+		//else
+		//{
 			pressed = this->CheckKey(KEY_BACKWARD);
-			if (pressed)
-			{
-				Vector3 camBackwards = this->zEng->GetCamera()->GetForward() * -1;
+		//	if (pressed)
+		//	{
+		//		Vector3 camBackwards = this->zEng->GetCamera()->GetForward() * -1;
 
-				Vector3 position = player->GetObjectPosition();
-				Vector3 newPos = position + (camBackwards * this->zDeltaTime * mSpeed);
+		//		Vector3 position = player->GetObjectPosition();
+		//		Vector3 newPos = position + (camBackwards * this->zDeltaTime * mSpeed);
 
-				//player->SetNextPosition(newPos);
-			}
-		}
+		//		//player->SetNextPosition(newPos);
+		//	}
+		//}
 
 		pressed = this->CheckKey(KEY_LEFT);
-		if (pressed)
-		{
-			Vector3 camForward = this->zEng->GetCamera()->GetForward();
-			Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
-			Vector3 camRight = camForward.GetCrossProduct(camUp);
+		//if (pressed)
+		//{
+		//	Vector3 camForward = this->zEng->GetCamera()->GetForward();
+		//	Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
+		//	Vector3 camRight = camForward.GetCrossProduct(camUp);
 
-			Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
-			Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
+		//	Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
+		//	Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
 
-			//player->SetNextPosition(newPos);
-		}
-		else
-		{
+		//	player->SetNextPosition(newPos);
+		//}
+		//else
+		//{
 			pressed = this->CheckKey(KEY_RIGHT);
-			if (pressed)
-			{
-				Vector3 camForward = this->zEng->GetCamera()->GetForward();
-				Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
-				Vector3 camRight = camForward.GetCrossProduct(camUp) * -1;
+		//	if (pressed)
+		//	{
+		//		Vector3 camForward = this->zEng->GetCamera()->GetForward();
+		//		Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
+		//		Vector3 camRight = camForward.GetCrossProduct(camUp) * -1;
 
-				Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
-				Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
-				//player->SetNextPosition(newPos);
-			}
-		}
+		//		Vector3 position = this->zPlayers.at(pos)->GetObjectPosition();
+		//		Vector3 newPos = position + (camRight * this->zDeltaTime * mSpeed);
+		//		player->SetNextPosition(newPos);
+		//	}
+		//}
 
 		pressed = this->CheckKey(KEY_SPRINT);
 		if (pressed)
@@ -333,11 +348,13 @@ void Client::HandleKeyboardInput()
 		this->CloseConnection("Escape was pressed");
 	}
 }
+
 void Client::Ping()
 {
 	this->zTimeSinceLastPing = 0.0f;
 	this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
 }
+
 void Client::HandleNetworkMessage(const std::string& msg)
 {
 	std::vector<std::string> msgArray;
@@ -424,6 +441,7 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		}
 	}
 }
+
 void Client::CloseConnection(const std::string& reason)
 {
 	MaloW::Debug("Client Shutdown:" + reason);
@@ -431,6 +449,7 @@ void Client::CloseConnection(const std::string& reason)
 	this->zServerChannel->Close();
 	this->Close();
 }
+
 int Client::SearchForPlayer(const int id)
 {
 	int position = -1;
@@ -447,6 +466,7 @@ int Client::SearchForPlayer(const int id)
 
 	return position;
 }
+
 int Client::SearchForObject(const int id)
 {
 	int position = -1;
@@ -463,6 +483,7 @@ int Client::SearchForObject(const int id)
 
 	return position;
 }
+
 int Client::SearchForAnimal(const int id)
 {
 	int position = -1;
@@ -479,6 +500,7 @@ int Client::SearchForAnimal(const int id)
 
 	return position;
 }
+
 int Client::FindObject(const int id, const unsigned int objectType)
 {
 	int position = -1;
@@ -499,6 +521,7 @@ int Client::FindObject(const int id, const unsigned int objectType)
 	}
 	return position;
 }
+
 void Client::HandleNewObject(const std::vector<std::string>& msgArray, const unsigned int objectType )
 {
 	Vector3 position = Vector3(0, 0, 0);
@@ -635,6 +658,7 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 		}
 	}
 }
+
 void Client::HandleRemoveObject(const std::vector<std::string>& msgArray, const unsigned int objectType )
 {
 	int ID = -1;
@@ -682,6 +706,7 @@ void Client::HandleRemoveObject(const std::vector<std::string>& msgArray, const 
 		}
 	}
 }
+
 void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const unsigned int objectType)
 {
 	int ID = -1;

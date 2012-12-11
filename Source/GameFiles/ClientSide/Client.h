@@ -51,7 +51,8 @@ private:
 	/*! Close the connection and print the reason to the client*/
 	void CloseConnection(const std::string& reason);
 	/*! Initializes the graphic stuff*/
-	void initClient();
+	void InitGraphics();
+	/*! Updates The Clock and returns the DeltaTime*/
 	float Update();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
@@ -73,6 +74,7 @@ private:
 	void HandleRemoveObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
 	/*! Send Camera Info and Rotation to Server*/
 	void SendClientUpdate();
+
 public:
 	Client();
 	/*! Connects to a Host with the specified parameters*/

@@ -669,8 +669,3 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 
 	
 }
-
-
-
-
-
