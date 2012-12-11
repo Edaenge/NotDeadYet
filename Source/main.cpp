@@ -21,7 +21,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 
 	// IMPLEMENT MAIN PROGRAM HERE.
 	MainMenu *menu = new MainMenu();
-	menu->run();
+	menu->Run();
 	delete menu;
 
 	// Free Graphics
