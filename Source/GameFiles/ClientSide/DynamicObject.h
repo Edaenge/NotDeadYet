@@ -21,8 +21,8 @@ public:
 	inline void SetNextPosition(const Vector3 position) {this->zEndPosition = position;}
 	/*! Returns New Position*/
 	Vector3 GetNextPosition() const {return this->zEndPosition;}
-	/*! Updates the Animal*/
-	void Update(float deltaTime);
+	/*! Updates the Object*/
+	virtual void Update(float deltaTime);
 
 private:
 	/*! Interpolates the position*/

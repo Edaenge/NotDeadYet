@@ -78,7 +78,8 @@ private:
 	void HandleRemoveObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
 	/*! Send Camera Info and Rotation to Server*/
 	void SendClientUpdate();
-
+	/*! Checks Collision*/
+	void CheckCollision();
 public:
 	Client();
 	/*! Connects to a Host with the specified parameters*/

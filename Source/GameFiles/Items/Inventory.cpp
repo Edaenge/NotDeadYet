@@ -1,4 +1,4 @@
-#include "GameFiles/Inventory/Inventory.h"
+#include "GameFiles/Items/Inventory.h"
 
 Inventory::Inventory()
 {
@@ -25,13 +25,11 @@ Inventory::~Inventory()
 	delete this->zItems;
 	this->zItems = 0;
 
-
 	if (this->zInventorySlotBlocked)
 	{
 		delete this->zInventorySlotBlocked;
 		this->zInventorySlotBlocked = 0;
 	}
-	
 }
 
 MaloW::Array<Item*>* Inventory::GetItems() const
@@ -96,7 +94,7 @@ bool Inventory::RemoveItem(const unsigned int position)
 		int weight = GetItem(position)->GetWeight();
 		this->zWeightTotal -= weight;
 
-		for (int i = 0; i < weight; i++)
+		for (int i = 0; i < weight - 1; i++)
 		{
 			this->zInventorySlotBlocked->get(zSlotsAvailable++) = false;
 		}
@@ -115,9 +113,35 @@ bool Inventory::RemoveItem(Item* item)
 	int position = this->Search(item->GetID());
 	if (position != -1)
 	{
-		return this->RemoveItem(position);
+		return this->MoveAndRemove(position);
+		//return this->RemoveItem(position);
 	}
 	return false;
+}
+
+bool Inventory::MoveAndRemove( const unsigned int position )
+{
+	unsigned int newPos = this->Move(position);
+
+	if (newPos != -1)
+	{
+		return this->RemoveItem(newPos);
+	}
+	return false;
+}
+
+unsigned int Inventory::Move(const unsigned int position)
+{
+	unsigned int pos = -1;
+	Item* temp = this->zItems->get(position);
+	for (unsigned int i = position; i < this->zItems->size() - 1; i++)
+	{
+		this->zItems->get(i) = this->zItems->get(i + 1);
+	}
+	pos = this->zItems->size() - 1;
+	this->zItems->get(pos) = temp;
+
+	return pos;
 }
 
 MaloW::Array<bool>* Inventory::GetBlockedSlots() const

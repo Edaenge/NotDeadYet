@@ -1,7 +1,7 @@
 #include "Graphics.h"
 #include "SoundEngine.h"
 #include "MainMenu.h"
-//#include <vld.h>
+#include <vld.h>
 
 void test();
 

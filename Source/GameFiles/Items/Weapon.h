@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "GameFiles/Inventory/Item.h"
+#include "GameFiles/Items/Item.h"
 
 class Weapon : public Item
 {
@@ -20,6 +20,12 @@ public:
 		this->zDamage = damage; 
 		this->zRange = range;
 	}
+	Weapon(const unsigned int id, const unsigned int weight, const std::string& name, 
+		const float damage, const float range) : Item(id, weight, name)
+	{
+		this->zDamage = damage; 
+		this->zRange = range;
+	}
 	virtual ~Weapon(){}
 	/*! Returns The Weapon Damage*/
 	float GetDamage() const {return this->zDamage;}
@@ -27,6 +33,7 @@ public:
 	float GetRange() const {return this->zRange;}
 
 	virtual void UseWeapon(float& range, float& damage) = 0;
+	virtual void Use() = 0;
 protected:
 	float zDamage;
 	float zRange;

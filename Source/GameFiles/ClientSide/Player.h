@@ -22,7 +22,7 @@ public:
 	/*! Returns New Position*/
 	Vector3 GetNextPosition() const {return this->zEndPosition;}
 	/*! Updates the Player*/
-	void Update(float deltaTime);
+	virtual void Update(float deltaTime);
 
 private:
 	/*! Interpolates the position*/

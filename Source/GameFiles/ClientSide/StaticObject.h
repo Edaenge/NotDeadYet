@@ -13,7 +13,7 @@ public:
 	StaticObject() : WorldObject(){}
 	virtual ~StaticObject(){}
 
-	void Update(float dt){};
+	virtual void Update(float dt){};
 private:
 
 };

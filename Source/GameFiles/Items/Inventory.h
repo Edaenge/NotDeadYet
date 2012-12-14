@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "GameFiles/Inventory/Item.h"
+#include "GameFiles/Items/Item.h"
 #include <vector>
 #include "Array.h"
 class Inventory
@@ -33,7 +33,9 @@ public:
 	/*! Returns the Inventory Capacity == Max Weight allowed*/
 	int GetInventoryCapacity() const;
 private:
-	//void Sort();
+	/*! Places the item to be removed At the last position*/
+	bool MoveAndRemove(const unsigned int position);
+	unsigned int Move(const unsigned int position);
 private:
 	/*! Array of items*/
 	MaloW::Array<Item*>* zItems;
