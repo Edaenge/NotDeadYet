@@ -22,9 +22,11 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_SERVER_FULL,
 	MESSAGE_TYPE_SERVER_SHUTDOWN,
 	MESSAGE_TYPE_UPDATE_PLAYER,
+	MESSAGE_TYPE_DEAD_PLAYER,
 	MESSAGE_TYPE_UPDATE_STATIC_OBJECT,
 	MESSAGE_TYPE_UPDATE_DYNAMIC_OBJECT,
 	MESSAGE_TYPE_UPDATE_ANIMAL,
+	MESSAGE_TYPE_DEAD_ANIMAL,
 	MESSAGE_TYPE_NEW_PLAYER,
 	MESSAGE_TYPE_NEW_STATIC_OBJECT,
 	MESSAGE_TYPE_NEW_DYNAMIC_OBJECT,
@@ -60,6 +62,7 @@ static const std::string CLIENT_DATA			= "CD";
 static const std::string NEW_PLAYER				= "NP";
 static const std::string UPDATE_PLAYER			= "UP";
 static const std::string REMOVE_PLAYER			= "RP";
+static const std::string DEAD_PLAYER			= "DP";
 //Static Object Messages
 static const std::string NEW_STATIC_OBJECT		= "NSO";
 static const std::string REMOVE_STATIC_OBJECT	= "RSO";
@@ -72,6 +75,7 @@ static const std::string UPDATE_DYNAMIC_OBJECT	= "UDO";
 static const std::string NEW_ANIMAL				= "NA";
 static const std::string REMOVE_ANIMAL			= "RA";
 static const std::string UPDATE_ANIMAL			= "UA";
+static const std::string DEAD_ANIMAL			= "DA";
 //Key Messages
 static const std::string KEY_DOWN				= "KD";
 static const std::string KEY_UP					= "KU";

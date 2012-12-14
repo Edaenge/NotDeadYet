@@ -2,23 +2,26 @@
 
 PlayerActor::PlayerActor( const int ID ) : BioActor()
 {
-	this->zFrameTime = 0.0f;
-	this->zLatency = 0.0f;
+	InitValues();
 	this->zID = ID;
 }
 
 PlayerActor::PlayerActor( const int ID, const Vector3& startPos ) : BioActor(startPos)
 {
-	this->zFrameTime = 0.0f;
-	this->zLatency = 0.0f;
+	InitValues();
 	this->zID = ID;
 }
 
 PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& startRot ) : BioActor(startPos, startRot)
 {
+	InitValues();
+	this->zID = ID;
+}
+
+void PlayerActor::InitValues()
+{
 	this->zFrameTime = 0.0f;
 	this->zLatency = 0.0f;
-	this->zID = ID;
 }
 
 PlayerActor::~PlayerActor()
@@ -28,8 +31,15 @@ PlayerActor::~PlayerActor()
 
 void PlayerActor::Update(float deltaTime)
 {
+	float dt = deltaTime + this->zLatency;
+
 	if(this->zKeyStates.GetKeyState(KEY_SPRINT))
-		this->zState = STATE_RUNNING;
+	{
+		if(Sprint(dt))
+			this->zState = STATE_RUNNING;
+		else
+			this->zState = STATE_WALKING;
+	}
 
 	else if(this->zKeyStates.GetKeyState(KEY_DUCK))
 		this->zState = STATE_CROUCHING;
@@ -37,8 +47,6 @@ void PlayerActor::Update(float deltaTime)
 	else
 		this->zState = STATE_WALKING;
 	
-	float dt = deltaTime + this->zLatency;
-
 	this->zFrameTime += dt;
 	switch (this->zState)
 	{
@@ -74,5 +82,13 @@ void PlayerActor::Update(float deltaTime)
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDir);
 		this->zPos = this->zPos + (right * -1 * dt * this->zVelocity);
+	}
+
+	if(this->zState != STATE_RUNNING && (this->zStamina != this->zStaminaMax))
+	{
+		this->zStamina += dt * this->zStaminaCof;
+
+		if(this->zStamina > this->zStaminaMax)
+			this->zStamina = this->zStaminaMax;
 	}
 }

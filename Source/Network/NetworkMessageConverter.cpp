@@ -93,6 +93,12 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_UPDATE_ANIMAL:
 		ss << UPDATE_ANIMAL << " " << fp << "*";
 		break;
+	case MESSAGE_TYPE_DEAD_PLAYER:
+		ss << DEAD_PLAYER << " " << fp << "*";
+		break;
+	case MESSAGE_TYPE_DEAD_ANIMAL:
+		ss << DEAD_ANIMAL << " " << fp << "*";
+		break;
 	case MESSAGE_TYPE_KEY_DOWN:
 		ss << KEY_DOWN << " " << fp << "*";
 		break;

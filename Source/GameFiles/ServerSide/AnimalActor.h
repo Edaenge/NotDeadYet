@@ -7,13 +7,14 @@ for project desperation* at Blekinge tekniska högskola.
 
 #include "GameFiles/ServerSide/BioActor.h"
 
-/*This is an animal. It inherits from BioActor.*/
+/*This is a NPC animal. It inherits from BioActor.*/
+/*ID is generated in Actor.h*/
 class AnimalActor : public BioActor
 {
 public:
-	AnimalActor(const int ID);
-	AnimalActor(const int ID, const Vector3& startPos);
-	AnimalActor(const int ID, const Vector3& startPos, const Vector4& rot);
+	AnimalActor();
+	AnimalActor(const Vector3& startPos);
+	AnimalActor(const Vector3& startPos, const Vector4& rot);
 	virtual ~AnimalActor();
 
 	virtual void Update(float deltaTime);

@@ -9,6 +9,7 @@ for project desperation* at Blekinge tekniska högskola.
 #include "GameFiles/KeyUtil/KeyValues.h"
 #include "GameFiles/KeyUtil/KeyStates.h"
 
+
 /*This class is used to save player information such as position and states.
   This information is sent to clients.
 */
@@ -46,10 +47,15 @@ public:
 	inline void SetFrameTime(const float frameTime){this->zFrameTime = frameTime;}
 	inline void SetLatency(const float latency){this->zLatency = latency;}
 	
+private:
+	void InitValues();
 
 private:
 	float	zLatency;
 	float	zFrameTime;
+
+	float	zHunger;
+	float	zHydration;
 
 	std::string zPlayerModel;
 	KeyStates zKeyStates;
