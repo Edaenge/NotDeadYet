@@ -22,8 +22,8 @@ RangedWeapon::~RangedWeapon()
 
 void RangedWeapon::UseWeapon(float& range, float& damage)
 {
-	damage = this->zDamage;
 	range = this->zRange;
+	damage = this->zDamage;
 }
 
 void RangedWeapon::Use()

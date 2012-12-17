@@ -23,8 +23,8 @@ MeleeWeapon::~MeleeWeapon()
 
 void MeleeWeapon::UseWeapon(float& range, float& damage)
 {
-	damage = this->zDamage;
 	range = this->zRange;
+	damage = this->zDamage;
 }
 
 void MeleeWeapon::Use()

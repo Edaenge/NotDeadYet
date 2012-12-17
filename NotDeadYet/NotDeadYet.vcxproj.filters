@@ -136,6 +136,9 @@
     <ClCompile Include="..\Source\GameFiles\Items\RangedWeapon.cpp">
       <Filter>Game Files\Items</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ServerSide\BioActor.cpp">
+      <Filter>Game Files\ServerSide</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -311,6 +314,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\Items\Weapon.h">
       <Filter>Game Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ServerSide\StaticObjectActor.h">
+      <Filter>Game Files\ServerSide</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

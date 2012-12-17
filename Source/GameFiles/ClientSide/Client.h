@@ -17,32 +17,15 @@ using namespace MaloW;
 
 class Client : public MaloW::Process
 {
-private:
-	/*! Current Client ID*/
-	int zID;
-	bool zCreated;
-	int	zPort;
-	std::string zIP;
-	bool zRunning;
-	INT64 zStartime;
-	float zDeltaTime;
-	float zSecsPerCnt;
-	/*! Counter*/
-	float zWaitTimer;
-	/*! Total Runtime*/
-	float zFrameTime;
-	KeyHandler zKeyInfo;
-	std::string zMeshID;
-	GraphicsEngine* zEng;
+public:
+	Client();
+	/*! Connects to a Host with the specified parameters*/
+	int Connect(const std::string& ip, const int port);
+	virtual ~Client();
+	void Life();
+	/*! Checks if Thread is alive*/
+	bool IsAlive();
 
-	float zTimeSinceLastPing;
-
-	std::vector<Player*> zPlayers;
-	std::vector<Animal*> zAnimals;
-	std::vector<StaticObject*> zStaticObjects;
-	std::vector<DynamicObject*> zDynamicObjects;
-	NetworkMessageConverter zMsgHandler;
-	ServerChannel* zServerChannel;
 private:
 	/*! Handle Keyboard Input */
 	void HandleKeyboardInput();
@@ -78,14 +61,35 @@ private:
 	void HandleRemoveObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
 	/*! Send Camera Info and Rotation to Server*/
 	void SendClientUpdate();
-	/*! Checks Collision*/
+	/*! Checks Ray Vs Static Objects*/
+	std::vector<StaticObject*> RayVsWorld();
+	/*! Checks Mesh vs Mesh Collision*/
 	void CheckCollision();
-public:
-	Client();
-	/*! Connects to a Host with the specified parameters*/
-	int Connect(const std::string& ip, const int port);
-	virtual ~Client();
-	void Life();
-	/*! Checks if Thread is alive*/
-	bool IsAlive();
+
+private:
+	/*! Current Client ID*/
+	int zID;
+	int	zPort;
+	bool zCreated;
+	bool zRunning;
+	std::string zIP;
+	INT64 zStartime;
+	float zDeltaTime;
+	/*! Total Runtime*/
+	float zFrameTime;
+	float zSecsPerCnt;
+	KeyHandler zKeyInfo;
+	std::string zMeshID;
+	GraphicsEngine* zEng;
+	float zTimeSinceLastPing;
+	/*! Counters*/
+	float zSendUpdateDelayTimer;
+	float zCircularGuiShowTimer;
+	/*! Vectors to keep track of World Objects*/
+	std::vector<Player*> zPlayers;
+	std::vector<Animal*> zAnimals;
+	std::vector<StaticObject*> zStaticObjects;
+	std::vector<DynamicObject*> zDynamicObjects;
+	NetworkMessageConverter zMsgHandler;
+	ServerChannel* zServerChannel;
 };

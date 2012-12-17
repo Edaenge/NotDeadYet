@@ -8,15 +8,16 @@
 
 
 /*Key words*/
-static const std::string COMMAND_FORWARD =	"C_FORWARD";
-static const std::string COMMAND_BACKWARD = "C_BACKWARD";
-static const std::string COMMAND_LEFT =		"C_LEFT";
-static const std::string COMMAND_RIGHT =	"C_RIGHT";
-static const std::string COMMAND_INTERACT = "C_USE";
-static const std::string COMMAND_MENU =		"C_MENU";
-static const std::string COMMAND_JUMP =		"C_JUMP";
-static const std::string COMMAND_SPRINT =	"C_SPRINT";
-static const std::string COMMAND_DUCK =		"C_DUCK";
+static const std::string COMMAND_FORWARD	= "C_FORWARD";
+static const std::string COMMAND_BACKWARD	= "C_BACKWARD";
+static const std::string COMMAND_LEFT		= "C_LEFT";
+static const std::string COMMAND_RIGHT		= "C_RIGHT";
+static const std::string COMMAND_INTERACT	= "C_USE";
+static const std::string COMMAND_MENU		= "C_MENU";
+static const std::string COMMAND_JUMP		= "C_JUMP";
+static const std::string COMMAND_SPRINT		= "C_SPRINT";
+static const std::string COMMAND_DUCK		= "C_DUCK";
+static const std::string COMMAND_INVENTORY	= "C_INVENTORY";
 
 
 /*cfg path*/
@@ -32,7 +33,7 @@ KeyBindConfig::~KeyBindConfig()
 {
 }
 
-void KeyBindConfig::ReadBindings( char* bindings )
+void KeyBindConfig::ReadBindings(char* bindings)
 {
 	if(!ReadFromFile(CONFIG_KEYBINDING_PATH, bindings))
 	{
@@ -53,7 +54,8 @@ void KeyBindConfig::CreateDefaultIni(char* bindings)
 		VK_SPACE,
 		VK_CONTROL,
 		'E',
-		VK_ESCAPE
+		VK_ESCAPE,
+		'B'
 	};
 
 	memcpy(bindings, defaultBindings, sizeof(defaultBindings));
@@ -89,7 +91,7 @@ bool KeyBindConfig::WriteToFile( const std::string path, const char* data )
 	return true;
 }
 
-bool KeyBindConfig::ConvertKey( std::string& ret, const char key ) const
+bool KeyBindConfig::ConvertKey(std::string& ret, const char key) const
 {
 	KeyConverter kc;
 
@@ -109,7 +111,7 @@ bool KeyBindConfig::ConvertKey( std::string& ret, const char key ) const
 	
 }
 
-bool KeyBindConfig::ReadFromFile( const std::string path, char* data )
+bool KeyBindConfig::ReadFromFile(const std::string path, char* data)
 {
 	KeyConverter kc;
 	int count = 0;
@@ -150,7 +152,7 @@ bool KeyBindConfig::ReadFromFile( const std::string path, char* data )
 	return true;
 }
 
-int KeyBindConfig::GetKeyValue( std::string CC )
+int KeyBindConfig::GetKeyValue(std::string CC)
 {
 	std::transform(CC.begin(), CC.end(), CC.begin(), ::toupper);
 
@@ -199,10 +201,15 @@ int KeyBindConfig::GetKeyValue( std::string CC )
 		return KEY_DUCK;
 	}
 
+	if(CC == COMMAND_INVENTORY)
+	{
+		return KEY_INVENTORY;
+	}
+
 	return -1;
 }
 
-const std::string& KeyBindConfig::GetCommand( const int keyValue )
+const std::string& KeyBindConfig::GetCommand(const int keyValue)
 {
 	switch (keyValue)
 	{
@@ -233,13 +240,16 @@ const std::string& KeyBindConfig::GetCommand( const int keyValue )
 	case KEY_MENU:
 		return COMMAND_MENU;
 		break;
+	case KEY_INVENTORY:
+		return COMMAND_INVENTORY;
+		break;
 	default:
 		return "none";
 		break;
 	}
 }
 
-void KeyBindConfig::TrimAndSet( char* ret )
+void KeyBindConfig::TrimAndSet(char* ret)
 {
 	if(ret == NULL)
 		return;

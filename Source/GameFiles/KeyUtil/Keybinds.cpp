@@ -33,4 +33,3 @@ void Keybinds::ReadKeyBinds()
 	KeyBindConfig kbc;
 	kbc.ReadBindings(this->zKeyBindings);
 }
-

@@ -6,16 +6,18 @@
 using namespace MaloW;
 
 //Timeout_value = 10 sek
-static const float TIMEOUT_VALUE = 10.0f; 
+static const float TIMEOUT_VALUE = 10.0f;
+// 30 updates per sec
 static const float UPDATE_DELAY = 0.0333f;
+static const float CIRCULAR_GUI_DISPLAY_TIMER = 2.0f;
 static const float MAX_DISTANCE_TO_OBJECT = 50.0f;
 
-enum MSG_TYPE
+static const enum OBJECT_TYPE
 {
-	MSG_TYPE_PLAYER,
-	MSG_TYPE_STATIC_OBJECT,
-	MSG_TYPE_DYNAMIC_OBJECT,
-	MSG_TYPE_ANIMAL
+	OBJECT_TYPE_PLAYER,
+	OBJECT_TYPE_STATIC_OBJECT,
+	OBJECT_TYPE_DYNAMIC_OBJECT,
+	OBJECT_TYPE_ANIMAL
 };
 
 Client::Client()
@@ -27,14 +29,14 @@ Client::Client()
 	this->zRunning = true;
 	this->zCreated = false;
 	this->zFrameTime = 0.0f;
-	this->zWaitTimer = 0.0f;
+	this->zServerChannel = NULL;
+	this->zCircularGuiShowTimer = 0.0f;
 	this->zKeyInfo = KeyHandler();
 	this->zKeyInfo.InitKeyBinds();
-	this->zServerChannel = NULL;
 	this->zTimeSinceLastPing = 0.0f;
+	this->zMeshID = "Media/scale.obj";
+	this->zSendUpdateDelayTimer = 0.0f;
 	this->zMsgHandler = NetworkMessageConverter();
-
-	zMeshID = "Media/scale.obj";
 
 	INT64 frequency;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
@@ -109,26 +111,7 @@ void Client::InitGraphics()
 	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
 	this->zEng->GetCamera()->LookAt( Vector3(0, 0, 0) );
 
-	iMesh* objectMesh = this->zEng->CreateStaticMesh("Media/Fern_02_v01.obj", Vector3(0, 0, 0));
-
-	StaticObject* object = new StaticObject();
-	object->AddStaticMesh(objectMesh);
-	this->zStaticObjects.push_back(object);
-
 	this->zEng->StartRendering();
-
-	//this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(100, 1, 100), "Media/TerrainTexture.png", "Media/TerrainHeightmap.raw");
-
-	//StaticMesh* scaleHuman = this->zEng->CreateStaticMesh("Media/scale.obj", D3DXVECTOR3(5, -6, 15));
-	//scaleHuman->Scale(0.1f);
-	//this->zEng->GetCamera()->FollowMesh(scaleHuman);
-
-	//iLight* testLight = this->zEng->CreateLight(Vector3(15, 30, 15));
-	//testLight->SetIntensity(50);
-	//SoundEngine* seng = eng->GetSoundEngine();
-	//seng->SetMasterVolume(0.5f);
-
-	//this->zEng->LoadingScreen("Media/LoadingScreen/StartScreen.png", "", 0.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void Client::Life()
@@ -145,7 +128,7 @@ void Client::Life()
 	{
 		this->Update();
 
-		this->zWaitTimer += this->zDeltaTime;
+		this->zSendUpdateDelayTimer += this->zDeltaTime;
 		this->zTimeSinceLastPing += this->zDeltaTime;
 
 		this->HandleKeyboardInput();
@@ -154,7 +137,7 @@ void Client::Life()
 			this->UpdateCameraPos();
 
 			this->UpdateWorldObjects();
-
+			
 			if (MaloW::ProcessEvent* ev = this->PeekEvent())
 			{
 				//Check if Client has received a Message
@@ -176,9 +159,9 @@ void Client::Life()
 			}
 			if(this->zCreated)
 			{
-				if(this->zWaitTimer >= UPDATE_DELAY)
+				if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
 				{
-					this->zWaitTimer = 0.0f;
+					this->zSendUpdateDelayTimer = 0.0f;
 					this->SendClientUpdate();
 				}
 			}
@@ -221,16 +204,19 @@ void Client::UpdateCameraPos()
 
 void Client::UpdateWorldObjects()
 {
-	std::vector<Player*>::iterator itp;
-	for (itp = this->zPlayers.begin(); itp < this->zPlayers.end(); itp++)
+	for (auto x = this->zPlayers.begin(); x < this->zPlayers.end(); x++)
 	{
-		(*itp)->Update(this->zDeltaTime);
+		(*x)->Update(this->zDeltaTime);
 	}
 
-	std::vector<Animal*>::iterator ita;
-	for (ita = this->zAnimals.begin(); ita < this->zAnimals.end(); ita++)
+	for (auto x = this->zAnimals.begin(); x < this->zAnimals.end(); x++)
 	{
-		(*ita)->Update(this->zDeltaTime);
+		(*x)->Update(this->zDeltaTime);
+	}
+
+	for (auto x = this->zDynamicObjects.begin(); x < this->zDynamicObjects.end(); x++)
+	{
+		(*x)->Update(this->zDeltaTime);
 	}
 }
 
@@ -296,6 +282,19 @@ void Client::HandleKeyboardInput()
 		pressed = this->CheckKey(KEY_SPRINT);
 
 		pressed = this->CheckKey(KEY_DUCK);
+
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
+		{
+			this->RayVsWorld();
+			this->zCircularGuiShowTimer = CIRCULAR_GUI_DISPLAY_TIMER;
+		}
+		else
+		{
+			if (this->zCircularGuiShowTimer > 0.0f)
+			{
+				this->zCircularGuiShowTimer -= this->zDeltaTime;
+			}
+		}
 	}
 	else
 	{
@@ -332,62 +331,62 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		//Player
 		else if(strcmp(key, UPDATE_PLAYER.c_str()) == 0)
 		{
-			this->HandleUpdateObject(msgArray, MSG_TYPE_PLAYER);
+			this->HandleUpdateObject(msgArray, OBJECT_TYPE_PLAYER);
 		}
 		//Animal
 		else if(strcmp(key, UPDATE_ANIMAL.c_str()) == 0)
 		{
-			this->HandleUpdateObject(msgArray, MSG_TYPE_ANIMAL);
+			this->HandleUpdateObject(msgArray, OBJECT_TYPE_ANIMAL);
 		}
 		//Static Object
 		else if(strcmp(key, UPDATE_STATIC_OBJECT.c_str()) == 0)
 		{
-			this->HandleUpdateObject(msgArray, MSG_TYPE_STATIC_OBJECT);
+			this->HandleUpdateObject(msgArray, OBJECT_TYPE_STATIC_OBJECT);
 		}
 		//Static Object
 		else if(strcmp(key, NEW_STATIC_OBJECT.c_str()) == 0)
 		{
-			this->HandleNewObject(msgArray, MSG_TYPE_STATIC_OBJECT);
+			this->HandleNewObject(msgArray, OBJECT_TYPE_STATIC_OBJECT);
 		}
 		//Static Object
 		else if(strcmp(key, REMOVE_STATIC_OBJECT.c_str()) == 0)
 		{
-			this->HandleRemoveObject(msgArray, MSG_TYPE_STATIC_OBJECT);
+			this->HandleRemoveObject(msgArray, OBJECT_TYPE_STATIC_OBJECT);
 		}
 		//Dynamic Object
 		else if(strcmp(key, UPDATE_DYNAMIC_OBJECT.c_str()) == 0)
 		{
-			this->HandleUpdateObject(msgArray, MSG_TYPE_DYNAMIC_OBJECT);
+			this->HandleUpdateObject(msgArray, OBJECT_TYPE_DYNAMIC_OBJECT);
 		}
 		//Dynamic Object
 		else if(strcmp(key, NEW_DYNAMIC_OBJECT.c_str()) == 0)
 		{
-			this->HandleNewObject(msgArray, MSG_TYPE_DYNAMIC_OBJECT);
+			this->HandleNewObject(msgArray, OBJECT_TYPE_DYNAMIC_OBJECT);
 		}
 		//Dynamic Object
 		else if(strcmp(key, REMOVE_DYNAMIC_OBJECT.c_str()) == 0)
 		{
-			this->HandleRemoveObject(msgArray, MSG_TYPE_DYNAMIC_OBJECT);
+			this->HandleRemoveObject(msgArray, OBJECT_TYPE_DYNAMIC_OBJECT);
 		}
 		//Player
 		else if(strcmp(key, NEW_PLAYER.c_str()) == 0)
 		{
-			this->HandleNewObject(msgArray, MSG_TYPE_PLAYER);
+			this->HandleNewObject(msgArray, OBJECT_TYPE_PLAYER);
 		}
 		//Animal
 		else if(strcmp(key, NEW_ANIMAL.c_str()) == 0)
 		{
-			this->HandleNewObject(msgArray, MSG_TYPE_ANIMAL);
+			this->HandleNewObject(msgArray, OBJECT_TYPE_ANIMAL);
 		}
 		//Animal
 		else if(strcmp(key, REMOVE_ANIMAL.c_str()) == 0)
 		{
-			this->HandleRemoveObject(msgArray, MSG_TYPE_ANIMAL);
+			this->HandleRemoveObject(msgArray, OBJECT_TYPE_ANIMAL);
 		}
 		//Player
 		else if(strcmp(key, REMOVE_PLAYER.c_str()) == 0)
 		{
-			this->HandleRemoveObject(msgArray, MSG_TYPE_PLAYER);
+			this->HandleRemoveObject(msgArray, OBJECT_TYPE_PLAYER);
 		}
 		else if(strcmp(key, SELF_ID.c_str()) == 0)
 		{
@@ -484,16 +483,16 @@ int Client::FindObject(const int id, const unsigned int objectType)
 	int position = -1;
 	switch (objectType)
 	{
-	case MSG_TYPE_PLAYER:
+	case OBJECT_TYPE_PLAYER:
 		position = SearchForPlayer(id);
 		break;
-	case MSG_TYPE_ANIMAL:
+	case OBJECT_TYPE_ANIMAL:
 		position = SearchForAnimal(id);
 		break;
-	case MSG_TYPE_STATIC_OBJECT:
+	case OBJECT_TYPE_STATIC_OBJECT:
 		position = SearchForStaticObject(id);
 		break;
-	case MSG_TYPE_DYNAMIC_OBJECT:
+	case OBJECT_TYPE_DYNAMIC_OBJECT:
 		position = SearchForDynamicObject(id);
 		break;
 	default:
@@ -515,16 +514,16 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 
 	switch (objectType)
 	{
-	case MSG_TYPE_PLAYER:
+	case OBJECT_TYPE_PLAYER:
 		clientID = this->zMsgHandler.ConvertStringToInt(NEW_PLAYER, msgArray[0]);
 		break;
-	case MSG_TYPE_ANIMAL:
+	case OBJECT_TYPE_ANIMAL:
 		clientID = this->zMsgHandler.ConvertStringToInt(NEW_ANIMAL, msgArray[0]);
 		break;
-	case MSG_TYPE_STATIC_OBJECT:
+	case OBJECT_TYPE_STATIC_OBJECT:
 		clientID = this->zMsgHandler.ConvertStringToInt(NEW_STATIC_OBJECT, msgArray[0]);
 		break;
-	case MSG_TYPE_DYNAMIC_OBJECT:
+	case OBJECT_TYPE_DYNAMIC_OBJECT:
 		clientID = this->zMsgHandler.ConvertStringToInt(NEW_DYNAMIC_OBJECT, msgArray[0]);
 		break;
 	default:
@@ -580,16 +579,16 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 		int pos;
 		switch (objectType)
 		{
-		case MSG_TYPE_PLAYER:
+		case OBJECT_TYPE_PLAYER:
 			pos = this->SearchForPlayer(clientID);
 			break;
-		case MSG_TYPE_ANIMAL:
+		case OBJECT_TYPE_ANIMAL:
 			pos = this->SearchForAnimal(clientID);
 			break;
-		case MSG_TYPE_STATIC_OBJECT:
+		case OBJECT_TYPE_STATIC_OBJECT:
 			pos = this->SearchForStaticObject(clientID);
 			break;
-		case MSG_TYPE_DYNAMIC_OBJECT:
+		case OBJECT_TYPE_DYNAMIC_OBJECT:
 			pos = this->SearchForStaticObject(clientID);
 			break;
 		default:
@@ -601,16 +600,16 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 			WorldObject* newWorldObject = NULL;
 			switch (objectType)
 			{
-			case MSG_TYPE_PLAYER:
+			case OBJECT_TYPE_PLAYER:
 				newWorldObject = new Player();
 				break;
-			case MSG_TYPE_ANIMAL:
+			case OBJECT_TYPE_ANIMAL:
 				newWorldObject = new Animal();
 				break;
-			case MSG_TYPE_STATIC_OBJECT:
+			case OBJECT_TYPE_STATIC_OBJECT:
 				newWorldObject = new StaticObject();
 				break;
-			case MSG_TYPE_DYNAMIC_OBJECT:
+			case OBJECT_TYPE_DYNAMIC_OBJECT:
 				newWorldObject = new StaticObject();
 				break;
 			default:
@@ -622,22 +621,22 @@ void Client::HandleNewObject(const std::vector<std::string>& msgArray, const uns
 			mesh->Scale(scale);
 		
 			//Create player data
-			newWorldObject->AddStaticMesh(mesh);
+			newWorldObject->SetStaticMesh(mesh);
 			newWorldObject->SetID(clientID);
 			switch (objectType)
 			{
-			case MSG_TYPE_PLAYER:
+			case OBJECT_TYPE_PLAYER:
 				dynamic_cast<Player*>(newWorldObject)->SetNextPosition(position);
 				dynamic_cast<Player*>(newWorldObject)->SetState(state);
 				this->zPlayers.push_back(dynamic_cast<Player*>(newWorldObject));
 				break;
-			case MSG_TYPE_STATIC_OBJECT:
+			case OBJECT_TYPE_STATIC_OBJECT:
 				this->zStaticObjects.push_back(dynamic_cast<StaticObject*>(newWorldObject));
 				break;
-			case MSG_TYPE_DYNAMIC_OBJECT:
+			case OBJECT_TYPE_DYNAMIC_OBJECT:
 				//Implement here
 				break;
-			case MSG_TYPE_ANIMAL:
+			case OBJECT_TYPE_ANIMAL:
 				dynamic_cast<Animal*>(newWorldObject)->SetNextPosition(position);
 				dynamic_cast<Animal*>(newWorldObject)->SetState(state);
 				this->zAnimals.push_back(dynamic_cast<Animal*>(newWorldObject));
@@ -659,19 +658,19 @@ void Client::HandleRemoveObject(const std::vector<std::string>& msgArray, const 
 	int pos = -1;
 	switch(objectType)
 	{
-	case MSG_TYPE_PLAYER:
+	case OBJECT_TYPE_PLAYER:
 		ID = this->zMsgHandler.ConvertStringToInt(REMOVE_PLAYER, msgArray[0]);
 		pos = SearchForPlayer(ID);
 		break;
-	case MSG_TYPE_ANIMAL:
+	case OBJECT_TYPE_ANIMAL:
 		ID = this->zMsgHandler.ConvertStringToInt(REMOVE_ANIMAL, msgArray[0]);
 		pos = SearchForAnimal(ID);
 		break;
-	case MSG_TYPE_STATIC_OBJECT:
+	case OBJECT_TYPE_STATIC_OBJECT:
 		ID = this->zMsgHandler.ConvertStringToInt(REMOVE_STATIC_OBJECT, msgArray[0]);
 		pos = SearchForStaticObject(ID);
 		break;
-	case MSG_TYPE_DYNAMIC_OBJECT:
+	case OBJECT_TYPE_DYNAMIC_OBJECT:
 		ID = this->zMsgHandler.ConvertStringToInt(REMOVE_DYNAMIC_OBJECT, msgArray[0]);
 		pos = SearchForDynamicObject(ID);
 		break;
@@ -687,19 +686,19 @@ void Client::HandleRemoveObject(const std::vector<std::string>& msgArray, const 
 		}
 		switch(objectType)
 		{
-		case MSG_TYPE_PLAYER:
+		case OBJECT_TYPE_PLAYER:
 			this->zEng->DeleteMesh(this->zPlayers[pos]->GetMesh());
 			this->zPlayers.erase(zPlayers.begin() + pos);
 			break;
-		case MSG_TYPE_ANIMAL:
+		case OBJECT_TYPE_ANIMAL:
 			this->zEng->DeleteMesh(this->zAnimals[pos]->GetMesh());
 			this->zAnimals.erase(zAnimals.begin() + pos);
 			break;
-		case MSG_TYPE_STATIC_OBJECT:
+		case OBJECT_TYPE_STATIC_OBJECT:
 			this->zEng->DeleteMesh(this->zStaticObjects[pos]->GetMesh());
 			this->zStaticObjects.erase(zStaticObjects.begin() + pos);
 			break;
-		case MSG_TYPE_DYNAMIC_OBJECT:
+		case OBJECT_TYPE_DYNAMIC_OBJECT:
 			this->zEng->DeleteMesh(this->zDynamicObjects[pos]->GetMesh());
 			this->zDynamicObjects.erase(zDynamicObjects.begin() + pos);
 			break;
@@ -716,19 +715,19 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 	//Get ID and Position Depending on type
 	switch (objectType)
 	{
-	case MSG_TYPE_PLAYER:
+	case OBJECT_TYPE_PLAYER:
 		ID = this->zMsgHandler.ConvertStringToInt(UPDATE_PLAYER, msgArray[0]);
 		pos = SearchForPlayer(ID);
 		break;
-	case MSG_TYPE_ANIMAL:
+	case OBJECT_TYPE_ANIMAL:
 		ID = this->zMsgHandler.ConvertStringToInt(UPDATE_ANIMAL, msgArray[0]);
 		pos = SearchForAnimal(ID);
 		break;
-	case MSG_TYPE_STATIC_OBJECT:
+	case OBJECT_TYPE_STATIC_OBJECT:
 		ID = this->zMsgHandler.ConvertStringToInt(UPDATE_STATIC_OBJECT, msgArray[0]);
 		pos = SearchForStaticObject(ID);
 		break;
-	case MSG_TYPE_DYNAMIC_OBJECT:
+	case OBJECT_TYPE_DYNAMIC_OBJECT:
 		ID = this->zMsgHandler.ConvertStringToInt(UPDATE_DYNAMIC_OBJECT, msgArray[0]);
 		pos = SearchForDynamicObject(ID);
 		break;
@@ -743,16 +742,16 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 		WorldObject* worldObjectPointer = NULL;
 		switch (objectType)
 		{
-		case MSG_TYPE_PLAYER:
+		case OBJECT_TYPE_PLAYER:
 			worldObjectPointer = this->zPlayers[pos];
 			break;
-		case MSG_TYPE_ANIMAL:
+		case OBJECT_TYPE_ANIMAL:
 			worldObjectPointer = this->zAnimals[pos];
 			break;
-		case MSG_TYPE_STATIC_OBJECT:
+		case OBJECT_TYPE_STATIC_OBJECT:
 			worldObjectPointer = this->zStaticObjects[pos];
 			break;
-		case MSG_TYPE_DYNAMIC_OBJECT:
+		case OBJECT_TYPE_DYNAMIC_OBJECT:
 			worldObjectPointer = this->zDynamicObjects[pos];
 			break;
 		default:
@@ -815,17 +814,17 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 			{
 				switch (objectType)
 				{
-				case MSG_TYPE_PLAYER:
+				case OBJECT_TYPE_PLAYER:
 					dynamic_cast<Player*>(worldObjectPointer)->SetNextPosition(position);
 					break;
-				case MSG_TYPE_ANIMAL:
+				case OBJECT_TYPE_ANIMAL:
 					dynamic_cast<Animal*>(worldObjectPointer)->SetNextPosition(position);
 					break;
-				case MSG_TYPE_STATIC_OBJECT:
+				case OBJECT_TYPE_STATIC_OBJECT:
 					worldObjectPointer->SetPosition(position);
 					break;
-				case MSG_TYPE_DYNAMIC_OBJECT:
-					dynamic_cast<DynamicObject*>(worldObjectPointer)->SetPosition(position);
+				case OBJECT_TYPE_DYNAMIC_OBJECT:
+					dynamic_cast<DynamicObject*>(worldObjectPointer)->SetNextPosition(position);
 					break;
 				default:
 					break;
@@ -841,13 +840,13 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 			{
 				switch (objectType)
 				{
-				case MSG_TYPE_PLAYER:
+				case OBJECT_TYPE_PLAYER:
 					dynamic_cast<Player*>(worldObjectPointer)->SetState(state);
 					break;
-				case MSG_TYPE_ANIMAL:
+				case OBJECT_TYPE_ANIMAL:
 					dynamic_cast<Animal*>(worldObjectPointer)->SetState(state);
 					break;
-				case MSG_TYPE_DYNAMIC_OBJECT:
+				case OBJECT_TYPE_DYNAMIC_OBJECT:
 					dynamic_cast<DynamicObject*>(worldObjectPointer)->SetState(state);
 					break;
 				default:
@@ -867,22 +866,22 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 				{
 					this->zEng->DeleteMesh(worldObjectPointer->GetMesh());
 				}
-				worldObjectPointer->AddStaticMesh(mesh);
+				worldObjectPointer->SetStaticMesh(mesh);
 			}
 
 			//Copy over new Values to the vector
 			switch (objectType)
 			{
-			case MSG_TYPE_PLAYER:
+			case OBJECT_TYPE_PLAYER:
 				this->zPlayers[pos] = dynamic_cast<Player*>(worldObjectPointer);
 				break;
-			case MSG_TYPE_ANIMAL:
+			case OBJECT_TYPE_ANIMAL:
 				this->zAnimals[pos] = dynamic_cast<Animal*>(worldObjectPointer);
 				break;
-			case MSG_TYPE_STATIC_OBJECT:
+			case OBJECT_TYPE_STATIC_OBJECT:
 				this->zStaticObjects[pos] = dynamic_cast<StaticObject*>(worldObjectPointer);
 				break;
-			case MSG_TYPE_DYNAMIC_OBJECT:
+			case OBJECT_TYPE_DYNAMIC_OBJECT:
 				this->zDynamicObjects[pos] = dynamic_cast<DynamicObject*>(worldObjectPointer);
 				break;
 			default:
@@ -892,14 +891,14 @@ void Client::HandleUpdateObject(const std::vector<std::string>& msgArray, const 
 	}
 }
 
-void Client::CheckCollision()
+std::vector<StaticObject*> Client::RayVsWorld()
 {
 	Vector3 origin = this->zEng->GetCamera()->GetPosition();
 	Vector3 camForward = this->zEng->GetCamera()->GetForward();
 	CollisionData data;
 	std::vector<StaticObject*> static_Collisions;
 	//Static objects
-	for (auto it = this->zStaticObjects.begin(); it < this->zStaticObjects.end(); it++)
+	for(auto it = this->zStaticObjects.begin(); it < this->zStaticObjects.end(); it++)
 	{
 		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(origin, camForward, (*it)->GetMesh());
 
@@ -907,5 +906,19 @@ void Client::CheckCollision()
 		{
 			static_Collisions.push_back((*it));
 		}
+	}
+
+	return static_Collisions;
+}
+
+void Client::CheckCollision()
+{
+	int position = this->SearchForPlayer(this->zID);
+
+	if (position != -1)
+	{
+		iMesh* playerMesh = this->zPlayers[position]->GetMesh();
+
+		CollisionData data;
 	}
 }

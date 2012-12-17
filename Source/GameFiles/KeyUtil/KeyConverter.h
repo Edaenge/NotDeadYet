@@ -7,7 +7,6 @@ public:
 	KeyConverter();
 	virtual ~KeyConverter();
 
-	std::string ConvertToString(const char key) const;
 	char ConvertToChar(const std::string& key) const;
 	bool CheckNumPad(std::string& ret, const char key) const;
 	bool CheckFKeys(std::string& ret,const char key) const;

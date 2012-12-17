@@ -25,10 +25,12 @@ public:
 	virtual ~Equipment();
 
 	void EquipWeapon(Weapon* weapon);
+	Weapon* GetWeapon();
+	void UnEquipWeapon();
 	void UseWeapon();
 	bool EquipGear(const unsigned int type, Gear* item);
 	Gear* GetGear(const unsigned int type);
-	Gear* UnEquipGear(const unsigned int type);
+	void UnEquipGear(const unsigned int type);
 private:
 	Weapon* zWeapon;
 	std::vector<Gear*> zGear;

@@ -7,6 +7,7 @@
 
 #include <string>
 
+/*! Abstract class for Items*/
 class Item
 {
 public:
@@ -14,9 +15,9 @@ public:
 	Item(const int id);
 	Item(const unsigned int id, const unsigned int weight, const std::string& name);
 	virtual ~Item(){}
-	void InitValues(unsigned int id = -1, unsigned int weight = 0, const std::string& name = "Unknown");
+	void InitValues(const unsigned int id = -1, const unsigned int weight = 0, const std::string& name = "Unknown");
 	/*! Returns Item ID*/
-	inline unsigned int GetID() const {return this->zID;}
+	inline int GetID() const {return this->zID;}
 	/*! Returns the Item Weight*/
 	inline unsigned int GetWeight() const {return this->zWeight;}
 	/*! Sets the Item ID*/
@@ -26,7 +27,8 @@ public:
 
 	virtual void Use() = 0;
 private:
-	unsigned int zID;
+	int zID;
 	unsigned int zWeight;
 	std::string zItemName;
+
 };

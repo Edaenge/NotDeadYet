@@ -26,7 +26,7 @@ public:
 	/*! Returns the object ID*/
 	inline int GetID() const {return this->zID;}
 	/*! Adds a Pointer to the Player Model Mesh*/
-	void AddStaticMesh(iMesh* mesh) {this->zMesh = mesh;}
+	void SetStaticMesh(iMesh* mesh) {this->zMesh = mesh;}
 	bool HasMesh() const 
 	{
 		if(this->zMesh != 0) 

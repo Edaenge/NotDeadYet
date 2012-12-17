@@ -39,6 +39,7 @@
     <ClCompile Include="..\Source\GameFiles\MainMenu.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\Actor.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\AnimalActor.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ServerSide\BioActor.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\Host.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\PlayerActor.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
@@ -94,6 +95,7 @@
     <ClInclude Include="..\Source\GameFiles\ServerSide\BioActor.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\Host.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\PlayerActor.h" />
+    <ClInclude Include="..\Source\GameFiles\ServerSide\StaticObjectActor.h" />
     <ClInclude Include="..\Source\MaloWLib\Array.h" />
     <ClInclude Include="..\Source\MaloWLib\List.h" />
     <ClInclude Include="..\Source\MaloWLib\MaloW.h" />

@@ -7,6 +7,7 @@
 
 #include "GameFiles/Items/Item.h"
 
+ /*! Abstract class for Weapons*/
 class Weapon : public Item
 {
 public:

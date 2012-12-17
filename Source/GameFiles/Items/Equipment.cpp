@@ -18,6 +18,14 @@ Equipment::~Equipment()
 		delete this->zWeapon;
 		this->zWeapon = 0;
 	}
+	for (auto x = this->zGear.begin(); x < this->zGear.end(); x++)
+	{
+		if ((*x))
+		{
+			delete (*x);
+			(*x) = 0;
+		}
+	}
 }
 
 void Equipment::EquipWeapon(Weapon* weapon)
@@ -52,12 +60,20 @@ Gear* Equipment::GetGear(const unsigned int type)
 	return 0;
 }
 
-Gear* Equipment::UnEquipGear(const unsigned int type)
+void Equipment::UnEquipGear(const unsigned int type)
 {
 	if (type < GEAR_SLOTS)
 	{
 		this->zGear[type] = 0;
-		return this->zGear[type];
 	}
-	return 0;
+}
+
+Weapon* Equipment::GetWeapon()
+{
+	return this->zWeapon;
+}
+
+void Equipment::UnEquipWeapon()
+{
+	this->zWeapon = 0;
 }

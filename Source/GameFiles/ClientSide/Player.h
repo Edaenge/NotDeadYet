@@ -21,6 +21,14 @@ public:
 	inline void SetNextPosition(const Vector3 position) {this->zEndPosition = position;}
 	/*! Returns New Position*/
 	Vector3 GetNextPosition() const {return this->zEndPosition;}
+
+	inline float GetHealth() const {return this->zHealth;}
+	inline float GetHunger() const {return this->zHunger;}
+	inline float GetHydration() const {return this->zHydration;}
+
+	inline void SetHealth(const float health) {this->zHealth = health;}
+	inline void SetHunger(const float hunger) {this->zHunger = hunger;}
+	inline void SetHydration(const float hydration) {this->zHydration = hydration;}
 	/*! Updates the Player*/
 	virtual void Update(float deltaTime);
 
@@ -30,6 +38,9 @@ private:
 
 private:
 	int zState;
-	Vector3 zEndPosition;
+	float zHealth;
+	float zHunger;
 	float zVelocity;
+	float zHydration;
+	Vector3 zEndPosition;
 };

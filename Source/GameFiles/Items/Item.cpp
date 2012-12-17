@@ -16,7 +16,9 @@ Item::Item(const unsigned int id, const unsigned int weight, const std::string& 
 	this->InitValues(id, weight, name);
 }
 
-void Item::InitValues(unsigned int id, unsigned int weight, const std::string& name)
+void Item::InitValues(const unsigned int id, const unsigned int weight, const std::string& name)
 {
-
+	this->zID = id;
+	this->zWeight = weight;
+	this->zItemName = name;
 }

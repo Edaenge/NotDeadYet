@@ -8,6 +8,8 @@
 #include "GameFiles/Items/Item.h"
 #include <vector>
 #include "Array.h"
+
+/*! Class That keeps track of the inventory data*/
 class Inventory
 {
 public:
@@ -20,27 +22,24 @@ public:
 	/*! Returns the item at the position */
 	Item* GetItem(const unsigned int position) const;
 	/*! Returns the Items*/
-	MaloW::Array<Item*>* GetItems() const;
+	std::vector<Item*> GetItems() const;
 	/*! Search for the item and returns it if found or NULL if not found*/
 	Item* SearchAndGetItem(const unsigned int ID) const;
 	/*! Removes the item*/
 	bool RemoveItem(const unsigned int position);
 	bool RemoveItem(Item* item);
 	/*! Returns blocked slots*/
-	MaloW::Array<bool>* GetBlockedSlots() const;
+	std::vector<bool> GetBlockedSlots() const;
 	/*! Get the status of the slot at Position*/
 	bool GetBlockedSlot(unsigned int position) const;
 	/*! Returns the Inventory Capacity == Max Weight allowed*/
 	int GetInventoryCapacity() const;
-private:
-	/*! Places the item to be removed At the last position*/
-	bool MoveAndRemove(const unsigned int position);
-	unsigned int Move(const unsigned int position);
+
 private:
 	/*! Array of items*/
-	MaloW::Array<Item*>* zItems;
+	std::vector<Item*> zItems;
 	/*! Array to keep track of Gui Representation*/
-	MaloW::Array<bool>* zInventorySlotBlocked;
+	std::vector<bool> zInventorySlotBlocked;
 
 	/*! Nr of slots available in inventory == zInventorySlotBlocked array*/
 	unsigned int zSlotsAvailable;

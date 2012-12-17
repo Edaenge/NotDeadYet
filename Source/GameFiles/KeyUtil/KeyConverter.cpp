@@ -64,37 +64,6 @@ KeyConverter::~KeyConverter()
 {
 }
 
-std::string KeyConverter::ConvertToString(const char key) const
-{
-	std::string returnValue = "";
-	bool found = true;
-
-	found = CheckCommonKeys(returnValue, key);
-	if (found)
-	{
-		return returnValue;
-	}
-	found = CheckNumPad(returnValue, key);
-	if (found)
-	{
-		return returnValue;
-	}
-	found = CheckFKeys(returnValue, key);
-	if (found)
-	{
-		return returnValue;
-	}
-	found = CheckUncommonKeys(returnValue, key);
-	if (found)
-	{
-		return returnValue;
-	}
-	std::stringstream ss;
-	ss << key;
-	returnValue = ss.str();
-	return returnValue;
-}
-
 bool KeyConverter::CheckNumPad(std::string& ret, const char key) const
 {
 	bool found = true;
