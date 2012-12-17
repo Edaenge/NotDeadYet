@@ -266,32 +266,32 @@ void Host::HandleRecivedMessages()
 		p_index = SearchForPlayer((*it)->getID());
 
 		//Handles upadtes from client.
-		if(strcmp(key, CLIENT_DATA.c_str()) == 0 && (p_index != -1))
+		if(strcmp(key, M_CLIENT_DATA.c_str()) == 0 && (p_index != -1))
 		{
 			HandlePlayerUpdate(this->zPlayers[p_index], this->zClients[c_index], msgArray);
 		}
 		//Handles key presses from client.
-		else if(strcmp(key, KEY_DOWN.c_str()) == 0 && (p_index != -1))
+		else if(strcmp(key, M_KEY_DOWN.c_str()) == 0 && (p_index != -1))
 		{
 			HandleKeyPress(this->zPlayers[p_index], msgArray[0]);
 		}
 		//Handles key releases from client.
-		else if(strcmp(key, KEY_UP.c_str()) == 0 && (p_index != -1))
+		else if(strcmp(key, M_KEY_UP.c_str()) == 0 && (p_index != -1))
 		{
 			HandleKeyRelease(this->zPlayers[p_index], msgArray[0]);
 		}
 		//Handles Pings from client.
-		else if(strcmp(key, PING.c_str()) == 0 && (c_index != -1))
+		else if(strcmp(key, M_PING.c_str()) == 0 && (c_index != -1))
 		{
 			HandlePingMsg(this->zClients[c_index]);
 		}
 		//Handles user data from client. Used when the player is new.
-		else if(strcmp(key, USER_DATA.c_str()) == 0 && (c_index != -1))
+		else if(strcmp(key, M_USER_DATA.c_str()) == 0 && (c_index != -1))
 		{
 			CreateNewPlayer(this->zClients[c_index], msgArray);
 		}
 		//Handles if client disconnects.
-		else if(strcmp(key, CONNECTION_CLOSED.c_str()) == 0)
+		else if(strcmp(key, M_CONNECTION_CLOSED.c_str()) == 0)
 		{
 			KickClient((*it)->getID());
 		}
@@ -308,7 +308,7 @@ void Host::HandleRecivedMessages()
 void Host::HandleKeyPress( PlayerActor* pl, const std::string& key )
 {
 	//Hard coded for test
-	int keyz = this->zMessageConverter.ConvertStringToInt(KEY_DOWN, key);
+	int keyz = this->zMessageConverter.ConvertStringToInt(M_KEY_DOWN, key);
 
 	switch (keyz)
 	{
@@ -342,7 +342,7 @@ void Host::HandleKeyPress( PlayerActor* pl, const std::string& key )
 void Host::HandleKeyRelease( PlayerActor* pl, const std::string& key )
 {
 	//Hard coded for test
-	int keyz = this->zMessageConverter.ConvertStringToInt(KEY_UP, key);
+	int keyz = this->zMessageConverter.ConvertStringToInt(M_KEY_UP, key);
 
 	switch (keyz)
 	{
@@ -393,24 +393,24 @@ void Host::HandlePlayerUpdate( PlayerActor* pl, ClientData* cd, const std::vecto
 		char key[512];
 		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 		
-		if(strcmp(key, DIRECTION.c_str()) == 0)
+		if(strcmp(key, M_DIRECTION.c_str()) == 0)
 		{
-			Vector3 dir = this->zMessageConverter.ConvertStringToVector(DIRECTION, (*it));
+			Vector3 dir = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it));
 			pl->SetDirection(dir);
 		}
-		else if(strcmp(key, UP.c_str()) == 0)
+		else if(strcmp(key, M_UP.c_str()) == 0)
 		{
-			Vector3 up = this->zMessageConverter.ConvertStringToVector(UP, (*it));
+			Vector3 up = this->zMessageConverter.ConvertStringToVector(M_UP, (*it));
 			pl->SetUpVector(up);
 		}
-		else if(strcmp(key, ROTATION.c_str()) == 0)
+		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
-			Vector4 rot = this->zMessageConverter.ConvertStringToQuaternion(ROTATION, (*it));
+			Vector4 rot = this->zMessageConverter.ConvertStringToQuaternion(M_ROTATION, (*it));
 			pl->SetRotation(rot);
 		}
-		else if(strcmp(key, FRAME_TIME.c_str()) == 0)
+		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
 		{
-				float frameTime = this->zMessageConverter.ConvertStringToFloat(FRAME_TIME, (*it));
+				float frameTime = this->zMessageConverter.ConvertStringToFloat(M_FRAME_TIME, (*it));
 				pl->SetFrameTime(frameTime);
 		}
 		else
@@ -599,17 +599,17 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 		char key[512];
 		sscanf_s((*it_m).c_str(), "%s ", &key, sizeof(key));
 
-		if(strcmp(key, MESH_MODEL.c_str()) == 0)
+		if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
-			uModel = this->zMessageConverter.ConvertStringToSubstring(MESH_MODEL, (*it_m));
+			uModel = this->zMessageConverter.ConvertStringToSubstring(M_MESH_MODEL, (*it_m));
 		}
-		else if(strcmp(key, DIRECTION.c_str()) == 0)
+		else if(strcmp(key, M_DIRECTION.c_str()) == 0)
 		{
-			uDir = this->zMessageConverter.ConvertStringToVector(DIRECTION, (*it_m));
+			uDir = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it_m));
 		}
-		else if(strcmp(key, UP.c_str()) == 0)
+		else if(strcmp(key, M_UP.c_str()) == 0)
 		{
-			uUp = this->zMessageConverter.ConvertStringToVector(UP, (*it_m));
+			uUp = this->zMessageConverter.ConvertStringToVector(M_UP, (*it_m));
 		}
 	}
 
