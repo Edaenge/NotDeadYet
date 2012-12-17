@@ -19,10 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Source\GameFiles\ClientSide\Animal.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ClientSide\AnimalObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\Client.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\DynamicObject.cpp" />
-    <ClCompile Include="..\Source\GameFiles\ClientSide\Player.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ClientSide\PlayerObject.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ClientSide\WorldObjectManager.cpp" />
     <ClCompile Include="..\Source\GameFiles\Game.cpp" />
     <ClCompile Include="..\Source\GameFiles\Graphics.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Equipment.cpp" />
@@ -67,12 +68,14 @@
     <ClInclude Include="..\External\NDYGFX\Include\iText.h" />
     <ClInclude Include="..\External\NDYGFX\Include\Vector.h" />
     <ClInclude Include="..\Source\GameFiles\AnimationStates.h" />
-    <ClInclude Include="..\Source\GameFiles\ClientSide\Animal.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientSide\AnimalObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\Client.h" />
     <ClInclude Include="..\source\gamefiles\clientside\DynamicObject.h" />
-    <ClInclude Include="..\Source\GameFiles\ClientSide\Player.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientSide\OrganicObject.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientSide\PlayerObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\StaticObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObject.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObjectManager.h" />
     <ClInclude Include="..\Source\GameFiles\Game.h" />
     <ClInclude Include="..\Source\GameFiles\Graphics.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Equipment.h" />

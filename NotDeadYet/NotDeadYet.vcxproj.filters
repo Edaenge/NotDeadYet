@@ -103,12 +103,6 @@
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyConverter.cpp">
       <Filter>Game Files\KeyUtil</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ClientSide\Player.cpp">
-      <Filter>Game Files\ClientSide</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ClientSide\Animal.cpp">
-      <Filter>Game Files\ClientSide</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\GameFiles\ServerSide\AnimalActor.cpp">
       <Filter>Game Files\ServerSide</Filter>
     </ClCompile>
@@ -138,6 +132,15 @@
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\ServerSide\BioActor.cpp">
       <Filter>Game Files\ServerSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\WorldObjectManager.cpp">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\AnimalObject.cpp">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\PlayerObject.cpp">
+      <Filter>Game Files\ClientSide</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -255,9 +258,6 @@
     <ClInclude Include="..\Source\GameFiles\ClientSide\Client.h">
       <Filter>Game Files\ClientSide</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ClientSide\Player.h">
-      <Filter>Game Files\ClientSide</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ServerSide\Actor.h">
       <Filter>Game Files\ServerSide</Filter>
     </ClInclude>
@@ -268,9 +268,6 @@
       <Filter>Game Files\ServerSide</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObject.h">
-      <Filter>Game Files\ClientSide</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ClientSide\Animal.h">
       <Filter>Game Files\ClientSide</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ClientSide\StaticObject.h">
@@ -317,6 +314,18 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ServerSide\StaticObjectActor.h">
       <Filter>Game Files\ServerSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObjectManager.h">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ClientSide\OrganicObject.h">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ClientSide\AnimalObject.h">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ClientSide\PlayerObject.h">
+      <Filter>Game Files\ClientSide</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

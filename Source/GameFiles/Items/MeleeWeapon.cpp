@@ -27,4 +27,3 @@ void MeleeWeapon::Use()
 {
 
 }
-
