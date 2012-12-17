@@ -10,7 +10,7 @@
 class StaticObject : public WorldObject
 {
 public:
-	StaticObject() : WorldObject(){}
+	StaticObject(const unsigned int id) : WorldObject(id){}
 	virtual ~StaticObject(){}
 
 	virtual void Update(float dt){};

@@ -11,7 +11,7 @@
 class DynamicObject : public WorldObject
 {
 public:
-	DynamicObject();
+	DynamicObject(const unsigned int id);
 	virtual ~DynamicObject(){}
 	/*! Sets the State*/
 	inline void SetState(const int state) {this->zState = state;}

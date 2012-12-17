@@ -15,16 +15,16 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	switch (ID)
 	{
 	case MESSAGE_TYPE_UP:
-		ss << UP << " " << x << " " << y << " " << z <<"*";
+		ss << M_UP << " " << x << " " << y << " " << z <<"*";
 		break;
 	case MESSAGE_TYPE_DIRECTION:
-		ss << DIRECTION << " " << x << " " << y << " " << z <<"*";
+		ss << M_DIRECTION << " " << x << " " << y << " " << z <<"*";
 		break;
 	case MESSAGE_TYPE_POSITION:
-		ss << POSITION << " " << x << " " << y << " " << z <<"*";
+		ss << M_POSITION << " " << x << " " << y << " " << z <<"*";
 		break;
 	case MESSAGE_TYPE_SCALE:
-		ss << SCALE << " " << x << " " << y << " " << z <<"*";
+		ss << M_SCALE << " " << x << " " << y << " " << z <<"*";
 		break;
 	default:
 		ss << "";
@@ -40,13 +40,14 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	switch (ID)
 	{
 	case MESSAGE_TYPE_ROTATION:
-		ss << ROTATION << " " << x << " " << y << " "<<
-			z << " " << w << "*";
+		ss << M_ROTATION;
 		break;
 	default:
-		ss << "";
+		return "";
 		break;
 	}
+	ss << " " << x << " " << y << " "<<
+		z << " " << w << "*";
 
 	return ss.str();
 }
@@ -57,22 +58,25 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	switch (ID)
 	{
 	case MESSAGE_TYPE_MESH_MODEL:
-		ss << MESH_MODEL << " " << word << "*";
+		ss << M_MESH_MODEL;
 		break;
 	case MESSAGE_TYPE_KEY_DOWN:
-		ss << KEY_DOWN << " " << word << "*";
+		ss << M_KEY_DOWN;
 		break;
 	case MESSAGE_TYPE_KEY_UP:
-		ss << KEY_UP << " " << word << "*";
+		ss << M_KEY_UP;
+		break;
+	case MESSAGE_TYPE_ITEM_NAME:
+		ss << M_ITEM_NAME;
 		break;
 	case  MESSAGE_TYPE_KICKED:
-		ss << KICKED << " " << word <<"*";
+		ss << M_KICKED;
 		break;
 	default:
-		ss << "";
+		return "";
 		break;
 	}
-
+	ss << " " << word << "*";
 	return ss.str();
 }
 std::string NetworkMessageConverter::Convert(const unsigned int ID, const float fp)
@@ -82,70 +86,106 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	switch (ID)
 	{
 	case MESSAGE_TYPE_UPDATE_PLAYER:
-		ss << UPDATE_PLAYER << " " << fp << "*";
+		ss << M_UPDATE_PLAYER;
 		break;
 	case MESSAGE_TYPE_UPDATE_STATIC_OBJECT:
-		ss << UPDATE_STATIC_OBJECT << " " << fp << "*";
+		ss << M_UPDATE_STATIC_OBJECT;
 		break;
 	case MESSAGE_TYPE_UPDATE_DYNAMIC_OBJECT:
-		ss << UPDATE_DYNAMIC_OBJECT << " " << fp << "*";
+		ss << M_UPDATE_DYNAMIC_OBJECT;
 		break;
 	case MESSAGE_TYPE_UPDATE_ANIMAL:
-		ss << UPDATE_ANIMAL << " " << fp << "*";
+		ss << M_UPDATE_ANIMAL;
 		break;
 	case MESSAGE_TYPE_DEAD_PLAYER:
-		ss << DEAD_PLAYER << " " << fp << "*";
+		ss << M_DEAD_PLAYER;
 		break;
 	case MESSAGE_TYPE_DEAD_ANIMAL:
-		ss << DEAD_ANIMAL << " " << fp << "*";
+		ss << M_DEAD_ANIMAL;
 		break;
 	case MESSAGE_TYPE_KEY_DOWN:
-		ss << KEY_DOWN << " " << fp << "*";
+		ss << M_KEY_DOWN;
 		break;
 	case MESSAGE_TYPE_KEY_UP:
-		ss << KEY_UP << " " << fp << "*";
+		ss << M_KEY_UP;
 		break;
 	case MESSAGE_TYPE_FRAME_TIME:
-		ss << FRAME_TIME << " " << fp << "*";
+		ss << M_FRAME_TIME;
 		break;
 	case MESSAGE_TYPE_STATE:
-		ss << STATE << " " << fp << "*";
+		ss << M_STATE;
 		break;
 	case MESSAGE_TYPE_NEW_PLAYER:
-		ss << NEW_PLAYER << " " << fp << "*";
+		ss << M_NEW_PLAYER;
 		break;
 	case MESSAGE_TYPE_NEW_STATIC_OBJECT:
-		ss << NEW_STATIC_OBJECT << " " << fp << "*";
+		ss << M_NEW_STATIC_OBJECT;
 		break;
 	case MESSAGE_TYPE_NEW_DYNAMIC_OBJECT:
-		ss << NEW_DYNAMIC_OBJECT << " " << fp << "*";
+		ss << M_NEW_DYNAMIC_OBJECT;
 		break;
 	case MESSAGE_TYPE_NEW_ANIMAL:
-		ss << NEW_ANIMAL << " " << fp << "*";
+		ss << M_NEW_ANIMAL;
+		break;
+	case MESSAGE_TYPE_PICKUP_ITEM:
+		ss << M_PICKUP_ITEM;
+		break;
+	case MESSAGE_TYPE_DROP_ITEM:
+		ss << M_DROP_ITEM;
+		break;
+	case MESSAGE_TYPE_ITEM_TYPE:
+		ss << M_ITEM_TYPE;
+		break;
+	case MESSAGE_TYPE_ADD_INVENTORY_ITEM:
+		ss << M_ADD_INVENTORY_ITEM;
+		break;
+	case MESSAGE_TYPE_ITEM_WEIGHT:
+		ss << M_ITEM_WEIGHT;
+		break;
+	case MESSAGE_TYPE_WEAPON_DAMAGE:
+		ss << M_WEAPON_DAMAGE;
+		break;
+	case MESSAGE_TYPE_WEAPON_RANGE:
+		ss << M_WEAPON_RANGE;
+		break;
+	case MESSAGE_TYPE_REMOVE_INVENTORY_ITEM:
+		ss << M_REMOVE_INVENTORY_ITEM;
+		break;
+	case MESSAGE_TYPE_HUNGER:
+		ss << M_HUNGER;
+		break;
+	case MESSAGE_TYPE_HYDRATION:
+		ss << M_HYDRATION;
+		break;
+	case MESSAGE_TYPE_HEALTH:
+		ss << M_HEALTH;
+		break;
+	case MESSAGE_TYPE_STAMINA:
+		ss << M_STAMINA;
 		break;
 	case MESSAGE_TYPE_REMOVE_PLAYER:
-		ss << REMOVE_PLAYER << " " << fp << "*";
+		ss << M_REMOVE_PLAYER;
 		break;
 	case MESSAGE_TYPE_REMOVE_STATIC_OBJECT:
-		ss << REMOVE_STATIC_OBJECT << " " << fp << "*";
+		ss << M_REMOVE_STATIC_OBJECT;
 		break;
 	case MESSAGE_TYPE_REMOVE_ANIMAL:
-		ss << REMOVE_ANIMAL << " " << fp << "*";
+		ss << M_REMOVE_ANIMAL;
 		break;
 	case MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT:
-		ss << REMOVE_DYNAMIC_OBJECT << " " << fp << "*";
+		ss << M_REMOVE_DYNAMIC_OBJECT;
 		break;
 	case MESSAGE_TYPE_CONNECTION_CLOSED:
-		ss << CONNECTION_CLOSED << " " << fp << "*";
+		ss << M_CONNECTION_CLOSED;
 		break;
 	case MESSAGE_TYPE_SELF_ID:
-		ss << SELF_ID << " " << fp << "*";
+		ss << M_SELF_ID;
 		break;
 	default:
-		ss << "";
+		return "";
 		break;
 	}
-
+	ss << " " << fp << "*";
 	return ss.str();
 }
 std::string NetworkMessageConverter::Convert(const unsigned int ID)
@@ -154,22 +194,25 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	switch (ID)
 	{
 	case MESSAGE_TYPE_CLIENT_DATA:
-		ss << CLIENT_DATA << "*";
+		ss << M_CLIENT_DATA;
 		break;
 	case MESSAGE_TYPE_PING:
-		ss << PING << "*";
+		ss << M_PING;
+		break;
+	case MESSAGE_TYPE_FETCH_INVENTORY:
+		ss << M_FETCH_INVENTORY;
 		break;
 	case MESSAGE_TYPE_SERVER_FULL:
-		ss << SERVER_FULL << "*";
+		ss << M_SERVER_FULL;
 		break;
 	case MESSAGE_TYPE_USER_DATA:
-		ss << USER_DATA << "*";
+		ss << M_USER_DATA;
 		break;
 	default:
-		ss << "";
+		return "";
 		break;
 	}
-
+	ss << "*";
 	return ss.str();
 }
 std::string NetworkMessageConverter::CombineMessage(const std::vector<std::string>& msgArray)

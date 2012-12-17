@@ -10,9 +10,8 @@
 class RangedWeapon : public Weapon
 {
 public:
-	RangedWeapon(unsigned int id);
-	RangedWeapon(unsigned int id, float damage, float range);
-	RangedWeapon(const unsigned int id, const unsigned int weight, const std::string& name, 
+	RangedWeapon(const unsigned int id,const unsigned int itemType);
+	RangedWeapon(const unsigned int id, const unsigned int weight, const std::string& name, const unsigned int itemType,
 		const float damage, const float range);
 	virtual ~RangedWeapon();
 

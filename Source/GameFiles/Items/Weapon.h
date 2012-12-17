@@ -11,18 +11,13 @@
 class Weapon : public Item
 {
 public:
-	Weapon(const unsigned int id): Item(id)
+	Weapon(const unsigned int id,const unsigned int itemType): Item(id, itemType)
 	{
 		this->zDamage = 0.0f; 
 		this->zRange = 0.0f;
 	}
-	Weapon(unsigned int id, float damage, float range) : Item(id)
-	{
-		this->zDamage = damage; 
-		this->zRange = range;
-	}
-	Weapon(const unsigned int id, const unsigned int weight, const std::string& name, 
-		const float damage, const float range) : Item(id, weight, name)
+	Weapon(const unsigned int id, const unsigned int weight, const std::string& name, const unsigned int itemType,
+		const float damage, const float range) : Item(id, weight, name, itemType)
 	{
 		this->zDamage = damage; 
 		this->zRange = range;

@@ -2,7 +2,7 @@
 
 #define PI 3.14159265358979323846f
 
-DynamicObject::DynamicObject() : WorldObject()
+DynamicObject::DynamicObject(const unsigned int id) : WorldObject(id)
 {
 	this->zState = STATE_IDLE;
 	this->zEndPosition = Vector3(0,0,0);
@@ -28,7 +28,5 @@ void DynamicObject::Update(float deltaTime)
 
 void DynamicObject::LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t)
 {
-	Vector3 temp = CurrPos + (newPos - CurrPos) * t * zVelocity;
-
-	CurrPos = temp;
+	CurrPos = CurrPos + (newPos - CurrPos) * t * zVelocity;
 }

@@ -6,12 +6,9 @@
 #include "Process.h"
 #include "GraphicsEngine.h"
 #include "Network/ServerChannel.h"
-#include "GameFiles/ClientSide/Player.h"
-#include "GameFiles/ClientSide/Animal.h"
 #include "GameFiles/KeyUtil/KeyHandler.h"
 #include "Network/NetworkMessageConverter.h"
-#include "GameFiles/ClientSide/StaticObject.h"
-#include "GameFiles/ClientSide/DynamicObject.h"
+#include "GameFiles/ClientSide/WorldObjectManager.h"
 
 using namespace MaloW;
 
@@ -45,20 +42,10 @@ private:
 	void UpdateWorldObjects();
 	/*! Updates the camera position to follow the mesh*/
 	void UpdateCameraPos();
-	/*! Search for the object with the correct ID and returns a Position if found*/
-	int SearchForPlayer(const int id);
-	/*! Search for the object with the correct ID and returns a Position if found*/
-	int SearchForAnimal(const int id);
-	/*! Search for the object with the correct ID and returns a Position if found*/
-	int SearchForStaticObject(const int id);
-	/*! Search for the object with the correct ID and returns a Position if found*/
-	int SearchForDynamicObject(const int id);
-
-	int FindObject(const int id, const unsigned int type);
 	/*! Handles Message types*/
-	void HandleUpdateObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
-	void HandleNewObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
-	void HandleRemoveObject(const std::vector<std::string>& msgArray, const unsigned int objectType);
+	void HandleUpdateObject(const std::vector<std::string>& msgArray, const unsigned int objectType, const unsigned int id);
+	void HandleNewObject(const std::vector<std::string>& msgArray, const unsigned int objectType, const unsigned int id);
+	void HandleRemoveObject(const std::vector<std::string>& msgArray, const unsigned int objectType, const unsigned int id);
 	/*! Send Camera Info and Rotation to Server*/
 	void SendClientUpdate();
 	/*! Checks Ray Vs Static Objects*/
@@ -66,6 +53,10 @@ private:
 	/*! Checks Mesh vs Mesh Collision*/
 	void CheckCollision();
 
+	void SendPickupItemMessage(unsigned int id);
+	void SendDropItemMessage(unsigned int id);
+	void HandleRemoveInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id);
+	void HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id);
 private:
 	/*! Current Client ID*/
 	int zID;
@@ -85,11 +76,7 @@ private:
 	/*! Counters*/
 	float zSendUpdateDelayTimer;
 	float zCircularGuiShowTimer;
-	/*! Vectors to keep track of World Objects*/
-	std::vector<Player*> zPlayers;
-	std::vector<Animal*> zAnimals;
-	std::vector<StaticObject*> zStaticObjects;
-	std::vector<DynamicObject*> zDynamicObjects;
-	NetworkMessageConverter zMsgHandler;
 	ServerChannel* zServerChannel;
+	WorldObjectManager zObjectManager;
+	NetworkMessageConverter zMsgHandler;
 };

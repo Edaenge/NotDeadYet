@@ -10,8 +10,7 @@
 class Gear : public Item
 {
 public:
-	Gear();
-	Gear(const unsigned int id, const unsigned int weight, const std::string& name);
+	Gear(const unsigned int id, const unsigned int weight, const std::string& name, const unsigned int itemType);
 	virtual ~Gear();
 	void Use();
 private:

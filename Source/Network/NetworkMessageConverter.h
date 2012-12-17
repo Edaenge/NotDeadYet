@@ -42,50 +42,80 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_REMOVE_ANIMAL,
 	MESSAGE_TYPE_USER_DATA,
 	MESSAGE_TYPE_FRAME_TIME,
-	MESSAGE_TYPE_CLIENT_DATA
+	MESSAGE_TYPE_CLIENT_DATA,
+	MESSAGE_TYPE_PICKUP_ITEM,
+	MESSAGE_TYPE_DROP_ITEM,
+	MESSAGE_TYPE_HEALTH,
+	MESSAGE_TYPE_HUNGER,
+	MESSAGE_TYPE_HYDRATION,
+	MESSAGE_TYPE_STAMINA,
+	MESSAGE_TYPE_ITEM_TYPE,
+	MESSAGE_TYPE_FETCH_INVENTORY,
+	MESSAGE_TYPE_REMOVE_INVENTORY_ITEM,
+	MESSAGE_TYPE_ADD_INVENTORY_ITEM,
+	MESSAGE_TYPE_ITEM_NAME,
+	MESSAGE_TYPE_ITEM_WEIGHT,
+	MESSAGE_TYPE_WEAPON_DAMAGE,
+	MESSAGE_TYPE_WEAPON_RANGE
 };
 //Data Messages
-static const std::string POSITION				= "P";
-static const std::string ROTATION				= "R";
-static const std::string DIRECTION				= "D";
-static const std::string UP						= "U";
-static const std::string MESH_MODEL				= "M";
-static const std::string KICKED					= "K";
-static const std::string SCALE					= "Sc";
-static const std::string STATE					= "St";
-//Shutdown Messages
-static const std::string CONNECTION_CLOSED		= "CC";
-static const std::string SERVER_FULL			= "SF";
-static const std::string SERVER_SHUTDOWN		= "SS";
-//Player Messages
-static const std::string CLIENT_DATA			= "CD";
-static const std::string NEW_PLAYER				= "NP";
-static const std::string UPDATE_PLAYER			= "UP";
-static const std::string REMOVE_PLAYER			= "RP";
-static const std::string DEAD_PLAYER			= "DP";
-//Static Object Messages
-static const std::string NEW_STATIC_OBJECT		= "NSO";
-static const std::string REMOVE_STATIC_OBJECT	= "RSO";
-static const std::string UPDATE_STATIC_OBJECT	= "USO";
-//Dynamic Object Messages
-static const std::string NEW_DYNAMIC_OBJECT		= "NDO";
-static const std::string REMOVE_DYNAMIC_OBJECT	= "RDO";
-static const std::string UPDATE_DYNAMIC_OBJECT	= "UDO";
+static const std::string M_POSITION					= "P";
+static const std::string M_ROTATION					= "R";
+static const std::string M_DIRECTION				= "D";
+static const std::string M_UP						= "U";
+static const std::string M_MESH_MODEL				= "M";
+static const std::string M_KICKED					= "K";
+static const std::string M_SCALE					= "SC";
+static const std::string M_HUNGER					= "HU";
+static const std::string M_HEALTH					= "HE";
+static const std::string M_HYDRATION				= "HY";
+static const std::string M_FRAME_TIME				= "FT";
+static const std::string M_STAMINA					= "STAM";
+static const std::string M_STATE					= "STAT";
+static const std::string M_ITEM_TYPE				= "IT";
+static const std::string M_ITEM_NAME				= "IN";
+static const std::string M_ITEM_WEIGHT				= "IW";
+static const std::string M_WEAPON_DAMAGE			= "WD";
+static const std::string M_WEAPON_RANGE				= "WR";
+//Item Messages
+static const std::string M_PICKUP_ITEM				= "PI";
+static const std::string M_DROP_ITEM				= "DI";
+static const std::string M_FETCH_INVENTORY			= "FI";
+static const std::string M_ADD_INVENTORY_ITEM		= "AII";
+static const std::string M_REMOVE_INVENTORY_ITEM	= "RII";
 //Animal Messages
-static const std::string NEW_ANIMAL				= "NA";
-static const std::string REMOVE_ANIMAL			= "RA";
-static const std::string UPDATE_ANIMAL			= "UA";
-static const std::string DEAD_ANIMAL			= "DA";
+static const std::string M_NEW_ANIMAL				= "NA";
+static const std::string M_REMOVE_ANIMAL			= "RA";
+static const std::string M_UPDATE_ANIMAL			= "UA";
+static const std::string M_DEAD_ANIMAL				= "DA";
 //Key Messages
-static const std::string KEY_DOWN				= "KD";
-static const std::string KEY_UP					= "KU";
+static const std::string M_KEY_DOWN					= "KD";
+static const std::string M_KEY_UP					= "KU";
 //Initial Data Message
-static const std::string USER_DATA				= "UD";
+static const std::string M_USER_DATA				= "UD";
+//Shutdown Messages
+static const std::string M_CONNECTION_CLOSED		= "CC";
+static const std::string M_SERVER_FULL				= "SF";
+static const std::string M_SERVER_SHUTDOWN			= "SS";
+//Player Messages
+static const std::string M_CLIENT_DATA				= "CD";
+static const std::string M_NEW_PLAYER				= "NP";
+static const std::string M_UPDATE_PLAYER			= "UP";
+static const std::string M_REMOVE_PLAYER			= "RP";
+static const std::string M_DEAD_PLAYER				= "DP";
+//Static Object Messages
+static const std::string M_NEW_STATIC_OBJECT		= "NSO";
+static const std::string M_REMOVE_STATIC_OBJECT		= "RSO";
+static const std::string M_UPDATE_STATIC_OBJECT		= "USO";
+//Dynamic Object Messages
+static const std::string M_NEW_DYNAMIC_OBJECT		= "NDO";
+static const std::string M_REMOVE_DYNAMIC_OBJECT	= "RDO";
+static const std::string M_UPDATE_DYNAMIC_OBJECT	= "UDO";
 //Confirmation Message
-static const std::string SELF_ID				= "Self";
+static const std::string M_SELF_ID					= "SELF";
 //Ping Message
-static const std::string PING					= "Ping";
-static const std::string FRAME_TIME				= "FT";
+static const std::string M_PING						= "PING";
+
 /*
 	This class creates string messages used for communication
 	between sockets.

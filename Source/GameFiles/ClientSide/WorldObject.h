@@ -9,7 +9,7 @@
 class WorldObject
 {
 public:
-	WorldObject(){this->zMesh = 0; this->zID = -1;}
+	WorldObject(const unsigned int id){this->zMesh = 0; this->zID = id;}
 	~WorldObject(){}
 	/*!	Returns Pointer to the Player Mesh*/
 	iMesh* GetMesh() const {return this->zMesh;}
@@ -24,7 +24,7 @@ public:
 	void SetScale(const Vector3& scale) {this->zMesh->Scale(scale);}
 	inline void SetRotation(const Vector4& rot) {this->zMesh->SetQuaternion(rot);}
 	/*! Returns the object ID*/
-	inline int GetID() const {return this->zID;}
+	inline unsigned int GetID() const {return this->zID;}
 	/*! Adds a Pointer to the Player Model Mesh*/
 	void SetStaticMesh(iMesh* mesh) {this->zMesh = mesh;}
 	bool HasMesh() const 
@@ -40,5 +40,5 @@ public:
 
 protected:
 	iMesh* zMesh;
-	int zID;
+	unsigned int zID;
 };

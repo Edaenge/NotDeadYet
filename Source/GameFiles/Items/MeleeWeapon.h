@@ -10,9 +10,8 @@
 class MeleeWeapon : public Weapon
 {
 public:
-	MeleeWeapon(unsigned int id);
-	MeleeWeapon(unsigned int id, float damage, float range);
-	MeleeWeapon(const unsigned int id, const unsigned int weight, const std::string& name, 
+	MeleeWeapon(const unsigned int id,const unsigned int itemType);
+	MeleeWeapon(const unsigned int id, const unsigned int weight, const std::string& name, const unsigned int itemType,
 		const float damage, const float range);
 	virtual ~MeleeWeapon();
 
