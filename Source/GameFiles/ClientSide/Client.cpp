@@ -57,6 +57,13 @@ Client::~Client()
 	this->Close();
 	this->WaitUntillDone();
 
+	zGui->RemoveFromRenderer(this->zEng);
+	if(this->zGui)
+	{
+		delete this->zGui;
+		this->zGui = 0;
+	}
+
 	if(this->zServerChannel)
 	{
 		delete this->zServerChannel;
@@ -88,6 +95,11 @@ void Client::InitGraphics()
 	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
 	this->zEng->GetCamera()->LookAt( Vector3(0, 0, 0) );
 
+	int x = this->zEng->GetEngineParameters()->windowHeight / 4;
+	int y = this->zEng->GetEngineParameters()->windowWidth / 4;
+
+	zGui = new CircularListGui(x, y, x*2, y*2, "Media/Fern_02_v01.png");
+	zGui->AddToRenderer(this->zEng);
 	this->zEng->StartRendering();
 }
 
@@ -108,13 +120,21 @@ void Client::Life()
 		this->zSendUpdateDelayTimer += this->zDeltaTime;
 		this->zTimeSinceLastPing += this->zDeltaTime;
 
-		this->HandleKeyboardInput();
-		if (this->stayAlive)
+		if(this->zCreated)
 		{
+			this->HandleKeyboardInput();
+
+			if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
+			{
+				this->zSendUpdateDelayTimer = 0.0f;
+				this->SendClientUpdate();
+			}
 			this->UpdateCameraPos();
 
 			this->UpdateWorldObjects();
-			
+		}
+		if (this->stayAlive)
+		{
 			if (MaloW::ProcessEvent* ev = this->PeekEvent())
 			{
 				//Check if Client has received a Message
@@ -133,14 +153,6 @@ void Client::Life()
 			{
 				MaloW::Debug("Timeout From Server");
 				//Print a Timeout Message to Client
-			}
-			if(this->zCreated)
-			{
-				if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
-				{
-					this->zSendUpdateDelayTimer = 0.0f;
-					this->SendClientUpdate();
-				}
 			}
 			Sleep(5);
 		}
@@ -250,12 +262,25 @@ void Client::HandleKeyboardInput()
 		{
 			this->RayVsWorld();
 			this->zCircularGuiShowTimer = CIRCULAR_GUI_DISPLAY_TIMER;
+			if (zGui->IsHidden())
+			{
+				zGui->ShowGui();
+			}
 		}
 		else
 		{
 			if (this->zCircularGuiShowTimer > 0.0f)
 			{
 				this->zCircularGuiShowTimer -= this->zDeltaTime;
+				float fadeValue = this->zDeltaTime / CIRCULAR_GUI_DISPLAY_TIMER;
+				this->zGui->FadeOut(fadeValue);
+			}
+			else
+			{
+				if (!zGui->IsHidden())
+				{
+					zGui->HideGui();
+				}
 			}
 		}
 	}
@@ -414,6 +439,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	unsigned int itemType = -1;
 	float weaponDamage;
 	float weaponRange;
+	float hunger;
 	char key[256];
 	for(unsigned int i = 1; i < msgArray.size(); i++)
 	{
@@ -439,6 +465,10 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		{
 			weaponRange = this->zMsgHandler.ConvertStringToFloat(M_WEAPON_RANGE, msgArray[i]);
 		}
+		else if(strcmp(key, M_HUNGER.c_str()) == 0)
+		{
+			hunger = this->zMsgHandler.ConvertStringToFloat(M_HUNGER, msgArray[i]);
+		}
 		if (itemType == -1)
 		{
 			MaloW::Debug("Wrong or no Item Type sent from server in Client::HandleAddInventoryItem ItemType: " + MaloW::convertNrToString(itemType));
@@ -449,7 +479,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		switch (itemType)
 		{
 		case ITEM_TYPE_FOOD_MEAT:
-
+			item = new Food(id, itemWeight, itemName, itemType, hunger);
 			break;
 		case ITEM_TYPE_WEAPON_RANGED_BOW:
 			item = new RangedWeapon(id, itemWeight, itemName, itemType, weaponDamage, weaponRange);

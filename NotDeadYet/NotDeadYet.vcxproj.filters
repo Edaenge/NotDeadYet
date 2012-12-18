@@ -35,6 +35,9 @@
     <Filter Include="Game Files\Items">
       <UniqueIdentifier>{84d54727-12de-4411-907d-382ca95e5889}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Files\Gui">
+      <UniqueIdentifier>{5ddd9f0f-20d9-4f25-8fe4-f5000bc22b3d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\main.cpp">
@@ -141,6 +144,18 @@
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\ClientSide\PlayerObject.cpp">
       <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Items\Food.cpp">
+      <Filter>Game Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Gui\CircularListGui.cpp">
+      <Filter>Game Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Gui\GuiElement.cpp">
+      <Filter>Game Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Gui\InventoryGui.cpp">
+      <Filter>Game Files\Gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -326,6 +341,18 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ClientSide\PlayerObject.h">
       <Filter>Game Files\ClientSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Items\Food.h">
+      <Filter>Game Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Gui\CircularListGui.h">
+      <Filter>Game Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Gui\GuiElement.h">
+      <Filter>Game Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Gui\InventoryGui.h">
+      <Filter>Game Files\Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
