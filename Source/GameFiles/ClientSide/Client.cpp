@@ -98,7 +98,7 @@ void Client::InitGraphics()
 	int x = this->zEng->GetEngineParameters()->windowHeight / 4;
 	int y = this->zEng->GetEngineParameters()->windowWidth / 4;
 
-	zGui = new CircularListGui(x, y, x*2, y*2, "Media/Fern_02_v01.png");
+	zGui = new CircularListGui(x, y, x*2, y*2, "Media/Use_v01.png");
 	zGui->AddToRenderer(this->zEng);
 	this->zEng->StartRendering();
 }

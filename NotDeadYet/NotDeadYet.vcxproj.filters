@@ -36,7 +36,7 @@
       <UniqueIdentifier>{84d54727-12de-4411-907d-382ca95e5889}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Files\Gui">
-      <UniqueIdentifier>{5ddd9f0f-20d9-4f25-8fe4-f5000bc22b3d}</UniqueIdentifier>
+      <UniqueIdentifier>{6fc4c0f3-de69-4f6f-af99-2d8abe327f17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -315,9 +315,6 @@
     <ClInclude Include="..\Source\GameFiles\ServerSide\BioActor.h">
       <Filter>Game Files\ServerSide</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\AnimalHandler.h">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\gamefiles\clientside\DynamicObject.h">
       <Filter>Game Files\ClientSide</Filter>
     </ClInclude>
@@ -367,6 +364,9 @@
       <Filter>Game Files\ServerSide</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ServerSide\ActorHandler.h">
+      <Filter>Game Files\ServerSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ServerSide\DynamicObjectActor.h">
       <Filter>Game Files\ServerSide</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\Items\Food.h">
