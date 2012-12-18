@@ -33,6 +33,26 @@ namespace MaloW
 		return s;
 	}
 
+	inline int convertStringToInt(const std::string& str)
+	{
+		int ret;
+		std::stringstream ss;
+		ss << str;
+		ss >> ret;
+
+		return ret;
+	}
+
+	inline float convertStringToFloat(const std::string& str)
+	{
+		float ret;
+		stringstream ss;
+		ss << str;
+		ss >> ret;
+
+		return ret;
+	}
+
 	inline std::wstring convertStringToWString(const std::string& s)
 	{
 		int len;

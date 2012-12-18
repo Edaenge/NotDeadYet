@@ -5,7 +5,7 @@ Host::Host()
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
 	this->zClients = std::vector<ClientData *>(); 
-	this->zPlayers = std::vector<PlayerActor *>();
+	this->zActorHandler = new ActorHandler();
 
 	this->zStartime = 0;
 	this->zSecsPerCnt = 0.0f;
@@ -25,11 +25,8 @@ Host::~Host()
 
 	this->zServerListener->Close();
 	SAFE_DELETE(this->zServerListener);
+	SAFE_DELETE(this->zActorHandler);
 
-	for(auto x = zPlayers.begin(); x < zPlayers.end(); x++)
-	{
-		SAFE_DELETE(*x);
-	}
 	for(auto x = zClients.begin(); x < zClients.end(); x++)
 	{
 		SAFE_DELETE(*x);
@@ -172,8 +169,8 @@ void Host::SendPlayerUpdates()
 	std::string mess = "";
 
 	//Fetch player data
-	std::vector<PlayerActor*>::iterator it_Player;
-	for (it_Player = this->zPlayers.begin(); it_Player < this->zPlayers.end(); it_Player++)
+	std::vector<PlayerActor*> pl = this->zActorHandler->GetPlayers();
+	for (auto it_Player = pl.begin(); it_Player < pl.end(); it_Player++)
 	{
 		Vector3 pos = (*it_Player)->GetPosition();
 		Vector3 dir = (*it_Player)->GetDirection();
@@ -243,8 +240,8 @@ void Host::HandleRecivedMessages()
 	if(this->zMessages.empty())
 		return;
 
-	int p_index;
 	int c_index;
+	PlayerActor* p_actor = NULL; 
 
 	for (auto it = this->zMessages.begin(); it < this->zMessages.end(); it++)
 	{
@@ -263,22 +260,22 @@ void Host::HandleRecivedMessages()
 		sscanf_s(msgArray[0].c_str(), "%s ", &key, sizeof(key));
 		
 		c_index = SearchForClient((*it)->getID());
-		p_index = SearchForPlayer((*it)->getID());
+		p_actor = dynamic_cast<PlayerActor*>(this->zActorHandler->GetActor((*it)->getID(), ACTOR_TYPE_PLAYER));
 
-		//Handles upadtes from client.
-		if(strcmp(key, M_CLIENT_DATA.c_str()) == 0 && (p_index != -1))
+		//Handles updates from client.
+		if(strcmp(key, M_CLIENT_DATA.c_str()) == 0 && (p_actor))
 		{
-			HandlePlayerUpdate(this->zPlayers[p_index], this->zClients[c_index], msgArray);
+			HandlePlayerUpdate(p_actor, this->zClients[c_index], msgArray);
 		}
 		//Handles key presses from client.
-		else if(strcmp(key, M_KEY_DOWN.c_str()) == 0 && (p_index != -1))
+		else if(strcmp(key, M_KEY_DOWN.c_str()) == 0 && (p_actor))
 		{
-			HandleKeyPress(this->zPlayers[p_index], msgArray[0]);
+			HandleKeyPress(p_actor, msgArray[0]);
 		}
 		//Handles key releases from client.
-		else if(strcmp(key, M_KEY_UP.c_str()) == 0 && (p_index != -1))
+		else if(strcmp(key, M_KEY_UP.c_str()) == 0 && (p_actor))
 		{
-			HandleKeyRelease(this->zPlayers[p_index], msgArray[0]);
+			HandleKeyRelease(p_actor, msgArray[0]);
 		}
 		//Handles Pings from client.
 		else if(strcmp(key, M_PING.c_str()) == 0 && (c_index != -1))
@@ -442,22 +439,6 @@ int Host::SearchForClient( const int ID ) const
 	return -1;
 }
 
-int Host::SearchForPlayer(const int ID) const
-{
-	if(!HasPlayers())
-		return -1;
-
-	for (unsigned int i = 0; i < this->zPlayers.size(); i++)
-	{
-		if(this->zPlayers.at(i)->GetID() == ID)
-		{
-			return i;
-		}
-	}
-
-	return -1;
-}
-
 void Host::BroadCastServerShutdown()
 {
 	std::string mess = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_SHUTDOWN);
@@ -524,20 +505,15 @@ float Host::Update()
 
 void Host::UpdatePl()
 {
-	for (auto it = zPlayers.begin(); it < zPlayers.end(); it++)
-	{
-		(*it)->Update(this->zDeltaTime);
-	}
-	
+	this->zActorHandler->UpdatePl(zDeltaTime);	
 }
 
 bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string reason /*= ""*/ )
 {
+
 	int index = SearchForClient(ID);
-	int pIndex = SearchForPlayer(ID);
 
 	ClientData* temp_c = zClients.at(index);
-	PlayerActor* temp_p = zPlayers.at(pIndex);
 
 	std::string mess;
 	bool removed = false;
@@ -561,17 +537,16 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 	//remove the player
 
 
-	if(index != -1 && pIndex != -1)
-	{
-		this->zClients.erase(zClients.begin() + index);
-		this->zPlayers.erase(zPlayers.begin() + pIndex);
+	PlayerActor* temp_p = NULL;
+	this->zClients.erase(zClients.begin() + index);
+	temp_p = dynamic_cast<PlayerActor*>(this->zActorHandler->RemovePlayerActor(ID));
 
-		SAFE_DELETE(temp_c);
-		SAFE_DELETE(temp_p);
+	SAFE_DELETE(temp_c);
+	SAFE_DELETE(temp_p);
 
-		removed = true;
-		MaloW::Debug("Client"+MaloW::convertNrToString(ID)+" removed from server.");
-	}
+	removed = true;
+	MaloW::Debug("Client"+MaloW::convertNrToString(ID)+" removed from server.");
+	
 
 	//Notify clients
 	this->SendToAllClients(mess);
@@ -620,15 +595,15 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	pi->SetDirection(uDir);
 	//Debug Pos
 	pi->SetPosition(Vector3(pi->GetID()*25,0,1)); 
-	this->zPlayers.push_back(pi);
+	this->zActorHandler->AddNewPlayer(pi);
 
-	//Create a new player message
+	//Collect player infos
 	std::vector<std::string> temp;
-	int newPlayerindex = 0;
+	std::vector<PlayerActor *> players = this->zActorHandler->GetPlayers();
 	int count = 0;
+	int newPlayerindex = 0;
 
-	std::vector<PlayerActor*>::iterator it;
-	for (it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
+	for(auto it = players.begin(); it < players.end(); it++)
 	{
 		Vector3 pos = (*it)->GetPosition();
 		Vector3 scale = (*it)->GetScale();
@@ -666,6 +641,4 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 		if(zClients[i]->zClient->getClientID() != cc->getClientID())
 			this->zClients[i]->zClient->sendData(temp[newPlayerindex]);
 	}
-
-	
 }

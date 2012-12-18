@@ -5,22 +5,24 @@ for project desperation* at Blekinge tekniska högskola.
 
 #pragma once
 
-//static const enum STATIC_OBJECT_TYPE
-//{
-//	//STATIC_OBJECT_TYPE_
-//};
-
 #include "GameFiles/ServerSide/Actor.h"
+#include <vector>
 
 class StaticObjectActor : public Actor
 {
 public:
 	StaticObjectActor();
+	StaticObjectActor(const std::string& meshModel);
 	virtual ~StaticObjectActor();
 	
 	virtual void Update(float deltaTime){};
 
+	int GetWeight() const {return this->zWeight;}
+
 protected:
+	std::string zMeshModel;
+	int zWeight;
+	int zType;
 
 private:
 };

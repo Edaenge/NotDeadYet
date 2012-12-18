@@ -9,8 +9,7 @@ for project desperation* at Blekinge tekniska högskola.
 #include "Network/ServerListener.h"
 #include "Network/NetworkMessageConverter.h"
 #include "GameFiles/ServerSide/PlayerActor.h"
-
-#include "Safe.h"
+#include "GameFiles/ServerSide/ActorHandler.h"
 
 
 struct ClientData
@@ -106,8 +105,6 @@ private:
 	void HandlePlayerUpdate(PlayerActor* pl, ClientData* cd, const std::vector<std::string> &data);
 	/*! Search for a client. Returns -1 if none was found.*/
 	int SearchForClient(const int ID) const;
-	/*! Search for a player. Returns -1 if none was found.*/
-	int SearchForPlayer(const int ID) const;
 	/*! Creates a new player and notifies all clients.*/
 	void CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data);
 
@@ -115,8 +112,9 @@ private:
 	ServerListener* zServerListener;
 
 	std::vector<ClientData*>			zClients;
-	std::vector<PlayerActor*>			zPlayers;
 	std::vector<MaloW::NetworkPacket*>	zMessages;
+
+	ActorHandler* zActorHandler;
 	
 	NetworkMessageConverter zMessageConverter;
 

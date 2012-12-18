@@ -19,7 +19,7 @@ public:
 	BioActor(const Vector3& startPos, const Vector4& rot);
 	virtual ~BioActor();
 
-	virtual void Update(float deltaTime){};
+	virtual void Update(float deltaTime) = 0;
 	/*! Returns true if BioActor dies from the damage done.*/
 	virtual bool TakeDamage(const float dmg);
 	/*! Returns false if player cannot sprint, due to stamina.*/

@@ -5,6 +5,7 @@ for project desperation* at Blekinge tekniska högskola.
 #pragma once
 
 #include <vector.h>
+#include "safe.h"
 
 /* This is an abstract base class for objects in the game.
    Every time an actor is created, an ID will be generated in this class. This id should be used for this actor.
