@@ -1,16 +1,16 @@
-#include "GameFiles/ServerSide/AnimalActor.h"
+#include "AnimalActor.h"
 
-AnimalActor::AnimalActor() : BioActor()
+AnimalActor::AnimalActor()
 {
 
 }
 
-AnimalActor::AnimalActor( const Vector3& startPos ) : BioActor(startPos)
+AnimalActor::AnimalActor( const Vector3& startPos )
 {
 
 }
 
-AnimalActor::AnimalActor( const Vector3& startPos, const Vector4& rot ) : BioActor(startPos, rot)
+AnimalActor::AnimalActor( const Vector3& startPos, const Vector4& rot )
 {
 
 }
@@ -20,7 +20,7 @@ AnimalActor::~AnimalActor()
 
 }
 
-void AnimalActor::Update(float deltaTime)
+void AnimalActor::Update( float deltaTime )
 {
 
 }

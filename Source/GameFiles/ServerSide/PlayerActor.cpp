@@ -22,6 +22,8 @@ void PlayerActor::InitValues()
 {
 	this->zFrameTime = 0.0f;
 	this->zLatency = 0.0f;
+	this->zHunger = 100.0f;
+	this->zHydration = 100.0f;
 }
 
 PlayerActor::~PlayerActor()
