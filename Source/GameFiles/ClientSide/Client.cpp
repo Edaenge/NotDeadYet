@@ -22,12 +22,12 @@ Client::Client()
 	this->zCreated = false;
 	this->zFrameTime = 0.0f;
 	this->zServerChannel = NULL;
-	this->zCircularGuiShowTimer = 0.0f;
 	this->zKeyInfo = KeyHandler();
 	this->zKeyInfo.InitKeyBinds();
 	this->zTimeSinceLastPing = 0.0f;
 	this->zMeshID = "Media/scale.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
+	this->zLootingGuiShowTimer = 0.0f;
 	this->zMsgHandler = NetworkMessageConverter();
 
 	INT64 frequency;
@@ -95,10 +95,10 @@ void Client::InitGraphics()
 	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
 	this->zEng->GetCamera()->LookAt( Vector3(0, 0, 0) );
 
-	int x = this->zEng->GetEngineParameters()->windowHeight / 4;
-	int y = this->zEng->GetEngineParameters()->windowWidth / 4;
+	int x = this->zEng->GetEngineParameters()->windowHeight * 0.33f;
+	int y = this->zEng->GetEngineParameters()->windowWidth * 0.25f;
 
-	zGui = new CircularListGui(x, y, x*2, y*2, "Media/Use_v01.png");
+	zGui = new InventoryGui(x, y, x * 1.5f, x * 1.5f, "Media/Inventory_v01.png");
 	zGui->AddToRenderer(this->zEng);
 	this->zEng->StartRendering();
 }
@@ -238,7 +238,7 @@ bool Client::CheckKey(const unsigned int ID)
 void Client::HandleKeyboardInput()
 {
 	bool pressed = false;
-	
+	bool InventoryOpen = false;
 	int pos = this->zObjectManager.SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
 	if (pos != -1)
 	{
@@ -261,26 +261,39 @@ void Client::HandleKeyboardInput()
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
 		{
 			this->RayVsWorld();
-			this->zCircularGuiShowTimer = CIRCULAR_GUI_DISPLAY_TIMER;
-			if (zGui->IsHidden())
-			{
-				zGui->ShowGui();
-			}
+			this->zLootingGuiShowTimer = CIRCULAR_GUI_DISPLAY_TIMER;
+			zGui->ShowGui();
+			InventoryOpen = true;
 		}
 		else
 		{
-			if (this->zCircularGuiShowTimer > 0.0f)
+			if (this->zLootingGuiShowTimer > 0.0f)
 			{
-				this->zCircularGuiShowTimer -= this->zDeltaTime;
+				this->zLootingGuiShowTimer -= this->zDeltaTime;
 				float fadeValue = this->zDeltaTime / CIRCULAR_GUI_DISPLAY_TIMER;
 				this->zGui->FadeOut(fadeValue);
+
+				InventoryOpen = true;
 			}
 			else
 			{
-				if (!zGui->IsHidden())
+				InventoryOpen = false;
+			}
+		}
+		if (this->zEng->GetKeyListener()->IsClicked(1))
+		{
+			PlayerObject* player = this->zObjectManager.GetPlayer(pos);
+			MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(player->GetEquipmentPtr()->GetWeapon());
+			if (!mWpn)
+			{
+				RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(player->GetEquipmentPtr()->GetWeapon());
+				if (rWpn)
 				{
-					zGui->HideGui();
 				}
+			}
+			else
+			{
+
 			}
 		}
 	}
@@ -288,6 +301,7 @@ void Client::HandleKeyboardInput()
 	{
 		MaloW::Debug("Something Went Wrong. This player cannot be found. In function Client::HandleKeyBoardInput");
 	}
+
 
 	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 	{

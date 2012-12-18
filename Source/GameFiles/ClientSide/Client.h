@@ -8,7 +8,7 @@
 #include "Network/ServerChannel.h"
 #include "GameFiles/Items/Inventory.h"
 #include "GameFiles/KeyUtil/KeyHandler.h"
-#include "GameFiles/Gui/CircularListGui.h"
+#include "GameFiles/Gui/InventoryGui.h"
 #include "Network/NetworkMessageConverter.h"
 #include "GameFiles/ClientSide/WorldObjectManager.h"
 
@@ -77,9 +77,9 @@ private:
 	float zTimeSinceLastPing;
 	/*! Counters*/
 	float zSendUpdateDelayTimer;
-	float zCircularGuiShowTimer;
+	float zLootingGuiShowTimer;
 	ServerChannel* zServerChannel;
 	WorldObjectManager zObjectManager;
 	NetworkMessageConverter zMsgHandler;
-	CircularListGui* zGui;
+	InventoryGui* zGui;
 };

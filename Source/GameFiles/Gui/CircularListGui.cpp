@@ -45,6 +45,7 @@ bool CircularListGui::CheckCollision(float mouseX, float mouseY, bool mousePress
 		if (!this->zPressed && mousePressed)
 		{
 			this->zPressed = true;
+			this->HideGui();
 		}
 	}
 	return false;

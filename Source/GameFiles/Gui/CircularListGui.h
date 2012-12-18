@@ -18,6 +18,7 @@ public:
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
 	bool CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
+
 private:
 	bool zPressed;
 	bool zHovered;
