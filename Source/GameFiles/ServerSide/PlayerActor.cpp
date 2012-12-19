@@ -20,6 +20,7 @@ PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& 
 
 void PlayerActor::InitValues()
 {
+	this->zObjManager = NULL;
 	this->zFrameTime = 0.0f;
 	this->zLatency = 0.0f;
 	this->zHunger = 100.0f;
@@ -163,7 +164,23 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 
 bool PlayerActor::DropObject( const int ID )
 {
-	//Item* item = this->zInventory-
+	Item* item = this->zInventory->SearchAndGetItem(ID);
+	unsigned int item_type;
+
+	if(!item)
+		return false;
+
+	item_type = item->GetItemType();
+
+	switch (item_type)
+	{
+	case ITEM_TYPE_FOOD_MEAT:
+
+		break;
+	default:
+		break;
+	}
+
 
 	return false;
 }

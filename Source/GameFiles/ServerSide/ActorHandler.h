@@ -6,9 +6,8 @@ for project desperation* at Blekinge tekniska högskola.
 #pragma once
 
 #include "GameFiles/ServerSide/PlayerActor.h"
-#include "GameFiles/ServerSide/WeaponObject.h"
-#include "GameFiles/ServerSide/FoodObject.h"
 #include "GameFiles/ServerSide/AnimalActor.h"
+#include "GameFiles/ServerSide/ObjectManager.h"
 
 static const enum ACTOR_TYPE
 {
@@ -65,5 +64,7 @@ private:
 	std::vector<AnimalActor *> zAnimals;
 	std::vector<FoodObject *> zFoods;
 	std::vector<WeaponObject *> zWeapons;
+
+	ObjectManager* zObjManager;
 
 };

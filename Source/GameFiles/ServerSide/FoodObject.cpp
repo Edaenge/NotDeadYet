@@ -1,27 +1,40 @@
 #include "FoodObject.h"
 
 
-FoodObject::FoodObject() : StaticObjectActor()
+FoodObject::FoodObject( const bool genID /*= true*/ ) : StaticObjectActor(genID)
 {
 	this->zHunger = 1.0f;
 	this->zWeight = 1;
 }
 
-FoodObject::FoodObject( const FoodData* data ) : StaticObjectActor()
+
+FoodObject::FoodObject( const FoodObject& other )
 {
-	if(!data)
-	{
-		this->zHunger = 1.0f;
-		this->zWeight = 1;
-	}
-	else
-	{
-		this->zHunger = data->zHunger;
-		this->zWeight = data->zWeight;
-		this->zActorModel = data->zModel;
-		this->zType = data->zType;
-		this->zActorObjectName = data->zObjName;
-	}
+	this->GenerateID();
+	this->zHunger = other.zHunger;
+	this->zWeight = other.zWeight;
+	this->zActorModel = other.zActorModel;
+	this->zType = other.zType;
+	this->zActorObjectName = other.zActorObjectName;
+	this->zScale = other.zScale;
+	this->zRot = other.zRot;
+}
+
+FoodObject& FoodObject::operator= (const FoodObject& other)
+{
+	if(this == &other)
+		return *this;
+
+	this->GenerateID();
+	this->zHunger = other.zHunger;
+	this->zWeight = other.zWeight;
+	this->zActorModel = other.zActorModel;
+	this->zType = other.zType;
+	this->zActorObjectName = other.zActorObjectName;
+	this->zScale = other.zScale;
+	this->zRot = other.zRot;
+
+	return *this;
 }
 
 FoodObject::~FoodObject()

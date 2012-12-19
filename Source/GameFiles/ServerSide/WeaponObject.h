@@ -6,15 +6,17 @@ for project desperation* at Blekinge tekniska högskola.
 #pragma once
 
 #include "GameFiles/ServerSide/StaticObjectActor.h"
-#include "GameFiles/ServerSide/ObjectManager.h"
 
 /**/
 class WeaponObject : public StaticObjectActor
 {
 public:
-	WeaponObject();
-	/*! Use ObjectManager to Get Data*/
-	WeaponObject( const WeaponData* data);
+	WeaponObject(const bool genID = true);
+	/*! Note: ID from Actor will not be copied. IT will auto generate a new ID.*/
+	WeaponObject( const WeaponObject& other);
+	/*! Note: ID from Actor will not be copied. IT will auto generate a new ID.*/
+	WeaponObject& operator= (const WeaponObject& other);
+	/*! */
 	virtual ~WeaponObject();
 
 	float GetDamage() const {return this->zDamage;}

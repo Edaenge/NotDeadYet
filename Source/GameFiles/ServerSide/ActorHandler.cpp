@@ -2,7 +2,8 @@
 
 ActorHandler::ActorHandler()
 {
-
+	this->zObjManager = new ObjectManager();
+	this->zObjManager->ReadObjects();
 }
 
 ActorHandler::~ActorHandler()
@@ -49,6 +50,7 @@ bool ActorHandler::AddNewPlayer( PlayerActor* new_player )
 	if(!new_player)
 		return false;
 
+	new_player->SetObjManager(this->zObjManager);
 	this->zPlayers.push_back(new_player);
 
 	return true;

@@ -21,6 +21,9 @@ public:
 	int GetWeight() const {return this->zWeight;}
 	int GetType() const {return this->zType;}
 
+	void SetWeight(const int weight) {this->zWeight = weight;}
+	void SetType(const int TYPE) {this->zType = TYPE;}
+
 protected:
 	int zWeight;
 	int zType;

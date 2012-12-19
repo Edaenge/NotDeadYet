@@ -8,7 +8,7 @@ static const std::string FILENAME		=	"WorldObjects.cfg";
 static const std::string OBJECT_WEAPON	=	"[Object.Weapon]";
 static const std::string OBJECT_FOOD	=	"[Object.Food]";
 
-static const std::string END			=	"#end";
+static const std::string END			=	"#END";
 static const std::string TYPE			=	"TYPE";
 static const std::string WEIGHT			=	"WEIGHT";
 static const std::string HUNGER			=	"HUNGER";
@@ -26,7 +26,18 @@ ObjectManager::ObjectManager()
 
 ObjectManager::~ObjectManager()
 {
+	auto x = zWeapons.begin();
+	auto i = zFood.begin();
 
+	for(; x < zWeapons.end(); x++)
+	{
+		SAFE_DELETE((*x));
+	}
+
+	for(; i < zFood.end(); i++)
+	{
+		SAFE_DELETE((*i));
+	}
 }
 
 bool ObjectManager::ReadObjects()
@@ -44,34 +55,42 @@ bool ObjectManager::ReadObjects()
 		char command[126];
 
 		read.getline(line,sizeof(line));
+
+		if(strcmp(line, "") == 0)
+			continue;
+
 		TrimAndSet(line);
 
 		sscanf_s(line, "%s", &key, sizeof(key));
 
 		if(strcmp(key, OBJECT_WEAPON.c_str()) == 0)
 		{
-			WeaponData wp;
-			while(!read.eof() && strcmp(key, END.c_str()) != 0)
+			WeaponObject *wp = new WeaponObject(false);
+			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
 				TrimAndSet(line);
 
 				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
-				InterpCommand(command, key, wp);
+
+				if(strcmp(command,END.c_str()) != 0)
+					InterpCommand(command, key, wp);
 			}
 			this->zWeapons.push_back(wp);
 		}
 
 		else if(strcmp(key, OBJECT_FOOD.c_str()) == 0)
 		{
-			FoodData fd;
+			FoodObject *fd = new FoodObject(false);
 			while(!read.eof() && strcmp(key, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
 				TrimAndSet(line);
 
 				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
-				InterpCommand(command, key, fd);
+
+				if(strcmp(command,END.c_str()) != 0)
+					InterpCommand(command, key, fd);
 			}
 
 			this->zFood.push_back(fd);
@@ -110,96 +129,104 @@ void ObjectManager::TrimAndSet( char* ret )
 
 }
 
-bool ObjectManager::InterpCommand( const char* command, char* key, WeaponData& wp )
+bool ObjectManager::InterpCommand( char* command, char* key, WeaponObject* wp )
 {
 	if(strcmp(key, "") == 0)
 		return false;
 
+	string CC(command);
+	std::transform(CC.begin(), CC.end(), CC.begin(), ::toupper);
+	strcpy(command, CC.c_str());
+
 	if(strcmp(command, TYPE.c_str()) == 0)
 	{
-		wp.zType = MaloW::convertStringToInt(key);
+		wp->SetType(MaloW::convertStringToInt(key));
 	}
 	else if(strcmp(command, DAMAGE.c_str()) == 0)
 	{
-		wp.zDamage = MaloW::convertStringToFloat(key);
+		wp->SetDamage(MaloW::convertStringToFloat(key));
 	}
 	else if(strcmp(command, WEIGHT.c_str()) == 0)
 	{
-		wp.zWeight = MaloW::convertStringToInt(key);
+		wp->SetWeight(MaloW::convertStringToInt(key));
 	}
 	else if(strcmp(command, RANGE.c_str()) == 0)
 	{
-		wp.zRange = MaloW::convertStringToFloat(key);
+		wp->SetRange(MaloW::convertStringToFloat(key));
 	}
 	else if(strcmp(command, MODEL.c_str()) == 0)
 	{
-		wp.zModel = key;
+		wp->SetActorModel(key);
 	}
 	else if(strcmp(command, NAME.c_str()) == 0)
 	{
-		wp.zObjName = key;
+		wp->SetActorObjectName(key);
 	}
 
 	return true;
 }
 
-bool ObjectManager::InterpCommand( const char* command, char* key, FoodData& fd )
+bool ObjectManager::InterpCommand( char* command, char* key, FoodObject* fd )
 {
 	if(strcmp(key, "") == 0)
 		return false;
 
+	string CC(command);
+	std::transform(CC.begin(), CC.end(), CC.begin(), ::toupper);
+	strcpy(command, CC.c_str());
+
 	if(strcmp(command, TYPE.c_str()) == 0)
 	{
-		fd.zType = MaloW::convertStringToInt(key);
+		fd->SetType(MaloW::convertStringToInt(key));
 	}
 	else if(strcmp(command, HUNGER.c_str()) == 0)
 	{
-		fd.zHunger = MaloW::convertStringToFloat(key);
+		fd->SetHunger(MaloW::convertStringToFloat(key));
 	}
 	else if(strcmp(command, WEIGHT.c_str()) == 0)
 	{
-		fd.zWeight = MaloW::convertStringToInt(key);
+		fd->SetWeight(MaloW::convertStringToInt(key));
 	}
 	else if(strcmp(command, MODEL.c_str()) == 0)
 	{
-		fd.zModel = key;
+		fd->SetActorModel(key);
 	}
 	else if(strcmp(command, NAME.c_str()) == 0)
 	{
-		fd.zObjName = key;
+		fd->SetActorObjectName(key);
 	}
 
 
 	return true;
 }
 
-const WeaponData* ObjectManager::GetWeaponObject( const int TYPE )
+const WeaponObject* ObjectManager::GetWeaponObject( const int type )
 {
-	return SearchType(zWeapons, TYPE);
+	return SearchType(zWeapons, type);
 }
 
-const FoodData* ObjectManager::GetFoodObject( const int TYPE )
+const FoodObject* ObjectManager::GetFoodObject( const int type )
 {
-	return SearchType(zFood, TYPE);
+	return SearchType(zFood, type);
 }
 
-const WeaponData* ObjectManager::SearchType( std::vector<WeaponData>& weapons, const int type ) const
+const WeaponObject* ObjectManager::SearchType( std::vector<WeaponObject*>& weapons, const int type ) const
 {
 	for(auto it = weapons.begin(); it < weapons.end(); it++)
 	{
-		if((*it).zType == type)
-			return &(*it);
+		if((*it)->GetType() == type)
+			return (*it);
 	}
 
 	return NULL;
 }
 
-const FoodData* ObjectManager::SearchType( std::vector<FoodData>& food, const int type ) const
+const FoodObject* ObjectManager::SearchType( std::vector<FoodObject*>& food, const int type ) const
 {
 	for(auto it = food.begin(); it < food.end(); it++)
 	{
-		if((*it).zType == type)
-			return &(*it);
+		if((*it)->GetType() == type)
+			return (*it);
 	}
 
 	return NULL;

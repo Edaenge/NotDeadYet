@@ -7,49 +7,12 @@ for project desperation* at Blekinge tekniska högskola.
 
 #include <vector>
 #include "Items/Item.h"
+#include "ServerSide/WeaponObject.h"
+#include "ServerSide/FoodObject.h"
 
-
-struct WeaponData
-{
-	WeaponData()
-	{
-		zRange	= 0.0f;
-		zDamage = 0.0f;
-		zWeight = 0;
-		zType	= 0;
-		
-		zModel = "none";
-	}
-
-	float	zRange;
-	float	zDamage;
-	int		zWeight;
-	int		zType;
-	
-	std::string zModel;
-	std::string zObjName;
-};
-
-struct FoodData
-{
-	FoodData()
-	{
-		zHunger	= 0.0f;
-		zWeight = 0;
-		zType = 0;
-
-		zModel = "none";
-	}
-
-	float	zHunger;
-	int		zWeight;
-	int		zType;
-
-	std::string zModel;
-	std::string zObjName;
-};
-
-/**/
+/*This class reads and stores WordObjects.
+  The objects can be fetched by using enums from Item.h.
+*/
 class ObjectManager
 {
 
@@ -61,21 +24,21 @@ public:
 	/*! Returns a weapon object from given type.
 		Returns null if it cannot be found.
 	*/
-	const WeaponData* GetWeaponObject(const int TYPE);
+	const WeaponObject* GetWeaponObject(const int type);
 	/*! Returns a food object from given type.
 		Returns null if it cannot be found.
 	*/
-	const FoodData* GetFoodObject(const int TYPE);
+	const FoodObject* GetFoodObject(const int type);
 
 private:
 	void TrimAndSet( char* ret );
-	bool InterpCommand( const char* command, char* key, WeaponData& wp );
-	bool InterpCommand( const char* command, char* key, FoodData& fd );
-	const WeaponData* SearchType(std::vector<WeaponData>& weapons, const int type) const;
-	const FoodData* SearchType(std::vector<FoodData>& food, const int type) const;
+	bool InterpCommand( char* command, char* key, WeaponObject* wp );
+	bool InterpCommand( char* command, char* key, FoodObject* fd );
+	const WeaponObject* SearchType(std::vector<WeaponObject*>& weapons, const int type) const;
+	const FoodObject* SearchType(std::vector<FoodObject*>& food, const int type) const;
 
 private:
-	std::vector<WeaponData>	zWeapons;
-	std::vector<FoodData>	zFood;
+	std::vector<WeaponObject*> zWeapons;
+	std::vector<FoodObject*>	  zFood;
 
 };

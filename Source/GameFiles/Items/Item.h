@@ -29,10 +29,15 @@ public:
 	inline int GetID() const {return this->zID;}
 	/*! Returns the Item Weight*/
 	inline unsigned int GetWeight() const {return this->zWeight;}
+	/*! */
+	unsigned int GetItemType() const {return this->zItemType;}
 	/*! Sets the Item ID*/
 	void SetID(const unsigned int id) {this->zID = id;}
 	/*! Sets the Item Weight*/
 	void SetWeight(const unsigned int weight) {this->zWeight = weight;}
+	/*! */
+	void SetItemType(const unsigned int type) {this->zItemType = type;}
+	
 
 	virtual void Use() = 0;
 

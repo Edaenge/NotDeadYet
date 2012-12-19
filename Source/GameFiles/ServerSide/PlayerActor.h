@@ -6,8 +6,7 @@ for project desperation* at Blekinge tekniska högskola.
 #pragma once
 
 #include "GameFiles/ServerSide/BioActor.h"
-#include "GameFiles/ServerSide/FoodObject.h"
-#include "GameFiles/ServerSide/WeaponObject.h"
+#include "GameFiles/ServerSide/ObjectManager.h"
 #include "GameFiles/ServerSide/DynamicObjectActor.h"
 #include "GameFiles/KeyUtil/KeyValues.h"
 #include "GameFiles/KeyUtil/KeyStates.h"
@@ -58,6 +57,8 @@ public:
 
 	inline void SetFrameTime(const float frameTime){this->zFrameTime = frameTime;}
 	inline void SetLatency(const float latency){this->zLatency = latency;}
+	/*! Sets the objm. This class is not responsible for deallocation.*/
+	void SetObjManager(ObjectManager* objm) {this->zObjManager = objm;}
 	
 private:
 	void InitValues();
@@ -72,4 +73,6 @@ private:
 	KeyStates zKeyStates;
 
 	Inventory* zInventory;
+
+	ObjectManager* zObjManager;
 };
