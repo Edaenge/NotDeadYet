@@ -14,11 +14,14 @@ public:
 	CircularListGui(float x, float y, float width, float height, std::string textureName);
 	virtual ~CircularListGui();
 
-	virtual bool AddToRenderer(GraphicsEngine* ge, std::string itemTextureName);
+	virtual bool AddToRenderer(GraphicsEngine* ge);
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
 	bool CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
-
+	void SetItemTexture(const std::string& itemTexName){this->zItemImageName = itemTexName;}
+	void FadeOut(float value);
+	void ShowGui();
+	void HideGui();
 private:
 	std::string zItemImageName;
 	float zItemX;

@@ -29,6 +29,7 @@
     <ClCompile Include="..\Source\GameFiles\Gui\CircularListGui.cpp" />
     <ClCompile Include="..\Source\GameFiles\Gui\GuiElement.cpp" />
     <ClCompile Include="..\Source\GameFiles\Gui\InventoryGui.cpp" />
+    <ClCompile Include="..\Source\GameFiles\Gui\InventorySlotGui.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Equipment.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Food.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Gear.cpp" />
@@ -84,6 +85,7 @@
     <ClInclude Include="..\Source\GameFiles\ClientSide\AnimalObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\Client.h" />
     <ClInclude Include="..\source\gamefiles\clientside\DynamicObject.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientSide\MovingObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\OrganicObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\PlayerObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\StaticObject.h" />
@@ -94,6 +96,7 @@
     <ClInclude Include="..\Source\GameFiles\Gui\CircularListGui.h" />
     <ClInclude Include="..\Source\GameFiles\Gui\GuiElement.h" />
     <ClInclude Include="..\Source\GameFiles\Gui\InventoryGui.h" />
+    <ClInclude Include="..\Source\GameFiles\Gui\InventorySlotGui.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Equipment.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Food.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Gear.h" />

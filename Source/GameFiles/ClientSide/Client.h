@@ -79,6 +79,7 @@ private:
 	/*! Counters*/
 	float zSendUpdateDelayTimer;
 	float zLootingGuiShowTimer;
+	float zInventoryGuiShowTimer;
 	ServerChannel* zServerChannel;
 	WorldObjectManager zObjectManager;
 	NetworkMessageConverter zMsgHandler;

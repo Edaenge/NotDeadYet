@@ -38,7 +38,7 @@ bool GuiElement::AddToRenderer(GraphicsEngine* ge)
 	if (ge)
 	{
 		this->zGuiImage = ge->CreateImage(Vector2(this->zX , this->zY), this->GetDimension(), this->zTextureName.c_str());
-		this->HideGui();
+		this->ShowGui();
 		return true;
 	}
 	return false;
@@ -50,6 +50,7 @@ bool GuiElement::RemoveFromRenderer(GraphicsEngine* ge)
 	{
 		ge->DeleteImage(this->zGuiImage);
 		this->zGuiImage = 0;
+		this->zHidden = true;
 		return true;
 	}
 	return false;
@@ -77,13 +78,16 @@ void GuiElement::ShowGui()
 
 void GuiElement::FadeOut(float value)
 {
-	if (this->zOpacity > 0.0f)
+	if (this->zGuiImage)
 	{
-		this->zOpacity -= value;
-		this->zGuiImage->SetOpacity(this->zOpacity);
-	}
-	else
-	{
-		this->HideGui();
+		if (this->zOpacity > 0.0f)
+		{
+			this->zOpacity -= value;
+			this->zGuiImage->SetOpacity(this->zOpacity);
+		}
+		else
+		{
+			this->HideGui();
+		}
 	}
 }

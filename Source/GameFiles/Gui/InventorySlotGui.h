@@ -18,7 +18,10 @@ public:
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
 	bool CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
-
+	
+	void FadeOut(float value);
+	void ShowGui();
+	void HideGui();
 private:
 	iImage* zSlotImage;
 };

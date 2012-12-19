@@ -9,7 +9,7 @@ using namespace MaloW;
 static const float TIMEOUT_VALUE = 10.0f;
 // 30 updates per sec
 static const float UPDATE_DELAY = 0.0333f;
-static const float CIRCULAR_GUI_DISPLAY_TIMER = 2.0f;
+static const float GUI_DISPLAY_TIMER = 2.0f;
 static const float MAX_DISTANCE_TO_OBJECT = 50.0f;
 
 Client::Client()
@@ -107,10 +107,12 @@ void Client::InitGraphics()
 	int y = this->zEng->GetEngineParameters()->windowWidth * 0.25f;
 
 	zInvGui = new InventoryGui(x, y, x * 1.5f, x * 1.5f, "Media/Inventory_v01.png");
-	zInvGui->AddToRenderer(this->zEng);
+	
+	
 	zCircularInvGui = new CircularListGui(x, y, x * 1.5f, x * 1.5f, "Media/Use_v01.png");
-	zCircularInvGui->AddToRenderer(this->zEng);
-
+	
+	zInvGui->AddItemToGui("Media/Inventory_v01.png", this->zEng);
+	zInvGui->AddItemToGui("Media/Inventory_v01.png", this->zEng);
 	this->zEng->GetKeyListener()->SetCursorVisibility(true);
 	this->zEng->StartRendering();
 }
@@ -250,7 +252,6 @@ bool Client::CheckKey(const unsigned int ID)
 void Client::HandleKeyboardInput()
 {
 	bool pressed = false;
-	bool InventoryOpen = false;
 	int pos = this->zObjectManager.SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
 	if (pos != -1)
 	{
@@ -273,39 +274,88 @@ void Client::HandleKeyboardInput()
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
 		{
 			this->RayVsWorld();
-			this->zLootingGuiShowTimer = CIRCULAR_GUI_DISPLAY_TIMER;
-			zInvGui->ShowGui();
-			InventoryOpen = true;
+			this->zLootingGuiShowTimer = GUI_DISPLAY_TIMER;
+			this->zInvGui->AddToRenderer(this->zEng);
 		}
 		else
 		{
 			if (this->zLootingGuiShowTimer > 0.0f)
 			{
 				this->zLootingGuiShowTimer -= this->zDeltaTime;
-				float fadeValue = this->zDeltaTime / CIRCULAR_GUI_DISPLAY_TIMER;
-				this->zInvGui->FadeOut(fadeValue);
-				
-				InventoryOpen = true;
+				float fadeValue = this->zDeltaTime / GUI_DISPLAY_TIMER;
 			}
 			else
 			{
+
+			}
+		}
+		bool InventoryOpen = false;
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
+		{
+			this->zInventoryGuiShowTimer = GUI_DISPLAY_TIMER;
+			if (this->zInvGui->IsHidden())
+			{
+				this->zInvGui->AddToRenderer(this->zEng);
+			}
+			InventoryOpen = true;
+		}
+		else
+		{
+			if (this->zInventoryGuiShowTimer > 0.0f)
+			{
+				this->zInventoryGuiShowTimer -= this->zDeltaTime;
+				float fadeValue = this->zDeltaTime / GUI_DISPLAY_TIMER;
+				this->zInvGui->FadeOut(fadeValue);
+
+				InventoryOpen = false;
+			}
+			else
+			{
+				if (!this->zInvGui->IsHidden())
+				{
+					this->zInvGui->RemoveFromRenderer(this->zEng);
+				}
+				
 				InventoryOpen = false;
 			}
 		}
-
-		bool bOverInventory = false;
+		float invPosition = -1;
 		if (InventoryOpen)
 		{
+			this->zEng->GetKeyListener()->SetCursorVisibility(true);
+			this->zEng->GetCamera()->SetUpdateCamera(false);
 			Vector2 mousePosition = this->zEng->GetKeyListener()->GetMousePosition();
-			bOverInventory = this->zInvGui->CheckCollision(mousePosition.x, mousePosition.y, false, this->zEng);
+			invPosition = this->zInvGui->CheckCollision(mousePosition.x, mousePosition.y, false, this->zEng);
 		}
+		else
+		{
+			this->zEng->GetKeyListener()->SetCursorVisibility(false);
+			this->zEng->GetCamera()->SetUpdateCamera(true);
+		}
+		if (this->zEng->GetKeyListener()->IsClicked(2))
+		{
+			if (invPosition != -1)
+			{
+				
+				if (this->zCircularInvGui->IsHidden())
+				{
+					std::string texName = this->zInvGui->GetImageName(invPosition);
+					this->zCircularInvGui->SetItemTexture(texName);
+					this->zCircularInvGui->AddToRenderer(this->zEng);
+				}
+			}
+		}
+		else
+		{
+			if (!this->zCircularInvGui->IsHidden())
+			{
+				this->zCircularInvGui->RemoveFromRenderer(this->zEng);
+			}
+			
+		}
+		
 		if (this->zEng->GetKeyListener()->IsClicked(1))
 		{
-
-			if (bOverInventory)
-			{
-
-			}
 			PlayerObject* player = this->zObjectManager.GetPlayer(pos);
 			MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(player->GetEquipmentPtr()->GetWeapon());
 			if (!mWpn)

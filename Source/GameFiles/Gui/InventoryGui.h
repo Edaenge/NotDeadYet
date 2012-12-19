@@ -19,9 +19,15 @@ public:
 	virtual bool AddToRenderer(GraphicsEngine* ge);
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
-	bool CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
+	int CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
+	bool AddItemToGui(std::string textureName, GraphicsEngine* ge);
+	bool RemoveItemFromGui(const unsigned int position);
 
+	void FadeOut(float value);
+	void ShowGui();
+	void HideGui();
+	std::string GetImageName(unsigned int position);
 private:
 	Vector2 zNrOfSlots;
-	std::vector<iImage*> zSlotGui;
+	std::vector<InventorySlotGui*> zSlotGui;
 };

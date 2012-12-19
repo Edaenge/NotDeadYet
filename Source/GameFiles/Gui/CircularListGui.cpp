@@ -5,6 +5,7 @@ CircularListGui::CircularListGui()
 {
 	this->zPressed = false;
 	this->zHovered = false;
+	this->zItemImage = NULL;
 	this->zItemImageName = "";
 }
 
@@ -14,10 +15,11 @@ CircularListGui::CircularListGui(float x, float y, float width, float height, st
 	this->zPressed = false;
 	this->zHovered = false;
 	this->zItemImageName = "";
-	this->zItemX = (x + width) * 0.5f - 20.0f;
-	this->zItemY = (y + height) * 0.5f - 20.0f;
-	this->zItemWidth = 60.0f;
-	this->zItemHeight = 60.0f;
+	this->zItemX = (x + width) * 0.5f - 10.0f;
+	this->zItemY = (y + height) * 0.5f - 10.0f;
+	this->zItemWidth = 30.0f;
+	this->zItemHeight = 30.0f;
+	this->zItemImage = NULL;
 }
 
 CircularListGui::~CircularListGui()
@@ -25,20 +27,34 @@ CircularListGui::~CircularListGui()
 
 }
 
-bool CircularListGui::AddToRenderer(GraphicsEngine* ge, std::string itemTextureName)
+bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 {
 	GuiElement::AddToRenderer(ge);
-
-	this->zItemImage = ge->CreateImage(Vector2(this->zItemX, this->zItemY), Vector2(this->zItemWidth, this->zItemHeight), itemTextureName.c_str());
+	if (ge)
+	{
+		this->zItemImage = ge->CreateImage(Vector2(this->zItemX, this->zItemY), Vector2(this->zItemWidth, this->zItemHeight), this->zItemImageName.c_str());
+		this->ShowGui();
+		return true;
+	}
 	
 	return true;
 }
 
 bool CircularListGui::RemoveFromRenderer(GraphicsEngine* ge)
 {
-	GuiElement::RemoveFromRenderer(ge);
-	ge->DeleteImage(this->zItemImage);
-	return true;
+	if (ge)
+	{
+		GuiElement::RemoveFromRenderer(ge);
+		if (this->zGuiImage)
+		{
+			ge->DeleteImage(this->zGuiImage);
+			this->zGuiImage = 0;
+		}
+		return true;
+	}
+	
+
+	return false;
 }
 
 bool CircularListGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
@@ -54,4 +70,43 @@ bool CircularListGui::CheckCollision(float mouseX, float mouseY, bool mousePress
 		}
 	}
 	return false;
+}
+
+void CircularListGui::HideGui()
+{
+	if (this->zItemImage)
+	{
+		this->zHidden = true;
+		this->zOpacity = 0.0f;
+		this->zItemImage->SetOpacity(this->zOpacity);
+	}
+	GuiElement::HideGui();
+}
+
+void CircularListGui::ShowGui()
+{
+	if (this->zItemImage)
+	{
+		this->zHidden = false;
+		this->zOpacity = 1.0f;
+		this->zItemImage->SetOpacity(this->zOpacity);
+	}
+	GuiElement::ShowGui();
+}
+
+void CircularListGui::FadeOut(float value)
+{
+	if (this->zItemImage)
+	{
+		if (this->zOpacity > 0.0f)
+		{
+			this->zOpacity -= value;
+			this->zItemImage->SetOpacity(this->zOpacity);
+		}
+		else
+		{
+			this->HideGui();
+		}
+	}
+	GuiElement::FadeOut(value);
 }
