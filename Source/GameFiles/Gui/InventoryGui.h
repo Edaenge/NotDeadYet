@@ -6,6 +6,8 @@
 #pragma once
 
 #include "GameFiles/Gui/GuiElement.h"
+#include "GameFiles/Gui/InventorySlotGui.h"
+#include <vector>
 
 class InventoryGui : public GuiElement
 {
@@ -19,8 +21,7 @@ public:
 
 	bool CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 
-protected:
 private:
-	bool zPressed;
-	bool zHovered;
+	Vector2 zNrOfSlots;
+	std::vector<iImage*> zSlotGui;
 };

@@ -7,8 +7,9 @@
 #include "GraphicsEngine.h"
 #include "Network/ServerChannel.h"
 #include "GameFiles/Items/Inventory.h"
-#include "GameFiles/KeyUtil/KeyHandler.h"
 #include "GameFiles/Gui/InventoryGui.h"
+#include "GameFiles/KeyUtil/KeyHandler.h"
+#include "GameFiles/Gui/CircularListGui.h"
 #include "Network/NetworkMessageConverter.h"
 #include "GameFiles/ClientSide/WorldObjectManager.h"
 
@@ -81,5 +82,6 @@ private:
 	ServerChannel* zServerChannel;
 	WorldObjectManager zObjectManager;
 	NetworkMessageConverter zMsgHandler;
-	InventoryGui* zGui;
+	InventoryGui* zInvGui;
+	CircularListGui* zCircularInvGui;
 };

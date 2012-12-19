@@ -18,10 +18,12 @@ Client::Client()
 	this->zIP = "";
 	this->zPort = 0;
 	this->zEng = NULL;
+	this->zInvGui = NULL;
 	this->zRunning = true;
 	this->zCreated = false;
 	this->zFrameTime = 0.0f;
 	this->zServerChannel = NULL;
+	this->zCircularInvGui = NULL;
 	this->zKeyInfo = KeyHandler();
 	this->zKeyInfo.InitKeyBinds();
 	this->zTimeSinceLastPing = 0.0f;
@@ -57,17 +59,23 @@ Client::~Client()
 	this->Close();
 	this->WaitUntillDone();
 
-	zGui->RemoveFromRenderer(this->zEng);
-	if(this->zGui)
+	zInvGui->RemoveFromRenderer(this->zEng);
+	if(this->zInvGui)
 	{
-		delete this->zGui;
-		this->zGui = 0;
+		delete this->zInvGui;
+		this->zInvGui = 0;
+	}
+	zCircularInvGui->RemoveFromRenderer(this->zEng);
+	if(this->zCircularInvGui)
+	{
+		delete this->zCircularInvGui;
+		this->zCircularInvGui = NULL;
 	}
 
 	if(this->zServerChannel)
 	{
 		delete this->zServerChannel;
-		this->zServerChannel = 0;
+		this->zServerChannel = NULL;
 	}
 }
 
@@ -98,8 +106,12 @@ void Client::InitGraphics()
 	int x = this->zEng->GetEngineParameters()->windowHeight * 0.33f;
 	int y = this->zEng->GetEngineParameters()->windowWidth * 0.25f;
 
-	zGui = new InventoryGui(x, y, x * 1.5f, x * 1.5f, "Media/Inventory_v01.png");
-	zGui->AddToRenderer(this->zEng);
+	zInvGui = new InventoryGui(x, y, x * 1.5f, x * 1.5f, "Media/Inventory_v01.png");
+	zInvGui->AddToRenderer(this->zEng);
+	zCircularInvGui = new CircularListGui(x, y, x * 1.5f, x * 1.5f, "Media/Use_v01.png");
+	zCircularInvGui->AddToRenderer(this->zEng);
+
+	this->zEng->GetKeyListener()->SetCursorVisibility(true);
 	this->zEng->StartRendering();
 }
 
@@ -262,7 +274,7 @@ void Client::HandleKeyboardInput()
 		{
 			this->RayVsWorld();
 			this->zLootingGuiShowTimer = CIRCULAR_GUI_DISPLAY_TIMER;
-			zGui->ShowGui();
+			zInvGui->ShowGui();
 			InventoryOpen = true;
 		}
 		else
@@ -271,8 +283,8 @@ void Client::HandleKeyboardInput()
 			{
 				this->zLootingGuiShowTimer -= this->zDeltaTime;
 				float fadeValue = this->zDeltaTime / CIRCULAR_GUI_DISPLAY_TIMER;
-				this->zGui->FadeOut(fadeValue);
-
+				this->zInvGui->FadeOut(fadeValue);
+				
 				InventoryOpen = true;
 			}
 			else
@@ -280,8 +292,20 @@ void Client::HandleKeyboardInput()
 				InventoryOpen = false;
 			}
 		}
+
+		bool bOverInventory = false;
+		if (InventoryOpen)
+		{
+			Vector2 mousePosition = this->zEng->GetKeyListener()->GetMousePosition();
+			bOverInventory = this->zInvGui->CheckCollision(mousePosition.x, mousePosition.y, false, this->zEng);
+		}
 		if (this->zEng->GetKeyListener()->IsClicked(1))
 		{
+
+			if (bOverInventory)
+			{
+
+			}
 			PlayerObject* player = this->zObjectManager.GetPlayer(pos);
 			MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(player->GetEquipmentPtr()->GetWeapon());
 			if (!mWpn)

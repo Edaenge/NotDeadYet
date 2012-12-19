@@ -47,13 +47,14 @@ public:
 	void FadeOut(float value);
 
 protected:
-private:
 	float zX;
 	float zY;
 	float zWidth;
+	bool zHidden;
+	bool zPressed;
+	bool zHovered;
 	float zHeight;
 	float zOpacity;
-	bool zHidden;
 	iImage* zGuiImage;
 	std::string zTextureName;
 };

@@ -5,8 +5,8 @@
 #pragma once
 
 #include "GameFiles/AnimationStates.h"
-#include "GameFiles/ClientSide/OrganicObject.h"
 #include "GameFiles/Items/Equipment.h"
+#include "GameFiles/ClientSide/OrganicObject.h"
 
 //Keeps track of player Info
 class PlayerObject : public OrganicObject
@@ -27,6 +27,7 @@ public:
 	virtual void Update(float deltaTime);
 	/*! Returns a Pointer to the players Equipment*/
 	Equipment* GetEquipmentPtr() const {return this->zEquipment;};
+	void SetEquipment(Equipment* eq) {this->zEquipment = eq;}
 private:
 	float zHunger;
 	float zStamina;
