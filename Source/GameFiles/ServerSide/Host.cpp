@@ -589,7 +589,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	}
 
 	if(uModel != "")
-		pi->SetPlayerModel(uModel);
+		pi->SetActorModel(uModel);
 
 	pi->SetUpVector(uUp);
 	pi->SetDirection(uDir);

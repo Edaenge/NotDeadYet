@@ -25,10 +25,11 @@ extern "C"
 {
 	class DECLDIR iMesh
 	{	
-	public:
-		iMesh() {};
+	protected:
 		virtual ~iMesh() {};
+		iMesh() {};
 
+	public:
 		// Special Color
 		virtual void SetSpecialColor(COLOR specialColor) = 0;
 		virtual COLOR GetSpecialColor() const = 0;
@@ -41,6 +42,8 @@ extern "C"
 		virtual void RotateAxis(const Vector3& around, float angle) = 0;
 		virtual void Scale(const Vector3& scale) = 0;
 		virtual void Scale(float scale) = 0;
+		virtual void SetScale(float scale) = 0;
+		virtual void SetScale(Vector3 scale) = 0;
 		virtual Vector3 GetPosition() const = 0;
 		virtual Vector4 GetRotationQuaternion() const = 0;
 		virtual Vector3 GetScaling() const = 0;

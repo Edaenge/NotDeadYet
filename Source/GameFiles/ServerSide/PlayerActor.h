@@ -6,8 +6,12 @@ for project desperation* at Blekinge tekniska högskola.
 #pragma once
 
 #include "GameFiles/ServerSide/BioActor.h"
+#include "GameFiles/ServerSide/FoodObject.h"
+#include "GameFiles/ServerSide/WeaponObject.h"
+#include "GameFiles/ServerSide/DynamicObjectActor.h"
 #include "GameFiles/KeyUtil/KeyValues.h"
 #include "GameFiles/KeyUtil/KeyStates.h"
+#include "Items/Inventory.h"
 
 
 /*This class is used to save player information such as position and states.
@@ -27,6 +31,12 @@ public:
 
 	/*! Updates players pos, states etc.*/
 	void Update(float deltaTime);
+	/*! Picks up an object and transform it to an item and adds it to the inventory.
+		Genuine actors: StaticObjectActor, DynamicObjectActor.
+		This function DO NOT deallocates the Actor object.
+	*/
+	bool PickUpObject(StaticObjectActor* object);
+	bool PickUpObject(DynamicObjectActor* object);
 
 	float GetLatency() const {return this->zLatency;}
 	inline float GetFrameTime() const {return this->zFrameTime;}
@@ -57,6 +67,7 @@ private:
 	float	zHunger;
 	float	zHydration;
 
-	std::string zPlayerModel;
 	KeyStates zKeyStates;
+
+	Inventory* zInventory;
 };

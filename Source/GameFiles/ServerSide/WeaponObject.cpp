@@ -21,6 +21,8 @@ WeaponObject::WeaponObject( const WeaponData* data ) : StaticObjectActor()
 		this->zWeight = data->zWeight;
 		this->zDamage = data->zDamage;
 		this->zRange = data->zRange;
+		this->zActorModel = data->zModel;
+		this->zActorObjectName = data->zObjName;
 	}
 }
 

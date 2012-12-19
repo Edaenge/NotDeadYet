@@ -5,7 +5,10 @@
 
 #pragma once
 
-#include "GameFiles/Items/Item.h"
+#include "GameFiles/Items/RangedWeapon.h"
+#include "GameFiles/Items/MeleeWeapon.h"
+#include "GameFiles/Items/Gear.h"
+#include "GameFiles/Items/Food.h"
 #include <vector>
 #include "Array.h"
 

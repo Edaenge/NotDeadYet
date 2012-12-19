@@ -1,9 +1,10 @@
-//--------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
 //
-//	Written by Markus Tillman for project "Not dead yet" at Blekinga Tekniska Högskola.
-//	//**TODO:implement**
-//--------------------------------------------------------------------------------------
-//#include "stdafx.fx"
+//	Written by Markus Tillman for project "Not dead yet" at Blekinge Tekniska Högskola.
+//	
+//	This shader renders geometry (deferred with 4 GBuffers) with up to 4 textures(blendmap).
+//-----------------------------------------------------------------------------------------
+#include "stdafx.fx"
 
 //-----------------------------------------------------------------------------------------
 //	Global variables (non-numeric values cannot be added to a constantbuffer.)
@@ -12,28 +13,28 @@
 Texture2D tex1; //R-channel in blendmap. ex: grass
 Texture2D tex2; //G-channel in blendmap. ex: dirt
 Texture2D tex3; //B-channel in blendmap. ex: leaves
+Texture2D tex4; //A-channel in blendmap. ex: footprints?**TILLMAN**
 Texture2D<float4> blendMap;
 //Texture2D tex4; //**extra, ex: blood, footprints**
 
 //-----------------------------------------------------------------------------------------
 // Constant buffers
 //-----------------------------------------------------------------------------------------
-cbuffer PerFrame
-{
-	float4 cameraPosition;
-};
 cbuffer PerObject
 {
+	//Matrices
 	matrix	WVP;
 	matrix	worldMatrix;
 	matrix	worldMatrixInverseTranspose;
 
+	//Texture
 	bool	textured;
-	
+	float	texScale;
+
+	//Material
 	float	specularPower;
-	float4	specularColor;
-	float4	diffuseColor;
-	float4	ambientLight;
+	float3	specularColor;
+	float3	diffuseColor;
 };
 
 //-----------------------------------------------------------------------------------------
@@ -41,20 +42,20 @@ cbuffer PerObject
 //-----------------------------------------------------------------------------------------
 struct VSIn
 {
-	float4 pos		: POSITION; //3 används**
+	float3 pos		: POSITION;
 	float2 tex		: TEXCOORD;
 	float3 norm		: NORMAL;
-	float4 color	: COLOR; //3 anv'nds**
+	float3 color	: COLOR;
 };
 
 struct PSSceneIn
 {
-	float4 pos		: SV_POSITION;
+	float4 pos		: SV_POSITION; 
 	float2 tex		: TEXCOORD;
 	float3 norm		: NORMAL;
-	float4 color	: COLOR;
+	float3 color	: COLOR;
 
-	float4 posW		: POSITION;	//world position
+	float4 posW		: POSITION;	//world position 
 };
 
 struct PSOut			
@@ -66,37 +67,18 @@ struct PSOut
 };
 
 
-//-----------------------------------------------------------------------------------------
-// **states tmp**
-//-----------------------------------------------------------------------------------------
-RasterizerState BackCulling
-{
-	CullMode = Back;
-};
-SamplerState LinearWrapSampler
-{
-	Filter = MIN_MAG_MIP_LINEAR; 
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
-DepthStencilState EnableDepth
-{
-    DepthEnable = TRUE;
-    DepthWriteMask = ALL;
-    DepthFunc = LESS_EQUAL;
-};
 
 //-----------------------------------------------------------------------------------------
 // VertexShader: VSScene
 //-----------------------------------------------------------------------------------------
 PSSceneIn VSScene(VSIn input)
 {
-	input.color.w = 1.0f;
-	input.pos.w = 1.0f;
+	//input.color.w = 1.0f;
+	//input.pos.w = 1.0f; //**
 
 	PSSceneIn output = (PSSceneIn)0;
-	output.pos = mul(input.pos, WVP);
-	output.posW = mul(input.pos, worldMatrix);
+	output.pos = mul(float4(input.pos, 1.0f), WVP);
+	output.posW = mul(float4(input.pos, 1.0f), worldMatrix);
 	output.tex = input.tex;
 	output.norm = normalize(mul(input.norm, (float3x3)worldMatrixInverseTranspose));
 	output.color = input.color;
@@ -119,39 +101,42 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 		//finalColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb; //Debug
 		
 		//Sample textures
-		float3 tex1Color  = tex1.Sample(LinearWrapSampler, input.tex).rgb; 
-		float3 tex2Color = tex2.Sample(LinearWrapSampler, input.tex).rgb;
-		float3 tex3Color = tex3.Sample(LinearWrapSampler, input.tex).rgb;
-		float3 blendMapColor = blendMap.Sample(LinearWrapSampler, input.tex).rgb;
+		float2 texCoord = input.tex * texScale;
+		float3 tex1Color = tex1.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+		float3 tex2Color = tex2.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+		float3 tex3Color = tex3.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+		float3 tex4Color = tex4.Sample(LinearWrapSampler, texCoord).rgb; //**tillman opti, FORMAT = RGB och inte A**
+		float4 blendMapColor = normalize(blendMap.Sample(LinearWrapSampler, input.tex)); //normalize
 
 		//Inverse of all blend weights to scale final color to be in range [0,1]
-		float inverseTotal = 1.0f / (blendMapColor.r + blendMapColor.g + blendMapColor.b);
+		float inverseTotal = 1.0f / (blendMapColor.r + blendMapColor.g + blendMapColor.b + blendMapColor.a);
 
 		//Scale color for each texture by the weight in the blendmap and scale to [0,1]
 		tex1Color *= blendMapColor.r * inverseTotal;
 		tex2Color *= blendMapColor.g * inverseTotal;
 		tex3Color *= blendMapColor.b * inverseTotal;
+		tex4Color *= blendMapColor.a * inverseTotal;
 
-		//Blendmapped color
-		finalColor = (tex1Color + tex2Color + tex3Color) * diffuseColor.rgb;
+		//Blendmapped color (normalize it)
+		finalColor = (tex1Color + tex2Color + tex3Color + tex4Color) * diffuseColor.rgb;
 	}
 	else
 	{
-		finalColor = input.color.rgb; //Geometry color
+		finalColor = input.color; //Geometry color
 	}
 	output.Texture.xyz = finalColor;
 	output.Texture.w = -1.0f;
 
 	//NormalAndDepth RT
 	output.NormalAndDepth = float4(input.norm.xyz, input.pos.z / input.pos.w);	
-	float depth = length(cameraPosition.xyz - input.posW.xyz) / 200.0f;		// Haxfix
+	float depth = length(CameraPosition.xyz - input.posW.xyz) / 200.0f;		// Haxfix
 	output.NormalAndDepth.w = depth;
 
 	//Position RT
 	output.Position = input.posW;
 	
 	//Specular RT
-	output.Specular = specularColor;
+	output.Specular.xyz = specularColor;
 	output.Specular.w = specularPower;
 
 	return output;

@@ -35,6 +35,12 @@
     <Filter Include="Game Files\Items">
       <UniqueIdentifier>{84d54727-12de-4411-907d-382ca95e5889}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Files\Gui">
+      <UniqueIdentifier>{6fc4c0f3-de69-4f6f-af99-2d8abe327f17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PhysicsEngine">
+      <UniqueIdentifier>{77c34bd0-07a8-4c50-b54d-e15f2bcff13c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\main.cpp">
@@ -156,6 +162,30 @@
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\ServerSide\ActorHandler.cpp">
       <Filter>Game Files\ServerSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Items\Food.cpp">
+      <Filter>Game Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Gui\CircularListGui.cpp">
+      <Filter>Game Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Gui\GuiElement.cpp">
+      <Filter>Game Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Gui\InventoryGui.cpp">
+      <Filter>Game Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PhysicsEngine\ObjLoader.cpp">
+      <Filter>PhysicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PhysicsEngine\Physics.cpp">
+      <Filter>PhysicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PhysicsEngine\PhysicsEngine.cpp">
+      <Filter>PhysicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PhysicsEngine\PhysicsObject.cpp">
+      <Filter>PhysicsEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -353,6 +383,30 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ServerSide\DynamicObjectActor.h">
       <Filter>Game Files\ServerSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Items\Food.h">
+      <Filter>Game Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Gui\CircularListGui.h">
+      <Filter>Game Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Gui\GuiElement.h">
+      <Filter>Game Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Gui\InventoryGui.h">
+      <Filter>Game Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\PhysicsEngine\ObjLoader.h">
+      <Filter>PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\PhysicsEngine\Physics.h">
+      <Filter>PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\PhysicsEngine\PhysicsEngine.h">
+      <Filter>PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\PhysicsEngine\PhysicsObject.h">
+      <Filter>PhysicsEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

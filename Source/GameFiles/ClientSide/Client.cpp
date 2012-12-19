@@ -18,16 +18,18 @@ Client::Client()
 	this->zIP = "";
 	this->zPort = 0;
 	this->zEng = NULL;
+	this->zInvGui = NULL;
 	this->zRunning = true;
 	this->zCreated = false;
 	this->zFrameTime = 0.0f;
 	this->zServerChannel = NULL;
-	this->zCircularGuiShowTimer = 0.0f;
+	this->zCircularInvGui = NULL;
 	this->zKeyInfo = KeyHandler();
 	this->zKeyInfo.InitKeyBinds();
 	this->zTimeSinceLastPing = 0.0f;
 	this->zMeshID = "Media/scale.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
+	this->zLootingGuiShowTimer = 0.0f;
 	this->zMsgHandler = NetworkMessageConverter();
 
 	INT64 frequency;
@@ -57,10 +59,23 @@ Client::~Client()
 	this->Close();
 	this->WaitUntillDone();
 
+	zInvGui->RemoveFromRenderer(this->zEng);
+	if(this->zInvGui)
+	{
+		delete this->zInvGui;
+		this->zInvGui = 0;
+	}
+	zCircularInvGui->RemoveFromRenderer(this->zEng);
+	if(this->zCircularInvGui)
+	{
+		delete this->zCircularInvGui;
+		this->zCircularInvGui = NULL;
+	}
+
 	if(this->zServerChannel)
 	{
 		delete this->zServerChannel;
-		this->zServerChannel = 0;
+		this->zServerChannel = NULL;
 	}
 }
 
@@ -88,6 +103,15 @@ void Client::InitGraphics()
 	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
 	this->zEng->GetCamera()->LookAt( Vector3(0, 0, 0) );
 
+	int x = this->zEng->GetEngineParameters()->windowHeight * 0.33f;
+	int y = this->zEng->GetEngineParameters()->windowWidth * 0.25f;
+
+	zInvGui = new InventoryGui(x, y, x * 1.5f, x * 1.5f, "Media/Inventory_v01.png");
+	zInvGui->AddToRenderer(this->zEng);
+	zCircularInvGui = new CircularListGui(x, y, x * 1.5f, x * 1.5f, "Media/Use_v01.png");
+	zCircularInvGui->AddToRenderer(this->zEng);
+
+	this->zEng->GetKeyListener()->SetCursorVisibility(true);
 	this->zEng->StartRendering();
 }
 
@@ -108,13 +132,21 @@ void Client::Life()
 		this->zSendUpdateDelayTimer += this->zDeltaTime;
 		this->zTimeSinceLastPing += this->zDeltaTime;
 
-		this->HandleKeyboardInput();
-		if (this->stayAlive)
+		if(this->zCreated)
 		{
+			this->HandleKeyboardInput();
+
+			if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
+			{
+				this->zSendUpdateDelayTimer = 0.0f;
+				this->SendClientUpdate();
+			}
 			this->UpdateCameraPos();
 
 			this->UpdateWorldObjects();
-			
+		}
+		if (this->stayAlive)
+		{
 			if (MaloW::ProcessEvent* ev = this->PeekEvent())
 			{
 				//Check if Client has received a Message
@@ -133,14 +165,6 @@ void Client::Life()
 			{
 				MaloW::Debug("Timeout From Server");
 				//Print a Timeout Message to Client
-			}
-			if(this->zCreated)
-			{
-				if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
-				{
-					this->zSendUpdateDelayTimer = 0.0f;
-					this->SendClientUpdate();
-				}
 			}
 			Sleep(5);
 		}
@@ -226,7 +250,7 @@ bool Client::CheckKey(const unsigned int ID)
 void Client::HandleKeyboardInput()
 {
 	bool pressed = false;
-	
+	bool InventoryOpen = false;
 	int pos = this->zObjectManager.SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
 	if (pos != -1)
 	{
@@ -249,13 +273,51 @@ void Client::HandleKeyboardInput()
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
 		{
 			this->RayVsWorld();
-			this->zCircularGuiShowTimer = CIRCULAR_GUI_DISPLAY_TIMER;
+			this->zLootingGuiShowTimer = CIRCULAR_GUI_DISPLAY_TIMER;
+			zInvGui->ShowGui();
+			InventoryOpen = true;
 		}
 		else
 		{
-			if (this->zCircularGuiShowTimer > 0.0f)
+			if (this->zLootingGuiShowTimer > 0.0f)
 			{
-				this->zCircularGuiShowTimer -= this->zDeltaTime;
+				this->zLootingGuiShowTimer -= this->zDeltaTime;
+				float fadeValue = this->zDeltaTime / CIRCULAR_GUI_DISPLAY_TIMER;
+				this->zInvGui->FadeOut(fadeValue);
+				
+				InventoryOpen = true;
+			}
+			else
+			{
+				InventoryOpen = false;
+			}
+		}
+
+		bool bOverInventory = false;
+		if (InventoryOpen)
+		{
+			Vector2 mousePosition = this->zEng->GetKeyListener()->GetMousePosition();
+			bOverInventory = this->zInvGui->CheckCollision(mousePosition.x, mousePosition.y, false, this->zEng);
+		}
+		if (this->zEng->GetKeyListener()->IsClicked(1))
+		{
+
+			if (bOverInventory)
+			{
+
+			}
+			PlayerObject* player = this->zObjectManager.GetPlayer(pos);
+			MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(player->GetEquipmentPtr()->GetWeapon());
+			if (!mWpn)
+			{
+				RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(player->GetEquipmentPtr()->GetWeapon());
+				if (rWpn)
+				{
+				}
+			}
+			else
+			{
+
 			}
 		}
 	}
@@ -263,6 +325,7 @@ void Client::HandleKeyboardInput()
 	{
 		MaloW::Debug("Something Went Wrong. This player cannot be found. In function Client::HandleKeyBoardInput");
 	}
+
 
 	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 	{
@@ -414,6 +477,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	unsigned int itemType = -1;
 	float weaponDamage;
 	float weaponRange;
+	float hunger;
 	char key[256];
 	for(unsigned int i = 1; i < msgArray.size(); i++)
 	{
@@ -439,6 +503,10 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		{
 			weaponRange = this->zMsgHandler.ConvertStringToFloat(M_WEAPON_RANGE, msgArray[i]);
 		}
+		else if(strcmp(key, M_HUNGER.c_str()) == 0)
+		{
+			hunger = this->zMsgHandler.ConvertStringToFloat(M_HUNGER, msgArray[i]);
+		}
 		if (itemType == -1)
 		{
 			MaloW::Debug("Wrong or no Item Type sent from server in Client::HandleAddInventoryItem ItemType: " + MaloW::convertNrToString(itemType));
@@ -449,7 +517,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		switch (itemType)
 		{
 		case ITEM_TYPE_FOOD_MEAT:
-
+			item = new Food(id, itemWeight, itemName, itemType, hunger);
 			break;
 		case ITEM_TYPE_WEAPON_RANGED_BOW:
 			item = new RangedWeapon(id, itemWeight, itemName, itemType, weaponDamage, weaponRange);

@@ -26,7 +26,11 @@
     <ClCompile Include="..\Source\GameFiles\ClientSide\WorldObjectManager.cpp" />
     <ClCompile Include="..\Source\GameFiles\Game.cpp" />
     <ClCompile Include="..\Source\GameFiles\Graphics.cpp" />
+    <ClCompile Include="..\Source\GameFiles\Gui\CircularListGui.cpp" />
+    <ClCompile Include="..\Source\GameFiles\Gui\GuiElement.cpp" />
+    <ClCompile Include="..\Source\GameFiles\Gui\InventoryGui.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Equipment.cpp" />
+    <ClCompile Include="..\Source\GameFiles\Items\Food.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Gear.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Inventory.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Item.cpp" />
@@ -56,6 +60,10 @@
     <ClCompile Include="..\Source\Network\NetworkServer.cpp" />
     <ClCompile Include="..\Source\Network\ServerChannel.cpp" />
     <ClCompile Include="..\Source\Network\ServerListener.cpp" />
+    <ClCompile Include="..\Source\PhysicsEngine\ObjLoader.cpp" />
+    <ClCompile Include="..\Source\PhysicsEngine\Physics.cpp" />
+    <ClCompile Include="..\Source\PhysicsEngine\PhysicsEngine.cpp" />
+    <ClCompile Include="..\Source\PhysicsEngine\PhysicsObject.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundEffect.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundEngine.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundSong.cpp" />
@@ -83,7 +91,11 @@
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObjectManager.h" />
     <ClInclude Include="..\Source\GameFiles\Game.h" />
     <ClInclude Include="..\Source\GameFiles\Graphics.h" />
+    <ClInclude Include="..\Source\GameFiles\Gui\CircularListGui.h" />
+    <ClInclude Include="..\Source\GameFiles\Gui\GuiElement.h" />
+    <ClInclude Include="..\Source\GameFiles\Gui\InventoryGui.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Equipment.h" />
+    <ClInclude Include="..\Source\GameFiles\Items\Food.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Gear.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Inventory.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Item.h" />
@@ -122,6 +134,10 @@
     <ClInclude Include="..\Source\Network\ServerChannel.h" />
     <ClInclude Include="..\Source\Network\ServerListener.h" />
     <ClInclude Include="..\Source\Network\Winsock.h" />
+    <ClInclude Include="..\Source\PhysicsEngine\ObjLoader.h" />
+    <ClInclude Include="..\Source\PhysicsEngine\Physics.h" />
+    <ClInclude Include="..\Source\PhysicsEngine\PhysicsEngine.h" />
+    <ClInclude Include="..\Source\PhysicsEngine\PhysicsObject.h" />
     <ClInclude Include="..\Source\SoundEngine\fmod.h" />
     <ClInclude Include="..\Source\SoundEngine\SoundEffect.h" />
     <ClInclude Include="..\Source\SoundEngine\SoundEngine.h" />

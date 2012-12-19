@@ -25,7 +25,6 @@ public:
 	Item(const int id, const unsigned int itemType);
 	Item(const unsigned int id, const unsigned int weight, const std::string& name, const unsigned int itemType);
 	virtual ~Item(){}
-	void InitValues(const unsigned int id = 0, const unsigned int itemType = 0, const unsigned int weight = 0, const std::string& name = "Unknown");
 	/*! Returns Item ID*/
 	inline int GetID() const {return this->zID;}
 	/*! Returns the Item Weight*/
@@ -36,6 +35,9 @@ public:
 	void SetWeight(const unsigned int weight) {this->zWeight = weight;}
 
 	virtual void Use() = 0;
+
+private:
+	void InitValues(const unsigned int id = 0, const unsigned int itemType = 0, const unsigned int weight = 0, const std::string& name = "Unknown");
 private:
 	unsigned int zID;
 	unsigned int zWeight;

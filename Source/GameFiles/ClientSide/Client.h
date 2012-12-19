@@ -6,7 +6,10 @@
 #include "Process.h"
 #include "GraphicsEngine.h"
 #include "Network/ServerChannel.h"
+#include "GameFiles/Items/Inventory.h"
+#include "GameFiles/Gui/InventoryGui.h"
 #include "GameFiles/KeyUtil/KeyHandler.h"
+#include "GameFiles/Gui/CircularListGui.h"
 #include "Network/NetworkMessageConverter.h"
 #include "GameFiles/ClientSide/WorldObjectManager.h"
 
@@ -75,8 +78,10 @@ private:
 	float zTimeSinceLastPing;
 	/*! Counters*/
 	float zSendUpdateDelayTimer;
-	float zCircularGuiShowTimer;
+	float zLootingGuiShowTimer;
 	ServerChannel* zServerChannel;
 	WorldObjectManager zObjectManager;
 	NetworkMessageConverter zMsgHandler;
+	InventoryGui* zInvGui;
+	CircularListGui* zCircularInvGui;
 };

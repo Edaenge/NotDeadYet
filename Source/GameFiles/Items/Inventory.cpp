@@ -39,7 +39,7 @@ bool Inventory::AddItem(Item* item)
 	if(this->zWeightTotal + weight <= this->zInventoryCap)
 	{
 		this->zWeightTotal += weight;
-		for (int i = 0; i < weight - 1; i++)
+		for (unsigned int i = 0; i < weight - 1; i++)
 		{
 			zInventorySlotBlocked[this->zSlotsAvailable-1] = true;
 
@@ -71,7 +71,7 @@ Item* Inventory::GetItem(const unsigned int position) const
 
 int Inventory::Search(const unsigned int ID) const
 {
-	for (int i = 0; i < this->zItems.size(); i++)
+	for (unsigned int i = 0; i < this->zItems.size(); i++)
 	{
 		Item* temp = this->zItems[i];
 		if (temp)
@@ -90,7 +90,7 @@ bool Inventory::RemoveItem(const unsigned int position)
 		int weight = GetItem(position)->GetWeight();
 		this->zWeightTotal -= weight;
 
-		for (int i = 0; i < weight - 1; i++)
+		for (unsigned int i = 0; i < weight - 1; i++)
 		{
 			this->zInventorySlotBlocked[zSlotsAvailable++] = false;
 		}

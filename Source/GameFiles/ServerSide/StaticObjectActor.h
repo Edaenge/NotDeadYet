@@ -8,19 +8,20 @@ for project desperation* at Blekinge tekniska högskola.
 #include "GameFiles/ServerSide/Actor.h"
 #include <vector>
 
+/*Class for Static objects, such as Food, Weapons basically things that cannot move.*/
 class StaticObjectActor : public Actor
 {
 public:
-	StaticObjectActor();
-	StaticObjectActor(const std::string& meshModel);
+	StaticObjectActor(bool genID = true);
+	StaticObjectActor(const std::string& meshModel, bool genID = true);
 	virtual ~StaticObjectActor();
 	
 	virtual void Update(float deltaTime){};
 
 	int GetWeight() const {return this->zWeight;}
+	int GetType() const {return this->zType;}
 
 protected:
-	std::string zMeshModel;
 	int zWeight;
 	int zType;
 

@@ -5,12 +5,29 @@
 
 // Edit 2012-11-18 by Alexivan - Removed DX dependencies
 // Edit 2012-11-23 by Alexivan - Added DX Conversions
+// EDIT 2012-12-17 by Tillman - Added GetD3DXVECTORX and Union & []-operator overloading.
+// EDIT 2012-12-18 by Alexivan - Warning Ignore for nameless struct in union
+// EDIT 2012-12-18 by Alexivan - GetLength function made constant
+// EDIT 2012-12-19 by Alexivan - Added Less Than Comparison, Removed Destructors
+// EDIT 2012-12-19 by Alexivan - Removed Destructors, Fixed GetRotated, Normalize with big N, Made some functions constant
+
+#pragma warning ( push ) 
+#pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
+#pragma warning ( disable : 4290 ) // C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
 
 class Vector2
 {
 public:
-	float x;
-	float y;
+	union
+	{
+		//the variable "values" and x and y share the same memory
+		float values[2];
+		struct
+		{
+			float x; //values[0]
+			float y; //values[1]
+		};
+	};
 
 	Vector2()
 	{
@@ -24,28 +41,68 @@ public:
 		this->y = _y;
 	}
 
-	virtual ~Vector2() {}
-
-	float GetLength()
+	float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2));
 	}
 
-	void normalize()
+	void Normalize()
 	{
 		float length = this->GetLength();
 		this->x /= length;
 		this->y /= length;
 	}
+
+	inline bool operator<( const Vector2& v ) const
+	{
+		return ( x < v.x || y < v.y );
+	}
+
+	inline Vector2 operator-( const Vector2& v ) const
+	{
+		return Vector2( x - v.x, y - v.y );
+	}
+
+	inline Vector2 operator+( const Vector2& v ) const
+	{
+		return Vector2( x + v.x, y + v.y );
+	}
+
+	inline float& operator[]( unsigned int i ) throw(const char*)
+	{
+		if(i > 1)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+
+	inline const float& operator[]( unsigned int i ) const
+	{
+		if(i > 1)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+
 };
 
 
 class Vector3
 {
 public:
-	float x;
-	float y;
-	float z;
+	union
+	{
+		//the variable "values" and x,y and z share the same memory
+		float values[3];
+		struct
+		{
+			float x; //values[0]
+			float y; //values[1]
+			float z; //values[2]
+		};
+	};
 
 	Vector3()
 	{
@@ -61,14 +118,12 @@ public:
 		this->z = _z;
 	}
 
-	virtual ~Vector3() {}
-
-	float GetLength()
+	inline float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
 	}
 
-	void normalize()
+	inline void Normalize()
 	{
 		float length = this->GetLength();
 			
@@ -80,7 +135,7 @@ public:
 		}
 	}
 
-	float GetDotProduct(Vector3& compObj)
+	inline float GetDotProduct(Vector3& compObj) const
 	{
 		float dot = this->x * compObj.x;
 		dot += this->y * compObj.y;
@@ -88,7 +143,7 @@ public:
 		return dot;
 	}
 
-	Vector3 GetCrossProduct(Vector3 vec)
+	inline Vector3 GetCrossProduct(Vector3 vec) const
 	{
 		Vector3 retVec;
 		retVec.x = this->y * vec.z - vec.y * this->z;
@@ -98,71 +153,106 @@ public:
 		return retVec;
 	}
 
-	float GetAngle(Vector3& compObj)
+	inline float GetAngle(Vector3& compObj)
 	{
 		return acos(this->GetDotProduct(compObj) / (this->GetLength() * compObj.GetLength()));
 	}
 	// new for physics
 		
-	Vector3 operator+(const Vector3& v) const
+	inline Vector3 operator+(const Vector3& v) const
     {
         return Vector3(this->x+v.x, this->y+v.y, this->z+v.z);
     }
-	Vector3 operator-(const Vector3& v) const
+
+	inline Vector3 operator-(const Vector3& v) const
 	{
 		return Vector3(this->x-v.x, this->y-v.y, this->z-v.z);
 	}
-	Vector3 operator*(const float& scalar) const
+
+	inline Vector3 operator*(const float& scalar) const
 	{
 		return Vector3(this->x*scalar, this->y*scalar, this->z*scalar);
 	}
-	Vector3 operator/(const float& scalar) const
+
+	inline Vector3 operator/(const float& scalar) const
 	{
 		return Vector3(this->x/scalar, this->y/scalar, this->z/scalar);
 	}
-	void operator+=(const Vector3& v)
+
+	inline void operator+=(const Vector3& v)
     {
         x += v.x;
         y += v.y;
         z += v.z;
     }
-	void operator-=(const Vector3& v)
+
+	inline void operator-=(const Vector3& v)
     {
         x -= v.x;
         y -= v.y;
         z -= v.z;
     }
-	void operator*=(const float scalar)
+
+	inline void operator*=(const float scalar)
     {
         x *= scalar;
         y *= scalar;
         z *= scalar;
     }
-	float GetLengthSquared()
+
+	inline float GetLengthSquared()
 	{
 		return this->GetDotProduct(*this);
 	}
-	Vector3 GetComponentMultiplication(const Vector3 & compVec)
+
+	inline Vector3 GetComponentMultiplication(const Vector3 & compVec)
 	{
 		return Vector3(this->x*compVec.x, this->y*compVec.y, this->z*compVec.z);
 	}
-	void RotateY(float angle)
+
+	inline void RotateY(float angle)
 	{
 		Vector3 vec = *this;
 		vec.x = cos(angle) * this->x + sin(angle) * this->z;
 		vec.z = -sin(angle) * this->x + cos(angle) * this->z;
 		*this = vec;
 	}
-	Vector3 GetRoteted(float angle)
+
+	inline Vector3 GetRotated(float angle) const
 	{
 		Vector3 vec = *this;
 		vec.RotateY(angle);
 		return vec;
 	}
-	Vector3 GetInverseComponents()
+
+	inline Vector3 GetInverseComponents() const
 	{
 		return Vector3(1.0f/this->x, 1.0f/this->y, 1.0f/this->z);
 	}
+
+	inline bool operator<( const Vector3& v ) const
+	{
+		return ( x < v.x || y < v.y || z < v.z );
+	}
+
+	inline float& operator[]( unsigned int i ) throw(const char*)
+	{
+		if(i > 2)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+
+	inline const float& operator[]( unsigned int i ) const
+	{
+		if(i > 2)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+
 #ifdef D3DVECTOR_DEFINED
 	operator D3DXVECTOR3 () const { return D3DXVECTOR3(x,y,z); }
 #endif
@@ -172,11 +262,68 @@ public:
 class Vector4
 {
 public:
-	float x,y,z,w;
+	union
+	{
+		//the variable "values" and x,y,z and w share the same memory
+		float values[4];
+		struct
+		{
+			float x; //values[0]
+			float y; //values[1]
+			float z; //values[2]
+			float w; //values[3]
+		};
+	};
 
 	Vector4(float _x=0.0f, float _y=0.0f, float _z=0.0f, float _w=0.0f) : x(_x), y(_y), z(_z), w(_w)
 	{
 
+	}
+
+	inline float GetLength() const
+	{
+		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2) + pow(this->w, 2));
+	}
+
+	inline Vector4 operator+(const Vector4& v) const
+	{
+		return Vector4(this->x+v.x, this->y+v.y, this->z+v.z, this->w+v.w);
+	}
+
+	inline void Normalize()
+	{
+		float length = this->GetLength();
+
+		if(length > 0.0f)
+		{
+			this->x /= length;
+			this->y /= length;
+			this->z /= length;
+			this->w /= length;
+		}
+	}
+
+	inline bool operator<( const Vector4& v ) const
+	{
+		return ( x < v.x || y < v.y || z < v.z || w < v.w );
+	}
+
+	inline float& operator[]( unsigned int i ) throw(const char*)
+	{
+		if(i > 3)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
+	}
+
+	inline const float& operator[]( unsigned int i ) const
+	{
+		if(i > 3)
+		{
+			throw("index out of bounds");
+		}
+		return values[i];
 	}
 
 #ifdef D3DVECTOR_DEFINED
@@ -184,5 +331,6 @@ public:
 #endif
 };
 
+#pragma warning (pop)
 
 #endif
