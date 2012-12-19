@@ -300,9 +300,6 @@
     <ClInclude Include="..\Source\GameFiles\ServerSide\BioActor.h">
       <Filter>Game Files\ServerSide</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\AnimalHandler.h">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\gamefiles\clientside\DynamicObject.h">
       <Filter>Game Files\ClientSide</Filter>
     </ClInclude>
@@ -352,6 +349,9 @@
       <Filter>Game Files\ServerSide</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ServerSide\ActorHandler.h">
+      <Filter>Game Files\ServerSide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ServerSide\DynamicObjectActor.h">
       <Filter>Game Files\ServerSide</Filter>
     </ClInclude>
   </ItemGroup>

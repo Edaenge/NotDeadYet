@@ -100,8 +100,8 @@
     <ClInclude Include="..\Source\GameFiles\ServerSide\Actor.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\ActorHandler.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\AnimalActor.h" />
-    <ClInclude Include="..\Source\GameFiles\ServerSide\AnimalHandler.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\BioActor.h" />
+    <ClInclude Include="..\Source\GameFiles\ServerSide\DynamicObjectActor.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\FoodObject.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\Host.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\ObjectManager.h" />
