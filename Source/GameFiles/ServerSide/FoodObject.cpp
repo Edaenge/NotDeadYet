@@ -18,8 +18,9 @@ FoodObject::FoodObject( const FoodData* data ) : StaticObjectActor()
 	{
 		this->zHunger = data->zHunger;
 		this->zWeight = data->zWeight;
-		this->zMeshModel = data->zModel;
+		this->zActorModel = data->zModel;
 		this->zType = data->zType;
+		this->zActorObjectName = data->zObjName;
 	}
 }
 

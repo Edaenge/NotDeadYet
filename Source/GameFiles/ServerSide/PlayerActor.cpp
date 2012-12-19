@@ -3,19 +3,19 @@
 PlayerActor::PlayerActor( const int ID ) : BioActor()
 {
 	InitValues();
-	this->zID = ID;
+	this->SetID(ID);
 }
 
 PlayerActor::PlayerActor( const int ID, const Vector3& startPos ) : BioActor(startPos)
 {
 	InitValues();
-	this->zID = ID;
+	this->SetID(ID);
 }
 
 PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& startRot ) : BioActor(startPos, startRot)
 {
 	InitValues();
-	this->zID = ID;
+	this->SetID(ID);
 }
 
 void PlayerActor::InitValues()
@@ -24,11 +24,12 @@ void PlayerActor::InitValues()
 	this->zLatency = 0.0f;
 	this->zHunger = 100.0f;
 	this->zHydration = 100.0f;
+	this->zInventory = new Inventory();
 }
 
 PlayerActor::~PlayerActor()
 {
-
+	SAFE_DELETE(zInventory);
 }
 
 void PlayerActor::Update(float deltaTime)
@@ -93,4 +94,76 @@ void PlayerActor::Update(float deltaTime)
 		if(this->zStamina > this->zStaminaMax)
 			this->zStamina = this->zStaminaMax;
 	}
+}
+
+bool PlayerActor::PickUpObject( DynamicObjectActor* object )
+{
+	//Not yet implemented
+	return false;
+}
+
+bool PlayerActor::PickUpObject( StaticObjectActor* object )
+{
+	FoodObject* fo		= NULL;
+	WeaponObject* wo	= NULL;
+	Item* item			= NULL; 
+
+	fo = dynamic_cast<FoodObject*>(object);
+	if(fo)
+	{
+		item = new Food(fo->GetID(), fo->GetWeight(), fo->GetActorObjectName(), fo->GetType(), fo->GetHunger());
+		
+		if(!this->zInventory->AddItem(item))
+		{
+			SAFE_DELETE(item);
+			return false;
+		}
+
+		return true;
+	}
+	
+	wo = dynamic_cast<WeaponObject*>(object);
+	if(wo)
+	{
+		
+		switch (wo->GetType())
+		{
+		case ITEM_TYPE_WEAPON_MELEE_AXE:
+			item = new MeleeWeapon(wo->GetID(), wo->GetWeight(), wo->GetActorObjectName(), wo->GetType(),
+									wo->GetDamage(), wo->GetRange());
+			break;
+		case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
+			item = new MeleeWeapon(wo->GetID(), wo->GetWeight(), wo->GetActorObjectName(), wo->GetType(),
+				wo->GetDamage(), wo->GetRange());
+			break;
+		case ITEM_TYPE_WEAPON_RANGED_BOW:
+			item = new RangedWeapon(wo->GetID(), wo->GetWeight(), wo->GetActorObjectName(), wo->GetType(),
+				wo->GetDamage(), wo->GetRange());
+			break;
+		case ITEM_TYPE_WEAPON_RANGED_ROCK:
+			item = new RangedWeapon(wo->GetID(), wo->GetWeight(), wo->GetActorObjectName(), wo->GetType(),
+				wo->GetDamage(), wo->GetRange());
+			break;
+		default:
+			//Return
+			return false;
+			break;
+		}
+
+		if(!this->zInventory->AddItem(item))
+		{
+			SAFE_DELETE(item);
+			return false;
+		}
+		return true;
+	}
+
+	return false;
+}
+
+bool PlayerActor::DropObject( const int ID )
+{
+	//Item* item = this->zInventory-
+
+	return false;
 }

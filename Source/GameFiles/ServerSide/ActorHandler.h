@@ -56,8 +56,8 @@ public:
 	Actor* GetActor(const int ID, const int TYPE) const;
 
 private:
-	const unsigned int SearchForActor(const int ID, int TYPE) const;
-	const unsigned int SearchForActor(const int ID, int TYPE, Actor** aOut) const;
+	const int SearchForActor(const int ID, int TYPE) const;
+	const int SearchForActor(const int ID, int TYPE, Actor** aOut) const;
 
 private:
 

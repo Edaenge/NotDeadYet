@@ -4,7 +4,7 @@
 #include <string>
 #include <algorithm>
 
-static const std::string FILENAME		=	"WorldStaticObjects.cfg";
+static const std::string FILENAME		=	"WorldObjects.cfg";
 static const std::string OBJECT_WEAPON	=	"[Object.Weapon]";
 static const std::string OBJECT_FOOD	=	"[Object.Food]";
 
@@ -14,6 +14,7 @@ static const std::string WEIGHT			=	"WEIGHT";
 static const std::string HUNGER			=	"HUNGER";
 static const std::string DAMAGE			=	"DAMAGE";
 static const std::string MODEL			=	"MODEL";
+static const std::string NAME			=	"NAME";
 static const std::string RANGE			=	"RANGE";
 static const std::string IS_RANGED		=	"IS_RANGED";
 
@@ -41,7 +42,7 @@ bool ObjectManager::ReadObjects()
 		char line[256];
 		char key[52];
 		char command[126];
-		
+
 		read.getline(line,sizeof(line));
 		TrimAndSet(line);
 
@@ -134,6 +135,10 @@ bool ObjectManager::InterpCommand( const char* command, char* key, WeaponData& w
 	{
 		wp.zModel = key;
 	}
+	else if(strcmp(command, NAME.c_str()) == 0)
+	{
+		wp.zObjName = key;
+	}
 
 	return true;
 }
@@ -159,6 +164,11 @@ bool ObjectManager::InterpCommand( const char* command, char* key, FoodData& fd 
 	{
 		fd.zModel = key;
 	}
+	else if(strcmp(command, NAME.c_str()) == 0)
+	{
+		fd.zObjName = key;
+	}
+
 
 	return true;
 }

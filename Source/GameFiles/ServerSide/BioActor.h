@@ -9,7 +9,7 @@ for project desperation* at Blekinge tekniska högskola.
 #include "GameFiles/AnimationStates.h"
 #include <string>
 
-/*This class is used to create living creatures such as humans, animals etc. */
+/*This class is Abstract, this class is used to create living creatures such as humans, animals etc. */
 class BioActor : public Actor
 {
 public:
@@ -28,7 +28,6 @@ public:
 
 	int GetState() const {return this->zState;}
 	float GetVelocity() const {return this->zVelocity;}
-	const std::string& GetActorModel() const {return this->zActorModel;}
 	const Vector3& GetDirection() const {return this->zDir;}
 	const Vector3& GetUpVector() const {return this->zUp;}
 	float GetStamina() const {return this->zStamina;}
@@ -40,7 +39,6 @@ public:
 	void SetState(const int state){this->zState = state;}
 	void SetVelocity(const float velocity){this->zVelocity = velocity;}
 	inline void SetDirection(const Vector3& dir){this->zDir = dir;}
-	void SetPlayerModel(const std::string& model){this->zActorModel = model;}
 	inline void SetUpVector(const Vector3& up){this->zUp = up;}
 	void SetHealth(const float health){this->zHealth = health;}
 	void SetStamina(const float stamina){this->zStamina = stamina;}
@@ -61,8 +59,6 @@ protected:
 	float	zStaminaCof;
 
 	bool	zAlive;
-
-	std::string zActorModel;
 
 	Vector3 zDir;
 	Vector3 zUp;

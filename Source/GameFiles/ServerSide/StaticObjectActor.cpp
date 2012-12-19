@@ -1,15 +1,20 @@
 #include "StaticObjectActor.h"
 
 
-StaticObjectActor::StaticObjectActor()
+StaticObjectActor::StaticObjectActor( bool genID /*= true*/ )
 {
-	this->zMeshModel = "none";
+	if(genID)
+		this->GenerateID();
+
 	this->zType = 0;
 }
 
-StaticObjectActor::StaticObjectActor( const std::string& meshModel )
+StaticObjectActor::StaticObjectActor( const std::string& meshModel, bool genID /*= true*/ )
 {
-	this->zMeshModel = meshModel;
+	if(genID)
+		this->GenerateID();
+
+	this->zType = 0;
 }
 
 StaticObjectActor::~StaticObjectActor()

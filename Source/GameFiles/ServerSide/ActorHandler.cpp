@@ -76,7 +76,7 @@ PlayerActor* ActorHandler::RemovePlayerActor( const int ID )
 	return pa;
 }
 
-const unsigned int ActorHandler::SearchForActor( const int ID, int TYPE ) const
+const int ActorHandler::SearchForActor( const int ID, int TYPE ) const
 {
 	if(TYPE == ACTOR_TYPE_PLAYER)
 	{
@@ -120,7 +120,7 @@ const unsigned int ActorHandler::SearchForActor( const int ID, int TYPE ) const
 	return -1;
 }
 
-const unsigned int ActorHandler::SearchForActor( const int ID, int TYPE, Actor** aOut ) const
+const int ActorHandler::SearchForActor( const int ID, int TYPE, Actor** aOut ) const
 {
 	if(TYPE == ACTOR_TYPE_PLAYER)
 	{

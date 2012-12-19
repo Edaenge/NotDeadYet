@@ -6,16 +6,8 @@ for project desperation* at Blekinge tekniska högskola.
 #pragma once
 
 #include <vector>
+#include "Items/Item.h"
 
-static const enum FOOD_OBJECT
-{
-	FOOD_OBJECT_MEAT
-};
-
-static const enum WEAPON_OBJECT
-{
-	WEAPON_OBJECT_SWORD
-};
 
 struct WeaponData
 {
@@ -35,6 +27,7 @@ struct WeaponData
 	int		zType;
 	
 	std::string zModel;
+	std::string zObjName;
 };
 
 struct FoodData
@@ -53,6 +46,7 @@ struct FoodData
 	int		zType;
 
 	std::string zModel;
+	std::string zObjName;
 };
 
 /**/

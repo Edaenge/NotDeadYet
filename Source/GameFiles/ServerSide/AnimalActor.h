@@ -12,9 +12,9 @@ for project desperation* at Blekinge tekniska högskola.
 class AnimalActor : public BioActor
 {
 public:
-	AnimalActor();
-	AnimalActor(const Vector3& startPos);
-	AnimalActor(const Vector3& startPos, const Vector4& rot);
+	AnimalActor(bool genID = true);
+	AnimalActor(const Vector3& startPos, bool genID = true);
+	AnimalActor(const Vector3& startPos, const Vector4& rot, bool genID = true);
 	virtual ~AnimalActor();
 
 	virtual void Update(float deltaTime);
