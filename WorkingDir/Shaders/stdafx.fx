@@ -32,6 +32,11 @@ struct Light
 	matrix LightViewProj;
 };
 
+struct Cascade
+{
+	matrix viewProj;
+};
+
 struct SunLight
 {
 	float4 Direction;
@@ -48,15 +53,16 @@ cbuffer EveryFrame
 	matrix CameraVP;
 	float4 CameraPosition;
 	
-	float NrOfLights;
-	Light lights[10];
-	float4 SceneAmbientLight;
+	float NrOfLights;//**tillman**
+	Light lights[10];//**tillman**
+	float4 SceneAmbientLight;//**tillman**
 	
-	bool UseSun;
-	SunLight sun;
-	//float SMAP_DX;
-	//float PCF_SIZE;
-	//float PCF_SIZE_SQUARED;
+	bool UseSun;//**tillman**
+	SunLight sun; //**tillman**
+
+	float NrOfCascades;
+	float4 CascadeLevels;
+	Cascade cascades[10];
 
 	float timerMillis;
 

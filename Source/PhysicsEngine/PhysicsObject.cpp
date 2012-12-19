@@ -40,7 +40,7 @@ void PhysicsObject::SetPosition( const Vector3& pos )
 void PhysicsObject::SetQuaternion( const Vector4& quat )
 {
 	this->rotQuat = quat;
-	this->rotQuat.normalize();
+	this->rotQuat.Normalize();
 	this->RecreateWorldMatrix();
 }
 
@@ -54,7 +54,7 @@ void PhysicsObject::MoveBy( const Vector3& moveby )
 void PhysicsObject::Rotate( const Vector4& quat )
 {
 	this->rotQuat = QuatMult(this->rotQuat, quat);
-	this->rotQuat.normalize();
+	this->rotQuat.Normalize();
 	this->RecreateWorldMatrix();
 }
 
@@ -67,7 +67,7 @@ void PhysicsObject::RotateAxis( const Vector3& around, float angle )
 	quaternion.w = sin(angle/2) * cos(around.z);
 
 	this->rotQuat = QuatMult(this->rotQuat, quaternion);
-	this->rotQuat.normalize();
+	this->rotQuat.Normalize();
 	this->RecreateWorldMatrix();
 }
 
