@@ -90,7 +90,7 @@ bool Inventory::RemoveItem(const unsigned int position)
 		int weight = GetItem(position)->GetWeight();
 		this->zWeightTotal -= weight;
 
-		for (unsigned int i = 0; i < weight - 1; i++)
+		for (int i = 0; i < weight - 1; i++)
 		{
 			this->zInventorySlotBlocked[zSlotsAvailable++] = false;
 		}

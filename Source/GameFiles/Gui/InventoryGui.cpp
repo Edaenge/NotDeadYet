@@ -12,14 +12,14 @@ InventoryGui::InventoryGui( float x, float y, float width, float height, std::st
 
 InventoryGui::~InventoryGui()
 {
-	for (auto it = this->zSlotImage.begin(); it < this->zSlotImage.end(); it++)
-	{
-		if ((*it))
-		{
-			delete (*it);
-			(*it) = NULL;
-		}
-	}
+	//for (auto it = this->zSlotImage.begin(); it < this->zSlotImage.end(); it++)
+	//{
+	//	if ((*it))
+	//	{
+	//		delete (*it);
+	//		(*it) = NULL;
+	//	}
+	//}
 }
 
 bool InventoryGui::AddToRenderer( GraphicsEngine* ge )

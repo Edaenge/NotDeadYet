@@ -111,7 +111,7 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 	fo = dynamic_cast<FoodObject*>(object);
 	if(fo)
 	{
-		item = new Food(fo->GetID(), fo->GetWeight(), fo->GetActorObjectName(), fo->GetType());
+		item = new Food(fo->GetID(), fo->GetWeight(), fo->GetActorObjectName(), fo->GetType(), fo->GetHunger());
 		
 		if(!this->zInventory->AddItem(item))
 		{
@@ -157,6 +157,13 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 		}
 		return true;
 	}
+
+	return false;
+}
+
+bool PlayerActor::DropObject( const int ID )
+{
+	//Item* item = this->zInventory-
 
 	return false;
 }

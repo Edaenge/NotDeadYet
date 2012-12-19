@@ -37,6 +37,8 @@ public:
 	*/
 	bool PickUpObject(StaticObjectActor* object);
 	bool PickUpObject(DynamicObjectActor* object);
+	/*! */
+	bool DropObject(const int ID);
 
 	float GetLatency() const {return this->zLatency;}
 	inline float GetFrameTime() const {return this->zFrameTime;}

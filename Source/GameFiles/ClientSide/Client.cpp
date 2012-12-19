@@ -109,7 +109,7 @@ void Client::InitGraphics()
 	zInvGui = new InventoryGui(x, y, x * 1.5f, x * 1.5f, "Media/Inventory_v01.png");
 	zInvGui->AddToRenderer(this->zEng);
 	zCircularInvGui = new CircularListGui(x, y, x * 1.5f, x * 1.5f, "Media/Use_v01.png");
-	zCircularInvGui->AddToRenderer(this->zEng);
+//	zCircularInvGui->AddToRenderer(this->zEng);
 
 	this->zEng->GetKeyListener()->SetCursorVisibility(true);
 	this->zEng->StartRendering();

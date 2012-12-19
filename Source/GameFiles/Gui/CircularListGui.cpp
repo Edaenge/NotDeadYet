@@ -37,7 +37,7 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge, std::string itemTextureN
 bool CircularListGui::RemoveFromRenderer(GraphicsEngine* ge)
 {
 	GuiElement::RemoveFromRenderer(ge);
-	ge->DeleteImage(this->zItemImage);
+//	ge->DeleteImage(this->zItemImage);
 	return true;
 }
 
