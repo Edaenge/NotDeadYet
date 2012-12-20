@@ -273,51 +273,20 @@ void Client::HandleKeyboardInput()
 
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
 		{
-			this->RayVsWorld();
-			this->zLootingGuiShowTimer = GUI_DISPLAY_TIMER;
-			this->zInvGui->AddToRenderer(this->zEng);
+			HandleInteractionGui(true);
 		}
 		else
 		{
-			if (this->zLootingGuiShowTimer > 0.0f)
-			{
-				this->zLootingGuiShowTimer -= this->zDeltaTime;
-				float fadeValue = this->zDeltaTime / GUI_DISPLAY_TIMER;
-			}
-			else
-			{
-
-			}
+			HandleInteractionGui(false);
 		}
 		bool InventoryOpen = false;
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
 		{
-			this->zInventoryGuiShowTimer = GUI_DISPLAY_TIMER;
-			if (this->zInvGui->IsHidden())
-			{
-				this->zInvGui->AddToRenderer(this->zEng);
-			}
-			InventoryOpen = true;
+			HandleInvetoryGui(true);
 		}
 		else
 		{
-			if (this->zInventoryGuiShowTimer > 0.0f)
-			{
-				this->zInventoryGuiShowTimer -= this->zDeltaTime;
-				float fadeValue = this->zDeltaTime / GUI_DISPLAY_TIMER;
-				this->zInvGui->FadeOut(fadeValue);
-
-				InventoryOpen = false;
-			}
-			else
-			{
-				if (!this->zInvGui->IsHidden())
-				{
-					this->zInvGui->RemoveFromRenderer(this->zEng);
-				}
-				
-				InventoryOpen = false;
-			}
+			HandleInvetoryGui(false);
 		}
 		float invPosition = -1;
 		if (InventoryOpen)
@@ -1014,4 +983,60 @@ void Client::SendDropItemMessage(unsigned int id)
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_DROP_ITEM, id);
 
 	this->zServerChannel->sendData(msg);
+}
+
+void Client::HandleInvetoryGui(bool bShow)
+{
+	bool InventoryOpen = false;
+	if(bShow)
+	{
+		this->zInventoryGuiShowTimer = GUI_DISPLAY_TIMER;
+		if (this->zInvGui->IsHidden())
+		{
+			this->zInvGui->AddToRenderer(this->zEng);
+		}
+		InventoryOpen = true;
+	}
+	else
+	{
+		if (this->zInventoryGuiShowTimer > 0.0f)
+		{
+			this->zInventoryGuiShowTimer -= this->zDeltaTime;
+			float fadeValue = this->zDeltaTime / GUI_DISPLAY_TIMER;
+			this->zInvGui->FadeOut(fadeValue);
+
+			InventoryOpen = false;
+		}
+		else
+		{
+			if (!this->zInvGui->IsHidden())
+			{
+				this->zInvGui->RemoveFromRenderer(this->zEng);
+			}
+
+			InventoryOpen = false;
+		}
+	}
+}
+
+void Client::HandleInteractionGui(bool bShow)
+{
+	if (bShow)
+	{
+		this->RayVsWorld();
+		this->zLootingGuiShowTimer = GUI_DISPLAY_TIMER;
+		this->zInvGui->AddToRenderer(this->zEng);
+	}
+	else
+	{
+		if (this->zLootingGuiShowTimer > 0.0f)
+		{
+			this->zLootingGuiShowTimer -= this->zDeltaTime;
+			float fadeValue = this->zDeltaTime / GUI_DISPLAY_TIMER;
+		}
+		else
+		{
+
+		}
+	}
 }

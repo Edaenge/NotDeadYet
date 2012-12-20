@@ -60,6 +60,8 @@ private:
 	void SendDropItemMessage(unsigned int id);
 	void HandleRemoveInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id);
 	void HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id);
+	void HandleInvetoryGui(bool bOpen);
+	void HandleInteractionGui(bool bShow);
 private:
 	/*! Current Client ID*/
 	int zID;
