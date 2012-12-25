@@ -17,10 +17,20 @@ Game::~Game()
 void Game::Run()
 {
 	GraphicsEngine* eng = GetGraphics();
+	bool bLastCursorVisible = false;
+	bool bCurrentCursorVisible = false;
 	//Waits for client to exit.
 	while(this->zClient->IsAlive())
 	{
 		eng->Update();
+		bCurrentCursorVisible = this->zClient->GetCursorVisibility();
+		if (bLastCursorVisible != bCurrentCursorVisible)
+		{
+			bLastCursorVisible = bCurrentCursorVisible;
+			eng->GetCamera()->SetUpdateCamera(!bCurrentCursorVisible);
+			eng->GetKeyListener()->SetCursorVisibility(bCurrentCursorVisible);
+		}
+		
 		Sleep(5);
 	}
 
@@ -44,13 +54,13 @@ int Game::InitGameClient(std::string ip, int port)
 
 	if(code == CONNECTION_SUCCESS)
 		this->zClient->Start();
+		
 
 	return code;
 }
 
 int Game::InitGameHost(int port, int nrOfClients)
 {
-
 	int code;
 
 	//if a Host hasn't been created yet Create one
@@ -67,6 +77,5 @@ int Game::InitGameHost(int port, int nrOfClients)
 
 	if(code == CONNECTION_SUCCESS)
 		this->zHost->Start();
-	
 	return code;
 }

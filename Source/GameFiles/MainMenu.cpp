@@ -73,15 +73,16 @@ void MainMenu::PrintToScreen(const std::string msg )
 void MainMenu::Run()
 {
 	int hostErrorCode = 0;
-	int clientErrorCode = 0;
+	int clientErrorCode;
 	// Initializes the host and returns a code that explains what happend
-	hostErrorCode    = this->zGame->InitGameHost(10000, 5);
+	hostErrorCode    = this->zGame->InitGameHost(11521, 5);
 	// Initializes the Client and returns a code that explains what happend
-	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 10000);
+	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 11521);
 	//clientErrorCode  = this->zGame->InitGameClient("194.47.150.20", 10000);
 
 	if(hostErrorCode == 0 && clientErrorCode == 0)
 	{
+		MaloW::Debug("Game Running");
 		this->zGame->Run();
 	}
 	else

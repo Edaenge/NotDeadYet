@@ -112,6 +112,7 @@ void ClientChannel::sendData(string msg)
 
 void ClientChannel::Life()
 {
+	MaloW::Debug("ClientChannel Process Started");
 	while(this->stayAlive)
 	{
 		string msg = this->receiveData();

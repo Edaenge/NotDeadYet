@@ -24,7 +24,11 @@ CircularListGui::CircularListGui(float x, float y, float width, float height, st
 
 CircularListGui::~CircularListGui()
 {
-
+	if (this->zItemImage)
+	{
+		delete this->zItemImage;
+		this->zItemImage = NULL;
+	}
 }
 
 bool CircularListGui::AddToRenderer(GraphicsEngine* ge)

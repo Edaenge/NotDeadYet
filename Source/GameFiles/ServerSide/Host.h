@@ -66,6 +66,8 @@ public:
 	void SendToClient(int clientID, const std::string& message);
 	/*! Sends player updates to clients.*/
 	void SendPlayerUpdates();
+	/*! Sends Animal updates to clients.*/
+	void SendAnimalUpdates();
 	/*! Notifies all clients, the server is shutting down.*/
 	void BroadCastServerShutdown();
 	/*! Pings the clients.*/

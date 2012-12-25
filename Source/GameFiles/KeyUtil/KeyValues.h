@@ -1,5 +1,7 @@
 #pragma once
 
+static const int KEY_CAP = 11;
+
 enum KEY_BINDINGS
 {
 	KEY_FORWARD,
@@ -12,5 +14,5 @@ enum KEY_BINDINGS
 	KEY_INTERACT,
 	KEY_MENU,
 	KEY_INVENTORY,
-	KEY_CAP
+	KEY_EQUIPMENT
 };

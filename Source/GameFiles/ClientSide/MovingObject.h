@@ -26,7 +26,6 @@ public:
 	Vector3 GetNextPosition() const {return this->zEndPosition;}
 
 	virtual void Update(float dt) = 0;
-
 protected:
 	/*! Interpolates the position*/
 	void LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t)

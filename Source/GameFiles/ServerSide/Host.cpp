@@ -36,6 +36,7 @@ Host::~Host()
 
 void Host::Life()
 {
+	MaloW::Debug("Host Process Started");
 	this->zServerListener->Start();
 	
 	INT64 frequency;
@@ -174,7 +175,6 @@ void Host::SendPlayerUpdates()
 	for (auto it_Player = pl.begin(); it_Player < pl.end(); it_Player++)
 	{
 		Vector3 pos = (*it_Player)->GetPosition();
-		Vector3 dir = (*it_Player)->GetDirection();
 		Vector4 rot = (*it_Player)->GetRotation();
 
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_PLAYER, (*it_Player)->GetID());
@@ -182,24 +182,52 @@ void Host::SendPlayerUpdates()
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (*it_Player)->GetState());
-		//mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
 
 		playerData.push_back(mess);
 	}
 
 	//Send Data to clients
-	std::vector<ClientData*>::iterator it_Client;
-	std::vector<std::string>::iterator it_Message;
-
-	for (it_Client = zClients.begin(); it_Client < zClients.end(); it_Client++)
+	for (auto it_Client = zClients.begin(); it_Client < zClients.end(); it_Client++)
 	{
-		for (it_Message = playerData.begin(); it_Message < playerData.end(); it_Message++)
+		for (auto it_Message = playerData.begin(); it_Message < playerData.end(); it_Message++)
 		{
 			(*it_Client)->zClient->sendData((*it_Message));
 		}
 	}
+}
 
+void Host::SendAnimalUpdates()
+{
+	if(!HasPlayers())
+		return;
 
+	std::vector<std::string> animalData;
+	std::string mess = "";
+
+	//Fetch player data
+	std::vector<AnimalActor*> pl = this->zActorHandler->GetAnimals();
+	for (auto it_Animal = pl.begin(); it_Animal < pl.end(); it_Animal++)
+	{
+		Vector3 pos = (*it_Animal)->GetPosition();
+		Vector3 dir = (*it_Animal)->GetDirection();
+		Vector4 rot = (*it_Animal)->GetRotation();
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_ANIMAL, (*it_Animal)->GetID());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (*it_Animal)->GetState());
+
+		animalData.push_back(mess);
+	}
+
+	//Send Data to clients
+	for (auto it_Client = zClients.begin(); it_Client < zClients.end(); it_Client++)
+	{
+		for (auto it_Message = animalData.begin(); it_Message < animalData.end(); it_Message++)
+		{
+			(*it_Client)->zClient->sendData((*it_Message));
+		}
+	}
 }
 
 bool Host::HasPlayers() const

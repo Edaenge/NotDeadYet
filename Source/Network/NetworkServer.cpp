@@ -59,6 +59,7 @@ ClientChannel* NetworkServer::ListenForNewClients()
 
 void NetworkServer::Life()
 {
+	MaloW::Debug("NetworkServer Process Started");
 	while(this->stayAlive)
 	{
 		ClientChannel* cc = this->ListenForNewClients();

@@ -15,4 +15,14 @@ public:
 	virtual ~DynamicObject(){}
 	/*! Updates the Object*/
 	virtual void Update(float deltaTime);
+
+	int GetWeight() const {return this->zWeight;}
+	int GetType() const {return this->zType;}
+
+	void SetWeight(const int weight) {this->zWeight = weight;}
+	void SetType(const int TYPE) {this->zType = TYPE;}
+
+private:
+	int zWeight;
+	int zType;
 };

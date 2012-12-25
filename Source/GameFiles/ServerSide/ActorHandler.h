@@ -37,6 +37,12 @@ public:
 	PlayerActor* RemovePlayerActor(const int ID);
 	/*! Returns Players.*/
 	inline const std::vector<PlayerActor*>& GetPlayers() const {return this->zPlayers;}
+	/*! Returns Animals.*/
+	inline const std::vector<AnimalActor*>& GetAnimals() const {return this->zAnimals;}
+	/*! Returns Food Objects.*/
+	inline const std::vector<FoodObject*>& GetFoods() const {return this->zFoods;}
+	/*! Returns Weapon Objects.*/
+	inline const std::vector<WeaponObject*>& GetWeapons() const {return this->zWeapons;}
 
 ////////////////////////////////
 //			ANIMALS		     //

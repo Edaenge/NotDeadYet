@@ -5,14 +5,11 @@
 
 using namespace MaloW;
 
-
-
 ServerChannel::ServerChannel()
 {
 	this->stayAlive = false;
 	this->notifier = NULL;
 }
-
 
 int ServerChannel::InitConnection(std::string IP, int port)
 {
@@ -60,7 +57,6 @@ int ServerChannel::InitConnection(std::string IP, int port)
 	return returnCode;
 }
 
-
 ServerChannel::~ServerChannel()
 {
 	this->Close();
@@ -82,7 +78,6 @@ ServerChannel::~ServerChannel()
 		MaloW::Debug("SC: Error cleaning up Winsock Library. Error: " + MaloW::convertNrToString(WSAGetLastError()));;
 
 }
-
 
 string ServerChannel::receiveData()
 {
@@ -147,10 +142,9 @@ string ServerChannel::receiveData()
 	return msg;
 }
 
-
 void ServerChannel::sendData(string msg)
 {
-	MaloW::Debug("Sent to Server " + msg);
+	MaloW::Debug("Sc: Sending to Server " + msg);
 	msg += 10;
 	char bufs[1024] = {0};
 	for(unsigned int i = 0; i < msg.length(); i++)
@@ -164,9 +158,9 @@ void ServerChannel::sendData(string msg)
 	}
 }
 
-
 void ServerChannel::Life()
 {
+	MaloW::Debug("ServerChannel Process Started");
 	while(this->stayAlive)
 	{
 		string msg = this->receiveData();
@@ -180,7 +174,6 @@ void ServerChannel::Life()
 		}
 	}
 }
-
 
 void ServerChannel::CloseSpecific()
 {

@@ -18,7 +18,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 
 	// Tester
 	//test();
-
+	
 	// IMPLEMENT MAIN PROGRAM HERE.
 	MainMenu *menu = new MainMenu();
 	menu->Run();

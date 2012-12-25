@@ -3,7 +3,7 @@
 
 WorldObjectManager::WorldObjectManager()
 {
-
+	this->zTerrain = NULL;
 }
 
 WorldObjectManager::~WorldObjectManager()
@@ -42,6 +42,13 @@ WorldObjectManager::~WorldObjectManager()
 			delete (*x);
 			(*x) = 0;
 		}
+	}
+	this->zMapObjects.erase(this->zMapObjects.begin(), this->zMapObjects.end());
+
+	if (this->zTerrain)
+	{
+		//delete this->zTerrain;
+		this->zTerrain = NULL;
 	}
 }
 
@@ -108,32 +115,12 @@ bool WorldObjectManager::RemoveObject(const unsigned int type, const unsigned in
 	return true;
 }
 
-std::vector<PlayerObject*> WorldObjectManager::GetPlayers()
-{
-	return this->zPlayers;
-}
-
-std::vector<AnimalObject*> WorldObjectManager::GetAnimals()
-{
-	return this->zAnimals;
-}
-
-std::vector<StaticObject*> WorldObjectManager::GetStaticObjects()
-{
-	return this->zStaticObjects;
-}
-
-std::vector<DynamicObject*> WorldObjectManager::GetDynamicObjects()
-{
-	return this->zDynamicObjects;
-}
-
-PlayerObject* WorldObjectManager::GetPlayer(const unsigned int pos)
+PlayerObject* WorldObjectManager::GetPlayerObject(const unsigned int pos)
 {
 	return this->zPlayers[pos];
 }
 
-AnimalObject* WorldObjectManager::GetAnimal(const unsigned int pos)
+AnimalObject* WorldObjectManager::GetAnimalObject(const unsigned int pos)
 {
 	return this->zAnimals[pos];
 }
@@ -264,4 +251,38 @@ void WorldObjectManager::UpdateObjects( float deltaTime )
 	{
 		(*x)->Update(deltaTime);
 	}
+}
+
+bool WorldObjectManager::AddMapObject( iMesh* object )
+{
+	if (object)
+	{
+		this->zMapObjects.push_back(object);
+		return true;
+	}
+	return false;
+}
+
+bool WorldObjectManager::AddTerrain(iTerrain* terrain)
+{
+	if (terrain)
+	{
+		this->zTerrain = terrain;
+		return true;
+	}
+	return false;
+}
+
+iMesh* WorldObjectManager::GetMapObject(unsigned int position)
+{
+	if (position < this->zMapObjects.size())
+	{
+		return this->zMapObjects[position];
+	}
+	return NULL;
+}
+
+iTerrain* WorldObjectManager::GetTerrain()
+{
+	return this->zTerrain;
 }
