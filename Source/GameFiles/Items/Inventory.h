@@ -17,6 +17,7 @@ class Inventory
 {
 public:
 	Inventory();
+	Inventory(const unsigned int inventorySize);
 	virtual ~Inventory();
 	/*! Search for the Item in and returns its position*/
 	int Search(const unsigned int ID) const;
@@ -53,5 +54,4 @@ private:
 	/*! Nr of slots Occupied == Current Weight*/
 	unsigned int zWeightTotal;
 };
-/* Gui Draws the Items in zItems and the blocked slots zInventorySlotBlocked
-So Weight = number of Items + blocked slots*/
+/* Weight = number of Items + blocked slots*/

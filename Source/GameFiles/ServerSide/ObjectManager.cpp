@@ -13,6 +13,8 @@ static const std::string TYPE			=	"TYPE";
 static const std::string WEIGHT			=	"WEIGHT";
 static const std::string HUNGER			=	"HUNGER";
 static const std::string DAMAGE			=	"DAMAGE";
+static const std::string PATH			=	"PATH";
+static const std::string DESCRIPTION	=	"DESCRIPTION";
 static const std::string MODEL			=	"MODEL";
 static const std::string NAME			=	"NAME";
 static const std::string RANGE			=	"RANGE";
@@ -150,6 +152,14 @@ bool ObjectManager::InterpCommand( char* command, char* key, WeaponObject* wp )
 	{
 		wp->SetWeight(MaloW::convertStringToInt(key));
 	}
+	/*else if(strcmp(command, PATH.c_str()) == 0)
+	{
+		wp->SetIconPath(key);
+	}*/
+	else if(strcmp(command, DESCRIPTION.c_str()) == 0)
+	{
+		wp->SetDescription(key);
+	}
 	else if(strcmp(command, RANGE.c_str()) == 0)
 	{
 		wp->SetRange(MaloW::convertStringToFloat(key));
@@ -186,6 +196,10 @@ bool ObjectManager::InterpCommand( char* command, char* key, FoodObject* fd )
 	else if(strcmp(command, WEIGHT.c_str()) == 0)
 	{
 		fd->SetWeight(MaloW::convertStringToInt(key));
+	}
+	else if(strcmp(command, DESCRIPTION.c_str()) == 0)
+	{
+		fd->SetDescription(key);
 	}
 	else if(strcmp(command, MODEL.c_str()) == 0)
 	{

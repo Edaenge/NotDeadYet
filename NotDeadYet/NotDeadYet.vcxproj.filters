@@ -190,6 +190,9 @@
     <ClCompile Include="..\Source\GameFiles\Gui\InventorySlotGui.cpp">
       <Filter>Game Files\Gui</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\GuiManager.cpp">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -417,9 +420,13 @@
     <ClInclude Include="..\Source\GameFiles\Gui\InventorySlotGui.h">
       <Filter>Game Files\Gui</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ClientSide\GuiManager.h">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameIcon.ico" />
+    <None Include="Client_ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="NotDeadYet.rc" />

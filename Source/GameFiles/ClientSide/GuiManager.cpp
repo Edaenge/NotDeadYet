@@ -106,9 +106,9 @@ void GuiManager::ToggleInventoryGui()
 	}
 }
 
-void GuiManager::AddInventoryItemToGui( std::string itemIconPath )
+void GuiManager::AddInventoryItemToGui(const Gui_Item_Data gid)
 {
-	
+	this->zInvGui->AddItemToGui(gid.zFilePath, this->zGraphicEngine);
 }
 
 void GuiManager::ShowCircularItemGui()
@@ -143,7 +143,7 @@ void GuiManager::HideCircularItemGui()
 	}
 }
 
-void GuiManager::ShowLootingGui()
+void GuiManager::ShowLootingGui(std::vector<Gui_Item_Data> gui_Item_Data)
 {
 	if(!this->zLooting)
 	{

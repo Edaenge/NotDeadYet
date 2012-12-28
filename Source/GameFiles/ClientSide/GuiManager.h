@@ -8,6 +8,27 @@
 #include "GameFiles/Gui/CircularListGui.h"
 #include <string>
 
+struct Gui_Item_Data
+{
+	Gui_Item_Data()
+	{
+		this->zID = -1;
+		this->zName = "Unknown";
+		this->zFilePath = "Unknown";
+		this->zDescription = "Unknown";
+	}
+	Gui_Item_Data(const int id, const std::string& name, const std::string& filePath, const std::string& description)
+	{
+		this->zID = id;
+		this->zName = name;
+		this->zFilePath = filePath;
+		this->zDescription = description;
+	}
+	int zID;	
+	std::string zName;
+	std::string zFilePath;
+	std::string zDescription;
+};
 class GuiManager
 {
 public:
@@ -16,10 +37,10 @@ public:
 	virtual ~GuiManager();
 	void ToggleInventoryGui();
 	void HideInventoryGui();
-	void AddInventoryItemToGui(std::string itemIconPath);
+	void AddInventoryItemToGui(const Gui_Item_Data gid);
 	void ShowCircularItemGui();
 	void HideCircularItemGui();
-	void ShowLootingGui();
+	void ShowLootingGui(std::vector<Gui_Item_Data> gui_Item_Data);
 	void HideLootingGui();
 	void ShowDeathGui();
 	void HideDeathGui();

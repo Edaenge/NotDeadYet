@@ -54,6 +54,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_REMOVE_INVENTORY_ITEM,
 	MESSAGE_TYPE_ADD_INVENTORY_ITEM,
 	MESSAGE_TYPE_ITEM_NAME,
+	MESSAGE_TYPE_ITEM_DESCRIPTION,
+	MESSAGE_TYPE_ITEM_ICON_PATH,
 	MESSAGE_TYPE_ITEM_WEIGHT,
 	MESSAGE_TYPE_WEAPON_DAMAGE,
 	MESSAGE_TYPE_WEAPON_RANGE
@@ -74,6 +76,8 @@ static const std::string M_STAMINA					= "STAM";
 static const std::string M_STATE					= "STAT";
 static const std::string M_ITEM_TYPE				= "IT";
 static const std::string M_ITEM_NAME				= "IN";
+static const std::string M_ITEM_DESCRIPTION			= "ID";
+static const std::string M_ITEM_ICON_PATH			= "IIP";
 static const std::string M_ITEM_WEIGHT				= "IW";
 static const std::string M_WEAPON_DAMAGE			= "WD";
 static const std::string M_WEAPON_RANGE				= "WR";
@@ -127,10 +131,9 @@ public:
 	NetworkMessageConverter();
 	virtual ~NetworkMessageConverter();
 
-	//Converts parameters to correctly formated strings sent between client and server
+	/*! Converts parameters to correctly formated strings sent between client and server.*/
 	std::string Convert(const unsigned int ID);
-	//std::string Convert(const unsigned int ID, const unsigned int state_ID);
-	std::string Convert(const unsigned int ID, const float time);
+	std::string Convert(const unsigned int ID, const float fp);
 	std::string Convert(const unsigned int ID, const std::string word);
 	std::string Convert(const unsigned int ID, const float x, const float y, const float z);
 	std::string Convert(const unsigned int ID, const float x, const float y, const float z, const float w);

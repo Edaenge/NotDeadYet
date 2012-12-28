@@ -33,14 +33,6 @@ void Equipment::EquipWeapon(Weapon* weapon)
 	this->zWeapon = weapon;
 }
 
-void Equipment::UseWeapon()
-{
-	if (this->zWeapon)
-	{
-		//this->zActiveWeapon->UseWeapon();
-	}
-}
-
 bool Equipment::EquipGear(const unsigned int type, Gear* item)
 {
 	if (type < GEAR_SLOTS)

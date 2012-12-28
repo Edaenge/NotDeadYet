@@ -15,6 +15,21 @@ Inventory::Inventory()
 	this->zSlotsAvailable = this->zInventoryCap;
 }
 
+Inventory::Inventory(const unsigned int inventorySize)
+{
+	this->zInventoryCap = inventorySize;
+	this->zWeightTotal = 0;
+
+	this->zInventorySlotBlocked = std::vector<bool>();
+	this->zItems = std::vector<Item*>();
+
+	for (unsigned int i = 0; i < this->zInventoryCap; i++)
+	{
+		this->zInventorySlotBlocked.push_back(false);
+	}
+	this->zSlotsAvailable = this->zInventoryCap;
+}
+
 Inventory::~Inventory()
 {
 	//Remove Item Arrays

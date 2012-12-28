@@ -69,6 +69,12 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	case MESSAGE_TYPE_ITEM_NAME:
 		ss << M_ITEM_NAME;
 		break;
+	case MESSAGE_TYPE_ITEM_ICON_PATH:
+		ss << M_ITEM_ICON_PATH;
+		break;
+	case MESSAGE_TYPE_ITEM_DESCRIPTION:
+		ss << M_ITEM_DESCRIPTION;
+		break;
 	case  MESSAGE_TYPE_KICKED:
 		ss << M_KICKED;
 		break;

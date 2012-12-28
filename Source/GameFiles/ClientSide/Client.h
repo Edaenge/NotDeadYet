@@ -48,48 +48,43 @@ private:
 	void UpdateWorldObjects();
 	/*! Updates the camera position to follow the mesh.*/
 	void UpdateCameraPos();
-	/*! Handles Message types.*/
-	void HandleUpdateObjectMessage(const std::vector<std::string>& msgArray, const unsigned int objectType, const unsigned int id);
-	void HandleNewObjectMessage(const std::vector<std::string>& msgArray, const unsigned int objectType, const unsigned int id);
-	void HandleRemoveObjectMessage(const unsigned int objectType, const unsigned int id);
-	
 	/*! Updates A Static Object.*/
-	void UpdateStaticObjects(const std::vector<std::string>& msgArray, const unsigned int id);
+	bool UpdateStaticObjects(const std::vector<std::string>& msgArray, const int id);
 	/*! Updates An Animal Object.*/
-	void UpdateAnimalObjects(const std::vector<std::string>& msgArray, const unsigned int id);
+	bool UpdateAnimalObjects(const std::vector<std::string>& msgArray, const int id);
 	/*! Updates A Dynamic Object.*/
-	void UpdateDynamicObjects(const std::vector<std::string>& msgArray, const unsigned int id);
+	bool UpdateDynamicObjects(const std::vector<std::string>& msgArray, const int id);
 	/*! Updates A Player Object*/
-	void UpdatePlayerObjects(const std::vector<std::string>& msgArray, const unsigned int id);
+	bool UpdatePlayerObjects(const std::vector<std::string>& msgArray, const int id);
 	
 	/*! Removes A Player Object*/
-	void RemovePlayerObject(const unsigned int id);
+	bool RemovePlayerObject(const int id);
 	/*! Removes An Animal Object*/
-	void RemoveAnimalObject(const unsigned int id);
+	bool RemoveAnimalObject(const int id);
 	/*! Removes A Static Object*/
-	void RemoveStaticObject(const unsigned int id);
+	bool RemoveStaticObject(const int id);
 	/*! Removes A Dynamic Object*/
-	void RemoveDynamicObject(const unsigned int id);
+	bool RemoveDynamicObject(const int id);
 
 	/*! Adds A Player Object*/
-	void AddNewPlayerObject(const std::vector<std::string>& msgArray, const unsigned int id);
+	bool AddNewPlayerObject(const std::vector<std::string>& msgArray, const int id);
 	/*! Adds An Animal Object*/
-	void AddNewAnimalObject(const std::vector<std::string>& msgArray, const unsigned int id);
+	bool AddNewAnimalObject(const std::vector<std::string>& msgArray, const int id);
 	/*! Adds A Static Object*/
-	void AddNewStaticObject(const std::vector<std::string>& msgArray, const unsigned int id);
+	bool AddNewStaticObject(const std::vector<std::string>& msgArray, const int id);
 	/*! Adds A Dynamic Object*/
-	void AddNewDynamicObject(const std::vector<std::string>& msgArray, const unsigned int id);
+	bool AddNewDynamicObject(const std::vector<std::string>& msgArray, const int id);
 
 	/*! Send Camera Info and Rotation to Server*/
 	void SendClientUpdate();
 	/*! Checks Ray Vs Static/Dynamic Objects*/
-	std::vector<WorldObject*>& RayVsWorld();
+	std::vector<Gui_Item_Data>& RayVsWorld();
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
-	void CheckCollision();
+	bool CheckCollision();
 
-	void SendPickupItemMessage(unsigned int id);
-	void SendDropItemMessage(unsigned int id);
-	void HandleRemoveInventoryItem(const unsigned int id);
+	void SendPickupItemMessage(const int id);
+	void SendDropItemMessage(const int id);
+	void HandleRemoveInventoryItem(const int id);
 	void HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id);
 	/*! Initiates all the Client Data*/
 	void Init();
@@ -124,4 +119,5 @@ private:
 	ServerChannel* zServerChannel;
 	WorldObjectManager* zObjectManager;
 	NetworkMessageConverter zMsgHandler;
+	Inventory* zPlayerInventory;
 };

@@ -8,7 +8,7 @@ WorldObjectManager::WorldObjectManager()
 
 WorldObjectManager::~WorldObjectManager()
 {
-	for(auto x = this->zPlayers.begin(); x < this->zPlayers.end(); x++)
+	for(auto x = this->zPlayerObjects.begin(); x < this->zPlayerObjects.end(); x++)
 	{
 		if((*x))
 		{
@@ -17,7 +17,7 @@ WorldObjectManager::~WorldObjectManager()
 		}
 	}
 
-	for(auto x = this->zAnimals.begin(); x < this->zAnimals.end(); x++)
+	for(auto x = this->zAnimalObjects.begin(); x < this->zAnimalObjects.end(); x++)
 	{
 		if((*x))
 		{
@@ -56,7 +56,7 @@ bool WorldObjectManager::AddObject(PlayerObject* player)
 {
 	if (player)
 	{
-		this->zPlayers.push_back(player);
+		this->zPlayerObjects.push_back(player);
 		return true;
 	}
 	return false;
@@ -66,7 +66,7 @@ bool WorldObjectManager::AddObject(AnimalObject* animal)
 {
 	if (animal)
 	{
-		this->zAnimals.push_back(animal);
+		this->zAnimalObjects.push_back(animal);
 		return true;
 	}
 	return false;
@@ -97,10 +97,10 @@ bool WorldObjectManager::RemoveObject(const unsigned int type, const unsigned in
 	switch(type)
 	{
 	case OBJECT_TYPE_PLAYER:
-		this->zPlayers.erase(this->zPlayers.begin() + position);
+		this->zPlayerObjects.erase(this->zPlayerObjects.begin() + position);
 		break;
 	case OBJECT_TYPE_ANIMAL:
-		this->zAnimals.erase(this->zAnimals.begin() + position);
+		this->zAnimalObjects.erase(this->zAnimalObjects.begin() + position);
 		break;
 	case OBJECT_TYPE_STATIC_OBJECT:
 		this->zStaticObjects.erase(this->zStaticObjects.begin() + position);
@@ -117,12 +117,12 @@ bool WorldObjectManager::RemoveObject(const unsigned int type, const unsigned in
 
 PlayerObject* WorldObjectManager::GetPlayerObject(const unsigned int pos)
 {
-	return this->zPlayers[pos];
+	return this->zPlayerObjects[pos];
 }
 
 AnimalObject* WorldObjectManager::GetAnimalObject(const unsigned int pos)
 {
-	return this->zAnimals[pos];
+	return this->zAnimalObjects[pos];
 }
 
 StaticObject* WorldObjectManager::GetStaticObject(const unsigned int pos)
@@ -141,10 +141,10 @@ int WorldObjectManager::SearchForObject(const unsigned int type, const unsigned 
 	switch(type)
 	{
 	case OBJECT_TYPE_PLAYER:
-		position = this->SearchForPlayer(id);
+		position = this->SearchForPlayerObject(id);
 		break;
 	case OBJECT_TYPE_ANIMAL:
-		position = this->SearchForAnimal(id);
+		position = this->SearchForAnimalObject(id);
 		break;
 	case OBJECT_TYPE_STATIC_OBJECT:
 		position = this->SearchForStaticObject(id);
@@ -159,11 +159,11 @@ int WorldObjectManager::SearchForObject(const unsigned int type, const unsigned 
 	return position;
 }
 
-int WorldObjectManager::SearchForPlayer(const unsigned int id)
+int WorldObjectManager::SearchForPlayerObject(const unsigned int id)
 {
-	for (unsigned int i = 0; i < this->zPlayers.size(); i++)
+	for (unsigned int i = 0; i < this->zPlayerObjects.size(); i++)
 	{
-		if (this->zPlayers[i]->GetID() == id)
+		if (this->zPlayerObjects[i]->GetID() == id)
 		{
 			return i;
 		}
@@ -195,11 +195,11 @@ int WorldObjectManager::SearchForDynamicObject(const unsigned int id)
 	return -1;
 }
 
-int WorldObjectManager::SearchForAnimal(const unsigned int id)
+int WorldObjectManager::SearchForAnimalObject(const unsigned int id)
 {
-	for (unsigned int i = 0; i < this->zAnimals.size(); i++)
+	for (unsigned int i = 0; i < this->zAnimalObjects.size(); i++)
 	{
-		if (this->zAnimals[i]->GetID() == id)
+		if (this->zAnimalObjects[i]->GetID() == id)
 		{
 			return i;
 		}
@@ -213,12 +213,12 @@ bool WorldObjectManager::SearchAndRemove(const unsigned int type, const unsigned
 	switch(type)
 	{
 	case OBJECT_TYPE_PLAYER:
-		position = this->SearchForPlayer(id);
-		this->zPlayers.erase(this->zPlayers.begin() + position);
+		position = this->SearchForPlayerObject(id);
+		this->zPlayerObjects.erase(this->zPlayerObjects.begin() + position);
 		break;
 	case OBJECT_TYPE_ANIMAL:
-		position = this->SearchForAnimal(id);
-		this->zAnimals.erase(this->zAnimals.begin() + position);
+		position = this->SearchForAnimalObject(id);
+		this->zAnimalObjects.erase(this->zAnimalObjects.begin() + position);
 		break;
 	case OBJECT_TYPE_STATIC_OBJECT:
 		position = this->SearchForStaticObject(id);
@@ -237,12 +237,12 @@ bool WorldObjectManager::SearchAndRemove(const unsigned int type, const unsigned
 
 void WorldObjectManager::UpdateObjects( float deltaTime )
 {
-	for (auto x = this->zPlayers.begin(); x < this->zPlayers.end(); x++)
+	for (auto x = this->zPlayerObjects.begin(); x < this->zPlayerObjects.end(); x++)
 	{
 		(*x)->Update(deltaTime);
 	}
 
-	for (auto x = this->zAnimals.begin(); x < this->zAnimals.end(); x++)
+	for (auto x = this->zAnimalObjects.begin(); x < this->zAnimalObjects.end(); x++)
 	{
 		(*x)->Update(deltaTime);
 	}
@@ -285,4 +285,28 @@ iMesh* WorldObjectManager::GetMapObject(unsigned int position)
 iTerrain* WorldObjectManager::GetTerrain()
 {
 	return this->zTerrain;
+}
+
+PlayerObject* WorldObjectManager::SearchAndGetPlayerObject(const unsigned int id)
+{
+	int position = this->SearchForPlayerObject(id);
+	return this->zPlayerObjects[position];
+}
+
+AnimalObject* WorldObjectManager::SearchAndGetAnimalObject(const unsigned int id)
+{
+	int position = this->SearchForAnimalObject(id);
+	return this->zAnimalObjects[position];
+}
+
+StaticObject* WorldObjectManager::SearchAndGetStaticObject(const unsigned int id)
+{
+	int position = this->SearchForStaticObject(id);
+	return this->zStaticObjects[position];
+}
+
+DynamicObject* WorldObjectManager::SearchAndGetDynamicObject(const unsigned int id)
+{
+	int position = this->SearchForDynamicObject(id);
+	return this->zDynamicObjects[position];
 }

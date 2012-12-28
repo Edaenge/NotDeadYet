@@ -33,10 +33,11 @@ public:
 	bool RemoveObject(const unsigned int type, const unsigned int id);
 	bool SearchAndRemove(const unsigned int type, const unsigned int id);
 
-	inline const std::vector<PlayerObject*>& GetPlayers() {return this->zPlayers;}
-	inline const std::vector<AnimalObject*>& GetAnimals() {return this->zAnimals;}
-	inline const std::vector<StaticObject*>& GetStaticObjects() {return this->zStaticObjects;}
-	inline const std::vector<DynamicObject*>& GetDynamicObjects() {return this->zDynamicObjects;}
+	inline std::vector<PlayerObject*>& GetPlayers() {return this->zPlayerObjects;}
+	inline std::vector<AnimalObject*>& GetAnimals() {return this->zAnimalObjects;}
+	inline std::vector<StaticObject*>& GetStaticObjects() {return this->zStaticObjects;}
+	inline std::vector<DynamicObject*>& GetDynamicObjects() {return this->zDynamicObjects;}
+	inline std::vector<iMesh*>& GetMapObjects() {return this->zMapObjects;}
 
 	PlayerObject* GetPlayerObject(const unsigned int pos);
 	AnimalObject* GetAnimalObject(const unsigned int pos);
@@ -45,6 +46,11 @@ public:
 
 	/*! Search for the Object With the ID.*/
 	int SearchForObject(const unsigned int type, const unsigned int id);
+
+	PlayerObject* SearchAndGetPlayerObject(const unsigned int id);
+	AnimalObject* SearchAndGetAnimalObject(const unsigned int id);
+	StaticObject* SearchAndGetStaticObject(const unsigned int id);
+	DynamicObject* SearchAndGetDynamicObject(const unsigned int id);
 	/*! Interpolates all the Objects towards their final Position*/
 	void UpdateObjects(float deltaTime);
 
@@ -55,9 +61,9 @@ public:
 	iTerrain* GetTerrain();
 private:
 	/*! Search for the object with the correct ID and returns a Position if found.*/
-	int SearchForPlayer(const unsigned int id);
+	int SearchForPlayerObject(const unsigned int id);
 	/*! Search for the object with the correct ID and returns a Position if found.*/
-	int SearchForAnimal(const unsigned int id);
+	int SearchForAnimalObject(const unsigned int id);
 	/*! Search for the object with the correct ID and returns a Position if found.*/
 	int SearchForStaticObject(const unsigned int id);
 	/*! Search for the object with the correct ID and returns a Position if found.*/
@@ -65,8 +71,8 @@ private:
 
 private:
 	/*! Vectors to keep track of World Objects.*/
-	std::vector<PlayerObject*> zPlayers;
-	std::vector<AnimalObject*> zAnimals;
+	std::vector<PlayerObject*> zPlayerObjects;
+	std::vector<AnimalObject*> zAnimalObjects;
 	std::vector<StaticObject*> zStaticObjects;
 	std::vector<DynamicObject*> zDynamicObjects;
 	/*! Objects that are part part of the map are stored here

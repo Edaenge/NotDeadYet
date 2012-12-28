@@ -5,9 +5,9 @@ MeleeWeapon::MeleeWeapon(const unsigned int id,const unsigned int itemType) : We
 
 }
 
-MeleeWeapon::MeleeWeapon(const unsigned int id, const unsigned int weight, const std::string& name, 
-						 const unsigned int itemType, const float damage, const float range) 
-						 : Weapon(id, weight, name, itemType, damage, range)
+MeleeWeapon::MeleeWeapon(const unsigned int id, const unsigned int weight, const std::string& name, const unsigned int itemType, 
+						 const std::string& description, const float damage, const float range)
+						 : Weapon(id, weight, name, itemType, description, damage, range)
 {
 
 }
