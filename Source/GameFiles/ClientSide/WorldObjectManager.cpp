@@ -94,25 +94,63 @@ bool WorldObjectManager::AddObject(DynamicObject* dynamicObject)
 
 bool WorldObjectManager::RemoveObject(const unsigned int type, const unsigned int position)
 {
-	switch(type)
+	if (type == OBJECT_TYPE_PLAYER)
 	{
-	case OBJECT_TYPE_PLAYER:
-		this->zPlayerObjects.erase(this->zPlayerObjects.begin() + position);
-		break;
-	case OBJECT_TYPE_ANIMAL:
-		this->zAnimalObjects.erase(this->zAnimalObjects.begin() + position);
-		break;
-	case OBJECT_TYPE_STATIC_OBJECT:
-		this->zStaticObjects.erase(this->zStaticObjects.begin() + position);
-		break;
-	case OBJECT_TYPE_DYNAMIC_OBJECT:
-		this->zDynamicObjects.erase(this->zDynamicObjects.begin() + position);
-		break;
-	default:
-		return false;
-		break;
+		if (position < this->zPlayerObjects.size())
+		{
+			PlayerObject* playerObj = this->zPlayerObjects[position];
+			this->zPlayerObjects.erase(this->zPlayerObjects.begin() + position);
+			if (playerObj)
+			{
+				delete playerObj;
+				playerObj = NULL;
+			}
+			return true;
+		}
 	}
-	return true;
+	if (type == OBJECT_TYPE_ANIMAL)
+	{
+		if (position < this->zAnimalObjects.size())
+		{
+			AnimalObject* animalObj = this->zAnimalObjects[position];
+			this->zAnimalObjects.erase(this->zAnimalObjects.begin() + position);
+			if (animalObj)
+			{
+				delete animalObj;
+				animalObj = NULL;
+			}
+			return true;
+		}
+	}
+	if (type == OBJECT_TYPE_STATIC_OBJECT)
+	{
+		if (position < this->zStaticObjects.size())
+		{
+			StaticObject* staticObj = this->zStaticObjects[position];
+			this->zStaticObjects.erase(this->zStaticObjects.begin() + position);
+			if (staticObj)
+			{
+				delete staticObj;
+				staticObj = NULL;
+			}
+			return true;
+		}
+	}
+	if (type == OBJECT_TYPE_DYNAMIC_OBJECT)
+	{
+		if (position < this->zDynamicObjects.size())
+		{
+			DynamicObject* dynamicObj = this->zDynamicObjects[position];
+			this->zDynamicObjects.erase(this->zDynamicObjects.begin() + position);
+			if (dynamicObj)
+			{
+				delete dynamicObj;
+				dynamicObj = NULL;
+			}
+			return true;
+		}
+	}
+	return false;
 }
 
 PlayerObject* WorldObjectManager::GetPlayerObject(const unsigned int pos)

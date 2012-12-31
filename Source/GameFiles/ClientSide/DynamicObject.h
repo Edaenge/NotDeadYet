@@ -21,7 +21,9 @@ public:
 	int GetType() const {return this->zType;}
 	std::string GetName() const {return this->zName;}
 	std::string GetDescription() const {return this->zDescription;}
+	std::string GetIconPath() const {return this->zIconPath;}
 
+	void SetIconPath(const std::string& path) {this->zIconPath = path;}
 	void SetDescription(const std::string& description) {this->zDescription = description;}
 	void SetName(const std::string& name) {this->zName = name;}
 	void SetWeight(const int weight) {this->zWeight = weight;}
@@ -31,5 +33,6 @@ private:
 	int zWeight;
 	int zType;
 	std::string zName;
+	std::string zIconPath;
 	std::string zDescription;
 };

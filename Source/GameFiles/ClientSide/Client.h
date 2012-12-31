@@ -78,7 +78,7 @@ private:
 	/*! Send Camera Info and Rotation to Server*/
 	void SendClientUpdate();
 	/*! Checks Ray Vs Static/Dynamic Objects*/
-	std::vector<Gui_Item_Data>& RayVsWorld();
+	std::vector<Gui_Item_Data> RayVsWorld();
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
 	bool CheckCollision();
 

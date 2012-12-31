@@ -162,25 +162,15 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 	return false;
 }
 
-bool PlayerActor::DropObject( const int ID )
+Item* PlayerActor::DropObject( const int ID )
 {
 	Item* item = this->zInventory->SearchAndGetItem(ID);
 	unsigned int item_type;
 
 	if(!item)
-		return false;
+		return NULL;
 
-	item_type = item->GetItemType();
+	this->zInventory->RemoveItem(item);
 
-	switch (item_type)
-	{
-	case ITEM_TYPE_FOOD_MEAT:
-
-		break;
-	default:
-		break;
-	}
-
-
-	return false;
+	return item;
 }

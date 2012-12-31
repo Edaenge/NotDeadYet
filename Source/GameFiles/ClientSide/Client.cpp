@@ -105,17 +105,9 @@ void Client::InitGraphics()
 	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
 	this->zEng->GetCamera()->LookAt( Vector3(0, 0, 0) );
 
-	//int x = (int)(this->zEng->GetEngineParameters()->windowHeight * 0.33f);
-	//int y = (int)(this->zEng->GetEngineParameters()->windowWidth * 0.25f);
+	//iTerrain* terrain = this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 20);
 
-	//zInvGui = new InventoryGui(x, y, x * 1.5f, x * 1.5f, "Media/Inventory_v01.png");
-	
-	//zCircularInvGui = new CircularListGui(x, y, x * 1.5f, x * 1.5f, "Media/Use_v01.png");
-
-	//zInvGui->AddItemToGui("Media/Inventory_v01.png", this->zEng);
-	//zInvGui->AddItemToGui("Media/Inventory_v01.png", this->zEng);
-
-	//this->zEng->GetKeyListener()->SetCursorVisibility(true);
+	//this->zObjectManager->AddTerrain(terrain);
 	this->zEng->StartRendering();
 }
 
@@ -236,7 +228,13 @@ void Client::UpdateCameraPos()
 	if (pos != -1)
 	{
 		Vector3 position = this->zObjectManager->GetPlayerObject(pos)->GetPosition();
-		//float y = this->zObjectManager->GetTerrain()->GetYPositionAt(position.x, position.z);
+		iTerrain* terrain = this->zObjectManager->GetTerrain();
+		if (terrain)
+		{
+			position.y = terrain->GetYPositionAt(position.x, position.z);
+			terrain = NULL;
+		}
+		
 		position.y += 2.5f;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
@@ -316,19 +314,47 @@ void Client::HandleKeyboardInput()
 
 	zShowCursor = this->zGuiManager->IsGuiOpen();
 
-	if(!CheckCollision())
-		this->CheckMovementKeys();
+	
+	this->CheckMovementKeys();
 
-	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
+	//Used For Testing ATM
+	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_JUMP)))
 	{
-		std::vector<Gui_Item_Data> collisionObjects = this->RayVsWorld();
-		this->zGuiManager->ShowLootingGui(collisionObjects);
-		this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
+		if (!this->zKeyInfo.GetKeyState(KEY_JUMP))
+		{
+			if (this->zPlayerInventory->GetItems().size() > 0)
+			{
+				int id = this->zPlayerInventory->GetItem(0)->GetID();
+				this->SendDropItemMessage(id);
+			}
+		}
+		this->zKeyInfo.SetKeyState(KEY_JUMP, true);
 	}
 	else
 	{
-		this->zGuiManager->HideLootingGui();
-		this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
+		this->zKeyInfo.SetKeyState(KEY_JUMP, false);
+	}
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			std::vector<Gui_Item_Data> collisionObjects = this->RayVsWorld();
+			if (collisionObjects.size() > 0)
+			{
+				SendPickupItemMessage(collisionObjects[0].zID);
+			}
+			this->zGuiManager->ShowLootingGui(collisionObjects);
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			this->zGuiManager->HideLootingGui();
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
+		}
+		
 	}
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
 	{
@@ -516,14 +542,15 @@ void Client::HandleNetworkMessage(const std::string& msg)
 
 void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id)
 {
-	std::string itemName;
-	std::string itemDescription;
-	std::string itemIconFilePath = "Media/Use_v01.png";
-	unsigned int itemWeight;
-	unsigned int itemType = -1;
-	float weaponDamage;
-	float weaponRange;
-	float hunger;
+	std::string itemName = "Unknown";
+	std::string itemDescription = "<<<<<UNKNOWN DESCRIPTION>>>>>";
+	std::string itemIconFilePath = "none";
+	int itemWeight = 0;
+	int itemType = -1;
+	float weaponDamage = 0.0f;
+	float weaponRange = 0.0f;
+	float hunger = 0.0f;
+
 	char key[256];
 	for(unsigned int i = 1; i < msgArray.size(); i++)
 	{
@@ -561,58 +588,57 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		{
 			hunger = this->zMsgHandler.ConvertStringToFloat(M_HUNGER, msgArray[i]);
 		}
-		if (itemType == -1)
-		{
-			MaloW::Debug("Wrong or no Item Type sent from server in Client::HandleAddInventoryItem ItemType: " + MaloW::convertNrToString(itemType));
-			return;
-		}
-		//Todo add more data to item to identify type ex Bow/Axe/Pocket Knife
-		Item* item = 0;
-		switch (itemType)
-		{
-		case ITEM_TYPE_FOOD_MEAT:
-			item = new Food(id, itemWeight, itemName, itemType, itemDescription, hunger);
-			break;
-		case ITEM_TYPE_WEAPON_RANGED_BOW:
-			item = new RangedWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
-			break;
-		case ITEM_TYPE_WEAPON_RANGED_ROCK:
-			item = new RangedWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
-			break;
-		case ITEM_TYPE_WEAPON_MELEE_AXE:
-			item = new MeleeWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
-			break;
-		case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
-			item = new MeleeWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
-			break;
-		case ITEM_TYPE_GEAR_HEAD:
-			item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
-			break;
-		case ITEM_TYPE_GEAR_CHEST:
-			item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
-			break;
-		case ITEM_TYPE_GEAR_LEGS:
-			item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
-			break;
-		case ITEM_TYPE_GEAR_BOOTS:
-			item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
-			break;
-		default:
-			break;
-		}
-		bool added = this->zPlayerInventory->AddItem(item);
-		if (added)
-		{
-			Gui_Item_Data gid = Gui_Item_Data(id, itemName, itemDescription, itemIconFilePath);
-			this->zGuiManager->AddInventoryItemToGui(gid);
-		}
-		
+	}
+	if (itemType == -1)
+	{
+		MaloW::Debug("Wrong or no Item Type sent from server in Client::HandleAddInventoryItem ItemType: " + MaloW::convertNrToString(itemType));
+		return;
+	}
+	//Todo add more data to item to identify type ex Bow/Axe/Pocket Knife
+	Item* item = 0;
+	switch (itemType)
+	{
+	case ITEM_TYPE_FOOD_MEAT:
+		item = new Food(id, itemWeight, itemName, itemType, itemDescription, hunger);
+		break;
+	case ITEM_TYPE_WEAPON_RANGED_BOW:
+		item = new RangedWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
+		break;
+	case ITEM_TYPE_WEAPON_RANGED_ROCK:
+		item = new RangedWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
+		break;
+	case ITEM_TYPE_WEAPON_MELEE_AXE:
+		item = new MeleeWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
+		break;
+	case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
+		item = new MeleeWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
+		break;
+	case ITEM_TYPE_GEAR_HEAD:
+		item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
+		break;
+	case ITEM_TYPE_GEAR_CHEST:
+		item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
+		break;
+	case ITEM_TYPE_GEAR_LEGS:
+		item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
+		break;
+	case ITEM_TYPE_GEAR_BOOTS:
+		item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
+		break;
+	default:
+		break;
+	}
+	if (this->zPlayerInventory->AddItem(item))
+	{
+		Gui_Item_Data gid = Gui_Item_Data(id, itemName, itemDescription, itemIconFilePath);
+		//this->zGuiManager->AddInventoryItemToGui(gid);
 	}
 }
 
-void Client::HandleRemoveInventoryItem( const int id )
+void Client::HandleRemoveInventoryItem(const int id)
 {
-	//Remove Item with ITEM_ID = id
+	int index = this->zPlayerInventory->Search(id);
+	this->zPlayerInventory->RemoveItem(index);
 }
 
 void Client::CloseConnection(const std::string& reason)
@@ -647,6 +673,11 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			iTerrain* terrain = this->zObjectManager->GetTerrain();
+			if (terrain)
+			{
+				position.y = terrain->GetYPositionAt(position.x, position.z);
+			}
 			playerObject->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -693,7 +724,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 
 bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const int id)
 {
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
+	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
 
 	if (pos != -1)
 	{
@@ -715,6 +746,11 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			iTerrain* terrain = this->zObjectManager->GetTerrain();
+			if (terrain)
+			{
+				position.y = terrain->GetYPositionAt(position.x, position.z);
+			}
 			animalObject->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -755,7 +791,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 
 bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const int id)
 {
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
+	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, id);
 
 	if (pos != -1)
 	{
@@ -777,6 +813,11 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			iTerrain* terrain = this->zObjectManager->GetTerrain();
+			if (terrain)
+			{
+				position.y = terrain->GetYPositionAt(position.x, position.z);
+			}
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
@@ -806,6 +847,11 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, msgArray[i]);
 			staticObject->SetDescription(description);
 		}
+		else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
+		{
+			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, msgArray[i]);
+			staticObject->SetIconPath(path);
+		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
 			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, msgArray[i]);
@@ -831,7 +877,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 
 bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const int id)
 {
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
+	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, id);
 
 	if (pos != -1)
 	{
@@ -853,6 +899,11 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			iTerrain* terrain = this->zObjectManager->GetTerrain();
+			if (terrain)
+			{
+				position.y = terrain->GetYPositionAt(position.x, position.z);
+			}
 			dynamicObject->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -868,15 +919,15 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, msgArray[i]);
 			dynamicObject->SetState(state);
 		}
-		else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
-		{
-			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, msgArray[i]);
-			dynamicObject->SetWeight(weight);
-		}
 		else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
 		{
 			int type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[i]);
 			dynamicObject->SetType(type);
+		}
+		else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
+		{
+			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, msgArray[i]);
+			dynamicObject->SetWeight(weight);
 		}
 		else if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
 		{
@@ -887,6 +938,11 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 		{
 			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, msgArray[i]);
 			dynamicObject->SetDescription(description);
+		}
+		else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
+		{
+			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, msgArray[i]);
+			dynamicObject->SetIconPath(path);
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
@@ -942,6 +998,11 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			iTerrain* terrain = this->zObjectManager->GetTerrain();
+			if (terrain)
+			{
+				position.y = terrain->GetYPositionAt(position.x, position.z);
+			}
 			PlayerObjectPointer->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -1037,20 +1098,46 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			iTerrain* terrain = this->zObjectManager->GetTerrain();
+			if (terrain)
+			{
+				position.y = terrain->GetYPositionAt(position.x, position.z);
+			}
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
 			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, msgArray[i]);
 			StaticObjectPointer->SetRotation(rotation);
 		}
+		else if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
+		{
+			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, msgArray[i]);
+			StaticObjectPointer->SetName(name);
+		}
+		else if(strcmp(key, M_ITEM_DESCRIPTION.c_str()) == 0)
+		{
+			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, msgArray[i]);
+			StaticObjectPointer->SetDescription(description);
+		}
+		else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
+		{
+			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, msgArray[i]);
+			StaticObjectPointer->SetIconPath(path);
+		}
+		else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
+		{
+			int type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[i]);
+			StaticObjectPointer->SetType(type);
+		}
+		else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
+		{
+			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, msgArray[i]);
+			StaticObjectPointer->SetWeight(weight);
+		}
 		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
 		{
 			serverTime = this->zMsgHandler.ConvertStringToFloat(M_FRAME_TIME, msgArray[i]);
 		}
-		//else if(strcmp(key, M_STATE.c_str()) == 0)
-		//{
-		//	int state = this->zMsgHandler.ConvertStringToInt(M_STATE, msgArray[i]);
-		//}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
 			bFile = true;
@@ -1086,7 +1173,7 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 	if (id == -1)
 		return false;
 	
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
+	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
 	//Check if object was found
 	if(pos == -1)
 		return false;	
@@ -1110,6 +1197,11 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			iTerrain* terrain = this->zObjectManager->GetTerrain();
+			if (terrain)
+			{
+				position.y = terrain->GetYPositionAt(position.x, position.z);
+			}
 			AnimalObjectPointer->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -1167,7 +1259,7 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 	if (id == -1)
 		return false;
 		
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, id);
+	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, id);
 	//Check if object was found
 	if(pos == -1)
 		return false;
@@ -1192,21 +1284,45 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
-			DynamicObjectPointer->SetNextPosition(position);
+			iTerrain* terrain = this->zObjectManager->GetTerrain();
+			if (terrain)
+			{
+				position.y = terrain->GetYPositionAt(position.x, position.z);
+			}
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
 			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, msgArray[i]);
 			DynamicObjectPointer->SetRotation(rotation);
 		}
+		else if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
+		{
+			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, msgArray[i]);
+			DynamicObjectPointer->SetName(name);
+		}
+		else if(strcmp(key, M_ITEM_DESCRIPTION.c_str()) == 0)
+		{
+			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, msgArray[i]);
+			DynamicObjectPointer->SetDescription(description);
+		}
+		else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
+		{
+			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, msgArray[i]);
+			DynamicObjectPointer->SetIconPath(path);
+		}
+		else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
+		{
+			int type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[i]);
+			DynamicObjectPointer->SetType(type);
+		}
+		else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
+		{
+			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, msgArray[i]);
+			DynamicObjectPointer->SetWeight(weight);
+		}
 		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
 		{
 			serverTime = this->zMsgHandler.ConvertStringToFloat(M_FRAME_TIME, msgArray[i]);
-		}
-		else if(strcmp(key, M_STATE.c_str()) == 0)
-		{
-			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, msgArray[i]);
-			DynamicObjectPointer->SetState(state);
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
@@ -1243,7 +1359,7 @@ bool Client::RemovePlayerObject(const int id)
 	if (id == -1)
 		return false;
 		
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
+	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
 
 	//Check if object was found in the array
 	if(pos == -1)
@@ -1305,14 +1421,16 @@ bool Client::RemoveStaticObject(const int id)
 	
 	iMesh* mesh = this->zObjectManager->GetStaticObject(pos)->GetMesh();
 
-	if(mesh)
-	{
-		this->zEng->DeleteMesh(mesh);
-	}
+	//if(mesh)
+	//{
+	//	this->zEng->DeleteMesh(mesh);
+	//}
 	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_STATIC_OBJECT, pos))
 	{
 		MaloW::Debug("Failed To Remove Static Object with id: " + MaloW::convertNrToString(id));
+		return false;
 	}
+	MaloW::Debug("Removed Static Object, Number of Objects remaining = " + MaloW::convertNrToString(this->zObjectManager->GetStaticObjects().size()));
 
 	return true;
 }
@@ -1342,7 +1460,7 @@ bool Client::RemoveDynamicObject(const int id)
 	return true;
 }
 
-std::vector<Gui_Item_Data>& Client::RayVsWorld()
+std::vector<Gui_Item_Data> Client::RayVsWorld()
 {
 	Vector3 origin = this->zEng->GetCamera()->GetPosition();
 	Vector3 camForward = this->zEng->GetCamera()->GetForward();

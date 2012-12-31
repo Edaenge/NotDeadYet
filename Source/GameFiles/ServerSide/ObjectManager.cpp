@@ -97,8 +97,6 @@ bool ObjectManager::ReadObjects()
 
 			this->zFood.push_back(fd);
 		}
-
-
 	}
 
 	return true;
@@ -131,6 +129,24 @@ void ObjectManager::TrimAndSet( char* ret )
 
 }
 
+bool ObjectManager::Replace(char* key)
+{
+	if (strcmp(key, "") == 0)
+		return false;
+
+	std::string str = string(key);
+
+	for (int i = 0; i < str.length(); i++)
+	{
+		if (str.at(i) == '_')
+		{
+			str.at(i) = ' ';
+		}
+	}
+	strcpy(key, str.c_str());
+	return true;
+}
+
 bool ObjectManager::InterpCommand( char* command, char* key, WeaponObject* wp )
 {
 	if(strcmp(key, "") == 0)
@@ -152,10 +168,10 @@ bool ObjectManager::InterpCommand( char* command, char* key, WeaponObject* wp )
 	{
 		wp->SetWeight(MaloW::convertStringToInt(key));
 	}
-	/*else if(strcmp(command, PATH.c_str()) == 0)
+	else if(strcmp(command, PATH.c_str()) == 0)
 	{
 		wp->SetIconPath(key);
-	}*/
+	}
 	else if(strcmp(command, DESCRIPTION.c_str()) == 0)
 	{
 		wp->SetDescription(key);
@@ -197,6 +213,10 @@ bool ObjectManager::InterpCommand( char* command, char* key, FoodObject* fd )
 	{
 		fd->SetWeight(MaloW::convertStringToInt(key));
 	}
+	else if(strcmp(command, PATH.c_str()) == 0)
+	{
+		fd->SetIconPath(key);
+	}
 	else if(strcmp(command, DESCRIPTION.c_str()) == 0)
 	{
 		fd->SetDescription(key);
@@ -210,18 +230,17 @@ bool ObjectManager::InterpCommand( char* command, char* key, FoodObject* fd )
 		fd->SetActorObjectName(key);
 	}
 
-
 	return true;
 }
 
 const WeaponObject* ObjectManager::GetWeaponObject( const int type )
 {
-	return SearchType(zWeapons, type);
+	return SearchType(this->zWeapons, type);
 }
 
 const FoodObject* ObjectManager::GetFoodObject( const int type )
 {
-	return SearchType(zFood, type);
+	return SearchType(this->zFood, type);
 }
 
 const WeaponObject* ObjectManager::SearchType( std::vector<WeaponObject*>& weapons, const int type ) const

@@ -237,7 +237,7 @@ std::vector<std::string> NetworkMessageConverter::SplitMessage(const std::string
 	for(unsigned int i = 0; i < msg.length(); i++)
 	{
 		subMsg = "";
-		while (msg.at(i) != '*')
+		while (msg.at(i) != '*' || i >= msg.length())
 		{
 			subMsg += msg[i++];
 		}

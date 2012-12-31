@@ -50,7 +50,7 @@ void ActorHandler::UpdateA( float deltaTime )
 	}
 }
 
-bool ActorHandler::AddNewPlayer( PlayerActor* new_player )
+bool ActorHandler::AddNewPlayer(PlayerActor* new_player)
 {
 	if(!new_player)
 		return false;
@@ -61,26 +61,106 @@ bool ActorHandler::AddNewPlayer( PlayerActor* new_player )
 	return true;
 }
 
+bool ActorHandler::AddNewStaticFoodActor( FoodObject* new_Food )
+{
+	if(!new_Food)
+		return false;
+
+	this->zFoods.push_back(new_Food);
+
+	return true;
+}
+
+bool ActorHandler::AddNewStaticWeaponActor( WeaponObject* new_Weapon )
+{
+	if(!new_Weapon)
+		return false;
+
+	this->zWeapons.push_back(new_Weapon);
+
+	return true;
+}
+
 Actor* ActorHandler::GetActor( const int ID, const int TYPE ) const
 {
 	Actor* ac = NULL;
-	SearchForActor(ID, TYPE, &ac);
+	this->SearchForActor(ID, TYPE, &ac);
 
 	return ac;
 }
 
-PlayerActor* ActorHandler::RemovePlayerActor( const int ID )
+bool ActorHandler::RemovePlayerActor( const int ID )
 {
-	int index = SearchForActor(ID, ACTOR_TYPE_PLAYER);
-	PlayerActor* pa;
+	int index = this->SearchForActor(ID, ACTOR_TYPE_PLAYER);
 
 	if(index == -1)
-		return NULL;
+		return false;
 
-	pa = this->zPlayers[index];
-	zPlayers.erase(zPlayers.begin() + index);
+	PlayerActor* temp = this->zPlayers[index];
+	this->zPlayers.erase(this->zPlayers.begin() + index);
+	
+	SAFE_DELETE(temp);
 
-	return pa;
+	return true;
+}
+
+bool ActorHandler::RemoveAnimalActor( const int ID )
+{
+	int index = this->SearchForActor(ID, ACTOR_TYPE_ANIMAL);
+
+	if(index == -1)
+		return false;
+	
+	AnimalActor* temp = this->zAnimals[index];
+	this->zAnimals.erase(this->zAnimals.begin() + index);
+
+	SAFE_DELETE(temp);
+
+	return true;
+}
+
+bool ActorHandler::RemoveStaticFoodActor( const int ID )
+{
+	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_FOOD);
+
+	if(index == -1)
+		return false;
+
+	FoodObject* temp = this->zFoods[index];
+	this->zFoods.erase(this->zFoods.begin() + index);
+	
+	SAFE_DELETE(temp);
+	
+	return true;
+}
+
+bool ActorHandler::RemoveStaticWeaponActor( const int ID )
+{
+	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_WEAPON);
+
+	if(index == -1)
+		return false;
+
+	WeaponObject* temp = this->zWeapons[index];
+
+	this->zWeapons.erase(this->zWeapons.begin() + index);
+	SAFE_DELETE(temp);
+
+	return true;
+}
+
+bool ActorHandler::RemoveDynamicActor( const int ID )
+{
+	//int index = this->SearchForActor(ID, ACTOR_TYPE_ANIMAL);
+
+	//if(index == -1)
+	//	return false;
+
+	//this->zAnimals.erase(this->zAnimals.begin() + index);
+
+	//SAFE_DELETE(temp);
+
+	return true;
 }
 
 const int ActorHandler::SearchForActor( const int ID, int TYPE ) const
@@ -184,3 +264,7 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE, Actor** aOut ) c
 	return -1;
 }
 
+ObjectManager* ActorHandler::GetObjManager() const
+{
+	return this->zObjManager;
+}

@@ -57,17 +57,27 @@ public:
 	/*! Main loop for this thread*/
 	void Life();
 	/*! Checks if the server have players connected.*/
-	bool HasPlayers() const;
+	bool HasClients() const;
 	/*! Returns the port*/
 	inline int GetPort() const{return this->zPort;}
 	/*! Sends a message to all connected clients.*/
 	void SendToAllClients(const std::string& message);
 	/*! Sends to a specific client.*/
 	void SendToClient(int clientID, const std::string& message);
-	/*! Sends player updates to clients.*/
-	void SendPlayerUpdates();
-	/*! Sends Animal updates to clients.*/
-	void SendAnimalUpdates();
+	/*! Sends Player Actor updates to clients.*/
+	void SendPlayerActorUpdates();
+	/*! Sends Animal Actor updates to clients.*/
+	void SendAnimalActorUpdates();
+	/*! Sends Static Actor updates to clients.*/
+	void SendStaticActorUpdates();
+	/*! Sends Dynamic Actor updates to clients.*/
+	void SendDynamicActorUpdates();
+	/*! Sends new Static Object Data to Clients*/
+	void SendNewObjectMessage(StaticObjectActor* staticObj);
+	/*! Sends new Dynamic Object Data to Clients*/
+	void SendNewObjectMessage(DynamicObjectActor* dynamicObj);
+	/*! Sends new Animal Object Data to Clients*/
+	void SendNewObjectMessage(AnimalActor* animalObj);
 	/*! Notifies all clients, the server is shutting down.*/
 	void BroadCastServerShutdown();
 	/*! Pings the clients.*/
@@ -85,6 +95,8 @@ public:
 	bool IsAlive() const;
 
 private:
+	/*! Creates all Animal/Static And Dynamic Objects in the Game At the Beginning of the Game.*/
+	void Init();
 	/*! Handles new incoming connections.*/
 	void HandleNewConnections();
 	/*! Handles messages from clients. This function will call the following functions:
@@ -109,7 +121,19 @@ private:
 	int SearchForClient(const int ID) const;
 	/*! Creates a new player and notifies all clients.*/
 	void CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data);
-
+	bool HandlePickupItem(PlayerActor* pActor, const int ObjectId);
+	void HandleDropItem(PlayerActor* pActor, const int ItemId);
+	/*! Returns an Array Containing Existing Static Objects Messages.*/
+	void GetExistingObjects(std::vector<std::string>& static_Objects);
+	/*! Creates an Object From the Item Data.*/
+	void CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item);
+	void CreateObjectFromItem(PlayerActor* pActor, Food* food_Item);
+	/*! Creates An Item From the Object Data.*/
+	bool CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj);
+	bool CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj);
+	/*! */
+	bool CreateStaticObjectActor(const int type, WeaponObject* weaponObj);
+	bool CreateStaticObjectActor(const int type, FoodObject* foodObj);
 private:
 	ServerListener* zServerListener;
 
@@ -127,9 +151,5 @@ private:
 	float zSecsPerCnt;
 	float zDeltaTime;
 	float zTimeOut;
-	float zUpdateDelay;
 	float zPingMessageInterval;
-
-
-
 };

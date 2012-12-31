@@ -1,11 +1,13 @@
 #include "GameFiles/ServerSide/Host.h"
 
+// 30 updates per sec
+static const float UPDATE_DELAY = 0.0333f;
 
 Host::Host()
 {
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
-	this->zClients = std::vector<ClientData *>(); 
+	this->zClients = std::vector<ClientData*>(); 
 	this->zActorHandler = new ActorHandler();
 
 	this->zStartime = 0;
@@ -13,7 +15,6 @@ Host::Host()
 	this->zDeltaTime = 0.0f;
 	this->zTimeOut = 15.0f;
 	this->zPingMessageInterval = 5.0f;
-	this->zUpdateDelay = 0.05f;
 }
 
 Host::~Host()
@@ -33,12 +34,35 @@ Host::~Host()
 		SAFE_DELETE(*x);
 	}
 }
+//NEEDS FIXING
+void Host::Init()
+{
+	//Creates A New FoodObject With an Id And Default Values 
+	FoodObject* foodObj = new FoodObject(true);
+	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_MEAT, foodObj))
+	{
+		foodObj->SetPosition(Vector3(10.0f, 0.0f, 10.0f));
+		//Adds The Object To the Array
+		this->zActorHandler->AddNewStaticFoodActor(foodObj);
+	}
+	//Creates A New WeaponObject With an Id And Default Values 
+	WeaponObject* weaponObj = new WeaponObject(true);
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, weaponObj))
+	{
+		weaponObj->SetPosition(Vector3(-10.0f, 0.0f, -10.0f));
+		//Adds The Object To the Array
+		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+	}
+	
+}
 
 void Host::Life()
 {
 	MaloW::Debug("Host Process Started");
 	this->zServerListener->Start();
 	
+	this->Init();
+
 	INT64 frequency;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 	
@@ -64,9 +88,11 @@ void Host::Life()
 		PingClients();
 		UpdatePl();
 		
-		if(waitTimer >= this->zUpdateDelay)
+		if(waitTimer >= UPDATE_DELAY)
 		{
-			SendPlayerUpdates();
+			SendPlayerActorUpdates();
+			SendAnimalActorUpdates();
+			SendDynamicActorUpdates();
 			waitTimer = 0.0f;
 		}
 
@@ -141,12 +167,10 @@ void Host::HandleNewConnections()
 
 void Host::SendToAllClients( const std::string& message )
 {
-	if(!HasPlayers())
+	if(!HasClients())
 		return;
 
-	std::vector<ClientData*>::iterator it;
-
-	for(it = zClients.begin(); it < zClients.end(); it++)
+	for(auto it = zClients.begin(); it < zClients.end(); it++)
 	{
 		(*it)->zClient->sendData(message);
 	}
@@ -162,9 +186,9 @@ void Host::SendToClient( int clientID, const std::string& message )
 	this->zClients[pos]->zClient->sendData(message);
 }
 
-void Host::SendPlayerUpdates()
+void Host::SendPlayerActorUpdates()
 {
-	if(!HasPlayers())
+	if(!HasClients())
 		return;
 
 	std::vector<std::string> playerData;
@@ -196,20 +220,19 @@ void Host::SendPlayerUpdates()
 	}
 }
 
-void Host::SendAnimalUpdates()
+void Host::SendAnimalActorUpdates()
 {
-	if(!HasPlayers())
+	if(!HasClients())
 		return;
 
 	std::vector<std::string> animalData;
 	std::string mess = "";
 
 	//Fetch player data
-	std::vector<AnimalActor*> pl = this->zActorHandler->GetAnimals();
-	for (auto it_Animal = pl.begin(); it_Animal < pl.end(); it_Animal++)
+	std::vector<AnimalActor*> al = this->zActorHandler->GetAnimals();
+	for (auto it_Animal = al.begin(); it_Animal < al.end(); it_Animal++)
 	{
 		Vector3 pos = (*it_Animal)->GetPosition();
-		Vector3 dir = (*it_Animal)->GetDirection();
 		Vector4 rot = (*it_Animal)->GetRotation();
 
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_ANIMAL, (*it_Animal)->GetID());
@@ -230,7 +253,72 @@ void Host::SendAnimalUpdates()
 	}
 }
 
-bool Host::HasPlayers() const
+void Host::SendStaticActorUpdates()
+{
+	if(!HasClients())
+		return;
+
+	std::vector<std::string> staticData;
+	std::string mess = "";
+
+	//Fetch Static Objects data
+	std::vector<FoodObject*> stf = this->zActorHandler->GetFoods();
+	for (auto it_Static = stf.begin(); it_Static < stf.end(); it_Static++)
+	{
+		Vector3 pos = (*it_Static)->GetPosition();
+		Vector4 rot = (*it_Static)->GetRotation();
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_STATIC_OBJECT, (*it_Static)->GetID());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (*it_Static)->GetType());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (*it_Static)->GetWeight());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it_Static)->GetDescription());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it_Static)->GetIconPath());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it_Static)->GetActorObjectName());
+
+		staticData.push_back(mess);
+	}
+
+	std::vector<WeaponObject*> stw = this->zActorHandler->GetWeapons();
+	for (auto it_Static = stw.begin(); it_Static < stw.end(); it_Static++)
+	{
+		Vector3 pos = (*it_Static)->GetPosition();
+		Vector4 rot = (*it_Static)->GetRotation();
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_STATIC_OBJECT, (*it_Static)->GetID());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (*it_Static)->GetType());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (*it_Static)->GetWeight());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it_Static)->GetDescription());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it_Static)->GetIconPath());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it_Static)->GetActorObjectName());
+
+		staticData.push_back(mess);
+	}
+	//Send Data to clients
+	for (auto it_Client = zClients.begin(); it_Client < zClients.end(); it_Client++)
+	{
+		for (auto it_Message = staticData.begin(); it_Message < staticData.end(); it_Message++)
+		{
+			(*it_Client)->zClient->sendData((*it_Message));
+		}
+	}
+}
+
+void Host::SendDynamicActorUpdates()
+{
+	if(!HasClients())
+		return;
+
+	std::vector<std::string> dynamicData;
+	std::string mess = "";
+}
+
+bool Host::HasClients() const
 {
 	return !this->zClients.empty();
 }
@@ -261,6 +349,281 @@ void Host::ReadMessages()
 		}
 		
 	}
+}
+
+bool Host::HandlePickupItem( PlayerActor* pActor, const int ObjectId )
+{
+	if(!HasClients())
+		return false;
+
+	//Check For FoodObject
+	FoodObject* food = dynamic_cast<FoodObject*>(this->zActorHandler->GetActor(ObjectId, ACTOR_TYPE_STATIC_OBJECT_FOOD));
+
+	if (food)
+	{
+		this->CreateItemFromObject(pActor, food);
+		return true;
+	}
+
+	//Check For Weapon Object
+	WeaponObject* weapon = dynamic_cast<WeaponObject*>(this->zActorHandler->GetActor(ObjectId, ACTOR_TYPE_STATIC_OBJECT_WEAPON));
+
+	if (weapon)
+	{
+		this->CreateItemFromObject(pActor, weapon);
+		return true;
+	}
+
+	return false;
+}
+
+bool Host::CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj)
+{
+	std::string msg;
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, foodObj->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, foodObj->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, foodObj->GetDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, foodObj->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, foodObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_HUNGER, foodObj->GetHunger());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, foodObj->GetIconPath());
+
+	std::string removeMsg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_STATIC_OBJECT, foodObj->GetID());
+
+	this->SendToAllClients(removeMsg);
+
+	this->SendToClient(pActor->GetID(), msg);
+
+	pActor->PickUpObject(foodObj);
+
+	this->zActorHandler->RemoveStaticFoodActor(foodObj->GetID());
+
+	return true;
+}
+
+bool Host::CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj)
+{
+	std::string msg;
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, weaponObj->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, weaponObj->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, weaponObj->GetDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, weaponObj->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, weaponObj->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, weaponObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_DAMAGE, weaponObj->GetDamage());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_RANGE, weaponObj->GetRange());
+
+	std::string removeMsg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_STATIC_OBJECT, weaponObj->GetID());
+
+	this->SendToAllClients(removeMsg);
+
+	this->SendToClient(pActor->GetID(), msg);
+
+	pActor->PickUpObject(weaponObj);
+
+	this->zActorHandler->RemoveStaticFoodActor(weaponObj->GetID());
+
+	return true;
+}
+
+void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
+{	
+	Item* item = NULL;
+	item = pActor->DropObject(ItemId);
+
+	if (!item)
+		return;
+
+	int item_type = item->GetItemType();
+
+	if (item_type == ITEM_TYPE_FOOD_MEAT)
+	{
+		Food* item_Food = dynamic_cast<Food*>(item);
+		if (!item_Food)
+			return;
+
+		this->CreateObjectFromItem(pActor, item_Food);
+		return;
+	}
+	if (item_type == ITEM_TYPE_WEAPON_RANGED_BOW)
+	{
+		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
+		if (!item_Weapon)
+			return;
+
+		this->CreateObjectFromItem(pActor, item_Weapon);
+		return;
+	}
+	if (item_type == ITEM_TYPE_WEAPON_RANGED_ROCK)
+	{
+		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
+		if (!item_Weapon)
+			return;
+
+		this->CreateObjectFromItem(pActor, item_Weapon);
+		return;
+	}
+	if (item_type == ITEM_TYPE_WEAPON_MELEE_AXE)
+	{
+		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
+		if (!item_Weapon)
+			return;
+
+		this->CreateObjectFromItem(pActor, item_Weapon);
+		return;
+	}
+	if (item_type == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
+	{
+		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
+		if (!item_Weapon)
+			return;
+
+		this->CreateObjectFromItem(pActor, item_Weapon);
+		return;
+	}
+}
+
+void Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
+{
+	FoodObject* foodObj = new FoodObject(false);
+	if (!this->CreateStaticObjectActor(food_Item->GetItemType(), foodObj))
+		return;
+	
+	//Creates A New FoodObject With an Id And Default Values 
+	
+	foodObj->SetID(food_Item->GetID());
+	foodObj->SetPosition(pActor->GetPosition());
+
+	this->zActorHandler->AddNewStaticFoodActor(foodObj);
+
+	this->SendNewObjectMessage(foodObj);
+
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, food_Item->GetID());
+
+	this->SendToClient(pActor->GetID(), msg);
+}
+
+void Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
+{
+	WeaponObject* weaponObj = new WeaponObject(false);
+
+	if (!this->CreateStaticObjectActor(weapon_Item->GetItemType(), weaponObj))
+		return;
+
+	//Creates A New WeaponObject With an Id And Default Values
+	weaponObj->SetID(weapon_Item->GetID());
+	weaponObj->SetPosition(pActor->GetPosition());
+
+	this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+
+	this->SendNewObjectMessage(weaponObj);
+
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, weapon_Item->GetID());
+
+	this->SendToClient(pActor->GetID(), msg);
+}
+
+bool Host::CreateStaticObjectActor(const int type, WeaponObject* weaponObj)
+{
+	//Get Default Values For a Weapon Object
+	const WeaponObject* weapon = this->zActorHandler->GetObjManager()->GetWeaponObject(type);
+
+	if (!weapon)
+		return false;
+
+	//Creates A New WeaponObject With an Id And Default Values 
+	weaponObj->SetType(type);
+	weaponObj->SetRange(weapon->GetRange());
+	weaponObj->SetWeight(weapon->GetWeight());
+	weaponObj->SetDamage(weapon->GetDamage());
+	weaponObj->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+	weaponObj->SetIconPath(weapon->GetIconPath());
+	weaponObj->SetActorModel(weapon->GetActorModel());
+	weaponObj->SetDescription(weapon->GetDescription());
+	weaponObj->SetActorObjectName(weapon->GetActorObjectName());
+
+	return true;
+}
+
+bool Host::CreateStaticObjectActor(const int type, FoodObject* foodObj)
+{
+	//Get Default Values For a Meat Object
+	const FoodObject* food = this->zActorHandler->GetObjManager()->GetFoodObject(type);
+
+	if (!food)
+		return false;
+
+	//Creates A New WeaponObject With an Id And Default Values 
+	foodObj->SetType(type);
+	foodObj->SetWeight(food->GetWeight());
+	foodObj->SetHunger(food->GetHunger());
+	foodObj->SetIconPath(food->GetIconPath());
+	foodObj->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+	foodObj->SetActorModel(food->GetActorModel());
+	foodObj->SetDescription(food->GetDescription());
+	foodObj->SetActorObjectName(food->GetActorObjectName());
+
+	return true;
+}
+
+void Host::SendNewObjectMessage(StaticObjectActor* staticObj)
+{
+	std::string msg;
+	Vector3 pos = staticObj->GetPosition();
+	Vector3 scale = staticObj->GetScale();
+	Vector4 rot = staticObj->GetRotation();
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, staticObj->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, staticObj->GetActorModel());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, staticObj->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, staticObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, staticObj->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, staticObj->GetDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, staticObj->GetIconPath());
+
+	this->SendToAllClients(msg);
+}
+
+void Host::SendNewObjectMessage(DynamicObjectActor* dynamicObj)
+{
+	std::string msg;
+	Vector3 pos = dynamicObj->GetPosition();
+	Vector3 scale = dynamicObj->GetScale();
+	Vector4 rot = dynamicObj->GetRotation();
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_DYNAMIC_OBJECT, dynamicObj->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, dynamicObj->GetActorModel());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, dynamicObj->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, dynamicObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, dynamicObj->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, dynamicObj->GetDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, dynamicObj->GetIconPath());
+
+	this->SendToAllClients(msg);
+}
+
+void Host::SendNewObjectMessage(AnimalActor* animalObj)
+{
+	std::string msg;
+	Vector3 pos = animalObj->GetPosition();
+	Vector3 scale = animalObj->GetScale();
+	Vector4 rot = animalObj->GetRotation();
+
+	msg  = this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+	msg +=  this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	msg +=  this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+	msg +=  this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, animalObj->GetState());
+	msg +=  this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, animalObj->GetActorModel());
+
+	this->SendToAllClients(msg);
 }
 
 void Host::HandleRecivedMessages()
@@ -310,6 +673,18 @@ void Host::HandleRecivedMessages()
 		else if(strcmp(key, M_PING.c_str()) == 0 && (c_index != -1))
 		{
 			HandlePingMsg(this->zClients[c_index]);
+		}
+		//Handles Pickup Object Requests from Client
+		else if(strcmp(key, M_PICKUP_ITEM.c_str()) == 0 && (p_actor))
+		{
+			int objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
+			HandlePickupItem(p_actor, objID);
+		}
+		//Handles Drop Item Requests from Client
+		else if(strcmp(key, M_DROP_ITEM.c_str()) == 0 && (p_actor))
+		{
+			int objID = this->zMessageConverter.ConvertStringToInt(M_DROP_ITEM, msgArray[0]);
+			HandleDropItem(p_actor, objID);
 		}
 		//Handles user data from client. Used when the player is new.
 		else if(strcmp(key, M_USER_DATA.c_str()) == 0 && (c_index != -1))
@@ -453,8 +828,7 @@ void Host::HandlePlayerUpdate( PlayerActor* pl, ClientData* cd, const std::vecto
 
 int Host::SearchForClient( const int ID ) const
 {
-
-	if(!HasPlayers())
+	if(!HasClients())
 		return -1;
 
 	for (unsigned int i = 0; i < this->zClients.size(); i++)
@@ -476,7 +850,7 @@ void Host::BroadCastServerShutdown()
 
 void Host::PingClients()
 {
-	if(!HasPlayers())
+	if(!HasClients())
 		return;
 
 	ClientData* cd; 
@@ -537,7 +911,7 @@ void Host::UpdatePl()
 	this->zActorHandler->UpdatePl(zDeltaTime);	
 }
 
-bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string reason /*= ""*/ )
+bool Host::KickClient( const int ID, bool sendAMessage, std::string reason )
 {
 
 	int index = SearchForClient(ID);
@@ -565,13 +939,10 @@ bool Host::KickClient( const int ID, bool sendAMessage /*= false*/, std::string 
 
 	//remove the player
 
-
-	PlayerActor* temp_p = NULL;
 	this->zClients.erase(zClients.begin() + index);
-	temp_p = dynamic_cast<PlayerActor*>(this->zActorHandler->RemovePlayerActor(ID));
+	this->zActorHandler->RemovePlayerActor(ID);
 
 	SAFE_DELETE(temp_c);
-	SAFE_DELETE(temp_p);
 
 	removed = true;
 	MaloW::Debug("Client"+MaloW::convertNrToString(ID)+" removed from server.");
@@ -591,11 +962,7 @@ bool Host::IsAlive() const
 void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data )
 {
 	std::string mess;
-	std::string uModel;
-	Vector3 uDir;
-	Vector3 uUp;
-
-
+	
 	PlayerActor* pi = new PlayerActor(cd->zClient->getClientID());
 
 	for (auto it_m = data.begin() + 1; it_m < data.end(); it_m++)
@@ -605,25 +972,24 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 
 		if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
-			uModel = this->zMessageConverter.ConvertStringToSubstring(M_MESH_MODEL, (*it_m));
+			std::string uModel = this->zMessageConverter.ConvertStringToSubstring(M_MESH_MODEL, (*it_m));
+			if(uModel != "")
+				pi->SetActorModel(uModel);
 		}
 		else if(strcmp(key, M_DIRECTION.c_str()) == 0)
 		{
-			uDir = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it_m));
+			Vector3 uDir = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it_m));
+			pi->SetDirection(uDir);
 		}
 		else if(strcmp(key, M_UP.c_str()) == 0)
 		{
-			uUp = this->zMessageConverter.ConvertStringToVector(M_UP, (*it_m));
+			Vector3 uUp = this->zMessageConverter.ConvertStringToVector(M_UP, (*it_m));
+			pi->SetUpVector(uUp);
 		}
 	}
 
-	if(uModel != "")
-		pi->SetActorModel(uModel);
-
-	pi->SetUpVector(uUp);
-	pi->SetDirection(uDir);
 	//Debug Pos
-	pi->SetPosition(Vector3(pi->GetID()*25,0,1)); 
+	pi->SetPosition(Vector3(pi->GetID()*15,0,1)); 
 	this->zActorHandler->AddNewPlayer(pi);
 
 	//Collect player infos
@@ -631,12 +997,12 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	std::vector<PlayerActor *> players = this->zActorHandler->GetPlayers();
 	int count = 0;
 	int newPlayerindex = 0;
-
+	
+	//Gets PlayerInformation
 	for(auto it = players.begin(); it < players.end(); it++)
 	{
 		Vector3 pos = (*it)->GetPosition();
 		Vector3 scale = (*it)->GetScale();
-		Vector3 dir = (*it)->GetDirection();
 		Vector4 rot = (*it)->GetRotation();
 
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, (*it)->GetID());
@@ -645,7 +1011,6 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (*it)->GetState());
-		//mess += this->zMessageConverter.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
 
 		temp.push_back(mess);
 
@@ -655,11 +1020,17 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 		count++;
 	}
 
-	//Send players to new player
+	//Send All Players to the new player
 	MaloW::ClientChannel* cc = cd->zClient;
 
-	std::vector<std::string>::iterator sIt;
-	for (sIt = temp.begin(); sIt < temp.end(); sIt++)
+	for (auto sIt = temp.begin(); sIt < temp.end(); sIt++)
+	{
+		cc->sendData(*sIt);
+	}
+	//Sends All Static Objects To the Player
+	std::vector<std::string> static_Msg;
+	this->GetExistingObjects(static_Msg);
+	for (auto sIt = static_Msg.begin(); sIt < static_Msg.end(); sIt++)
 	{
 		cc->sendData(*sIt);
 	}
@@ -669,5 +1040,53 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	{
 		if(zClients[i]->zClient->getClientID() != cc->getClientID())
 			this->zClients[i]->zClient->sendData(temp[newPlayerindex]);
+	}
+}
+
+void Host::GetExistingObjects( std::vector<std::string>& static_Objects )
+{
+	std::string mess;
+	std::vector<FoodObject*> static_Food = this->zActorHandler->GetFoods();
+	//Gets Static Food Objects Data
+	for(auto it = static_Food.begin(); it < static_Food.end(); it++)
+	{
+		Vector3 pos = (*it)->GetPosition();
+		Vector3 scale = (*it)->GetScale();
+		Vector4 rot = (*it)->GetRotation();
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, (*it)->GetID());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (*it)->GetType());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it)->GetActorObjectName());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (*it)->GetWeight());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it)->GetIconPath());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it)->GetDescription());
+
+		static_Objects.push_back(mess);
+
+	}
+	std::vector<WeaponObject *> static_Weapon = this->zActorHandler->GetWeapons();
+	//Gets Static Weapon Objects Data
+	for(auto it = static_Weapon.begin(); it < static_Weapon.end(); it++)
+	{
+		Vector3 pos = (*it)->GetPosition();
+		Vector3 scale = (*it)->GetScale();
+		Vector4 rot = (*it)->GetRotation();
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, (*it)->GetID());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (*it)->GetType());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it)->GetActorObjectName());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (*it)->GetWeight());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it)->GetIconPath());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it)->GetDescription());
+
+		static_Objects.push_back(mess);
 	}
 }

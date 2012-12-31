@@ -36,7 +36,7 @@ private:
 	bool InterpCommand( char* command, char* key, FoodObject* fd );
 	const WeaponObject* SearchType(std::vector<WeaponObject*>& weapons, const int type) const;
 	const FoodObject* SearchType(std::vector<FoodObject*>& food, const int type) const;
-
+	bool Replace(char* key);
 private:
 	std::vector<WeaponObject*> zWeapons;
 	std::vector<FoodObject*>	  zFood;
