@@ -16,6 +16,12 @@
 
 using namespace MaloW;
 
+struct TempImage 
+{
+	iImage* image;
+	int id;
+};
+
 class Client : public MaloW::Process
 {
 public:
@@ -120,4 +126,5 @@ private:
 	WorldObjectManager* zObjectManager;
 	NetworkMessageConverter zMsgHandler;
 	Inventory* zPlayerInventory;
+	std::vector<TempImage> images;
 };

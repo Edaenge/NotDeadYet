@@ -552,41 +552,41 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	float hunger = 0.0f;
 
 	char key[256];
-	for(unsigned int i = 1; i < msgArray.size(); i++)
+	for (auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
 		{
-			itemName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, msgArray[i]);
+			itemName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it));
 		}
 		else if(strcmp(key, M_ITEM_DESCRIPTION.c_str()) == 0)
 		{
-			itemDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, msgArray[i]);
+			itemDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it));
 		}
 		else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
 		{
-			itemIconFilePath = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, msgArray[i]);
+			itemIconFilePath = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it));
 		}
 		else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
 		{
-			itemWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, msgArray[i]);
+			itemWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it));
 		}
 		else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
 		{
-			itemType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[i]);
+			itemType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it));
 		}
 		else if(strcmp(key, M_WEAPON_DAMAGE.c_str()) == 0)
 		{
-			weaponDamage = this->zMsgHandler.ConvertStringToFloat(M_WEAPON_DAMAGE, msgArray[i]);
+			weaponDamage = this->zMsgHandler.ConvertStringToFloat(M_WEAPON_DAMAGE, (*it));
 		}
 		else if(strcmp(key, M_WEAPON_RANGE.c_str()) == 0)
 		{
-			weaponRange = this->zMsgHandler.ConvertStringToFloat(M_WEAPON_RANGE, msgArray[i]);
+			weaponRange = this->zMsgHandler.ConvertStringToFloat(M_WEAPON_RANGE, (*it));
 		}
 		else if(strcmp(key, M_HUNGER.c_str()) == 0)
 		{
-			hunger = this->zMsgHandler.ConvertStringToFloat(M_HUNGER, msgArray[i]);
+			hunger = this->zMsgHandler.ConvertStringToFloat(M_HUNGER, (*it));
 		}
 	}
 	if (itemType == -1)
@@ -632,6 +632,14 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	{
 		Gui_Item_Data gid = Gui_Item_Data(id, itemName, itemDescription, itemIconFilePath);
 		//this->zGuiManager->AddInventoryItemToGui(gid);
+
+		MaloW::Debug("Added Image");
+		TempImage temp;
+		int pos = images.size();
+		temp.image = this->zEng->CreateImage(Vector2(pos * 100, (int)(pos * 0.2f) * 60 + 50), Vector2(50, 50), itemIconFilePath.c_str());
+		temp.id = id;
+
+		this->images.push_back(temp);
 	}
 }
 
@@ -639,6 +647,16 @@ void Client::HandleRemoveInventoryItem(const int id)
 {
 	int index = this->zPlayerInventory->Search(id);
 	this->zPlayerInventory->RemoveItem(index);
+
+	for (int i = 0; i < images.size(); i++)
+	{
+		if (images[i].id == id)
+		{
+			MaloW::Debug("Removed Image");
+			this->zEng->DeleteImage(images[i].image);
+			images.erase(images.begin() + i);
+		}
+	}
 }
 
 void Client::CloseConnection(const std::string& reason)
@@ -666,13 +684,13 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	PlayerObject* playerObject = new PlayerObject(id);
 
 	char key[512];
-	for(unsigned int i = 1; i < msgArray.size(); i++)
+	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
-			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
 			iTerrain* terrain = this->zObjectManager->GetTerrain();
 			if (terrain)
 			{
@@ -682,24 +700,24 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
-			rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, msgArray[i]);
+			rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
 		}
 		else if(strcmp(key, M_STATE.c_str()) == 0)
 		{
-			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, msgArray[i]);
+			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
 			playerObject->SetState(state);
 		}
 		else if(strcmp(key, M_SCALE.c_str()) == 0)
 		{
-			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, msgArray[i]);
+			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
-			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, msgArray[i]);
+			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
 		}
 		else
 		{
-			MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[i] + " in HandleNewObject");
+			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in HandleNewObject");
 		}
 	}
 	if (!this->zCreated)
@@ -739,13 +757,13 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 	AnimalObject* animalObject = new AnimalObject(id);
 	
 	char key[512];
-	for(unsigned int i = 1; i < msgArray.size(); i++)
+	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
-			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
 			iTerrain* terrain = this->zObjectManager->GetTerrain();
 			if (terrain)
 			{
@@ -755,24 +773,24 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
-			rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, msgArray[i]);
+			rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
 		}
 		else if(strcmp(key, M_STATE.c_str()) == 0)
 		{
-			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, msgArray[i]);
+			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
 			animalObject->SetState(state);
 		}
 		else if(strcmp(key, M_SCALE.c_str()) == 0)
 		{
-			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, msgArray[i]);
+			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
-			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, msgArray[i]);
+			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
 		}
 		else
 		{
-			MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[i] + " in HandleNewObject");
+			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in HandleNewObject");
 		}
 	}
 	//Creates a StaticMesh from the given Filename
@@ -806,13 +824,13 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 	StaticObject* staticObject = new StaticObject(id);
 
 	char key[512];
-	for(unsigned int i = 1; i < msgArray.size(); i++)
+	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
-			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
 			iTerrain* terrain = this->zObjectManager->GetTerrain();
 			if (terrain)
 			{
@@ -821,44 +839,44 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
-			rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, msgArray[i]);
+			rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
 		}
 		else if(strcmp(key, M_SCALE.c_str()) == 0)
 		{
-			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, msgArray[i]);
+			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
 		}
 		else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
 		{
-			int type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[i]);
+			int type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it));
 			staticObject->SetType(type);
 		}
 		else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
 		{
-			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, msgArray[i]);
+			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it));
 			staticObject->SetWeight(weight);
 		}
 		else if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
 		{
-			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, msgArray[i]);
+			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it));
 			staticObject->SetName(name);
 		}
 		else if(strcmp(key, M_ITEM_DESCRIPTION.c_str()) == 0)
 		{
-			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, msgArray[i]);
+			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it));
 			staticObject->SetDescription(description);
 		}
 		else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
 		{
-			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, msgArray[i]);
+			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it));
 			staticObject->SetIconPath(path);
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
-			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, msgArray[i]);
+			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
 		}
 		else
 		{
-			MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[i] + " in HandleNewObject");
+			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in HandleNewObject");
 		}
 	}
 
@@ -892,65 +910,67 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 	DynamicObject* dynamicObject = new DynamicObject(id);
 
 	char key[512];
-	for(unsigned int i = 1; i < msgArray.size(); i++)
+	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
-			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
 			iTerrain* terrain = this->zObjectManager->GetTerrain();
 			if (terrain)
 			{
-				position.y = terrain->GetYPositionAt(position.x, position.z);
+				float y = terrain->GetYPositionAt(position.x, position.z);
+				if (position.y < y)
+					position.y = y;
 			}
 			dynamicObject->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
-			rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, msgArray[i]);
+			rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
 		}
 		else if(strcmp(key, M_SCALE.c_str()) == 0)
 		{
-			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, msgArray[i]);
+			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
 		}
 		else if(strcmp(key, M_STATE.c_str()) == 0)
 		{
-			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, msgArray[i]);
+			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
 			dynamicObject->SetState(state);
 		}
 		else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
 		{
-			int type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[i]);
+			int type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it));
 			dynamicObject->SetType(type);
 		}
 		else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
 		{
-			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, msgArray[i]);
+			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it));
 			dynamicObject->SetWeight(weight);
 		}
 		else if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
 		{
-			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, msgArray[i]);
+			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it));
 			dynamicObject->SetName(name);
 		}
 		else if(strcmp(key, M_ITEM_DESCRIPTION.c_str()) == 0)
 		{
-			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, msgArray[i]);
+			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it));
 			dynamicObject->SetDescription(description);
 		}
 		else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
 		{
-			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, msgArray[i]);
+			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it));
 			dynamicObject->SetIconPath(path);
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
-			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, msgArray[i]);
+			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
 		}
 		else
 		{
-			MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[i] + " in HandleNewObject");
+			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in HandleNewObject");
 		}
 	}
 	
@@ -991,13 +1011,13 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 	bool bFile = false;
 		
 	char key[512];
-	for(unsigned int i = 1; i < msgArray.size(); i++)
+	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
-			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
 			iTerrain* terrain = this->zObjectManager->GetTerrain();
 			if (terrain)
 			{
@@ -1007,46 +1027,46 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
-			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, msgArray[i]);
+			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
 			PlayerObjectPointer->SetRotation(rotation);
 		}
 		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
 		{
-			serverTime = this->zMsgHandler.ConvertStringToFloat(M_FRAME_TIME, msgArray[i]);
+			serverTime = this->zMsgHandler.ConvertStringToFloat(M_FRAME_TIME, (*it));
 		}
 		else if(strcmp(key, M_STATE.c_str()) == 0)
 		{
-			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, msgArray[i]);
+			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
 			PlayerObjectPointer->SetState(state);
 		}
 		else if(strcmp(key, M_HEALTH.c_str()) == 0)
 		{
-			float health = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, msgArray[i]);
+			float health = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, (*it));
 			PlayerObjectPointer->SetHealth(health);
 		}
 		else if(strcmp(key, M_HUNGER.c_str()) == 0)
 		{
-			float hunger = this->zMsgHandler.ConvertStringToFloat(M_HUNGER, msgArray[i]);
+			float hunger = this->zMsgHandler.ConvertStringToFloat(M_HUNGER, (*it));
 			PlayerObjectPointer->SetHunger(hunger);
 		}
 		else if(strcmp(key, M_HYDRATION.c_str()) == 0)
 		{
-			float hydration = this->zMsgHandler.ConvertStringToFloat(M_HYDRATION, msgArray[i]);
+			float hydration = this->zMsgHandler.ConvertStringToFloat(M_HYDRATION, (*it));
 			PlayerObjectPointer->SetHydration(hydration);
 		}
 		else if(strcmp(key, M_STAMINA.c_str()) == 0)
 		{
-			float stamina = this->zMsgHandler.ConvertStringToFloat(M_STAMINA, msgArray[i]);
+			float stamina = this->zMsgHandler.ConvertStringToFloat(M_STAMINA, (*it));
 			PlayerObjectPointer->SetStamina(stamina);
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
 			bFile = true;
-			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, msgArray[i]);
+			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
 		}
 		else
 		{
-			MaloW::Debug("Client: Unknown Message Was sent from server - " + msgArray[i] + " - in HandleUpdateObject");
+			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in HandleUpdateObject");
 		}
 	}
 
@@ -1091,13 +1111,13 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 	bool bFile = false;
 	
 	char key[512];
-	for(unsigned int i = 1; i < msgArray.size(); i++)
+	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
-			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
 			iTerrain* terrain = this->zObjectManager->GetTerrain();
 			if (terrain)
 			{
@@ -1106,46 +1126,46 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
-			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, msgArray[i]);
+			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
 			StaticObjectPointer->SetRotation(rotation);
 		}
 		else if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
 		{
-			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, msgArray[i]);
+			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it));
 			StaticObjectPointer->SetName(name);
 		}
 		else if(strcmp(key, M_ITEM_DESCRIPTION.c_str()) == 0)
 		{
-			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, msgArray[i]);
+			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it));
 			StaticObjectPointer->SetDescription(description);
 		}
 		else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
 		{
-			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, msgArray[i]);
+			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it));
 			StaticObjectPointer->SetIconPath(path);
 		}
 		else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
 		{
-			int type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[i]);
+			int type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it));
 			StaticObjectPointer->SetType(type);
 		}
 		else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
 		{
-			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, msgArray[i]);
+			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it));
 			StaticObjectPointer->SetWeight(weight);
 		}
 		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
 		{
-			serverTime = this->zMsgHandler.ConvertStringToFloat(M_FRAME_TIME, msgArray[i]);
+			serverTime = this->zMsgHandler.ConvertStringToFloat(M_FRAME_TIME, (*it));
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
 			bFile = true;
-			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, msgArray[i]);
+			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
 		}
 		else
 		{
-			MaloW::Debug("Client: Unknown Message Was sent from server - " + msgArray[i] + " - in HandleUpdateObject");
+			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in HandleUpdateObject");
 		}
 	}
 
@@ -1190,13 +1210,13 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 	bool bFile = false;
 
 	char key[512];
-	for(unsigned int i = 1; i < msgArray.size(); i++)
+	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
-			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
 			iTerrain* terrain = this->zObjectManager->GetTerrain();
 			if (terrain)
 			{
@@ -1206,31 +1226,31 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
-			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, msgArray[i]);
+			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
 			AnimalObjectPointer->SetRotation(rotation);
 		}
 		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
 		{
-			serverTime = this->zMsgHandler.ConvertStringToFloat(M_FRAME_TIME, msgArray[i]);
+			serverTime = this->zMsgHandler.ConvertStringToFloat(M_FRAME_TIME, (*it));
 		}
 		else if(strcmp(key, M_STATE.c_str()) == 0)
 		{
-			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, msgArray[i]);
+			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
 			AnimalObjectPointer->SetState(state);
 		}
 		else if(strcmp(key, M_HEALTH.c_str()) == 0)
 		{
-			float health = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, msgArray[i]);
+			float health = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, (*it));
 			AnimalObjectPointer->SetHealth(health);
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
 			bFile = true;
-			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, msgArray[i]);
+			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
 		}
 		else
 		{
-			MaloW::Debug("Client: Unknown Message Was sent from server - " + msgArray[i] + " - in HandleUpdateObject");
+			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in HandleUpdateObject");
 		}
 	}
 
@@ -1277,13 +1297,13 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 	bool bFile = false;
 
 	char key[512];
-	for(unsigned int i = 1; i < msgArray.size(); i++)
+	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s(msgArray[i].c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
-			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[i]);
+			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
 			iTerrain* terrain = this->zObjectManager->GetTerrain();
 			if (terrain)
 			{
@@ -1292,46 +1312,46 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
-			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, msgArray[i]);
+			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
 			DynamicObjectPointer->SetRotation(rotation);
 		}
 		else if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
 		{
-			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, msgArray[i]);
+			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it));
 			DynamicObjectPointer->SetName(name);
 		}
 		else if(strcmp(key, M_ITEM_DESCRIPTION.c_str()) == 0)
 		{
-			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, msgArray[i]);
+			std::string description = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it));
 			DynamicObjectPointer->SetDescription(description);
 		}
 		else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
 		{
-			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, msgArray[i]);
+			std::string path = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it));
 			DynamicObjectPointer->SetIconPath(path);
 		}
 		else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
 		{
-			int type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[i]);
+			int type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it));
 			DynamicObjectPointer->SetType(type);
 		}
 		else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
 		{
-			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, msgArray[i]);
+			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it));
 			DynamicObjectPointer->SetWeight(weight);
 		}
 		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
 		{
-			serverTime = this->zMsgHandler.ConvertStringToFloat(M_FRAME_TIME, msgArray[i]);
+			serverTime = this->zMsgHandler.ConvertStringToFloat(M_FRAME_TIME, (*it));
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
 			bFile = true;
-			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, msgArray[i]);
+			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
 		}
 		else
 		{
-			MaloW::Debug("Client: Unknown Message Was sent from server - " + msgArray[i] + " - in HandleUpdateObject");
+			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in HandleUpdateObject");
 		}
 	}
 
@@ -1421,10 +1441,10 @@ bool Client::RemoveStaticObject(const int id)
 	
 	iMesh* mesh = this->zObjectManager->GetStaticObject(pos)->GetMesh();
 
-	//if(mesh)
-	//{
-	//	this->zEng->DeleteMesh(mesh);
-	//}
+	if(mesh)
+	{
+		//this->zEng->DeleteMesh(mesh);
+	}
 	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_STATIC_OBJECT, pos))
 	{
 		MaloW::Debug("Failed To Remove Static Object with id: " + MaloW::convertNrToString(id));
@@ -1475,7 +1495,7 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
-			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetName(), "", (*it)->GetDescription());
+			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription());
 			Collisions.push_back(gui_Data);
 		}
 	}

@@ -31,6 +31,7 @@
     <ClCompile Include="..\Source\GameFiles\Gui\GuiElement.cpp" />
     <ClCompile Include="..\Source\GameFiles\Gui\InventoryGui.cpp" />
     <ClCompile Include="..\Source\GameFiles\Gui\InventorySlotGui.cpp" />
+    <ClCompile Include="..\Source\GameFiles\Items\Container.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Equipment.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Food.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Gear.cpp" />
@@ -99,6 +100,7 @@
     <ClInclude Include="..\Source\GameFiles\Gui\GuiElement.h" />
     <ClInclude Include="..\Source\GameFiles\Gui\InventoryGui.h" />
     <ClInclude Include="..\Source\GameFiles\Gui\InventorySlotGui.h" />
+    <ClInclude Include="..\Source\GameFiles\Items\Container.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Equipment.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Food.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Gear.h" />

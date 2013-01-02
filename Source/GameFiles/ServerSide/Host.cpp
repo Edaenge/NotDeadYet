@@ -41,7 +41,7 @@ void Host::Init()
 	FoodObject* foodObj = new FoodObject(true);
 	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_MEAT, foodObj))
 	{
-		foodObj->SetPosition(Vector3(10.0f, 0.0f, 10.0f));
+		foodObj->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
 	}
@@ -49,7 +49,15 @@ void Host::Init()
 	WeaponObject* weaponObj = new WeaponObject(true);
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, weaponObj))
 	{
-		weaponObj->SetPosition(Vector3(-10.0f, 0.0f, -10.0f));
+		weaponObj->SetPosition(Vector3(-5.0f, 0.0f, -5.0f));
+		//Adds The Object To the Array
+		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+	}
+
+	weaponObj = new WeaponObject(true);
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, weaponObj))
+	{
+		weaponObj->SetPosition(Vector3(-5.0f, 0.0f, 5.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 	}
@@ -516,13 +524,14 @@ void Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 	weaponObj->SetID(weapon_Item->GetID());
 	weaponObj->SetPosition(pActor->GetPosition());
 
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, weapon_Item->GetID());
+
+	this->SendToClient(pActor->GetID(), msg);
+
 	this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
 	this->SendNewObjectMessage(weaponObj);
 
-	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, weapon_Item->GetID());
-
-	this->SendToClient(pActor->GetID(), msg);
 }
 
 bool Host::CreateStaticObjectActor(const int type, WeaponObject* weaponObj)
@@ -538,7 +547,7 @@ bool Host::CreateStaticObjectActor(const int type, WeaponObject* weaponObj)
 	weaponObj->SetRange(weapon->GetRange());
 	weaponObj->SetWeight(weapon->GetWeight());
 	weaponObj->SetDamage(weapon->GetDamage());
-	weaponObj->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+	weaponObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 	weaponObj->SetIconPath(weapon->GetIconPath());
 	weaponObj->SetActorModel(weapon->GetActorModel());
 	weaponObj->SetDescription(weapon->GetDescription());
@@ -560,7 +569,7 @@ bool Host::CreateStaticObjectActor(const int type, FoodObject* foodObj)
 	foodObj->SetWeight(food->GetWeight());
 	foodObj->SetHunger(food->GetHunger());
 	foodObj->SetIconPath(food->GetIconPath());
-	foodObj->SetScale(Vector3(0.5f, 0.5f, 0.5f));
+	foodObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 	foodObj->SetActorModel(food->GetActorModel());
 	foodObj->SetDescription(food->GetDescription());
 	foodObj->SetActorObjectName(food->GetActorObjectName());
@@ -811,8 +820,8 @@ void Host::HandlePlayerUpdate( PlayerActor* pl, ClientData* cd, const std::vecto
 		}
 		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
 		{
-				float frameTime = this->zMessageConverter.ConvertStringToFloat(M_FRAME_TIME, (*it));
-				pl->SetFrameTime(frameTime);
+			float frameTime = this->zMessageConverter.ConvertStringToFloat(M_FRAME_TIME, (*it));
+			pl->SetFrameTime(frameTime);
 		}
 		else
 			MaloW::Debug("Unknown message in HandlePlayerUpdate.");

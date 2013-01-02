@@ -15,7 +15,7 @@ public:
 		const std::string& description, const float damage, const float range);
 	virtual ~RangedWeapon();
 
-	void Use();
+	virtual void Use();
 
 	void UseWeapon(float& range, float& damage);
 private:

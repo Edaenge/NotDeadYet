@@ -5,6 +5,7 @@
 #include <algorithm>
 
 static const std::string FILENAME		=	"WorldObjects.cfg";
+static const std::string COMMENT		=	"//";
 static const std::string OBJECT_WEAPON	=	"[Object.Weapon]";
 static const std::string OBJECT_FOOD	=	"[Object.Food]";
 
@@ -52,22 +53,25 @@ bool ObjectManager::ReadObjects()
 
 	while(!read.eof())
 	{
-		char line[256];
-		char key[52];
-		char command[126];
+		char line[256] = "";
+		char key[52] = "";
+		char command[126] = "";
 
 		read.getline(line,sizeof(line));
 
 		if(strcmp(line, "") == 0)
 			continue;
 
-		TrimAndSet(line);
+		//TrimAndSet(line);
 
 		sscanf_s(line, "%s", &key, sizeof(key));
 
+		if(strcmp(key, COMMENT.c_str()) == 0)
+			continue;
+
 		if(strcmp(key, OBJECT_WEAPON.c_str()) == 0)
 		{
-			WeaponObject *wp = new WeaponObject(false);
+			WeaponObject* wp = new WeaponObject(false);
 			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
@@ -80,10 +84,9 @@ bool ObjectManager::ReadObjects()
 			}
 			this->zWeapons.push_back(wp);
 		}
-
 		else if(strcmp(key, OBJECT_FOOD.c_str()) == 0)
 		{
-			FoodObject *fd = new FoodObject(false);
+			FoodObject* fd = new FoodObject(false);
 			while(!read.eof() && strcmp(key, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
