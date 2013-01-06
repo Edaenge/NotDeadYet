@@ -9,6 +9,7 @@ for project desperation* at Blekinge tekniska högskola.
 #include "Items/Item.h"
 #include "ServerSide/WeaponObject.h"
 #include "ServerSide/FoodObject.h"
+#include "ServerSide/ContainerObject.h"
 
 /*This class reads and stores WordObjects.
   The objects can be fetched by using enums from Item.h.
@@ -29,16 +30,22 @@ public:
 		Returns null if it cannot be found.
 	*/
 	const FoodObject* GetFoodObject(const int type);
-
+	/*! Returns a container object from given type.
+		Returns null if it cannot be found.
+	*/
+	const ContainerObject* GetContainerObject(const int type);
 private:
-	void TrimAndSet( char* ret );
-	bool InterpCommand( char* command, char* key, WeaponObject* wp );
-	bool InterpCommand( char* command, char* key, FoodObject* fd );
+	void TrimAndSet(char* ret);
+	bool InterpCommand(char* command, char* key, WeaponObject* wp);
+	bool InterpCommand(char* command, char* key, FoodObject* fd);
+	bool InterpCommand(char* command, char* key, ContainerObject* fd);
 	const WeaponObject* SearchType(std::vector<WeaponObject*>& weapons, const int type) const;
 	const FoodObject* SearchType(std::vector<FoodObject*>& food, const int type) const;
+	const ContainerObject* SearchType(std::vector<ContainerObject*>& container, const int type) const;
 	bool Replace(char* key);
 private:
+	std::vector<FoodObject*> zFood;
 	std::vector<WeaponObject*> zWeapons;
-	std::vector<FoodObject*>	  zFood;
+	std::vector<ContainerObject*> zContainer;
 
 };

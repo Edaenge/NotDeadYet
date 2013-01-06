@@ -107,6 +107,7 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 {
 	FoodObject* fo		= NULL;
 	WeaponObject* wo	= NULL;
+	ContainerObject* co = NULL;
 	Item* item			= NULL; 
 
 	fo = dynamic_cast<FoodObject*>(object);
@@ -122,7 +123,7 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 
 		return true;
 	}
-	
+
 	wo = dynamic_cast<WeaponObject*>(object);
 	if(wo)
 	{
@@ -156,6 +157,21 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 			SAFE_DELETE(item);
 			return false;
 		}
+		return true;
+	}
+
+	co = dynamic_cast<ContainerObject*>(object);
+	if(co)
+	{
+		item = new Container(co->GetID(), co->GetWeight(), co->GetActorObjectName(), co->GetType(), 
+			co->GetDescription(), co->GetMaxUses(), co->GetCurrentUses());
+
+		if(!this->zInventory->AddItem(item))
+		{
+			SAFE_DELETE(item);
+			return false;
+		}
+
 		return true;
 	}
 

@@ -21,6 +21,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_CONNECTION_CLOSED,
 	MESSAGE_TYPE_SERVER_FULL,
 	MESSAGE_TYPE_SERVER_SHUTDOWN,
+	MESSAGE_TYPE_ERROR_MESSAGE,
 	MESSAGE_TYPE_UPDATE_PLAYER,
 	MESSAGE_TYPE_DEAD_PLAYER,
 	MESSAGE_TYPE_UPDATE_STATIC_OBJECT,
@@ -53,12 +54,15 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_FETCH_INVENTORY,
 	MESSAGE_TYPE_REMOVE_INVENTORY_ITEM,
 	MESSAGE_TYPE_ADD_INVENTORY_ITEM,
+	MESSAGE_TYPE_ITEM_USE,
 	MESSAGE_TYPE_ITEM_NAME,
 	MESSAGE_TYPE_ITEM_DESCRIPTION,
 	MESSAGE_TYPE_ITEM_ICON_PATH,
 	MESSAGE_TYPE_ITEM_WEIGHT,
 	MESSAGE_TYPE_WEAPON_DAMAGE,
-	MESSAGE_TYPE_WEAPON_RANGE
+	MESSAGE_TYPE_WEAPON_RANGE,
+	MESSAGE_TYPE_CONTAINER_MAX,
+	MESSAGE_TYPE_CONTAINER_CURRENT
 };
 //Data Messages
 static const std::string M_POSITION					= "P";
@@ -79,8 +83,11 @@ static const std::string M_ITEM_NAME				= "IN";
 static const std::string M_ITEM_DESCRIPTION			= "ID";
 static const std::string M_ITEM_ICON_PATH			= "IIP";
 static const std::string M_ITEM_WEIGHT				= "IW";
+static const std::string M_ITEM_USE					= "IU";
 static const std::string M_WEAPON_DAMAGE			= "WD";
 static const std::string M_WEAPON_RANGE				= "WR";
+static const std::string M_CONTAINER_CURRENT		= "COCU";
+static const std::string M_CONTAINER_MAX			= "COMA";
 //Item Messages
 static const std::string M_PICKUP_ITEM				= "PI";
 static const std::string M_DROP_ITEM				= "DI";
@@ -101,6 +108,8 @@ static const std::string M_USER_DATA				= "UD";
 static const std::string M_CONNECTION_CLOSED		= "CC";
 static const std::string M_SERVER_FULL				= "SF";
 static const std::string M_SERVER_SHUTDOWN			= "SS";
+//Error Message
+static const std::string M_ERROR_MESSAGE			= "EM";
 //Player Messages
 static const std::string M_CLIENT_DATA				= "CD";
 static const std::string M_NEW_PLAYER				= "NP";

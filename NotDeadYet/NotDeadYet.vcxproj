@@ -49,6 +49,7 @@
     <ClCompile Include="..\Source\GameFiles\ServerSide\ActorHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\AnimalActor.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\BioActor.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ServerSide\ContainerObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\FoodObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\Host.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\ObjectManager.cpp" />
@@ -120,6 +121,7 @@
     <ClInclude Include="..\Source\GameFiles\ServerSide\ActorHandler.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\AnimalActor.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\BioActor.h" />
+    <ClInclude Include="..\Source\GameFiles\ServerSide\ContainerObject.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\DynamicObjectActor.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\FoodObject.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\Host.h" />

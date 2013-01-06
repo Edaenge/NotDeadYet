@@ -369,7 +369,13 @@ bool Host::HandlePickupItem( PlayerActor* pActor, const int ObjectId )
 
 	if (food)
 	{
+		if (!pActor->PickUpObject(food))
+		{
+			this->SendErrorMessage(pActor->GetID(), "Failed To Pickup Item " + food->GetActorObjectName());
+			return false;
+		}
 		this->CreateItemFromObject(pActor, food);
+
 		return true;
 	}
 
@@ -378,11 +384,43 @@ bool Host::HandlePickupItem( PlayerActor* pActor, const int ObjectId )
 
 	if (weapon)
 	{
+		if (!pActor->PickUpObject(weapon))
+		{
+			this->SendErrorMessage(pActor->GetID(), "Failed To Pickup Item " + weapon->GetActorObjectName());
+			return false;
+		}
+
 		this->CreateItemFromObject(pActor, weapon);
+
 		return true;
 	}
 
+	//Check For Weapon Object
+	ContainerObject* container = dynamic_cast<ContainerObject*>(this->zActorHandler->GetActor(ObjectId, ACTOR_TYPE_STATIC_OBJECT_CONTAINER));
+
+	if (container)
+	{
+		if (!pActor->PickUpObject(container))
+		{
+			this->SendErrorMessage(pActor->GetID(), "Failed To Pickup Item " + container->GetActorObjectName());
+			return false;
+		}
+
+		this->CreateItemFromObject(pActor, container);
+
+		return true;
+	}
+
+	
+	this->SendErrorMessage(pActor->GetID(), "Couldn't Pickup Object");
+
 	return false;
+}
+
+void Host::SendErrorMessage(const int id, const std::string error_Message)
+{
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ERROR_MESSAGE, error_Message);
+	this->SendToClient(id, error_Message);
 }
 
 bool Host::CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj)
@@ -394,16 +432,14 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj)
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, foodObj->GetDescription());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, foodObj->GetActorObjectName());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, foodObj->GetWeight());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_HUNGER, foodObj->GetHunger());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, foodObj->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_HUNGER, foodObj->GetHunger());
 
 	std::string removeMsg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_STATIC_OBJECT, foodObj->GetID());
 
 	this->SendToAllClients(removeMsg);
 
 	this->SendToClient(pActor->GetID(), msg);
-
-	pActor->PickUpObject(foodObj);
 
 	this->zActorHandler->RemoveStaticFoodActor(foodObj->GetID());
 
@@ -412,6 +448,10 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj)
 
 bool Host::CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj)
 {
+
+	if (!pActor->PickUpObject(weaponObj))
+		return false;
+
 	std::string msg;
 
 	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, weaponObj->GetID());
@@ -429,10 +469,35 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj)
 
 	this->SendToClient(pActor->GetID(), msg);
 
-	pActor->PickUpObject(weaponObj);
-
 	this->zActorHandler->RemoveStaticFoodActor(weaponObj->GetID());
 
+	return true;
+}
+
+bool Host::CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerObj)
+{
+	if (!pActor->PickUpObject(containerObj))
+		return false;
+
+	std::string msg;
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, containerObj->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, containerObj->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, containerObj->GetDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, containerObj->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, containerObj->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, containerObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_CONTAINER_MAX, containerObj->GetMaxUses());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, containerObj->GetCurrentUses());
+
+	std::string removeMsg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_STATIC_OBJECT, containerObj->GetID());
+
+	this->SendToAllClients(removeMsg);
+
+	this->SendToClient(pActor->GetID(), msg);
+
+	this->zActorHandler->RemoveStaticContainerActor(containerObj->GetID());
+	
 	return true;
 }
 
@@ -442,15 +507,20 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 	item = pActor->DropObject(ItemId);
 
 	if (!item)
+	{
+		this->SendErrorMessage(pActor->GetID(), "Failed To find Item");
 		return;
-
+	}
 	int item_type = item->GetItemType();
 
 	if (item_type == ITEM_TYPE_FOOD_MEAT)
 	{
 		Food* item_Food = dynamic_cast<Food*>(item);
 		if (!item_Food)
+		{
+			MaloW::Debug("Wrong Item Type Set");
 			return;
+		}
 
 		this->CreateObjectFromItem(pActor, item_Food);
 		return;
@@ -459,8 +529,10 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 	{
 		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
 		if (!item_Weapon)
+		{
+			MaloW::Debug("Wrong Item Type Set");
 			return;
-
+		}
 		this->CreateObjectFromItem(pActor, item_Weapon);
 		return;
 	}
@@ -468,7 +540,10 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 	{
 		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
 		if (!item_Weapon)
+		{
+			MaloW::Debug("Wrong Item Type Set");
 			return;
+		}
 
 		this->CreateObjectFromItem(pActor, item_Weapon);
 		return;
@@ -477,7 +552,10 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 	{
 		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
 		if (!item_Weapon)
+		{
+			MaloW::Debug("Wrong Item Type Set");
 			return;
+		}
 
 		this->CreateObjectFromItem(pActor, item_Weapon);
 		return;
@@ -486,39 +564,44 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 	{
 		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
 		if (!item_Weapon)
+		{
+			MaloW::Debug("Wrong Item Type Set");
 			return;
+		}
 
 		this->CreateObjectFromItem(pActor, item_Weapon);
 		return;
 	}
 }
 
-void Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
+bool Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
 {
 	FoodObject* foodObj = new FoodObject(false);
 	if (!this->CreateStaticObjectActor(food_Item->GetItemType(), foodObj))
-		return;
+		return false;
 	
 	//Creates A New FoodObject With an Id And Default Values 
 	
 	foodObj->SetID(food_Item->GetID());
 	foodObj->SetPosition(pActor->GetPosition());
 
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, food_Item->GetID());
+
+	this->SendToClient(pActor->GetID(), msg);
+
 	this->zActorHandler->AddNewStaticFoodActor(foodObj);
 
 	this->SendNewObjectMessage(foodObj);
 
-	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, food_Item->GetID());
-
-	this->SendToClient(pActor->GetID(), msg);
+	return true;
 }
 
-void Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
+bool Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 {
 	WeaponObject* weaponObj = new WeaponObject(false);
 
 	if (!this->CreateStaticObjectActor(weapon_Item->GetItemType(), weaponObj))
-		return;
+		return false;
 
 	//Creates A New WeaponObject With an Id And Default Values
 	weaponObj->SetID(weapon_Item->GetID());
@@ -532,6 +615,29 @@ void Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 
 	this->SendNewObjectMessage(weaponObj);
 
+	return true;
+}
+
+bool Host::CreateObjectFromItem(PlayerActor* pActor, Container* container_Item)
+{
+	ContainerObject* containerObj = new ContainerObject(false);
+
+	if (!this->CreateStaticObjectActor(container_Item->GetItemType(), containerObj))
+		return false;
+
+	//Creates A New WeaponObject With an Id And Default Values
+	containerObj->SetID(container_Item->GetID());
+	containerObj->SetPosition(pActor->GetPosition());
+
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, container_Item->GetID());
+
+	this->SendToClient(pActor->GetID(), msg);
+
+	this->zActorHandler->AddNewStaticContainerActor(containerObj);
+
+	this->SendNewObjectMessage(containerObj);
+
+	return true;
 }
 
 bool Host::CreateStaticObjectActor(const int type, WeaponObject* weaponObj)
@@ -573,6 +679,28 @@ bool Host::CreateStaticObjectActor(const int type, FoodObject* foodObj)
 	foodObj->SetActorModel(food->GetActorModel());
 	foodObj->SetDescription(food->GetDescription());
 	foodObj->SetActorObjectName(food->GetActorObjectName());
+
+	return true;
+}
+
+bool Host::CreateStaticObjectActor(const int type, ContainerObject* containerObj)
+{
+	//Get Default Values For a Meat Object
+	const ContainerObject* container = this->zActorHandler->GetObjManager()->GetContainerObject(type);
+
+	if (!container)
+		return false;
+
+	//Creates A New WeaponObject With an Id And Default Values 
+	containerObj->SetType(type);
+	containerObj->SetWeight(container->GetWeight());
+	containerObj->SetMaxUses(container->GetMaxUses());
+	containerObj->SetIconPath(container->GetIconPath());
+	containerObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	containerObj->SetActorModel(container->GetActorModel());
+	containerObj->SetDescription(container->GetDescription());
+	containerObj->SetCurrentUses(container->GetCurrentUses());
+	containerObj->SetActorObjectName(container->GetActorObjectName());
 
 	return true;
 }

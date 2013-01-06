@@ -126,14 +126,18 @@ private:
 	/*! Returns an Array Containing Existing Static Objects Messages.*/
 	void GetExistingObjects(std::vector<std::string>& static_Objects);
 	/*! Creates an Object From the Item Data.*/
-	void CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item);
-	void CreateObjectFromItem(PlayerActor* pActor, Food* food_Item);
+	bool CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item);
+	bool CreateObjectFromItem(PlayerActor* pActor, Food* food_Item);
+	bool CreateObjectFromItem(PlayerActor* pActor, Container* weapon_Item);
 	/*! Creates An Item From the Object Data.*/
 	bool CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj);
 	bool CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj);
-	/*! */
+	bool CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerObj);
+	/*! Creates a StaticObject with default values.*/
 	bool CreateStaticObjectActor(const int type, WeaponObject* weaponObj);
 	bool CreateStaticObjectActor(const int type, FoodObject* foodObj);
+	bool CreateStaticObjectActor(const int type, ContainerObject* containerObj);
+	void SendErrorMessage(const int id, const std::string error_Message);
 private:
 	ServerListener* zServerListener;
 

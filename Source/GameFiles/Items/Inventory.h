@@ -9,6 +9,7 @@
 #include "GameFiles/Items/MeleeWeapon.h"
 #include "GameFiles/Items/Gear.h"
 #include "GameFiles/Items/Food.h"
+#include "GameFiles/Items/Container.h"
 #include <vector>
 #include "Array.h"
 
@@ -20,7 +21,7 @@ public:
 	Inventory(const unsigned int inventorySize);
 	virtual ~Inventory();
 	/*! Search for the Item in and returns its position*/
-	int Search(const unsigned int ID) const;
+	int Search(const int ID) const;
 	/*! Adds an item to the array*/
 	bool AddItem(Item* item);
 	/*! Returns the item at the position */

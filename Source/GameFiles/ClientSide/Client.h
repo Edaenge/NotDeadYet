@@ -98,6 +98,9 @@ private:
 	void ReadMessage();
 
 	void CheckMovementKeys();
+	/*! Uses the Selected Item*/
+	void HandleUseItem(const int id);
+	void DisplayMessageToClient(const std::string& msg);
 private:
 	/*! Current Client ID*/
 	int zID;

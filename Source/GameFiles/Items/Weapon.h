@@ -32,7 +32,6 @@ public:
 	void SetDamage(const float damage) {this->zDamage = damage;}
 	void SetRange(const float range) {this->zRange = range;}
 
-	virtual void UseWeapon(float& range, float& damage) = 0;
 	virtual void Use() = 0;
 protected:
 	float zDamage;

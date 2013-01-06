@@ -75,8 +75,11 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	case MESSAGE_TYPE_ITEM_DESCRIPTION:
 		ss << M_ITEM_DESCRIPTION;
 		break;
-	case  MESSAGE_TYPE_KICKED:
+	case MESSAGE_TYPE_KICKED:
 		ss << M_KICKED;
+		break;
+	case MESSAGE_TYPE_ERROR_MESSAGE:
+		ss << M_ERROR_MESSAGE;
 		break;
 	default:
 		return "";
@@ -153,6 +156,12 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 		break;
 	case MESSAGE_TYPE_WEAPON_RANGE:
 		ss << M_WEAPON_RANGE;
+		break;
+	case MESSAGE_TYPE_CONTAINER_MAX:
+		ss << M_CONTAINER_MAX;
+		break;
+	case MESSAGE_TYPE_CONTAINER_CURRENT:
+		ss << M_CONTAINER_CURRENT;
 		break;
 	case MESSAGE_TYPE_REMOVE_INVENTORY_ITEM:
 		ss << M_REMOVE_INVENTORY_ITEM;

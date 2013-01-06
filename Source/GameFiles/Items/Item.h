@@ -52,7 +52,7 @@ public:
 	virtual void Use() = 0;
 
 private:
-	void InitValues(const unsigned int id = 0, const unsigned int itemType = 0, const unsigned int weight = 0, 
+	void InitValues(const int id = -1, const unsigned int itemType = 0, const unsigned int weight = 0, 
 		const std::string& name = "Unknown", const std::string& description = "Unknown");
 
 private:

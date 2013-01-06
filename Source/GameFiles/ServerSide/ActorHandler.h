@@ -15,6 +15,7 @@ static const enum ACTOR_TYPE
 	ACTOR_TYPE_ANIMAL,
 	ACTOR_TYPE_STATIC_OBJECT_FOOD,
 	ACTOR_TYPE_STATIC_OBJECT_WEAPON,
+	ACTOR_TYPE_STATIC_OBJECT_CONTAINER,
 	ACTOR_TYPE_DYNAMIC_OBJECT
 };
 
@@ -54,9 +55,11 @@ public:
 	///////////////////////////////
 	bool AddNewStaticFoodActor(FoodObject* new_Food);
 	bool AddNewStaticWeaponActor(WeaponObject* new_Weapon);
+	bool AddNewStaticContainerActor(ContainerObject* new_Container);
 	/*! Removes the Static Object.*/
 	bool RemoveStaticFoodActor(const int ID);
-	bool RemoveStaticWeaponActor( const int ID );
+	bool RemoveStaticWeaponActor(const int ID);
+	bool RemoveStaticContainerActor(const int ID);
 	/*! Removes the Dynamic Object.*/
 	bool RemoveDynamicActor(const int ID);
 	/*! Returns Food Objects.*/
@@ -80,10 +83,11 @@ private:
 
 private:
 
-	std::vector<PlayerActor *> zPlayers;
-	std::vector<AnimalActor *> zAnimals;
-	std::vector<FoodObject *> zFoods;
-	std::vector<WeaponObject *> zWeapons;
+	std::vector<PlayerActor*> zPlayers;
+	std::vector<AnimalActor*> zAnimals;
+	std::vector<FoodObject*> zFoods;
+	std::vector<WeaponObject*> zWeapons;
+	std::vector<ContainerObject*> zContainer;
 
 	ObjectManager* zObjManager;
 

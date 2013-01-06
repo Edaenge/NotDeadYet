@@ -1,17 +1,18 @@
-#include "FoodObject.h"
+#include "GameFiles/ServerSide/ContainerObject.h"
 
 
-FoodObject::FoodObject( const bool genID /*= true*/ ) : StaticObjectActor(genID)
+ContainerObject::ContainerObject(const bool genID) : StaticObjectActor(genID)
 {
-	this->zHunger = 1.0f;
-	this->zWeight = 1;
+	this->zMaxUse = 0;
+	this->zUsesLeft = 0;
 }
 
 
-FoodObject::FoodObject( const FoodObject& other )
+ContainerObject::ContainerObject(const ContainerObject& other)
 {
 	this->GenerateID();
-	this->zHunger = other.zHunger;
+	this->zMaxUse = other.zMaxUse;
+	this->zUsesLeft = other.zUsesLeft;
 	this->zWeight = other.zWeight;
 	this->zActorModel = other.zActorModel;
 	this->zType = other.zType;
@@ -23,13 +24,14 @@ FoodObject::FoodObject( const FoodObject& other )
 	this->zPos = other.zPos;
 }
 
-FoodObject& FoodObject::operator= (const FoodObject& other)
+ContainerObject& ContainerObject::operator= (const ContainerObject& other)
 {
 	if(this == &other)
 		return *this;
 
 	this->GenerateID();
-	this->zHunger = other.zHunger;
+	this->zMaxUse = other.zMaxUse;
+	this->zUsesLeft = other.zUsesLeft;
 	this->zWeight = other.zWeight;
 	this->zActorModel = other.zActorModel;
 	this->zType = other.zType;
@@ -43,7 +45,7 @@ FoodObject& FoodObject::operator= (const FoodObject& other)
 	return *this;
 }
 
-FoodObject::~FoodObject()
+ContainerObject::~ContainerObject()
 {
 
 }

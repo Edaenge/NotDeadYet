@@ -11,17 +11,17 @@ class Container : public Item
 {
 public:
 	Container(const unsigned int id, const unsigned int weight, const std::string& name, 
-		const unsigned int itemType, const std::string& itemDescription, const float maxSize, const float currSize);
+		const unsigned int itemType, const std::string& itemDescription, const int maxUse, const int currUse);
 	virtual ~Container();
 
-	void SetMaxSize(const float size) {this->zMaxSize = size;}
-	void SetCurrentSize(const float size) {this->zCurrentSize = size;}
+	void SetMaxSize(const int size) {this->zMaxUses = size;}
+	void SetCurrentSize(const int size) {this->zUsesRemaining = size;}
 
-	inline float GetCurrentSize() {return this->zCurrentSize;}
-	inline float GetMaxSize() {return this->zMaxSize;}
+	inline int GetCurrentSize() {return this->zUsesRemaining;}
+	inline float GetMaxSize() {return this->zMaxUses;}
 
 	virtual void Use();
 private:
-	float zMaxSize;
-	float zCurrentSize;
+	int zMaxUses;
+	int zUsesRemaining;
 };

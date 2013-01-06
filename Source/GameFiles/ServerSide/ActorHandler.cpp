@@ -81,6 +81,16 @@ bool ActorHandler::AddNewStaticWeaponActor( WeaponObject* new_Weapon )
 	return true;
 }
 
+bool ActorHandler::AddNewStaticContainerActor( ContainerObject* new_Container )
+{
+	if(!new_Container)
+		return false;
+
+	this->zContainer.push_back(new_Container);
+
+	return true;
+}
+
 Actor* ActorHandler::GetActor( const int ID, const int TYPE ) const
 {
 	Actor* ac = NULL;
@@ -149,6 +159,21 @@ bool ActorHandler::RemoveStaticWeaponActor( const int ID )
 	return true;
 }
 
+bool ActorHandler::RemoveStaticContainerActor( const int ID )
+{
+	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_CONTAINER);
+
+	if(index == -1)
+		return false;
+
+	ContainerObject* temp = this->zContainer[index];
+
+	this->zContainer.erase(this->zContainer.begin() + index);
+	SAFE_DELETE(temp);
+
+	return true;
+}
+
 bool ActorHandler::RemoveDynamicActor( const int ID )
 {
 	//int index = this->SearchForActor(ID, ACTOR_TYPE_ANIMAL);
@@ -198,6 +223,15 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE ) const
 	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_WEAPON)
 	{
 		for (unsigned int it = 0; it < this->zWeapons.size(); it++)
+		{
+			if(this->zWeapons[it]->GetID() == ID)
+				return it;
+		}
+	}
+
+	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_CONTAINER)
+	{
+		for (unsigned int it = 0; it < this->zContainer.size(); it++)
 		{
 			if(this->zWeapons[it]->GetID() == ID)
 				return it;
@@ -255,6 +289,18 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE, Actor** aOut ) c
 			if(this->zWeapons[it]->GetID() == ID)
 			{
 				*aOut = this->zWeapons[it];
+				return it;
+			}
+		}
+	}
+
+	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_CONTAINER)
+	{
+		for (unsigned int it = 0; it < this->zContainer.size(); it++)
+		{
+			if(this->zContainer[it]->GetID() == ID)
+			{
+				*aOut = this->zContainer[it];
 				return it;
 			}
 		}

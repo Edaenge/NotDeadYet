@@ -9,7 +9,7 @@ using namespace MaloW;
 static const float TIMEOUT_VALUE = 10.0f;
 // 30 updates per sec
 static const float UPDATE_DELAY = 0.0333f;
-static const float MAX_DISTANCE_TO_OBJECT = 50.0f;
+static const float MAX_DISTANCE_TO_OBJECT = 10.0f;
 
 Client::Client()
 {
@@ -521,6 +521,11 @@ void Client::HandleNetworkMessage(const std::string& msg)
 
 			this->zServerChannel->sendData(serverMessage);
 		}
+		else if(strcmp(key, M_ERROR_MESSAGE.c_str()) == 0)
+		{
+			std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_ERROR_MESSAGE, msgArray[0]);
+			DisplayMessageToClient(error_Message);
+		}
 		else if(strcmp(key, M_SERVER_FULL.c_str()) == 0)
 		{
 			this->CloseConnection("Server is full");
@@ -550,7 +555,8 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	float weaponDamage = 0.0f;
 	float weaponRange = 0.0f;
 	float hunger = 0.0f;
-
+	int maxUse = 0;
+	int currUse = 0;
 	char key[256];
 	for (auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
@@ -588,6 +594,14 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		{
 			hunger = this->zMsgHandler.ConvertStringToFloat(M_HUNGER, (*it));
 		}
+		else if(strcmp(key, M_CONTAINER_MAX.c_str()) == 0)
+		{
+			maxUse = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_MAX, (*it));
+		}
+		else if(strcmp(key, M_CONTAINER_CURRENT.c_str()) == 0)
+		{
+			currUse = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_CURRENT, (*it));
+		}
 	}
 	if (itemType == -1)
 	{
@@ -613,6 +627,9 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
 		item = new MeleeWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
 		break;
+	case ITEM_TYPE_CONTAINER_CANTEEN:
+		item = new Container(id, itemWeight, itemName, itemType, itemDescription, maxUse, currUse);
+		break;
 	case ITEM_TYPE_GEAR_HEAD:
 		item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
 		break;
@@ -636,10 +653,54 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		MaloW::Debug("Added Image");
 		TempImage temp;
 		int pos = images.size();
-		temp.image = this->zEng->CreateImage(Vector2(pos * 100, (int)(pos * 0.2f) * 60 + 50), Vector2(50, 50), itemIconFilePath.c_str());
+		float width = this->zEng->GetEngineParameters()->windowWidth * 0.1428f;
+		float height = this->zEng->GetEngineParameters()->windowHeight * 0.1428f;
+		int y = (int)(pos * 0.1428f);
+		temp.image = this->zEng->CreateImage(Vector2((pos  - y)* width, y * height + 50), Vector2(width, width), itemIconFilePath.c_str());
 		temp.id = id;
 
 		this->images.push_back(temp);
+	}
+}
+
+void Client::HandleUseItem(const int id)
+{
+	int index = this->zPlayerInventory->Search(id);
+
+	Item* item = this->zPlayerInventory->GetItem(index);
+
+	if(!item)
+		return;
+	
+	if(item->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN)
+	{
+		item->Use();
+	}
+	else if(item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW || item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
+	{
+		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
+
+		Equipment* eq = player->GetEquipmentPtr();
+
+		RangedWeapon* rwp = dynamic_cast<RangedWeapon*>(item);
+
+		if (rwp)
+			eq->EquipWeapon(rwp);
+	}
+	else if(item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE || item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
+	{
+		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
+
+		Equipment* eq = player->GetEquipmentPtr();
+
+		MeleeWeapon* rwp = dynamic_cast<MeleeWeapon*>(item);
+
+		if (rwp)
+			eq->EquipWeapon(rwp);
+	}
+	else if(item->GetItemType() == ITEM_TYPE_FOOD_MEAT)
+	{
+		item->Use();
 	}
 }
 
@@ -648,7 +709,7 @@ void Client::HandleRemoveInventoryItem(const int id)
 	int index = this->zPlayerInventory->Search(id);
 	this->zPlayerInventory->RemoveItem(index);
 
-	for (int i = 0; i < images.size(); i++)
+	for (unsigned int i = 0; i < images.size(); i++)
 	{
 		if (images[i].id == id)
 		{
@@ -1562,4 +1623,9 @@ void Client::SendDropItemMessage(const int id)
 bool Client::GetCursorVisibility()
 {
 	return this->zShowCursor;
+}
+
+void Client::DisplayMessageToClient( const std::string& msg )
+{
+	MaloW::Debug(msg);
 }
