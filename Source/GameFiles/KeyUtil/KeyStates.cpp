@@ -1,4 +1,4 @@
-#include "GameFiles/KeyUtil/KeyStates.h"
+#include "KeyStates.h"
 
 KeyStates::KeyStates()
 {

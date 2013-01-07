@@ -1,4 +1,4 @@
-#include "GameFiles/Items/Inventory.h"
+#include "Inventory.h"
 
 Inventory::Inventory()
 {

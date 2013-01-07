@@ -1,4 +1,4 @@
-#include "GameFiles/Items/Equipment.h"
+#include "Equipment.h"
 
 const unsigned int GEAR_SLOTS = 4;
 

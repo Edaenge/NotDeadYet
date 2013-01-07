@@ -1,4 +1,4 @@
-#include "GameFiles/Items/Item.h"
+#include "Item.h"
 
 Item::Item( const int id, const unsigned int itemType )
 {

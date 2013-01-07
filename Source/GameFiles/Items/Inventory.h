@@ -5,13 +5,12 @@
 
 #pragma once
 
-#include "GameFiles/Items/RangedWeapon.h"
-#include "GameFiles/Items/MeleeWeapon.h"
-#include "GameFiles/Items/Gear.h"
-#include "GameFiles/Items/Food.h"
-#include "GameFiles/Items/Container.h"
+#include "RangedWeapon.h"
+#include "MeleeWeapon.h"
+#include "Gear.h"
+#include "Food.h"
+#include "Container.h"
 #include <vector>
-#include "Array.h"
 
 /*! Class That keeps track of the inventory data*/
 class Inventory

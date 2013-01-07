@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "GameFiles/Items/Weapon.h"
+#include "Weapon.h"
 
 class RangedWeapon : public Weapon
 {

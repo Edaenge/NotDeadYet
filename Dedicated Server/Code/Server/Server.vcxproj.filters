@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Wrapper">
+      <UniqueIdentifier>{5b2c18ca-0b3c-4380-ba82-6b6c5b8d1a49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineFiles">
+      <UniqueIdentifier>{a9ae8ded-751a-468c-b495-d11a102073bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineFiles\Server">
+      <UniqueIdentifier>{5c36f703-e482-43cb-a742-cbfdca722665}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineFiles\Network">
+      <UniqueIdentifier>{9c69bb5f-ea87-4d76-afd1-ac7f00d5a5c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineFiles\KeyUtil">
+      <UniqueIdentifier>{748cb4f1-b50d-40c1-9548-37e48a09e6cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MaloWLib">
+      <UniqueIdentifier>{fca24baa-2113-491e-af99-7e6a53302fec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EngineFiles\Items">
+      <UniqueIdentifier>{a7c7b9ae-5116-4e50-a1ac-7f5a9189c082}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EngineFiles\Server\Actor.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\AnimalActor.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\BioActor.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\Host.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\PlayerActor.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\StaticObjectActor.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Network\ClientChannel.h">
+      <Filter>EngineFiles\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Network\ClientConnectedEvent.h">
+      <Filter>EngineFiles\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Network\NetworkPacket.h">
+      <Filter>EngineFiles\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Network\NetworkServer.h">
+      <Filter>EngineFiles\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Network\ServerListener.h">
+      <Filter>EngineFiles\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Network\Winsock.h">
+      <Filter>EngineFiles\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrapper\ServerEngineWrapper.h">
+      <Filter>Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\ServerEngine.h">
+      <Filter>EngineFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\ActorHandler.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\ContainerObject.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\DynamicObjectActor.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\FoodObject.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\ObjectManager.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\WeaponObject.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\KeyUtil\KeyStates.h">
+      <Filter>EngineFiles\KeyUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\KeyUtil\KeyValues.h">
+      <Filter>EngineFiles\KeyUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Network\NetworkMessageConverter.h">
+      <Filter>EngineFiles\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Container.h">
+      <Filter>EngineFiles\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Equipment.h">
+      <Filter>EngineFiles\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Food.h">
+      <Filter>EngineFiles\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Gear.h">
+      <Filter>EngineFiles\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Inventory.h">
+      <Filter>EngineFiles\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Item.h">
+      <Filter>EngineFiles\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.h">
+      <Filter>EngineFiles\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\RangedWeapon.h">
+      <Filter>EngineFiles\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Weapon.h">
+      <Filter>EngineFiles\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\AnimationStates.h">
+      <Filter>EngineFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MaloWLib\Array.h">
+      <Filter>MaloWLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MaloWLib\List.h">
+      <Filter>MaloWLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MaloWLib\MaloW.h">
+      <Filter>MaloWLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MaloWLib\MaloWFileDebug.h">
+      <Filter>MaloWLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MaloWLib\Process.h">
+      <Filter>MaloWLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MaloWLib\Queue.h">
+      <Filter>MaloWLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\MaloWLib\Safe.h">
+      <Filter>MaloWLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\External\NDYGFX\Include\Vector.h">
+      <Filter>EngineFiles</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="EngineFiles\Server\Actor.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\AnimalActor.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\BioActor.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\Host.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\PlayerActor.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Network\ClientChannel.cpp">
+      <Filter>EngineFiles\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Network\ClientConnectedEvent.cpp">
+      <Filter>EngineFiles\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Network\NetworkServer.cpp">
+      <Filter>EngineFiles\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Network\ServerListener.cpp">
+      <Filter>EngineFiles\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Wrapper\ServerEngineWrapper.cpp">
+      <Filter>Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\ServerEngine.cpp">
+      <Filter>EngineFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\ActorHandler.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\ContainerObject.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\FoodObject.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\ObjectManager.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\WeaponObject.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\KeyUtil\KeyStates.cpp">
+      <Filter>EngineFiles\KeyUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Network\NetworkMessageConverter.cpp">
+      <Filter>EngineFiles\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Container.cpp">
+      <Filter>EngineFiles\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Equipment.cpp">
+      <Filter>EngineFiles\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Food.cpp">
+      <Filter>EngineFiles\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Gear.cpp">
+      <Filter>EngineFiles\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Inventory.cpp">
+      <Filter>EngineFiles\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Item.cpp">
+      <Filter>EngineFiles\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.cpp">
+      <Filter>EngineFiles\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\RangedWeapon.cpp">
+      <Filter>EngineFiles\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\MaloWLib\Process.cpp">
+      <Filter>MaloWLib</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
