@@ -3,8 +3,7 @@
 
 #pragma once
 
-#include "GameFiles/ClientSide/Client.h"
-#include "GameFiles/ServerSide/Host.h"
+#include "ClientSide\Client.h"
 
 
 enum NETWORK_ERROR_CODE
@@ -31,5 +30,4 @@ class Game
 
 	private:
 		Client* zClient;
-		Host*	zHost; 
 };
