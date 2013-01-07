@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "GameFiles/Items/Item.h"
+#include "Item.h"
 
  /*! Abstract class for Weapons*/
 class Weapon : public Item

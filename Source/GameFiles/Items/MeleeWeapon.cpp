@@ -1,4 +1,4 @@
-#include "GameFiles/Items/MeleeWeapon.h"
+#include "MeleeWeapon.h"
 
 MeleeWeapon::MeleeWeapon(const unsigned int id,const unsigned int itemType) : Weapon(id, itemType)
 {
