@@ -6,7 +6,7 @@ MovingObject::MovingObject(const unsigned int id) : WorldObject(id)
 {
 	this->zState = STATE_IDLE; 
 	this->zEndPosition = Vector3(0,0,0);
-	this->zVelocity = 100.0f;
+	this->zVelocity = 500.0f;
 }
 
 float MovingObject::GetInterpolationType(const float deltaTime, const unsigned int type)
@@ -35,4 +35,25 @@ float MovingObject::GetInterpolationType(const float deltaTime, const unsigned i
 	}
 
 	return t;
+}
+
+void MovingObject::LinearInterpolation( Vector3& CurrPos, const Vector3& newPos, float t )
+{
+	bool bLarger = false;
+	if (CurrPos < newPos)
+		bLarger = true;
+
+	CurrPos = CurrPos + (newPos - CurrPos) * t * zVelocity;
+
+	if (!bLarger)
+	{
+		if (CurrPos < newPos)
+			CurrPos = newPos;
+	}
+	else
+	{
+		if (newPos < CurrPos)
+			CurrPos = newPos;
+	}
+	
 }

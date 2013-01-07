@@ -2,9 +2,9 @@
 
 PlayerObject::PlayerObject(const unsigned int id) : OrganicObject(id)
 {
-	float zHunger = 0.0f;
-	float zStamina = 0.0f;
-	float zHydration = 0.0f;
+	this->zHunger = 0.0f;
+	this->zStamina = 0.0f;
+	this->zHydration = 0.0f;
 	this->zEquipment = new Equipment();
 }
 

@@ -19,9 +19,9 @@ GuiManager::GuiManager()
 	this->zLootingGuiShowTimer = 0.0f;
 	this->zInventoryGuiShowTimer = 0.0f;
 	
-	this->zInvGui = NULL;
-	this->zLootingGui = NULL;
-	this->zInvCircGui = NULL;
+	//this->zInvGui = NULL;
+	//this->zLootingGui = NULL;
+	//this->zInvCircGui = NULL;
 	this->zGraphicEngine = NULL;
 }
 
@@ -46,37 +46,37 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 	float width = windowWidth * 0.5f;
 	float height = windowHeight * 0.5f;
 
-	this->zInvGui = new InventoryGui(x, y, width, height, INVENTORY_GUI_PATH);
+	//this->zInvGui = new InventoryGui(x, y, width, height, INVENTORY_GUI_PATH);
 
 	Vector2 mousePosition = this->zGraphicEngine->GetKeyListener()->GetMousePosition();
 	x = mousePosition.x;
 	y = mousePosition.y;
 	width = windowWidth * 0.25f;
 	height = windowHeight * 0.25f;
-	this->zInvCircGui = new CircularListGui(x, y, width, height, INVENTORY_ITEM_SELECTION_GUI_PATH);
+	//this->zInvCircGui = new CircularListGui(x, y, width, height, INVENTORY_ITEM_SELECTION_GUI_PATH);
 
-	this->zLootingGui = new CircularListGui(x, y, width, height, LOOTING_GUI_PATH);
+	//this->zLootingGui = new CircularListGui(x, y, width, height, LOOTING_GUI_PATH);
 }
 
 GuiManager::~GuiManager()
 {
-	if (this->zInvGui)
-	{
-		delete this->zInvGui;
-		this->zInvGui = NULL;
-	}
+	//if (this->zInvGui)
+	//{
+	//	delete this->zInvGui;
+	//	this->zInvGui = NULL;
+	//}
 
-	if (this->zInvCircGui)
-	{
-		delete this->zInvCircGui;
-		this->zInvCircGui = NULL;
-	}
+	//if (this->zInvCircGui)
+	//{
+	//	delete this->zInvCircGui;
+	//	this->zInvCircGui = NULL;
+	//}
 
-	if (this->zLootingGui)
-	{
-		delete this->zLootingGui;
-		this->zLootingGui = NULL;
-	}
+	//if (this->zLootingGui)
+	//{
+	//	delete this->zLootingGui;
+	//	this->zLootingGui = NULL;
+	//}
 }
 
 void GuiManager::HideInventoryGui()
@@ -85,7 +85,7 @@ void GuiManager::HideInventoryGui()
 	{
 		//Hide Inventory
 		this->zInventoryOpen = false;
-		this->zInvGui->RemoveFromRenderer(this->zGraphicEngine);
+		//this->zInvGui->RemoveFromRenderer(this->zGraphicEngine);
 	}
 }
 
@@ -94,7 +94,7 @@ void GuiManager::ToggleInventoryGui()
 	if (!this->zInventoryOpen)
 	{
 		//Show Inventory
-		this->zInvGui->AddToRenderer(this->zGraphicEngine);
+		//this->zInvGui->AddToRenderer(this->zGraphicEngine);
 		this->zInventoryOpen = true;
 		//this->zInventoryGuiShowTimer = GUI_DISPLAY_TIMER;
 	}
@@ -102,13 +102,13 @@ void GuiManager::ToggleInventoryGui()
 	{
 		//Hide Inventory
 		this->zInventoryOpen = false;
-		this->zInvGui->RemoveFromRenderer(this->zGraphicEngine);
+		//this->zInvGui->RemoveFromRenderer(this->zGraphicEngine);
 	}
 }
 
 void GuiManager::AddInventoryItemToGui(const Gui_Item_Data gid)
 {
-	this->zInvGui->AddItemToGui(gid.zFilePath, this->zGraphicEngine);
+	//this->zInvGui->AddItemToGui(gid.zFilePath, this->zGraphicEngine);
 }
 
 void GuiManager::ShowCircularItemGui()
@@ -119,16 +119,16 @@ void GuiManager::ShowCircularItemGui()
 		if (!this->zCircularInventorySelectionOpen)
 		{
 			//Set Gui Position to Mouse Position
-			Vector2 mousePosition = this->zGraphicEngine->GetKeyListener()->GetMousePosition();
-			Vector2 dimension = this->zInvCircGui->GetDimension();
+			//Vector2 mousePosition = this->zGraphicEngine->GetKeyListener()->GetMousePosition();
+			//Vector2 dimension = this->zInvCircGui->GetDimension();
 
-			float x = mousePosition.x - dimension.x * 0.5f;
-			float y = mousePosition.y - dimension.y * 0.5f;
-			this->zInvCircGui->SetPosition(x, y);
+			//float x = mousePosition.x - dimension.x * 0.5f;
+			//float y = mousePosition.y - dimension.y * 0.5f;
+			//this->zInvCircGui->SetPosition(x, y);
 
 			//Show Gui
 			this->zCircularInventorySelectionOpen = true;
-			this->zInvCircGui->AddToRenderer(this->zGraphicEngine);
+			//this->zInvCircGui->AddToRenderer(this->zGraphicEngine);
 		}
 	}
 }
@@ -139,7 +139,7 @@ void GuiManager::HideCircularItemGui()
 	if (this->zCircularInventorySelectionOpen)
 	{
 		this->zCircularInventorySelectionOpen = false;
-		this->zInvCircGui->RemoveFromRenderer(this->zGraphicEngine);
+		//this->zInvCircGui->RemoveFromRenderer(this->zGraphicEngine);
 	}
 }
 
@@ -148,15 +148,15 @@ void GuiManager::ShowLootingGui(std::vector<Gui_Item_Data> gui_Item_Data)
 	if(!this->zLooting)
 	{
 		//Set Gui Position to Mouse Position
-		Vector2 mousePosition = this->zGraphicEngine->GetKeyListener()->GetMousePosition();
-		Vector2 dimension = this->zLootingGui->GetDimension();
-		float x = mousePosition.x - dimension.x * 0.5f;
-		float y = mousePosition.y - dimension.y * 0.5f;
-		this->zLootingGui->SetPosition(x, y);
+		//Vector2 mousePosition = this->zGraphicEngine->GetKeyListener()->GetMousePosition();
+		//Vector2 dimension = this->zLootingGui->GetDimension();
+		//float x = mousePosition.x - dimension.x * 0.5f;
+		//float y = mousePosition.y - dimension.y * 0.5f;
+		//this->zLootingGui->SetPosition(x, y);
 
 		//Show Loot Gui
 		this->zLooting = true;
-		this->zLootingGui->AddToRenderer(this->zGraphicEngine);
+		//this->zLootingGui->AddToRenderer(this->zGraphicEngine);
 		this->zLootingGuiShowTimer = GUI_DISPLAY_TIMER;
 	}
 }
@@ -168,7 +168,7 @@ void GuiManager::HideLootingGui()
 		//Hide Loot Gui
 		this->zLooting = false;
 		
-		this->zLootingGui->RemoveFromRenderer(this->zGraphicEngine);
+		//this->zLootingGui->RemoveFromRenderer(this->zGraphicEngine);
 	}
 }
 

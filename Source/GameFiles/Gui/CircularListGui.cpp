@@ -14,7 +14,7 @@ CircularListGui::CircularListGui(float x, float y, float width, float height, st
 {
 	this->zPressed = false;
 	this->zHovered = false;
-	this->zItemImageName = "";
+	this->zItemImageName = "Media/Inventory_v01.png";
 	this->zItemX = (x + width) * 0.5f - 10.0f;
 	this->zItemY = (y + height) * 0.5f - 10.0f;
 	this->zItemWidth = 30.0f;

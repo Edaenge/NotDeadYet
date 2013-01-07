@@ -6,6 +6,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 
+
 class DynamicObjectActor : public Actor
 {
 public:
