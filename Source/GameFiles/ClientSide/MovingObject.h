@@ -13,7 +13,7 @@ public:
 	{
 		this->zState = STATE_IDLE; 
 		this->zEndPosition = Vector3(0,0,0);
-		this->zVelocity = 500.0f;
+		this->zVelocity = 100.0f;
 	}
 	virtual ~MovingObject() {}
 	/*! Sets the State*/

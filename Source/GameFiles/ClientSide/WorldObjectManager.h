@@ -53,11 +53,12 @@ public:
 	DynamicObject* SearchAndGetDynamicObject(const unsigned int id);
 	/*! Interpolates all the Objects towards their final Position*/
 	void UpdateObjects(float deltaTime);
-
+	/*! Adds a Map Object to the Array.*/
 	bool AddMapObject(iMesh* object);
 	bool AddTerrain(iTerrain* terrain);
 
 	iMesh* GetMapObject(unsigned int position);
+	/*! Returns Pointer to the Terrain.*/
 	iTerrain* GetTerrain();
 private:
 	/*! Search for the object with the correct ID and returns a Position if found.*/
@@ -78,5 +79,6 @@ private:
 	/*! Objects that are part part of the map are stored here
 	for example trees.*/
 	std::vector<iMesh*> zMapObjects;
+	/*! Pointer to the Terrain.*/
 	iTerrain* zTerrain;
 };

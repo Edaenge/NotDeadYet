@@ -1,6 +1,6 @@
 /*
 Made by Edänge Simon Datum(19/12/12 created) 
-for project desperation* at Blekinge tekniska högskola.
+for project Not Dead Yet at Blekinge tekniska högskola.
 */
 
 #pragma once

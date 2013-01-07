@@ -713,7 +713,7 @@ void Client::HandleRemoveInventoryItem(const int id)
 	{
 		if (images[i].id == id)
 		{
-			MaloW::Debug("Removed Image");
+			MaloW::Debug("Removed Image ID: " + MaloW::convertNrToString(id));
 			this->zEng->DeleteImage(images[i].image);
 			images.erase(images.begin() + i);
 		}
@@ -778,7 +778,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		}
 		else
 		{
-			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in HandleNewObject");
+			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewPlayerObject");
 		}
 	}
 	if (!this->zCreated)
@@ -851,7 +851,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 		}
 		else
 		{
-			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in HandleNewObject");
+			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewAnimalObject");
 		}
 	}
 	//Creates a StaticMesh from the given Filename
@@ -937,7 +937,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 		}
 		else
 		{
-			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in HandleNewObject");
+			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewStaticObject");
 		}
 	}
 
@@ -1031,7 +1031,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 		}
 		else
 		{
-			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in HandleNewObject");
+			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewDynamicObject");
 		}
 	}
 	
@@ -1127,7 +1127,7 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 		}
 		else
 		{
-			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in HandleUpdateObject");
+			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in UpdatePlayerObjects");
 		}
 	}
 
@@ -1226,7 +1226,7 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		}
 		else
 		{
-			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in HandleUpdateObject");
+			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in UpdateStaticObjects");
 		}
 	}
 
@@ -1311,7 +1311,7 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		}
 		else
 		{
-			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in HandleUpdateObject");
+			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in UpdateAnimalObjects");
 		}
 	}
 
@@ -1412,7 +1412,7 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 		}
 		else
 		{
-			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in HandleUpdateObject");
+			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in UpdateDynamicObjects");
 		}
 	}
 
@@ -1625,7 +1625,7 @@ bool Client::GetCursorVisibility()
 	return this->zShowCursor;
 }
 
-void Client::DisplayMessageToClient( const std::string& msg )
+void Client::DisplayMessageToClient(const std::string& msg)
 {
 	MaloW::Debug(msg);
 }

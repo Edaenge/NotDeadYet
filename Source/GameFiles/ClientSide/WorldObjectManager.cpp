@@ -175,26 +175,26 @@ DynamicObject* WorldObjectManager::GetDynamicObject( const unsigned int pos)
 
 int WorldObjectManager::SearchForObject(const unsigned int type, const unsigned int id)
 {
-	int position;
+	int index;
 	switch(type)
 	{
 	case OBJECT_TYPE_PLAYER:
-		position = this->SearchForPlayerObject(id);
+		index = this->SearchForPlayerObject(id);
 		break;
 	case OBJECT_TYPE_ANIMAL:
-		position = this->SearchForAnimalObject(id);
+		index = this->SearchForAnimalObject(id);
 		break;
 	case OBJECT_TYPE_STATIC_OBJECT:
-		position = this->SearchForStaticObject(id);
+		index = this->SearchForStaticObject(id);
 		break;
 	case OBJECT_TYPE_DYNAMIC_OBJECT:
-		position = this->SearchForDynamicObject(id);
+		index = this->SearchForDynamicObject(id);
 		break;
 	default:
-		position = -1;
+		index = -1;
 		break;
 	}
-	return position;
+	return index;
 }
 
 int WorldObjectManager::SearchForPlayerObject(const unsigned int id)
@@ -291,7 +291,7 @@ void WorldObjectManager::UpdateObjects( float deltaTime )
 	}
 }
 
-bool WorldObjectManager::AddMapObject( iMesh* object )
+bool WorldObjectManager::AddMapObject(iMesh* object)
 {
 	if (object)
 	{

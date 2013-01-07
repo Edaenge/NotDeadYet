@@ -1,5 +1,5 @@
 //Made by Edänge Simon 
-//for project desperation* at Blekinge tekniska högskola.
+//for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "Game.h"

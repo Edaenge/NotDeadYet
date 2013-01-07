@@ -88,7 +88,7 @@ void PlayerActor::Update(float deltaTime)
 		this->zPos = this->zPos + (right * -1 * dt * this->zVelocity);
 	}
 
-	if(this->zState != STATE_RUNNING && (this->zStamina != this->zStaminaMax))
+	if(this->zState != STATE_RUNNING && (this->zStamina < this->zStaminaMax))
 	{
 		this->zStamina += dt * this->zStaminaCof;
 
@@ -132,7 +132,7 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 		{
 		case ITEM_TYPE_WEAPON_MELEE_AXE:
 			item = new MeleeWeapon(wo->GetID(), wo->GetWeight(), wo->GetActorObjectName(), wo->GetType(),
-									wo->GetDescription(), wo->GetDamage(), wo->GetRange());
+				wo->GetDescription(), wo->GetDamage(), wo->GetRange());
 			break;
 		case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
 			item = new MeleeWeapon(wo->GetID(), wo->GetWeight(), wo->GetActorObjectName(), wo->GetType(),

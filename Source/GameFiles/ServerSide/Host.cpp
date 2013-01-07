@@ -460,7 +460,7 @@ bool Host::HandlePickupItem( PlayerActor* pActor, const int ObjectId )
 void Host::SendErrorMessage(const int id, const std::string error_Message)
 {
 	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ERROR_MESSAGE, error_Message);
-	this->SendToClient(id, error_Message);
+	this->SendToClient(id, msg);
 }
 
 bool Host::CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj)
@@ -488,10 +488,6 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj)
 
 bool Host::CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj)
 {
-
-	if (!pActor->PickUpObject(weaponObj))
-		return false;
-
 	std::string msg;
 
 	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, weaponObj->GetID());
@@ -516,9 +512,6 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj)
 
 bool Host::CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerObj)
 {
-	if (!pActor->PickUpObject(containerObj))
-		return false;
-
 	std::string msg;
 
 	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, containerObj->GetID());
