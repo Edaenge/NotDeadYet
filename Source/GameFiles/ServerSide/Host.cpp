@@ -623,7 +623,10 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
 {
 	FoodObject* foodObj = new FoodObject(false);
 	if (!this->CreateStaticObjectActor(food_Item->GetItemType(), foodObj))
+	{
+		SAFE_DELETE(foodObj);
 		return false;
+	}
 	
 	//Creates A New FoodObject With an Id And Default Values 
 	
@@ -646,8 +649,10 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 	WeaponObject* weaponObj = new WeaponObject(false);
 
 	if (!this->CreateStaticObjectActor(weapon_Item->GetItemType(), weaponObj))
+	{
+		SAFE_DELETE(weaponObj);
 		return false;
-
+	}
 	//Creates A New WeaponObject With an Id And Default Values
 	weaponObj->SetID(weapon_Item->GetID());
 	weaponObj->SetPosition(pActor->GetPosition());
@@ -668,8 +673,10 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Container* container_Item)
 	ContainerObject* containerObj = new ContainerObject(false);
 
 	if (!this->CreateStaticObjectActor(container_Item->GetItemType(), containerObj))
+	{
+		SAFE_DELETE(containerObj);
 		return false;
-
+	}
 	//Creates A New ContainerObject With an Id And Default Values
 	containerObj->SetID(container_Item->GetID());
 	containerObj->SetPosition(pActor->GetPosition());
@@ -725,6 +732,8 @@ bool Host::CreateStaticObjectActor(const int type, FoodObject* foodObj)
 	foodObj->SetDescription(food->GetDescription());
 	foodObj->SetActorObjectName(food->GetActorObjectName());
 
+	foodObj = new FoodObject(food);
+	
 	return true;
 }
 
