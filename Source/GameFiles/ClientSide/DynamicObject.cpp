@@ -9,3 +9,12 @@ void DynamicObject::Update(float deltaTime)
 	this->LinearInterpolation(currentPosition, this->zEndPosition, t);
 	this->SetPosition(currentPosition);
 }
+
+DynamicObject::DynamicObject(const unsigned int id) : MovingObject(id)
+{
+	this->zType = 0;
+	this->zWeight = 0;
+	this->zName = "Unknown";
+	this->zIconPath = "Unknown";
+	this->zDescription = "Unknown";
+}

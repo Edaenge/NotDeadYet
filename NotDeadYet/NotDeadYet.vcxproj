@@ -25,6 +25,7 @@
     <ClCompile Include="..\Source\GameFiles\ClientSide\GuiManager.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\MovingObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\PlayerObject.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ClientSide\StaticObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\WorldObjectManager.cpp" />
     <ClCompile Include="..\Source\GameFiles\Game.cpp" />
     <ClCompile Include="..\Source\GameFiles\Graphics.cpp" />

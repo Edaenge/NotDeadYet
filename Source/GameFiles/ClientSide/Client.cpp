@@ -1504,7 +1504,7 @@ bool Client::RemoveStaticObject(const int id)
 
 	if(mesh)
 	{
-		//this->zEng->DeleteMesh(mesh);
+		this->zEng->DeleteMesh(mesh);
 	}
 	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_STATIC_OBJECT, pos))
 	{

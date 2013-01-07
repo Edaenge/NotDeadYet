@@ -9,7 +9,7 @@
 class OrganicObject : public MovingObject
 {
 public:
-	OrganicObject(const unsigned int id) : MovingObject(id) {}
+	OrganicObject(const unsigned int id) : MovingObject(id) {this->zHealth = 0.0f;}
 	virtual ~OrganicObject() {}
 	/*! Return the Health*/
 	inline float GetHealth() const {return this->zHealth;}

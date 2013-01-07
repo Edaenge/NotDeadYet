@@ -92,14 +92,14 @@ bool WorldObjectManager::AddObject(DynamicObject* dynamicObject)
 	return false;
 }
 
-bool WorldObjectManager::RemoveObject(const unsigned int type, const unsigned int position)
+bool WorldObjectManager::RemoveObject(const unsigned int type, const unsigned int index)
 {
 	if (type == OBJECT_TYPE_PLAYER)
 	{
-		if (position < this->zPlayerObjects.size())
+		if (index < this->zPlayerObjects.size())
 		{
-			PlayerObject* playerObj = this->zPlayerObjects[position];
-			this->zPlayerObjects.erase(this->zPlayerObjects.begin() + position);
+			PlayerObject* playerObj = this->zPlayerObjects[index];
+			this->zPlayerObjects.erase(this->zPlayerObjects.begin() + index);
 			if (playerObj)
 			{
 				delete playerObj;
@@ -110,10 +110,10 @@ bool WorldObjectManager::RemoveObject(const unsigned int type, const unsigned in
 	}
 	if (type == OBJECT_TYPE_ANIMAL)
 	{
-		if (position < this->zAnimalObjects.size())
+		if (index < this->zAnimalObjects.size())
 		{
-			AnimalObject* animalObj = this->zAnimalObjects[position];
-			this->zAnimalObjects.erase(this->zAnimalObjects.begin() + position);
+			AnimalObject* animalObj = this->zAnimalObjects[index];
+			this->zAnimalObjects.erase(this->zAnimalObjects.begin() + index);
 			if (animalObj)
 			{
 				delete animalObj;
@@ -124,10 +124,10 @@ bool WorldObjectManager::RemoveObject(const unsigned int type, const unsigned in
 	}
 	if (type == OBJECT_TYPE_STATIC_OBJECT)
 	{
-		if (position < this->zStaticObjects.size())
+		if (index < this->zStaticObjects.size())
 		{
-			StaticObject* staticObj = this->zStaticObjects[position];
-			this->zStaticObjects.erase(this->zStaticObjects.begin() + position);
+			StaticObject* staticObj = this->zStaticObjects[index];
+			this->zStaticObjects.erase(this->zStaticObjects.begin() + index);
 			if (staticObj)
 			{
 				delete staticObj;
@@ -138,10 +138,10 @@ bool WorldObjectManager::RemoveObject(const unsigned int type, const unsigned in
 	}
 	if (type == OBJECT_TYPE_DYNAMIC_OBJECT)
 	{
-		if (position < this->zDynamicObjects.size())
+		if (index < this->zDynamicObjects.size())
 		{
-			DynamicObject* dynamicObj = this->zDynamicObjects[position];
-			this->zDynamicObjects.erase(this->zDynamicObjects.begin() + position);
+			DynamicObject* dynamicObj = this->zDynamicObjects[index];
+			this->zDynamicObjects.erase(this->zDynamicObjects.begin() + index);
 			if (dynamicObj)
 			{
 				delete dynamicObj;
@@ -153,24 +153,36 @@ bool WorldObjectManager::RemoveObject(const unsigned int type, const unsigned in
 	return false;
 }
 
-PlayerObject* WorldObjectManager::GetPlayerObject(const unsigned int pos)
+PlayerObject* WorldObjectManager::GetPlayerObject(const unsigned int index)
 {
-	return this->zPlayerObjects[pos];
+	if (index < this->zPlayerObjects.size())
+		return this->zPlayerObjects[index];
+
+	return NULL;
 }
 
-AnimalObject* WorldObjectManager::GetAnimalObject(const unsigned int pos)
+AnimalObject* WorldObjectManager::GetAnimalObject(const unsigned int index)
 {
-	return this->zAnimalObjects[pos];
+	if (index < this->zAnimalObjects.size())
+		return this->zAnimalObjects[index];
+
+	return NULL;
 }
 
-StaticObject* WorldObjectManager::GetStaticObject(const unsigned int pos)
+StaticObject* WorldObjectManager::GetStaticObject(const unsigned int index)
 {
-	return this->zStaticObjects[pos];
+	if (index < this->zStaticObjects.size())
+		return this->zStaticObjects[index];
+	
+	return NULL;
 }
 
-DynamicObject* WorldObjectManager::GetDynamicObject( const unsigned int pos)
+DynamicObject* WorldObjectManager::GetDynamicObject(const unsigned int index)
 {
-	return this->zDynamicObjects[pos];
+	if (index < this->zDynamicObjects.size())
+		return this->zDynamicObjects[index];
+
+	return NULL;
 }
 
 int WorldObjectManager::SearchForObject(const unsigned int type, const unsigned int id)
@@ -247,24 +259,25 @@ int WorldObjectManager::SearchForAnimalObject(const unsigned int id)
 
 bool WorldObjectManager::SearchAndRemove(const unsigned int type, const unsigned int id)
 {
-	int position;
+	int index;
+
 	switch(type)
 	{
 	case OBJECT_TYPE_PLAYER:
-		position = this->SearchForPlayerObject(id);
-		this->zPlayerObjects.erase(this->zPlayerObjects.begin() + position);
+		index = this->SearchForPlayerObject(id);
+		this->zPlayerObjects.erase(this->zPlayerObjects.begin() + index);
 		break;
 	case OBJECT_TYPE_ANIMAL:
-		position = this->SearchForAnimalObject(id);
-		this->zAnimalObjects.erase(this->zAnimalObjects.begin() + position);
+		index = this->SearchForAnimalObject(id);
+		this->zAnimalObjects.erase(this->zAnimalObjects.begin() + index);
 		break;
 	case OBJECT_TYPE_STATIC_OBJECT:
-		position = this->SearchForStaticObject(id);
-		this->zStaticObjects.erase(this->zStaticObjects.begin() + position);
+		index = this->SearchForStaticObject(id);
+		this->zStaticObjects.erase(this->zStaticObjects.begin() + index);
 		break;
 	case OBJECT_TYPE_DYNAMIC_OBJECT:
-		position = this->SearchForDynamicObject(id);
-		this->zDynamicObjects.erase(this->zDynamicObjects.begin() + position);
+		index = this->SearchForDynamicObject(id);
+		this->zDynamicObjects.erase(this->zDynamicObjects.begin() + index);
 		break;
 	default:
 		return false;
