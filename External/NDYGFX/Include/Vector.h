@@ -28,17 +28,8 @@ public:
 			float y; //values[1]
 		};
 	};
-
-	Vector2()
+	Vector2(float x=0.0f, float y=0.0f) : x(x), y(y)
 	{
-		this->x = 0;
-		this->y = 0;
-	}
-
-	Vector2(float _x, float _y)
-	{
-		this->x = _x;
-		this->y = _y;
 	}
 
 	float GetLength() const
@@ -117,20 +108,10 @@ public:
 		};
 	};
 
-	Vector3()
+	Vector3(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f) : x(_x), y(_y), z(_z)
 	{
-		this->x = 0;
-		this->y = 0;
-		this->z = 0;
 	}
-
-	Vector3(float _x, float _y, float _z)
-	{
-		this->x = _x;
-		this->y = _y;
-		this->z = _z;
-	}
-
+	
 	inline float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
