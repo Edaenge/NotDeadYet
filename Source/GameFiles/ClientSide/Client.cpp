@@ -612,7 +612,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	Item* item = 0;
 	switch (itemType)
 	{
-	case ITEM_TYPE_FOOD_MEAT:
+	case ITEM_TYPE_FOOD_DEER_MEAT:
 		item = new Food(id, itemWeight, itemName, itemType, itemDescription, hunger);
 		break;
 	case ITEM_TYPE_WEAPON_RANGED_BOW:
@@ -698,7 +698,7 @@ void Client::HandleUseItem(const int id)
 		if (rwp)
 			eq->EquipWeapon(rwp);
 	}
-	else if(item->GetItemType() == ITEM_TYPE_FOOD_MEAT)
+	else if(item->GetItemType() == ITEM_TYPE_FOOD_DEER_MEAT)
 	{
 		item->Use();
 	}

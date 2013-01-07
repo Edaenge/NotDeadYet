@@ -37,31 +37,53 @@ Host::~Host()
 //NEEDS FIXING
 void Host::Init()
 {
+	int counter = 0;
 	//Creates A New FoodObject With an Id And Default Values 
 	FoodObject* foodObj = new FoodObject(true);
-	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_MEAT, foodObj))
+	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, foodObj))
 	{
 		foodObj->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
+		
+		MaloW::Debug("Created Meat Object");
+		counter++;
 	}
 	//Creates A New WeaponObject With an Id And Default Values 
 	WeaponObject* weaponObj = new WeaponObject(true);
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, weaponObj))
 	{
-		weaponObj->SetPosition(Vector3(-5.0f, 0.0f, -5.0f));
+		weaponObj->SetPosition(Vector3(5.0f, 0.0f, -5.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+
+		MaloW::Debug("Created Bow Object");
+		counter++;
 	}
 
 	weaponObj = new WeaponObject(true);
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, weaponObj))
 	{
-		weaponObj->SetPosition(Vector3(-5.0f, 0.0f, 5.0f));
+		weaponObj->SetPosition(Vector3(-5.0f, 0.0f, -5.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+		
+		MaloW::Debug("Created Axe Object");
+		counter++;
+	}
+
+	ContainerObject* containerObj = new ContainerObject(true);
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, containerObj))
+	{
+		containerObj->SetPosition(Vector3(-5.0f, 0.0f, 5.0f));
+		//Adds The Object To the Array
+		this->zActorHandler->AddNewStaticContainerActor(containerObj);
+		
+		MaloW::Debug("Created Canteen Object");
+		counter++;
 	}
 	
+	MaloW::Debug("Created " + MaloW::convertNrToString(counter) + " Objects");
 }
 
 void Host::Life()
@@ -307,6 +329,24 @@ void Host::SendStaticActorUpdates()
 
 		staticData.push_back(mess);
 	}
+	std::vector<ContainerObject*> stc = this->zActorHandler->GetContainers();
+	for (auto it_Static = stc.begin(); it_Static < stc.end(); it_Static++)
+	{
+		Vector3 pos = (*it_Static)->GetPosition();
+		Vector4 rot = (*it_Static)->GetRotation();
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_STATIC_OBJECT, (*it_Static)->GetID());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (*it_Static)->GetType());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (*it_Static)->GetWeight());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it_Static)->GetDescription());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it_Static)->GetIconPath());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it_Static)->GetActorObjectName());
+
+		staticData.push_back(mess);
+	}
 	//Send Data to clients
 	for (auto it_Client = zClients.begin(); it_Client < zClients.end(); it_Client++)
 	{
@@ -395,7 +435,7 @@ bool Host::HandlePickupItem( PlayerActor* pActor, const int ObjectId )
 		return true;
 	}
 
-	//Check For Weapon Object
+	//Check For Container Object
 	ContainerObject* container = dynamic_cast<ContainerObject*>(this->zActorHandler->GetActor(ObjectId, ACTOR_TYPE_STATIC_OBJECT_CONTAINER));
 
 	if (container)
@@ -513,7 +553,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 	}
 	int item_type = item->GetItemType();
 
-	if (item_type == ITEM_TYPE_FOOD_MEAT)
+	if (item_type == ITEM_TYPE_FOOD_DEER_MEAT)
 	{
 		Food* item_Food = dynamic_cast<Food*>(item);
 		if (!item_Food)
@@ -572,6 +612,18 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 		this->CreateObjectFromItem(pActor, item_Weapon);
 		return;
 	}
+	if (item_type == ITEM_TYPE_CONTAINER_CANTEEN)
+	{
+		Container* item_Container = dynamic_cast<Container*>(item);
+		if (!item_Container)
+		{
+			MaloW::Debug("Wrong Item Type Set");
+			return;
+		}
+
+		this->CreateObjectFromItem(pActor, item_Container);
+		return;
+	}
 }
 
 bool Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
@@ -625,7 +677,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Container* container_Item)
 	if (!this->CreateStaticObjectActor(container_Item->GetItemType(), containerObj))
 		return false;
 
-	//Creates A New WeaponObject With an Id And Default Values
+	//Creates A New ContainerObject With an Id And Default Values
 	containerObj->SetID(container_Item->GetID());
 	containerObj->SetPosition(pActor->GetPosition());
 
@@ -1208,6 +1260,28 @@ void Host::GetExistingObjects( std::vector<std::string>& static_Objects )
 	std::vector<WeaponObject *> static_Weapon = this->zActorHandler->GetWeapons();
 	//Gets Static Weapon Objects Data
 	for(auto it = static_Weapon.begin(); it < static_Weapon.end(); it++)
+	{
+		Vector3 pos = (*it)->GetPosition();
+		Vector3 scale = (*it)->GetScale();
+		Vector4 rot = (*it)->GetRotation();
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, (*it)->GetID());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (*it)->GetType());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it)->GetActorObjectName());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (*it)->GetWeight());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it)->GetIconPath());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it)->GetDescription());
+
+		static_Objects.push_back(mess);
+	}
+
+	std::vector<ContainerObject *> static_Container = this->zActorHandler->GetContainers();
+	//Gets Static Weapon Objects Data
+	for(auto it = static_Container.begin(); it < static_Container.end(); it++)
 	{
 		Vector3 pos = (*it)->GetPosition();
 		Vector3 scale = (*it)->GetScale();

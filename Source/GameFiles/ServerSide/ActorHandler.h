@@ -66,6 +66,8 @@ public:
 	inline const std::vector<FoodObject*>& GetFoods() const {return this->zFoods;}
 	/*! Returns Weapon Objects.*/
 	inline const std::vector<WeaponObject*>& GetWeapons() const {return this->zWeapons;}
+	/*! Returns Container Objects.*/
+	inline const std::vector<ContainerObject*>& GetContainers() const {return this->zContainer;}
 
 //////////////////////////////
 	/*! Returns an Actor. TYPE is a enum to identify which Actor to get.

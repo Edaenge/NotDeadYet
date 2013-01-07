@@ -19,7 +19,9 @@ static const enum M_OBJECT_TYPE
 	OBJECT_TYPE_GEAR_LEGS,
 	OBJECT_TYPE_GEAR_BOOTS,
 	OBJECT_TYPE_CONTAINER_CANTEEN,
-	OBJECT_TYPE_FOOD_MEAT
+	OBJECT_TYPE_CONTAINER_WATER_BOTTLE,
+	OBJECT_TYPE_FOOD_DEER_MEAT,
+	OBJECT_TYPE_FOOD_WOLF_MEAT
 };
 /*Class for Static objects, such as Food, Weapons basically things that cannot move.*/
 class StaticObjectActor : public Actor

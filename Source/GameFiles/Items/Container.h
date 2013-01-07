@@ -18,7 +18,7 @@ public:
 	void SetCurrentSize(const int size) {this->zUsesRemaining = size;}
 
 	inline int GetCurrentSize() {return this->zUsesRemaining;}
-	inline float GetMaxSize() {return this->zMaxUses;}
+	inline int GetMaxSize() {return this->zMaxUses;}
 
 	virtual void Use();
 private:

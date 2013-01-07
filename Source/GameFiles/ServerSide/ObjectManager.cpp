@@ -91,7 +91,7 @@ bool ObjectManager::ReadObjects()
 		else if(strcmp(key, OBJECT_FOOD.c_str()) == 0)
 		{
 			FoodObject* fd = new FoodObject(false);
-			while(!read.eof() && strcmp(key, END.c_str()) != 0)
+			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
 				TrimAndSet(line);
@@ -107,7 +107,7 @@ bool ObjectManager::ReadObjects()
 		else if(strcmp(key, OBJECT_CONTAINER.c_str()) == 0)
 		{
 			ContainerObject* ct = new ContainerObject(false);
-			while(!read.eof() && strcmp(key, END.c_str()) != 0)
+			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
 				TrimAndSet(line);
@@ -159,7 +159,7 @@ bool ObjectManager::Replace(char* key)
 
 	std::string str = string(key);
 
-	for (int i = 0; i < str.length(); i++)
+	for (unsigned int i = 0; i < str.length(); i++)
 	{
 		if (str.at(i) == '_')
 		{

@@ -19,11 +19,11 @@ public:
 	virtual ~ContainerObject();
 
 
-	float GetMaxUses() const {return this->zMaxUse;}
-	float GetCurrentUses() const {return this->zUsesLeft;}
+	int GetMaxUses() const {return this->zMaxUse;}
+	int GetCurrentUses() const {return this->zUsesLeft;}
 
-	void SetMaxUses(const float max){this->zMaxUse = max;}
-	void SetCurrentUses(const float usesLeft){this->zUsesLeft = usesLeft;}
+	void SetMaxUses(const int max){this->zMaxUse = max;}
+	void SetCurrentUses(const int usesLeft){this->zUsesLeft = usesLeft;}
 
 private:
 	int zMaxUse;

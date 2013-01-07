@@ -181,7 +181,6 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 Item* PlayerActor::DropObject( const int ID )
 {
 	Item* item = this->zInventory->SearchAndGetItem(ID);
-	unsigned int item_type;
 
 	if(!item)
 		return NULL;
