@@ -199,6 +199,9 @@
     <ClCompile Include="..\Source\GameFiles\ServerSide\ContainerObject.cpp">
       <Filter>Game Files\ServerSide</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\MovingObject.cpp">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">

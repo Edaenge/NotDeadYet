@@ -4,7 +4,6 @@
 */
 #pragma once
 
-#include "GameFiles/AnimationStates.h"
 #include "GameFiles/ClientSide/OrganicObject.h"
 
 /*! Class to Handle Animals*/

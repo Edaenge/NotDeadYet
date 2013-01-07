@@ -4,7 +4,6 @@
 */
 #pragma once
 
-#include "GameFiles/AnimationStates.h"
 #include "GameFiles/ClientSide/MovingObject.h"
 #include <string>
 
@@ -12,7 +11,7 @@
 class DynamicObject : public MovingObject
 {
 public:
-	DynamicObject(const unsigned int id);
+	DynamicObject(const unsigned int id) : MovingObject(id) {}
 	virtual ~DynamicObject(){}
 	/*! Updates the Object*/
 	virtual void Update(float deltaTime);
@@ -27,7 +26,7 @@ public:
 	void SetDescription(const std::string& description) {this->zDescription = description;}
 	void SetName(const std::string& name) {this->zName = name;}
 	void SetWeight(const int weight) {this->zWeight = weight;}
-	void SetType(const int TYPE) {this->zType = TYPE;}
+	void SetType(const int type) {this->zType = type;}
 
 private:
 	int zWeight;

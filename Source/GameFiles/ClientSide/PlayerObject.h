@@ -4,7 +4,6 @@
 */
 #pragma once
 
-#include "GameFiles/AnimationStates.h"
 #include "GameFiles/Items/Equipment.h"
 #include "GameFiles/ClientSide/OrganicObject.h"
 

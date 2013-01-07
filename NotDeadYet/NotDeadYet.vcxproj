@@ -23,6 +23,7 @@
     <ClCompile Include="..\Source\GameFiles\ClientSide\Client.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\DynamicObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\GuiManager.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ClientSide\MovingObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\PlayerObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\WorldObjectManager.cpp" />
     <ClCompile Include="..\Source\GameFiles\Game.cpp" />

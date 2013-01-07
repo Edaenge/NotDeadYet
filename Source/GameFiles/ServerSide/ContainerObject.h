@@ -18,7 +18,6 @@ public:
 	/*! */
 	virtual ~ContainerObject();
 
-
 	int GetMaxUses() const {return this->zMaxUse;}
 	int GetCurrentUses() const {return this->zUsesLeft;}
 

@@ -7,6 +7,7 @@
 
 #include "GameFiles/ClientSide/WorldObject.h"
 #include <string>
+
 /*! Class to Handle Static Objects*/
 class StaticObject : public WorldObject
 {
@@ -23,7 +24,7 @@ public:
 	void SetDescription(const std::string& description) {this->zDescription = description;}
 	void SetName(const std::string& name) {this->zName = name;}
 	void SetWeight(const int weight) {this->zWeight = weight;}
-	void SetType(const int TYPE) {this->zType = TYPE;}
+	void SetType(const int type) {this->zType = type;}
 
 private:
 	int zWeight;

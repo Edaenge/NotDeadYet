@@ -130,7 +130,7 @@ void Host::Life()
 	}
 }
 
-int Host::InitHost( int port, unsigned int maxClients )
+int Host::InitHost(int port, unsigned int maxClients)
 {
 	int code = 0;
 
@@ -195,7 +195,7 @@ void Host::HandleNewConnections()
 	SAFE_DELETE(pe);
 }
 
-void Host::SendToAllClients( const std::string& message )
+void Host::SendToAllClients(const std::string& message)
 {
 	if(!HasClients())
 		return;
@@ -206,7 +206,7 @@ void Host::SendToAllClients( const std::string& message )
 	}
 }
 
-void Host::SendToClient( int clientID, const std::string& message )
+void Host::SendToClient(int clientID, const std::string& message)
 {
 	int pos = SearchForClient(clientID);
 
@@ -399,7 +399,7 @@ void Host::ReadMessages()
 	}
 }
 
-bool Host::HandlePickupItem( PlayerActor* pActor, const int ObjectId )
+bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectId)
 {
 	if(!HasClients())
 		return false;
@@ -888,7 +888,7 @@ void Host::HandleRecivedMessages()
 	}
 }
 
-void Host::HandleKeyPress( PlayerActor* pl, const std::string& key )
+void Host::HandleKeyPress(PlayerActor* pl, const std::string& key)
 {
 	//Hard coded for test
 	int keyz = this->zMessageConverter.ConvertStringToInt(M_KEY_DOWN, key);
@@ -922,7 +922,7 @@ void Host::HandleKeyPress( PlayerActor* pl, const std::string& key )
 
 }
 
-void Host::HandleKeyRelease( PlayerActor* pl, const std::string& key )
+void Host::HandleKeyRelease(PlayerActor* pl, const std::string& key)
 {
 	//Hard coded for test
 	int keyz = this->zMessageConverter.ConvertStringToInt(M_KEY_UP, key);
@@ -955,7 +955,7 @@ void Host::HandleKeyRelease( PlayerActor* pl, const std::string& key )
 	}
 }
 
-void Host::HandlePingMsg( ClientData* cd )
+void Host::HandlePingMsg(ClientData* cd)
 {
 	//Hard coded
 	if(cd->zTotalPingTime > 60.0f)
@@ -968,7 +968,7 @@ void Host::HandlePingMsg( ClientData* cd )
 	cd->zCurrentPingTime = 0.0f;
 }
 
-void Host::HandlePlayerUpdate( PlayerActor* pl, ClientData* cd, const std::vector<std::string> &data )
+void Host::HandlePlayerUpdate(PlayerActor* pl, ClientData* cd, const std::vector<std::string> &data)
 {
 	
 	for(auto it = data.begin() + 1; it < data.end(); it++)
@@ -1008,7 +1008,7 @@ void Host::HandlePlayerUpdate( PlayerActor* pl, ClientData* cd, const std::vecto
 	pl->SetLatency(latency);
 }
 
-int Host::SearchForClient( const int ID ) const
+int Host::SearchForClient(const int ID) const
 {
 	if(!HasClients())
 		return -1;
