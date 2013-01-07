@@ -54,12 +54,6 @@ Client::~Client()
 	this->Close();
 	this->WaitUntillDone();
 
-	if (this->zPlayerInventory)
-	{
-		delete this->zPlayerInventory;
-		this->zPlayerInventory = NULL;
-	}
-
 	if (this->zGuiManager)
 	{
 		delete this->zGuiManager;
@@ -72,10 +66,16 @@ Client::~Client()
 		this->zObjectManager = NULL;
 	}
 
-	if(this->zServerChannel)
+	if (this->zServerChannel)
 	{
 		delete this->zServerChannel;
 		this->zServerChannel = NULL;
+	}
+
+	if (this->zPlayerInventory)
+	{
+		delete this->zPlayerInventory;
+		this->zPlayerInventory = NULL;
 	}
 }
 
@@ -207,11 +207,11 @@ void Client::SendClientUpdate()
 	std::string msg;
 	Vector3 dir = this->zEng->GetCamera()->GetForward();
 	Vector3 up = this->zEng->GetCamera()->GetUpVector();
-	int position = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
 	Vector4 rot = Vector4(0, 0, 0, 0);
-	if (position != -1)
+	if (index != -1)
 	{
-		rot = this->zObjectManager->GetPlayerObject(position)->GetRotation();
+		rot = this->zObjectManager->GetPlayerObject(index)->GetRotation();
 	}
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CLIENT_DATA);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_FRAME_TIME, this->zFrameTime);
@@ -224,18 +224,17 @@ void Client::SendClientUpdate()
 
 void Client::UpdateCameraPos()
 {
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
-	if (pos != -1)
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
+	if (index != -1)
 	{
-		Vector3 position = this->zObjectManager->GetPlayerObject(pos)->GetPosition();
+		Vector3 position = this->zObjectManager->GetPlayerObject(index)->GetPosition();
 		iTerrain* terrain = this->zObjectManager->GetTerrain();
 		if (terrain)
 		{
 			position.y = terrain->GetYPositionAt(position.x, position.z);
 			terrain = NULL;
 		}
-		
-		position.y += 2.5f;
+		position.y -= 2.5f;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
 }
@@ -305,8 +304,8 @@ void Client::CheckMovementKeys()
 
 void Client::HandleKeyboardInput()
 {
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
-	if (pos == -1)
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
+	if (index == -1)
 	{
 		MaloW::Debug("Something Went Wrong. This player cannot be found. In function Client::HandleKeyBoardInput");
 		return;
@@ -380,7 +379,7 @@ void Client::HandleKeyboardInput()
 
 	if (this->zEng->GetKeyListener()->IsClicked(1))
 	{
-		PlayerObject* player = this->zObjectManager->GetPlayerObject(pos);
+		PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
 		MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(player->GetEquipmentPtr()->GetWeapon());
 		if (!mWpn)
 		{
@@ -609,7 +608,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		return;
 	}
 	//Todo add more data to item to identify type ex Bow/Axe/Pocket Knife
-	Item* item = 0;
+	Item* item = NULL;
 	switch (itemType)
 	{
 	case ITEM_TYPE_FOOD_DEER_MEAT:
@@ -1079,11 +1078,11 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			iTerrain* terrain = this->zObjectManager->GetTerrain();
-			if (terrain)
-			{
-				position.y = terrain->GetYPositionAt(position.x, position.z);
-			}
+			//iTerrain* terrain = this->zObjectManager->GetTerrain();
+			//if (terrain)
+			//{
+			//	position.y = terrain->GetYPositionAt(position.x, position.z);
+			//}
 			PlayerObjectPointer->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -1179,11 +1178,11 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			iTerrain* terrain = this->zObjectManager->GetTerrain();
-			if (terrain)
-			{
-				position.y = terrain->GetYPositionAt(position.x, position.z);
-			}
+			//iTerrain* terrain = this->zObjectManager->GetTerrain();
+			//if (terrain)
+			//{
+			//	position.y = terrain->GetYPositionAt(position.x, position.z);
+			//}
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{

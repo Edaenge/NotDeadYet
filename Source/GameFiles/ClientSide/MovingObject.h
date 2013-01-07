@@ -35,8 +35,7 @@ public:
 
 protected:
 	/*! Interpolates the position*/
-	void LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t)
-	{ CurrPos = CurrPos + (newPos - CurrPos) * t * zVelocity;}
+	void LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t);
 	float GetInterpolationType(const float deltaTime, const unsigned int type);
 protected:
 	int zState;

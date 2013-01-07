@@ -8,7 +8,6 @@
 /WorkingDir/NotDeadYetD32.pdb
 /WorkingDir/NotDeadYetR32.exe
 /WorkingDir/NotDeadYetR32.pdb
-/WorkingDir/MaloWDebug.txt
 /NotDeadYet.sdf
 /NotDeadYet.v11.suo
 /NotDeadYet/Debug
@@ -21,19 +20,4 @@
 /NotDeadYet.v11.suo
 /NotDeadYet.sdf
 /NotDeadYet/NotDeadYet.aps
-/WorkingDir/Config.cfg
-/Dedicated Server/Obj
-/Dedicated Server/C++CLI.dll
-/Dedicated Server/C++CLI.exp
-/Dedicated Server/C++CLI.ilk
-/Dedicated Server/C++CLI.lib
-/Dedicated Server/C++CLI.pdb
-/Dedicated Server/GUI.exe
-/Dedicated Server/GUI.exe.config
-/Dedicated Server/GUI.pdb
-/Dedicated Server/MaloWDebug.txt
-/Dedicated Server/Server.dll
-/Dedicated Server/Bin/x86/Server.pdb
-/Dedicated Server/Bin/x86/Server.exp
-/Dedicated Server/Bin/x86/Server.ilk
-/Dedicated Server/Bin/x86/Server.lib
+/WorkingDir/Config.cfg/WorkingDir/MaloWDebug.txt

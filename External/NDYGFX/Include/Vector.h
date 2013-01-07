@@ -55,7 +55,20 @@ public:
 
 	inline bool operator<( const Vector2& v ) const
 	{
-		return ( x < v.x || y < v.y );
+		if ( x < v.x ) return true;
+		if ( v.x < x ) return false;
+		if ( y < v.y ) return true;
+		if ( v.y < y ) return false;
+		return false;
+	}
+
+	inline bool operator>( const Vector2& v ) const
+	{
+		if ( x > v.x ) return true;
+		if ( v.x > x ) return false;
+		if ( y > v.y ) return true;
+		if ( v.y > y ) return false;
+		return false;
 	}
 
 	inline Vector2 operator-( const Vector2& v ) const
@@ -232,7 +245,24 @@ public:
 
 	inline bool operator<( const Vector3& v ) const
 	{
-		return ( x < v.x || y < v.y || z < v.z );
+		if ( x < v.x ) return true;
+		if ( v.x < x ) return false;
+		if ( y < v.y ) return true;
+		if ( v.y < y ) return false;
+		if ( z < v.z ) return true;
+		if ( v.z < z ) return false;
+		return false;
+	}
+
+	inline bool operator>( const Vector3& v ) const
+	{
+		if ( x > v.x ) return true;
+		if ( v.x > x ) return false;
+		if ( y > v.y ) return true;
+		if ( v.y > y ) return false;
+		if ( z > v.z ) return true;
+		if ( v.z > z ) return false;
+		return false;
 	}
 
 	inline float& operator[]( unsigned int i ) throw(const char*)
@@ -305,7 +335,28 @@ public:
 
 	inline bool operator<( const Vector4& v ) const
 	{
-		return ( x < v.x || y < v.y || z < v.z || w < v.w );
+		if ( x < v.x ) return true;
+		if ( v.x < x ) return false;
+		if ( y < v.y ) return true;
+		if ( v.y < y ) return false;
+		if ( z < v.z ) return true;
+		if ( v.z < z ) return false;
+		if ( w < v.w ) return true;
+		if ( v.w < w ) return false;
+		return false;
+	}
+
+	inline bool operator>( const Vector4& v ) const
+	{
+		if ( x > v.x ) return true;
+		if ( v.x > x ) return false;
+		if ( y > v.y ) return true;
+		if ( v.y > y ) return false;
+		if ( z > v.z ) return true;
+		if ( v.z > z ) return false;
+		if ( w > v.w ) return true;
+		if ( v.w > w ) return false;
+		return false;
 	}
 
 	inline float& operator[]( unsigned int i ) throw(const char*)
