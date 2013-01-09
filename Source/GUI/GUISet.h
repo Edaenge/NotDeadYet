@@ -14,6 +14,7 @@
 #include "Element.h"
 #include "SimpleButton.h"
 #include "GUIPicture.h"
+#include "TextBox.h"
 
 #include "ChangeSetEvent.h"
 

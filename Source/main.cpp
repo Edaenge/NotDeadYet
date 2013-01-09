@@ -23,6 +23,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 	menu->Init();
 	menu->Run();
 	delete menu;
+	Sleep(10);
 
 	// Free Graphics
 	FreeGraphics();
