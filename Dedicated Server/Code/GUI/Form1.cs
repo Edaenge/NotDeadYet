@@ -42,6 +42,11 @@ namespace GUI
             {
                 //TODO, ret function. returns messages.
             }
+            else
+            {
+                this.m_ServerEngine.ShutdownHost();
+                this.button_Start.Enabled = true;
+            }
         }
 
         private void button_Start_MouseClick(object sender, MouseEventArgs e)
@@ -90,6 +95,30 @@ namespace GUI
                     this.button_Start.Enabled = false;
             }
 
+        }
+
+        private void button_Start_EnabledChanged(object sender, EventArgs e)
+        {
+            if (button_Start.Enabled)
+                button_Shutdown.Enabled = false;
+
+            else if(!button_Start.Enabled)
+                button_Shutdown.Enabled = true;
+        }
+
+        private void button_Shutdown_EnabledChanged(object sender, EventArgs e)
+        {
+            if (button_Shutdown.Enabled)
+                button_Start.Enabled = false;
+
+            else if (!button_Shutdown.Enabled)
+                button_Start.Enabled = true;
+        }
+
+        private void button_Shutdown_Click(object sender, EventArgs e)
+        {
+            this.m_ServerEngine.ShutdownHost();
+            this.button_Shutdown.Enabled = true;
         }
 
     }

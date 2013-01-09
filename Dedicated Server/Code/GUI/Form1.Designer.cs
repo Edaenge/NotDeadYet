@@ -42,11 +42,18 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.button_Shutdown = new System.Windows.Forms.Button();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -74,6 +81,7 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.button_Shutdown);
             this.panel1.Controls.Add(this.label_Status);
             this.panel1.Controls.Add(this.button_Start);
             this.panel1.Controls.Add(this.label2);
@@ -101,6 +109,7 @@
             this.button_Start.TabIndex = 12;
             this.button_Start.Text = "Start";
             this.button_Start.UseVisualStyleBackColor = true;
+            this.button_Start.EnabledChanged += new System.EventHandler(this.button_Start_EnabledChanged);
             this.button_Start.MouseClick += new System.Windows.Forms.MouseEventHandler(this.button_Start_MouseClick);
             // 
             // label2
@@ -119,7 +128,7 @@
             this.textBox_Port.Name = "textBox_Port";
             this.textBox_Port.Size = new System.Drawing.Size(100, 20);
             this.textBox_Port.TabIndex = 10;
-            this.textBox_Port.Text = "1010";
+            this.textBox_Port.Text = "11521";
             // 
             // label1
             // 
@@ -137,7 +146,7 @@
             this.textBox_Players.Name = "textBox_Players";
             this.textBox_Players.Size = new System.Drawing.Size(100, 20);
             this.textBox_Players.TabIndex = 8;
-            this.textBox_Players.Text = "1";
+            this.textBox_Players.Text = "10";
             // 
             // tabPage2
             // 
@@ -167,11 +176,61 @@
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
+            // button_Shutdown
+            // 
+            this.button_Shutdown.Enabled = false;
+            this.button_Shutdown.Location = new System.Drawing.Point(80, 152);
+            this.button_Shutdown.Name = "button_Shutdown";
+            this.button_Shutdown.Size = new System.Drawing.Size(75, 23);
+            this.button_Shutdown.TabIndex = 13;
+            this.button_Shutdown.Text = "Shutdown";
+            this.button_Shutdown.UseVisualStyleBackColor = true;
+            this.button_Shutdown.EnabledChanged += new System.EventHandler(this.button_Shutdown_EnabledChanged);
+            this.button_Shutdown.Click += new System.EventHandler(this.button_Shutdown_Click);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.toolStripStatusLabel2,
+            this.toolStripStatusLabel3,
+            this.toolStripStatusLabel4});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 427);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(346, 22);
+            this.statusStrip1.TabIndex = 6;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(47, 17);
+            this.toolStripStatusLabel1.Text = "Players:";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(24, 17);
+            this.toolStripStatusLabel2.Text = "0/0";
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(42, 17);
+            this.toolStripStatusLabel3.Text = "Status:";
+            // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(75, 17);
+            this.toolStripStatusLabel4.Text = "Not Running";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(346, 449);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
@@ -182,7 +241,10 @@
             this.panel1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -200,6 +262,12 @@
         private System.Windows.Forms.Label label_Status;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Button button_Shutdown;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
 
     }
 }
