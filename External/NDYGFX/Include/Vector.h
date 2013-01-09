@@ -5,11 +5,12 @@
 
 // Edit 2012-11-18 by Alexivan - Removed DX dependencies
 // Edit 2012-11-23 by Alexivan - Added DX Conversions
-// EDIT 2012-12-17 by Tillman - Added GetD3DXVECTORX and Union & []-operator overloading.
+// EDIT 2012-12-17 by Tillman  - Added GetD3DXVECTORX and Union & []-operator overloading.
 // EDIT 2012-12-18 by Alexivan - Warning Ignore for nameless struct in union
 // EDIT 2012-12-18 by Alexivan - GetLength function made constant
 // EDIT 2012-12-19 by Alexivan - Added Less Than Comparison, Removed Destructors
 // EDIT 2012-12-19 by Alexivan - Removed Destructors, Fixed GetRotated, Normalize with big N, Made some functions constant
+// EDIT 2013-01-07 by Tillman  - Optimized Constructors.
 
 #pragma warning ( push ) 
 #pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -28,8 +29,10 @@ public:
 			float y; //values[1]
 		};
 	};
-	Vector2(float x=0.0f, float y=0.0f) : x(x), y(y)
+
+	Vector2(float _x = 0.0f, float _y = 0.0f) : x(_x), y(_y)
 	{
+		
 	}
 
 	float GetLength() const
@@ -50,15 +53,6 @@ public:
 		if ( v.x < x ) return false;
 		if ( y < v.y ) return true;
 		if ( v.y < y ) return false;
-		return false;
-	}
-
-	inline bool operator>( const Vector2& v ) const
-	{
-		if ( x > v.x ) return true;
-		if ( v.x > x ) return false;
-		if ( y > v.y ) return true;
-		if ( v.y > y ) return false;
 		return false;
 	}
 
@@ -110,8 +104,9 @@ public:
 
 	Vector3(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f) : x(_x), y(_y), z(_z)
 	{
+
 	}
-	
+
 	inline float GetLength() const
 	{
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
@@ -235,17 +230,6 @@ public:
 		return false;
 	}
 
-	inline bool operator>( const Vector3& v ) const
-	{
-		if ( x > v.x ) return true;
-		if ( v.x > x ) return false;
-		if ( y > v.y ) return true;
-		if ( v.y > y ) return false;
-		if ( z > v.z ) return true;
-		if ( v.z > z ) return false;
-		return false;
-	}
-
 	inline float& operator[]( unsigned int i ) throw(const char*)
 	{
 		if(i > 2)
@@ -324,19 +308,6 @@ public:
 		if ( v.z < z ) return false;
 		if ( w < v.w ) return true;
 		if ( v.w < w ) return false;
-		return false;
-	}
-
-	inline bool operator>( const Vector4& v ) const
-	{
-		if ( x > v.x ) return true;
-		if ( v.x > x ) return false;
-		if ( y > v.y ) return true;
-		if ( v.y > y ) return false;
-		if ( z > v.z ) return true;
-		if ( v.z > z ) return false;
-		if ( w > v.w ) return true;
-		if ( v.w > w ) return false;
 		return false;
 	}
 

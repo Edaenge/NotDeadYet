@@ -36,6 +36,13 @@ public:
 protected:
 	/*! Interpolates the position*/
 	void LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t);
+	/*! Returns time Value depending on type
+	IT_LINEAR,
+	IT_COSINE,
+	IT_ACCELERATION,
+	IT_SMOOTH_STEP,
+	IT_DECELERATION
+	*/
 	float GetInterpolationType(const float deltaTime, const unsigned int type);
 protected:
 	int zState;

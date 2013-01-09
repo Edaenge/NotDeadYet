@@ -649,16 +649,24 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		Gui_Item_Data gid = Gui_Item_Data(id, itemName, itemDescription, itemIconFilePath);
 		//this->zGuiManager->AddInventoryItemToGui(gid);
 
-		MaloW::Debug("Added Image");
-		TempImage temp;
-		int pos = images.size();
-		float width = this->zEng->GetEngineParameters()->windowWidth * 0.1428f;
-		float height = this->zEng->GetEngineParameters()->windowHeight * 0.1428f;
-		int y = (int)(pos * 0.1428f);
-		temp.image = this->zEng->CreateImage(Vector2((pos  - y)* width, y * height + 50), Vector2(width, width), itemIconFilePath.c_str());
-		temp.id = id;
+		MaloW::Debug("Added Image ID: " + MaloW::convertNrToString(id));
+		//TempImage temp;
+		//int pos = images.size();
+		//float width = this->zEng->GetEngineParameters()->windowWidth * 0.1428f;
+		//float height = this->zEng->GetEngineParameters()->windowHeight * 0.1428f;
+		//int y = (int)(pos * 0.1428f);
+		//temp.image = this->zEng->CreateImage(Vector2((pos  - y)* width, y * height + 50), Vector2(width, width), itemIconFilePath.c_str());
+		//temp.id = id;
 
-		this->images.push_back(temp);
+		//this->images.push_back(temp);
+	}
+	else
+	{
+		if (item)
+		{
+			delete item;
+			item = NULL;
+		}
 	}
 }
 
@@ -706,17 +714,18 @@ void Client::HandleUseItem(const int id)
 void Client::HandleRemoveInventoryItem(const int id)
 {
 	int index = this->zPlayerInventory->Search(id);
-	this->zPlayerInventory->RemoveItem(index);
+	if(this->zPlayerInventory->RemoveItem(index))
+		MaloW::Debug("Item Removed on Client");
 
-	for (unsigned int i = 0; i < images.size(); i++)
-	{
-		if (images[i].id == id)
-		{
-			MaloW::Debug("Removed Image ID: " + MaloW::convertNrToString(id));
-			this->zEng->DeleteImage(images[i].image);
-			images.erase(images.begin() + i);
-		}
-	}
+	//for (unsigned int i = 0; i < images.size(); i++)
+	//{
+	//	if (images[i].id == id)
+	//	{
+	//		MaloW::Debug("Removed Image ID: " + MaloW::convertNrToString(id));
+	//		this->zEng->DeleteImage(images[i].image);
+	//		images.erase(images.begin() + i);
+	//	}
+	//}
 }
 
 void Client::CloseConnection(const std::string& reason)
