@@ -195,6 +195,43 @@ void Host::HandleNewConnections()
 	client->Start();
 
 	SAFE_DELETE(pe);
+
+	//Collect player infos
+	message = "";
+	std::vector<std::string> temp;
+	std::vector<PlayerActor *> players = this->zActorHandler->GetPlayers();
+
+	//Gets PlayerInformation
+	for(auto it = players.begin(); it < players.end(); it++)
+	{
+		Vector3 pos = (*it)->GetPosition();
+		Vector3 scale = (*it)->GetScale();
+		Vector4 rot = (*it)->GetRotation();
+
+		message =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, (*it)->GetID());
+		message += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		message += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+		message += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		message += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
+		message += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (*it)->GetState());
+
+		temp.push_back(message);
+	}
+
+	//Send the players to player
+	for (auto it = temp.begin(); it < temp.end(); it++)
+	{
+		client->sendData(*it);
+	}
+
+	//Sends All Static Objects To the Player
+	std::vector<std::string> static_Msg;
+	this->GetExistingObjects(static_Msg);
+	for (auto sIt = static_Msg.begin(); sIt < static_Msg.end(); sIt++)
+	{
+		client->sendData(*sIt);
+	}
+	
 }
 
 void Host::SendToAllClients(const std::string& message)
@@ -1182,57 +1219,27 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 
 	//Debug Pos
 	pi->SetPosition(Vector3(pi->GetID()*15,0,1)); 
+	//Add new player to the list
 	this->zActorHandler->AddNewPlayer(pi);
 
-	//Collect player infos
-	std::vector<std::string> temp;
-	std::vector<PlayerActor *> players = this->zActorHandler->GetPlayers();
-	int count = 0;
-	int newPlayerindex = 0;
-	
-	//Gets PlayerInformation
-	for(auto it = players.begin(); it < players.end(); it++)
-	{
-		Vector3 pos = (*it)->GetPosition();
-		Vector3 scale = (*it)->GetScale();
-		Vector4 rot = (*it)->GetRotation();
+	//Gather New player information
+	Vector3 pos = pi->GetPosition();
+	Vector3 scale = pi->GetScale();
+	Vector4 rot = pi->GetRotation();
 
-		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, (*it)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (*it)->GetState());
-
-		temp.push_back(mess);
-
-		if((*it)->GetID() == pi->GetID())
-			newPlayerindex = count;
-
-		count++;
-	}
-
-	//Send All Players to the new player
-	MaloW::ClientChannel* cc = cd->zClient;
-
-	for (auto sIt = temp.begin(); sIt < temp.end(); sIt++)
-	{
-		cc->sendData(*sIt);
-	}
-	//Sends All Static Objects To the Player
-	std::vector<std::string> static_Msg;
-	this->GetExistingObjects(static_Msg);
-	for (auto sIt = static_Msg.begin(); sIt < static_Msg.end(); sIt++)
-	{
-		cc->sendData(*sIt);
-	}
+	mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, pi->GetID());
+	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, pi->GetActorModel());
+	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, pi->GetState());
 
 	//Send new player to players
 	for (unsigned int i = 0; i < (unsigned int)this->zClients.size(); i++)
 	{
-		if(zClients[i]->zClient->getClientID() != cc->getClientID())
-			this->zClients[i]->zClient->sendData(temp[newPlayerindex]);
+		this->zClients[i]->zClient->sendData(mess);
 	}
+
 }
 
 void Host::GetExistingObjects( std::vector<std::string>& static_Objects )
