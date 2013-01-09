@@ -483,7 +483,8 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj)
 
 	this->SendToClient(pActor->GetID(), msg);
 
-	this->zActorHandler->RemoveStaticFoodActor(foodObj->GetID());
+	if(!this->zActorHandler->RemoveStaticFoodActor(foodObj->GetID()))
+		MaloW::Debug("Failed to remove static object.");
 
 	return true;
 }
@@ -507,7 +508,7 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj)
 
 	this->SendToClient(pActor->GetID(), msg);
 
-	this->zActorHandler->RemoveStaticFoodActor(weaponObj->GetID());
+	this->zActorHandler->RemoveStaticWeaponActor(weaponObj->GetID());
 
 	return true;
 }
