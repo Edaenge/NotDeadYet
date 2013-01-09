@@ -40,3 +40,7 @@
 /Dedicated Server/Bin/x86/Server.pdb
 /Dedicated Server/Code/Code.opensdf
 /Dedicated Server/Code/GUI/obj/Debug
+/WorkingDir/Media/Thumbs.db
+/WorkingDir/Media/LoadingScreen/Thumbs.db
+/*.vsp
+/WorkingDir/*.pdb
