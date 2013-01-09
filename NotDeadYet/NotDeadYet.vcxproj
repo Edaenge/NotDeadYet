@@ -46,6 +46,7 @@
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyStates.cpp" />
     <ClCompile Include="..\Source\GameFiles\MainMenu.cpp" />
+    <ClCompile Include="..\Source\GameFiles\MainMenuCreate.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\Actor.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\ActorHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\AnimalActor.cpp" />
@@ -57,6 +58,13 @@
     <ClCompile Include="..\Source\GameFiles\ServerSide\PlayerActor.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\StaticObjectActor.cpp" />
     <ClCompile Include="..\Source\GameFiles\ServerSide\WeaponObject.cpp" />
+    <ClCompile Include="..\Source\GUI\ChangeSetEvent.cpp" />
+    <ClCompile Include="..\Source\GUI\Element.cpp" />
+    <ClCompile Include="..\Source\GUI\GUIEvent.cpp" />
+    <ClCompile Include="..\Source\GUI\GUIPicture.cpp" />
+    <ClCompile Include="..\Source\GUI\GUISet.cpp" />
+    <ClCompile Include="..\Source\GUI\NoEvent.cpp" />
+    <ClCompile Include="..\Source\GUI\SimpleButton.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
     <ClCompile Include="..\Source\MaloWLib\Process.cpp" />
     <ClCompile Include="..\Source\Network\ClientChannel.cpp" />
@@ -130,6 +138,13 @@
     <ClInclude Include="..\Source\GameFiles\ServerSide\PlayerActor.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\StaticObjectActor.h" />
     <ClInclude Include="..\Source\GameFiles\ServerSide\WeaponObject.h" />
+    <ClInclude Include="..\Source\GUI\ChangeSetEvent.h" />
+    <ClInclude Include="..\Source\GUI\Element.h" />
+    <ClInclude Include="..\Source\GUI\GUIEvent.h" />
+    <ClInclude Include="..\Source\GUI\GUIPicture.h" />
+    <ClInclude Include="..\Source\GUI\GUISet.h" />
+    <ClInclude Include="..\Source\GUI\NoEvent.h" />
+    <ClInclude Include="..\Source\GUI\SimpleButton.h" />
     <ClInclude Include="..\Source\MaloWLib\Array.h" />
     <ClInclude Include="..\Source\MaloWLib\List.h" />
     <ClInclude Include="..\Source\MaloWLib\MaloW.h" />

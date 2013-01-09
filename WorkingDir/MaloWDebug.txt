@@ -1,1266 +1,509 @@
 Initing Engine with width: 1024 and height: 768
+Host Process Started
+NetworkServer Process Started
+Created Meat Object
+Created Bow Object
+Created Axe Object
+Created Canteen Object
+Created 4 Objects
+Game Running
+Client Process Started
+ServerChannel Process Started
 New Player Connected.
 New Player Accepted.
 Sent to Client SELF 0*
 
 SC: Received from Server SELF 0*
-WARNING: Failed to load texture: Unknown
-Sent to Server UD*M Media/scale.obj*D -0.235702 -0.942809 0.235702*U 0 1 0*
+ClientChannel Process Started
+Sc: Sending to Server UD*M Media/scale.obj*D -0.235702 -0.942809 0.235702*U 0 1 0*
 CC: Received from Client UD*M Media/scale.obj*D -0.235702 -0.942809 0.235702*U 0 1 0*
 Sent to Client NP 0*P 0 0 1*SC 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*STAT 0*
 
 SC: Received from Server NP 0*P 0 0 1*SC 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*STAT 0*
-Sent to Server CD*FT 2.98702*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-SC: Received from Server UP 0*FT 0.0470937*P 0 0 1*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 2.98702*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-Sent to Client UP 0*FT 0.0470937*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client NSO 0*P 5 0 5*SC 0.05 0.05 0.05*R 0 0 0 0*M Media/Fern_02_v01.obj*IT 10*IN Fresh_Deer_Meat*IW 1*IIP Media/Fern_02_v01.png*ID Fills_your_Hunger.*
 
-Sent to Server CD*FT 3.03382*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-CC: Received from Client CD*FT 3.03382*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-Sent to Client UP 0*FT 3.04895*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client NSO 1*P 5 0 -5*SC 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*IT 0*IN Bow_Of_Power*IW 3*IIP Media/Use_v01.png*ID Long_Range_Weapon*
 
-SC: Received from Server UP 0*FT 3.04895*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 3.08067*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-CC: Received from Client CD*FT 3.08067*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-SC: Received from Server UP 0*FT 3.11188*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 3.11188*P 0 0 1*R 0 0 0 0*STAT 1*
+SC: Received from Server NSO 0*P 5 0 5*SC 0.05 0.05 0.05*R 0 0 0 0*M Media/Fern_02_v01.obj*IT 10*IN Fresh_Deer_Meat*IW 1*IIP Media/Fern_02_v01.png*ID Fills_your_Hunger.*
+Sent to Client NSO 2*P -5 0 -5*SC 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*IT 2*IN Heavy_Axe*IW 3*IIP Media/Use_v01.png*ID Melee_Weapon*
 
-Sent to Server CD*FT 3.12742*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-CC: Received from Client CD*FT 3.12742*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-SC: Received from Server UP 0*FT 3.18982*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 3.17537*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-Sent to Client UP 0*FT 3.18982*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client NSO 3*P -5 0 5*SC 0.05 0.05 0.05*R 0 0 0 0*M Media/bth.obj*IT 8*IN Water_Bottle*IW 1*IIP Media/Inventory_v01.png*ID SmallCanteen*
 
-CC: Received from Client CD*FT 3.17537*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-Sent to Server CD*FT 3.22102*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-CC: Received from Client CD*FT 3.22102*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-SC: Received from Server UP 0*FT 3.23533*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 3.23533*P 0 0 1*R 0 0 0 0*STAT 1*
+SC: Received from Server NSO 1*P 5 0 -5*SC 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*IT 0*IN Bow_Of_Power*IW 3*IIP Media/Use_v01.png*ID Long_Range_Weapon*
+SC: Received from Server NSO 2*P -5 0 -5*SC 0.05 0.05 0.05*R 0 0 0 0*M Media/scale.obj*IT 2*IN Heavy_Axe*IW 3*IIP Media/Use_v01.png*ID Melee_Weapon*
+SC: Received from Server NSO 3*P -5 0 5*SC 0.05 0.05 0.05*R 0 0 0 0*M Media/bth.obj*IT 8*IN Water_Bottle*IW 1*IIP Media/Inventory_v01.png*ID SmallCanteen*
+Sc: Sending to Server CD*FT 1.63636*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 1.63636*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 1.66733*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 1.67236*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 1.67236*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 1.69237*P 0 0 1*R 0 0 0 0*STAT 1*
 
-Sent to Server CD*FT 3.26791*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-CC: Received from Client CD*FT 3.26791*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-SC: Received from Server UP 0*FT 3.29892*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 3.31504*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-CC: Received from Client CD*FT 3.31504*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-Sent to Server CD*FT 3.36141*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-SC: Received from Server UP 0*FT 3.36156*P 0 0 1*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 3.36141*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-Sent to Client UP 0*FT 3.36156*P 0 0 1*R 0 0 0 0*STAT 1*
+SC: Received from Server UP 0*FT 1.69237*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 1.70736*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 1.70736*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 1.72737*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 1.72737*P 0 0 1*R 0 0 0 0*STAT 1*
 
-Sent to Server CD*FT 3.40829*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-CC: Received from Client CD*FT 3.40829*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
-Sent to Client UP 0*FT 3.42389*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 3.42389*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 3.45514*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 3.45514*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 3.46872*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 3.46872*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 3.50307*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 3.50307*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 3.53705*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 3.53705*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 3.55459*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 3.58001*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 3.58001*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 3.61107*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 3.61107*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 3.62661*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 3.62661*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 3.67329*P 0 0 1*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 3.67447*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 3.67329*P 0 0 1*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 3.67447*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 3.72031*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 3.72031*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 3.73614*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 3.73614*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 3.76731*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 3.76731*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 3.79763*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 3.79763*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 3.81382*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 3.81382*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 3.85973*P 0 0 1*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 3.86165*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 3.86165*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 3.90744*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 3.90744*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 3.92259*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 3.92259*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 3.95421*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 3.95421*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 3.98516*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 3.98516*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 4.00101*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.00101*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 4.04806*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.04782*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 1.74336*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 1.74336*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 1.76337*P 0 0 1*R 0 0 0 0*STAT 1*
 
 TAT 1*
-CC: Received from Client CD*FT 4.04806*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 4.09478*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.09478*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.11168*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 1.78231*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 1.78231*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 1.80616*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 1.80616*P 0 0 1*R 0 0 0 0*STAT 1*
+
+Sc: Sending to Server CD*FT 1.81638*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 1.81638*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 1.83638*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 1.85237*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 1.85237*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 1.87737*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 1.87737*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 1.88877*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 1.88877*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 1.90797*P 0 0 1*R 0 0 0 0*STAT 1*
 
 TAT 1*
-Sent to Server CD*FT 4.14154*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.14154*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 4.17274*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 4.17274*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 1.92438*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 1.92438*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 1.94415*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 1.95822*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 1.95822*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 1.98293*P 0 0 1*R 0 0 0 0*STAT 1*
 
-Sent to Server CD*FT 4.18827*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.18827*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.23397*P 0 0 1*R 0 0 0 0*STAT 1*
+SC: Received from Server UP 0*FT 1.98293*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 1.99537*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 1.99537*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.02035*P 0 0 1*R 0 0 0 0*STAT 1*
 
-SC: Received from Server UP 0*FT 4.23397*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 4.23621*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.23621*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 4.28194*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.28194*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.29754*P 0 0 1*R 0 0 0 0*STAT 1*
+SC: Received from Server UP 0*FT 2.02035*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.03137*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.03137*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.05636*P 0 0 1*R 0 0 0 0*STAT 1*
 
-SC: Received from Server UP 0*FT 4.29754*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 4.3286*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.3286*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 4.3586*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 4.3586*P 0 0 1*R 0 0 0 0*STAT 1*
+SC: Received from Server UP 0*FT 2.05636*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.06738*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.06738*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 2.09221*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 2.09221*P 0 0 1*R 0 0 0 0*STAT 1*
 
-Sent to Server CD*FT 4.37542*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.37542*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 4.42174*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 4.42174*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.102*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.102*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.12644*P 0 0 1*R 0 0 0 0*STAT 1*
 
-Sent to Server CD*FT 4.42222*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.42222*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 4.4693*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.4693*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.48317*P 0 0 1*R 0 0 0 0*STAT 1*
+SC: Received from Server UP 0*FT 2.12644*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.13738*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.13738*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 2.16238*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.17238*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.17238*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.19738*P 0 0 1*R 0 0 0 0*STAT 1*
 
-SC: Received from Server UP 0*FT 4.48317*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 4.51612*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.51612*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.54619*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 4.54619*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 4.5626*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.5626*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.60904*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 4.60904*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 4.6107*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.6107*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 4.65648*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.65648*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.67191*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 4.67191*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 4.70336*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.70336*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.71936*P 0 0 1*R 0 0 0 0*STAT 1*
+SC: Received from Server UP 0*FT 2.19738*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.20738*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.20738*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.23739*P 0 0 1*R 0 0 0 0*STAT 1*
 
 TAT 1*
-Sent to Server CD*FT 4.75048*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.75048*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 4.7966*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.79806*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.24254*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.24254*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.27253*P 0 0 1*R 0 0 0 0*STAT 1*
 
 TAT 1*
-CC: Received from Client CD*FT 4.7966*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 4.84384*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.84384*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.85844*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.27911*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.27911*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.30911*P 0 0 1*R 0 0 0 0*STAT 1*
 
-SC: Received from Server UP 0*FT 4.85844*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 4.89021*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.89021*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.92067*P 0 0 1*R 0 0 0 0*STAT 1*
+TAT 1*
+Sc: Sending to Server CD*FT 2.31442*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.31442*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 2.34442*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.3514*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.3514*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.38106*P 0 0 1*R 0 0 0 0*STAT 1*
 
-SC: Received from Server UP 0*FT 4.92067*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 4.93737*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.93737*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 4.98249*P 0 0 1*R 0 0 0 0*STAT 1*
+SC: Received from Server UP 0*FT 2.38106*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.38639*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.38639*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.41639*P 0 0 1*R 0 0 0 0*STAT 1*
 
-SC: Received from Server UP 0*FT 4.98249*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 4.98499*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 4.98499*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 5.03269*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.03269*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 5.04633*P 0 0 1*R 0 0 0 0*STAT 1*
+SC: Received from Server UP 0*FT 2.41639*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.4214*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.4214*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.45139*P 0 0 1*R 0 0 0 0*STAT 1*
 
-SC: Received from Server UP 0*FT 5.04633*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 5.07766*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.07766*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 5.11123*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 5.11068*P 0 0 1*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 5.11123*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 5.1558*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.1558*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 5.17114*P 0 0 1*R 0 0 0 0*STAT 1*
+TAT 1*
+Sc: Sending to Server CD*FT 2.4564*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.4564*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.48622*P 0 0 1*R 0 0 0 0*STAT 1*
 
-SC: Received from Server UP 0*FT 5.17114*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 5.20224*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.20224*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
+SC: Received from Server UP 0*FT 2.48622*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.4924*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.4924*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.5224*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 2.5224*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.5284*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.5284*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 2.5584*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.5634*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.5634*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.59402*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 2.59841*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.59841*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.62841*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 2.62841*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.63459*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.63459*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 2.66458*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.67041*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.67041*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.70041*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 2.70541*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.70541*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.7424*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 2.74041*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.74041*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 2.77642*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.77781*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.77781*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.80781*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 2.80781*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.81442*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.81442*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.84443*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 2.85058*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.85058*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.88058*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 2.88058*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.88642*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.88642*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.91642*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 2.91642*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.92338*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.92338*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.95538*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 2.95538*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.95943*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.95943*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 2.99643*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 2.99643*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 2.99543*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 2.99543*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 3.0317*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 3.0317*P 0 0 1*R 0 0 0 0*STAT 1*
+
+Sc: Sending to Server CD*FT 3.02939*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.02939*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 3.05468*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 3.05468*P 0 0 1*R 0 0 0 0*STAT 1*
+
+Sc: Sending to Server CD*FT 3.06784*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.06784*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.10582*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 3.10582*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.10448*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.10448*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 3.14148*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 3.14148*P 0 0 1*R 0 0 0 0*STAT 1*
+
+Sc: Sending to Server CD*FT 3.14168*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.14168*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sc: Sending to Server CD*FT 3.17544*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.17544*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 3.17246*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 3.17246*P 0 0 1*R 0 0 0 0*STAT 1*
+
+Sc: Sending to Server CD*FT 3.21144*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.21144*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.21641*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 3.21641*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.24846*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.24846*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.25346*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 3.25346*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.28548*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.28548*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.28974*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 3.28974*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.32244*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.32244*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.32749*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 3.32749*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.35845*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.35845*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.36345*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 3.39553*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.39553*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.40068*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 3.40068*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.43145*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.43145*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.43632*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 3.43632*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.46755*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.46755*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 3.47231*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 3.47231*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 3.50731*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.50247*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.50247*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.55232*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 3.55232*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.64346*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 3.59247*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 3.59247*P 0 0 1*R 0 0 0 0*STAT 1*
+
+CC: Received from Client CD*FT 3.64346*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 3.69247*P 0 0 1*R 0 0 0 0*STAT 1*
+ 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.69247*P 0 0 1*R 0 0 0 0*STAT 1*
+
+CC: Received from Client CD*FT 3.69246*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 3.72947*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.73046*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.72947*P 0 0 1*R 0 0 0 0*STAT 1*
+
+CC: Received from Client CD*FT 3.73046*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sc: Sending to Server CD*FT 3.76747*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.76747*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.77316*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 3.77316*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.80148*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.80148*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.81379*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 3.81379*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.84147*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.84147*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 3.85254*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 3.87748*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.87748*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sc: Sending to Server CD*FT 3.91193*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 3.88245*P 0 0 1*R 0 0 0 0*STAT 1*
+
+CC: Received from Client CD*FT 3.91193*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 3.88245*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 3.95098*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 3.95023*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.95023*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sc: Sending to Server CD*FT 3.98548*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 3.98548*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 3.98921*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 3.98921*P 0 0 1*R 0 0 0 0*STAT 1*
+
+Sc: Sending to Server CD*FT 4.02248*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 4.02248*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 4.02967*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.06048*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 4.06048*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 4.07138*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 4.07138*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.09649*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 4.09649*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+SC: Received from Server UP 0*FT 4.10649*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.13149*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+CC: Received from Client CD*FT 4.13149*D -0.235702 -0.942809 0.235702*U 0 1 0*R 0 0 0 0*
+Sent to Client UP 0*FT 4.14148*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 4.16759*D -0.515388 -0.834243 0.195996*U -0.779762 0.551398 0.296534*R 0 0 0 0*
+CC: Received from Client CD*FT 4.16759*D -0.515388 -0.834243 0.195996*U -0.779762 0.551398 0.296534*R 0 0 0 0*
+Sent to Client UP 0*FT 4.18378*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 4.20349*D -0.515388 -0.834243 0.195996*U -0.779762 0.551398 0.296534*R 0 0 0 0*
+CC: Received from Client CD*FT 4.20349*D -0.515388 -0.834243 0.195996*U -0.779762 0.551398 0.296534*R 0 0 0 0*
+Sent to Client UP 0*FT 4.21849*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 4.21849*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.23949*D -0.515388 -0.834243 0.195996*U -0.779762 0.551398 0.296534*R 0 0 0 0*
+CC: Received from Client CD*FT 4.23949*D -0.515388 -0.834243 0.195996*U -0.779762 0.551398 0.296534*R 0 0 0 0*
+Sent to Client UP 0*FT 4.24945*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 4.27551*D -0.515388 -0.834243 0.195996*U -0.779762 0.551398 0.296534*R 0 0 0 0*
+CC: Received from Client CD*FT 4.27551*D -0.515388 -0.834243 0.195996*U -0.779762 0.551398 0.296534*R 0 0 0 0*
+SC: Received from Server UP 0*FT 4.28551*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.31063*D -0.515863 -0.833907 0.196176*U -0.779448 0.551905 0.296414*R 0 0 0 0*
+CC: Received from Client CD*FT 4.31063*D -0.515863 -0.833907 0.196176*U -0.779448 0.551905 0.296414*R 0 0 0 0*
+Sent to Client UP 0*FT 4.32549*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 4.32549*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.34663*D -0.515863 -0.833907 0.196176*U -0.779448 0.551905 0.296414*R 0 0 0 0*
+CC: Received from Client CD*FT 4.34663*D -0.515863 -0.833907 0.196176*U -0.779448 0.551905 0.296414*R 0 0 0 0*
+Sent to Client UP 0*FT 4.3616*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 4.3616*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.38253*D -0.515863 -0.833907 0.196176*U -0.779448 0.551905 0.296414*R 0 0 0 0*
+CC: Received from Client CD*FT 4.38253*D -0.515863 -0.833907 0.196176*U -0.779448 0.551905 0.296414*R 0 0 0 0*
+Sent to Client UP 0*FT 4.39748*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 4.39748*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.41751*D -0.515863 -0.833907 0.196176*U -0.779448 0.551905 0.296414*R 0 0 0 0*
+CC: Received from Client CD*FT 4.41751*D -0.515863 -0.833907 0.196176*U -0.779448 0.551905 0.296414*R 0 0 0 0*
+SC: Received from Server UP 0*FT 4.43357*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 4.43357*P 0 0 1*R 0 0 0 0*STAT 1*
+
+Sc: Sending to Server CD*FT 4.45452*D -0.51535 -0.83357 0.198936*U -0.777642 0.552414 0.300186*R 0 0 0 0*
+CC: Received from Client CD*FT 4.45452*D -0.51535 -0.83357 0.198936*U -0.777642 0.552414 0.300186*R 0 0 0 0*
+SC: Received from Server UP 0*FT 4.47139*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 4.47139*P 0 0 1*R 0 0 0 0*STAT 1*
+
+Sc: Sending to Server CD*FT 4.49253*D -0.517483 -0.827347 0.218421*U -0.762231 0.561691 0.321726*R 0 0 0 0*
+CC: Received from Client CD*FT 4.49253*D -0.517483 -0.827347 0.218421*U -0.762231 0.561691 0.321726*R 0 0 0 0*
+SC: Received from Server UP 0*FT 4.50753*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.52853*D -0.525902 -0.808931 0.262787*U -0.72362 0.587903 0.361585*R 0 0 0 0*
+CC: Received from Client CD*FT 4.52853*D -0.525902 -0.808931 0.262787*U -0.72362 0.587903 0.361585*R 0 0 0 0*
+Sent to Client UP 0*FT 4.54351*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 4.54351*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.56684*D -0.549904 -0.771074 0.321016*U -0.665911 0.636746 0.388738*R 0 0 0 0*
+CC: Received from Client CD*FT 4.56684*D -0.549904 -0.771074 0.321016*U -0.665911 0.636746 0.388738*R 0 0 0 0*
+SC: Received from Server UP 0*FT 4.57696*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 4.57696*P 0 0 1*R 0 0 0 0*STAT 1*
+
+Sc: Sending to Server CD*FT 4.60255*D -0.605512 -0.713027 0.353479*U -0.615781 0.701136 0.359474*R 0 0 0 0*
+CC: Received from Client CD*FT 4.60255*D -0.605512 -0.713027 0.353479*U -0.615781 0.701136 0.359474*R 0 0 0 0*
+Sent to Client UP 0*FT 4.61354*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 4.63755*D -0.672523 -0.664393 0.326027*U -0.597846 0.747383 0.289825*R 0 0 0 0*
+CC: Received from Client CD*FT 4.63755*D -0.672523 -0.664393 0.326027*U -0.597846 0.747383 0.289825*R 0 0 0 0*
+Sent to Client UP 0*FT 4.6473*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 4.6473*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.67354*D -0.74896 -0.620362 0.232829*U -0.592398 0.784316 0.184158*R 0 0 0 0*
+CC: Received from Client CD*FT 4.67354*D -0.74896 -0.620362 0.232829*U -0.592398 0.784316 0.184158*R 0 0 0 0*
+SC: Received from Server UP 0*FT 4.68354*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.70851*D -0.797931 -0.59586 0.0908742*U -0.592033 0.803089 0.067425*R 0 0 0 0*
+CC: Received from Client CD*FT 4.70851*D -0.797931 -0.59586 0.0908742*U -0.592033 0.803089 0.067425*R 0 0 0 0*
+SC: Received from Server UP 0*FT 4.72351*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.74353*D -0.815048 -0.569572 -0.106227*U -0.564796 0.821941 -0.0736108*R 0 0 0 0*
+CC: Received from Client CD*FT 4.74353*D -0.815048 -0.569572 -0.106227*U -0.564796 0.821941 -0.0736108*R 0 0 0 0*
+Sent to Client UP 0*FT 4.75949*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 4.75949*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.77851*D -0.760381 -0.557166 -0.333746*U -0.510185 0.830401 -0.22393*R 0 0 0 0*
+CC: Received from Client CD*FT 4.77851*D -0.760381 -0.557166 -0.333746*U -0.510185 0.830401 -0.22393*R 0 0 0 0*
+Sent to Client UP 0*FT 4.79357*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 4.81455*D -0.708298 -0.560587 -0.429017*U -0.479489 0.828095 -0.290427*R 0 0 0 0*
+CC: Received from Client CD*FT 4.81455*D -0.708298 -0.560587 -0.429017*U -0.479489 0.828095 -0.290427*R 0 0 0 0*
+SC: Received from Server UP 0*FT 4.83457*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.84955*D -0.726438 -0.556593 -0.403103*U -0.486684 0.830785 -0.270063*R 0 0 0 0*
+CC: Received from Client CD*FT 4.84955*D -0.726438 -0.556593 -0.403103*U -0.486684 0.830785 -0.270063*R 0 0 0 0*
+SC: Received from Server UP 0*FT 4.87051*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.88456*D -0.793446 -0.55198 -0.25644*U -0.525229 0.833857 -0.169753*R 0 0 0 0*
+CC: Received from Client CD*FT 4.88456*D -0.793446 -0.55198 -0.25644*U -0.525229 0.833857 -0.169753*R 0 0 0 0*
+Sent to Client UP 0*FT 4.90454*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 4.91953*D -0.824242 -0.565105 0.035794*U -0.564573 0.825019 0.0245174*R 0 0 0 0*
+CC: Received from Client CD*FT 4.91953*D -0.824242 -0.565105 0.035794*U -0.564573 0.825019 0.0245174*R 0 0 0 0*
+Sent to Client UP 0*FT 4.93952*P 0 0 1*R 0 0 0 0*STAT 1*
+
+SC: Received from Server UP 0*FT 4.93952*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 4.95554*D -0.77733 -0.586946 0.226389*U -0.563533 0.809626 0.164123*R 0 0 0 0*
+CC: Received from Client CD*FT 4.95554*D -0.77733 -0.586946 0.226389*U -0.563533 0.809626 0.164123*R 0 0 0 0*
+Sent to Client UP 0*FT 4.97559*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 4.99056*D -0.740676 -0.609576 0.282519*U -0.56955 0.792728 0.217246*R 0 0 0 0*
+CC: Received from Client CD*FT 4.99056*D -0.740676 -0.609576 0.282519*U -0.56955 0.792728 0.217246*R 0 0 0 0*
+Sent to Client PING*
+
+ PING*
+Sc: Sending to Server PING*
+CC: Received from Client PING*
+SC: Received from Server UP 0*FT 5.01558*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 5.01558*P 0 0 1*R 0 0 0 0*STAT 1*
+
+Sc: Sending to Server CD*FT 5.02555*D -0.741238 -0.623244 0.249263*U -0.590737 0.782027 0.198653*R 0 0 0 0*
+CC: Received from Client CD*FT 5.02555*D -0.741238 -0.623244 0.249263*U -0.590737 0.782027 0.198653*R 0 0 0 0*
+SC: Received from Server UP 0*FT 5.05049*P 0 0 1*R 0 0 0 0*STAT 1*
+Sent to Client UP 0*FT 5.05049*P 0 0 1*R 0 0 0 0*STAT 1*
+
+Sc: Sending to Server CD*FT 5.06058*D -0.765192 -0.625152 0.153838*U -0.612888 0.780503 0.123218*R 0 0 0 0*
+CC: Received from Client CD*FT 5.06058*D -0.765192 -0.625152 0.153838*U -0.612888 0.780503 0.123218*R 0 0 0 0*
+Sent to Client UP 0*FT 5.08661*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 5.09656*D -0.782204 -0.620362 0.057517*U -0.618692 0.784316 0.0454937*R 0 0 0 0*
+CC: Received from Client CD*FT 5.09656*D -0.782204 -0.620362 0.057517*U -0.618692 0.784316 0.0454937*R 0 0 0 0*
+SC: Received from Server UP 0*FT 5.12155*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 5.13161*D -0.791137 -0.611067 0.0264338*U -0.610726 0.791579 0.0204058*R 0 0 0 0*
+CC: Received from Client CD*FT 5.13161*D -0.791137 -0.611067 0.0264338*U -0.610726 0.791579 0.0204058*R 0 0 0 0*
+Sent to Client UP 0*FT 5.16248*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 5.16756*D -0.80351 -0.594822 0.02363*U -0.594565 0.803857 0.0174853*R 0 0 0 0*
+CC: Received from Client CD*FT 5.16756*D -0.80351 -0.594822 0.02363*U -0.594565 0.803857 0.0174853*R 0 0 0 0*
+Sent to Client UP 0*FT 5.19757*P 0 0 1*R 0 0 0 0*STAT 1*
+
+TAT 1*
+Sc: Sending to Server CD*FT 5.20255*D -0.815784 -0.57727 0.0354274*U -0.576727 0.816553 0.0250458*R 0 0 0 0*
+CC: Received from Client CD*FT 5.20255*D -0.815784 -0.57727 0.0354274*U -0.576727 0.816553 0.0250458*R 0 0 0 0*
+SC: Received from Server UP 0*FT 5.23255*P 0 0 1*R 0 0 0 0*STAT 1*
 Sent to Client UP 0*FT 5.23255*P 0 0 1*R 0 0 0 0*STAT 1*
 
-SC: Received from Server UP 0*FT 5.23255*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 5.24901*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.24901*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 5.29694*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 5.2947*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 5.23855*D -0.82836 -0.558309 0.0459382*U -0.557453 0.829633 0.0309146*R 0 0 0 0*
+CC: Received from Client CD*FT 5.23855*D -0.82836 -0.558309 0.0459382*U -0.557453 0.829633 0.0309146*R 0 0 0 0*
+Sent to Client UP 0*FT 5.26855*P 0 0 1*R 0 0 0 0*STAT 1*
 
-SC: Received from Server UP 0*FT 5.2947*P 0 0 1*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 5.29694*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 5.34261*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.34261*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 5.35738*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 5.35738*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 5.38964*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.38964*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 5.42087*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 5.42087*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 5.4362*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.4362*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 5.48329*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 5.48327*P 0 0 1*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 5.48329*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 5.52979*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.52979*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server PING*
-Sent to Client PING*
-
-Sent to Client UP 0*FT 5.54271*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 5.54271*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server PING*
-CC: Received from Client PING*
-Sent to Server CD*FT 5.57738*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.57738*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 5.64037*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 5.64037*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 5.62341*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.62341*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 5.71867*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 5.71867*P 0 0 1*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 5.67022*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.67022*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 5.71701*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.71701*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 5.74731*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 5.74731*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 5.7638*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.7638*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 5.82664*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 5.82664*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 5.81061*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.81061*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 5.90416*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 5.90416*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 5.85855*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.85855*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 5.90485*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.90485*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 5.93475*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 5.93475*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 5.95105*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.95105*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.01305*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.01305*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 5.99796*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 5.99796*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 6.04459*D -0.445855 -0.776162 0.445855*U -0.548Sent to Client UP 0*FT 6.09285*P 0 0 1*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 6.04459*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 6.09176*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.09176*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.12424*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.12424*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 6.13851*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.13851*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.20216*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.20216*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 6.18499*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.18499*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.27892*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.27892*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 6.23309*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.23309*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 6.2793*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.2793*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.31041*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.31041*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 6.32541*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.32541*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.38855*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.38855*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 6.37253*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.37253*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 6.41901*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 6.46864*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 6.46864*P 0 0 1*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 6.41901*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 6.46587*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.46587*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.49657*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.49657*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 6.51293*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.51293*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.5762*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.5762*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 6.55941*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.55941*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 6.60643*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.65436*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.65436*P 0 0 1*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 6.60643*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 6.65333*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.65333*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.68489*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.68489*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 6.70009*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.70009*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.76285*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.76285*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 6.74716*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.74716*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 6.79488*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 6.84054*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 6.84054*P 0 0 1*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 6.79488*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 6.84035*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.84035*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.87062*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.87062*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 6.88752*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.88752*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 6.9505*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 6.9505*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 6.93379*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.93379*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.02779*P 0 0 1*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 6.9819*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 6.9819*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 7.02786*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.02786*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.05946*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.05946*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 7.0742*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.0742*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.13867*P 0 0 1*R 0 0 0 0*STAT 1*
+SC: Received from Server UP 0*FT 5.26855*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 5.27359*D -0.837078 -0.544965 0.0481012*U -0.544067 0.838459 0.0312639*R 0 0 0 0*
+CC: Received from Client CD*FT 5.27359*D -0.837078 -0.544965 0.0481012*U -0.544067 0.838459 0.0312639*R 0 0 0 0*
+Sent to Client UP 0*FT 5.30358*P 0 0 1*R 0 0 0 0*STAT 1*
 
 TAT 1*
-Sent to Server CD*FT 7.121*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.121*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 7.1678*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 7.21593*P 0 0 1*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 7.1678*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 7.2146*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.2146*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.24555*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.24555*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 7.26147*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.26147*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 7.32497*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 7.32497*P 0 0 1*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 7.30821*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.30821*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.40171*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.40171*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 7.35595*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.35595*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 7.40246*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.40246*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.43383*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.43383*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 7.44893*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.44893*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.51251*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.51251*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 7.49585*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.49585*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 7.54244*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 7.59275*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 7.59275*P 0 0 1*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 7.54244*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 7.58951*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.58951*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.6209*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.6209*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 7.63584*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.63584*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.69846*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.69846*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 7.68262*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.68262*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 7.73143*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.77756*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.77756*P 0 0 1*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 7.73143*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 7.77661*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.77661*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.80823*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.80823*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 7.82346*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.82346*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.88669*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.88669*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 7.86979*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.86979*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.9641*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.9641*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 7.9178*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.9178*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 7.9634*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 7.9634*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 7.9939*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 7.9939*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 8.0103*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.0103*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.07274*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 8.07274*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 8.05712*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.05712*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 8.10466*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.15111*P 0 0 1*R 0 0 0 0*STAT 1*
+Sc: Sending to Server CD*FT 5.30861*D -0.843618 -0.534827 0.0476308*U -0.533976 0.844962 0.0301484*R 0 0 0 0*
+CC: Received from Client CD*FT 5.30861*D -0.843618 -0.534827 0.0476308*U -0.533976 0.844962 0.0301484*R 0 0 0 0*
+Sent to Client UP 0*FT 5.33811*P 0 0 1*R 0 0 0 0*STAT 1*
 
 TAT 1*
-CC: Received from Client CD*FT 8.10466*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 8.1506*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.1506*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.18148*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 8.18148*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 8.19758*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.19758*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.25991*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 8.25991*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 8.24418*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.24418*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.33782*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 8.33782*P 0 0 1*R 0 0 0 0*STAT 1*
-829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.29196*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 8.3382*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.3382*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.36865*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 8.36865*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 8.38468*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.38468*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.44686*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 8.44686*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 8.4314*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.4314*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 8.46476*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.46476*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.49488*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 8.49488*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 8.50942*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.50942*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.57127*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 8.57127*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 8.55618*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.55618*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.65214*P 0 0 1*R 0 0 0 0*STAT 1*
-
-U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 8.65214*P 0 0 1*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 8.60298*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 8.64984*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.64984*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 8.68154*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 8.68154*P 0 0 1*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 8.69697*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.69697*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.75884*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 8.75884*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 8.7436*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.7436*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.8376*P 0 0 1*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 8.79185*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.79185*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 8.83699*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.83699*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.86774*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 8.86774*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 8.88377*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.88377*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Client UP 0*FT 8.94573*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 8.94573*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 8.93076*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.93076*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-SC: Received from Server UP 0*FT 9.02419*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 9.02419*P 0 0 1*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 8.97897*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-CC: Received from Client CD*FT 8.97897*D -0.445855 -0.776162 0.445855*U -0.548829 0.630534 0.548829*R 0 0 0 0*
-Sent to Server CD*FT 9.02417*D -0.45064 -0.767948 0.455169*U -0.540299 0.640512 0.54573*R 0 0 0 0*
-CC: Received from Client CD*FT 9.02417*D -0.45064 -0.767948 0.455169*U -0.540299 0.640512 0.54573*R 0 0 0 0*
-Sent to Client UP 0*FT 9.05473*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.05473*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 9.07148*D -0.4124 -0.756562 0.507484*U -0.47713 0.653922 0.587139*R 0 0 0 0*
-CC: Received from Client CD*FT 9.07148*D -0.4124 -0.756562 0.507484*U -0.47713 0.653922 0.587139*R 0 0 0 0*
-Sent to Client UP 0*FT 9.13599*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.13599*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 9.11789*D -0.380439 -0.747983 0.543863*U -0.42874 0.663718 0.612912*R 0 0 0 0*
-CC: Received from Client CD*FT 9.11789*D -0.380439 -0.747983 0.543863*U -0.42874 0.663718 0.612912*R 0 0 0 0*
-Sent to Server CD*FT 9.16462*D -0.328921 -0.73717 0.590248*U -0.358839 0.675708 0.643936*R 0 0 0 0*
-Sent to Client UP 0*FT 9.21267*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.21267*P 0 0 1*R 0 0 0 0*STAT 1*
-*U -0.358839 0.675708 0.643936*R 0 0 0 0*
-Sent to Server CD*FT 9.21163*D -0.287471 -0.72899 0.621235*U -0.306145 0.684524 0.661591*R 0 0 0 0*
-CC: Received from Client CD*FT 9.21163*D -0.287471 -0.72899 0.621235*U -0.306145 0.684524 0.661591*R 0 0 0 0*
-Sent to Client UP 0*FT 9.24185*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.24185*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 9.25817*D -0.281471 -0.724125 0.629617*U -0.295533 0.689669 0.661072*R 0 0 0 0*
-CC: Received from Client CD*FT 9.25817*D -0.281471 -0.724125 0.629617*U -0.295533 0.689669 0.661072*R 0 0 0 0*
-Sent to Client UP 0*FT 9.32072*P 0 0 1*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.32072*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 9.30499*D -0.281471 -0.724125 0.629617*U -0.295533 0.689669 0.661072*R 0 0 0 0*
-CC: Received from Client CD*FT 9.30499*D -0.281471 -0.724125 0.629617*U -0.295533 0.689669 0.661072*R 0 0 0 0*
-Sent to Server CD*FT 9.35232*D -0.281471 -0.724125 0.629617*U -0.295533 0.689669 0.661072*R 0 0 0 0*
-SC: Received from Server UP 0*FT 9.39991*P 0 0 1*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 9.39991*P 0 0 1*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 9.35232*D -0.281471 -0.724125 0.629617*U -0.295533 0.689669 0.661072*R 0 0 0 0*
-Sent to Server KD 0*
-CC: Received from Client KD 0*
-Sent to Server CD*FT 9.39858*D -0.281471 -0.724125 0.629617*U -0.295533 0.689669 0.661072*R 0 0 0 0*
-CC: Received from Client CD*FT 9.39858*D -0.281471 -0.724125 0.629617*U -0.295533 0.689669 0.661072*R 0 0 0 0*
-Sent to Client UP 0*FT 9.47728*P -0.0875897 -0.225337 1.19593*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.47728*P -0.0875897 -0.225337 1.19593*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 9.44717*D -0.281471 -0.724125 0.629617*U -0.295533 0.689669 0.661072*R 0 0 0 0*
-CC: Received from Client CD*FT 9.44717*D -0.281471 -0.724125 0.629617*U -0.295533 0.689669 0.661072*R 0 0 0 0*
-SC: Received from Server UP 0*FT 9.50862*P -0.444211 -1.1428 1.99365*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 9.50862*P -0.444211 -1.1428 1.99365*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 9.49234*D -0.28076 -0.728669 0.624672*U -0.298718 0.684866 0.664625*R 0 0 0 0*
-CC: Received from Client CD*FT 9.49234*D -0.28076 -0.728669 0.624672*U -0.298718 0.684866 0.664625*R 0 0 0 0*
-Sent to Server KU 0*
-Sent to Client UP 0*FT 9.58625*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.58625*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-CC: Received from Client KU 0*
-.278329 -0.72995 0.624264*U -0.297244 0.6835 0.666689*R 0 0 0 0*
-CC: Received from Client CD*FT 9.5391*D -0.278329 -0.72995 0.624264*U -0.297244 0.6835 0.666689*R 0 0 0 0*
-Sent to Server CD*FT 9.58623*D -0.27528 -0.731224 0.624125*U -0.295089 0.682138 0.669037*R 0 0 0 0*
-CC: Received from Client CD*FT 9.58623*D -0.27528 -0.731224 0.624125*U -0.295089 0.682138 0.669037*R 0 0 0 0*
-Sent to Client UP 0*FT 9.61795*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.61795*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 9.63347*D -0.274382 -0.731858 0.623778*U -0.294675 0.681457 0.669912*R 0 0 0 0*
-CC: Received from Client CD*FT 9.63347*D -0.274382 -0.731858 0.623778*U -0.294675 0.681457 0.669912*R 0 0 0 0*
-Sent to Client UP 0*FT 9.69688*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.69688*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 9.67947*D -0.276114 -0.732174 0.622641*U -0.296812 0.681118 0.669314*R 0 0 0 0*
-CC: Received from Client CD*FT 9.67947*D -0.276114 -0.732174 0.622641*U -0.296812 0.681118 0.669314*R 0 0 0 0*
-Sent to Client UP 0*FT 9.77357*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 9.72617*D -0.276114 -0.732174 0.622641*U -0.296812 0.681118 0.669314*R 0 0 0 0*
-SC: Received from Server UP 0*FT 9.77357*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 9.72617*D -0.276114 -0.732174 0.622641*U -0.296812 0.681118 0.669314*R 0 0 0 0*
-Sent to Server CD*FT 9.77297*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 9.77297*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Client UP 0*FT 9.80373*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.80373*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 9.82028*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 9.82028*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Client UP 0*FT 9.88379*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.88379*P -0.800422 -2.06519 2.7873*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 9.86657*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 9.86657*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Server KD 1*
-CC: Received from Client KD 1*
-Sent to Server CD*FT 9.91351*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-SC: Received from Server UP 0*FT 9.96142*P -0.710672 -1.82773 2.58546*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 9.91351*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Client UP 0*FT 9.96142*P -0.710672 -1.82773 2.58546*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 9.96021*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 9.96021*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Client UP 0*FT 9.99128*P -0.362266 -0.905939 1.80191*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 9.99128*P -0.362266 -0.905939 1.80191*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 10.0074*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 10.0074*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Client UP 0*FT 10.0696*P -0.0128753 0.0184569 1.01615*R 0 0 0 0*STAT 1*
-
-TAT 1*
-Sent to Server CD*FT 10.0538*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 10.0538*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Client UP 0*FT 10.1493*P 0.340936 0.954549 0.220452*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 10.1493*P 0.340936 0.954549 0.220452*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 10.1034*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 10.1034*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Server CD*FT 10.1483*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 10.1483*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Client UP 0*FT 10.1802*P 0.688431 1.87393 -0.561045*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 10.1802*P 0.688431 1.87393 -0.561045*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 10.1942*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 10.1942*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Client UP 0*FT 10.2571*P 1.0387 2.80065 -1.34877*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 10.2571*P 1.0387 2.80065 -1.34877*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 10.241*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 10.241*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Server KU 1*
-CC: Received from Client KU 1*
-Sent to Client UP 0*FT 10.3344*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 10.2904*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 10.2904*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Server CD*FT 10.3356*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-CC: Received from Client CD*FT 10.3356*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Client UP 0*FT 10.4169*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 10.4169*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 10.3825*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-SC: Received from Server UP 0*FT 10.4464*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 10.4464*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 10.3825*D -0.276737 -0.732174 0.622365*U -0.297481 0.681118 0.669017*R 0 0 0 0*
-Sent to Server CD*FT 10.4282*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 10.4282*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 10.4752*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 10.5211*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 10.4752*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 10.5211*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 10.5218*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 10.5218*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 10.5539*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 10.5539*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 10.5686*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 10.5686*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client PING*
-
-SC: Received from Server PING*
-Sent to Server PING*
-er UP 0*FT 10.6312*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client PING*
-Sent to Server CD*FT 10.6161*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 10.6161*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 10.6642*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 10.713*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 10.713*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 10.6642*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 10.7092*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 10.7092*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 10.7397*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 10.7397*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 10.7426*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 10.7426*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 10.837*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 10.837*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 10.7885*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 10.7885*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 10.8345*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 10.8345*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 10.866*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 10.866*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 10.8806*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 10.8806*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 10.9428*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
- 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 10.9142*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 10.9588*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 10.9588*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 10.9893*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 10.9893*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.0054*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.0054*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.0673*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 11.0673*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.0522*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.0522*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 11.1*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.1471*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-TAT 1*
-CC: Received from Client CD*FT 11.1*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 11.1461*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.1461*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.1767*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 11.1767*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.1939*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.1939*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.2566*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 11.2566*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.2403*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.2403*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 11.2874*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 11.3354*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 11.3354*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 11.2874*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 11.3335*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.3335*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.3639*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 11.3639*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.3803*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.3803*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.4434*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 11.4434*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.4266*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.4266*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 11.4734*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 11.521*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 11.4734*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 11.5202*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.5202*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.5506*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 11.5506*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.568*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.568*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.6313*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 11.6313*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.615*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.615*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 11.661*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.712*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 11.712*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 11.661*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 11.7078*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.7078*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.7381*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 11.7381*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.7554*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.7554*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.8185*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 11.8185*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.801*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.801*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 11.8946*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 11.8946*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 11.8478*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.8478*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 11.8961*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.8961*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 11.9259*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 11.9259*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.9414*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.9414*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.0034*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.0034*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 11.975*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 11.975*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 12.0194*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.0194*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.0501*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.0501*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.0671*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.0671*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.1309*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.1309*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.1131*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.1131*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 12.1601*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.2075*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-TAT 1*
-CC: Received from Client CD*FT 12.1601*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 12.2067*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.2067*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.2371*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.2371*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.2535*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.2535*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.3151*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.3151*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.3013*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.3013*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 12.3469*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 12.3969*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 12.3969*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 12.3469*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 12.3939*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.3939*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.4229*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.4229*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.4416*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.4416*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.5045*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.5045*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.4874*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.4874*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.5806*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.5806*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.5356*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.5356*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 12.5816*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.5816*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.6131*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.6131*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.6283*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.6283*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.6898*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.6898*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.6745*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.6745*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 12.7214*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 12.7687*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 12.7687*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 12.7214*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 12.7695*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.7695*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.8007*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.8007*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.8162*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.8162*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.8794*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.8794*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.8619*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.8619*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.9558*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.9558*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 12.9102*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.9102*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 12.9564*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 12.9564*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 12.988*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 12.988*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.0021*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.0021*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 13.0639*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 13.0639*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.0499*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.0499*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 13.097*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 13.1451*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 13.1451*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 13.097*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 13.1436*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.1436*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 13.1752*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 13.1752*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.1905*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.1905*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 13.2532*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 13.2532*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.2362*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.2362*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 13.2838*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 13.3282*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 13.3282*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 13.2838*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 13.3301*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.3301*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 13.3607*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 13.3607*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.3769*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.3769*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 13.4378*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 13.4378*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.4233*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.4233*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 13.5167*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 13.5167*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 13.4716*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.4716*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 13.5184*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.5184*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 13.5495*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 13.5495*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.5638*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.5638*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 13.626*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 13.626*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.6117*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.6117*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 13.6576*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 13.7053*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 13.7053*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 13.6576*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 13.7045*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.7045*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 13.7343*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 13.7343*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.751*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.751*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 13.8134*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 13.8134*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.7978*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.7978*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 13.8451*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 13.8928*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 13.8451*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 13.8928*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-Sent to Server CD*FT 13.8914*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.8914*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 13.9221*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 13.9221*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.9386*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.9386*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.0006*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.0006*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 13.9858*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 13.9858*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 14.0323*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.082*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.082*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 14.0323*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 14.079*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.079*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.1095*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.1095*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.1123*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.1123*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 14.1566*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.2059*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.2059*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 14.1566*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 14.2035*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.2035*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.2336*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.2336*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.2501*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.2501*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.3117*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.3117*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.2969*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.2969*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 14.346*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.3907*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.3907*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 14.346*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 14.3905*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.3905*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.42*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.42*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.4374*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.4374*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.4994*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.4994*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.4842*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.4842*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 14.5312*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.5792*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-TAT 1*
-CC: Received from Client CD*FT 14.5312*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 14.5782*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.5782*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.6106*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.6106*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.6245*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.6245*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.6864*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.6864*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.6714*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.6714*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.765*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.765*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.7202*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.7202*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 14.766*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.766*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.7977*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.7977*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.8119*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.8119*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.874*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.874*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.8594*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.8594*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.954*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.954*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.9073*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.9073*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 14.953*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.953*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 14.9845*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 14.9845*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 14.9993*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 14.9993*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.0613*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.0613*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.0457*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.0457*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 15.0931*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.1417*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-TAT 1*
-CC: Received from Client CD*FT 15.0931*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 15.1407*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.1407*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.1718*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.1718*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.187*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.187*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.2502*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.2502*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.233*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.233*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 15.2797*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.3276*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.3276*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 15.2797*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 15.3281*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.3281*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.3599*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.3599*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.3733*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.3733*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.4358*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.4358*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.4202*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.4202*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 15.467*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 15.5152*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Client UP 0*FT 15.5152*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-CC: Received from Client CD*FT 15.467*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 15.5139*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.5139*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.5442*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.5442*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.5616*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.5616*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.6245*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.6245*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.6083*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.6083*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client PING*
-
-SC: Received from Server PING*
-Sent to Server PING*
-CC: Received from Client PING*
-Sent to Server CD*FT 15.6551*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.7026*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.7026*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 15.6551*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 15.7012*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.7012*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.7316*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.7316*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.7477*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.7477*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.8096*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.8096*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.7945*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.7945*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.886*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.886*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.8424*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.8424*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 15.889*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.889*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.9209*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.9209*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.9359*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.9359*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 15.9987*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 15.9987*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 15.9831*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 15.9831*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 16.0286*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 16.0785*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 16.0286*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 16.0754*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 16.0754*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 16.1056*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 16.1056*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 16.1221*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 16.1221*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 16.1846*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 16.1846*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 16.1691*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 16.1691*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 16.2157*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-SC: Received from Server UP 0*FT 16.2627*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-CC: Received from Client CD*FT 16.2157*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 16.2636*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 16.2636*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 16.2949*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 16.2949*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 16.3104*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 16.3104*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 16.3727*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 16.3727*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 16.3561*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 16.3561*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 16.4031*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 16.4492*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-TAT 1*
-CC: Received from Client CD*FT 16.4031*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 16.4504*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 16.4504*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 16.4805*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 16.4805*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 16.4965*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 16.4965*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 16.559*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 16.559*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CD*FT 16.5303*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 16.5303*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Server CD*FT 16.5745*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-CC: Received from Client CD*FT 16.5745*D -0.279085 -0.73249 0.620943*U -0.300284 0.680778 0.66811*R 0 0 0 0*
-Sent to Client UP 0*FT 16.6048*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-
-SC: Received from Server UP 0*FT 16.6048*P 1.21208 3.25936 -1.73869*R 0 0 0 0*STAT 1*
-Sent to Server CC 0*
-CC: Received from Client CC 0*
+Sc: Sending to Server CD*FT 5.34477*D -0.845571 -0.5318 0.0468928*U -0.530985 0.84687 0.0294468*R 0 0 0 0*
+CC: Received from Client CD*FT 5.34477*D -0.845571 -0.5318 0.0468928*U -0.530985 0.84687 0.0294468*R 0 0 0 0*
+Sc: Sending to Server CC 0*
 Client Shutdown: Escape was pressed
+CC: Received from Client CC 0*
 CC: Client disconnected, closing.
 CC: Received from Client 
 Client0 removed from server.
-SC: Server disconnected, closing.
+ng.
 SC: Received from Server 
 NS: Invalid client socket, connection failed. Error: 10004
-WARNING: Resource manager deleted a resource; missing a decrease in reference counter somewhere. Occurrences: 1

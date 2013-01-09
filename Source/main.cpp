@@ -15,12 +15,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 		MaloW::Debug("Failed Initializing Graphics!");
 		return 1;
 	}
-
 	// Tester
 	//test();
 	
 	// IMPLEMENT MAIN PROGRAM HERE.
 	MainMenu *menu = new MainMenu();
+	menu->Init();
 	menu->Run();
 	delete menu;
 

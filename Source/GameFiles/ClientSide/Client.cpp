@@ -108,7 +108,7 @@ void Client::InitGraphics()
 	//iTerrain* terrain = this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 20);
 
 	//this->zObjectManager->AddTerrain(terrain);
-	this->zEng->StartRendering();
+	//this->zEng->StartRendering();
 }
 
 void Client::Init()
