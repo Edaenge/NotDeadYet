@@ -234,7 +234,7 @@ void Client::UpdateCameraPos()
 			position.y = terrain->GetYPositionAt(position.x, position.z);
 			terrain = NULL;
 		}
-		position.y -= 2.5f;
+		position.y += 2.5f;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
 }
