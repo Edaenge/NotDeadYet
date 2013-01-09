@@ -44,4 +44,10 @@
 /Dedicated Server/Code/GUI/obj/Debug
 /Dedicated Server/Code/Code.sdf
 /Dedicated Server/Code/Code.v11.suo
+<<<<<<< HEAD
 /Dedicated Server/Bin/x86/C++CLI.dll
+=======
+/WorkingDir/Config.cfg
+/WorkingDir/*.pdb
+/Dedicated Server/Bin/x86/C++CLI.dll
+>>>>>>> 21c7fee17c043dc834210be551ce3b7170998113

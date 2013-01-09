@@ -38,6 +38,9 @@
     <Filter Include="PhysicsEngine">
       <UniqueIdentifier>{77c34bd0-07a8-4c50-b54d-e15f2bcff13c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{e1502db5-db6a-44ef-8c56-2d9b1044d15d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\main.cpp">
@@ -156,6 +159,30 @@
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\ClientSide\StaticObject.cpp">
       <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GUI\ChangeSetEvent.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GUI\Element.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GUI\GUIEvent.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GUI\GUIPicture.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GUI\GUISet.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GUI\NoEvent.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GUI\SimpleButton.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\MainMenuCreate.cpp">
+      <Filter>Game Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -344,6 +371,27 @@
     </ClInclude>
     <ClInclude Include="..\Source\Network\Winsock.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GUI\ChangeSetEvent.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GUI\Element.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GUI\GUIEvent.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GUI\GUIPicture.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GUI\GUISet.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GUI\NoEvent.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GUI\SimpleButton.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

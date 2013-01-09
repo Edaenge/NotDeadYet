@@ -5,6 +5,8 @@ static const float UPDATE_DELAY = 0.0333f;
 
 Host::Host()
 {
+	MaloW::ClearDebug();
+
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
 	this->zClients = std::vector<ClientData*>(); 
@@ -732,8 +734,6 @@ bool Host::CreateStaticObjectActor(const int type, FoodObject* foodObj)
 	foodObj->SetDescription(food->GetDescription());
 	foodObj->SetActorObjectName(food->GetActorObjectName());
 
-	foodObj = new FoodObject(food);
-	
 	return true;
 }
 
