@@ -75,11 +75,11 @@ Item* Inventory::SearchAndGetItem(unsigned int ID) const
 	return this->GetItem(position);
 }
 
-Item* Inventory::GetItem(const unsigned int position) const
+Item* Inventory::GetItem(const unsigned int index) const
 {
-	if (position < this->zItems.size())
+	if (index < this->zItems.size())
 	{
-		return this->zItems[position];
+		return this->zItems[index];
 	}
 	return 0;
 }
@@ -98,20 +98,25 @@ int Inventory::Search( const int ID ) const
 	return -1;
 }
 
-bool Inventory::RemoveItem(const unsigned int position)
+bool Inventory::RemoveItem(const unsigned int index)
 {
-	if (position < this->zItems.size())
+	if (index < this->zItems.size())
 	{
-		int weight = GetItem(position)->GetWeight();
+		int weight = GetItem(index)->GetWeight();
 		this->zWeightTotal -= weight;
 
 		for (int i = 0; i < weight - 1; i++)
 		{
 			this->zInventorySlotBlocked[zSlotsAvailable++] = false;
 		}
+		Item* item = this->zItems.at(index);
+		this->zItems.erase(this->zItems.begin() + index);
 
-		this->zItems.erase(this->zItems.begin() + position);
-
+		if (item)
+		{
+			delete item;
+			item = NULL;
+		}
 		return true;
 	}
 	return false;
@@ -119,10 +124,10 @@ bool Inventory::RemoveItem(const unsigned int position)
 
 bool Inventory::RemoveItem(Item* item)
 {
-	int position = this->Search(item->GetID());
-	if (position != -1)
+	int index = this->Search(item->GetID());
+	if (index != -1)
 	{
-		return this->RemoveItem(position);
+		return this->RemoveItem(index);
 	}
 	return false;
 }
@@ -132,9 +137,9 @@ std::vector<bool> Inventory::GetBlockedSlots() const
 	return this->zInventorySlotBlocked;
 }
 
-bool Inventory::GetBlockedSlot(unsigned int position) const
+bool Inventory::GetBlockedSlot(unsigned int index) const
 {
-	return this->zInventorySlotBlocked[position];
+	return this->zInventorySlotBlocked[index];
 }
 
 int Inventory::GetInventoryCapacity() const
