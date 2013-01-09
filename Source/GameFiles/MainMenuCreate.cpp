@@ -19,7 +19,7 @@ void MainMenu::Init()
 	temp = new SimpleButton(50, 600, 1, "Media/NewGame.png", 100, 25, new ChangeSetEvent(NOMENU), "Media/Options.png", "Media/Quit.png", 50, 600, 100, 25);
 	zSets[MAINMENU].AddElement(temp);
 
-	temp = new SimpleButton(50, 635, 1, "Media/Options.png", 100, 25, new NoEvent(), "Media/FindServers.png", "Media/Quit.png", 50, 635, 100, 25);
+	temp = new SimpleButton(50, 635, 1, "Media/Options.png", 100, 25, new ChangeSetEvent(OPTIONS), "Media/FindServers.png", "Media/Quit.png", 50, 635, 100, 25);
 	zSets[MAINMENU].AddElement(temp);
 
 	temp = new SimpleButton(50, 670, 1, "Media/FindServers.png", 100, 25, new ChangeSetEvent(FIND_SERVER), "Media/Options.png", "Media/Quit.png", 50, 670, 100, 25);
@@ -34,6 +34,16 @@ void MainMenu::Init()
 
 	temp = new SimpleButton(70, 500, 1, "Media/Options.png", 100, 25, new ChangeSetEvent(MAINMENU), "Media/Quit.png", "Media/FindServers.png", 70, 500, 100, 25);
 	zSets[FIND_SERVER].AddElement(temp);
+
+	//OPTIONS
+	temp = new GUIPicture(50, 50, 1, "Media/Options.png", windowWidth * (0.66f), windowHeight * (0.66f));
+	zSets[OPTIONS].AddElement(temp);
+
+	temp = new TextBox(100, 100, 1, "Media/NewGame.png", 100, 50, "12", "SoundVolume", 1, 2, TEXTBOX::NR);
+	zSets[OPTIONS].AddElement(temp);
+
+	temp = new SimpleButton(70, 500, 1, "Media/Options.png", 100, 25, new ChangeSetEvent(MAINMENU), "Media/Quit.png", "Media/FindServers.png", 70, 500, 100, 25);
+	zSets[OPTIONS].AddElement(temp);
 
 	this->zPrimarySet = MAINMENU;
 	this->zSecondarySet = NOMENU;

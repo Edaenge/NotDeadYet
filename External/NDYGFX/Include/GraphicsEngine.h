@@ -71,6 +71,7 @@ extern "C"
 		virtual void SetFPSMax(float maxFPS) = 0;
 
 		virtual void SetSunLightProperties(Vector3 direction, Vector3 lightColor = Vector3(1.0f, 1.0f, 1.0f), float intensity = 1.0f) = 0;
+		virtual void SetSunLightDisabled() = 0;
 
 		virtual iPhysicsEngine* GetPhysicsEngine() const = 0;
 
@@ -79,7 +80,7 @@ extern "C"
 		virtual void SetSceneAmbientLight(Vector3 ambientLight) = 0;
 		virtual Vector3 GetSceneAmbientLight() const = 0;
 
-		virtual void ResizeGraphicsEngine(float width, float height) = 0;
+		virtual void ResizeGraphicsEngine(unsigned int width, unsigned int height) = 0;
 	};
 
 	/*

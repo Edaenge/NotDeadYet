@@ -22,86 +22,89 @@ MainMenu::~MainMenu()
 
 void MainMenu::Run()
 {
-	this->StartTestRun();
-	//////////////////////////////////////////////////////////////////////
-	
-	zSets[zPrimarySet].AddSetToRenderer(GetGraphics());
-
-	bool run = true;
-	GraphicsEngine* eng = GetGraphics();
-
-	eng->GetCamera()->SetUpdateCamera(false);
-	eng->GetKeyListener()->SetCursorVisibility(true);
-	eng->Update();
-
-	Vector2 mousePos;
-	GUIEvent* retEvent = NULL;
-	bool mousePressed = false;
-	while(run)
+	bool proModeOrNot = true; // CHANGE HERE!!!!!!!
+	if(!proModeOrNot)
 	{
+		this->StartTestRun();
+	}
+	else
+	{
+		zSets[zPrimarySet].AddSetToRenderer(GetGraphics());
+
+		bool run = true;
+		GraphicsEngine* eng = GetGraphics();
+
+		eng->GetCamera()->SetUpdateCamera(false);
+		eng->GetKeyListener()->SetCursorVisibility(true);
 		eng->Update();
-		mousePos = GetGraphics()->GetKeyListener()->GetMousePosition();
 
-		//Try to get an event from buttons, if no event from main set try second.
-		retEvent = zSets[this->zPrimarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
-		if(retEvent == NULL)
-			retEvent = zSets[this->zSecondarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
-
-		if(retEvent != NULL)
+		Vector2 mousePos;
+		GUIEvent* retEvent = NULL;
+		bool mousePressed = false;
+		while(run)
 		{
-			if(retEvent->GetEventMessage() == "ChangeSetEvent")
+			eng->Update();
+			mousePos = GetGraphics()->GetKeyListener()->GetMousePosition();
+
+			//Try to get an event from buttons, if no event from main set try second.
+			retEvent = zSets[this->zPrimarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
+			if(retEvent == NULL)
+				retEvent = zSets[this->zSecondarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
+
+			if(retEvent != NULL)
 			{
-				ChangeSetEvent* setEvent = (ChangeSetEvent*)retEvent;
-				if(this->zPrimarySet == FIND_SERVER)
+				if(retEvent->GetEventMessage() == "ChangeSetEvent")
 				{
-					zSets[MAINMENU].RemoveSetFromRenderer(eng);
-				}
+					ChangeSetEvent* setEvent = (ChangeSetEvent*)retEvent;
+					if(this->zPrimarySet == FIND_SERVER || this->zPrimarySet == OPTIONS)
+					{
+						zSets[MAINMENU].RemoveSetFromRenderer(eng);
+					}
 
-				this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet); // THIS IS ALWAYS DONE IN THIS FUNCTION!
-				zPrimarySet = (SET)setEvent->GetSet(); // THIS IS ALWAYS DONE IN THIS FUNCTION!
+					this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet); // THIS IS ALWAYS DONE IN THIS FUNCTION!
+					zPrimarySet = (SET)setEvent->GetSet(); // THIS IS ALWAYS DONE IN THIS FUNCTION!
 
-				//Special Menu Things Are Done Below.
-				switch(setEvent->GetSet())
-				{
-				case NOMENU:
-					this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet);
+					//Special Menu Things Are Done Below.
+					switch(setEvent->GetSet())
+					{
+					case NOMENU:
+						this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet);
 
-					this->EnableMouse(false);
+						this->EnableMouse(false);
 
-					this->StartTestRun();
+						this->StartTestRun();
 
-					this->EnableMouse(true);
+						this->EnableMouse(true);
 
-					this->SwapMenus(MAINMENU, this->zSecondarySet);
+						this->SwapMenus(MAINMENU, this->zSecondarySet);
 
-					break;
-				case MAINMENU:
+						break;
+					case MAINMENU:
 
-					break;
-				case FIND_SERVER:
-					zSets[MAINMENU].AddSetToRenderer(eng);
+						break;
+					case FIND_SERVER:
+						zSets[MAINMENU].AddSetToRenderer(eng);
 
-					break;
-				case OPTIONS:
+						break;
+					case OPTIONS:
+						zSets[MAINMENU].AddSetToRenderer(eng);
 
-					break;
-				case QUIT:
-					run = false;
-					break;
-				default:
+						break;
+					case QUIT:
+						run = false;
+						break;
+					default:
 
-					break;
+						break;
+					}
 				}
 			}
-		}
-		else
-		{
-			//Returned no event
+			else
+			{
+				//Returned no event
+			}
 		}
 	}
-	
-
-	//////////////////////////////////////////////////////////////////
 
 	/*
 	int hostErrorCode = 0;
@@ -158,7 +161,7 @@ void MainMenu::StartTestRun()
 	int clientErrorCode;
 	// Initializes the Client and returns a code that explains what happend
 	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 11521);
-	//clientErrorCode  = this->zGame->InitGameClient("194.47.150.20", 10000);
+	//clientErrorCode  = this->zGame->InitGameClient("194.47.150.20", 11521);
 
 	if(clientErrorCode == 0)
 	{
