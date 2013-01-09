@@ -191,9 +191,9 @@ void Host::HandleNewConnections()
 	this->zClients.push_back(new ClientData(client));
 
 	message = this->zMessageConverter.Convert(MESSAGE_TYPE_SELF_ID, client->getClientID());
-	client->sendData(message);
 	client->Start();
-
+	client->sendData(message);
+	
 	SAFE_DELETE(pe);
 
 	//Collect player infos
@@ -577,7 +577,7 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerO
 void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 {	
 	Item* item = NULL;
-	item = pActor->DropObject(ItemId);
+	item = pActor->GetItem(ItemId);
 
 	if (!item)
 	{
@@ -596,6 +596,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 		}
 
 		this->CreateObjectFromItem(pActor, item_Food);
+		pActor->DropObject(ItemId);
 		return;
 	}
 	if (item_type == ITEM_TYPE_WEAPON_RANGED_BOW)
@@ -607,6 +608,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 			return;
 		}
 		this->CreateObjectFromItem(pActor, item_Weapon);
+		pActor->DropObject(ItemId);
 		return;
 	}
 	if (item_type == ITEM_TYPE_WEAPON_RANGED_ROCK)
@@ -619,6 +621,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 		}
 
 		this->CreateObjectFromItem(pActor, item_Weapon);
+		pActor->DropObject(ItemId);
 		return;
 	}
 	if (item_type == ITEM_TYPE_WEAPON_MELEE_AXE)
@@ -631,6 +634,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 		}
 
 		this->CreateObjectFromItem(pActor, item_Weapon);
+		pActor->DropObject(ItemId);
 		return;
 	}
 	if (item_type == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
@@ -643,6 +647,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 		}
 
 		this->CreateObjectFromItem(pActor, item_Weapon);
+		pActor->DropObject(ItemId);
 		return;
 	}
 	if (item_type == ITEM_TYPE_CONTAINER_CANTEEN)
@@ -655,6 +660,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 		}
 
 		this->CreateObjectFromItem(pActor, item_Container);
+		pActor->DropObject(ItemId);
 		return;
 	}
 }
@@ -664,6 +670,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
 	FoodObject* foodObj = new FoodObject(false);
 	if (!this->CreateStaticObjectActor(food_Item->GetItemType(), foodObj))
 	{
+		MaloW::Debug("Failed to Create StaticObject Food");
 		SAFE_DELETE(foodObj);
 		return false;
 	}
@@ -690,6 +697,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 
 	if (!this->CreateStaticObjectActor(weapon_Item->GetItemType(), weaponObj))
 	{
+		MaloW::Debug("Failed to Create StaticObject Weapon");
 		SAFE_DELETE(weaponObj);
 		return false;
 	}
@@ -714,6 +722,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Container* container_Item)
 
 	if (!this->CreateStaticObjectActor(container_Item->GetItemType(), containerObj))
 	{
+		MaloW::Debug("Failed to Create StaticObject Container");
 		SAFE_DELETE(containerObj);
 		return false;
 	}
@@ -1005,7 +1014,7 @@ void Host::HandleKeyRelease(PlayerActor* pl, const std::string& key)
 void Host::HandlePingMsg(ClientData* cd)
 {
 	//Hard coded
-	if(cd->zTotalPingTime > 60.0f)
+	if(cd->zTotalPingTime > 10.0f)
 		cd->ResetPingCounter();
 
 	cd->zTotalPingTime += cd->zCurrentPingTime;

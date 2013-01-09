@@ -62,9 +62,11 @@ bool Inventory::AddItem(Item* item)
 			this->zSlotsAvailable--;
 		}
 		this->zItems.push_back(item);
-
+		MaloW::Debug("Added Item "+item->GetItemName() + MaloW::convertNrToString(item->GetID()));
 		return true;
 	}
+
+	MaloW::Debug("Failed to add item "+item->GetItemName() + MaloW::convertNrToString(item->GetID()));
 	return false;
 }
 

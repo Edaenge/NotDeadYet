@@ -37,8 +37,9 @@ public:
 	bool PickUpObject(StaticObjectActor* object);
 	bool PickUpObject(DynamicObjectActor* object);
 	/*! */
-	Item* DropObject(const int ID);
+	bool DropObject(const int ID);
 
+	Item* GetItem(const int ID){return this->zInventory->SearchAndGetItem(ID);}
 	float GetLatency() const {return this->zLatency;}
 	inline float GetFrameTime() const {return this->zFrameTime;}
 	/*! Gets the current key state. This function is used

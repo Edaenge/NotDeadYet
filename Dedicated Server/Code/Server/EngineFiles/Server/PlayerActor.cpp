@@ -178,14 +178,17 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 	return false;
 }
 
-Item* PlayerActor::DropObject( const int ID )
+bool PlayerActor::DropObject( const int ID )
 {
 	Item* item = this->zInventory->SearchAndGetItem(ID);
 
 	if(!item)
-		return NULL;
-
+	{
+		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString(ID));
+		return false;
+	}
 	this->zInventory->RemoveItem(item);
+	MaloW::Debug("Removed successes: " + MaloW::convertNrToString(ID));
 
-	return item;
+	return true;
 }
