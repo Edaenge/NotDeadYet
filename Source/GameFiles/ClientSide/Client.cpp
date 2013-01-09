@@ -21,7 +21,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/scale.obj";
+	this->zMeshID = "Media/Arrow_v01.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -313,7 +313,6 @@ void Client::HandleKeyboardInput()
 
 	zShowCursor = this->zGuiManager->IsGuiOpen();
 
-	
 	this->CheckMovementKeys();
 
 	//Used For Testing ATM
@@ -323,7 +322,7 @@ void Client::HandleKeyboardInput()
 		{
 			if (this->zPlayerInventory->GetItems().size() > 0)
 			{
-				int id = this->zPlayerInventory->GetItem(0)->GetID();
+ 				int id = this->zPlayerInventory->GetItem(0)->GetID();
 				this->SendDropItemMessage(id);
 			}
 		}
