@@ -15,6 +15,10 @@ namespace GUI
     public partial class Form1 : Form
     {
         const int MAX_PLAYERS = 32;
+        const string RUNNING = "Running";
+        const string NOT_RUNNING = "Not Running";
+
+        int max_pl = 0;
         CppCLI m_ServerEngine = null;
 
         public Form1()
@@ -40,12 +44,14 @@ namespace GUI
         {
             if (this.m_ServerEngine.IsRunning())
             {
-                //TODO, ret function. returns messages.
+                toolStripStatusLabel2.Text = Convert.ToString(m_ServerEngine.GetNrOfPlayers() + "/" + max_pl);
+                toolStripStatusLabel4.Text = RUNNING;
             }
             else
             {
                 this.m_ServerEngine.ShutdownHost();
                 this.button_Start.Enabled = true;
+                toolStripStatusLabel4.Text = NOT_RUNNING;
             }
         }
 
@@ -92,7 +98,10 @@ namespace GUI
                 if (!this.m_ServerEngine.StartHost())
                     MessageBox.Show("Error: Server was never initialized.");
                 else
+                {
                     this.button_Start.Enabled = false;
+                    max_pl = players;
+                }
             }
 
         }

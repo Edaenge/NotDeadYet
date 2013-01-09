@@ -141,7 +141,8 @@ void ObjectManager::TrimAndSet( char* ret )
 
 	int index = (int)found;
 
-	std::string subA, subB;
+	std::string subA;
+	std::string subB;
 	subA = str.substr(0,index);
 	subB = str.substr(index+1,str.size()-1);
 
