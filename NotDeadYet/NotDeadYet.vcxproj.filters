@@ -184,6 +184,9 @@
     <ClCompile Include="..\Source\GameFiles\MainMenuCreate.cpp">
       <Filter>Game Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GUI\TextBox.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -391,6 +394,9 @@
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GUI\SimpleButton.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GUI\TextBox.h">
       <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
