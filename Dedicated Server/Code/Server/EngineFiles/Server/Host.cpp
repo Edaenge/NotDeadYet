@@ -45,6 +45,7 @@ void Host::Init()
 	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, foodObj))
 	{
 		foodObj->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
+		foodObj->SetScale(Vector3(1,1,1));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
 		
@@ -56,6 +57,7 @@ void Host::Init()
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, weaponObj))
 	{
 		weaponObj->SetPosition(Vector3(5.0f, 0.0f, -5.0f));
+		weaponObj->SetScale(Vector3(1,1,1));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
@@ -67,6 +69,7 @@ void Host::Init()
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, weaponObj))
 	{
 		weaponObj->SetPosition(Vector3(-5.0f, 0.0f, -5.0f));
+		weaponObj->SetScale(Vector3(1,1,1));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 		
@@ -78,6 +81,7 @@ void Host::Init()
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, containerObj))
 	{
 		containerObj->SetPosition(Vector3(-5.0f, 0.0f, 5.0f));
+		containerObj->SetScale(Vector3(1,1,1));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticContainerActor(containerObj);
 		
