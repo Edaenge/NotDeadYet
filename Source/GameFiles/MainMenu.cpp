@@ -22,7 +22,7 @@ MainMenu::~MainMenu()
 
 void MainMenu::Run()
 {
-	bool proModeOrNot = true; // CHANGE HERE!!!!!!!
+	bool proModeOrNot = false; // CHANGE HERE!!!!!!!
 	if(!proModeOrNot)
 	{
 		this->StartTestRun();
