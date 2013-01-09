@@ -10,7 +10,7 @@ class WorldObject
 {
 public:
 	WorldObject(const unsigned int id){this->zMesh = 0; this->zID = id;}
-	~WorldObject(){}
+	virtual ~WorldObject(){}
 	/*!	Returns Pointer to the Player Mesh*/
 	iMesh* GetMesh() const {return this->zMesh;}
 	/*! Returns Object Model Scale*/

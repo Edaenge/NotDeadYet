@@ -1,0 +1,21 @@
+﻿Build started 2012-12-16 19:37:17.
+     1>Project "X:\Users\Documents\Visual Studio 2012\Projects\Dedicated Server\Code\C++CLI\C++CLI.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         X:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /AI"C:\Program Files (x86)\Windows Kits\8.0\References\CommonConfiguration\Neutral" /Zi /clr /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _WINDLL /D _UNICODE /D UNICODE /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /TP /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\PresentationCore.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\WindowsBase.dll" /analyze- /errorReport:prompt /clr:nostdlib AssemblyInfo.cpp C++CLIWrapper.cpp
+         AssemblyInfo.cpp
+         C++CLIWrapper.cpp
+         Generating Code...
+         X:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /Zi /clr /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _WINDLL /D _UNICODE /D UNICODE /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /TP /analyze- /errorReport:prompt "C:\Users\Edis\AppData\Local\Temp\.NETFramework,Version=v4.0.AssemblyAttributes.cpp"
+         .NETFramework,Version=v4.0.AssemblyAttributes.cpp
+       Link:
+         X:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"X:\Users\Documents\Visual Studio 2012\Projects\Dedicated Server\Code\Debug\C++CLI.dll" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"X:\Users\Documents\Visual Studio 2012\Projects\Dedicated Server\Code\Debug\C++CLI.pdb" /ASSEMBLYDEBUG /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /FIXED:NO /NXCOMPAT /MACHINE:X86 /DLL Debug\AssemblyInfo.obj
+         Debug\C++CLIWrapper.obj
+         "Debug\.NETFramework,Version=v4.0.AssemblyAttributes.obj"
+         "X:\Users\Documents\Visual Studio 2012\Projects\Dedicated Server\Bin\x86\Server.lib"
+            Creating library X:\Users\Documents\Visual Studio 2012\Projects\Dedicated Server\Code\Debug\C++CLI.lib and object X:\Users\Documents\Visual Studio 2012\Projects\Dedicated Server\Code\Debug\C++CLI.exp
+         C++CLI.vcxproj -> X:\Users\Documents\Visual Studio 2012\Projects\Dedicated Server\Code\Debug\C++CLI.dll
+     1>Done Building Project "X:\Users\Documents\Visual Studio 2012\Projects\Dedicated Server\Code\C++CLI\C++CLI.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.37

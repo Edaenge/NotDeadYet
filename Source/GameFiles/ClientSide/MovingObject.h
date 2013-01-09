@@ -20,12 +20,7 @@ static const enum INTERPOLATION_TYPES
 class MovingObject : public WorldObject
 {
 public:
-	MovingObject(const unsigned int id) : WorldObject(id)
-	{
-		this->zState = STATE_IDLE; 
-		this->zEndPosition = Vector3(0,0,0);
-		this->zVelocity = 100.0f;
-	}
+	MovingObject(const unsigned int id);
 	virtual ~MovingObject() {}
 	/*! Sets the State*/
 	inline void SetState(const int state) {this->zState = state;}
@@ -40,8 +35,14 @@ public:
 
 protected:
 	/*! Interpolates the position*/
-	void LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t)
-	{ CurrPos = CurrPos + (newPos - CurrPos) * t * zVelocity;}
+	void LinearInterpolation(Vector3& CurrPos, const Vector3& newPos, float t);
+	/*! Returns time Value depending on type
+	IT_LINEAR,
+	IT_COSINE,
+	IT_ACCELERATION,
+	IT_SMOOTH_STEP,
+	IT_DECELERATION
+	*/
 	float GetInterpolationType(const float deltaTime, const unsigned int type);
 protected:
 	int zState;

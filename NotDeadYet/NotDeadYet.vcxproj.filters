@@ -29,9 +29,6 @@
     <Filter Include="Game Files\ClientSide">
       <UniqueIdentifier>{faa25a58-0444-4646-ac60-d25ce1086ca7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Files\ServerSide">
-      <UniqueIdentifier>{c11d50e1-d8b2-43e4-b39c-56796bd3fc0e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Files\Items">
       <UniqueIdentifier>{84d54727-12de-4411-907d-382ca95e5889}</UniqueIdentifier>
     </Filter>
@@ -42,7 +39,7 @@
       <UniqueIdentifier>{77c34bd0-07a8-4c50-b54d-e15f2bcff13c}</UniqueIdentifier>
     </Filter>
     <Filter Include="GUI">
-      <UniqueIdentifier>{b72265e9-b1b7-4141-9e49-738b26890419}</UniqueIdentifier>
+      <UniqueIdentifier>{e1502db5-db6a-44ef-8c56-2d9b1044d15d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -67,22 +64,10 @@
     <ClCompile Include="..\Source\GameFiles\Game.cpp">
       <Filter>Game Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Network\ClientChannel.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Network\NetworkServer.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Network\ServerChannel.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Network\ClientConnectedEvent.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Network\NetworkMessageConverter.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Network\ServerListener.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\Graphics.cpp">
@@ -100,23 +85,11 @@
     <ClCompile Include="..\Source\GameFiles\ClientSide\Client.cpp">
       <Filter>Game Files\ClientSide</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\Host.cpp">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\PlayerActor.cpp">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyBindConfig.cpp">
       <Filter>Game Files\KeyUtil</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyConverter.cpp">
       <Filter>Game Files\KeyUtil</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\AnimalActor.cpp">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\Actor.cpp">
-      <Filter>Game Files\ServerSide</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\ClientSide\DynamicObject.cpp">
       <Filter>Game Files\ClientSide</Filter>
@@ -139,9 +112,6 @@
     <ClCompile Include="..\Source\GameFiles\Items\RangedWeapon.cpp">
       <Filter>Game Files\Items</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\BioActor.cpp">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\GameFiles\ClientSide\WorldObjectManager.cpp">
       <Filter>Game Files\ClientSide</Filter>
     </ClCompile>
@@ -150,21 +120,6 @@
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\ClientSide\PlayerObject.cpp">
       <Filter>Game Files\ClientSide</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\WeaponObject.cpp">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\StaticObjectActor.cpp">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\ObjectManager.cpp">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\FoodObject.cpp">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\ActorHandler.cpp">
-      <Filter>Game Files\ServerSide</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\Items\Food.cpp">
       <Filter>Game Files\Items</Filter>
@@ -199,16 +154,22 @@
     <ClCompile Include="..\Source\GameFiles\Items\Container.cpp">
       <Filter>Game Files\Items</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\ServerSide\ContainerObject.cpp">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\GameFiles\ClientSide\MovingObject.cpp">
       <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\StaticObject.cpp">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GUI\ChangeSetEvent.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\GUI\Element.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\GUI\GUIEvent.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GUI\GUIPicture.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\GUI\GUISet.cpp">
@@ -222,12 +183,6 @@
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\MainMenuCreate.cpp">
       <Filter>Game Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GUI\ChangeSetEvent.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\GUI\GUIPicture.cpp">
-      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -264,25 +219,10 @@
     <ClInclude Include="..\Source\GameFiles\Game.h">
       <Filter>Game Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Network\ClientChannel.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Network\NetworkPacket.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Network\NetworkServer.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Network\ServerChannel.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Network\ClientConnectedEvent.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Network\NetworkMessageConverter.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Network\ServerListener.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\Graphics.h">
@@ -321,9 +261,6 @@
     <ClInclude Include="..\External\NDYGFX\Include\iKeyListener.h">
       <Filter>External\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Network\Winsock.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\SoundEngine\fmod.h">
       <Filter>Sound Engine Files</Filter>
     </ClInclude>
@@ -345,15 +282,6 @@
     <ClInclude Include="..\Source\GameFiles\ClientSide\Client.h">
       <Filter>Game Files\ClientSide</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\Actor.h">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\Host.h">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\PlayerActor.h">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObject.h">
       <Filter>Game Files\ClientSide</Filter>
     </ClInclude>
@@ -365,12 +293,6 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyConverter.h">
       <Filter>Game Files\KeyUtil</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\AnimalActor.h">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\BioActor.h">
-      <Filter>Game Files\ServerSide</Filter>
     </ClInclude>
     <ClInclude Include="..\source\gamefiles\clientside\DynamicObject.h">
       <Filter>Game Files\ClientSide</Filter>
@@ -396,9 +318,6 @@
     <ClInclude Include="..\Source\GameFiles\Items\Weapon.h">
       <Filter>Game Files\Items</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\StaticObjectActor.h">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObjectManager.h">
       <Filter>Game Files\ClientSide</Filter>
     </ClInclude>
@@ -407,21 +326,6 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ClientSide\PlayerObject.h">
       <Filter>Game Files\ClientSide</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\WeaponObject.h">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\ObjectManager.h">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\FoodObject.h">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\ActorHandler.h">
-      <Filter>Game Files\ServerSide</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\DynamicObjectActor.h">
-      <Filter>Game Files\ServerSide</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\Items\Food.h">
       <Filter>Game Files\Items</Filter>
@@ -462,13 +366,22 @@
     <ClInclude Include="..\Source\GameFiles\Items\Container.h">
       <Filter>Game Files\Items</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\ServerSide\ContainerObject.h">
-      <Filter>Game Files\ServerSide</Filter>
+    <ClInclude Include="..\Source\Network\NetworkPacket.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Network\Winsock.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GUI\ChangeSetEvent.h">
+      <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GUI\Element.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GUI\GUIEvent.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GUI\GUIPicture.h">
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GUI\GUISet.h">
@@ -478,12 +391,6 @@
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GUI\SimpleButton.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GUI\ChangeSetEvent.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\GUI\GUIPicture.h">
       <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>

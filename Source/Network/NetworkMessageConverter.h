@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <Vector.h>
+#include "../../External/NDYGFX/Include/Vector.h"
 #include <vector>
 #include <string>
 

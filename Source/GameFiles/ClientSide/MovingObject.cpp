@@ -2,6 +2,13 @@
 
 #define PI 3.14159265358979323846f
 
+MovingObject::MovingObject(const unsigned int id) : WorldObject(id)
+{
+	this->zState = STATE_IDLE; 
+	this->zEndPosition = Vector3(0,0,0);
+	this->zVelocity = 500.0f;
+}
+
 float MovingObject::GetInterpolationType(const float deltaTime, const unsigned int type)
 {
 	float t;
@@ -28,4 +35,25 @@ float MovingObject::GetInterpolationType(const float deltaTime, const unsigned i
 	}
 
 	return t;
+}
+
+void MovingObject::LinearInterpolation( Vector3& CurrPos, const Vector3& newPos, float t )
+{
+	bool bLarger = false;
+	if (CurrPos.GetLength() < newPos.GetLength())
+		bLarger = true;
+
+	CurrPos = CurrPos + (newPos - CurrPos) * t * zVelocity;
+
+	if (!bLarger)
+	{
+		if (CurrPos.GetLength() < newPos.GetLength())
+			CurrPos = newPos;
+	}
+	else
+	{
+		if (newPos.GetLength() < CurrPos.GetLength())
+			CurrPos = newPos;
+	}
+	
 }

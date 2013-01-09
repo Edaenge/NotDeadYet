@@ -3,7 +3,7 @@
 	for project Not Dead Yet at Blekinge tekniska högskola
 */
 #pragma once
-#include "GameFiles/KeyUtil/KeyValues.h"
+#include "KeyValues.h"
 
 class KeyStates
 {

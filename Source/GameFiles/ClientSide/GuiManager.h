@@ -57,8 +57,8 @@ private:
 	float zLootingGuiShowTimer;
 	float zInventoryGuiShowTimer;
 
-	InventoryGui* zInvGui;
-	CircularListGui* zInvCircGui;
-	CircularListGui* zLootingGui;
+	//InventoryGui* zInvGui;
+	//CircularListGui* zInvCircGui;
+	//CircularListGui* zLootingGui;
 	GraphicsEngine* zGraphicEngine;
 };

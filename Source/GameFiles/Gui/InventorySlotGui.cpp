@@ -22,14 +22,25 @@ InventorySlotGui::~InventorySlotGui()
 
 bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)
 {
-	GuiElement::AddToRenderer(ge);
-	return true;
+	if (ge)
+	{
+		this->zGuiImage = ge->CreateImage(Vector2(this->zX , this->zY), this->GetDimension(), this->zTextureName.c_str());
+		this->ShowGui();
+		return true;
+	}
+	return false;
 }
 
 bool InventorySlotGui::RemoveFromRenderer(GraphicsEngine* ge)
 {
-	GuiElement::RemoveFromRenderer(ge);
-	return true;
+	if (this->zGuiImage)
+	{
+		ge->DeleteImage(this->zGuiImage);
+		this->zGuiImage = 0;
+		this->zHidden = true;
+		return true;
+	}
+	return false;
 }
 
 bool InventorySlotGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)

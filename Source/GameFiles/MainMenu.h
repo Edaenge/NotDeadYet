@@ -17,7 +17,6 @@ public:
 
 private:
 	void PrintClientError(const int code);
-	void PrintHostError(const int code);
 	/*! Prints the error message to the client*/
 	void PrintToScreen(const std::string msg);
 

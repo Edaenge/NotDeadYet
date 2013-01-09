@@ -1,4 +1,4 @@
-#include "GameFiles/Items/RangedWeapon.h"
+#include "RangedWeapon.h"
 
 RangedWeapon::RangedWeapon(const unsigned int id,const unsigned int itemType) : Weapon(id, itemType)
 {
