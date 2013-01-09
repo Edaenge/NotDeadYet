@@ -650,15 +650,15 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		//this->zGuiManager->AddInventoryItemToGui(gid);
 
 		MaloW::Debug("Added Image ID: " + MaloW::convertNrToString(id));
-		//TempImage temp;
-		//int pos = images.size();
-		//float width = this->zEng->GetEngineParameters()->windowWidth * 0.1428f;
-		//float height = this->zEng->GetEngineParameters()->windowHeight * 0.1428f;
-		//int y = (int)(pos * 0.1428f);
-		//temp.image = this->zEng->CreateImage(Vector2((pos  - y)* width, y * height + 50), Vector2(width, width), itemIconFilePath.c_str());
-		//temp.id = id;
+		TempImage temp;
+		int pos = images.size();
+		float width = this->zEng->GetEngineParameters()->windowWidth * 0.1428f;
+		float height = this->zEng->GetEngineParameters()->windowHeight * 0.1428f;
+		int y = (int)(pos * 0.1428f);
+		temp.image = this->zEng->CreateImage(Vector2((pos  - y)* width, y * height + 50), Vector2(width, width), itemIconFilePath.c_str());
+		temp.id = id;
 
-		//this->images.push_back(temp);
+		this->images.push_back(temp);
 	}
 	else
 	{
@@ -717,15 +717,15 @@ void Client::HandleRemoveInventoryItem(const int id)
 	if(this->zPlayerInventory->RemoveItem(index))
 		MaloW::Debug("Item Removed on Client");
 
-	//for (unsigned int i = 0; i < images.size(); i++)
-	//{
-	//	if (images[i].id == id)
-	//	{
-	//		MaloW::Debug("Removed Image ID: " + MaloW::convertNrToString(id));
-	//		this->zEng->DeleteImage(images[i].image);
-	//		images.erase(images.begin() + i);
-	//	}
-	//}
+	for (unsigned int i = 0; i < images.size(); i++)
+	{
+		if (images[i].id == id)
+		{
+			MaloW::Debug("Removed Image ID: " + MaloW::convertNrToString(id));
+			this->zEng->DeleteImage(images[i].image);
+			images.erase(images.begin() + i);
+		}
+	}
 }
 
 void Client::CloseConnection(const std::string& reason)
@@ -1560,7 +1560,13 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 	std::vector<StaticObject*> staticObjects = this->zObjectManager->GetStaticObjects();
 	for(auto it = staticObjects.begin(); it < staticObjects.end(); it++)
 	{
-		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(origin, camForward, (*it)->GetMesh());
+		iMesh* mesh = (*it)->GetMesh();
+		if (!mesh)
+		{
+			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
+			continue;
+		}
+		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(origin, camForward, mesh);
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
@@ -1572,7 +1578,8 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 	std::vector<DynamicObject*> dynamicObjects = this->zObjectManager->GetDynamicObjects();
 	for(auto it = dynamicObjects.begin(); it < dynamicObjects.end(); it++)
 	{
-		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(origin, camForward, (*it)->GetMesh());
+		iMesh* mesh = (*it)->GetMesh();
+		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(origin, camForward, mesh);
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
