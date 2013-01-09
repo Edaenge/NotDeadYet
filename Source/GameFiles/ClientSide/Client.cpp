@@ -738,9 +738,9 @@ void Client::CloseConnection(const std::string& reason)
 
 bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const int id)
 {
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
 
-	if (pos != -1)
+	if (index != -1)
 	{
 		MaloW::Debug("Cant create a new Object. Id already exists");
 		return false;
@@ -811,9 +811,9 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 
 bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const int id)
 {
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
 
-	if (pos != -1)
+	if (index != -1)
 	{
 		MaloW::Debug("Cant create a new Object. It already exists");
 		return false;
@@ -878,9 +878,9 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 
 bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const int id)
 {
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, id);
 
-	if (pos != -1)
+	if (index != -1)
 	{
 		MaloW::Debug("Cant create a new Object. It already exists");
 		return false;
@@ -964,9 +964,9 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 
 bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const int id)
 {
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, id);
 
-	if (pos != -1)
+	if (index != -1)
 	{
 		MaloW::Debug("Cant create a new Object. It already exists");
 		return false;
@@ -1062,13 +1062,13 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 	if (id == -1)
 		return false;
 
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
 	
 	//Check if object was found
-	if(pos == -1)
+	if(index == -1)
 		return false;
 
-	PlayerObject* PlayerObjectPointer = this->zObjectManager->GetPlayerObject(pos);
+	PlayerObject* PlayerObjectPointer = this->zObjectManager->GetPlayerObject(index);
 
 	if (!PlayerObjectPointer)
 		return false;
@@ -1164,12 +1164,13 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 	if (id == -1)
 		return false;
 
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, id);
+	
 	//Check if object was found
-	if(pos == -1)
+	if(index == -1)
 		return false;
 
-	StaticObject* StaticObjectPointer = this->zObjectManager->GetStaticObject(pos);
+	StaticObject* StaticObjectPointer = this->zObjectManager->GetStaticObject(index);
 	if (!StaticObjectPointer)
 		return false;
 
@@ -1262,12 +1263,12 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 	if (id == -1)
 		return false;
 	
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
 	//Check if object was found
-	if(pos == -1)
+	if(index == -1)
 		return false;	
 
-	AnimalObject* AnimalObjectPointer = this->zObjectManager->GetAnimalObject(pos);
+	AnimalObject* AnimalObjectPointer = this->zObjectManager->GetAnimalObject(index);
 
 	if (!AnimalObjectPointer)
 		return false;
@@ -1348,12 +1349,13 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 	if (id == -1)
 		return false;
 		
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, id);
+	
 	//Check if object was found
-	if(pos == -1)
+	if(index == -1)
 		return false;
 
-	DynamicObject* DynamicObjectPointer = this->zObjectManager->GetDynamicObject(pos);
+	DynamicObject* DynamicObjectPointer = this->zObjectManager->GetDynamicObject(index);
 
 	if (DynamicObjectPointer == NULL)
 		return false;
@@ -1448,10 +1450,10 @@ bool Client::RemovePlayerObject(const int id)
 	if (id == -1)
 		return false;
 		
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
 
 	//Check if object was found in the array
-	if(pos == -1)
+	if(index == -1)
 		return false;
 
 	if(this->zID == id)
@@ -1459,13 +1461,13 @@ bool Client::RemovePlayerObject(const int id)
 		this->CloseConnection("Unknown reason possible Kicked");
 	}
 
-	iMesh* mesh = this->zObjectManager->GetPlayerObject(pos)->GetMesh();
+	iMesh* mesh = this->zObjectManager->GetPlayerObject(index)->GetMesh();
 
 	if(mesh)
 	{
 		this->zEng->DeleteMesh(mesh);
 	}
-	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_PLAYER, pos))
+	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_PLAYER, index))
 	{
 		MaloW::Debug("Failed To Remove Player with id: " + MaloW::convertNrToString(id));
 	}
@@ -1477,19 +1479,19 @@ bool Client::RemoveAnimalObject(const int id)
 	if (id == -1)
 		return false;
 
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
 
 	//Check if object was found in the array
-	if(pos == -1)
+	if(index == -1)
 		return false;
 
-	iMesh* mesh = this->zObjectManager->GetAnimalObject(pos)->GetMesh();
+	iMesh* mesh = this->zObjectManager->GetAnimalObject(index)->GetMesh();
 
 	if(mesh)
 	{
 		this->zEng->DeleteMesh(mesh);
 	}
-	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_ANIMAL, pos))
+	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_ANIMAL, index))
 	{
 		MaloW::Debug("Failed To Remove Animal with id: " + MaloW::convertNrToString(id));
 	}
@@ -1502,19 +1504,19 @@ bool Client::RemoveStaticObject(const int id)
 	if (id == -1)
 		return false;
 
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, id);
 
 	//Check if object was found in the array
-	if(pos == -1)
+	if(index == -1)
 		return false;
 	
-	iMesh* mesh = this->zObjectManager->GetStaticObject(pos)->GetMesh();
+	iMesh* mesh = this->zObjectManager->GetStaticObject(index)->GetMesh();
 
 	if(mesh)
 	{
 		this->zEng->DeleteMesh(mesh);
 	}
-	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_STATIC_OBJECT, pos))
+	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_STATIC_OBJECT, index))
 	{
 		MaloW::Debug("Failed To Remove Static Object with id: " + MaloW::convertNrToString(id));
 		return false;
