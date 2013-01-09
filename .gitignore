@@ -42,6 +42,8 @@
 /Dedicated Server/Code/GUI/obj/Debug
 /WorkingDir/MaloWDebug.txt
 /Dedicated Server/Code/GUI/obj/Debug
-/WorkingDir/MaloWDebug.txt
 /Dedicated Server/Code/Code.sdf
 /Dedicated Server/Code/Code.v11.suo
+/WorkingDir/Config.cfg
+/WorkingDir/*.pdb
+/Dedicated Server/Bin/x86/C++CLI.dll

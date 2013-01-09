@@ -5,13 +5,11 @@
 Game::Game()
 {
 	this->zClient = NULL;
-	this->zHost = NULL;
 }
 
 Game::~Game()
 {
 	SAFE_DELETE(this->zClient);
-	SAFE_DELETE(this->zHost);
 }
 
 void Game::Run()
@@ -56,26 +54,5 @@ int Game::InitGameClient(std::string ip, int port)
 		this->zClient->Start();
 		
 
-	return code;
-}
-
-int Game::InitGameHost(int port, int nrOfClients)
-{
-	int code;
-
-	//if a Host hasn't been created yet Create one
-	if(!this->zHost)
-		this->zHost = new Host();
-	else
-	{
-		SAFE_DELETE(this->zHost);
-		this->zHost = new Host();
-	}
-
-	//Creates a host to listen on the given port
-	code = this->zHost->InitHost(port, nrOfClients);
-
-	if(code == CONNECTION_SUCCESS)
-		this->zHost->Start();
 	return code;
 }
