@@ -142,9 +142,10 @@ private:
 	bool CreateStaticObjectActor(const int type, FoodObject* foodObj);
 	bool CreateStaticObjectActor(const int type, ContainerObject* containerObj);
 	/*! Creates a DynamicObject with default values.*/
-	bool CreateDynamicObjectActor(const int type, ProjectileObject* projectileObj);
+	bool CreateDynamicObjectActor(const int type, DynamicProjectileObject* projectileObj);
 	void SendErrorMessage(const int id, const std::string error_Message);
 	bool CheckCollision(Vector3 position);
+	void HandleConversion(DynamicProjectileObject* dynamicProjObj);
 private:
 	ServerListener* zServerListener;
 

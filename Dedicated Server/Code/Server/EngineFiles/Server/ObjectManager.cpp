@@ -123,7 +123,7 @@ bool ObjectManager::ReadObjects()
 		}
 		else if(strcmp(key, OBJECT_PROJECTILE.c_str()) == 0)
 		{
-			ProjectileObject* ct = new ProjectileObject(false);
+			DynamicProjectileObject* ct = new DynamicProjectileObject(false);
 			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
@@ -378,7 +378,7 @@ bool ObjectManager::InterpCommand( char* command, char* key, ContainerObject* ct
 	return true;
 }
 
-bool ObjectManager::InterpCommand( char* command, char* key, ProjectileObject* pt )
+bool ObjectManager::InterpCommand( char* command, char* key, DynamicProjectileObject* pt )
 {
 	if(strcmp(key, "") == 0)
 		return false;
@@ -434,7 +434,7 @@ const ContainerObject* ObjectManager::GetContainerObject( const int type )
 	return SearchType(this->zContainers, type);
 }
 
-const ProjectileObject* ObjectManager::GetProjectileObject( const int type )
+const DynamicProjectileObject* ObjectManager::GetProjectileObject( const int type )
 {
 	return SearchType(this->zProjectiles, type);
 }
@@ -472,7 +472,7 @@ const ContainerObject* ObjectManager::SearchType( std::vector<ContainerObject*>&
 	return NULL;
 }
 
-const ProjectileObject* ObjectManager::SearchType(std::vector<ProjectileObject*>& projectiles, const int type) const
+const DynamicProjectileObject* ObjectManager::SearchType(std::vector<DynamicProjectileObject*>& projectiles, const int type) const
 {
 	for(auto it = projectiles.begin(); it < projectiles.end(); it++)
 	{

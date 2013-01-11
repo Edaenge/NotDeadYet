@@ -406,7 +406,7 @@ void Host::SendDynamicActorUpdates()
 	std::string mess = "";
 
 	//Fetch Static Objects data
-	std::vector<ProjectileObject*> dyp = this->zActorHandler->GetProjectiles();
+	std::vector<DynamicProjectileObject*> dyp = this->zActorHandler->GetProjectiles();
 	for (auto it_Dynamic = dyp.begin(); it_Dynamic < dyp.end(); it_Dynamic++)
 	{
 		Vector3 pos = (*it_Dynamic)->GetPosition();
@@ -836,10 +836,10 @@ bool Host::CreateStaticObjectActor(const int type, ContainerObject* containerObj
 	return true;
 }
 
-bool Host::CreateDynamicObjectActor(const int type, ProjectileObject* projectileObj)
+bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject* projectileObj)
 {
 	//Get Default Values For a Meat Object
-	const ProjectileObject* projectile = this->zActorHandler->GetObjManager()->GetProjectileObject(type);
+	const DynamicProjectileObject* projectile = this->zActorHandler->GetObjManager()->GetProjectileObject(type);
 
 	if (!projectile)
 		return false;
@@ -965,7 +965,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemId)
 	//Create Dynamic Object with player direction
 	Vector3 direction = pActor->GetDirection();
 
-	ProjectileObject* projectileObj = new ProjectileObject(true);
+	DynamicProjectileObject* projectileObj = new DynamicProjectileObject(true);
 
 	int type = ITEM_TYPE_PROJECTILE_ARROW;
 	if (rWpn->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
@@ -1429,6 +1429,29 @@ float Host::Update()
 	this->zStartime = currentTime;
 
 	return this->zDeltaTime;
+}
+
+void Host::HandleConversion(DynamicProjectileObject* dynamicProjObj)
+{
+	//StaticProjectileObject* staticProjObj = new StaticProjectileObject(dynamicProjObj, false);
+
+	//std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT, dynamicProjObj->GetID());
+	//this->SendToAllClients(msg);
+
+	//Vector3 pos = staticProjObj->GetPosition();
+	//Vector3 scale = staticProjObj->GetScale();
+	//Vector4 rot = staticProjObj->GetRotation();
+
+	//msg =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, staticProjObj->GetID());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, staticProjObj->GetActorModel());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, staticProjObj->GetType());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, staticProjObj->GetActorObjectName());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, staticProjObj->GetWeight());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, staticProjObj->GetIconPath());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, staticProjObj->GetDescription());
 }
 
 void Host::UpdateObjects()
