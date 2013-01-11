@@ -1,5 +1,4 @@
 /NotDeadYet.suo
-/NotDeadYet/Media/Cache
 /NotDeadYet.sdf
 /NotDeadYet/NotDeadYet/Debug
 /NotDeadYet/NotDeadYet/Release
@@ -48,3 +47,4 @@
 /WorkingDir/Config.cfg
 /WorkingDir/*.pdb
 /Dedicated Server/Bin/x86/C++CLI.dll
+/WorkingDir/Media/Cache

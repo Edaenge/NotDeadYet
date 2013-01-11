@@ -22,7 +22,7 @@ static const enum M_OBJECT_TYPE
 	OBJECT_TYPE_CONTAINER_WATER_BOTTLE,
 	OBJECT_TYPE_FOOD_DEER_MEAT,
 	OBJECT_TYPE_FOOD_WOLF_MEAT,
-	OBJECT_TYPE_AMMO_ARROW
+	OBJECT_TYPE_PROJECTILE_ARROW
 };
 /*Class for Static objects, such as Food, Weapons basically things that cannot move.*/
 class StaticObjectActor : public Actor
@@ -38,15 +38,19 @@ public:
 	int GetType() const {return this->zType;}
 	std::string GetDescription() const {return this->zDescription;}
 	std::string GetIconPath() const {return this->zIconPath;}
+	/*! Returns number of stacks the object has.*/
+	unsigned int GetStackSize() const {return this->zStacks;}
 
 	void SetIconPath(const std::string& path) {this->zIconPath = path;}
 	void SetDescription(const std::string& description) {this->zDescription = description;}
 	void SetWeight(const int weight) {this->zWeight = weight;}
 	void SetType(const int TYPE) {this->zType = TYPE;}
+	void SetStackSize(const unsigned int size) {this->zStacks = size;}
 
 protected:
 	int zWeight;
 	int zType;
+	int zStacks;
 	std::string zDescription;
 	std::string zIconPath;
 private:

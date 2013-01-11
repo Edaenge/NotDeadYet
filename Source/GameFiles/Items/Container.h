@@ -14,11 +14,11 @@ public:
 		const unsigned int itemType, const std::string& itemDescription, const int maxUse, const int currUse);
 	virtual ~Container();
 
-	void SetMaxSize(const int size) {this->zMaxUses = size;}
-	void SetCurrentSize(const int size) {this->zUsesRemaining = size;}
+	void SetMaxUses(const int size) {this->zMaxUses = size;}
+	void SetRemainingUses(const int size) {this->zUsesRemaining = size;}
 
-	inline int GetCurrentSize() {return this->zUsesRemaining;}
-	inline int GetMaxSize() {return this->zMaxUses;}
+	inline int GetRemainingUses() {return this->zUsesRemaining;}
+	inline int GetMaxUses() {return this->zMaxUses;}
 
 	virtual bool Use();
 private:

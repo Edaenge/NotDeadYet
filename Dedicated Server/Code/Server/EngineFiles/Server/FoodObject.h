@@ -18,11 +18,14 @@ public:
 	/*! */
 	virtual ~FoodObject();
 
-
+	
 	float GetHunger() const {return this->zHunger;}
-	void SetHunger(const float hunger){this->zHunger = hunger;}
+	/*! Returns number of stacks the item has.*/
+	unsigned int GetStackSize() const {return this->zStacks;}
 
+	void SetHunger(const float hunger){this->zHunger = hunger;}
+	void ModifyStackSize(const unsigned int size) {this->zStacks += size;}
 private:
 	float zHunger;
-
+	int zStacks;
 };

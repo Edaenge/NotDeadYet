@@ -101,6 +101,7 @@ private:
 	/*! Uses the Selected Item*/
 	void HandleUseItem(const int id);
 	void DisplayMessageToClient(const std::string& msg);
+	void HandleEquipItem(const int ItemId);
 private:
 	/*! Current Client ID*/
 	int zID;
@@ -115,10 +116,11 @@ private:
 	/*! Counters*/
 	float zSendUpdateDelayTimer;
 
+	bool zIsHuman;
 	bool zCreated;
 	bool zRunning;
 	bool zShowCursor;
-
+	
 	std::string zIP;
 	std::string zMeshID;
 

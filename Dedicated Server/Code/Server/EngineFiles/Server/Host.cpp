@@ -118,7 +118,7 @@ void Host::Life()
 		ReadMessages();
 		HandleRecivedMessages();
 		PingClients();
-		UpdatePl();
+		UpdateObjects();
 		
 		if(waitTimer >= UPDATE_DELAY)
 		{
@@ -404,6 +404,35 @@ void Host::SendDynamicActorUpdates()
 
 	std::vector<std::string> dynamicData;
 	std::string mess = "";
+
+	//Fetch Static Objects data
+	std::vector<ProjectileObject*> dyp = this->zActorHandler->GetProjectiles();
+	for (auto it_Dynamic = dyp.begin(); it_Dynamic < dyp.end(); it_Dynamic++)
+	{
+		Vector3 pos = (*it_Dynamic)->GetPosition();
+		Vector4 rot = (*it_Dynamic)->GetRotation();
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_DYNAMIC_OBJECT, (*it_Dynamic)->GetID());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (*it_Dynamic)->GetType());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (*it_Dynamic)->GetWeight());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it_Dynamic)->GetDescription());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it_Dynamic)->GetIconPath());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it_Dynamic)->GetActorObjectName());
+
+		dynamicData.push_back(mess);
+	}
+
+	//Send Data to clients
+	for (auto it_Client = zClients.begin(); it_Client < zClients.end(); it_Client++)
+	{
+		for (auto it_Message = dynamicData.begin(); it_Message < dynamicData.end(); it_Message++)
+		{
+			(*it_Client)->zClient->sendData((*it_Message));
+		}
+	}
 }
 
 bool Host::HasClients() const
@@ -787,7 +816,7 @@ bool Host::CreateStaticObjectActor(const int type, FoodObject* foodObj)
 
 bool Host::CreateStaticObjectActor(const int type, ContainerObject* containerObj)
 {
-	//Get Default Values For a Meat Object
+	//Get Default Values For a container Object
 	const ContainerObject* container = this->zActorHandler->GetObjManager()->GetContainerObject(type);
 
 	if (!container)
@@ -803,6 +832,28 @@ bool Host::CreateStaticObjectActor(const int type, ContainerObject* containerObj
 	containerObj->SetDescription(container->GetDescription());
 	containerObj->SetCurrentUses(container->GetCurrentUses());
 	containerObj->SetActorObjectName(container->GetActorObjectName());
+
+	return true;
+}
+
+bool Host::CreateDynamicObjectActor(const int type, ProjectileObject* projectileObj)
+{
+	//Get Default Values For a Meat Object
+	const ProjectileObject* projectile = this->zActorHandler->GetObjManager()->GetProjectileObject(type);
+
+	if (!projectile)
+		return false;
+
+	//Creates A New ProjectileObject With an Id And Default Values 
+	projectileObj->SetType(type);
+	projectileObj->SetWeight(projectile->GetWeight());
+	projectileObj->SetDamage(projectile->GetDamage());
+	projectileObj->SetIconPath(projectile->GetIconPath());
+	projectileObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	projectileObj->SetActorModel(projectile->GetActorModel());
+	projectileObj->SetDescription(projectile->GetDescription());
+	projectileObj->SetVelocity(projectile->GetVelocity());
+	projectileObj->SetActorObjectName(projectile->GetActorObjectName());
 
 	return true;
 }
@@ -845,7 +896,12 @@ void Host::SendNewObjectMessage(DynamicObjectActor* dynamicObj)
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, dynamicObj->GetActorObjectName());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, dynamicObj->GetDescription());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, dynamicObj->GetIconPath());
-
+	//ProjectileObject* projectileObj = dynamic_cast<ProjectileObject*>(dynamicObj);
+	//if (projectileObj)
+	//{
+		//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_DAMAGE, projectileObj->GetDamage());
+	//}
+	
 	this->SendToAllClients(msg);
 }
 
@@ -870,14 +926,15 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemId)
 	Equipment* eq = pActor->GetEquipment();
 
 	Weapon* weapon = eq->GetWeapon();
-	if (weapon->GetID() != ItemId)
-	{
-		MaloW::Debug("Server weapon isn't the same as Client Weapon");
-	}
+
 	if (!weapon)
 	{
 		SendErrorMessage(pActor->GetID(),"No Weapon is Equipped");
 		return;
+	}
+	if (weapon->GetID() != ItemId)
+	{
+		MaloW::Debug("Server weapon isn't the same as Client Weapon");
 	}
 
 	RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(weapon);
@@ -898,6 +955,8 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemId)
 		Vector3 direction = pActor->GetDirection();
 
 		Vector3 position = pActor->GetPosition() + (direction * range);
+
+		return;
 	}
 	float damage;
 	float range;
@@ -905,6 +964,27 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemId)
 
 	//Create Dynamic Object with player direction
 	Vector3 direction = pActor->GetDirection();
+
+	ProjectileObject* projectileObj = new ProjectileObject(true);
+
+	int type = ITEM_TYPE_PROJECTILE_ARROW;
+	if (rWpn->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
+	{
+		type = ITEM_TYPE_PROJECTILE_ARROW;
+	}
+	if(!this->CreateDynamicObjectActor(type, projectileObj))
+	{
+		MaloW::Debug("Failed to Create Projectile");
+		return;
+	}
+	Vector3 position = pActor->GetPosition();
+	projectileObj->SetPosition(position);
+	projectileObj->SetDirection(direction);
+	projectileObj->SetDamage(damage);
+	//Adds The Object To the Array
+	this->zActorHandler->AddNewDynamicProjectileActor(projectileObj);
+
+	SendNewObjectMessage(projectileObj);
 }
 
 bool Host::CheckCollision(Vector3 position)
@@ -938,6 +1018,16 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 		}
 		pActor->EatFood(food->GetHunger());
 
+		std::string msg;
+
+		msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_USE, food->GetID());
+		this->SendToClient(pActor->GetID(), msg);
+		if (food->GetStackSize() <= 0)
+		{
+			pActor->GetInventory()->RemoveItem(food);
+		}
+		
+
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN || item->GetItemType() == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
@@ -955,8 +1045,11 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 			this->SendErrorMessage(pActor->GetID(), "Stack is Empty");
 			return;
 		}
-		float hydration = (container->GetCurrentSize() + 1) * 15.0f;
+		float hydration = (container->GetRemainingUses() + 1) * 15.0f;
 		pActor->Drink(hydration);
+
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_USE, container->GetID());
+		this->SendToClient(pActor->GetID(), msg);
 
 		return;
 	}
@@ -974,9 +1067,12 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 
 		Inventory* inv = pActor->GetInventory();
 
-		int ammo = inv->SearchForItemType(ITEM_TYPE_AMMO_ARROW);
+		int ammo = inv->SearchForItemType(ITEM_TYPE_PROJECTILE_ARROW);
 
 		eq->EquipWeapon(rWpn, ammo);
+
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, rWpn->GetID());
+		this->SendToClient(pActor->GetID(), msg);
 
 		return;
 	}
@@ -998,6 +1094,9 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 
 		eq->EquipWeapon(rWpn, ammo);
 
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, rWpn->GetID());
+		this->SendToClient(pActor->GetID(), msg);
+
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE)
@@ -1013,6 +1112,9 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 		}
 
 		eq->EquipWeapon(mWpn);
+
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, mWpn->GetID());
+		this->SendToClient(pActor->GetID(), msg);
 
 		return;
 	}
@@ -1030,9 +1132,11 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 
 		eq->EquipWeapon(mWpn);
 
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, mWpn->GetID());
+		this->SendToClient(pActor->GetID(), msg);
+
 		return;
 	}
-
 }
 
 void Host::HandleRecivedMessages()
@@ -1083,14 +1187,16 @@ void Host::HandleRecivedMessages()
 		{
 			this->HandlePingMsg(this->zClients[c_index]);
 		}
+		//Handle Item usage in Inventory
 		else if(strcmp(key, M_ITEM_USE.c_str()) == 0 && (c_index != -1))
 		{
 			int objID = this->zMessageConverter.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
 			this->HandleItemUse(p_actor, objID);
 		}
+		//Handles Equipped Weapon usage
 		else if(strcmp(key, M_WEAPON_USE.c_str()) == 0 && (c_index != -1))
 		{
-			int objID = this->zMessageConverter.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
+			int objID = this->zMessageConverter.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
 			this->HandleWeaponUse(p_actor, objID);
 		}
 		//Handles Pickup Object Requests from Client
@@ -1325,9 +1431,9 @@ float Host::Update()
 	return this->zDeltaTime;
 }
 
-void Host::UpdatePl()
+void Host::UpdateObjects()
 {
-	this->zActorHandler->UpdatePl(zDeltaTime);	
+	this->zActorHandler->UpdateObjects(zDeltaTime);	
 }
 
 bool Host::KickClient( const int ID, bool sendAMessage, std::string reason )

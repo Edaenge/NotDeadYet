@@ -14,5 +14,10 @@ Food::~Food()
 
 bool Food::Use()
 {
-	return true;
+	if (this->zStacks > 0)
+	{
+		this->zStacks--;
+		return true;
+	}
+	return false;
 }
