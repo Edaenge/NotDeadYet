@@ -48,3 +48,4 @@
 /WorkingDir/*.pdb
 /Dedicated Server/Bin/x86/C++CLI.dll
 /WorkingDir/Media/Cache
+/Dedicated Server/Bin/x86/ServerClientMessages.txt
