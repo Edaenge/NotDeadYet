@@ -1,10 +1,10 @@
 #include "GameFiles/ClientSide/GuiManager.h"
 
-static const std::string DEATH_GUI_PATH						= "Media/Use_v01.png";
-static const std::string LOOTING_GUI_PATH					= "Media/Use_v01.png";
-static const std::string INVENTORY_GUI_PATH					= "Media/Inventory_v01.png";
-static const std::string IN_GAME_MENU_GUI_PATH				= "Media/Use_v01.png";
-static const std::string INVENTORY_ITEM_SELECTION_GUI_PATH	= "Media/Use_v01.png";
+static const std::string DEATH_GUI_PATH						= "Media/Use_v02.png";
+static const std::string LOOTING_GUI_PATH					= "Media/Use_v02.png";
+static const std::string INVENTORY_GUI_PATH					= "Media/Inventory_v02.png";
+static const std::string IN_GAME_MENU_GUI_PATH				= "Media/Use_v02.png";
+static const std::string INVENTORY_ITEM_SELECTION_GUI_PATH	= "Media/Use_v02.png";
 
 static const float GUI_DISPLAY_TIMER					= 2.0f;
 
@@ -19,7 +19,7 @@ GuiManager::GuiManager()
 	this->zLootingGuiShowTimer = 0.0f;
 	this->zInventoryGuiShowTimer = 0.0f;
 	
-	//this->zInvGui = NULL;
+	this->zInvGui = NULL;
 	//this->zLootingGui = NULL;
 	//this->zInvCircGui = NULL;
 	this->zGraphicEngine = NULL;
@@ -43,10 +43,10 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 
 	float x = windowWidth * 0.25f;
 	float y = windowHeight * 0.25f;
-	float width = windowWidth * 0.5f;
-	float height = windowHeight * 0.5f;
-
-	//this->zInvGui = new InventoryGui(x, y, width, height, INVENTORY_GUI_PATH);
+	float width = (500.0f / 1024.0f) * windowWidth;
+	float height = (500.0f / 768.0f) * windowHeight;
+	
+	this->zInvGui = new InventoryGui(windowWidth - width, windowHeight - height, width, height, INVENTORY_GUI_PATH);
 
 	Vector2 mousePosition = this->zGraphicEngine->GetKeyListener()->GetMousePosition();
 	x = mousePosition.x;
@@ -60,11 +60,11 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 
 GuiManager::~GuiManager()
 {
-	//if (this->zInvGui)
-	//{
-	//	delete this->zInvGui;
-	//	this->zInvGui = NULL;
-	//}
+	if (this->zInvGui)
+	{
+		delete this->zInvGui;
+		this->zInvGui = NULL;
+	}
 
 	//if (this->zInvCircGui)
 	//{
@@ -94,21 +94,21 @@ void GuiManager::ToggleInventoryGui()
 	if (!this->zInventoryOpen)
 	{
 		//Show Inventory
-		//this->zInvGui->AddToRenderer(this->zGraphicEngine);
+		this->zInvGui->AddToRenderer(this->zGraphicEngine);
 		this->zInventoryOpen = true;
-		//this->zInventoryGuiShowTimer = GUI_DISPLAY_TIMER;
+		this->zInventoryGuiShowTimer = GUI_DISPLAY_TIMER;
 	}
 	else
 	{
 		//Hide Inventory
 		this->zInventoryOpen = false;
-		//this->zInvGui->RemoveFromRenderer(this->zGraphicEngine);
+		this->zInvGui->RemoveFromRenderer(this->zGraphicEngine);
 	}
 }
 
 void GuiManager::AddInventoryItemToGui(const Gui_Item_Data gid)
 {
-	//this->zInvGui->AddItemToGui(gid.zFilePath, this->zGraphicEngine);
+	this->zInvGui->AddItemToGui(gid, this->zGraphicEngine);
 }
 
 void GuiManager::ShowCircularItemGui()
@@ -202,17 +202,18 @@ void GuiManager::HideDeathGui()
 
 void GuiManager::Update(float deltaTime)
 {
-	//if (!this->zInventoryOpen)
-	//{
-	//	if (this->zInventoryGuiShowTimer > 0.0f)
-	//	{
-	//		this->zInventoryGuiShowTimer -= deltaTime;
-	//	}
-	//	else
-	//	{
-	//		this->HideInventoryGui();
-	//	}
-	//}
+	if (!this->zInventoryOpen)
+	{
+		if (this->zInventoryGuiShowTimer > 0.0f)
+		{
+			this->zInventoryGuiShowTimer -= deltaTime;
+			this->zInvGui->FadeOut(deltaTime);
+		}
+		else
+		{
+			this->HideInventoryGui();
+		}
+	}
 	//
 	//if (!this->zLooting)
 	//{
@@ -230,4 +231,11 @@ void GuiManager::Update(float deltaTime)
 bool GuiManager::IsGuiOpen()
 {
 	return (this->zInventoryOpen || this->zLooting || this->zDeathGuiOpen || this->zIngameMenuOpen);
+}
+
+int GuiManager::CheckCollisionInv()
+{
+	Vector2 mousePos = zGraphicEngine->GetKeyListener()->GetMousePosition();
+	return this->zInvGui->CheckCollision(mousePos.x, mousePos.y, zGraphicEngine->GetKeyListener()->IsClicked(1), zGraphicEngine);
+	int i = 0;
 }

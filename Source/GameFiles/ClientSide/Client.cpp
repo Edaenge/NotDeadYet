@@ -343,9 +343,7 @@ void Client::HandleKeyboardInput()
 
 			if (item)
 			{
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());
-				this->zServerChannel->sendData(msg);
-			}
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());				this->zServerChannel->sendData(msg);				SendPickupItemMessage(collisionObjects[0].zID);			}
 		}
 	}
 	else
@@ -697,11 +695,11 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	}
 	if (this->zPlayerInventory->AddItem(item))
 	{
-		Gui_Item_Data gid = Gui_Item_Data(id, itemName, itemDescription, itemIconFilePath);
-		//this->zGuiManager->AddInventoryItemToGui(gid);
+		Gui_Item_Data gid = Gui_Item_Data(id, itemName, itemIconFilePath, itemDescription);
+		this->zGuiManager->AddInventoryItemToGui(gid);
 
 		MaloW::Debug("Added Image ID: " + MaloW::convertNrToString(id));
-		TempImage temp;
+		/*TempImage temp;
 		int pos = images.size();
 		float width = this->zEng->GetEngineParameters()->windowWidth * 0.1428f;
 		float height = this->zEng->GetEngineParameters()->windowHeight * 0.1428f;
@@ -709,7 +707,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		temp.image = this->zEng->CreateImage(Vector2((pos  - y)* width, y * height + 50), Vector2(width, width), itemIconFilePath.c_str());
 		temp.id = id;
 
-		this->images.push_back(temp);
+		this->images.push_back(temp);*/
 	}
 	else
 	{
@@ -830,7 +828,7 @@ void Client::HandleRemoveInventoryItem(const int id)
 	if(this->zPlayerInventory->RemoveItem(index))
 		MaloW::Debug("Item Removed on Client");
 
-	for (unsigned int i = 0; i < images.size(); i++)
+	/*for (unsigned int i = 0; i < images.size(); i++)
 	{
 		if (images[i].id == id)
 		{
@@ -838,7 +836,7 @@ void Client::HandleRemoveInventoryItem(const int id)
 			this->zEng->DeleteImage(images[i].image);
 			images.erase(images.begin() + i);
 		}
-	}
+	}*/
 }
 
 void Client::CloseConnection(const std::string& reason)
