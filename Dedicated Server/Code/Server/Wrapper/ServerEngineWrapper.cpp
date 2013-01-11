@@ -43,5 +43,3 @@ bool ServerEngineWrapper::IsRunning() const
 {
 	return zServerEngine->IsRunning();
 }
-
-

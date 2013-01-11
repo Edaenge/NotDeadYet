@@ -106,6 +106,7 @@
     <ClInclude Include="EngineFiles\Server\Host.h" />
     <ClInclude Include="EngineFiles\Server\ObjectManager.h" />
     <ClInclude Include="EngineFiles\Server\PlayerActor.h" />
+    <ClInclude Include="EngineFiles\Server\ProjectileObject.h" />
     <ClInclude Include="EngineFiles\Server\StaticObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\WeaponObject.h" />
     <ClInclude Include="Wrapper\ServerEngineWrapper.h" />
@@ -132,10 +133,12 @@
     <ClCompile Include="EngineFiles\Server\AnimalActor.cpp" />
     <ClCompile Include="EngineFiles\Server\BioActor.cpp" />
     <ClCompile Include="EngineFiles\Server\ContainerObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\FoodObject.cpp" />
     <ClCompile Include="EngineFiles\Server\Host.cpp" />
     <ClCompile Include="EngineFiles\Server\ObjectManager.cpp" />
     <ClCompile Include="EngineFiles\Server\PlayerActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\ProjectileObject.cpp" />
     <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\WeaponObject.cpp" />
     <ClCompile Include="Wrapper\ServerEngineWrapper.cpp" />

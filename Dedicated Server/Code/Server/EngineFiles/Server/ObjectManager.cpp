@@ -10,6 +10,7 @@ static const std::string OBJECT_WEAPON		=	"[Object.Weapon]";
 static const std::string OBJECT_FOOD		=	"[Object.Food]";
 static const std::string OBJECT_CONTAINER	=	"[Object.Container]";
 static const std::string OBJECT_GEAR		=	"[Object.Gear]";
+static const std::string OBJECT_PROJECTILE	=	"[Object.Projectile]";
 
 static const std::string END				=	"#END";
 static const std::string TYPE				=	"TYPE";
@@ -19,12 +20,14 @@ static const std::string DESCRIPTION		=	"DESCRIPTION";
 static const std::string MODEL				=	"MODEL";
 static const std::string NAME				=	"NAME";
 static const std::string IS_RANGED			=	"IS_RANGED";
+static const std::string SCALE				=	"SCALE";
 
 static const std::string HUNGER				=	"HUNGER";
 static const std::string DAMAGE				=	"DAMAGE";
 static const std::string RANGE				=	"RANGE";
 static const std::string MAX_USE			=	"MAX_USE";
 static const std::string CURRENT_USE		=	"CURRENT_USE";
+static const std::string VELOCITY			=	"VELOCITY";
 
 ObjectManager::ObjectManager()
 {
@@ -65,8 +68,6 @@ bool ObjectManager::ReadObjects()
 
 		if(strcmp(line, "") == 0)
 			continue;
-
-		//TrimAndSet(line);
 
 		sscanf_s(line, "%s", &key, sizeof(key));
 
@@ -118,7 +119,23 @@ bool ObjectManager::ReadObjects()
 					InterpCommand(command, key, ct);
 			}
 
-			this->zContainer.push_back(ct);
+			this->zContainers.push_back(ct);
+		}
+		else if(strcmp(key, OBJECT_PROJECTILE.c_str()) == 0)
+		{
+			ProjectileObject* ct = new ProjectileObject(false);
+			while(!read.eof() && strcmp(command, END.c_str()) != 0)
+			{
+				read.getline(line, sizeof(line));
+				TrimAndSet(line);
+
+				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
+
+				if(strcmp(command,END.c_str()) != 0)
+					InterpCommand(command, key, ct);
+			}
+
+			this->zProjectiles.push_back(ct);
 		}
 	}
 
@@ -150,7 +167,6 @@ void ObjectManager::TrimAndSet( char* ret )
 	str = subA + subB;
 
 	strcpy(ret, str.c_str());
-
 }
 
 bool ObjectManager::Replace(char* key)
@@ -212,6 +228,26 @@ bool ObjectManager::InterpCommand( char* command, char* key, WeaponObject* wp )
 	{
 		wp->SetActorObjectName(key);
 	}
+	else if (strcmp(command, SCALE.c_str()) == 0)
+	{
+		char x[52];
+		char y[52];
+		char z[52];
+		unsigned int index = 0;
+
+		while(key[index] != '\0')
+		{
+			if(key[index] == ',')
+				key[index] = ' ';
+
+			index++;
+		}
+
+		sscanf_s(key, "%s %s %s", &x, sizeof(x), &y, sizeof(y), &z, sizeof(z));
+		Vector3 vec(MaloW::convertStringToFloat(x), MaloW::convertStringToFloat(y), MaloW::convertStringToFloat(z));
+
+		wp->SetScale(vec);
+	}
 
 	return true;
 }
@@ -252,6 +288,26 @@ bool ObjectManager::InterpCommand( char* command, char* key, FoodObject* fd )
 	else if(strcmp(command, NAME.c_str()) == 0)
 	{
 		fd->SetActorObjectName(key);
+	}
+	else if (strcmp(command, SCALE.c_str()) == 0)
+	{
+		char x[52];
+		char y[52];
+		char z[52];
+
+		unsigned int index = 0;
+		while(command[index] != '\0')
+		{
+			if(command[index] == ',')
+				command[index] = ' ';
+
+			index++;
+		}
+
+		sscanf_s(key, "%s %s %s", &x, sizeof(x), &y, sizeof(y), &z, sizeof(z));
+		Vector3 vec(MaloW::convertStringToFloat(x), MaloW::convertStringToFloat(y), MaloW::convertStringToFloat(z));
+
+		fd->SetScale(vec);
 	}
 
 	return true;
@@ -298,6 +354,67 @@ bool ObjectManager::InterpCommand( char* command, char* key, ContainerObject* ct
 	{
 		ct->SetActorObjectName(key);
 	}
+	else if (strcmp(command, SCALE.c_str()) == 0)
+	{
+		char x[52];
+		char y[52];
+		char z[52];
+
+		unsigned int index = 0;
+		while(command[index] != '\0')
+		{
+			if(command[index] == ',')
+				command[index] = ' ';
+
+			index++;
+		}
+
+		sscanf_s(key, "%s %s %s", &x, sizeof(x), &y, sizeof(y), &z, sizeof(z));
+		Vector3 vec(MaloW::convertStringToFloat(x), MaloW::convertStringToFloat(y), MaloW::convertStringToFloat(z));
+
+		ct->SetScale(vec);
+	}
+
+	return true;
+}
+
+bool ObjectManager::InterpCommand( char* command, char* key, ProjectileObject* pt )
+{
+	if(strcmp(key, "") == 0)
+		return false;
+
+	string CC(command);
+	std::transform(CC.begin(), CC.end(), CC.begin(), ::toupper);
+	strcpy(command, CC.c_str());
+
+	if(strcmp(command, TYPE.c_str()) == 0)
+	{
+		pt->SetType(MaloW::convertStringToInt(key));
+	}
+	else if(strcmp(command, VELOCITY.c_str()) == 0)
+	{
+		pt->SetVelocity(MaloW::convertStringToFloat(key));
+	}
+	else if(strcmp(command, WEIGHT.c_str()) == 0)
+	{
+		pt->SetWeight(MaloW::convertStringToInt(key));
+	}
+	else if(strcmp(command, PATH.c_str()) == 0)
+	{
+		pt->SetIconPath(key);
+	}
+	else if(strcmp(command, DESCRIPTION.c_str()) == 0)
+	{
+		pt->SetDescription(key);
+	}
+	else if(strcmp(command, MODEL.c_str()) == 0)
+	{
+		pt->SetActorModel(key);
+	}
+	else if(strcmp(command, NAME.c_str()) == 0)
+	{
+		pt->SetActorObjectName(key);
+	}
 
 	return true;
 }
@@ -314,7 +431,12 @@ const FoodObject* ObjectManager::GetFoodObject( const int type )
 
 const ContainerObject* ObjectManager::GetContainerObject( const int type )
 {
-	return SearchType(this->zContainer, type);
+	return SearchType(this->zContainers, type);
+}
+
+const ProjectileObject* ObjectManager::GetProjectileObject( const int type )
+{
+	return SearchType(this->zProjectiles, type);
 }
 
 const WeaponObject* ObjectManager::SearchType( std::vector<WeaponObject*>& weapons, const int type ) const
@@ -339,9 +461,20 @@ const FoodObject* ObjectManager::SearchType( std::vector<FoodObject*>& food, con
 	return NULL;
 }
 
-const ContainerObject* ObjectManager::SearchType( std::vector<ContainerObject*>& container, const int type ) const
+const ContainerObject* ObjectManager::SearchType( std::vector<ContainerObject*>& containers, const int type ) const
 {
-	for(auto it = container.begin(); it < container.end(); it++)
+	for(auto it = containers.begin(); it < containers.end(); it++)
+	{
+		if((*it)->GetType() == type)
+			return (*it);
+	}
+
+	return NULL;
+}
+
+const ProjectileObject* ObjectManager::SearchType(std::vector<ProjectileObject*>& projectiles, const int type) const
+{
+	for(auto it = projectiles.begin(); it < projectiles.end(); it++)
 	{
 		if((*it)->GetType() == type)
 			return (*it);

@@ -37,6 +37,9 @@ namespace GUI
             {
                 Run();
                 Application.DoEvents();
+
+                Thread.Sleep(1);
+
             }
         }
 
@@ -109,19 +112,36 @@ namespace GUI
         private void button_Start_EnabledChanged(object sender, EventArgs e)
         {
             if (button_Start.Enabled)
+            {
                 button_Shutdown.Enabled = false;
-
-            else if(!button_Start.Enabled)
+                textBox_Players.Enabled = true;
+                textBox_Port.Enabled = true;
+            }
+            else if (!button_Start.Enabled)
+            {
                 button_Shutdown.Enabled = true;
+                textBox_Players.Enabled = false;
+                textBox_Port.Enabled = false;
+            }
+
+            
         }
 
         private void button_Shutdown_EnabledChanged(object sender, EventArgs e)
         {
             if (button_Shutdown.Enabled)
+            {
                 button_Start.Enabled = false;
+                textBox_Players.Enabled = true;
+                textBox_Port.Enabled = true;
+            }
 
             else if (!button_Shutdown.Enabled)
+            {
                 button_Start.Enabled = true;
+                textBox_Players.Enabled = false;
+                textBox_Port.Enabled = false;
+            }
         }
 
         private void button_Shutdown_Click(object sender, EventArgs e)

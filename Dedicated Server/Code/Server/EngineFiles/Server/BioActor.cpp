@@ -63,6 +63,7 @@ bool BioActor::Sprint(float dt)
 		return false;
 	else
 		this->zStamina = temp;
+	
 
 
 	return true;

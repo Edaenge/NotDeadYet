@@ -2,7 +2,7 @@
 
 Inventory::Inventory()
 {
-	this->zInventoryCap = 20;
+	this->zInventoryCap = 49;
 	this->zWeightTotal = 0;
 	
 	this->zInventorySlotBlocked = std::vector<bool>();
@@ -50,7 +50,7 @@ std::vector<Item*> Inventory::GetItems() const
 
 bool Inventory::AddItem(Item* item)
 {
-	int weight = item->GetWeight();
+	unsigned int weight = item->GetWeight() * item->GetStackSize();
 	if(this->zWeightTotal + weight <= this->zInventoryCap)
 	{
 		this->zWeightTotal += weight;
@@ -61,8 +61,15 @@ bool Inventory::AddItem(Item* item)
 			//Decrease slot size to mark blocked
 			this->zSlotsAvailable--;
 		}
+		Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType());
+		if (existingItem)
+		{
+			existingItem->ModifyStackSize(item->GetStackSize());
+			MaloW::Debug("Added Stack to inventory " + item->GetItemName());
+			return true;
+		}
 		this->zItems.push_back(item);
-		MaloW::Debug("Added Item "+item->GetItemName() + MaloW::convertNrToString(item->GetID()));
+		MaloW::Debug("Added Item " + item->GetItemName() + MaloW::convertNrToString(item->GetID()));
 		return true;
 	}
 
@@ -98,6 +105,30 @@ int Inventory::Search( const int ID ) const
 		}
 	}
 	return -1;
+}
+
+bool Inventory::RemoveItemStack(const int ID, const unsigned int numberOfStacks)
+{
+	int index = this->Search(ID);
+	if (index == -1)
+		return false;
+
+	if (index < this->zItems.size())
+	{
+		int weight = GetItem(index)->GetWeight() * numberOfStacks;
+		this->zWeightTotal -= weight;
+
+		for (int i = 0; i < weight - 1; i++)
+		{
+			this->zInventorySlotBlocked[zSlotsAvailable++] = false;
+		}
+		Item* item = this->zItems.at(index);
+		
+		item->ModifyStackSize(-numberOfStacks);
+
+		return true;
+	}
+	return false;
 }
 
 bool Inventory::RemoveItem(const unsigned int index)
@@ -157,9 +188,42 @@ int Inventory::SearchForItemType(const int TYPE)
 	{
 		if ((*it)->GetItemType() == TYPE)
 		{
-			counter++;
+			counter += (*it)->GetStackSize();
 		}
 	}
 
 	return counter;
+}
+
+Item* Inventory::SearchAndGetItemFromType( const int TYPE )
+{
+	for (auto it = this->zItems.begin(); it < this->zItems.end(); it++)
+	{
+		if ((*it)->GetItemType() == TYPE)
+		{
+			return (*it);
+		}
+	}
+	return NULL;
+}
+
+Item* Inventory::EquipItem( const int ID )
+{
+	int index = this->Search(ID);
+
+	if (index < this->zItems.size())
+	{
+		int weight = GetItem(index)->GetWeight();
+		this->zWeightTotal -= weight;
+
+		for (int i = 0; i < weight - 1; i++)
+		{
+			this->zInventorySlotBlocked[zSlotsAvailable++] = false;
+		}
+		Item* item = this->zItems.at(index);
+		this->zItems.erase(this->zItems.begin() + index);
+
+		return item;
+	}
+	return NULL;
 }
