@@ -7,6 +7,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "Actor.h"
 
+
 class DynamicObjectActor : public Actor
 {
 public:

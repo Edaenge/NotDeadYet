@@ -10,6 +10,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "AnimalActor.h"
 #include "ObjectManager.h"
 
+
 static const enum ACTOR_TYPE
 {
 	ACTOR_TYPE_PLAYER,

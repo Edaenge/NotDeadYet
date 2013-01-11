@@ -6,7 +6,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "Actor.h"
-#include <vector>
 
 static const enum M_OBJECT_TYPE
 {

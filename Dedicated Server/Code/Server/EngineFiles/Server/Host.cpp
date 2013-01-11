@@ -1442,25 +1442,25 @@ float Host::Update()
 
 void Host::HandleConversion(DynamicProjectileObject* dynamicProjObj)
 {
-	//StaticProjectileObject* staticProjObj = new StaticProjectileObject(dynamicProjObj, false);
+	StaticProjectileObject* staticProjObj = new StaticProjectileObject(dynamicProjObj, false);
 
-	//std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT, dynamicProjObj->GetID());
-	//this->SendToAllClients(msg);
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT, dynamicProjObj->GetID());
+	this->SendToAllClients(msg);
 
-	//Vector3 pos = staticProjObj->GetPosition();
-	//Vector3 scale = staticProjObj->GetScale();
-	//Vector4 rot = staticProjObj->GetRotation();
+	Vector3 pos = staticProjObj->GetPosition();
+	Vector3 scale = staticProjObj->GetScale();
+	Vector4 rot = staticProjObj->GetRotation();
 
-	//msg =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, staticProjObj->GetID());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, staticProjObj->GetActorModel());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, staticProjObj->GetType());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, staticProjObj->GetActorObjectName());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, staticProjObj->GetWeight());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, staticProjObj->GetIconPath());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, staticProjObj->GetDescription());
+	msg =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, staticProjObj->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, staticProjObj->GetActorModel());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, staticProjObj->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, staticProjObj->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, staticProjObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, staticProjObj->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, staticProjObj->GetDescription());
 }
 
 void Host::UpdateObjects()

@@ -11,10 +11,11 @@
 class StaticProjectileObject : public StaticObjectActor
 {
 public:
-	ProjectileObject(const bool genID = false);	/*! Note: ID from Actor will not be copied. IT will auto generate a new ID.*/
+	StaticProjectileObject(const bool genID = false);	
+	/*! Note: ID from Actor will not be copied. IT will auto generate a new ID.*/
 	StaticProjectileObject(const StaticProjectileObject& other, bool genID = false);
 	StaticProjectileObject(const StaticProjectileObject* other, bool genID = false);
-	//StaticProjectileObject(const DynamicProjectileObject* other, bool genID = false);
+	StaticProjectileObject(const DynamicProjectileObject* other, bool genID = false);
 	/*! */
 	virtual ~StaticProjectileObject();
 
