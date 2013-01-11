@@ -11,6 +11,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "FoodObject.h"
 #include "ContainerObject.h"
 #include "DynamicProjectileObject.h"
+#include "StaticProjectileObject.h"
 
 /*This class reads and stores WordObjects.
   The objects can be fetched by using enums from Item.h.

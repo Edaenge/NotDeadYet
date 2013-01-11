@@ -6,7 +6,6 @@
 #pragma once
 
 #include "DynamicObjectActor.h"
-#include "StaticProjectileObject.h"
 
 class DynamicProjectileObject : public DynamicObjectActor
 {

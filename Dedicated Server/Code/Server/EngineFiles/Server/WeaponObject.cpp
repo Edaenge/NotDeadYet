@@ -2,7 +2,7 @@
 
 
 
-WeaponObject::WeaponObject(const bool genID /* = true */) : StaticObjectActor(genID)
+WeaponObject::WeaponObject(const bool genID /* = false */) : StaticObjectActor(genID)
 {
 	this->zWeight = 1;
 	this->zRange = 1.0f;

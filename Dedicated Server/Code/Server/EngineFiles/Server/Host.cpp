@@ -44,7 +44,7 @@ void Host::Init()
 	int counter = 0;
 	//Creates A New FoodObject With an Id And Default Values 
 	FoodObject* foodObj = NULL; /*new FoodObject(true);*/
-	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, &foodObj))
+	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, &foodObj, true))
 	{
 		foodObj->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 		//Adds The Object To the Array
@@ -56,7 +56,7 @@ void Host::Init()
 	}
 	//Creates A New WeaponObject With an Id And Default Values 
 	WeaponObject* weaponObj = NULL;/*new WeaponObject(true);*/
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, &weaponObj))
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, &weaponObj, true))
 	{
 		weaponObj->SetPosition(Vector3(5.0f, 0.0f, -5.0f));
 		//Adds The Object To the Array
@@ -68,7 +68,7 @@ void Host::Init()
 	}
 
 	weaponObj = NULL; /*new WeaponObject(true);*/
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, &weaponObj))
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, &weaponObj, true))
 	{
 		weaponObj->SetPosition(Vector3(-5.0f, 0.0f, -5.0f));
 		//Adds The Object To the Array
@@ -80,7 +80,7 @@ void Host::Init()
 	}
 
 	ContainerObject* containerObj = NULL; /*new ContainerObject(true);*/
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, &containerObj))
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, &containerObj, true))
 	{
 		containerObj->SetPosition(Vector3(-5.0f, 0.0f, 5.0f));
 		//Adds The Object To the Array
@@ -800,7 +800,7 @@ bool Host::CreateStaticObjectActor(const int type, WeaponObject** weaponObj, con
 	//weaponObj->SetDescription(weapon->GetDescription());
 	//weaponObj->SetActorObjectName(weapon->GetActorObjectName());
 
-	*weaponObj = new WeaponObject(weapon);
+	*weaponObj = new WeaponObject(weapon, genID);
 
 	return true;
 }
@@ -823,7 +823,7 @@ bool Host::CreateStaticObjectActor(const int type, FoodObject** foodObj, const b
 	//foodObj->SetDescription(food->GetDescription());
 	//foodObj->SetActorObjectName(food->GetActorObjectName());
 
-	*foodObj = new FoodObject(food);
+	*foodObj = new FoodObject(food, genID);
 
 	return true;
 }
@@ -847,7 +847,7 @@ bool Host::CreateStaticObjectActor(const int type, ContainerObject** containerOb
 	//containerObj->SetCurrentUses(container->GetCurrentUses());
 	//containerObj->SetActorObjectName(container->GetActorObjectName());
 
-	*containerObj = new ContainerObject(container);
+	*containerObj = new ContainerObject(container, genID);
 
 	return true;
 }
@@ -1451,25 +1451,25 @@ float Host::Update()
 
 void Host::HandleConversion(DynamicProjectileObject* dynamicProjObj)
 {
-	//StaticProjectileObject* staticProjObj = new StaticProjectileObject(dynamicProjObj, false);
+	StaticProjectileObject* staticProjObj = new StaticProjectileObject(dynamicProjObj, false);
 
-	//std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT, dynamicProjObj->GetID());
-	//this->SendToAllClients(msg);
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT, dynamicProjObj->GetID());
+	this->SendToAllClients(msg);
 
-	//Vector3 pos = staticProjObj->GetPosition();
-	//Vector3 scale = staticProjObj->GetScale();
-	//Vector4 rot = staticProjObj->GetRotation();
+	Vector3 pos = staticProjObj->GetPosition();
+	Vector3 scale = staticProjObj->GetScale();
+	Vector4 rot = staticProjObj->GetRotation();
 
-	//msg =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, staticProjObj->GetID());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, staticProjObj->GetActorModel());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, staticProjObj->GetType());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, staticProjObj->GetActorObjectName());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, staticProjObj->GetWeight());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, staticProjObj->GetIconPath());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, staticProjObj->GetDescription());
+	msg =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, staticProjObj->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, staticProjObj->GetActorModel());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, staticProjObj->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, staticProjObj->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, staticProjObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, staticProjObj->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, staticProjObj->GetDescription());
 }
 
 void Host::UpdateObjects()
