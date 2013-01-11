@@ -75,7 +75,7 @@ void Host::Init()
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 		
 		if (Messages::FileWrite())
-			Messagess::Debug("Created Axe Object");
+			Messages::Debug("Created Axe Object");
 		counter++;
 	}
 
@@ -136,7 +136,7 @@ void Host::Life()
 			waitTimer = 0.0f;
 		}
 
-		Sleep(1);
+		Sleep(5);
 	}
 }
 
