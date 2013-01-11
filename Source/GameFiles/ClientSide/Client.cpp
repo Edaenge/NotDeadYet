@@ -176,7 +176,7 @@ void Client::Life()
 				MaloW::Debug("Timeout From Server");
 				//Print a Timeout Message to Client
 			}
-			Sleep(1);
+			Sleep(5);
 		}
 	}
 	this->zRunning = false;
@@ -702,8 +702,10 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	{
 		Gui_Item_Data gid = Gui_Item_Data(id, itemName, itemIconFilePath, itemDescription);
 		this->zGuiManager->AddInventoryItemToGui(gid);
-
-		MaloW::Debug("Added Image ID: " + MaloW::convertNrToString(id));
+		if (Messages::FileWrite())
+		{
+			Messages::Debug("Added Image ID: " + MaloW::convertNrToString(id));
+		}
 		/*TempImage temp;
 		int pos = images.size();
 		float width = this->zEng->GetEngineParameters()->windowWidth * 0.1428f;
@@ -1641,7 +1643,8 @@ bool Client::RemoveStaticObject(const int id)
 		MaloW::Debug("Failed To Remove Static Object with id: " + MaloW::convertNrToString(id));
 		return false;
 	}
-	Messages::Debug("Removed Static Object, Number of Objects remaining = " + MaloW::convertNrToString(this->zObjectManager->GetStaticObjects().size()));
+	if(Messages::FileWrite())
+		Messages::Debug("Removed Static Object, Number of Objects remaining = " + MaloW::convertNrToString(this->zObjectManager->GetStaticObjects().size()));
 
 	return true;
 }
