@@ -94,7 +94,7 @@ bool ActorHandler::AddNewStaticContainerActor( ContainerObject* new_Container )
 	return true;
 }
 
-bool ActorHandler::AddNewDynamicProjectileActor( ProjectileObject* new_Projectile )
+bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Projectile )
 {
 	if(!new_Projectile)
 		return false;
@@ -194,7 +194,7 @@ bool ActorHandler::RemoveDynamicActor( const int ID )
 	if(index == -1)
 		return false;
 
-	ProjectileObject* temp = this->zProjectiles[index];
+	DynamicProjectileObject* temp = this->zProjectiles[index];
 
 	this->zProjectiles.erase(this->zProjectiles.begin() + index);
 

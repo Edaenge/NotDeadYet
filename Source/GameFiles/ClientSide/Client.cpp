@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "Safe.h"
 #include "Network/NetworkPacket.h"
+#include "ClientServerMessages.h"
 
 using namespace MaloW;
 
@@ -343,8 +344,8 @@ void Client::HandleKeyboardInput()
 
 			if (item)
 			{
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());				
-				this->zServerChannel->sendData(msg);					
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());
+				this->zServerChannel->sendData(msg);
 			}
 		}
 	}
@@ -828,7 +829,7 @@ void Client::HandleRemoveInventoryItem(const int id)
 {
 	int index = this->zPlayerInventory->Search(id);
 	if(this->zPlayerInventory->RemoveItem(index))
-		MaloW::Debug("Item Removed on Client");
+		Messages::Debug("Item Removed on Client");
 
 	/*for (unsigned int i = 0; i < images.size(); i++)
 	{
@@ -1635,7 +1636,7 @@ bool Client::RemoveStaticObject(const int id)
 		MaloW::Debug("Failed To Remove Static Object with id: " + MaloW::convertNrToString(id));
 		return false;
 	}
-	MaloW::Debug("Removed Static Object, Number of Objects remaining = " + MaloW::convertNrToString(this->zObjectManager->GetStaticObjects().size()));
+	Messages::Debug("Removed Static Object, Number of Objects remaining = " + MaloW::convertNrToString(this->zObjectManager->GetStaticObjects().size()));
 
 	return true;
 }

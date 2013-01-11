@@ -2,6 +2,7 @@
 #include "NetworkPacket.h"
 #include "Winsock.h"
 #include "NetworkMessageConverter.h"
+#include "ClientServerMessages.h"
 
 using namespace MaloW;
 
@@ -138,13 +139,13 @@ string ServerChannel::receiveData()
 		}
 		while(goAgain && this->stayAlive);
 	}
-	MaloW::Debug("SC: Received from Server " + msg);
+	Messages::Debug("SC: Received from Server " + msg);
 	return msg;
 }
 
 void ServerChannel::sendData(string msg)
 {
-	MaloW::Debug("Sc: Sending to Server " + msg);
+	Messages::Debug("Sc: Sending to Server " + msg);
 	msg += 10;
 	char bufs[1024] = {0};
 	for(unsigned int i = 0; i < msg.length(); i++)

@@ -58,7 +58,7 @@ public:
 	bool AddNewStaticWeaponActor(WeaponObject* new_Weapon);
 	bool AddNewStaticContainerActor(ContainerObject* new_Container);
 
-	bool AddNewDynamicProjectileActor(ProjectileObject* new_Projectile);
+	bool AddNewDynamicProjectileActor(DynamicProjectileObject* new_Projectile);
 	/*! Removes the Static Object.*/
 	bool RemoveStaticFoodActor(const int ID);
 	bool RemoveStaticWeaponActor(const int ID);
@@ -72,7 +72,7 @@ public:
 	/*! Returns Container Objects.*/
 	inline const std::vector<ContainerObject*>& GetContainers() const {return this->zContainers;}
 	/*! Returns Projectiles Objects.*/
-	inline const std::vector<ProjectileObject*>& GetProjectiles() const {return this->zProjectiles;}
+	inline const std::vector<DynamicProjectileObject*>& GetProjectiles() const {return this->zProjectiles;}
 //////////////////////////////
 	/*! Returns an Actor. TYPE is a enum to identify which Actor to get.
 		ACTOR_TYPE_PLAYER,
@@ -94,7 +94,7 @@ private:
 	std::vector<FoodObject*> zFoods;
 	std::vector<WeaponObject*> zWeapons;
 	std::vector<ContainerObject*> zContainers;
-	std::vector<ProjectileObject*> zProjectiles;
+	std::vector<DynamicProjectileObject*> zProjectiles;
 	ObjectManager* zObjManager;
 
 };

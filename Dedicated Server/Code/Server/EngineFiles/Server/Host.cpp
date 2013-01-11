@@ -1,4 +1,5 @@
 #include "Host.h"
+#include "../../../../../Source/GameFiles/ClientServerMessages.h"
 
 // 30 updates per sec
 static const float UPDATE_DELAY = 0.0333f;
@@ -48,7 +49,7 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
 		
-		MaloW::Debug("Created Meat Object");
+		Messages::Debug("Created Meat Object");
 		counter++;
 	}
 	//Creates A New WeaponObject With an Id And Default Values 
@@ -59,7 +60,7 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
-		MaloW::Debug("Created Bow Object");
+		Messages::Debug("Created Bow Object");
 		counter++;
 	}
 
@@ -70,7 +71,7 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 		
-		MaloW::Debug("Created Axe Object");
+		Messages::Debug("Created Axe Object");
 		counter++;
 	}
 
@@ -81,16 +82,16 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticContainerActor(containerObj);
 		
-		MaloW::Debug("Created Canteen Object");
+		Messages::Debug("Created Canteen Object");
 		counter++;
 	}
 	
-	MaloW::Debug("Created " + MaloW::convertNrToString(counter) + " Objects");
+	Messages::Debug("Created " + MaloW::convertNrToString(counter) + " Objects");
 }
 
 void Host::Life()
 {
-	MaloW::Debug("Host Process Started");
+	Messages::Debug("Host Process Started");
 	this->zServerListener->Start();
 	
 	this->Init();
@@ -167,7 +168,7 @@ void Host::HandleNewConnections()
 		return;
 	}
 
-	MaloW::Debug("New Player Connected.");
+	Messages::Debug("New Player Connected.");
 
 	if((unsigned int)this->zClients.size() > zMaxClients)
 	{
@@ -181,7 +182,7 @@ void Host::HandleNewConnections()
 		return;
 	}
 
-	MaloW::Debug("New Player Accepted.");
+	Messages::Debug("New Player Accepted.");
 
 	std::string message = "";
 
@@ -406,7 +407,7 @@ void Host::SendDynamicActorUpdates()
 	std::string mess = "";
 
 	//Fetch Static Objects data
-	std::vector<ProjectileObject*> dyp = this->zActorHandler->GetProjectiles();
+	std::vector<DynamicProjectileObject*> dyp = this->zActorHandler->GetProjectiles();
 	for (auto it_Dynamic = dyp.begin(); it_Dynamic < dyp.end(); it_Dynamic++)
 	{
 		Vector3 pos = (*it_Dynamic)->GetPosition();
@@ -842,10 +843,10 @@ bool Host::CreateStaticObjectActor(const int type, ContainerObject** containerOb
 	return true;
 }
 
-bool Host::CreateDynamicObjectActor(const int type, ProjectileObject** projectileObj, const bool genID /*= false*/)
+bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID)
 {
 	//Get Default Values For a Meat Object
-	const ProjectileObject* projectile = this->zActorHandler->GetObjManager()->GetProjectileObject(type);
+	const DynamicProjectileObject* projectile = this->zActorHandler->GetObjManager()->GetProjectileObject(type);
 
 	if (!projectile)
 		return false;
@@ -861,7 +862,7 @@ bool Host::CreateDynamicObjectActor(const int type, ProjectileObject** projectil
 	//projectileObj->SetVelocity(projectile->GetVelocity());
 	//projectileObj->SetActorObjectName(projectile->GetActorObjectName());
 
-	*projectileObj = new ProjectileObject(projectile);
+	*projectileObj = new DynamicProjectileObject(projectile, false);
 
 	return true;
 }
@@ -973,8 +974,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemId)
 	//Create Dynamic Object with player direction
 	Vector3 direction = pActor->GetDirection();
 
-	ProjectileObject* projectileObj = NULL; /*new ProjectileObject(true);*/
-
+	DynamicProjectileObject* projectileObj = new DynamicProjectileObject(true);
 	int type = ITEM_TYPE_PROJECTILE_ARROW;
 	if (rWpn->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
 	{
@@ -1438,6 +1438,29 @@ float Host::Update()
 	this->zStartime = currentTime;
 
 	return this->zDeltaTime;
+}
+
+void Host::HandleConversion(DynamicProjectileObject* dynamicProjObj)
+{
+	//StaticProjectileObject* staticProjObj = new StaticProjectileObject(dynamicProjObj, false);
+
+	//std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT, dynamicProjObj->GetID());
+	//this->SendToAllClients(msg);
+
+	//Vector3 pos = staticProjObj->GetPosition();
+	//Vector3 scale = staticProjObj->GetScale();
+	//Vector4 rot = staticProjObj->GetRotation();
+
+	//msg =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, staticProjObj->GetID());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, staticProjObj->GetActorModel());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, staticProjObj->GetType());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, staticProjObj->GetActorObjectName());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, staticProjObj->GetWeight());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, staticProjObj->GetIconPath());
+	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, staticProjObj->GetDescription());
 }
 
 void Host::UpdateObjects()
