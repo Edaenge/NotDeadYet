@@ -8,27 +8,7 @@
 #include "GameFiles/Gui/CircularListGui.h"
 #include <string>
 
-struct Gui_Item_Data
-{
-	Gui_Item_Data()
-	{
-		this->zID = -1;
-		this->zName = "Unknown";
-		this->zFilePath = "Unknown";
-		this->zDescription = "Unknown";
-	}
-	Gui_Item_Data(const int id, const std::string& name, const std::string& filePath, const std::string& description)
-	{
-		this->zID = id;
-		this->zName = name;
-		this->zFilePath = filePath;
-		this->zDescription = description;
-	}
-	int zID;	
-	std::string zName;
-	std::string zFilePath;
-	std::string zDescription;
-};
+
 class GuiManager
 {
 public:
@@ -47,6 +27,7 @@ public:
 	void ToggleIngameMenu();
 	bool IsGuiOpen();
 	void Update(float deltaTime);
+	int CheckCollisionInv();
 private:
 	bool zLooting;
 	bool zDeathGuiOpen;
@@ -57,7 +38,7 @@ private:
 	float zLootingGuiShowTimer;
 	float zInventoryGuiShowTimer;
 
-	//InventoryGui* zInvGui;
+	InventoryGui* zInvGui;
 	//CircularListGui* zInvCircGui;
 	//CircularListGui* zLootingGui;
 	GraphicsEngine* zGraphicEngine;

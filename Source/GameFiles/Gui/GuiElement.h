@@ -6,6 +6,7 @@
 #pragma once
 
 #include "GraphicsEngine.h"
+#include "Graphics.h"
 #include <string>
 
 class GuiElement

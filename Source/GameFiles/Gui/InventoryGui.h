@@ -9,6 +9,28 @@
 #include "GameFiles/Gui/InventorySlotGui.h"
 #include <vector>
 
+struct Gui_Item_Data
+{
+	Gui_Item_Data()
+	{
+		this->zID = -1;
+		this->zName = "Unknown";
+		this->zFilePath = "Unknown";
+		this->zDescription = "Unknown";
+	}
+	Gui_Item_Data(const int id, const std::string& name, const std::string& filePath, const std::string& description)
+	{
+		this->zID = id;
+		this->zName = name;
+		this->zFilePath = filePath;
+		this->zDescription = description;
+	}
+	int zID;	
+	std::string zName;
+	std::string zFilePath;
+	std::string zDescription;
+};
+
 class InventoryGui : public GuiElement
 {
 public:
@@ -20,7 +42,7 @@ public:
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
 	int CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
-	bool AddItemToGui(std::string textureName, GraphicsEngine* ge);
+	bool AddItemToGui(Gui_Item_Data gid, GraphicsEngine* ge);
 	bool RemoveItemFromGui(const unsigned int position);
 
 	void FadeOut(float value);

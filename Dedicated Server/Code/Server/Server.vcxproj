@@ -98,9 +98,11 @@
     <ClInclude Include="EngineFiles\ServerEngine.h" />
     <ClInclude Include="EngineFiles\Server\Actor.h" />
     <ClInclude Include="EngineFiles\Server\ActorHandler.h" />
+    <ClInclude Include="EngineFiles\Server\AI.h" />
     <ClInclude Include="EngineFiles\Server\AnimalActor.h" />
     <ClInclude Include="EngineFiles\Server\BioActor.h" />
     <ClInclude Include="EngineFiles\Server\ContainerObject.h" />
+    <ClInclude Include="EngineFiles\Server\DeerActor.h" />
     <ClInclude Include="EngineFiles\Server\DynamicObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\DynamicProjectileObject.h" />
     <ClInclude Include="EngineFiles\Server\FoodObject.h" />
@@ -131,12 +133,12 @@
     <ClCompile Include="EngineFiles\ServerEngine.cpp" />
     <ClCompile Include="EngineFiles\Server\Actor.cpp" />
     <ClCompile Include="EngineFiles\Server\ActorHandler.cpp" />
+    <ClCompile Include="EngineFiles\Server\AI.cpp" />
     <ClCompile Include="EngineFiles\Server\AnimalActor.cpp" />
     <ClCompile Include="EngineFiles\Server\BioActor.cpp" />
     <ClCompile Include="EngineFiles\Server\ContainerObject.cpp" />
     <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp" />
-    <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp" />
-    <ClCompile Include="EngineFiles\Server\FoodObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />    <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp" />    <ClCompile Include="EngineFiles\Server\FoodObject.cpp" />
     <ClCompile Include="EngineFiles\Server\Host.cpp" />
     <ClCompile Include="EngineFiles\Server\ObjectManager.cpp" />
     <ClCompile Include="EngineFiles\Server\PlayerActor.cpp" />

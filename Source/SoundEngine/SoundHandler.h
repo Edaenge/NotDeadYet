@@ -4,36 +4,72 @@
 #pragma once
 #ifndef SOUNDHANDLER_H
 #define SOUNDHANDLER_H
+
 #include "fmod.hpp"
 #include "fmod_errors.h"
-#include "stdafx.h"
+#include "Vector.h"
+#include <fstream>
+#include <string>
+#include <list>
 
-#define SOUNDS_NONE				0
-#define MUSIC_NONE				0
+//struct APolygon
+//{
+//	int numVertices;
+//	int indicesOffset;
+//	float directOcclusion;
+//	float reverbOcclusion;
+//	FMOD_VECTOR normal;
+//};
+//
+//struct ObjectMesh
+//{
+//	int numVertices;
+//	FMOD_VECTOR *vertices;
+//	int numPolygons;
+//	APolygon* polygons;
+//	int numIndices;
+//	int *indices;
+//	FMOD::Geometry *geometry;
+//};
+
+struct SoundStruct
+{
+	FMOD::Sound*	sound;
+	char*			name;
+
+	SoundStruct(FMOD::Sound* sound, char* name) { this->sound = sound; this->name = name; };
+};
 
 
 class SoundHandler
 {
 private:
 	FMOD::System*		zSystem;
-	FMOD::Geometry*		zGeometry;
-	FMOD::Sound*		zSounds[16];	//This should probably be changed
-	FMOD::Sound*		zTrack1;		//Just an example for now
+	std::list<SoundStruct> zSoundList;
+	std::list<SoundStruct> zMusicList; 
 	FMOD::Channel*		zSoundChannel; 
 	FMOD::Channel*		zMusicChannel;
 	FMOD::ChannelGroup*	zSoundGroup;
 	FMOD::ChannelGroup*	zMusicGroup;
 	FMOD::ChannelGroup*	zMasterGroup;
-	FMOD::DSP*			zEcho;		//Echo, probably the most important applied effect
-	FMOD::DSP*			zLowpass;
-	FMOD::DSP*			zParameq; 
+	//FMOD::DSP*			zEcho;		//Echo, probably the most important applied effect
+	//FMOD::DSP*			zLowpass;
+	//FMOD::DSP*			zParameq;
+	
+	
+
+	FMOD::Geometry*		zLandGeometry;
+	FMOD::Geometry**	zObjectGeometry;
+
+	//ObjectMesh*			zLandscape; //The mesh to use for the landscape sound blocking.
+	//ObjectMesh*			zObjects;	//The meshes to use for blocking sounds, trees, rocks, etc.
 
 	FMOD_VECTOR			zSoundPos;
 	FMOD_VECTOR			zPlayerPos;
 	FMOD_VECTOR			zForwardVector;
 	FMOD_VECTOR			zUpVector;
 
-	int					zNrOfSounds;
+	int					zNrOfGeometryObjects;
 	unsigned int		zVersion;
 	bool				zIsPaused;
 	bool				zIsMuted;
@@ -43,20 +79,31 @@ public:
 	virtual		~SoundHandler();
 
 	int			Init();
-	void		PlaySound(int sound, D3DXVECTOR3 p_sPos); //The sound integer is to see which sound should be played.
+	
+	bool		LoadSoundIntoSystem(char* filename, bool loop) throw (...);
+	bool		LoadMusicIntoSystem(char* filename, bool loop) throw (...);
+	//These three have no priority.
+	//void		InitLandGeometry(/*Something that allows to get all vertices the land has, like a file name to be read*/); 
+	//void		InitObjectGeometry(/*Something that allows knowing what object it is and its vertices information, and maybe rotation and pos too*/);
+	//void		clearGeometry();
+	void		PlaySounds(char* filename, Vector3 p_sPos); //The sound integer is to see which sound should be played.
 	void		PauseAllAudio();
-	void		PlayMusic(int music); //The music integer is to see which music should be played.
+	void		PlayMusic(char* filename); //The music integer is to see which music should be played.
 	void		StopMusic();	//Music loops, so we must be able to stop it.
 
 	void		SetSoundVolume(float volume);
 	void		SetMusicVolume(float volume);
+	void		SetMasterVolume(float volume);
 	void		Mute();
 
 	//void		SetEffect(int effectNumber);//adds and removes effects, does not currently work.
 
+
 	void		updateSystem();
-	void		UpdateListenerPos(D3DXVECTOR3 p_pPos, D3DXVECTOR3 forward, D3DXVECTOR3 up); //There is more things you can do here.
+	void		UpdateListenerPos(Vector3 p_pPos, Vector3 forward, Vector3 up); //There is more things you can do here.
 
 	void		ERRCHECK(FMOD_RESULT result);
+
+
 };
 #endif

@@ -41,8 +41,8 @@ void Host::Init()
 {
 	int counter = 0;
 	//Creates A New FoodObject With an Id And Default Values 
-	FoodObject* foodObj = new FoodObject(true);
-	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, foodObj))
+	FoodObject* foodObj = NULL; /*new FoodObject(true);*/
+	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, &foodObj))
 	{
 		foodObj->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 		//Adds The Object To the Array
@@ -52,8 +52,8 @@ void Host::Init()
 		counter++;
 	}
 	//Creates A New WeaponObject With an Id And Default Values 
-	WeaponObject* weaponObj = new WeaponObject(true);
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, weaponObj))
+	WeaponObject* weaponObj = NULL;/*new WeaponObject(true);*/
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, &weaponObj))
 	{
 		weaponObj->SetPosition(Vector3(5.0f, 0.0f, -5.0f));
 		//Adds The Object To the Array
@@ -63,8 +63,8 @@ void Host::Init()
 		counter++;
 	}
 
-	weaponObj = new WeaponObject(true);
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, weaponObj))
+	weaponObj = NULL; /*new WeaponObject(true);*/
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, &weaponObj))
 	{
 		weaponObj->SetPosition(Vector3(-5.0f, 0.0f, -5.0f));
 		//Adds The Object To the Array
@@ -74,8 +74,8 @@ void Host::Init()
 		counter++;
 	}
 
-	ContainerObject* containerObj = new ContainerObject(true);
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, containerObj))
+	ContainerObject* containerObj = NULL; /*new ContainerObject(true);*/
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, &containerObj))
 	{
 		containerObj->SetPosition(Vector3(-5.0f, 0.0f, 5.0f));
 		//Adds The Object To the Array
@@ -697,8 +697,8 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 
 bool Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
 {
-	FoodObject* foodObj = new FoodObject(false);
-	if (!this->CreateStaticObjectActor(food_Item->GetItemType(), foodObj))
+	FoodObject* foodObj = NULL;/* = new FoodObject(false);*/
+	if (!this->CreateStaticObjectActor(food_Item->GetItemType(), &foodObj))
 	{
 		MaloW::Debug("Failed to Create StaticObject Food");
 		SAFE_DELETE(foodObj);
@@ -723,9 +723,9 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
 
 bool Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 {
-	WeaponObject* weaponObj = new WeaponObject(false);
+	WeaponObject* weaponObj = NULL;/* = new WeaponObject(false);*/
 
-	if (!this->CreateStaticObjectActor(weapon_Item->GetItemType(), weaponObj))
+	if (!this->CreateStaticObjectActor(weapon_Item->GetItemType(), &weaponObj))
 	{
 		MaloW::Debug("Failed to Create StaticObject Weapon");
 		SAFE_DELETE(weaponObj);
@@ -748,9 +748,9 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 
 bool Host::CreateObjectFromItem(PlayerActor* pActor, Container* container_Item)
 {
-	ContainerObject* containerObj = new ContainerObject(false);
+	ContainerObject* containerObj = NULL; /*= new ContainerObject(false);*/
 
-	if (!this->CreateStaticObjectActor(container_Item->GetItemType(), containerObj))
+	if (!this->CreateStaticObjectActor(container_Item->GetItemType(), &containerObj))
 	{
 		MaloW::Debug("Failed to Create StaticObject Container");
 		SAFE_DELETE(containerObj);
@@ -771,7 +771,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Container* container_Item)
 	return true;
 }
 
-bool Host::CreateStaticObjectActor(const int type, WeaponObject* weaponObj)
+bool Host::CreateStaticObjectActor(const int type, WeaponObject** weaponObj, const bool genID /*= false*/)
 {
 	//Get Default Values For a Weapon Object
 	const WeaponObject* weapon = this->zActorHandler->GetObjManager()->GetWeaponObject(type);
@@ -780,20 +780,22 @@ bool Host::CreateStaticObjectActor(const int type, WeaponObject* weaponObj)
 		return false;
 
 	//Creates A New WeaponObject With an Id And Default Values 
-	weaponObj->SetType(type);
-	weaponObj->SetRange(weapon->GetRange());
-	weaponObj->SetWeight(weapon->GetWeight());
-	weaponObj->SetDamage(weapon->GetDamage());
-	weaponObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	weaponObj->SetIconPath(weapon->GetIconPath());
-	weaponObj->SetActorModel(weapon->GetActorModel());
-	weaponObj->SetDescription(weapon->GetDescription());
-	weaponObj->SetActorObjectName(weapon->GetActorObjectName());
+	//weaponObj->SetType(type);
+	//weaponObj->SetRange(weapon->GetRange());
+	//weaponObj->SetWeight(weapon->GetWeight());
+	//weaponObj->SetDamage(weapon->GetDamage());
+	//weaponObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	//weaponObj->SetIconPath(weapon->GetIconPath());
+	//weaponObj->SetActorModel(weapon->GetActorModel());
+	//weaponObj->SetDescription(weapon->GetDescription());
+	//weaponObj->SetActorObjectName(weapon->GetActorObjectName());
+
+	*weaponObj = new WeaponObject(weapon);
 
 	return true;
 }
 
-bool Host::CreateStaticObjectActor(const int type, FoodObject* foodObj)
+bool Host::CreateStaticObjectActor(const int type, FoodObject** foodObj, const bool genID /*= false*/)
 {
 	//Get Default Values For a Meat Object
 	const FoodObject* food = this->zActorHandler->GetObjManager()->GetFoodObject(type);
@@ -802,19 +804,21 @@ bool Host::CreateStaticObjectActor(const int type, FoodObject* foodObj)
 		return false;
 
 	//Creates A New WeaponObject With an Id And Default Values 
-	foodObj->SetType(type);
-	foodObj->SetWeight(food->GetWeight());
-	foodObj->SetHunger(food->GetHunger());
-	foodObj->SetIconPath(food->GetIconPath());
-	foodObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	foodObj->SetActorModel(food->GetActorModel());
-	foodObj->SetDescription(food->GetDescription());
-	foodObj->SetActorObjectName(food->GetActorObjectName());
+	//foodObj->SetType(type);
+	//foodObj->SetWeight(food->GetWeight());
+	//foodObj->SetHunger(food->GetHunger());
+	//foodObj->SetIconPath(food->GetIconPath());
+	//foodObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	//foodObj->SetActorModel(food->GetActorModel());
+	//foodObj->SetDescription(food->GetDescription());
+	//foodObj->SetActorObjectName(food->GetActorObjectName());
+
+	*foodObj = new FoodObject(food);
 
 	return true;
 }
 
-bool Host::CreateStaticObjectActor(const int type, ContainerObject* containerObj)
+bool Host::CreateStaticObjectActor(const int type, ContainerObject** containerObj, const bool genID /*= false*/)
 {
 	//Get Default Values For a container Object
 	const ContainerObject* container = this->zActorHandler->GetObjManager()->GetContainerObject(type);
@@ -823,21 +827,22 @@ bool Host::CreateStaticObjectActor(const int type, ContainerObject* containerObj
 		return false;
 
 	//Creates A New WeaponObject With an Id And Default Values 
-	containerObj->SetType(type);
-	containerObj->SetWeight(container->GetWeight());
-	containerObj->SetMaxUses(container->GetMaxUses());
-	containerObj->SetIconPath(container->GetIconPath());
-	containerObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	containerObj->SetActorModel(container->GetActorModel());
-	containerObj->SetDescription(container->GetDescription());
-	containerObj->SetCurrentUses(container->GetCurrentUses());
-	containerObj->SetActorObjectName(container->GetActorObjectName());
+	//containerObj->SetType(type);
+	//containerObj->SetWeight(container->GetWeight());
+	//containerObj->SetMaxUses(container->GetMaxUses());
+	//containerObj->SetIconPath(container->GetIconPath());
+	//containerObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	//containerObj->SetActorModel(container->GetActorModel());
+	//containerObj->SetDescription(container->GetDescription());
+	//containerObj->SetCurrentUses(container->GetCurrentUses());
+	//containerObj->SetActorObjectName(container->GetActorObjectName());
+
+	*containerObj = new ContainerObject(container);
 
 	return true;
 }
 
-bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject* projectileObj)
-{
+bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject* projectileObj){
 	//Get Default Values For a Meat Object
 	const DynamicProjectileObject* projectile = this->zActorHandler->GetObjManager()->GetProjectileObject(type);
 
@@ -845,15 +850,17 @@ bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject* pro
 		return false;
 
 	//Creates A New ProjectileObject With an Id And Default Values 
-	projectileObj->SetType(type);
-	projectileObj->SetWeight(projectile->GetWeight());
-	projectileObj->SetDamage(projectile->GetDamage());
-	projectileObj->SetIconPath(projectile->GetIconPath());
-	projectileObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	projectileObj->SetActorModel(projectile->GetActorModel());
-	projectileObj->SetDescription(projectile->GetDescription());
-	projectileObj->SetVelocity(projectile->GetVelocity());
-	projectileObj->SetActorObjectName(projectile->GetActorObjectName());
+	//projectileObj->SetType(type);
+	//projectileObj->SetWeight(projectile->GetWeight());
+	//projectileObj->SetDamage(projectile->GetDamage());
+	//projectileObj->SetIconPath(projectile->GetIconPath());
+	//projectileObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	//projectileObj->SetActorModel(projectile->GetActorModel());
+	//projectileObj->SetDescription(projectile->GetDescription());
+	//projectileObj->SetVelocity(projectile->GetVelocity());
+	//projectileObj->SetActorObjectName(projectile->GetActorObjectName());
+
+	*projectileObj = new ProjectileObject(projectile);
 
 	return true;
 }
@@ -966,15 +973,15 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemId)
 	Vector3 direction = pActor->GetDirection();
 
 	DynamicProjectileObject* projectileObj = new DynamicProjectileObject(true);
-
 	int type = ITEM_TYPE_PROJECTILE_ARROW;
 	if (rWpn->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
 	{
 		type = ITEM_TYPE_PROJECTILE_ARROW;
 	}
-	if(!this->CreateDynamicObjectActor(type, projectileObj))
+	if(!this->CreateDynamicObjectActor(type, &projectileObj))
 	{
 		MaloW::Debug("Failed to Create Projectile");
+		SAFE_DELETE(projectileObj);
 		return;
 	}
 	Vector3 position = pActor->GetPosition();
