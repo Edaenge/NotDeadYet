@@ -91,7 +91,8 @@ string ClientChannel::receiveData()
 		}
 		while(goAgain && this->stayAlive);
 	}
-	Messages::Debug("CC: Received from Client " + msg);
+	if (Messages::FileWrite())
+		Messages::Debug("CC: Received from Client " + msg);
 	return msg;
 }
 
@@ -107,12 +108,14 @@ void ClientChannel::sendData(string msg)
 	{
 		MaloW::Debug("CC: Error sending data. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 	}
-	Messages::Debug("Sent to Client " + msg);
+	if (Messages::FileWrite())
+		Messages::Debug("Sent to Client " + msg);
 }
 
 void ClientChannel::Life()
 {
-	Messages::Debug("ClientChannel Process Started");
+	if (Messages::FileWrite())
+		Messages::Debug("ClientChannel Process Started");
 	while(this->stayAlive)
 	{
 		string msg = this->receiveData();

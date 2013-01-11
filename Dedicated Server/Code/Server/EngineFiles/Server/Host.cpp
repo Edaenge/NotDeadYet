@@ -7,6 +7,7 @@ static const float UPDATE_DELAY = 0.0333f;
 Host::Host()
 {
 	MaloW::ClearDebug();
+	Messages::ClearDebug();
 
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
@@ -49,7 +50,8 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
 		
-		Messages::Debug("Created Meat Object");
+		if (Messages::FileWrite())
+			Messages::Debug("Created Meat Object");
 		counter++;
 	}
 	//Creates A New WeaponObject With an Id And Default Values 
@@ -60,7 +62,8 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
-		Messages::Debug("Created Bow Object");
+		if (Messages::FileWrite())
+			Messages::Debug("Created Bow Object");
 		counter++;
 	}
 
@@ -71,7 +74,8 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 		
-		Messages::Debug("Created Axe Object");
+		if (Messages::FileWrite())
+			Messagess::Debug("Created Axe Object");
 		counter++;
 	}
 
@@ -82,16 +86,19 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticContainerActor(containerObj);
 		
-		Messages::Debug("Created Canteen Object");
+		if (Messages::FileWrite())
+			Messages::Debug("Created Canteen Object");
 		counter++;
 	}
 	
-	Messages::Debug("Created " + MaloW::convertNrToString(counter) + " Objects");
+	if (Messages::FileWrite())
+		Messages::Debug("Created " + MaloW::convertNrToString(counter) + " Objects");
 }
 
 void Host::Life()
 {
-	Messages::Debug("Host Process Started");
+	if (Messages::FileWrite())
+		Messages::Debug("Host Process Started");
 	this->zServerListener->Start();
 	
 	this->Init();
@@ -168,7 +175,8 @@ void Host::HandleNewConnections()
 		return;
 	}
 
-	Messages::Debug("New Player Connected.");
+	if (Messages::FileWrite())
+		Messages::Debug("New Player Connected.");
 
 	if((unsigned int)this->zClients.size() > zMaxClients)
 	{
@@ -182,7 +190,8 @@ void Host::HandleNewConnections()
 		return;
 	}
 
-	Messages::Debug("New Player Accepted.");
+	if (Messages::FileWrite())
+		Messages::Debug("New Player Accepted.");
 
 	std::string message = "";
 

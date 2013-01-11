@@ -14,6 +14,8 @@ static const float MAX_DISTANCE_TO_OBJECT = 10.0f;
 
 Client::Client()
 {
+	Messages::ClearDebug();
+
 	this->zID = 0;
 	this->zIP = "";
 	this->zPort = 0;
@@ -829,8 +831,11 @@ void Client::HandleRemoveInventoryItem(const int id)
 {
 	int index = this->zPlayerInventory->Search(id);
 	if(this->zPlayerInventory->RemoveItem(index))
-		Messages::Debug("Item Removed on Client");
-
+	{
+		if (Messages::FileWrite())
+			Messages::Debug("Item Removed on Client");
+		
+	}
 	/*for (unsigned int i = 0; i < images.size(); i++)
 	{
 		if (images[i].id == id)

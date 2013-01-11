@@ -5,7 +5,7 @@
 #include "../MaloWLib/MaloW.h"
 
 static bool eraseFile = false;
-
+static bool writeToFile = false;
 namespace Messages
 {
 	inline void Debug(std::string msg)
@@ -64,5 +64,9 @@ namespace Messages
 		writeFile.close();
 		eraseFile = false;
 		//}
+	}
+	inline bool FileWrite()
+	{
+		return writeToFile;
 	}
 }

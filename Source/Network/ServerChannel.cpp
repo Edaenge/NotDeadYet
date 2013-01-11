@@ -139,13 +139,16 @@ string ServerChannel::receiveData()
 		}
 		while(goAgain && this->stayAlive);
 	}
-	Messages::Debug("SC: Received from Server " + msg);
+	if (Messages::FileWrite())
+		Messages::Debug("SC: Received from Server " + msg);
 	return msg;
 }
 
 void ServerChannel::sendData(string msg)
 {
-	Messages::Debug("Sc: Sending to Server " + msg);
+	if (Messages::FileWrite())
+		Messages::Debug("Sc: Sending to Server " + msg);
+
 	msg += 10;
 	char bufs[1024] = {0};
 	for(unsigned int i = 0; i < msg.length(); i++)
@@ -161,7 +164,8 @@ void ServerChannel::sendData(string msg)
 
 void ServerChannel::Life()
 {
-	MaloW::Debug("ServerChannel Process Started");
+	if (Messages::FileWrite())
+		Messages::Debug("ServerChannel Process Started");
 	while(this->stayAlive)
 	{
 		string msg = this->receiveData();
