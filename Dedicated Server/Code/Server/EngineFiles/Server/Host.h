@@ -138,11 +138,11 @@ private:
 	bool CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj);
 	bool CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerObj);
 	/*! Creates a StaticObject with default values.*/
-	bool CreateStaticObjectActor(const int type, WeaponObject* weaponObj);
-	bool CreateStaticObjectActor(const int type, FoodObject* foodObj);
-	bool CreateStaticObjectActor(const int type, ContainerObject* containerObj);
+	bool CreateStaticObjectActor(const int type, WeaponObject** weaponObj, const bool genID = false);
+	bool CreateStaticObjectActor(const int type, FoodObject** foodObj, const bool genID = false);
+	bool CreateStaticObjectActor(const int type, ContainerObject** containerObj, const bool genID = false);
 	/*! Creates a DynamicObject with default values.*/
-	bool CreateDynamicObjectActor(const int type, ProjectileObject* projectileObj);
+	bool CreateDynamicObjectActor(const int type, ProjectileObject** projectileObj, const bool genID = false);
 	void SendErrorMessage(const int id, const std::string error_Message);
 	bool CheckCollision(Vector3 position);
 private:
