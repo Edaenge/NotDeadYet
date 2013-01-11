@@ -14,10 +14,12 @@ Container::~Container()
 
 }
 
-void Container::Use()
+bool Container::Use()
 {
 	if (this->zUsesRemaining > 0)
 	{
 		this->zUsesRemaining -= 1;
+		return true;
 	}
+	return false;
 }

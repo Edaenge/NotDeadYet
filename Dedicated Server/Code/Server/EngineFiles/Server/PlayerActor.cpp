@@ -24,8 +24,16 @@ void PlayerActor::InitValues()
 	this->zFrameTime = 0.0f;
 	this->zLatency = 0.0f;
 	this->zHunger = 100.0f;
+	this->zHungerMax = 100.0f;
 	this->zHydration = 100.0f;
+	this->zHydrationMax = 100.0f;
 	this->zInventory = new Inventory();
+	this->zEquipment = new Equipment();
+
+	this->zHealthChanged = false;
+	this->zStaminaChanged = false;
+	this->zHunger = false;
+	this->zHydration = false;
 }
 
 PlayerActor::~PlayerActor()
@@ -40,7 +48,10 @@ void PlayerActor::Update(float deltaTime)
 	if(this->zKeyStates.GetKeyState(KEY_SPRINT))
 	{
 		if(Sprint(dt))
+		{
 			this->zState = STATE_RUNNING;
+			this->zStaminaChanged = true;
+		}
 		else
 			this->zState = STATE_WALKING;
 	}
@@ -94,6 +105,8 @@ void PlayerActor::Update(float deltaTime)
 
 		if(this->zStamina > this->zStaminaMax)
 			this->zStamina = this->zStaminaMax;
+
+		this->zStaminaChanged = true;
 	}
 }
 
@@ -178,14 +191,56 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 	return false;
 }
 
-Item* PlayerActor::DropObject( const int ID )
+bool PlayerActor::DropObject( const int ID )
 {
 	Item* item = this->zInventory->SearchAndGetItem(ID);
 
 	if(!item)
-		return NULL;
-
+	{
+		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString(ID));
+		return false;
+	}
 	this->zInventory->RemoveItem(item);
+	MaloW::Debug("Removed successes: " + MaloW::convertNrToString(ID));
 
-	return item;
+	return true;
+}
+
+void PlayerActor::Drink(float hydration)
+{
+	this->zHydration += hydration;
+	if (this->zHydration >= this->zHydrationMax)
+		this->zHydration = this->zHydrationMax;
+
+}
+
+void PlayerActor::EatFood(float hunger)
+{
+	this->zHunger += hunger;
+	if (this->zHunger >= this->zHungerMax)
+		this->zHunger = this->zHungerMax;
+}
+
+void PlayerActor::AddChangedHData( string& mess, NetworkMessageConverter* nmc )
+{
+	if(zHealthChanged)
+	{
+		mess += nmc->Convert(MESSAGE_TYPE_HEALTH, this->zHealth);
+		this->zHealthChanged = false;
+	}
+	if(zStaminaChanged)
+	{
+		mess += nmc->Convert(MESSAGE_TYPE_STAMINA, this->zStamina);
+		this->zStaminaChanged = false;
+	}
+	if(zHungerChanged)
+	{
+		mess += nmc->Convert(MESSAGE_TYPE_HUNGER, this->zHunger);
+		this->zHungerChanged = false;
+	}
+	if(zHydrationChanged)
+	{
+		mess += nmc->Convert(MESSAGE_TYPE_HYDRATION, this->zHydrationChanged);
+		this->zHydrationChanged = false;
+	}
 }

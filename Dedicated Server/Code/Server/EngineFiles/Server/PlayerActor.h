@@ -11,7 +11,8 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "../../../../../Source/GameFiles/KeyUtil/KeyValues.h"
 #include "../../../../../Source/GameFiles/KeyUtil/KeyStates.h"
 #include "../../../../../Source/GameFiles/Items/Inventory.h"
-
+#include "../../../../../Source/GameFiles/Items/Equipment.h"
+#include "../../../../../Source/Network/NetworkMessageConverter.h"
 
 /*This class is used to save player information such as position and states.
   This information is sent to clients.
@@ -37,8 +38,15 @@ public:
 	bool PickUpObject(StaticObjectActor* object);
 	bool PickUpObject(DynamicObjectActor* object);
 	/*! */
-	Item* DropObject(const int ID);
+	bool DropObject(const int ID);
+	/*! Adds a message string with health,stamina,hunger, hydration to mess.
+	    This function checks if the data has changed since last update.
+		If it has changed, we need to send it to the client.
+		The parameter string is a network message string.
+	*/
+	void AddChangedHData(string& mess, NetworkMessageConverter* nmc);
 
+	Item* GetItem(const int ID){return this->zInventory->SearchAndGetItem(ID);}
 	float GetLatency() const {return this->zLatency;}
 	inline float GetFrameTime() const {return this->zFrameTime;}
 	/*! Gets the current key state. This function is used
@@ -59,7 +67,11 @@ public:
 	inline void SetLatency(const float latency){this->zLatency = latency;}
 	/*! Sets the objm. This class is not responsible for deallocation.*/
 	void SetObjManager(ObjectManager* objm) {this->zObjManager = objm;}
-	
+	Equipment* GetEquipment() {return this->zEquipment;}
+	Inventory* GetInventory() {return this->zInventory;}
+
+	void EatFood(float hunger);
+	void Drink(float hydration);
 private:
 	void InitValues();
 
@@ -68,11 +80,17 @@ private:
 	float	zFrameTime;
 
 	float	zHunger;
+	float	zHungerMax;
 	float	zHydration;
+	float	zHydrationMax;
 
+	bool zHydrationChanged;
+	bool zHungerChanged;
+	
 	KeyStates zKeyStates;
 
 	Inventory* zInventory;
+	Equipment* zEquipment;
 
 	ObjectManager* zObjManager;
 };

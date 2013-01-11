@@ -15,6 +15,7 @@ void Item::InitValues(const int id, const unsigned int itemType, const unsigned 
 					  const std::string& name, const std::string& description)
 {
 	this->zID = id;
+	this->zStacks = 1;
 	this->zWeight = weight;
 	this->zItemName = name;
 	this->zItemType = itemType;

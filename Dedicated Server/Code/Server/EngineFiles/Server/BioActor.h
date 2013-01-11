@@ -58,6 +58,9 @@ protected:
 	float	zStaminaMax;
 	float	zStaminaCof;
 
+	bool	zStaminaChanged;
+	bool	zHealthChanged;
+
 	bool	zAlive;
 
 	Vector3 zDir;

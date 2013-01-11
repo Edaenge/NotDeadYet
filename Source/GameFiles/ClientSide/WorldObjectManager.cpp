@@ -235,7 +235,7 @@ int WorldObjectManager::SearchForStaticObject(const unsigned int id)
 
 int WorldObjectManager::SearchForDynamicObject(const unsigned int id)
 {
-	for (unsigned int i = 0; i < this->zStaticObjects.size(); i++)
+	for (unsigned int i = 0; i < this->zDynamicObjects.size(); i++)
 	{
 		if (this->zDynamicObjects[i]->GetID() == id)
 		{

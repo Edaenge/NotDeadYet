@@ -11,7 +11,7 @@ class InventorySlotGui : public GuiElement
 {
 public:
 	InventorySlotGui();
-	InventorySlotGui(float x, float y, float width, float height, std::string textureName);
+	InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID);
 	virtual ~InventorySlotGui();
 
 	virtual bool AddToRenderer(GraphicsEngine* ge);
@@ -22,6 +22,9 @@ public:
 	void FadeOut(float value);
 	void ShowGui();
 	void HideGui();
+
+	int GetID(){ return this->zID; }
 private:
 	iImage* zSlotImage;
+	int zID;
 };

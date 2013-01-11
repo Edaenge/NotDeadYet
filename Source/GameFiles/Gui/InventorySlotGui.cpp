@@ -5,10 +5,11 @@ InventorySlotGui::InventorySlotGui()
 	this->zSlotImage = NULL;
 }
 
-InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, std::string textureName)
+InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID)
 	: GuiElement(x, y, width, height, textureName)
 {
 	this->zSlotImage = NULL;
+	this->zID = ID;
 }
 
 InventorySlotGui::~InventorySlotGui()
@@ -24,7 +25,8 @@ bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)
 {
 	if (ge)
 	{
-		this->zGuiImage = ge->CreateImage(Vector2(this->zX , this->zY), this->GetDimension(), this->zTextureName.c_str());
+		GuiElement::AddToRenderer(ge);
+		//this->zGuiImage = ge->CreateImage(Vector2(this->zX , this->zY), this->GetDimension(), this->zTextureName.c_str());
 		this->ShowGui();
 		return true;
 	}

@@ -147,10 +147,7 @@
     <ClInclude Include="..\..\..\External\NDYGFX\Include\Vector.h">
       <Filter>EngineFiles</Filter>
     </ClInclude>
-    <ClInclude Include="EngineFiles\Server\AI.h">
-      <Filter>EngineFiles\Server</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineFiles\Server\DeerActor.h">
+    <ClInclude Include="EngineFiles\Server\ProjectileObject.h">
       <Filter>EngineFiles\Server</Filter>
     </ClInclude>
   </ItemGroup>
@@ -239,10 +236,10 @@
     <ClCompile Include="..\..\..\Source\MaloWLib\Process.cpp">
       <Filter>MaloWLib</Filter>
     </ClCompile>
-    <ClCompile Include="EngineFiles\Server\AI.cpp">
+    <ClCompile Include="EngineFiles\Server\ProjectileObject.cpp">
       <Filter>EngineFiles\Server</Filter>
     </ClCompile>
-    <ClCompile Include="EngineFiles\Server\DeerActor.cpp">
+    <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp">
       <Filter>EngineFiles\Server</Filter>
     </ClCompile>
   </ItemGroup>

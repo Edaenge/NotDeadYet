@@ -22,7 +22,7 @@ void RangedWeapon::UseWeapon(float& range, float& damage)
 	damage = this->zDamage;
 }
 
-void RangedWeapon::Use()
+bool RangedWeapon::Use()
 {
-
+	return true;
 }

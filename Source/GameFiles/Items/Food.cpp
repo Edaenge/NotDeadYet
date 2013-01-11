@@ -12,7 +12,12 @@ Food::~Food()
 
 }
 
-void Food::Use()
+bool Food::Use()
 {
-
+	if (this->zStacks > 0)
+	{
+		this->zStacks--;
+		return true;
+	}
+	return false;
 }

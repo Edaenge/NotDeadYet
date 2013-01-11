@@ -23,7 +23,8 @@ void MeleeWeapon::UseWeapon(float& range, float& damage)
 	damage = this->zDamage;
 }
 
-void MeleeWeapon::Use()
+bool MeleeWeapon::Use()
 {
 
+	return true;
 }

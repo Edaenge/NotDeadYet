@@ -17,7 +17,7 @@ static const enum ACTOR_TYPE
 	ACTOR_TYPE_STATIC_OBJECT_FOOD,
 	ACTOR_TYPE_STATIC_OBJECT_WEAPON,
 	ACTOR_TYPE_STATIC_OBJECT_CONTAINER,
-	ACTOR_TYPE_DYNAMIC_OBJECT
+	ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE
 };
 
 class ActorHandler
@@ -33,7 +33,7 @@ public:
 ///////////////////////////////
 
 	/*! Updates the players.*/
-	void UpdatePl(float deltaTime);
+	void UpdateObjects(float deltaTime);
 	bool AddNewPlayer(PlayerActor* new_player);
 	/*! Removes the Player Object.*/
 	bool RemovePlayerActor(const int ID);
@@ -57,6 +57,8 @@ public:
 	bool AddNewStaticFoodActor(FoodObject* new_Food);
 	bool AddNewStaticWeaponActor(WeaponObject* new_Weapon);
 	bool AddNewStaticContainerActor(ContainerObject* new_Container);
+
+	bool AddNewDynamicProjectileActor(ProjectileObject* new_Projectile);
 	/*! Removes the Static Object.*/
 	bool RemoveStaticFoodActor(const int ID);
 	bool RemoveStaticWeaponActor(const int ID);
@@ -68,15 +70,16 @@ public:
 	/*! Returns Weapon Objects.*/
 	inline const std::vector<WeaponObject*>& GetWeapons() const {return this->zWeapons;}
 	/*! Returns Container Objects.*/
-	inline const std::vector<ContainerObject*>& GetContainers() const {return this->zContainer;}
-
+	inline const std::vector<ContainerObject*>& GetContainers() const {return this->zContainers;}
+	/*! Returns Projectiles Objects.*/
+	inline const std::vector<ProjectileObject*>& GetProjectiles() const {return this->zProjectiles;}
 //////////////////////////////
 	/*! Returns an Actor. TYPE is a enum to identify which Actor to get.
 		ACTOR_TYPE_PLAYER,
 		ACTOR_TYPE_ANIMAL,
 		ACTOR_TYPE_STATIC_OBJECT_FOOD,
 		ACTOR_TYPE_STATIC_OBJECT_WEAPON,
-		ACTOR_TYPE_DYNAMIC_OBJECT
+		ACTOR_TYPE_DYNAMIC_PROJECTILE
 	*/
 	Actor* GetActor(const int ID, const int TYPE) const;
 	ObjectManager* GetObjManager() const;
@@ -90,8 +93,8 @@ private:
 	std::vector<AnimalActor*> zAnimals;
 	std::vector<FoodObject*> zFoods;
 	std::vector<WeaponObject*> zWeapons;
-	std::vector<ContainerObject*> zContainer;
-
+	std::vector<ContainerObject*> zContainers;
+	std::vector<ProjectileObject*> zProjectiles;
 	ObjectManager* zObjManager;
 
 };

@@ -16,12 +16,13 @@ Client::Client()
 	this->zID = 0;
 	this->zIP = "";
 	this->zPort = 0;
+	this->zIsHuman = true;
 	this->zRunning = true;
 	this->zCreated = false;
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/scale.obj";
+	this->zMeshID = "Media/Bow_v01.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -172,7 +173,7 @@ void Client::Life()
 				MaloW::Debug("Timeout From Server");
 				//Print a Timeout Message to Client
 			}
-			Sleep(5);
+			Sleep(1);
 		}
 	}
 	this->zRunning = false;
@@ -313,7 +314,6 @@ void Client::HandleKeyboardInput()
 
 	zShowCursor = this->zGuiManager->IsGuiOpen();
 
-	
 	this->CheckMovementKeys();
 
 	//Used For Testing ATM
@@ -333,64 +333,108 @@ void Client::HandleKeyboardInput()
 	{
 		this->zKeyInfo.SetKeyState(KEY_JUMP, false);
 	}
-	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
+	//Used For Testing
+	if (this->zEng->GetKeyListener()->IsPressed('Q'))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
-			std::vector<Gui_Item_Data> collisionObjects = this->RayVsWorld();
-			if (collisionObjects.size() > 0)
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_RANGED_BOW);
+
+			if (item)
 			{
-				SendPickupItemMessage(collisionObjects[0].zID);
-			}
-			this->zGuiManager->ShowLootingGui(collisionObjects);
-			this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());				this->zServerChannel->sendData(msg);				SendPickupItemMessage(collisionObjects[0].zID);			}
 		}
 	}
 	else
 	{
-		if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		if (this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
-			this->zGuiManager->HideLootingGui();
-			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
+			this->zKeyInfo.SetKeyState(KEY_TEST, false);
 		}
-		
-	}
-	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
-		{
-			this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
-			this->zGuiManager->ToggleInventoryGui();
-		}
-	}
-	else
-	{
-		this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
 	}
 
-	if (this->zEng->GetKeyListener()->IsClicked(2))
+	if (this->zIsHuman)
 	{
-		this->zGuiManager->ShowCircularItemGui();
-	}
-	else
-	{
-		this->zGuiManager->HideCircularItemGui();
-	}
-
-	if (this->zEng->GetKeyListener()->IsClicked(1))
-	{
-		PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
-		MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(player->GetEquipmentPtr()->GetWeapon());
-		if (!mWpn)
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
 		{
-			RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(player->GetEquipmentPtr()->GetWeapon());
-			if (rWpn)
+			if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
 			{
+				std::vector<Gui_Item_Data> collisionObjects = this->RayVsWorld();
+				if (collisionObjects.size() > 0)
+				{
+					SendPickupItemMessage(collisionObjects[0].zID);
+				}
+				this->zGuiManager->ShowLootingGui(collisionObjects);
+				this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
 			}
 		}
 		else
 		{
+			if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
+			{
+				this->zGuiManager->HideLootingGui();
+				this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
+			}
 
+		}
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
+		{
+			if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
+			{
+				this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
+				this->zGuiManager->ToggleInventoryGui();
+			}
+		}
+		else
+		{
+			if (this->zKeyInfo.GetKeyState(KEY_INVENTORY))
+				this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
+		}
+
+		if (this->zEng->GetKeyListener()->IsClicked(2))
+		{
+			if (!this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+			{
+				this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, true);
+				this->zGuiManager->ShowCircularItemGui();
+			}
+		}
+		else
+		{
+			if (this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+			{
+				this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, false);
+				this->zGuiManager->HideCircularItemGui();
+			}
+		}
+
+		if (this->zEng->GetKeyListener()->IsClicked(1))
+		{
+			if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			{
+				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+				PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
+
+				Equipment* eq = player->GetEquipmentPtr();
+
+				Weapon* weapon = eq->GetWeapon();
+
+				if (!weapon)
+				{
+					this->DisplayMessageToClient("No Weapon is Equipped");
+				}
+				else
+				{
+					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, weapon->GetID());
+					this->zServerChannel->sendData(msg);
+				}
+			}
+		}
+		else
+		{
+			if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 		}
 	}
 
@@ -494,6 +538,11 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		{
 			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_PLAYER, msgArray[0]);
 			this->RemovePlayerObject(id);
+		}
+		else if(strcmp(key, M_EQUIP_ITEM.c_str()) == 0)
+		{
+			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
+			this->HandleEquipItem(id);
 		}
 		else if(strcmp(key, M_ADD_INVENTORY_ITEM.c_str()) == 0)
 		{
@@ -646,11 +695,11 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	}
 	if (this->zPlayerInventory->AddItem(item))
 	{
-		Gui_Item_Data gid = Gui_Item_Data(id, itemName, itemDescription, itemIconFilePath);
-		//this->zGuiManager->AddInventoryItemToGui(gid);
+		Gui_Item_Data gid = Gui_Item_Data(id, itemName, itemIconFilePath, itemDescription);
+		this->zGuiManager->AddInventoryItemToGui(gid);
 
 		MaloW::Debug("Added Image ID: " + MaloW::convertNrToString(id));
-		TempImage temp;
+		/*TempImage temp;
 		int pos = images.size();
 		float width = this->zEng->GetEngineParameters()->windowWidth * 0.1428f;
 		float height = this->zEng->GetEngineParameters()->windowHeight * 0.1428f;
@@ -658,7 +707,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		temp.image = this->zEng->CreateImage(Vector2((pos  - y)* width, y * height + 50), Vector2(width, width), itemIconFilePath.c_str());
 		temp.id = id;
 
-		this->images.push_back(temp);
+		this->images.push_back(temp);*/
 	}
 	else
 	{
@@ -672,42 +721,104 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 
 void Client::HandleUseItem(const int id)
 {
-	int index = this->zPlayerInventory->Search(id);
-
-	Item* item = this->zPlayerInventory->GetItem(index);
+	Item* item = this->zPlayerInventory->SearchAndGetItem(id);
 
 	if(!item)
 		return;
 	
 	if(item->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN)
 	{
-		item->Use();
+		Container* container = dynamic_cast<Container*>(item);
+
+		if (!container)
+		{
+			MaloW::Debug("dynamic cast Failed in Client::UseItem (Container)");
+			return;
+		}
+		container->Use();
+
+		return;
 	}
-	else if(item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW || item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
+	if (item->GetItemType() == ITEM_TYPE_FOOD_DEER_MEAT || item->GetItemType() == ITEM_TYPE_FOOD_WOLF_MEAT)
 	{
-		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
+		Food* food = dynamic_cast<Food*>(item);
 
-		Equipment* eq = player->GetEquipmentPtr();
+		if (!food)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Food)");
+			return;
+		}
 
-		RangedWeapon* rwp = dynamic_cast<RangedWeapon*>(item);
+		if (!food->Use())
+		{
+			MaloW::Debug("Stack is Empty");
+			return;
+		}
 
-		if (rwp)
-			eq->EquipWeapon(rwp);
-	}
-	else if(item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE || item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
-	{
-		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
-
-		Equipment* eq = player->GetEquipmentPtr();
-
-		MeleeWeapon* rwp = dynamic_cast<MeleeWeapon*>(item);
-
-		if (rwp)
-			eq->EquipWeapon(rwp);
+		return;
 	}
 	else if(item->GetItemType() == ITEM_TYPE_FOOD_DEER_MEAT)
 	{
 		item->Use();
+	}
+}
+
+void Client::HandleEquipItem(const int ItemId)
+{
+	Item* item = this->zPlayerInventory->EquipItem(ItemId);
+
+	if (!item)
+	{
+		MaloW::Debug("Item cant be found");
+		return;
+	}
+
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
+	{
+		RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item);
+		if (!rWpn)
+		{
+			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Bow)");
+			return;
+		}
+		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
+		Equipment* eq = player->GetEquipmentPtr();
+
+		int ammo = this->zPlayerInventory->SearchForItemType(ITEM_TYPE_PROJECTILE_ARROW);
+		eq->EquipWeapon(rWpn, ammo);
+
+		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
+	{
+		RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item);
+		if (!rWpn)
+		{
+			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Rock)");
+			return;
+		}
+		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
+		Equipment* eq = player->GetEquipmentPtr();
+
+		int ammo = this->zPlayerInventory->SearchForItemType(ITEM_TYPE_WEAPON_RANGED_ROCK);
+		eq->EquipWeapon(rWpn, ammo);
+
+		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE || item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE)
+	{
+		MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item);
+		if (!mWpn)
+		{
+			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Knife/Axe)");
+			return;
+		}
+
+		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
+		Equipment* eq = player->GetEquipmentPtr();
+		eq->EquipWeapon(mWpn);
+
+		return;
 	}
 }
 
@@ -717,7 +828,7 @@ void Client::HandleRemoveInventoryItem(const int id)
 	if(this->zPlayerInventory->RemoveItem(index))
 		MaloW::Debug("Item Removed on Client");
 
-	for (unsigned int i = 0; i < images.size(); i++)
+	/*for (unsigned int i = 0; i < images.size(); i++)
 	{
 		if (images[i].id == id)
 		{
@@ -725,7 +836,7 @@ void Client::HandleRemoveInventoryItem(const int id)
 			this->zEng->DeleteImage(images[i].image);
 			images.erase(images.begin() + i);
 		}
-	}
+	}*/
 }
 
 void Client::CloseConnection(const std::string& reason)
@@ -1380,6 +1491,7 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 			{
 				position.y = terrain->GetYPositionAt(position.x, position.z);
 			}
+			DynamicObjectPointer->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{

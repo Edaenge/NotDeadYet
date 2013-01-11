@@ -13,7 +13,7 @@ Gear::~Gear()
 
 }
 
-void Gear::Use()
+bool Gear::Use()
 {
-
+	return true;
 }
