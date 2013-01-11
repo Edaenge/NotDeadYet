@@ -153,6 +153,11 @@
     <ClInclude Include="EngineFiles\Server\StaticProjectileObject.h">
       <Filter>EngineFiles\Server</Filter>
     </ClInclude>
+    <ClInclude Include="EngineFiles\Server\AI.h" />
+    <ClInclude Include="EngineFiles\Server\DeerActor.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\ClientServerMessages.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineFiles\Server\Actor.cpp">
@@ -248,5 +253,7 @@
     <ClCompile Include="EngineFiles\Server\StaticProjectileObject.cpp">
       <Filter>EngineFiles\Server</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Server\AI.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />
   </ItemGroup>
 </Project>

@@ -70,6 +70,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\External\NDYGFX\Include\Vector.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\AnimationStates.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\ClientServerMessages.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Container.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Equipment.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Food.h" />
@@ -138,7 +139,9 @@
     <ClCompile Include="EngineFiles\Server\BioActor.cpp" />
     <ClCompile Include="EngineFiles\Server\ContainerObject.cpp" />
     <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp" />
-    <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />    <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp" />    <ClCompile Include="EngineFiles\Server\FoodObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\FoodObject.cpp" />
     <ClCompile Include="EngineFiles\Server\Host.cpp" />
     <ClCompile Include="EngineFiles\Server\ObjectManager.cpp" />
     <ClCompile Include="EngineFiles\Server\PlayerActor.cpp" />
