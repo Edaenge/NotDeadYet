@@ -19,6 +19,7 @@ static const std::string DESCRIPTION		=	"DESCRIPTION";
 static const std::string MODEL				=	"MODEL";
 static const std::string NAME				=	"NAME";
 static const std::string IS_RANGED			=	"IS_RANGED";
+static const std::string SCALE				=	"SCALE";
 
 static const std::string HUNGER				=	"HUNGER";
 static const std::string DAMAGE				=	"DAMAGE";
@@ -65,8 +66,6 @@ bool ObjectManager::ReadObjects()
 
 		if(strcmp(line, "") == 0)
 			continue;
-
-		//TrimAndSet(line);
 
 		sscanf_s(line, "%s", &key, sizeof(key));
 
@@ -150,7 +149,6 @@ void ObjectManager::TrimAndSet( char* ret )
 	str = subA + subB;
 
 	strcpy(ret, str.c_str());
-
 }
 
 bool ObjectManager::Replace(char* key)
@@ -212,6 +210,26 @@ bool ObjectManager::InterpCommand( char* command, char* key, WeaponObject* wp )
 	{
 		wp->SetActorObjectName(key);
 	}
+	else if (strcmp(command, SCALE.c_str()) == 0)
+	{
+		char x[52];
+		char y[52];
+		char z[52];
+		unsigned int index = 0;
+
+		while(key[index] != '\0')
+		{
+			if(key[index] == ',')
+				key[index] = ' ';
+
+			index++;
+		}
+
+		sscanf_s(key, "%s %s %s", &x, sizeof(x), &y, sizeof(y), &z, sizeof(z));
+		Vector3 vec(MaloW::convertStringToFloat(x), MaloW::convertStringToFloat(y), MaloW::convertStringToFloat(z));
+
+		wp->SetScale(vec);
+	}
 
 	return true;
 }
@@ -252,6 +270,26 @@ bool ObjectManager::InterpCommand( char* command, char* key, FoodObject* fd )
 	else if(strcmp(command, NAME.c_str()) == 0)
 	{
 		fd->SetActorObjectName(key);
+	}
+	else if (strcmp(command, SCALE.c_str()) == 0)
+	{
+		char x[52];
+		char y[52];
+		char z[52];
+
+		unsigned int index = 0;
+		while(command[index] != '\0')
+		{
+			if(command[index] == ',')
+				command[index] = ' ';
+
+			index++;
+		}
+
+		sscanf_s(key, "%s %s %s", &x, sizeof(x), &y, sizeof(y), &z, sizeof(z));
+		Vector3 vec(MaloW::convertStringToFloat(x), MaloW::convertStringToFloat(y), MaloW::convertStringToFloat(z));
+
+		fd->SetScale(vec);
 	}
 
 	return true;
@@ -298,10 +336,29 @@ bool ObjectManager::InterpCommand( char* command, char* key, ContainerObject* ct
 	{
 		ct->SetActorObjectName(key);
 	}
+	else if (strcmp(command, SCALE.c_str()) == 0)
+	{
+		char x[52];
+		char y[52];
+		char z[52];
+
+		unsigned int index = 0;
+		while(command[index] != '\0')
+		{
+			if(command[index] == ',')
+				command[index] = ' ';
+
+			index++;
+		}
+
+		sscanf_s(key, "%s %s %s", &x, sizeof(x), &y, sizeof(y), &z, sizeof(z));
+		Vector3 vec(MaloW::convertStringToFloat(x), MaloW::convertStringToFloat(y), MaloW::convertStringToFloat(z));
+
+		ct->SetScale(vec);
+	}
 
 	return true;
 }
-
 const WeaponObject* ObjectManager::GetWeaponObject( const int type )
 {
 	return SearchType(this->zWeapons, type);

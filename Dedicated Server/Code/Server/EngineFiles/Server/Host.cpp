@@ -45,7 +45,6 @@ void Host::Init()
 	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, foodObj))
 	{
 		foodObj->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
-		foodObj->SetScale(Vector3(1,1,1));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
 		
@@ -57,7 +56,6 @@ void Host::Init()
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, weaponObj))
 	{
 		weaponObj->SetPosition(Vector3(5.0f, 0.0f, -5.0f));
-		weaponObj->SetScale(Vector3(1,1,1));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
@@ -69,7 +67,6 @@ void Host::Init()
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, weaponObj))
 	{
 		weaponObj->SetPosition(Vector3(-5.0f, 0.0f, -5.0f));
-		weaponObj->SetScale(Vector3(1,1,1));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 		
@@ -81,7 +78,6 @@ void Host::Init()
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, containerObj))
 	{
 		containerObj->SetPosition(Vector3(-5.0f, 0.0f, 5.0f));
-		containerObj->SetScale(Vector3(1,1,1));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticContainerActor(containerObj);
 		
@@ -132,7 +128,7 @@ void Host::Life()
 			waitTimer = 0.0f;
 		}
 
-		Sleep(5);
+		Sleep(1);
 	}
 }
 
@@ -279,6 +275,7 @@ void Host::SendPlayerActorUpdates()
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (*it_Player)->GetState());
+		(*it_Player)->AddChangedHData(mess, &this->zMessageConverter);
 
 		playerData.push_back(mess);
 	}
@@ -912,7 +909,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemId)
 
 bool Host::CheckCollision(Vector3 position)
 {
-
+	return false;
 }
 
 void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )

@@ -33,6 +33,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button_Shutdown = new System.Windows.Forms.Button();
             this.label_Status = new System.Windows.Forms.Label();
             this.button_Start = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -42,7 +43,6 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.button_Shutdown = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -92,6 +92,18 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(200, 190);
             this.panel1.TabIndex = 8;
+            // 
+            // button_Shutdown
+            // 
+            this.button_Shutdown.Enabled = false;
+            this.button_Shutdown.Location = new System.Drawing.Point(80, 152);
+            this.button_Shutdown.Name = "button_Shutdown";
+            this.button_Shutdown.Size = new System.Drawing.Size(75, 23);
+            this.button_Shutdown.TabIndex = 13;
+            this.button_Shutdown.Text = "Shutdown";
+            this.button_Shutdown.UseVisualStyleBackColor = true;
+            this.button_Shutdown.EnabledChanged += new System.EventHandler(this.button_Shutdown_EnabledChanged);
+            this.button_Shutdown.Click += new System.EventHandler(this.button_Shutdown_Click);
             // 
             // label_Status
             // 
@@ -175,18 +187,6 @@
             this.richTextBox1.Size = new System.Drawing.Size(296, 381);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
-            // 
-            // button_Shutdown
-            // 
-            this.button_Shutdown.Enabled = false;
-            this.button_Shutdown.Location = new System.Drawing.Point(80, 152);
-            this.button_Shutdown.Name = "button_Shutdown";
-            this.button_Shutdown.Size = new System.Drawing.Size(75, 23);
-            this.button_Shutdown.TabIndex = 13;
-            this.button_Shutdown.Text = "Shutdown";
-            this.button_Shutdown.UseVisualStyleBackColor = true;
-            this.button_Shutdown.EnabledChanged += new System.EventHandler(this.button_Shutdown_EnabledChanged);
-            this.button_Shutdown.Click += new System.EventHandler(this.button_Shutdown_Click);
             // 
             // statusStrip1
             // 

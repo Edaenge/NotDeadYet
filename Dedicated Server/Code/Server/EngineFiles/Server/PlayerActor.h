@@ -12,6 +12,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "../../../../../Source/GameFiles/KeyUtil/KeyStates.h"
 #include "../../../../../Source/GameFiles/Items/Inventory.h"
 #include "../../../../../Source/GameFiles/Items/Equipment.h"
+#include "../../../../../Source/Network/NetworkMessageConverter.h"
 
 /*This class is used to save player information such as position and states.
   This information is sent to clients.
@@ -38,6 +39,12 @@ public:
 	bool PickUpObject(DynamicObjectActor* object);
 	/*! */
 	bool DropObject(const int ID);
+	/*! Adds a message string with health,stamina,hunger, hydration to mess.
+	    This function checks if the data has changed since last update.
+		If it has changed, we need to send it to the client.
+		The parameter string is a network message string.
+	*/
+	void AddChangedHData(string& mess, NetworkMessageConverter* nmc);
 
 	Item* GetItem(const int ID){return this->zInventory->SearchAndGetItem(ID);}
 	float GetLatency() const {return this->zLatency;}
@@ -77,6 +84,9 @@ private:
 	float	zHydration;
 	float	zHydrationMax;
 
+	bool zHydrationChanged;
+	bool zHungerChanged;
+	
 	KeyStates zKeyStates;
 
 	Inventory* zInventory;
