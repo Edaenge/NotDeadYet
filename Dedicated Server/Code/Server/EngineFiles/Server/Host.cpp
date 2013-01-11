@@ -42,7 +42,7 @@ void Host::Init()
 	int counter = 0;
 	//Creates A New FoodObject With an Id And Default Values 
 	FoodObject* foodObj = NULL; /*new FoodObject(true);*/
-	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, &foodObj))
+	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, &foodObj, true))
 	{
 		foodObj->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 		//Adds The Object To the Array
@@ -53,7 +53,7 @@ void Host::Init()
 	}
 	//Creates A New WeaponObject With an Id And Default Values 
 	WeaponObject* weaponObj = NULL;/*new WeaponObject(true);*/
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, &weaponObj))
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, &weaponObj, true))
 	{
 		weaponObj->SetPosition(Vector3(5.0f, 0.0f, -5.0f));
 		//Adds The Object To the Array
@@ -64,7 +64,7 @@ void Host::Init()
 	}
 
 	weaponObj = NULL; /*new WeaponObject(true);*/
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, &weaponObj))
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, &weaponObj, true))
 	{
 		weaponObj->SetPosition(Vector3(-5.0f, 0.0f, -5.0f));
 		//Adds The Object To the Array
@@ -75,7 +75,7 @@ void Host::Init()
 	}
 
 	ContainerObject* containerObj = NULL; /*new ContainerObject(true);*/
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, &containerObj))
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, &containerObj, true))
 	{
 		containerObj->SetPosition(Vector3(-5.0f, 0.0f, 5.0f));
 		//Adds The Object To the Array
@@ -790,7 +790,7 @@ bool Host::CreateStaticObjectActor(const int type, WeaponObject** weaponObj, con
 	//weaponObj->SetDescription(weapon->GetDescription());
 	//weaponObj->SetActorObjectName(weapon->GetActorObjectName());
 
-	*weaponObj = new WeaponObject(weapon);
+	*weaponObj = new WeaponObject(weapon, genID);
 
 	return true;
 }
@@ -813,7 +813,7 @@ bool Host::CreateStaticObjectActor(const int type, FoodObject** foodObj, const b
 	//foodObj->SetDescription(food->GetDescription());
 	//foodObj->SetActorObjectName(food->GetActorObjectName());
 
-	*foodObj = new FoodObject(food);
+	*foodObj = new FoodObject(food, genID);
 
 	return true;
 }
@@ -837,7 +837,7 @@ bool Host::CreateStaticObjectActor(const int type, ContainerObject** containerOb
 	//containerObj->SetCurrentUses(container->GetCurrentUses());
 	//containerObj->SetActorObjectName(container->GetActorObjectName());
 
-	*containerObj = new ContainerObject(container);
+	*containerObj = new ContainerObject(container, genID);
 
 	return true;
 }

@@ -28,8 +28,8 @@ static const enum M_OBJECT_TYPE
 class StaticObjectActor : public Actor
 {
 public:
-	StaticObjectActor(bool genID = true);
-	StaticObjectActor(const std::string& meshModel, bool genID = true);
+	StaticObjectActor(bool genID = false);
+	StaticObjectActor(const std::string& meshModel, bool genID = false);
 	virtual ~StaticObjectActor();
 	
 	virtual void Update(float deltaTime){};

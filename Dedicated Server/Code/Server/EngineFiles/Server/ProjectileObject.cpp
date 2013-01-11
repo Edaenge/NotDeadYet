@@ -1,7 +1,7 @@
 #include "ProjectileObject.h"
 
 
-ProjectileObject::ProjectileObject( const bool genID /*= true*/ ) : DynamicObjectActor(genID)
+ProjectileObject::ProjectileObject( const bool genID /*= false*/ ) : DynamicObjectActor(genID)
 {
 	this->zVelocity = 1.0f;
 	this->zStacks = 1;

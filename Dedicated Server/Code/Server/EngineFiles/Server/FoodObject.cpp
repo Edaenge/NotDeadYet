@@ -1,7 +1,7 @@
 #include "FoodObject.h"
 
 
-FoodObject::FoodObject( const bool genID /*= true*/ ) : StaticObjectActor(genID)
+FoodObject::FoodObject( const bool genID /*= false*/ ) : StaticObjectActor(genID)
 {
 	this->zHunger = 1.0f;
 	this->zWeight = 1;
@@ -26,6 +26,7 @@ FoodObject::FoodObject( const FoodObject& other, const bool genID /*genID = fals
 	this->zScale = other.zScale;
 	this->zRot = other.zRot;
 	this->zPos = other.zPos;
+	this->zStacks = other.zStacks;
 }
 
 FoodObject::FoodObject( const FoodObject* other, const bool genID /*genID = false*/ )
@@ -45,6 +46,7 @@ FoodObject::FoodObject( const FoodObject* other, const bool genID /*genID = fals
 	this->zScale = other->zScale;
 	this->zRot = other->zRot;
 	this->zPos = other->zPos;
+	this->zStacks = other->zStacks;
 }
 
 FoodObject::~FoodObject()

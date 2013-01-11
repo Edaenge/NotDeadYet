@@ -296,10 +296,10 @@ bool ObjectManager::InterpCommand( char* command, char* key, FoodObject* fd )
 		char z[52];
 
 		unsigned int index = 0;
-		while(command[index] != '\0')
+		while(key[index] != '\0')
 		{
-			if(command[index] == ',')
-				command[index] = ' ';
+			if(key[index] == ',')
+				key[index] = ' ';
 
 			index++;
 		}
@@ -361,10 +361,10 @@ bool ObjectManager::InterpCommand( char* command, char* key, ContainerObject* ct
 		char z[52];
 
 		unsigned int index = 0;
-		while(command[index] != '\0')
+		while(key[index] != '\0')
 		{
-			if(command[index] == ',')
-				command[index] = ' ';
+			if(key[index] == ',')
+				key[index] = ' ';
 
 			index++;
 		}

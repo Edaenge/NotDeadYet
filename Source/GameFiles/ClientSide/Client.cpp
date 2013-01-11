@@ -343,7 +343,9 @@ void Client::HandleKeyboardInput()
 
 			if (item)
 			{
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());				this->zServerChannel->sendData(msg);				SendPickupItemMessage(collisionObjects[0].zID);			}
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());				
+				this->zServerChannel->sendData(msg);					
+			}
 		}
 	}
 	else

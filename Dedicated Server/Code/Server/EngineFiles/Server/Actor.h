@@ -59,7 +59,11 @@ public:
 
 	virtual void Update(float deltaTime) = 0;
 protected:
-	const void GenerateID(){this->zID = this->zNextAID; this->zNextAID++;}
+	void GenerateID()
+	{
+		this->zID = this->zNextAID; 
+		this->zNextAID++;
+	}
 protected:
 	Vector3 zPos;
 	Vector3 zScale;

@@ -10,7 +10,7 @@
 class ProjectileObject : public DynamicObjectActor
 {
 public:
-	ProjectileObject(const bool genID = true);
+	ProjectileObject(const bool genID = false);
 	/*! Note: ID from Actor will not be copied. IT will auto generate a new ID.*/
 	ProjectileObject(const ProjectileObject& other);
 	/*! Note: ID from Actor will not be copied. IT will auto generate a new ID.*/
