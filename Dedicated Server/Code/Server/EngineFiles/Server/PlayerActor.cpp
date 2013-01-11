@@ -24,7 +24,9 @@ void PlayerActor::InitValues()
 	this->zFrameTime = 0.0f;
 	this->zLatency = 0.0f;
 	this->zHunger = 100.0f;
+	this->zHungerMax = 100.0f;
 	this->zHydration = 100.0f;
+	this->zHydrationMax = 100.0f;
 	this->zInventory = new Inventory();
 }
 
@@ -191,4 +193,19 @@ bool PlayerActor::DropObject( const int ID )
 	MaloW::Debug("Removed successes: " + MaloW::convertNrToString(ID));
 
 	return true;
+}
+
+void PlayerActor::Drink(float hydration)
+{
+	this->zHydration += hydration;
+	if (this->zHydration >= this->zHydrationMax)
+		this->zHydration = this->zHydrationMax;
+
+}
+
+void PlayerActor::EatFood(float hunger)
+{
+	this->zHunger += hunger;
+	if (this->zHunger >= this->zHungerMax)
+		this->zHunger = this->zHungerMax;
 }

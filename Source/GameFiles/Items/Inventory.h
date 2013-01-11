@@ -25,21 +25,22 @@ public:
 	/*! Adds an item to the array*/
 	bool AddItem(Item* item);
 	/*! Returns the item at the position */
-	Item* GetItem(const unsigned int position) const;
+	Item* GetItem(const unsigned int index) const;
 	/*! Returns the Items*/
 	std::vector<Item*> GetItems() const;
 	/*! Search for the item and returns it if found or NULL if not found*/
 	Item* SearchAndGetItem(const unsigned int ID) const;
 	/*! Removes the item*/
-	bool RemoveItem(const unsigned int position);
+	bool RemoveItem(const unsigned int index);
 	bool RemoveItem(Item* item);
 	/*! Returns blocked slots*/
 	std::vector<bool> GetBlockedSlots() const;
 	/*! Get the status of the slot at Position*/
-	bool GetBlockedSlot(unsigned int position) const;
+	bool GetBlockedSlot(unsigned int index) const;
 	/*! Returns the Inventory Capacity == Max Weight allowed*/
 	int GetInventoryCapacity() const;
-
+	/*! Returns amount of Items the player has in the inventory with itemType = TYPE*/
+	int SearchForItemType(const int TYPE);
 private:
 	/*! Array of items*/
 	std::vector<Item*> zItems;

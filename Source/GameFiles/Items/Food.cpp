@@ -12,7 +12,7 @@ Food::~Food()
 
 }
 
-void Food::Use()
+bool Food::Use()
 {
-
+	return true;
 }

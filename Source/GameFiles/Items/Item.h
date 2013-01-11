@@ -19,7 +19,8 @@ static const enum M_ITEM_TYPE
 	ITEM_TYPE_CONTAINER_CANTEEN,
 	ITEM_TYPE_CONTAINER_WATER_BOTTLE,
 	ITEM_TYPE_FOOD_DEER_MEAT,
-	ITEM_TYPE_FOOD_WOLF_MEAT
+	ITEM_TYPE_FOOD_WOLF_MEAT,
+	ITEM_TYPE_AMMO_ARROW
 };
 
 /*! Abstract class for Items*/
@@ -52,7 +53,7 @@ public:
 	/*! Sets the Item Description*/
 	void SetItemDescription(const std::string& description) {this->zItemDescription = description;}
 
-	virtual void Use() = 0;
+	virtual bool Use() = 0;
 
 private:
 	void InitValues(const int id = -1, const unsigned int itemType = 0, const unsigned int weight = 0, 

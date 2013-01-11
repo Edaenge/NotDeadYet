@@ -148,3 +148,18 @@ int Inventory::GetInventoryCapacity() const
 {
 	return this->zInventoryCap;
 }
+
+int Inventory::SearchForItemType(const int TYPE)
+{
+	int counter = 0;
+
+	for (auto it = this->zItems.begin(); it < this->zItems.end(); it++)
+	{
+		if ((*it)->GetItemType() == TYPE)
+		{
+			counter++;
+		}
+	}
+
+	return counter;
+}

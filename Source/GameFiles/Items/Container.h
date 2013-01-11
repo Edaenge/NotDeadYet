@@ -20,7 +20,7 @@ public:
 	inline int GetCurrentSize() {return this->zUsesRemaining;}
 	inline int GetMaxSize() {return this->zMaxUses;}
 
-	virtual void Use();
+	virtual bool Use();
 private:
 	int zMaxUses;
 	int zUsesRemaining;

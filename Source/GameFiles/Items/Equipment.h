@@ -23,14 +23,20 @@ class Equipment
 public:
 	Equipment();
 	virtual ~Equipment();
+	/*! Equips Weapon*/
+	void EquipWeapon(MeleeWeapon* weapon);
+	void EquipWeapon(RangedWeapon* weapon, const int AMMO = 0);
 
-	void EquipWeapon(Weapon* weapon);
 	Weapon* GetWeapon();
 	void UnEquipWeapon();
 	bool EquipGear(const unsigned int type, Gear* item);
 	Gear* GetGear(const unsigned int type);
 	void UnEquipGear(const unsigned int type);
+	void SetAmmo(const int AMMO) {this->zAmmo = AMMO;}
+	int GetAmmo() {return this->zAmmo;}
+
 private:
+	int zAmmo;
 	Weapon* zWeapon;
 	std::vector<Gear*> zGear;
 };

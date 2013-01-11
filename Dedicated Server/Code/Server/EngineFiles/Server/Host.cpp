@@ -868,6 +868,176 @@ void Host::SendNewObjectMessage(AnimalActor* animalObj)
 	this->SendToAllClients(msg);
 }
 
+void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemId)
+{
+	Equipment* eq = pActor->GetEquipment();
+
+	Weapon* weapon = eq->GetWeapon();
+	if (weapon->GetID() != ItemId)
+	{
+		MaloW::Debug("Server weapon isn't the same as Client Weapon");
+	}
+	if (!weapon)
+	{
+		SendErrorMessage(pActor->GetID(),"No Weapon is Equipped");
+		return;
+	}
+
+	RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(weapon);
+	if (!rWpn)
+	{
+		MaloW::Debug("dynamic cast Failed in Host::WeaponUse (Ranged Weapon)");
+
+		MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(weapon);
+		if (!mWpn)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::WeaponUse (Melee Weapon)");
+			return;
+		}
+		float damage;
+		float range;
+		mWpn->UseWeapon(range, damage);
+		//Check Collision
+		Vector3 direction = pActor->GetDirection();
+
+		Vector3 position = pActor->GetPosition() + (direction * range);
+	}
+	float damage;
+	float range;
+	rWpn->UseWeapon(range, damage);
+
+	//Create Dynamic Object with player direction
+	Vector3 direction = pActor->GetDirection();
+}
+
+bool Host::CheckCollision(Vector3 position)
+{
+
+}
+
+void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
+{
+	Item* item = pActor->GetItem(ItemId);
+
+	if (!item)
+	{
+		this->SendErrorMessage(pActor->GetID(), "Item Doesn't Exist");
+		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_FOOD_DEER_MEAT || item->GetItemType() == ITEM_TYPE_FOOD_WOLF_MEAT)
+	{
+		Food* food = dynamic_cast<Food*>(item);
+
+		if (!food)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Food)");
+			return;
+		}
+
+		if (!food->Use())
+		{
+			this->SendErrorMessage(pActor->GetID(), "Stack is Empty");
+			return;
+		}
+		pActor->EatFood(food->GetHunger());
+
+		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN || item->GetItemType() == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
+	{
+		Container* container = dynamic_cast<Container*>(item);
+
+		if (!container)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Container)");
+			return;
+		}
+
+		if (!container->Use())
+		{
+			this->SendErrorMessage(pActor->GetID(), "Stack is Empty");
+			return;
+		}
+		float hydration = (container->GetCurrentSize() + 1) * 15.0f;
+		pActor->Drink(hydration);
+
+		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
+	{
+		Equipment* eq = pActor->GetEquipment();
+
+		RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item);
+
+		if (!rWpn)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Bow)");
+			return;
+		}
+
+		Inventory* inv = pActor->GetInventory();
+
+		int ammo = inv->SearchForItemType(ITEM_TYPE_AMMO_ARROW);
+
+		eq->EquipWeapon(rWpn, ammo);
+
+		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
+	{
+		Equipment* eq = pActor->GetEquipment();
+
+		RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item);
+
+		if (!rWpn)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Rock)");
+			return;
+		}
+
+		Inventory* inv = pActor->GetInventory();
+
+		int ammo = inv->SearchForItemType(ITEM_TYPE_WEAPON_RANGED_ROCK);
+
+		eq->EquipWeapon(rWpn, ammo);
+
+		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE)
+	{
+		Equipment* eq = pActor->GetEquipment();
+
+		MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item);
+
+		if (!mWpn)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Axe)");
+			return;
+		}
+
+		eq->EquipWeapon(mWpn);
+
+		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
+	{
+		Equipment* eq = pActor->GetEquipment();
+
+		MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item);
+
+		if (!mWpn)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Pocket Knife)");
+			return;
+		}
+
+		eq->EquipWeapon(mWpn);
+
+		return;
+	}
+
+}
+
 void Host::HandleRecivedMessages()
 {
 	
@@ -899,44 +1069,54 @@ void Host::HandleRecivedMessages()
 		//Handles updates from client.
 		if(strcmp(key, M_CLIENT_DATA.c_str()) == 0 && (p_actor))
 		{
-			HandlePlayerUpdate(p_actor, this->zClients[c_index], msgArray);
+			this->HandlePlayerUpdate(p_actor, this->zClients[c_index], msgArray);
 		}
 		//Handles key presses from client.
 		else if(strcmp(key, M_KEY_DOWN.c_str()) == 0 && (p_actor))
 		{
-			HandleKeyPress(p_actor, msgArray[0]);
+			this->HandleKeyPress(p_actor, msgArray[0]);
 		}
 		//Handles key releases from client.
 		else if(strcmp(key, M_KEY_UP.c_str()) == 0 && (p_actor))
 		{
-			HandleKeyRelease(p_actor, msgArray[0]);
+			this->HandleKeyRelease(p_actor, msgArray[0]);
 		}
 		//Handles Pings from client.
 		else if(strcmp(key, M_PING.c_str()) == 0 && (c_index != -1))
 		{
-			HandlePingMsg(this->zClients[c_index]);
+			this->HandlePingMsg(this->zClients[c_index]);
+		}
+		else if(strcmp(key, M_ITEM_USE.c_str()) == 0 && (c_index != -1))
+		{
+			int objID = this->zMessageConverter.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
+			this->HandleItemUse(p_actor, objID);
+		}
+		else if(strcmp(key, M_WEAPON_USE.c_str()) == 0 && (c_index != -1))
+		{
+			int objID = this->zMessageConverter.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
+			this->HandleWeaponUse(p_actor, objID);
 		}
 		//Handles Pickup Object Requests from Client
 		else if(strcmp(key, M_PICKUP_ITEM.c_str()) == 0 && (p_actor))
 		{
 			int objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
-			HandlePickupItem(p_actor, objID);
+			this->HandlePickupItem(p_actor, objID);
 		}
 		//Handles Drop Item Requests from Client
 		else if(strcmp(key, M_DROP_ITEM.c_str()) == 0 && (p_actor))
 		{
 			int objID = this->zMessageConverter.ConvertStringToInt(M_DROP_ITEM, msgArray[0]);
-			HandleDropItem(p_actor, objID);
+			this->HandleDropItem(p_actor, objID);
 		}
 		//Handles user data from client. Used when the player is new.
 		else if(strcmp(key, M_USER_DATA.c_str()) == 0 && (c_index != -1))
 		{
-			CreateNewPlayer(this->zClients[c_index], msgArray);
+			this->CreateNewPlayer(this->zClients[c_index], msgArray);
 		}
 		//Handles if client disconnects.
 		else if(strcmp(key, M_CONNECTION_CLOSED.c_str()) == 0)
 		{
-			KickClient((*it)->getID());
+			this->KickClient((*it)->getID());
 		}
 		//Handles if not of the above.
 		else

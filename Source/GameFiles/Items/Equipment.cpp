@@ -9,6 +9,7 @@ Equipment::Equipment()
 	{
 		this->zGear.push_back(0);
 	}
+	this->zAmmo = 0;
 }
 
 Equipment::~Equipment()
@@ -28,9 +29,15 @@ Equipment::~Equipment()
 	}
 }
 
-void Equipment::EquipWeapon(Weapon* weapon)
+void Equipment::EquipWeapon(MeleeWeapon* weapon)
 {
 	this->zWeapon = weapon;
+}
+
+void Equipment::EquipWeapon( RangedWeapon* weapon, const int AMMO )
+{
+	this->zWeapon = weapon;
+	this->zAmmo = AMMO;
 }
 
 bool Equipment::EquipGear(const unsigned int type, Gear* item)

@@ -15,7 +15,7 @@ public:
 		const std::string& description, const float damage, const float range);
 	virtual ~MeleeWeapon();
 
-	virtual void Use();
+	virtual bool Use();
 	void UseWeapon(float& range, float& damage);
 private:
 	

@@ -125,6 +125,8 @@ private:
 	void CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data);
 	bool HandlePickupItem(PlayerActor* pActor, const int ObjectId);
 	void HandleDropItem(PlayerActor* pActor, const int ItemId);
+	void HandleItemUse(PlayerActor* pActor, const int ItemId);
+	void HandleWeaponUse(PlayerActor* pActor, const int ItemId);
 	/*! Returns an Array Containing Existing Static Objects Messages.*/
 	void GetExistingObjects(std::vector<std::string>& static_Objects);
 	/*! Creates an Object From the Item Data.*/
@@ -140,6 +142,7 @@ private:
 	bool CreateStaticObjectActor(const int type, FoodObject* foodObj);
 	bool CreateStaticObjectActor(const int type, ContainerObject* containerObj);
 	void SendErrorMessage(const int id, const std::string error_Message);
+	bool CheckCollision(Vector3 position);
 private:
 	ServerListener* zServerListener;
 

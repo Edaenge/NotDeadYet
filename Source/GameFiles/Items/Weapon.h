@@ -32,7 +32,7 @@ public:
 	void SetDamage(const float damage) {this->zDamage = damage;}
 	void SetRange(const float range) {this->zRange = range;}
 
-	virtual void Use() = 0;
+	virtual bool Use() = 0;
 protected:
 	float zDamage;
 	float zRange;

@@ -14,7 +14,7 @@ public:
 		const unsigned int itemType, const std::string& description, const float hunger);
 	virtual ~Food();
 
-	virtual void Use();
+	virtual bool Use();
 
 	float GetHunger() const {return this->zHunger;}
 

@@ -11,7 +11,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "../../../../../Source/GameFiles/KeyUtil/KeyValues.h"
 #include "../../../../../Source/GameFiles/KeyUtil/KeyStates.h"
 #include "../../../../../Source/GameFiles/Items/Inventory.h"
-
+#include "../../../../../Source/GameFiles/Items/Equipment.h"
 
 /*This class is used to save player information such as position and states.
   This information is sent to clients.
@@ -60,7 +60,11 @@ public:
 	inline void SetLatency(const float latency){this->zLatency = latency;}
 	/*! Sets the objm. This class is not responsible for deallocation.*/
 	void SetObjManager(ObjectManager* objm) {this->zObjManager = objm;}
-	
+	Equipment* GetEquipment() {return this->zEquipment;}
+	Inventory* GetInventory() {return this->zInventory;}
+
+	void EatFood(float hunger);
+	void Drink(float hydration);
 private:
 	void InitValues();
 
@@ -69,11 +73,14 @@ private:
 	float	zFrameTime;
 
 	float	zHunger;
+	float	zHungerMax;
 	float	zHydration;
+	float	zHydrationMax;
 
 	KeyStates zKeyStates;
 
 	Inventory* zInventory;
+	Equipment* zEquipment;
 
 	ObjectManager* zObjManager;
 };
