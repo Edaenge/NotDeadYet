@@ -405,10 +405,12 @@
     <ClInclude Include="..\Source\SoundEngine\SoundHandler.h">
       <Filter>Sound Engine Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ClientServerMessages.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameIcon.ico" />
-    <None Include="Client_ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="NotDeadYet.rc" />

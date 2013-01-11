@@ -1,4 +1,5 @@
 #include "Host.h"
+#include "../../../../../Source/GameFiles/ClientServerMessages.h"
 
 // 30 updates per sec
 static const float UPDATE_DELAY = 0.0333f;
@@ -48,7 +49,7 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
 		
-		MaloW::Debug("Created Meat Object");
+		Messages::Debug("Created Meat Object");
 		counter++;
 	}
 	//Creates A New WeaponObject With an Id And Default Values 
@@ -59,7 +60,7 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
-		MaloW::Debug("Created Bow Object");
+		Messages::Debug("Created Bow Object");
 		counter++;
 	}
 
@@ -70,7 +71,7 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 		
-		MaloW::Debug("Created Axe Object");
+		Messages::Debug("Created Axe Object");
 		counter++;
 	}
 
@@ -81,16 +82,16 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticContainerActor(containerObj);
 		
-		MaloW::Debug("Created Canteen Object");
+		Messages::Debug("Created Canteen Object");
 		counter++;
 	}
 	
-	MaloW::Debug("Created " + MaloW::convertNrToString(counter) + " Objects");
+	Messages::Debug("Created " + MaloW::convertNrToString(counter) + " Objects");
 }
 
 void Host::Life()
 {
-	MaloW::Debug("Host Process Started");
+	Messages::Debug("Host Process Started");
 	this->zServerListener->Start();
 	
 	this->Init();
@@ -167,7 +168,7 @@ void Host::HandleNewConnections()
 		return;
 	}
 
-	MaloW::Debug("New Player Connected.");
+	Messages::Debug("New Player Connected.");
 
 	if((unsigned int)this->zClients.size() > zMaxClients)
 	{
@@ -181,7 +182,7 @@ void Host::HandleNewConnections()
 		return;
 	}
 
-	MaloW::Debug("New Player Accepted.");
+	Messages::Debug("New Player Accepted.");
 
 	std::string message = "";
 
@@ -842,7 +843,8 @@ bool Host::CreateStaticObjectActor(const int type, ContainerObject** containerOb
 	return true;
 }
 
-bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject* projectileObj){
+bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID)
+{
 	//Get Default Values For a Meat Object
 	const DynamicProjectileObject* projectile = this->zActorHandler->GetObjManager()->GetProjectileObject(type);
 
@@ -860,7 +862,7 @@ bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject* pro
 	//projectileObj->SetVelocity(projectile->GetVelocity());
 	//projectileObj->SetActorObjectName(projectile->GetActorObjectName());
 
-	*projectileObj = new ProjectileObject(projectile);
+	*projectileObj = new DynamicProjectileObject(projectile, false);
 
 	return true;
 }

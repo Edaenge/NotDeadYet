@@ -82,6 +82,7 @@
     <ClInclude Include="..\External\NDYGFX\Include\iText.h" />
     <ClInclude Include="..\External\NDYGFX\Include\Vector.h" />
     <ClInclude Include="..\Source\GameFiles\AnimationStates.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientServerMessages.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\AnimalObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\Client.h" />
     <ClInclude Include="..\source\gamefiles\clientside\DynamicObject.h" />
@@ -143,7 +144,6 @@
     <ClInclude Include="..\Source\SoundEngine\SoundSong.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Client_ClassDiagram.cd" />
     <None Include="GameIcon.ico" />
   </ItemGroup>
   <ItemGroup>
