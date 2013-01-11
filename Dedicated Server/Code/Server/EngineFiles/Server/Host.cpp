@@ -912,7 +912,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemId)
 
 bool Host::CheckCollision(Vector3 position)
 {
-
+	return true;
 }
 
 void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )

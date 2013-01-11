@@ -23,18 +23,22 @@ InventoryGui::~InventoryGui()
 	}
 }
 
-bool InventoryGui::AddItemToGui(std::string textureName, GraphicsEngine* ge)
+bool InventoryGui::AddItemToGui(Gui_Item_Data gid, GraphicsEngine* ge)
 {
 	int size = this->zSlotGui.size();
 	int posX = (int)(size % (int)zNrOfSlots.x);
 	int posY = (int)(size / zNrOfSlots.x);
+	float startOffsetX = (32.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowWidth;
+	float startOffsetY = (32.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
 	if (posX * posY < (zNrOfSlots.x * zNrOfSlots.y))
 	{
-		float width = 40.0f;
-		float height = 40.0f;
-		float x = this->zX + width * posX + 15;
-		float y = this->zY + height * posY + 15;
-		InventorySlotGui* gui = new InventorySlotGui(x, y, width, height, textureName);
+		float width = (50.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowWidth;
+		float height = (50.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+		float paddingX = (13.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowWidth;
+		float paddingY = (13.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+		float x = this->zX + (width + paddingX) * posX + startOffsetX;
+		float y = this->zY + (height + paddingY) * posY + startOffsetY;
+		InventorySlotGui* gui = new InventorySlotGui(x, y, width, height, gid.zFilePath, gid.zID);
 		this->zSlotGui.push_back(gui);
 
 		return true;
@@ -74,9 +78,13 @@ bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
 	GuiElement::AddToRenderer(ge);
 	for (auto x = this->zSlotGui.begin(); x < this->zSlotGui.end(); x++)
 	{
+		if(x == this->zSlotGui.end())
+			break;
+
 		(*x)->AddToRenderer(ge);
 	}
 	return true;
+
 }
 
 bool InventoryGui::RemoveFromRenderer(GraphicsEngine* ge)
@@ -103,7 +111,7 @@ int InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, 
 				bCollision = (*x)->CheckCollision(mouseX, mouseY, mousePressed, ge);
 				if (bCollision)
 				{
-					return counter;
+					return (*x)->GetID();
 				}
 			}
 			counter++;

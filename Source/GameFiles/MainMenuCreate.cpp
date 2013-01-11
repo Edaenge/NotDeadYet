@@ -3,10 +3,10 @@
 void MainMenu::Init()
 {
 	iGraphicsEngineParams* GEP = GetGraphics()->GetEngineParameters();
-	float windowWidth = GEP->windowWidth;
-	float windowHeight = GEP->windowHeight;
-	float dx = (windowHeight * 4.0f) / 3.0f;
-	float offSet = (windowWidth - dx) / 2.0f;
+	int windowWidth = GEP->windowWidth;
+	int windowHeight = GEP->windowHeight;
+	float dx = ((float)windowHeight * 4.0f) / 3.0f;
+	float offSet = (float)(windowWidth - dx) / 2.0f;
 
 	GraphicsEngine* eng = GetGraphics();
 	eng->StartRendering();
