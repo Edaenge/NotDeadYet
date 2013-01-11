@@ -41,6 +41,10 @@ public:
 	int GetInventoryCapacity() const;
 	/*! Returns amount of Items the player has in the inventory with itemType = TYPE*/
 	int SearchForItemType(const int TYPE);
+	/*! Removes a stack from Item*/
+	bool RemoveItemStack(const int ID, const unsigned int numberOfStacks = 1);
+	Item* SearchAndGetItemFromType(const int TYPE);
+	Item* EquipItem(const int ID);
 private:
 	/*! Array of items*/
 	std::vector<Item*> zItems;

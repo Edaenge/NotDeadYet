@@ -85,7 +85,7 @@ public:
 	/*! Updates the server clock.*/
 	float Update();
 	/*! Updates the players.*/
-	void UpdatePl();
+	void UpdateObjects();
 	/*! Kicks client. Sends a message if reason is given.
 		If sendAMessage is false, the client will not be notified.
 		This function notifies all the other clients to remove this player.
@@ -141,6 +141,8 @@ private:
 	bool CreateStaticObjectActor(const int type, WeaponObject* weaponObj);
 	bool CreateStaticObjectActor(const int type, FoodObject* foodObj);
 	bool CreateStaticObjectActor(const int type, ContainerObject* containerObj);
+	/*! Creates a DynamicObject with default values.*/
+	bool CreateDynamicObjectActor(const int type, ProjectileObject* projectileObj);
 	void SendErrorMessage(const int id, const std::string error_Message);
 	bool CheckCollision(Vector3 position);
 private:

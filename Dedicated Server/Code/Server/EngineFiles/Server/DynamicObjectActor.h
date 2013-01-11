@@ -10,10 +10,11 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 class DynamicObjectActor : public Actor
 {
 public:
-	DynamicObjectActor(){};
-	virtual ~DynamicObjectActor(){};
+	DynamicObjectActor(bool genID = true);
+	DynamicObjectActor(const std::string& meshModel, bool genID = true);
+	virtual ~DynamicObjectActor();
 
-	virtual void Update() = 0;
+	virtual void Update(float deltaTime) = 0;
 
 	int GetWeight() const {return this->zWeight;}
 	int GetType() const {return this->zType;}

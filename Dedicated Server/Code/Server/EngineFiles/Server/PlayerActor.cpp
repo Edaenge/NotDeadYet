@@ -28,6 +28,7 @@ void PlayerActor::InitValues()
 	this->zHydration = 100.0f;
 	this->zHydrationMax = 100.0f;
 	this->zInventory = new Inventory();
+	this->zEquipment = new Equipment();
 }
 
 PlayerActor::~PlayerActor()

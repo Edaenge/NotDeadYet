@@ -52,7 +52,7 @@ void MovingObject::LinearInterpolation( Vector3& CurrPos, const Vector3& newPos,
 	}
 	else
 	{
-		if (newPos.GetLength() < CurrPos.GetLength())
+		if (CurrPos.GetLength() > newPos.GetLength())
 			CurrPos = newPos;
 	}
 	
