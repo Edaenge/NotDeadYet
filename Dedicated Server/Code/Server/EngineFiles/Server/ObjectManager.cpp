@@ -123,7 +123,7 @@ bool ObjectManager::ReadObjects()
 		}
 		else if(strcmp(key, OBJECT_PROJECTILE.c_str()) == 0)
 		{
-			DynamicProjectileObject* ct = new DynamicProjectileObject(false);
+			StaticProjectileObject* ct = new StaticProjectileObject(false);
 			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
@@ -135,7 +135,7 @@ bool ObjectManager::ReadObjects()
 					InterpCommand(command, key, ct);
 			}
 
-			this->zProjectiles.push_back(ct);
+			this->zStaticProjectiles.push_back(ct);
 		}
 	}
 
@@ -378,7 +378,7 @@ bool ObjectManager::InterpCommand( char* command, char* key, ContainerObject* ct
 	return true;
 }
 
-bool ObjectManager::InterpCommand( char* command, char* key, DynamicProjectileObject* pt )
+bool ObjectManager::InterpCommand( char* command, char* key, StaticProjectileObject* pt )
 {
 	if(strcmp(key, "") == 0)
 		return false;
@@ -394,6 +394,10 @@ bool ObjectManager::InterpCommand( char* command, char* key, DynamicProjectileOb
 	else if(strcmp(command, VELOCITY.c_str()) == 0)
 	{
 		pt->SetVelocity(MaloW::convertStringToFloat(key));
+	}
+	else if(strcmp(command, DAMAGE.c_str()) == 0)
+	{
+		pt->SetDamage(MaloW::convertStringToFloat(key));
 	}
 	else if(strcmp(command, WEIGHT.c_str()) == 0)
 	{
@@ -434,9 +438,9 @@ const ContainerObject* ObjectManager::GetContainerObject( const int type )
 	return SearchType(this->zContainers, type);
 }
 
-const DynamicProjectileObject* ObjectManager::GetProjectileObject( const int type )
+const StaticProjectileObject* ObjectManager::GetStaticProjectileObject( const int type )
 {
-	return SearchType(this->zProjectiles, type);
+	return SearchType(this->zStaticProjectiles, type);
 }
 
 const WeaponObject* ObjectManager::SearchType( std::vector<WeaponObject*>& weapons, const int type ) const
@@ -472,7 +476,7 @@ const ContainerObject* ObjectManager::SearchType( std::vector<ContainerObject*>&
 	return NULL;
 }
 
-const DynamicProjectileObject* ObjectManager::SearchType(std::vector<DynamicProjectileObject*>& projectiles, const int type) const
+const StaticProjectileObject* ObjectManager::SearchType(std::vector<StaticProjectileObject*>& projectiles, const int type) const
 {
 	for(auto it = projectiles.begin(); it < projectiles.end(); it++)
 	{

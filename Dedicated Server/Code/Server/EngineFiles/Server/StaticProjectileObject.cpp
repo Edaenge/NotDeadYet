@@ -38,18 +38,39 @@ StaticProjectileObject::StaticProjectileObject(const DynamicProjectileObject* ot
 	else
 		this->SetID(other->GetID());
 
-	this->zVelocity = other->GetVelocity();
-	this->zStacks = other->GetStackSize();
-	this->zDamage = other->GetDamage();
-	this->zWeight = other->GetWeight();
-	this->zActorModel = other->GetActorModel();
 	this->zType = other->GetType();
-	this->zActorObjectName = other->GetActorObjectName();
-	this->zIconPath = other->GetIconPath();
-	this->zDescription = other->GetDescription();
 	this->zScale = other->GetScale();
 	this->zRot = other->GetRotation();
 	this->zPos = other->GetPosition();
+	this->zDamage = other->GetDamage();
+	this->zWeight = other->GetWeight();
+	this->zStacks = other->GetStackSize();
+	this->zIconPath = other->GetIconPath();
+	this->zVelocity = other->GetVelocity();
+	this->zActorModel = other->GetActorModel();
+	this->zDescription = other->GetDescription();
+	this->zActorObjectName = other->GetActorObjectName();
+}
+
+StaticProjectileObject::StaticProjectileObject( const StaticProjectileObject* other, bool genID /*= false*/ )
+{
+	if (genID)
+		this->GenerateID();
+	else
+		this->SetID(other->GetID());
+
+	this->zRot = other->zRot;
+	this->zPos = other->zPos;
+	this->zType = other->zType;
+	this->zScale = other->zScale;
+	this->zStacks = other->zStacks;
+	this->zDamage = other->zDamage;
+	this->zWeight = other->zWeight;
+	this->zIconPath = other->zIconPath;
+	this->zVelocity = other->zVelocity;
+	this->zActorModel = other->zActorModel;
+	this->zDescription = other->zDescription;
+	this->zActorObjectName = other->zActorObjectName;
 }
 
 StaticProjectileObject::~StaticProjectileObject()

@@ -164,8 +164,8 @@ void ServerChannel::sendData(string msg)
 
 void ServerChannel::Life()
 {
-	if (Messages::FileWrite())
-		Messages::Debug("ServerChannel Process Started");
+	MaloW::Debug("ServerChannel Process Started");
+
 	while(this->stayAlive)
 	{
 		string msg = this->receiveData();

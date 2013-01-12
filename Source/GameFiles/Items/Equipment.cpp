@@ -29,15 +29,9 @@ Equipment::~Equipment()
 	}
 }
 
-void Equipment::EquipWeapon(MeleeWeapon* weapon)
+void Equipment::EquipWeapon(Weapon* weapon)
 {
 	this->zWeapon = weapon;
-}
-
-void Equipment::EquipWeapon( RangedWeapon* weapon, const int AMMO )
-{
-	this->zWeapon = weapon;
-	this->zAmmo = AMMO;
 }
 
 bool Equipment::EquipGear(const unsigned int type, Gear* item)
@@ -75,4 +69,18 @@ Weapon* Equipment::GetWeapon()
 void Equipment::UnEquipWeapon()
 {
 	this->zWeapon = 0;
+}
+
+void Equipment::EquipAmmo( Projectile* projectile )
+{
+	this->zAmmo = projectile;
+}
+
+void Equipment::UnEquipAmmo()
+{
+	this->zAmmo = 0;
+}
+Projectile* Equipment::GetAmmo()
+{
+	return this->zAmmo;
 }

@@ -3,7 +3,7 @@
 
 DynamicProjectileObject::DynamicProjectileObject(const bool genID /*= true*/) : DynamicObjectActor(genID)
 {
-	this->zVelocity = 1.0f;
+	this->zVelocity = 5.0f;
 	this->zStacks = 1;
 	this->zWeight = 1;
 	this->zMoving = true;

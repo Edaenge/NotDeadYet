@@ -156,7 +156,10 @@
     <ClInclude Include="EngineFiles\Server\AI.h" />
     <ClInclude Include="EngineFiles\Server\DeerActor.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\ClientServerMessages.h">
-      <Filter>EngineFiles\Server</Filter>
+      <Filter>EngineFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Projectile.h">
+      <Filter>EngineFiles\Items</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -255,5 +258,11 @@
     </ClCompile>
     <ClCompile Include="EngineFiles\Server\AI.cpp" />
     <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\HostConversions.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Projectile.cpp">
+      <Filter>EngineFiles\Items</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -190,6 +190,12 @@
     <ClCompile Include="..\Source\SoundEngine\SoundHandler.cpp">
       <Filter>Sound Engine Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\ClientObjectHandler.cpp">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Items\Projectile.cpp">
+      <Filter>Game Files\Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -407,6 +413,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ClientServerMessages.h">
       <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Items\Projectile.h">
+      <Filter>Game Files\Items</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

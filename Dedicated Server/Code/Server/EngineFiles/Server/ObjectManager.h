@@ -10,7 +10,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "WeaponObject.h"
 #include "FoodObject.h"
 #include "ContainerObject.h"
-#include "DynamicProjectileObject.h"
 #include "StaticProjectileObject.h"
 
 /*This class reads and stores WordObjects.
@@ -38,22 +37,22 @@ public:
 	/*! Returns a Projectile object from given type.
 		Returns null if it cannot be found.
 	*/
-	const DynamicProjectileObject* GetProjectileObject(const int type);
+	const StaticProjectileObject* GetStaticProjectileObject(const int type);
 private:
 	void TrimAndSet(char* ret);
 	bool InterpCommand(char* command, char* key, WeaponObject* wp);
 	bool InterpCommand(char* command, char* key, FoodObject* fd);
 	bool InterpCommand(char* command, char* key, ContainerObject* fd);
-	bool InterpCommand(char* command, char* key, DynamicProjectileObject* fd);
+	bool InterpCommand(char* command, char* key, StaticProjectileObject* fd);
 
 	const WeaponObject* SearchType(std::vector<WeaponObject*>& weapons, const int type) const;
 	const FoodObject* SearchType(std::vector<FoodObject*>& food, const int type) const;
 	const ContainerObject* SearchType(std::vector<ContainerObject*>& containers, const int type) const;
-	const DynamicProjectileObject* SearchType(std::vector<DynamicProjectileObject*>& projectiles, const int type) const;
+	const StaticProjectileObject* SearchType(std::vector<StaticProjectileObject*>& projectiles, const int type) const;
 	bool Replace(char* key);
 private:
 	std::vector<FoodObject*> zFood;
 	std::vector<WeaponObject*> zWeapons;
 	std::vector<ContainerObject*> zContainers;
-	std::vector<DynamicProjectileObject*> zProjectiles;
+	std::vector<StaticProjectileObject*> zStaticProjectiles;
 };

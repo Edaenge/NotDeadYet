@@ -27,6 +27,17 @@ ActorHandler::~ActorHandler()
 	{
 		SAFE_DELETE((*x));
 	}
+
+	for(auto x = this->zStaticProjectiles.begin(); x < this->zStaticProjectiles.end(); x++)
+	{
+		SAFE_DELETE((*x));
+	}
+
+	for(auto x = this->zDynamicProjectiles.begin(); x < this->zDynamicProjectiles.end(); x++)
+	{
+		SAFE_DELETE((*x));
+	}
+
 	if (this->zObjManager)
 	{
 		delete this->zObjManager;
@@ -47,7 +58,7 @@ void ActorHandler::UpdateObjects( float deltaTime )
 		(*it)->Update(deltaTime);
 	}
 	//Update DynamicObjects
-	for (auto it = this->zProjectiles.begin(); it < this->zProjectiles.end(); it++)
+	for (auto it = this->zDynamicProjectiles.begin(); it < this->zDynamicProjectiles.end(); it++)
 	{
 		(*it)->Update(deltaTime);
 	}
@@ -94,12 +105,22 @@ bool ActorHandler::AddNewStaticContainerActor( ContainerObject* new_Container )
 	return true;
 }
 
+bool ActorHandler::AddNewStaticProjectileActor( StaticProjectileObject* new_Projectile )
+{
+	if(!new_Projectile)
+		return false;
+
+	this->zStaticProjectiles.push_back(new_Projectile);
+
+	return true;
+}
+
 bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Projectile )
 {
 	if(!new_Projectile)
 		return false;
 
-	this->zProjectiles.push_back(new_Projectile);
+	this->zDynamicProjectiles.push_back(new_Projectile);
 
 	return true;
 }
@@ -187,16 +208,32 @@ bool ActorHandler::RemoveStaticContainerActor( const int ID )
 	return true;
 }
 
-bool ActorHandler::RemoveDynamicActor( const int ID )
+bool ActorHandler::RemoveStaticProjectileActor( const int ID )
+{
+	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_PROJECTILE);
+
+	if(index == -1)
+		return false;
+
+	StaticProjectileObject* temp = this->zStaticProjectiles[index];
+
+	this->zStaticProjectiles.erase(this->zStaticProjectiles.begin() + index);
+
+	SAFE_DELETE(temp);
+
+	return true;
+}
+
+bool ActorHandler::RemoveDynamicProjectileActor( const int ID )
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE);
 
 	if(index == -1)
 		return false;
 
-	DynamicProjectileObject* temp = this->zProjectiles[index];
+	DynamicProjectileObject* temp = this->zDynamicProjectiles[index];
 
-	this->zProjectiles.erase(this->zProjectiles.begin() + index);
+	this->zDynamicProjectiles.erase(this->zDynamicProjectiles.begin() + index);
 
 	SAFE_DELETE(temp);
 
@@ -253,11 +290,20 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE ) const
 		}
 	}
 
+	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
+	{
+		for (unsigned int it = 0; it < this->zStaticProjectiles.size(); it++)
+		{
+			if(this->zStaticProjectiles[it]->GetID() == ID)
+				return it;
+		}
+	}
+
 	else if(TYPE == ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE)
 	{
-		for (unsigned int it = 0; it < this->zProjectiles.size(); it++)
+		for (unsigned int it = 0; it < this->zDynamicProjectiles.size(); it++)
 		{
-			if(this->zProjectiles[it]->GetID() == ID)
+			if(this->zDynamicProjectiles[it]->GetID() == ID)
 				return it;
 		}
 	}
@@ -330,13 +376,25 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE, Actor** aOut ) c
 		}
 	}
 
+	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
+	{
+		for (unsigned int it = 0; it < this->zStaticProjectiles.size(); it++)
+		{
+			if(this->zStaticProjectiles[it]->GetID() == ID)
+			{
+				*aOut = this->zStaticProjectiles[it];
+				return it;
+			}
+		}
+	}
+
 	else if(TYPE == ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE)
 	{
-		for (unsigned int it = 0; it < this->zProjectiles.size(); it++)
+		for (unsigned int it = 0; it < this->zDynamicProjectiles.size(); it++)
 		{
-			if(this->zProjectiles[it]->GetID() == ID)
+			if(this->zDynamicProjectiles[it]->GetID() == ID)
 			{
-				*aOut = this->zProjectiles[it];
+				*aOut = this->zDynamicProjectiles[it];
 				return it;
 			}
 		}

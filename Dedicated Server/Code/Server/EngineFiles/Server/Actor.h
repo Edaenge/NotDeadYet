@@ -41,7 +41,7 @@ public:
 		this->zActorModel = "none";
 		this->zActorObjectName = "none";
 	}
-	virtual ~Actor(){}
+	virtual ~Actor(){this->zNextAID = 0;}
 	
 	inline const Vector3& GetPosition() const {return zPos;}
 	const Vector3& GetScale() const {return zScale;}

@@ -8,6 +8,8 @@
 #include "RangedWeapon.h"
 #include "MeleeWeapon.h"
 #include "Gear.h"
+#include "Projectile.h"
+
 #include <vector>
 
 enum GEAR_TYPE
@@ -24,19 +26,17 @@ public:
 	Equipment();
 	virtual ~Equipment();
 	/*! Equips Weapon*/
-	void EquipWeapon(MeleeWeapon* weapon);
-	void EquipWeapon(RangedWeapon* weapon, const int AMMO = 0);
-
+	void EquipWeapon(Weapon* weapon);
+	void EquipAmmo(Projectile* projectile);
+	void UnEquipAmmo();
+	Projectile* GetAmmo();
 	Weapon* GetWeapon();
 	void UnEquipWeapon();
 	bool EquipGear(const unsigned int type, Gear* item);
 	Gear* GetGear(const unsigned int type);
 	void UnEquipGear(const unsigned int type);
-	void SetAmmo(const int AMMO) {this->zAmmo = AMMO;}
-	int GetAmmo() {return this->zAmmo;}
-
 private:
-	int zAmmo;
+	Projectile* zAmmo;
 	Weapon* zWeapon;
 	std::vector<Gear*> zGear;
 };

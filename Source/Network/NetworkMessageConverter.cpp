@@ -172,6 +172,12 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_CONTAINER_CURRENT:
 		ss << M_CONTAINER_CURRENT;
 		break;
+	case MESSAGE_TYPE_PROJECTILE_DAMAGE:
+		ss << M_PROJECTILE_DAMAGE;
+		break;
+	case MESSAGE_TYPE_PROJECTILE_VELOCITY:
+		ss << M_PROJECTILE_VELOCITY;
+		break;
 	case MESSAGE_TYPE_REMOVE_INVENTORY_ITEM:
 		ss << M_REMOVE_INVENTORY_ITEM;
 		break;

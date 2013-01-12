@@ -137,10 +137,12 @@ private:
 	bool CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj);
 	bool CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj);
 	bool CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerObj);
+	bool CreateItemFromObject(PlayerActor* pActor, StaticProjectileObject* projectileObj);
 	/*! Creates a StaticObject with default values.*/
 	bool CreateStaticObjectActor(const int type, WeaponObject** weaponObj, const bool genID = false);
 	bool CreateStaticObjectActor(const int type, FoodObject** foodObj, const bool genID = false);
 	bool CreateStaticObjectActor(const int type, ContainerObject** containerObj, const bool genID = false);
+	bool CreateStaticObjectActor(const int type, StaticProjectileObject** projectileObj, const bool genID = false);
 	/*! Creates a DynamicObject with default values.*/
 	bool CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID = false);	
 	void SendErrorMessage(const int id, const std::string error_Message);

@@ -1,3 +1,0 @@
-Removed Static Object, Number of Objects remaining = 3
-Removed Static Object, Number of Objects remaining = 3
-Removed Static Object, Number of Objects remaining = 3

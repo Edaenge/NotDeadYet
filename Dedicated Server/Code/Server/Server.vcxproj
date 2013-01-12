@@ -78,6 +78,7 @@
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Inventory.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Item.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Projectile.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\RangedWeapon.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Weapon.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\KeyUtil\KeyStates.h" />
@@ -123,6 +124,7 @@
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Inventory.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Item.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Projectile.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\RangedWeapon.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\KeyUtil\KeyStates.cpp" />
     <ClCompile Include="..\..\..\Source\MaloWLib\Process.cpp" />
@@ -143,6 +145,7 @@
     <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp" />
     <ClCompile Include="EngineFiles\Server\FoodObject.cpp" />
     <ClCompile Include="EngineFiles\Server\Host.cpp" />
+    <ClCompile Include="EngineFiles\Server\HostConversions.cpp" />
     <ClCompile Include="EngineFiles\Server\ObjectManager.cpp" />
     <ClCompile Include="EngineFiles\Server\PlayerActor.cpp" />
     <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp" />

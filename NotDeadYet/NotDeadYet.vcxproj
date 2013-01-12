@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\Source\GameFiles\ClientSide\AnimalObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\Client.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ClientSide\ClientObjectHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\DynamicObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\GuiManager.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\MovingObject.cpp" />
@@ -40,6 +41,7 @@
     <ClCompile Include="..\Source\GameFiles\Items\Inventory.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Item.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\MeleeWeapon.cpp" />
+    <ClCompile Include="..\Source\GameFiles\Items\Projectile.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\RangedWeapon.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyBindConfig.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\Keybinds.cpp" />
@@ -106,6 +108,7 @@
     <ClInclude Include="..\Source\GameFiles\Items\Inventory.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Item.h" />
     <ClInclude Include="..\Source\GameFiles\Items\MeleeWeapon.h" />
+    <ClInclude Include="..\Source\GameFiles\Items\Projectile.h" />
     <ClInclude Include="..\Source\GameFiles\Items\RangedWeapon.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Weapon.h" />
     <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyBindConfig.h" />
