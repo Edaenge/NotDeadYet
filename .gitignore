@@ -46,8 +46,16 @@
 /Dedicated Server/Bin/x86/C++CLI.dll
 /WorkingDir/Config.cfg
 /WorkingDir/*.pdb
-/Dedicated Server/Bin/x86/C++CLI.dll
 /WorkingDir/Media/Cache
 /Dedicated Server/Bin/x86/ServerClientMessages.txt
 /WorkingDir/ServerClientMessages.txt
-/WorkingDir/ServerClientMessages.txt
+/Dedicated Server/Bin/x64/*.dll
+/Dedicated Server/Bin/x64/C++CLI.dll.metagen
+/Dedicated Server/Bin/x64/*.exp
+/Dedicated Server/Bin/x64/*.ilk
+/Dedicated Server/Bin/x64/*.lib
+/Dedicated Server/Bin/x64/*.pdb
+/Dedicated Server/Bin/x64/*.exe
+/Dedicated Server/Bin/x64/*.config
+/Dedicated Server/Bin/x64/MaloWDebug.txt
+/Dedicated Server/Bin/x64/ServerClientMessages.txt

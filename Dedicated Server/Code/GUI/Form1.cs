@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Threading;
 using System.Globalization;
+using System.Net;
+using System.IO;
 
 namespace GUI
 {
@@ -17,6 +19,7 @@ namespace GUI
         const int MAX_PLAYERS = 32;
         const string RUNNING = "Running";
         const string NOT_RUNNING = "Not Running";
+        String IPADD = "";
 
         int max_pl = 0;
         CppCLI m_ServerEngine = null;
@@ -35,6 +38,9 @@ namespace GUI
         {
             while(this.Created)
             {
+                if (IPADD != "")
+                    textBox_public_ip.Text = IPADD;
+
                 Run();
                 Application.DoEvents();
 
@@ -55,6 +61,7 @@ namespace GUI
                 this.m_ServerEngine.ShutdownHost();
                 this.button_Start.Enabled = true;
                 toolStripStatusLabel4.Text = NOT_RUNNING;
+
             }
         }
 
@@ -103,6 +110,7 @@ namespace GUI
                 else
                 {
                     this.button_Start.Enabled = false;
+                    backgroundWorker1.RunWorkerAsync(null);
                     max_pl = players;
                 }
             }
@@ -148,6 +156,25 @@ namespace GUI
         {
             this.m_ServerEngine.ShutdownHost();
             this.button_Shutdown.Enabled = true;
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+            String direction = "";
+            WebRequest request = WebRequest.Create("http://checkip.dyndns.org/");
+            using (WebResponse response = request.GetResponse())
+            using (StreamReader stream = new StreamReader(response.GetResponseStream()))
+            {
+                direction = stream.ReadToEnd();
+            }
+
+            //Search for the ip in the html
+            int first = direction.IndexOf("Address: ") + 9;
+            int last = direction.LastIndexOf("</body>");
+            direction = direction.Substring(first, last - first);
+            IPADD = direction+":"+textBox_Port.Text;
+
         }
 
     }

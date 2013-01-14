@@ -38,11 +38,7 @@ ActorHandler::~ActorHandler()
 		SAFE_DELETE((*x));
 	}
 
-	if (this->zObjManager)
-	{
-		delete this->zObjManager;
-		this->zObjManager = NULL;
-	}
+	SAFE_DELETE(this->zObjManager);
 }
 
 void ActorHandler::UpdateObjects( float deltaTime )
