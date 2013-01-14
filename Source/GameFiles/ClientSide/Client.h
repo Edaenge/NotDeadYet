@@ -104,6 +104,7 @@ private:
 	void HandleEquipItem(const int ItemID, const int Slot);
 	void HandleUnEquipItem(const int ItemID, const int Slot);
 	void SendUnEquipItem(const int ID, const int Slot);
+	void HandleRemoveEquipment(const int ItemID, const int Slot);
 private:
 	/*! Current Client ID*/
 	int zID;

@@ -264,5 +264,8 @@
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Projectile.cpp">
       <Filter>EngineFiles\Items</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Server\HostItemHandler.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

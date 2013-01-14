@@ -7,9 +7,9 @@ Equipment::Equipment()
 	this->zWeapon = 0;
 	for (unsigned int i = 0; i < GEAR_SLOTS; i++)
 	{
-		this->zGear.push_back(0);
+		this->zGear.push_back(NULL);
 	}
-	this->zAmmo = 0;
+	this->zProjectile = NULL;
 }
 
 Equipment::~Equipment()
@@ -17,14 +17,14 @@ Equipment::~Equipment()
 	if (this->zWeapon)
 	{
 		delete this->zWeapon;
-		this->zWeapon = 0;
+		this->zWeapon = NULL;
 	}
 	for (auto x = this->zGear.begin(); x < this->zGear.end(); x++)
 	{
 		if ((*x))
 		{
 			delete (*x);
-			(*x) = 0;
+			(*x) = NULL;
 		}
 	}
 }
@@ -50,14 +50,14 @@ Gear* Equipment::GetGear(const unsigned int type)
 	{
 		return this->zGear[type];
 	}
-	return 0;
+	return NULL;
 }
 
 void Equipment::UnEquipGear(const unsigned int type)
 {
 	if (type < GEAR_SLOTS)
 	{
-		this->zGear[type] = 0;
+		this->zGear[type] = NULL;
 	}
 }
 
@@ -68,19 +68,38 @@ Weapon* Equipment::GetWeapon()
 
 void Equipment::UnEquipWeapon()
 {
-	this->zWeapon = 0;
+	this->zWeapon = NULL;
 }
 
-void Equipment::EquipAmmo( Projectile* projectile )
+void Equipment::EquipProjectile(Projectile* projectile)
 {
-	this->zAmmo = projectile;
+	if (!projectile)
+		return;
+
+	if (this->zProjectile)
+	{
+		if (this->zProjectile->GetItemType() == projectile->GetItemType())
+		{
+			int totalStacks = this->zProjectile->GetStackSize() + projectile->GetStackSize();
+			this->zProjectile->SetStackSize(totalStacks);
+		}
+		else
+		{
+			this->zProjectile = projectile;
+		}
+	}
+	else
+	{
+		this->zProjectile = projectile;
+	}
+	
 }
 
-void Equipment::UnEquipAmmo()
+void Equipment::UnEquipProjectile()
 {
-	this->zAmmo = 0;
+	this->zProjectile = NULL;
 }
-Projectile* Equipment::GetAmmo()
+Projectile* Equipment::GetProjectile()
 {
-	return this->zAmmo;
+	return this->zProjectile;
 }

@@ -203,6 +203,7 @@
     <ClCompile Include="EngineFiles\Server\FoodObject.cpp" />
     <ClCompile Include="EngineFiles\Server\Host.cpp" />
     <ClCompile Include="EngineFiles\Server\HostConversions.cpp" />
+    <ClCompile Include="EngineFiles\Server\HostItemHandler.cpp" />
     <ClCompile Include="EngineFiles\Server\ObjectManager.cpp" />
     <ClCompile Include="EngineFiles\Server\PlayerActor.cpp" />
     <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp" />

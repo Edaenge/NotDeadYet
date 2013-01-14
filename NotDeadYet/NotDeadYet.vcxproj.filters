@@ -196,6 +196,9 @@
     <ClCompile Include="..\Source\GameFiles\Items\Projectile.cpp">
       <Filter>Game Files\Items</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\ClientItemHandler.cpp">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">

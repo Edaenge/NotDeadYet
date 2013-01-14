@@ -64,7 +64,7 @@ bool Inventory::AddItem(Item* item)
 			//Decrease slot size to mark blocked
 			this->zSlotsAvailable--;
 		}
-		if (item->IsStacking())
+		if (item->GetStacking())
 		{
 			Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType());
 			if (existingItem)

@@ -152,6 +152,7 @@ private:
 	bool CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID = false);
 	bool CheckCollision(Vector3 position);
 	void HandleConversion(DynamicProjectileObject* dynamicProjObj);
+	void SendRemoveEquipment(const int ClientID, const int ItemID, const int Slot);
 private:
 	ServerListener* zServerListener;
 

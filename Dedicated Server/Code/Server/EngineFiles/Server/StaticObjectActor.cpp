@@ -10,6 +10,7 @@ StaticObjectActor::StaticObjectActor(bool genID) : Actor()
 	this->zWeight = 1;
 	this->zDescription = "none";
 	this->zIconPath = "none";
+	this->zStacks = 1;
 }
 
 StaticObjectActor::StaticObjectActor(const std::string& meshModel, bool genID) : Actor()
