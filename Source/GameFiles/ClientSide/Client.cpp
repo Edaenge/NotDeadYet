@@ -320,6 +320,12 @@ void Client::HandleKeyboardInput()
 
 	this->CheckMovementKeys();
 
+	Menu_select_data msd;
+	if(this->zGuiManager->IsGuiOpen())
+	{
+		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
+	}
+
 	//Used For Testing ATM
 	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_JUMP)))
 	{
@@ -348,11 +354,7 @@ void Client::HandleKeyboardInput()
 
 			if (item)
 			{
-				MaloW::Debug("Item Equipped" + item->GetItemName());
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());
-				this->zServerChannel->sendData(msg);
-			}
-		}
+				MaloW::Debug("Item Equipped" + item->GetItemName());				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());				this->zServerChannel->sendData(msg);			}		}
 	}
 	else
 	{
@@ -400,7 +402,7 @@ void Client::HandleKeyboardInput()
 				this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
 		}
 
-		if (this->zEng->GetKeyListener()->IsClicked(2))
+		/*if (this->zEng->GetKeyListener()->IsClicked(2))
 		{
 			if (!this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
 			{
@@ -415,7 +417,7 @@ void Client::HandleKeyboardInput()
 				this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, false);
 				this->zGuiManager->HideCircularItemGui();
 			}
-		}
+		}*/
 
 		if (this->zEng->GetKeyListener()->IsClicked(1))
 		{
@@ -544,13 +546,28 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		//Player
 		else if(strcmp(key, M_REMOVE_PLAYER.c_str()) == 0)
 		{
-			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_PLAYER, msgArray[0]);
+			int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_PLAYER, msgArray[0]);
 			this->RemovePlayerObject(id);
 		}
 		else if(strcmp(key, M_EQUIP_ITEM.c_str()) == 0)
 		{
-			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
-			this->HandleEquipItem(id);
+			int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
+			int slot = -1;
+			if (msgArray.size() > 1)
+			{
+				slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+			}
+			this->HandleEquipItem(id, slot);
+		}
+		else if(strcmp(key, M_UNEQUIP_ITEM.c_str()) == 0)
+		{
+			int id = this->zMsgHandler.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
+			int slot = -1;
+			if (msgArray.size() > 1)
+			{
+				slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+			}
+			this->HandleUnEquipItem(id, slot);
 		}
 		else if(strcmp(key, M_ADD_INVENTORY_ITEM.c_str()) == 0)
 		{
@@ -601,9 +618,9 @@ void Client::HandleNetworkMessage(const std::string& msg)
 	}
 }
 
-void Client::HandleUseItem(const int id)
+void Client::HandleUseItem(const int ID)
 {
-	Item* item = this->zPlayerInventory->SearchAndGetItem(id);
+	Item* item = this->zPlayerInventory->SearchAndGetItem(ID);
 
 	if(!item)
 		return;
@@ -645,9 +662,9 @@ void Client::HandleUseItem(const int id)
 	}
 }
 
-void Client::HandleEquipItem(const int ItemId)
+void Client::HandleEquipItem(const int ItemID, const int Slot)
 {
-	Item* item = this->zPlayerInventory->EquipItem(ItemId);
+	Item* item = this->zPlayerInventory->EquipItem(ItemID);
 
 	if (!item)
 	{
@@ -655,8 +672,19 @@ void Client::HandleEquipItem(const int ItemId)
 		return;
 	}
 
+	if (Slot == -1)
+	{
+		MaloW::Debug("Error In Client::EquipItem Item Slot is -1");
+		return;
+	}
+
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
 	{
+		if (Slot != EQUIPMENT_SLOT_WEAPON)
+		{
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString(Slot));
+			return;
+		}
 		RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item);
 		if (!rWpn)
 		{
@@ -666,12 +694,25 @@ void Client::HandleEquipItem(const int ItemId)
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 		Equipment* eq = player->GetEquipmentPtr();
 
+		Weapon* oldWeapon = eq->GetWeapon();
+
+		if (oldWeapon)
+		{
+			this->zPlayerInventory->AddItem(oldWeapon);
+		}
+
 		eq->EquipWeapon(rWpn);
 
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
 	{
+		if (Slot != EQUIPMENT_SLOT_WEAPON)
+		{
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString(Slot));
+			return;
+		}
+
 		RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item);
 		if (!rWpn)
 		{
@@ -681,12 +722,25 @@ void Client::HandleEquipItem(const int ItemId)
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 		Equipment* eq = player->GetEquipmentPtr();
 
+		Weapon* oldWeapon = eq->GetWeapon();
+
+		if (oldWeapon)
+		{
+			this->zPlayerInventory->AddItem(oldWeapon);
+		}
+
 		eq->EquipWeapon(rWpn);
 
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_PROJECTILE_ARROW)
 	{
+		if (Slot != EQUIPMENT_SLOT_AMMO)
+		{
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not an Ammo ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_AMMO) + "!= Slot: " + MaloW::convertNrToString(Slot));
+			return;
+		}
+
 		Projectile* projectile = dynamic_cast<Projectile*>(item);
 		if (!projectile)
 		{
@@ -696,12 +750,23 @@ void Client::HandleEquipItem(const int ItemId)
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 		Equipment* eq = player->GetEquipmentPtr();
 
+		Projectile* oldProjectile = eq->GetAmmo();
+		if (oldProjectile)
+		{
+			this->zPlayerInventory->AddItem(oldProjectile);
+		}
 		eq->EquipAmmo(projectile);
 
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE || item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE)
 	{
+		if (Slot != EQUIPMENT_SLOT_WEAPON)
+		{
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString(Slot));
+			return;
+		}
+
 		MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item);
 		if (!mWpn)
 		{
@@ -711,33 +776,171 @@ void Client::HandleEquipItem(const int ItemId)
 
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 		Equipment* eq = player->GetEquipmentPtr();
+
+		Weapon* oldWeapon = eq->GetWeapon();
+
+		if (oldWeapon)
+		{
+			this->zPlayerInventory->AddItem(oldWeapon);
+		}
+
 		eq->EquipWeapon(mWpn);
 
 		return;
 	}
 }
 
-void Client::SendPickupItemMessage(const int id)
+void Client::HandleUnEquipItem( const int ItemID, const int Slot )
 {
-	std::string msg;
+	PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 
-	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PICKUP_ITEM, id);
+	if (!pObject)
+	{
+		MaloW::Debug("Client: this Player cant be found");
+		return;
+	}
+
+	Equipment* eq = pObject->GetEquipmentPtr();
+
+	if (Slot == EQUIPMENT_SLOT_AMMO)
+	{
+		Projectile* projectile = eq->GetAmmo();
+
+		if (projectile)
+		{
+			if (projectile->GetID() == ItemID)
+			{
+				eq->UnEquipAmmo();
+
+				this->zPlayerInventory->AddItem(projectile);
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+
+	if (Slot == EQUIPMENT_SLOT_WEAPON)
+	{
+		Weapon* wpn = eq->GetWeapon();
+
+		if (wpn)
+		{
+			if (wpn->GetID() == ItemID)
+			{
+				eq->UnEquipWeapon();
+
+				this->zPlayerInventory->AddItem(wpn);
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+
+	if (Slot == EQUIPMENT_SLOT_HEAD)
+	{
+		Gear* head = eq->GetGear(EQUIPMENT_SLOT_HEAD);
+
+		if (head)
+		{
+			if (head->GetID() == ItemID)
+			{
+				eq->UnEquipGear(EQUIPMENT_SLOT_HEAD);
+
+				this->zPlayerInventory->AddItem(head);
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Head Slot ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+
+	if (Slot == EQUIPMENT_SLOT_CHEST)
+	{
+		Gear* chest = eq->GetGear(EQUIPMENT_SLOT_CHEST);
+
+		if (chest)
+		{
+			if (chest->GetID() == ItemID)
+			{
+				eq->UnEquipGear(EQUIPMENT_SLOT_CHEST);
+
+				this->zPlayerInventory->AddItem(chest);
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Chest Slot ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+
+	if (Slot == EQUIPMENT_SLOT_LEGS)
+	{
+		Gear* legs = eq->GetGear(EQUIPMENT_SLOT_LEGS);
+
+		if (legs)
+		{
+			if (legs->GetID() == ItemID)
+			{
+				eq->UnEquipGear(EQUIPMENT_SLOT_LEGS);
+
+				this->zPlayerInventory->AddItem(legs);
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Legs Slot ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+
+	if (Slot == EQUIPMENT_SLOT_BOOTS)
+	{
+		Gear* boots = eq->GetGear(EQUIPMENT_SLOT_BOOTS);
+
+		if (boots)
+		{
+			if (boots->GetID() == ItemID)
+			{
+				eq->UnEquipGear(EQUIPMENT_SLOT_BOOTS);
+
+				this->zPlayerInventory->AddItem(boots);
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Boots Slot ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+}
+
+void Client::SendUnEquipItem(const int ID, const int Slot)
+{
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, ID);
+
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, Slot);
 
 	this->zServerChannel->sendData(msg);
 }
 
-void Client::SendDropItemMessage(const int id)
+void Client::SendPickupItemMessage(const int ID)
 {
 	std::string msg;
 
-	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_DROP_ITEM, id);
+	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PICKUP_ITEM, ID);
 
 	this->zServerChannel->sendData(msg);
 }
 
-void Client::HandleRemoveInventoryItem(const int id)
+void Client::SendDropItemMessage(const int ID)
 {
-	int index = this->zPlayerInventory->Search(id);
+	std::string msg;
+
+	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_DROP_ITEM, ID);
+
+	this->zServerChannel->sendData(msg);
+}
+
+void Client::HandleRemoveInventoryItem(const int ID)
+{
+	int index = this->zPlayerInventory->Search(ID);
 	if(this->zPlayerInventory->RemoveItem(index))
 	{
 		if (Messages::FileWrite())
@@ -934,11 +1137,16 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 	for(auto it = dynamicObjects.begin(); it < dynamicObjects.end(); it++)
 	{
 		iMesh* mesh = (*it)->GetMesh();
+		if (!mesh)
+		{
+			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
+			continue;
+		}
 		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(origin, camForward, mesh);
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
-			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetName(), "", (*it)->GetDescription());
+			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription());
 			Collisions.push_back(gui_Data);
 		}
 	}

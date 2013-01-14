@@ -36,8 +36,8 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 	GuiElement::AddToRenderer(ge);
 	if (ge)
 	{
-		this->zItemImage = ge->CreateImage(Vector2(this->zItemX, this->zItemY), Vector2(this->zItemWidth, this->zItemHeight), this->zItemImageName.c_str());
-		this->ShowGui();
+		//this->zItemImage = ge->CreateImage(Vector2(this->zItemX, this->zItemY), Vector2(this->zItemWidth, this->zItemHeight), this->zItemImageName.c_str());
+		//this->ShowGui();
 		return true;
 	}
 	
@@ -61,19 +61,23 @@ bool CircularListGui::RemoveFromRenderer(GraphicsEngine* ge)
 	return false;
 }
 
-bool CircularListGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
+int CircularListGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
 {
 	Vector2 dimension = this->GetDimension();
 
-	if (!((mouseX < this->zX || mouseX > (this->zX + dimension.x)) || (mouseY < this->zY || mouseY > (this->zY + dimension.y))))
+	if(mousePressed)
 	{
-		if (!this->zPressed && mousePressed)
-		{
-			this->zPressed = true;
-			this->HideGui();
-		}
+		if(mouseX < (this->zX + this->zWidth * 0.5f) && mouseY < (this->zY + this->zHeight * 0.5f))
+			return 0;
+		else if(mouseX > (this->zX + this->zWidth * 0.5f) && mouseY < (this->zY + this->zHeight * 0.5f))
+			return 1;
+		else if(mouseX < (this->zX + this->zWidth * 0.5f) && mouseY > (this->zY + this->zHeight * 0.5f))
+			return 2;
+		else if(mouseX > (this->zX + this->zWidth * 0.5f) && mouseY > (this->zY + this->zHeight * 0.5f))
+			return 3;
 	}
-	return false;
+
+	return -1;
 }
 
 void CircularListGui::HideGui()

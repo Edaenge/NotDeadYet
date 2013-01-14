@@ -23,6 +23,10 @@ GuiManager::GuiManager()
 	//this->zLootingGui = NULL;
 	//this->zInvCircGui = NULL;
 	this->zGraphicEngine = NULL;
+
+	zSelectedItem = 0;
+	zSelectedCircMenu = 0;
+	zMinorFix = false;
 }
 
 GuiManager::GuiManager(GraphicsEngine* ge)
@@ -49,13 +53,17 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 	this->zInvGui = new InventoryGui(windowWidth - width, windowHeight - height, width, height, INVENTORY_GUI_PATH);
 
 	Vector2 mousePosition = this->zGraphicEngine->GetKeyListener()->GetMousePosition();
+
 	x = mousePosition.x;
 	y = mousePosition.y;
-	width = windowWidth * 0.25f;
-	height = windowHeight * 0.25f;
-	//this->zInvCircGui = new CircularListGui(x, y, width, height, INVENTORY_ITEM_SELECTION_GUI_PATH);
+	width = (200.0f / 1024.0f) * windowWidth;
+	height = (200.0f / 768.0f) * windowHeight;
+	this->zInvCircGui = new CircularListGui(x, y, width, height, INVENTORY_ITEM_SELECTION_GUI_PATH);
 
 	//this->zLootingGui = new CircularListGui(x, y, width, height, LOOTING_GUI_PATH);
+	zSelectedItem = 0;
+	zSelectedCircMenu = 0;
+	zMinorFix = false;
 }
 
 GuiManager::~GuiManager()
@@ -66,11 +74,11 @@ GuiManager::~GuiManager()
 		this->zInvGui = NULL;
 	}
 
-	//if (this->zInvCircGui)
-	//{
-	//	delete this->zInvCircGui;
-	//	this->zInvCircGui = NULL;
-	//}
+	if (this->zInvCircGui)
+	{
+		delete this->zInvCircGui;
+		this->zInvCircGui = NULL;
+	}
 
 	//if (this->zLootingGui)
 	//{
@@ -103,6 +111,11 @@ void GuiManager::ToggleInventoryGui()
 		//Hide Inventory
 		this->zInventoryOpen = false;
 		this->zInvGui->RemoveFromRenderer(this->zGraphicEngine);
+		if(this->zCircularInventorySelectionOpen)
+		{
+			this->zCircularInventorySelectionOpen = false;
+			this->zInvCircGui->RemoveFromRenderer(this->zGraphicEngine);
+		}
 	}
 }
 
@@ -119,16 +132,16 @@ void GuiManager::ShowCircularItemGui()
 		if (!this->zCircularInventorySelectionOpen)
 		{
 			//Set Gui Position to Mouse Position
-			//Vector2 mousePosition = this->zGraphicEngine->GetKeyListener()->GetMousePosition();
-			//Vector2 dimension = this->zInvCircGui->GetDimension();
+			Vector2 mousePosition = this->zGraphicEngine->GetKeyListener()->GetMousePosition();
+			Vector2 dimension = this->zInvCircGui->GetDimension();
 
-			//float x = mousePosition.x - dimension.x * 0.5f;
-			//float y = mousePosition.y - dimension.y * 0.5f;
-			//this->zInvCircGui->SetPosition(x, y);
+			float x = mousePosition.x - dimension.x * 0.5f;
+			float y = mousePosition.y - dimension.y * 0.5f;
+			this->zInvCircGui->SetPosition(x, y);
 
 			//Show Gui
 			this->zCircularInventorySelectionOpen = true;
-			//this->zInvCircGui->AddToRenderer(this->zGraphicEngine);
+			this->zInvCircGui->AddToRenderer(this->zGraphicEngine);
 		}
 	}
 }
@@ -139,7 +152,7 @@ void GuiManager::HideCircularItemGui()
 	if (this->zCircularInventorySelectionOpen)
 	{
 		this->zCircularInventorySelectionOpen = false;
-		//this->zInvCircGui->RemoveFromRenderer(this->zGraphicEngine);
+		this->zInvCircGui->RemoveFromRenderer(this->zGraphicEngine);
 	}
 }
 
@@ -233,9 +246,46 @@ bool GuiManager::IsGuiOpen()
 	return (this->zInventoryOpen || this->zLooting || this->zDeathGuiOpen || this->zIngameMenuOpen);
 }
 
-int GuiManager::CheckCollisionInv()
+Menu_select_data GuiManager::CheckCollisionInv()
 {
-	Vector2 mousePos = zGraphicEngine->GetKeyListener()->GetMousePosition();
-	return this->zInvGui->CheckCollision(mousePos.x, mousePos.y, zGraphicEngine->GetKeyListener()->IsClicked(1), zGraphicEngine);
-	int i = 0;
+	// Fixes so the circle menu won't pop up instantly after selecting an option. You have to release the button first.
+	if( zMinorFix && !zGraphicEngine->GetKeyListener()->IsClicked(2))
+	{
+		zMinorFix = false;
+	}
+	if(this->zCircularInventorySelectionOpen)
+	{
+		Vector2 mousePos = zGraphicEngine->GetKeyListener()->GetMousePosition();
+		this->zSelectedCircMenu = this->zInvCircGui->CheckCollision(mousePos.x, mousePos.y, zGraphicEngine->GetKeyListener()->IsClicked(1), zGraphicEngine);
+
+		if(this->zSelectedCircMenu >= 0 && this->zSelectedCircMenu < 4)
+		{
+			zMinorFix = true;
+			this->HideCircularItemGui();
+			Menu_select_data msd;
+			msd.zAction = (CIRCMENU)this->zSelectedCircMenu;
+			msd.zID = this->zSelectedItem;
+			Menu_select_data returnVal;
+			return msd;
+		}
+		else if(!zGraphicEngine->GetKeyListener()->IsClicked(2))
+		{
+			this->HideCircularItemGui();
+		}
+
+	}
+	else if( this->zInventoryOpen )
+	{
+		Vector2 mousePos = zGraphicEngine->GetKeyListener()->GetMousePosition();
+		this->zSelectedItem = this->zInvGui->CheckCollision(mousePos.x, mousePos.y, zGraphicEngine->GetKeyListener()->IsClicked(2), zGraphicEngine);
+		if(zSelectedItem != -1 && !this->zCircularInventorySelectionOpen)
+		{
+			this->ShowCircularItemGui();
+		}
+		
+	}
+	Menu_select_data msd;
+	msd.zAction = (CIRCMENU)-1;
+	msd.zID = -1;
+	return msd;
 }

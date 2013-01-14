@@ -29,6 +29,8 @@ struct Gui_Item_Data
 	std::string zName;
 	std::string zFilePath;
 	std::string zDescription;
+
+	bool zPressed;
 };
 
 class InventoryGui : public GuiElement

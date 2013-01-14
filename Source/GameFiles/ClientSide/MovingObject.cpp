@@ -6,7 +6,7 @@ MovingObject::MovingObject(const unsigned int id) : WorldObject(id)
 {
 	this->zState = STATE_IDLE; 
 	this->zEndPosition = Vector3(0,0,0);
-	this->zVelocity = 500.0f;
+	this->zVelocity = 800.0f;
 }
 
 float MovingObject::GetInterpolationType(const float deltaTime, const unsigned int type)

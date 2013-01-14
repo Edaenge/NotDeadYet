@@ -54,19 +54,22 @@ bool Inventory::AddItem(Item* item)
 	if(this->zWeightTotal + weight <= this->zInventoryCap)
 	{
 		this->zWeightTotal += weight;
-		for (int i = 0; i < weight - 1; i++)
+		for (unsigned int i = 0; i < weight - 1; i++)
 		{
 			zInventorySlotBlocked[this->zSlotsAvailable-1] = true;
 
 			//Decrease slot size to mark blocked
 			this->zSlotsAvailable--;
 		}
-		Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType());
-		if (existingItem)
+		if (item->IsStacking())
 		{
-			existingItem->ModifyStackSize(item->GetStackSize());
-			MaloW::Debug("Added Stack to inventory " + item->GetItemName());
-			return true;
+			Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType());
+			if (existingItem)
+			{
+				existingItem->IncreaseStackSize(item->GetStackSize());
+				MaloW::Debug("Added Stack to inventory " + item->GetItemName());
+				return true;
+			}
 		}
 		this->zItems.push_back(item);
 		MaloW::Debug("Added Item " + item->GetItemName() + MaloW::convertNrToString(item->GetID()));
@@ -93,7 +96,7 @@ Item* Inventory::GetItem(const unsigned int index) const
 	return 0;
 }
 
-int Inventory::Search( const int ID ) const
+int Inventory::Search(const int ID) const
 {
 	for (unsigned int i = 0; i < this->zItems.size(); i++)
 	{
@@ -113,7 +116,7 @@ bool Inventory::RemoveItemStack(const int ID, const unsigned int numberOfStacks)
 	if (index == -1)
 		return false;
 
-	if (index < this->zItems.size())
+	if ((unsigned int)index < this->zItems.size())
 	{
 		int weight = GetItem(index)->GetWeight() * numberOfStacks;
 		this->zWeightTotal -= weight;
@@ -124,7 +127,7 @@ bool Inventory::RemoveItemStack(const int ID, const unsigned int numberOfStacks)
 		}
 		Item* item = this->zItems.at(index);
 		
-		item->ModifyStackSize(-numberOfStacks);
+		item->DecreaseStackSize(numberOfStacks);
 
 		return true;
 	}
@@ -180,7 +183,7 @@ int Inventory::GetInventoryCapacity() const
 	return this->zInventoryCap;
 }
 
-int Inventory::SearchForItemType(const int TYPE)
+int Inventory::SearchForItemType(const unsigned int TYPE)
 {
 	int counter = 0;
 
@@ -195,7 +198,7 @@ int Inventory::SearchForItemType(const int TYPE)
 	return counter;
 }
 
-Item* Inventory::SearchAndGetItemFromType( const int TYPE )
+Item* Inventory::SearchAndGetItemFromType( const unsigned int TYPE )
 {
 	for (auto it = this->zItems.begin(); it < this->zItems.end(); it++)
 	{
@@ -207,11 +210,14 @@ Item* Inventory::SearchAndGetItemFromType( const int TYPE )
 	return NULL;
 }
 
-Item* Inventory::EquipItem( const int ID )
+Item* Inventory::EquipItem(const int ID)
 {
 	int index = this->Search(ID);
 
-	if (index < this->zItems.size())
+	if (index == -1)
+		return NULL;
+	
+	if ((unsigned int)index < this->zItems.size())
 	{
 		int weight = GetItem(index)->GetWeight();
 		this->zWeightTotal -= weight;

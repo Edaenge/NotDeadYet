@@ -5,6 +5,7 @@ Projectile::Projectile(const unsigned int id, const unsigned int weight, const s
 		   const unsigned int itemType, const std::string& description, float velocity, float damage) 
 		   : Item(id, weight, name, itemType, description)
 {
+	this->zStacking = true;
 	this->zDamage = damage;
 	this->zVelocity = velocity;
 }

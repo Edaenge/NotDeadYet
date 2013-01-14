@@ -194,7 +194,7 @@ void Host::Life()
 	}
 }
 
-int Host::InitHost(int port, unsigned int maxClients)
+int Host::InitHost( const int PORT, const unsigned int MAX_CLIENTS )
 {
 	int code = 0;
 
@@ -206,10 +206,10 @@ int Host::InitHost(int port, unsigned int maxClients)
 		this->zServerListener = new ServerListener();
 	}
 	
-	code = this->zServerListener->InitListener(port);
+	code = this->zServerListener->InitListener(PORT);
 
-	this->zMaxClients = maxClients;
-	this->zPort	= port;
+	this->zMaxClients = MAX_CLIENTS;
+	this->zPort	= PORT;
 	
 	return code;
 }
@@ -533,13 +533,13 @@ void Host::ReadMessages()
 	}
 }
 
-bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectId)
+bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectID)
 {
 	if(!HasClients())
 		return false;
 
 	//Check For FoodObject
-	FoodObject* food = dynamic_cast<FoodObject*>(this->zActorHandler->GetActor(ObjectId, ACTOR_TYPE_STATIC_OBJECT_FOOD));
+	FoodObject* food = dynamic_cast<FoodObject*>(this->zActorHandler->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_FOOD));
 
 	if (food)
 	{
@@ -554,7 +554,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectId)
 	}
 
 	//Check For Weapon Object
-	WeaponObject* weapon = dynamic_cast<WeaponObject*>(this->zActorHandler->GetActor(ObjectId, ACTOR_TYPE_STATIC_OBJECT_WEAPON));
+	WeaponObject* weapon = dynamic_cast<WeaponObject*>(this->zActorHandler->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_WEAPON));
 
 	if (weapon)
 	{
@@ -570,7 +570,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectId)
 	}
 
 	//Check For Container Object
-	ContainerObject* container = dynamic_cast<ContainerObject*>(this->zActorHandler->GetActor(ObjectId, ACTOR_TYPE_STATIC_OBJECT_CONTAINER));
+	ContainerObject* container = dynamic_cast<ContainerObject*>(this->zActorHandler->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_CONTAINER));
 
 	if (container)
 	{
@@ -586,7 +586,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectId)
 	}
 
 	//Check For Container Object
-	StaticProjectileObject* projectile = dynamic_cast<StaticProjectileObject*>(this->zActorHandler->GetActor(ObjectId, ACTOR_TYPE_STATIC_OBJECT_PROJECTILE));
+	StaticProjectileObject* projectile = dynamic_cast<StaticProjectileObject*>(this->zActorHandler->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_PROJECTILE));
 
 	if (projectile)
 	{
@@ -606,16 +606,163 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectId)
 	return false;
 }
 
+void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Slot)
+{
+	if (Slot == -1)
+	{
+		MaloW::Debug("Error In Host::UnEquip Item Slot is -1");
+		return;
+	}
+
+	Inventory* inv = pActor->GetInventory();
+	Equipment* eq = pActor->GetEquipment();
+
+	if (Slot == EQUIPMENT_SLOT_AMMO)
+	{
+		Projectile* projectile = eq->GetAmmo();
+
+		if (projectile)
+		{
+			if (projectile->GetID() == ItemID)
+			{
+				eq->UnEquipAmmo();
+
+				inv->AddItem(projectile);
+
+				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+
+	if (Slot == EQUIPMENT_SLOT_WEAPON)
+	{
+		Weapon* wpn = eq->GetWeapon();
+
+		if (wpn)
+		{
+			if (wpn->GetID() == ItemID)
+			{
+				eq->UnEquipWeapon();
+
+				inv->AddItem(wpn);
+
+				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+
+	if (Slot == EQUIPMENT_SLOT_HEAD)
+	{
+		Gear* head = eq->GetGear(EQUIPMENT_SLOT_HEAD);
+
+		if (head)
+		{
+			if (head->GetID() == ItemID)
+			{
+				eq->UnEquipGear(EQUIPMENT_SLOT_HEAD);
+
+				inv->AddItem(head);
+
+				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Head Slot ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+
+	if (Slot == EQUIPMENT_SLOT_CHEST)
+	{
+		Gear* chest = eq->GetGear(EQUIPMENT_SLOT_CHEST);
+
+		if (chest)
+		{
+			if (chest->GetID() == ItemID)
+			{
+				eq->UnEquipGear(EQUIPMENT_SLOT_CHEST);
+
+				inv->AddItem(chest);
+
+				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Chest Slot ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+
+	if (Slot == EQUIPMENT_SLOT_LEGS)
+	{
+		Gear* legs = eq->GetGear(EQUIPMENT_SLOT_LEGS);
+
+		if (legs)
+		{
+			if (legs->GetID() == ItemID)
+			{
+				eq->UnEquipGear(EQUIPMENT_SLOT_LEGS);
+
+				inv->AddItem(legs);
+
+				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Legs Slot ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+
+	if (Slot == EQUIPMENT_SLOT_BOOTS)
+	{
+		Gear* boots = eq->GetGear(EQUIPMENT_SLOT_BOOTS);
+
+		if (boots)
+		{
+			if (boots->GetID() == ItemID)
+			{
+				eq->UnEquipGear(EQUIPMENT_SLOT_BOOTS);
+
+				inv->AddItem(boots);
+
+				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Boots Slot ID: " + MaloW::convertNrToString(ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+	}
+
+}
+
+void Host::SendUnEquipMessage(const int PlayerID, const int ID, const int Slot)
+{
+	std::string message = this->zMessageConverter.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, ID);
+	message += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, Slot);
+
+	this->SendToClient(PlayerID, message);
+}
+
 void Host::SendErrorMessage(const int id, const std::string error_Message)
 {
 	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ERROR_MESSAGE, error_Message);
 	this->SendToClient(id, msg);
 }
 
-void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
+void Host::HandleDropItem(PlayerActor* pActor, const int ItemID)
 {	
 	Item* item = NULL;
-	item = pActor->GetItem(ItemId);
+	item = pActor->GetItem(ItemID);
 
 	if (!item)
 	{
@@ -634,7 +781,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 		}
 
 		this->CreateObjectFromItem(pActor, item_Food);
-		pActor->DropObject(ItemId);
+		pActor->DropObject(ItemID);
 		return;
 	}
 	if (item_type == ITEM_TYPE_WEAPON_RANGED_BOW)
@@ -646,7 +793,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 			return;
 		}
 		this->CreateObjectFromItem(pActor, item_Weapon);
-		pActor->DropObject(ItemId);
+		pActor->DropObject(ItemID);
 		return;
 	}
 	if (item_type == ITEM_TYPE_WEAPON_RANGED_ROCK)
@@ -659,7 +806,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 		}
 
 		this->CreateObjectFromItem(pActor, item_Weapon);
-		pActor->DropObject(ItemId);
+		pActor->DropObject(ItemID);
 		return;
 	}
 	if (item_type == ITEM_TYPE_WEAPON_MELEE_AXE)
@@ -672,7 +819,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 		}
 
 		this->CreateObjectFromItem(pActor, item_Weapon);
-		pActor->DropObject(ItemId);
+		pActor->DropObject(ItemID);
 		return;
 	}
 	if (item_type == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
@@ -685,7 +832,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 		}
 
 		this->CreateObjectFromItem(pActor, item_Weapon);
-		pActor->DropObject(ItemId);
+		pActor->DropObject(ItemID);
 		return;
 	}
 	if (item_type == ITEM_TYPE_CONTAINER_CANTEEN)
@@ -698,7 +845,7 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemId)
 		}
 
 		this->CreateObjectFromItem(pActor, item_Container);
-		pActor->DropObject(ItemId);
+		pActor->DropObject(ItemID);
 		return;
 	}
 }
@@ -885,7 +1032,7 @@ void Host::SendNewObjectMessage(AnimalActor* animalObj)
 	this->SendToAllClients(msg);
 }
 
-void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemId)
+void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 {
 	Equipment* eq = pActor->GetEquipment();
 
@@ -896,7 +1043,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemId)
 		SendErrorMessage(pActor->GetID(),"No Weapon is Equipped");
 		return;
 	}
-	if (weapon->GetID() != ItemId)
+	if (weapon->GetID() != ItemID)
 	{
 		MaloW::Debug("Server weapon isn't the same as Client Weapon");
 	}
@@ -967,9 +1114,11 @@ bool Host::CheckCollision(Vector3 position)
 	return false;
 }
 
-void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
+void Host::HandleItemUse(PlayerActor* pActor, const int ItemID )
 {
-	Item* item = pActor->GetItem(ItemId);
+	Inventory* inv = pActor->GetInventory();
+
+	Item* item = inv->GetItem(ItemID);
 
 	if (!item)
 	{
@@ -1040,12 +1189,20 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 			return;
 		}
 
-		Inventory* inv = pActor->GetInventory();
+		inv->EquipItem(ItemID);
 
+		Weapon* oldWeapon = eq->GetWeapon();
 
+		if (oldWeapon)
+		{
+			inv->AddItem(oldWeapon);
+		}
+		
 		eq->EquipWeapon(rWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, rWpn->GetID());
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+
 		this->SendToClient(pActor->GetID(), msg);
 
 		return;
@@ -1062,11 +1219,20 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 			return;
 		}
 
-		Inventory* inv = pActor->GetInventory();
+		inv->EquipItem(ItemID);
+
+		Weapon* oldWeapon = eq->GetWeapon();
+
+		if (oldWeapon)
+		{
+			inv->AddItem(oldWeapon);
+		}
 
 		eq->EquipWeapon(rWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, rWpn->GetID());
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+
 		this->SendToClient(pActor->GetID(), msg);
 
 		return;
@@ -1083,9 +1249,20 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 			return;
 		}
 
+		inv->EquipItem(ItemID);
+
+		Weapon* oldWeapon = eq->GetWeapon();
+
+		if (oldWeapon)
+		{
+			inv->AddItem(oldWeapon);
+		}
+
 		eq->EquipWeapon(mWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, mWpn->GetID());
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+
 		this->SendToClient(pActor->GetID(), msg);
 
 		return;
@@ -1102,9 +1279,20 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 			return;
 		}
 
+		inv->EquipItem(ItemID);
+
+		Weapon* oldWeapon = eq->GetWeapon();
+
+		if (oldWeapon)
+		{
+			inv->AddItem(oldWeapon);
+		}
+
 		eq->EquipWeapon(mWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, mWpn->GetID());
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+
 		this->SendToClient(pActor->GetID(), msg);
 
 		return;
@@ -1121,9 +1309,21 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 			return;
 		}
 
+		inv->EquipItem(ItemID);
+
+		Projectile* oldProjectile = eq->GetAmmo();
+
+		
+		if (oldProjectile)
+		{
+			inv->AddItem(oldProjectile);
+		}
+
 		eq->EquipAmmo(arrow);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, arrow->GetID());
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_AMMO);
+
 		this->SendToClient(pActor->GetID(), msg);
 
 		return;
@@ -1183,6 +1383,17 @@ void Host::HandleRecivedMessages()
 		{
 			int objID = this->zMessageConverter.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
 			this->HandleItemUse(p_actor, objID);
+		}
+		//Handle UnEquip Item in Equipment
+		else if(strcmp(key, M_UNEQUIP_ITEM.c_str()) == 0 && (c_index != -1))
+		{
+			int objID = this->zMessageConverter.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
+			int eq_Slot = -1;
+			if (msgArray.size() > 1)
+			{
+				eq_Slot = this->zMessageConverter.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+			}
+			this->HandleUnEquipItem(p_actor, objID, eq_Slot);
 		}
 		//Handles Equipped Weapon usage
 		else if(strcmp(key, M_WEAPON_USE.c_str()) == 0 && (c_index != -1))
@@ -1448,7 +1659,7 @@ void Host::UpdateObjects()
 	}
 }
 
-bool Host::KickClient( const int ID, bool sendAMessage, std::string reason )
+bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 {
 
 	int index = SearchForClient(ID);
@@ -1550,7 +1761,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 
 }
 
-void Host::GetExistingObjects( std::vector<std::string>& static_Objects )
+void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 {
 	std::string mess;
 	std::vector<FoodObject*> static_Food = this->zActorHandler->GetFoods();
