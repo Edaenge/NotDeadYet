@@ -32,9 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.label_IP_address = new System.Windows.Forms.Label();
             this.textBox_public_ip = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.button_Shutdown = new System.Windows.Forms.Button();
             this.label_Status = new System.Windows.Forms.Label();
             this.button_Start = new System.Windows.Forms.Button();
@@ -83,21 +83,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Setup";
             // 
-            // panel1
-            // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel1.Controls.Add(this.button_Shutdown);
-            this.panel1.Controls.Add(this.label_Status);
-            this.panel1.Controls.Add(this.button_Start);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.textBox_Port);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.textBox_Players);
-            this.panel1.Location = new System.Drawing.Point(49, 78);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(200, 202);
-            this.panel1.TabIndex = 8;
-            // 
             // label_IP_address
             // 
             this.label_IP_address.AutoSize = true;
@@ -112,8 +97,23 @@
             this.textBox_public_ip.Location = new System.Drawing.Point(105, 301);
             this.textBox_public_ip.Name = "textBox_public_ip";
             this.textBox_public_ip.ReadOnly = true;
-            this.textBox_public_ip.Size = new System.Drawing.Size(100, 20);
+            this.textBox_public_ip.Size = new System.Drawing.Size(126, 20);
             this.textBox_public_ip.TabIndex = 14;
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.button_Shutdown);
+            this.panel1.Controls.Add(this.label_Status);
+            this.panel1.Controls.Add(this.button_Start);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.textBox_Port);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.textBox_Players);
+            this.panel1.Location = new System.Drawing.Point(49, 78);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(200, 202);
+            this.panel1.TabIndex = 8;
             // 
             // button_Shutdown
             // 
