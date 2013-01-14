@@ -7,6 +7,14 @@
 
 #include "GameFiles/Gui/GuiElement.h"
 
+enum CIRCMENU
+{
+	USE,
+	CRAFT,
+	DROP,
+	NOTHING
+};
+
 class CircularListGui : public GuiElement
 {
 public:
@@ -17,7 +25,7 @@ public:
 	virtual bool AddToRenderer(GraphicsEngine* ge);
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
-	bool CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
+	int CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 	void SetItemTexture(const std::string& itemTexName){this->zItemImageName = itemTexName;}
 	void FadeOut(float value);
 	void ShowGui();

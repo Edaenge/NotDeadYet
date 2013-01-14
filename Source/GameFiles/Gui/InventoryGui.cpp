@@ -3,11 +3,13 @@
 InventoryGui::InventoryGui()
 {
 	zNrOfSlots = Vector2(7, 7);
+	zPressed = false;
 }
 
 InventoryGui::InventoryGui(float x, float y, float width, float height, std::string textureName) 
 	: GuiElement(x, y, width, height, textureName)
 {
+	zPressed = false;
 	zNrOfSlots = Vector2(7, 7);
 }
 
@@ -102,6 +104,7 @@ int InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, 
 	Vector2 dimension = this->GetDimension();
 	int counter = 0;
 	bool bCollision = false;
+
 	if (!((mouseX < this->zX || mouseX > (this->zX + dimension.x)) || (mouseY < this->zY || mouseY > (this->zY + dimension.y))))
 	{
 		for (auto x = this->zSlotGui.begin(); x < this->zSlotGui.end() && !bCollision; x++)
@@ -111,7 +114,8 @@ int InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, 
 				bCollision = (*x)->CheckCollision(mouseX, mouseY, mousePressed, ge);
 				if (bCollision)
 				{
-					return (*x)->GetID();
+					if(mousePressed)
+						return (*x)->GetID();
 				}
 			}
 			counter++;
