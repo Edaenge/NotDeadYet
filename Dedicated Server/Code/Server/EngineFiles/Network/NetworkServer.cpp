@@ -119,6 +119,17 @@ int MaloW::NetworkServer::InitConnection(int port)
 		MaloW::Debug("NS: Failed to bind socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
 		WSACleanup();
 	}
+	int iOptVal = 0;
+	int iOptLen = sizeof (int);
+
+	retCode = setsockopt(this->sock, IPPROTO_TCP, TCP_NODELAY, (char*)&iOptVal, iOptLen);
+	if(retCode == SOCKET_ERROR)
+	{
+		returnCode = 1;
+		this->stayAlive = false;
+		MaloW::Debug("NS: Failed to set option. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		WSACleanup();
+	}
 
 	return returnCode;
 }

@@ -9,7 +9,6 @@ DynamicProjectileObject::DynamicProjectileObject(const bool genID /*= true*/) : 
 	this->zMoving = true;
 }
 
-
 DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& other, bool genID)
 {
 	if (genID)
@@ -31,6 +30,7 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& 
 	this->zRot = other.zRot;
 	this->zPos = other.zPos;
 }
+
 DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* other, bool genID)
 {
 	if (genID)
@@ -98,3 +98,4 @@ void DynamicProjectileObject::Update(float deltaTime)
 		this->zMoving = true;
 	}
 }
+

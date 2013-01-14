@@ -22,6 +22,9 @@
     <Filter Include="EngineFiles\Items">
       <UniqueIdentifier>{a7c7b9ae-5116-4e50-a1ac-7f5a9189c082}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EngineFiles\PhysicsEngine">
+      <UniqueIdentifier>{6273e039-af0b-4e90-a792-b43c6200a0d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineFiles\Server\Actor.h">
@@ -161,6 +164,18 @@
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Projectile.h">
       <Filter>EngineFiles\Items</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\PhysicsEngine\PhysicsEngine.h">
+      <Filter>EngineFiles\PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\PhysicsEngine\PhysicsObject.h">
+      <Filter>EngineFiles\PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\PhysicsEngine\ObjLoader.h">
+      <Filter>EngineFiles\PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\PhysicsEngine\Physics.h">
+      <Filter>EngineFiles\PhysicsEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineFiles\Server\Actor.cpp">
@@ -263,6 +278,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Projectile.cpp">
       <Filter>EngineFiles\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\PhysicsEngine\PhysicsEngine.cpp">
+      <Filter>EngineFiles\PhysicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\PhysicsEngine\PhysicsObject.cpp">
+      <Filter>EngineFiles\PhysicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\PhysicsEngine\ObjLoader.cpp">
+      <Filter>EngineFiles\PhysicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\PhysicsEngine\Physics.cpp">
+      <Filter>EngineFiles\PhysicsEngine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

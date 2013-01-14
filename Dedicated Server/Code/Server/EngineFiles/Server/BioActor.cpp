@@ -18,7 +18,6 @@ BioActor::BioActor(const Vector3& startPos, const Vector4& rot) : Actor(startPos
 
 BioActor::~BioActor()
 {
-
 }
 
 void BioActor::InitValues()
@@ -36,6 +35,7 @@ void BioActor::InitValues()
 	this->zStaminaMax = 100;
 	this->zStamina = zStaminaMax;
 	this->zStaminaCof = 0.10f;
+	zPhysicObj = NULL;
 }
 
 bool BioActor::TakeDamage( const float dmg )
