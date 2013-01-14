@@ -50,6 +50,9 @@ std::vector<Item*> Inventory::GetItems() const
 
 bool Inventory::AddItem(Item* item)
 {
+	if (!item)
+		return false;
+
 	unsigned int weight = item->GetWeight() * item->GetStackSize();
 	if(this->zWeightTotal + weight <= this->zInventoryCap)
 	{

@@ -27,9 +27,7 @@ static const enum M_ITEM_TYPE
 class Item
 {
 public:
-	Item(const int id, const unsigned int itemType);
-	Item(const unsigned int id, const unsigned int weight, const std::string& name, 
-		const unsigned int itemType, const std::string& itemDescription);
+	Item(const unsigned int id, const unsigned int itemType);
 	virtual ~Item(){}
 	/*! Returns Item ID*/
 	inline int GetID() const {return this->zID;}
@@ -43,7 +41,10 @@ public:
 	std::string GetItemDescription() const {return this->zItemDescription;}
 	/*! Returns number of stacks the item has.*/
 	unsigned int GetStackSize() const {return this->zStacks;}
+	
+	std::string GetIconPath() const {return this->zIconPath;}
 
+	void SetIconPath(const std::string& path) {this->zIconPath = path;}
 	/*! Sets the Item ID*/
 	void SetItemID(const unsigned int id) {this->zID = id;}
 	/*! Sets the Item Weight*/
@@ -63,8 +64,7 @@ public:
 
 private:
 	void InitValues(const int id = -1, const unsigned int itemType = 0, const unsigned int weight = 0, 
-		const std::string& name = "Unknown", const std::string& description = "Unknown");
-
+		const std::string& name = "Unknown", const std::string& description = "Unknown", const std::string iconPath = "Unknown");
 protected:
 	unsigned int zStacks;
 	unsigned int zID;
@@ -72,5 +72,6 @@ protected:
 	std::string zItemName;
 	unsigned int zItemType;
 	std::string zItemDescription;
+	std::string zIconPath;
 	bool zStacking;
 };

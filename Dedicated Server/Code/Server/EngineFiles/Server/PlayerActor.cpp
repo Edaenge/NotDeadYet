@@ -127,8 +127,12 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 	fo = dynamic_cast<FoodObject*>(object);
 	if(fo)
 	{
-		item = new Food(fo->GetID(), fo->GetWeight(), fo->GetActorObjectName(), fo->GetType(), fo->GetDescription() ,fo->GetHunger());
-		
+		item = new Food(fo->GetID(), fo->GetType(), fo->GetHunger());
+		item->SetItemName(fo->GetActorObjectName());
+		item->SetItemWeight(fo->GetWeight());
+		item->SetIconPath(fo->GetIconPath());
+		item->SetItemDescription(fo->GetDescription());
+
 		if(!this->zInventory->AddItem(item))
 		{
 			SAFE_DELETE(item);
@@ -145,20 +149,35 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 		switch (wo->GetType())
 		{
 		case ITEM_TYPE_WEAPON_MELEE_AXE:
-			item = new MeleeWeapon(wo->GetID(), wo->GetWeight(), wo->GetActorObjectName(), wo->GetType(),
-				wo->GetDescription(), wo->GetDamage(), wo->GetRange());
+			item = new MeleeWeapon(wo->GetID(), wo->GetType(),
+				wo->GetDamage(), wo->GetRange());
+			item->SetItemName(wo->GetActorObjectName());
+			item->SetItemWeight(wo->GetWeight());
+			item->SetIconPath(wo->GetIconPath());
+			item->SetItemDescription(wo->GetDescription());
 			break;
 		case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
-			item = new MeleeWeapon(wo->GetID(), wo->GetWeight(), wo->GetActorObjectName(), wo->GetType(),
-				wo->GetDescription(), wo->GetDamage(), wo->GetRange());
+			item = new MeleeWeapon(wo->GetID(), wo->GetType(),
+				wo->GetDamage(), wo->GetRange());
+			item->SetItemName(wo->GetActorObjectName());
+			item->SetItemWeight(wo->GetWeight());
+			item->SetIconPath(wo->GetIconPath());
+			item->SetItemDescription(wo->GetDescription());
 			break;
 		case ITEM_TYPE_WEAPON_RANGED_BOW:
-			item = new RangedWeapon(wo->GetID(), wo->GetWeight(), wo->GetActorObjectName(), wo->GetType(),
-				wo->GetDescription(), wo->GetDamage(), wo->GetRange());
+			item = new RangedWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
+
+			item->SetItemName(wo->GetActorObjectName());
+			item->SetItemWeight(wo->GetWeight());
+			item->SetIconPath(wo->GetIconPath());
+			item->SetItemDescription(wo->GetDescription());
 			break;
 		case ITEM_TYPE_WEAPON_RANGED_ROCK:
-			item = new RangedWeapon(wo->GetID(), wo->GetWeight(), wo->GetActorObjectName(), wo->GetType(),
-				wo->GetDescription(), wo->GetDamage(), wo->GetRange());
+			item = new RangedWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
+			item->SetItemName(wo->GetActorObjectName());
+			item->SetItemWeight(wo->GetWeight());
+			item->SetIconPath(wo->GetIconPath());
+			item->SetItemDescription(wo->GetDescription());
 			break;
 		default:
 			//Return
@@ -177,8 +196,12 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 	co = dynamic_cast<ContainerObject*>(object);
 	if(co)
 	{
-		item = new Container(co->GetID(), co->GetWeight(), co->GetActorObjectName(), co->GetType(), 
-			co->GetDescription(), co->GetMaxUses(), co->GetCurrentUses());
+		item = new Container(co->GetID(), co->GetType(), co->GetMaxUses(), co->GetCurrentUses());
+
+		item->SetItemName(co->GetActorObjectName());
+		item->SetItemWeight(co->GetWeight());
+		item->SetIconPath(co->GetIconPath());
+		item->SetItemDescription(co->GetDescription());
 
 		if(!this->zInventory->AddItem(item))
 		{
@@ -192,8 +215,12 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 	spo = dynamic_cast<StaticProjectileObject*>(object);
 	if(spo)
 	{
-		item = new Projectile(spo->GetID(), spo->GetWeight(), spo->GetActorObjectName(), spo->GetType(), 
-			spo->GetDescription(), spo->GetVelocity(), spo->GetDamage());
+		item = new Projectile(spo->GetID(), spo->GetType(), spo->GetVelocity(), spo->GetDamage());
+
+		item->SetItemName(spo->GetActorObjectName());
+		item->SetItemWeight(spo->GetWeight());
+		item->SetIconPath(spo->GetIconPath());
+		item->SetItemDescription(spo->GetDescription());
 
 		if(!this->zInventory->AddItem(item))
 		{

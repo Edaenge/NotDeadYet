@@ -5,7 +5,7 @@
 #include "../MaloWLib/MaloW.h"
 
 static bool eraseFile = false;
-static bool writeToFile = true;
+static bool writeToFile = false;
 namespace Messages
 {
 	inline void Debug(std::string msg)

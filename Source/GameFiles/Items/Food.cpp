@@ -1,8 +1,7 @@
 #include "Food.h"
 
-Food::Food(const unsigned int id, const unsigned int weight, const std::string& name, 
-		   const unsigned int itemType, const std::string& description, const float hunger)
-	: Item(id, weight, name, itemType, description)
+Food::Food(const unsigned int id, const unsigned int TYPE, const float hunger)
+	: Item(id, TYPE)
 {
 	this->zHunger = hunger;
 	this->zStacking = true;

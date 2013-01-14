@@ -837,6 +837,8 @@ void Client::HandleUnEquipItem( const int ItemID, const int Slot )
 				eq->UnEquipAmmo();
 
 				this->zPlayerInventory->AddItem(projectile);
+				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription());
+				this->zGuiManager->AddInventoryItemToGui(gid);
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString(ItemID));
@@ -855,6 +857,11 @@ void Client::HandleUnEquipItem( const int ItemID, const int Slot )
 				eq->UnEquipWeapon();
 
 				this->zPlayerInventory->AddItem(wpn);
+
+				Gui_Item_Data gid = Gui_Item_Data(wpn->GetID(), wpn->GetItemName(),
+					wpn->GetIconPath(), wpn->GetItemDescription());
+
+				this->zGuiManager->AddInventoryItemToGui(gid);
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString(ItemID));
@@ -873,6 +880,11 @@ void Client::HandleUnEquipItem( const int ItemID, const int Slot )
 				eq->UnEquipGear(EQUIPMENT_SLOT_HEAD);
 
 				this->zPlayerInventory->AddItem(head);
+
+				Gui_Item_Data gid = Gui_Item_Data(head->GetID(), head->GetItemName(),
+					head->GetIconPath(), head->GetItemDescription());
+
+				this->zGuiManager->AddInventoryItemToGui(gid);
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Head Slot ID: " + MaloW::convertNrToString(ItemID));
@@ -891,6 +903,12 @@ void Client::HandleUnEquipItem( const int ItemID, const int Slot )
 				eq->UnEquipGear(EQUIPMENT_SLOT_CHEST);
 
 				this->zPlayerInventory->AddItem(chest);
+
+				Gui_Item_Data gid = Gui_Item_Data(chest->GetID(), chest->GetItemName(),
+					chest->GetIconPath(), chest->GetItemDescription());
+
+				this->zGuiManager->AddInventoryItemToGui(gid);
+
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Chest Slot ID: " + MaloW::convertNrToString(ItemID));
@@ -909,6 +927,12 @@ void Client::HandleUnEquipItem( const int ItemID, const int Slot )
 				eq->UnEquipGear(EQUIPMENT_SLOT_LEGS);
 
 				this->zPlayerInventory->AddItem(legs);
+
+				Gui_Item_Data gid = Gui_Item_Data(legs->GetID(), legs->GetItemName(),
+					legs->GetIconPath(), legs->GetItemDescription());
+
+				this->zGuiManager->AddInventoryItemToGui(gid);
+
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Legs Slot ID: " + MaloW::convertNrToString(ItemID));
@@ -927,6 +951,12 @@ void Client::HandleUnEquipItem( const int ItemID, const int Slot )
 				eq->UnEquipGear(EQUIPMENT_SLOT_BOOTS);
 
 				this->zPlayerInventory->AddItem(boots);
+
+				Gui_Item_Data gid = Gui_Item_Data(boots->GetID(), boots->GetItemName(),
+					boots->GetIconPath(), boots->GetItemDescription());
+
+				this->zGuiManager->AddInventoryItemToGui(gid);
+
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Boots Slot ID: " + MaloW::convertNrToString(ItemID));
@@ -971,15 +1001,6 @@ void Client::HandleRemoveInventoryItem(const int ID)
 			Messages::Debug("Item Removed on Client");
 		
 	}
-	/*for (unsigned int i = 0; i < images.size(); i++)
-	{
-		if (images[i].id == id)
-		{
-			MaloW::Debug("Removed Image ID: " + MaloW::convertNrToString(id));
-			this->zEng->DeleteImage(images[i].image);
-			images.erase(images.begin() + i);
-		}
-	}*/
 }
 
 void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id)
@@ -1060,37 +1081,77 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	switch (itemType)
 	{
 	case ITEM_TYPE_FOOD_DEER_MEAT:
-		item = new Food(id, itemWeight, itemName, itemType, itemDescription, hunger);
+		item = new Food(id, itemType, hunger);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_WEAPON_RANGED_BOW:
-		item = new RangedWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
+		item = new RangedWeapon(id,itemType, weaponDamage, weaponRange);
 		break;
 	case ITEM_TYPE_WEAPON_RANGED_ROCK:
-		item = new RangedWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
+		item = new RangedWeapon(id,itemType, weaponDamage, weaponRange);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_WEAPON_MELEE_AXE:
-		item = new MeleeWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
+		item = new MeleeWeapon(id, itemType, weaponDamage, weaponRange);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
-		item = new MeleeWeapon(id, itemWeight, itemName, itemType, itemDescription, weaponDamage, weaponRange);
+		item = new MeleeWeapon(id, itemType, weaponDamage, weaponRange);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_CONTAINER_CANTEEN:
-		item = new Container(id, itemWeight, itemName, itemType, itemDescription, maxUse, currUse);
+		item = new Container(id, itemType, maxUse, currUse);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_PROJECTILE_ARROW:
-		item = new Projectile(id, itemWeight, itemName, itemType, itemDescription, projectileVelocity, projectileDamage);
+		item = new Projectile(id, itemType, projectileVelocity, projectileDamage);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_GEAR_HEAD:
-		item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
+		item = new Gear(id, itemType);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_GEAR_CHEST:
-		item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
+		item = new Gear(id, itemType);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_GEAR_LEGS:
-		item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
+		item = new Gear(id, itemType);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_GEAR_BOOTS:
-		item = new Gear(id, itemWeight, itemName, itemType, itemDescription);
+		item = new Gear(id, itemType);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
 	default:
 		break;
@@ -1103,15 +1164,6 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		{
 			Messages::Debug("Added Image ID: " + MaloW::convertNrToString(id));
 		}
-		/*TempImage temp;
-		int pos = images.size();
-		float width = this->zEng->GetEngineParameters()->windowWidth * 0.1428f;
-		float height = this->zEng->GetEngineParameters()->windowHeight * 0.1428f;
-		int y = (int)(pos * 0.1428f);
-		temp.image = this->zEng->CreateImage(Vector2((pos  - y)* width, y * height + 50), Vector2(width, width), itemIconFilePath.c_str());
-		temp.id = id;
-
-		this->images.push_back(temp);*/
 	}
 	else
 	{

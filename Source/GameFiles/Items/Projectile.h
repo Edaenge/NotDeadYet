@@ -10,8 +10,7 @@
 class Projectile : public Item
 {
 public:
-	Projectile(const unsigned int id, const unsigned int weight, const std::string& name, 
-		const unsigned int itemType, const std::string& description, float velocity, float damage);
+	Projectile(const unsigned int id, const unsigned int itemType, float velocity, float damage);
 	virtual ~Projectile();
 
 	void SetVelocity(float vel) {this->zVelocity = vel;}

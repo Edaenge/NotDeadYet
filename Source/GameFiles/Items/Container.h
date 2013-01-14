@@ -10,8 +10,8 @@
 class Container : public Item
 {
 public:
-	Container(const unsigned int id, const unsigned int weight, const std::string& name, 
-		const unsigned int itemType, const std::string& itemDescription, const int maxUse, const int currUse);
+	Container(const unsigned int id, const unsigned int itemType, 
+		const int maxUse, const int currUse);
 	virtual ~Container();
 
 	void SetMaxUses(const int size) {this->zMaxUses = size;}
