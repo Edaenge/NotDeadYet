@@ -5,6 +5,7 @@ Food::Food(const unsigned int id, const unsigned int weight, const std::string& 
 	: Item(id, weight, name, itemType, description)
 {
 	this->zHunger = hunger;
+	this->zStacking = true;
 }
 
 Food::~Food()

@@ -61,12 +61,15 @@ bool Inventory::AddItem(Item* item)
 			//Decrease slot size to mark blocked
 			this->zSlotsAvailable--;
 		}
-		Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType());
-		if (existingItem)
+		if (item->IsStacking())
 		{
-			existingItem->ModifyStackSize(item->GetStackSize());
-			MaloW::Debug("Added Stack to inventory " + item->GetItemName());
-			return true;
+			Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType());
+			if (existingItem)
+			{
+				existingItem->ModifyStackSize(item->GetStackSize());
+				MaloW::Debug("Added Stack to inventory " + item->GetItemName());
+				return true;
+			}
 		}
 		this->zItems.push_back(item);
 		MaloW::Debug("Added Item " + item->GetItemName() + MaloW::convertNrToString(item->GetID()));
@@ -195,7 +198,7 @@ int Inventory::SearchForItemType(const int TYPE)
 	return counter;
 }
 
-Item* Inventory::SearchAndGetItemFromType( const int TYPE )
+Item* Inventory::SearchAndGetItemFromType(const int TYPE)
 {
 	for (auto it = this->zItems.begin(); it < this->zItems.end(); it++)
 	{
@@ -207,7 +210,7 @@ Item* Inventory::SearchAndGetItemFromType( const int TYPE )
 	return NULL;
 }
 
-Item* Inventory::EquipItem( const int ID )
+Item* Inventory::EquipItem(const int ID)
 {
 	int index = this->Search(ID);
 

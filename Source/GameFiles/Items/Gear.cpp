@@ -5,7 +5,7 @@ Gear::Gear(const unsigned int id, const unsigned int weight, const std::string& 
 		   const unsigned int itemType, const std::string& description) 
 		   : Item(id, weight, name, itemType, description)
 {
-
+	this->zStacking = false;
 }
 
 Gear::~Gear()

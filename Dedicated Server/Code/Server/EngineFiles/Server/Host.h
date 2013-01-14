@@ -124,9 +124,10 @@ private:
 	/*! Creates a new player and notifies all clients.*/
 	void CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data);
 	bool HandlePickupItem(PlayerActor* pActor, const int ObjectId);
-	void HandleDropItem(PlayerActor* pActor, const int ItemId);
-	void HandleItemUse(PlayerActor* pActor, const int ItemId);
-	void HandleWeaponUse(PlayerActor* pActor, const int ItemId);
+	void HandleDropItem(PlayerActor* pActor, const int ItemID);
+	void HandleItemUse(PlayerActor* pActor, const int ItemID);
+	void HandleWeaponUse(PlayerActor* pActor, const int ItemID);
+	void HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Slot);
 	/*! Returns an Array Containing Existing Static Objects Messages.*/
 	void GetExistingObjects(std::vector<std::string>& static_Objects);
 	/*! Creates an Object From the Item Data.*/

@@ -54,6 +54,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_FETCH_INVENTORY,
 	MESSAGE_TYPE_REMOVE_INVENTORY_ITEM,
 	MESSAGE_TYPE_ADD_INVENTORY_ITEM,
+	MESSAGE_TYPE_EQUIPMENT_SLOT,
 	MESSAGE_TYPE_ITEM_USE,
 	MESSAGE_TYPE_ITEM_NAME,
 	MESSAGE_TYPE_ITEM_DESCRIPTION,
@@ -65,6 +66,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_CONTAINER_CURRENT,
 	MESSAGE_TYPE_WEAPON_USE,
 	MESSAGE_TYPE_EQUIP_ITEM,
+	MESSAGE_TYPE_UNEQUIP_ITEM,
 	MESSAGE_TYPE_PROJECTILE_DAMAGE,
 	MESSAGE_TYPE_PROJECTILE_VELOCITY
 };
@@ -96,7 +98,9 @@ static const std::string M_WEAPON_USE				= "WU";
 static const std::string M_CONTAINER_CURRENT		= "COCU";
 static const std::string M_CONTAINER_MAX			= "COMA";
 //Item Messages
+static const std::string M_EQUIPMENT_SLOT			= "ES";
 static const std::string M_EQUIP_ITEM				= "EI";
+static const std::string M_UNEQUIP_ITEM				= "UEI";
 static const std::string M_PICKUP_ITEM				= "PI";
 static const std::string M_DROP_ITEM				= "DI";
 static const std::string M_FETCH_INVENTORY			= "FI";

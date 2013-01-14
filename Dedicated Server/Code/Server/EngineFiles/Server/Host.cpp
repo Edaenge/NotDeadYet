@@ -606,6 +606,18 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectId)
 	return false;
 }
 
+void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Slot)
+{
+	if (Slot == -1)
+	{
+		MaloW::Debug("Error In Host::UnEquip Item Slot is -1");
+		return;
+	}
+
+
+}
+
+
 void Host::SendErrorMessage(const int id, const std::string error_Message)
 {
 	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ERROR_MESSAGE, error_Message);
@@ -1042,10 +1054,18 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 
 		Inventory* inv = pActor->GetInventory();
 
+		Weapon* oldWeapon = eq->GetWeapon();
+
+		if (oldWeapon)
+		{
+			inv->AddItem(oldWeapon);
+		}
 
 		eq->EquipWeapon(rWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, rWpn->GetID());
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+
 		this->SendToClient(pActor->GetID(), msg);
 
 		return;
@@ -1064,9 +1084,18 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 
 		Inventory* inv = pActor->GetInventory();
 
+		Weapon* oldWeapon = eq->GetWeapon();
+
+		if (oldWeapon)
+		{
+			inv->AddItem(oldWeapon);
+		}
+
 		eq->EquipWeapon(rWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, rWpn->GetID());
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+
 		this->SendToClient(pActor->GetID(), msg);
 
 		return;
@@ -1083,9 +1112,20 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 			return;
 		}
 
+		Inventory* inv = pActor->GetInventory();
+
+		Weapon* oldWeapon = eq->GetWeapon();
+
+		if (oldWeapon)
+		{
+			inv->AddItem(oldWeapon);
+		}
+
 		eq->EquipWeapon(mWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, mWpn->GetID());
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+
 		this->SendToClient(pActor->GetID(), msg);
 
 		return;
@@ -1102,9 +1142,20 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 			return;
 		}
 
+		Inventory* inv = pActor->GetInventory();
+
+		Weapon* oldWeapon = eq->GetWeapon();
+
+		if (oldWeapon)
+		{
+			inv->AddItem(oldWeapon);
+		}
+
 		eq->EquipWeapon(mWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, mWpn->GetID());
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+
 		this->SendToClient(pActor->GetID(), msg);
 
 		return;
@@ -1121,9 +1172,20 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemId )
 			return;
 		}
 
+		Inventory* inv = pActor->GetInventory();
+
+		Projectile* oldProjectile = eq->GetAmmo();
+
+		if (oldProjectile)
+		{
+			inv->AddItem(oldProjectile);
+		}
+
 		eq->EquipAmmo(arrow);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, arrow->GetID());
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_AMMO);
+
 		this->SendToClient(pActor->GetID(), msg);
 
 		return;
@@ -1183,6 +1245,17 @@ void Host::HandleRecivedMessages()
 		{
 			int objID = this->zMessageConverter.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
 			this->HandleItemUse(p_actor, objID);
+		}
+		//Handle UnEquip Item in Equipment
+		else if(strcmp(key, M_UNEQUIP_ITEM.c_str()) == 0 && (c_index != -1))
+		{
+			int objID = this->zMessageConverter.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
+			int eq_Slot = -1;
+			if (msgArray.size() > 1)
+			{
+				eq_Slot = this->zMessageConverter.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+			}
+			this->HandleUnEquipItem(p_actor, objID, eq_Slot);
 		}
 		//Handles Equipped Weapon usage
 		else if(strcmp(key, M_WEAPON_USE.c_str()) == 0 && (c_index != -1))

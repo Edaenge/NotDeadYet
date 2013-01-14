@@ -9,7 +9,7 @@ RangedWeapon::RangedWeapon(const unsigned int id, const unsigned int weight, con
 						   const std::string& description, const float damage, const float range)
 						   : Weapon(id, weight, name, itemType, description, damage, range)
 {
-
+	this->zStacking = false;
 }
 RangedWeapon::~RangedWeapon()
 {

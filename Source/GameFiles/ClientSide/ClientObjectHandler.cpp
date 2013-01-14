@@ -1,13 +1,13 @@
 #include "Client.h"
 #include "ClientServerMessages.h"
 
-bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const int id)
+bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const int ID)
 {
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, ID);
 
 	if (index != -1)
 	{
-		MaloW::Debug("Cant create a new Object. Id already exists");
+		MaloW::Debug("Cant create a new Player Object. ID: " + MaloW::convertNrToString(ID) + " already exists");
 		return false;
 	}
 	Vector3 position = Vector3(0, 0, 0);
@@ -15,7 +15,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	Vector4 rotation = Vector4(0, 0, 0, 0);
 	std::string filename = "";
 
-	PlayerObject* playerObject = new PlayerObject(id);
+	PlayerObject* playerObject = new PlayerObject(ID);
 
 	char key[512];
 	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
@@ -56,7 +56,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	}
 	if (!this->zCreated)
 	{
-		if (id == this->zID)
+		if (ID == this->zID)
 		{
 			this->zCreated = true;
 		}
@@ -74,13 +74,13 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
-bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const int id)
+bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const int ID)
 {
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, ID);
 
 	if (index != -1)
 	{
-		MaloW::Debug("Cant create a new Object. It already exists");
+		MaloW::Debug("Cant create a new Animal Object. ID: " + MaloW::convertNrToString(ID) + " already exists");
 		return false;
 	}
 	Vector3 position = Vector3(0, 0, 0);
@@ -88,7 +88,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 	Vector4 rotation = Vector4(0, 0, 0, 0);
 	std::string filename = "";
 
-	AnimalObject* animalObject = new AnimalObject(id);
+	AnimalObject* animalObject = new AnimalObject(ID);
 
 	char key[512];
 	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
@@ -140,13 +140,13 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
-bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const int id)
+bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const int ID)
 {
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, ID);
 
 	if (index != -1)
 	{
-		MaloW::Debug("Cant create a new Object. It already exists");
+		MaloW::Debug("Cant create a new Static Object. ID: " + MaloW::convertNrToString(ID) + " already exists");
 		return false;
 	}
 	Vector3 position = Vector3(0, 0, 0);
@@ -154,7 +154,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 	Vector4 rotation = Vector4(0, 0, 0, 0);
 	std::string filename = "";
 
-	StaticObject* staticObject = new StaticObject(id);
+	StaticObject* staticObject = new StaticObject(ID);
 
 	char key[512];
 	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
@@ -226,13 +226,13 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
-bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const int id)
+bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const int ID)
 {
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, ID);
 
 	if (index != -1)
 	{
-		MaloW::Debug("Cant create a new Object. It already exists");
+		MaloW::Debug("Cant create a new Dynamic Object. ID: " + MaloW::convertNrToString(ID) + "already exists");
 		return false;
 	}
 	Vector3 position = Vector3(0, 0, 0);
@@ -240,7 +240,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 	Vector4 rotation = Vector4(0, 0, 0, 0);
 
 	std::string filename = "";
-	DynamicObject* dynamicObject = new DynamicObject(id);
+	DynamicObject* dynamicObject = new DynamicObject(ID);
 
 	char key[512];
 	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
