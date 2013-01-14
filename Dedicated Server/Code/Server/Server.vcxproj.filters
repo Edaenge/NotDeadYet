@@ -279,7 +279,9 @@
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Projectile.cpp">
       <Filter>EngineFiles\Items</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\PhysicsEngine\PhysicsEngine.cpp">
+    <ClCompile Include="EngineFiles\Server\HostItemHandler.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>    <ClCompile Include="..\..\..\Source\PhysicsEngine\PhysicsEngine.cpp">
       <Filter>EngineFiles\PhysicsEngine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\PhysicsEngine\PhysicsObject.cpp">
@@ -290,6 +292,5 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Source\PhysicsEngine\Physics.cpp">
       <Filter>EngineFiles\PhysicsEngine</Filter>
-    </ClCompile>
-  </ItemGroup>
+    </ClCompile>  </ItemGroup>
 </Project>

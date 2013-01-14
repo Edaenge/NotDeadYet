@@ -166,6 +166,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_EQUIP_ITEM:
 		ss << M_EQUIP_ITEM;
 		break;
+	case MESSAGE_TYPE_REMOVE_EQUIPMENT:
+		ss << M_REMOVE_EQUIPMENT;
+		break;
 	case MESSAGE_TYPE_UNEQUIP_ITEM:
 		ss << M_UNEQUIP_ITEM;
 		break;

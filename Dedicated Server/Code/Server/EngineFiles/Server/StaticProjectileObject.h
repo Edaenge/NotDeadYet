@@ -20,17 +20,14 @@ public:
 	virtual ~StaticProjectileObject();
 
 	float GetVelocity() const {return this->zVelocity;}
-	/*! Returns number of stacks the item has.*/
-	unsigned int GetStackSize() const {return this->zStacks;}
 	/*! Returns The Weapon Damage*/
 	float GetDamage() const {return this->zDamage;}
 
 	void SetVelocity(const float velocity){this->zVelocity = velocity;}
-	void ModifyStackSize(const unsigned int size) {this->zStacks += size;}
+	
 	void SetDamage(const float damage) {this->zDamage = damage;}
 
 private:
 	float zVelocity;
-	int zStacks;
 	float zDamage;
 };

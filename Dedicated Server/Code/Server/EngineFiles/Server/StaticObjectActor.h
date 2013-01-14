@@ -44,7 +44,8 @@ public:
 	void SetDescription(const std::string& description) {this->zDescription = description;}
 	void SetWeight(const int weight) {this->zWeight = weight;}
 	void SetType(const int TYPE) {this->zType = TYPE;}
-	void SetStackSize(const unsigned int size) {this->zStacks = size;}
+	void SetStackSize(const int size) {this->zStacks = size;}
+	void ModifyStackSize(const int size) {this->zStacks += size;}
 
 protected:
 	int zWeight;
@@ -52,5 +53,6 @@ protected:
 	int zStacks;
 	std::string zDescription;
 	std::string zIconPath;
+
 private:
 };

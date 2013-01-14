@@ -2,6 +2,7 @@
 
 Item::Item(const unsigned int id, const unsigned int itemType)
 {
+	this->zStacks = 1;
 	this->InitValues(id, itemType);
 }
 

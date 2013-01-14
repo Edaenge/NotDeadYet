@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\Source\GameFiles\ClientSide\AnimalObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\Client.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ClientSide\ClientItemHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\ClientObjectHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\DynamicObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\GuiManager.cpp" />

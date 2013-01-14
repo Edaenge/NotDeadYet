@@ -16,18 +16,20 @@ StaticProjectileObject::StaticProjectileObject(const StaticProjectileObject& oth
 	else
 		this->SetID(other.GetID());
 
-	this->zVelocity = other.zVelocity;
+	this->zRot = other.zRot;
+	this->zPos = other.zPos;
+
+	this->zType = other.zType;
+	this->zScale = other.zScale;
 	this->zStacks = other.zStacks;
 	this->zDamage = other.zDamage;
 	this->zWeight = other.zWeight;
-	this->zActorModel = other.zActorModel;
-	this->zType = other.zType;
-	this->zActorObjectName = other.zActorObjectName;
 	this->zIconPath = other.zIconPath;
+	this->zVelocity = other.zVelocity;
+	this->zActorModel = other.zActorModel;
 	this->zDescription = other.zDescription;
-	this->zScale = other.zScale;
-	this->zRot = other.zRot;
-	this->zPos = other.zPos;
+	this->zActorObjectName = other.zActorObjectName;
+	
 }
 
 StaticProjectileObject::StaticProjectileObject(const DynamicProjectileObject* other, bool genID)

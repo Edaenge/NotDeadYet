@@ -59,7 +59,8 @@ public:
 	void SetStackSize(const unsigned int size) {this->zStacks = size;}
 	void IncreaseStackSize(const unsigned int size) {this->zStacks += size;}
 	void DecreaseStackSize(const unsigned int size) {this->zStacks -= size;}
-	bool IsStacking() {return this->zStacking;}
+	bool GetStacking() const {return this->zStacking;}
+	void SetStacking(bool value) {this->zStacking = value;}
 	virtual bool Use() = 0;
 
 private:

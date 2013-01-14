@@ -21,6 +21,7 @@ static const std::string MODEL				=	"MODEL";
 static const std::string NAME				=	"NAME";
 static const std::string IS_RANGED			=	"IS_RANGED";
 static const std::string SCALE				=	"SCALE";
+static const std::string STACKS				=	"STACKS";
 
 static const std::string HUNGER				=	"HUNGER";
 static const std::string DAMAGE				=	"DAMAGE";
@@ -187,7 +188,7 @@ bool ObjectManager::Replace(char* key)
 	return true;
 }
 
-bool ObjectManager::InterpCommand( char* command, char* key, WeaponObject* wp )
+bool ObjectManager::InterpCommand(char* command, char* key, WeaponObject* wp)
 {
 	if(strcmp(key, "") == 0)
 		return false;
@@ -228,6 +229,10 @@ bool ObjectManager::InterpCommand( char* command, char* key, WeaponObject* wp )
 	{
 		wp->SetActorObjectName(key);
 	}
+	else if(strcmp(command, STACKS.c_str()) == 0)
+	{
+		wp->SetStackSize(MaloW::convertStringToInt(key));
+	}
 	else if (strcmp(command, SCALE.c_str()) == 0)
 	{
 		char x[52];
@@ -252,7 +257,7 @@ bool ObjectManager::InterpCommand( char* command, char* key, WeaponObject* wp )
 	return true;
 }
 
-bool ObjectManager::InterpCommand( char* command, char* key, FoodObject* fd )
+bool ObjectManager::InterpCommand(char* command, char* key, FoodObject* fd)
 {
 	if(strcmp(key, "") == 0)
 		return false;
@@ -289,6 +294,10 @@ bool ObjectManager::InterpCommand( char* command, char* key, FoodObject* fd )
 	{
 		fd->SetActorObjectName(key);
 	}
+	else if(strcmp(command, STACKS.c_str()) == 0)
+	{
+		fd->SetStackSize(MaloW::convertStringToInt(key));
+	}
 	else if (strcmp(command, SCALE.c_str()) == 0)
 	{
 		char x[52];
@@ -313,7 +322,7 @@ bool ObjectManager::InterpCommand( char* command, char* key, FoodObject* fd )
 	return true;
 }
 
-bool ObjectManager::InterpCommand( char* command, char* key, ContainerObject* ct )
+bool ObjectManager::InterpCommand(char* command, char* key, ContainerObject* ct)
 {
 	if(strcmp(key, "") == 0)
 		return false;
@@ -354,6 +363,10 @@ bool ObjectManager::InterpCommand( char* command, char* key, ContainerObject* ct
 	{
 		ct->SetActorObjectName(key);
 	}
+	else if(strcmp(command, STACKS.c_str()) == 0)
+	{
+		ct->SetStackSize(MaloW::convertStringToInt(key));
+	}
 	else if (strcmp(command, SCALE.c_str()) == 0)
 	{
 		char x[52];
@@ -378,7 +391,7 @@ bool ObjectManager::InterpCommand( char* command, char* key, ContainerObject* ct
 	return true;
 }
 
-bool ObjectManager::InterpCommand( char* command, char* key, StaticProjectileObject* pt )
+bool ObjectManager::InterpCommand(char* command, char* key, StaticProjectileObject* pt)
 {
 	if(strcmp(key, "") == 0)
 		return false;
@@ -418,6 +431,10 @@ bool ObjectManager::InterpCommand( char* command, char* key, StaticProjectileObj
 	else if(strcmp(command, NAME.c_str()) == 0)
 	{
 		pt->SetActorObjectName(key);
+	}
+	else if(strcmp(command, STACKS.c_str()) == 0)
+	{
+		pt->SetStackSize(MaloW::convertStringToInt(key));
 	}
 
 	return true;

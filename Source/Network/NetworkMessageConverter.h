@@ -55,6 +55,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_REMOVE_INVENTORY_ITEM,
 	MESSAGE_TYPE_ADD_INVENTORY_ITEM,
 	MESSAGE_TYPE_EQUIPMENT_SLOT,
+	MESSAGE_TYPE_REMOVE_EQUIPMENT,
 	MESSAGE_TYPE_ITEM_USE,
 	MESSAGE_TYPE_ITEM_NAME,
 	MESSAGE_TYPE_ITEM_DESCRIPTION,
@@ -99,6 +100,7 @@ static const std::string M_CONTAINER_CURRENT		= "COCU";
 static const std::string M_CONTAINER_MAX			= "COMA";
 //Item Messages
 static const std::string M_EQUIPMENT_SLOT			= "ES";
+static const std::string M_REMOVE_EQUIPMENT			= "RE";
 static const std::string M_EQUIP_ITEM				= "EI";
 static const std::string M_UNEQUIP_ITEM				= "UEI";
 static const std::string M_PICKUP_ITEM				= "PI";
