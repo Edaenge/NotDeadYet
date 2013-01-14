@@ -1035,7 +1035,6 @@ void Host::SendNewObjectMessage(AnimalActor* animalObj)
 void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 {
 	Equipment* eq = pActor->GetEquipment();
-
 	Weapon* weapon = eq->GetWeapon();
 
 	if (!weapon)
@@ -1047,66 +1046,74 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 	{
 		MaloW::Debug("Server weapon isn't the same as Client Weapon");
 	}
+
 	float damage;
 	float range;
 	RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(weapon);
-	if (!rWpn)
-	{
-		MaloW::Debug("dynamic cast Failed in Host::WeaponUse (Ranged Weapon)");
 
-		MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(weapon);
-		if (!mWpn)
+	if (rWpn)
+	{
+		float velocity = 5.0f;
+		rWpn->UseWeapon(range, damage);
+
+		Projectile* projectile = eq->GetAmmo();
+
+		//Create Dynamic Object with player direction
+		Vector3 direction = pActor->GetDirection();
+
+		DynamicProjectileObject* projectileObj = new DynamicProjectileObject(true);
+
+		int type = -1;
+		if (projectile)
+			type = projectile->GetItemType();
+		else
+			type = rWpn->GetItemType();
+
+		if(!this->CreateDynamicObjectActor(type, &projectileObj, true))
 		{
-			MaloW::Debug("dynamic cast Failed in Host::WeaponUse (Melee Weapon)");
+			MaloW::Debug("Failed to Create Projectile");
+			SAFE_DELETE(projectileObj);
 			return;
 		}
+		MaloW::Debug("Created projectile ID: " + MaloW::convertNrToString(projectileObj->GetID()));
+
+
+		if (projectile)
+		{
+			damage += projectile->GetDamage();
+			velocity = projectile->GetVelocity();
+		}
+
+		Vector3 position = pActor->GetPosition();
+		projectileObj->SetPosition(position);
+		projectileObj->SetDirection(direction);
+		projectileObj->SetDamage(damage);
+		projectileObj->SetVelocity(velocity);
+		//Adds The Object To the Array
+		this->zActorHandler->AddNewDynamicProjectileActor(projectileObj);
+
+		SendNewObjectMessage(projectileObj);
+
+		return;
+	}
+
+	MaloW::Debug("dynamic cast Failed in Host::WeaponUse (Ranged Weapon)");
+
+	MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(weapon);
+
+	if (mWpn)
+	{
 		mWpn->UseWeapon(range, damage);
 		//Check Collision
 		Vector3 direction = pActor->GetDirection();
-
 		Vector3 position = pActor->GetPosition() + (direction * range);
 
 		return;
 	}
-	float velocity = 5.0f;
-	rWpn->UseWeapon(range, damage);
 
-	Projectile* projectile = eq->GetAmmo();
+	MaloW::Debug("dynamic cast Failed in Host::WeaponUse (Melee Weapon)");
 
-	//Create Dynamic Object with player direction
-	Vector3 direction = pActor->GetDirection();
-	
-	DynamicProjectileObject* projectileObj = new DynamicProjectileObject(true);
-	int type = -1;
-	if (projectile)
-		type = projectile->GetItemType();
-	else
-		type = rWpn->GetItemType();
-	
-	if(!this->CreateDynamicObjectActor(type, &projectileObj, true))
-	{
-		MaloW::Debug("Failed to Create Projectile");
-		SAFE_DELETE(projectileObj);
-		return;
-	}
-	MaloW::Debug("Created projectile ID: " + MaloW::convertNrToString(projectileObj->GetID()));
-
-	
-	if (projectile)
-	{
-		damage += projectile->GetDamage();
-		velocity = projectile->GetVelocity();
-	}
-
-	Vector3 position = pActor->GetPosition();
-	projectileObj->SetPosition(position);
-	projectileObj->SetDirection(direction);
-	projectileObj->SetDamage(damage);
-	projectileObj->SetVelocity(velocity);
-	//Adds The Object To the Array
-	this->zActorHandler->AddNewDynamicProjectileActor(projectileObj);
-
-	SendNewObjectMessage(projectileObj);
+	return;
 }
 
 bool Host::CheckCollision(Vector3 position)
