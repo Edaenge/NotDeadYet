@@ -320,6 +320,12 @@ void Client::HandleKeyboardInput()
 
 	this->CheckMovementKeys();
 
+	Menu_select_data msd;
+	if(this->zGuiManager->IsGuiOpen())
+	{
+		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
+	}
+
 	//Used For Testing ATM
 	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_JUMP)))
 	{
@@ -348,11 +354,7 @@ void Client::HandleKeyboardInput()
 
 			if (item)
 			{
-				MaloW::Debug("Item Equipped" + item->GetItemName());
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());
-				this->zServerChannel->sendData(msg);
-			}
-		}
+				MaloW::Debug("Item Equipped" + item->GetItemName());				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());				this->zServerChannel->sendData(msg);			}		}
 	}
 	else
 	{
@@ -400,7 +402,7 @@ void Client::HandleKeyboardInput()
 				this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
 		}
 
-		if (this->zEng->GetKeyListener()->IsClicked(2))
+		/*if (this->zEng->GetKeyListener()->IsClicked(2))
 		{
 			if (!this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
 			{
@@ -415,7 +417,7 @@ void Client::HandleKeyboardInput()
 				this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, false);
 				this->zGuiManager->HideCircularItemGui();
 			}
-		}
+		}*/
 
 		if (this->zEng->GetKeyListener()->IsClicked(1))
 		{

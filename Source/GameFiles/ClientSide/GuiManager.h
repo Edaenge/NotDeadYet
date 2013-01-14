@@ -8,6 +8,12 @@
 #include "GameFiles/Gui/CircularListGui.h"
 #include <string>
 
+struct Menu_select_data
+{
+	CIRCMENU zAction;
+	int zID;
+
+};
 
 class GuiManager
 {
@@ -27,7 +33,7 @@ public:
 	void ToggleIngameMenu();
 	bool IsGuiOpen();
 	void Update(float deltaTime);
-	int CheckCollisionInv();
+	Menu_select_data CheckCollisionInv();
 private:
 	bool zLooting;
 	bool zDeathGuiOpen;
@@ -38,8 +44,12 @@ private:
 	float zLootingGuiShowTimer;
 	float zInventoryGuiShowTimer;
 
+	int zSelectedItem;
+	int zSelectedCircMenu;
+	bool zMinorFix;
+
 	InventoryGui* zInvGui;
-	//CircularListGui* zInvCircGui;
+	CircularListGui* zInvCircGui;
 	//CircularListGui* zLootingGui;
 	GraphicsEngine* zGraphicEngine;
 };
