@@ -1,4 +1,5 @@
 #include "NetworkServer.h"
+#include "../../../../../Source/GameFiles/ClientServerMessages.h"
 
 using namespace MaloW;
 
@@ -59,7 +60,8 @@ ClientChannel* NetworkServer::ListenForNewClients()
 
 void NetworkServer::Life()
 {
-	MaloW::Debug("NetworkServer Process Started");
+	if (Messages::FileWrite())
+		Messages::Debug("NetworkServer Process Started");
 	while(this->stayAlive)
 	{
 		ClientChannel* cc = this->ListenForNewClients();

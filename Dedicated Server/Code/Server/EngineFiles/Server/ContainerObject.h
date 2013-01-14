@@ -10,11 +10,11 @@
 class ContainerObject : public StaticObjectActor
 {
 public:
-	ContainerObject(const bool genID = true);
+	ContainerObject(const bool genID = false);
 	/*! Note: ID from Actor will not be copied. IT will auto generate a new ID.*/
-	ContainerObject(const ContainerObject& other);
-	/*! Note: ID from Actor will not be copied. IT will auto generate a new ID.*/
-	ContainerObject& operator= (const ContainerObject& other);
+	ContainerObject(const ContainerObject& other, const bool genID = false);
+	ContainerObject(const ContainerObject* other, const bool genID = false);
+
 	/*! */
 	virtual ~ContainerObject();
 

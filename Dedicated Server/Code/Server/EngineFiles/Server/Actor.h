@@ -41,7 +41,7 @@ public:
 		this->zActorModel = "none";
 		this->zActorObjectName = "none";
 	}
-	virtual ~Actor(){}
+	virtual ~Actor(){this->zNextAID = 0;}
 	
 	inline const Vector3& GetPosition() const {return zPos;}
 	const Vector3& GetScale() const {return zScale;}
@@ -59,7 +59,11 @@ public:
 
 	virtual void Update(float deltaTime) = 0;
 protected:
-	const void GenerateID(){this->zID = this->zNextAID; this->zNextAID++;}
+	void GenerateID()
+	{
+		this->zID = this->zNextAID; 
+		this->zNextAID++;
+	}
 protected:
 	Vector3 zPos;
 	Vector3 zScale;

@@ -147,8 +147,19 @@
     <ClInclude Include="..\..\..\External\NDYGFX\Include\Vector.h">
       <Filter>EngineFiles</Filter>
     </ClInclude>
-    <ClInclude Include="EngineFiles\Server\ProjectileObject.h">
+    <ClInclude Include="EngineFiles\Server\DynamicProjectileObject.h">
       <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\StaticProjectileObject.h">
+      <Filter>EngineFiles\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\AI.h" />
+    <ClInclude Include="EngineFiles\Server\DeerActor.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\ClientServerMessages.h">
+      <Filter>EngineFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Projectile.h">
+      <Filter>EngineFiles\Items</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -236,11 +247,22 @@
     <ClCompile Include="..\..\..\Source\MaloWLib\Process.cpp">
       <Filter>MaloWLib</Filter>
     </ClCompile>
-    <ClCompile Include="EngineFiles\Server\ProjectileObject.cpp">
-      <Filter>EngineFiles\Server</Filter>
-    </ClCompile>
     <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp">
       <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\StaticProjectileObject.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\AI.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\HostConversions.cpp">
+      <Filter>EngineFiles\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Projectile.cpp">
+      <Filter>EngineFiles\Items</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

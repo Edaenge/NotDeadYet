@@ -5,18 +5,19 @@
 
 #pragma once
 
-#include "DynamicObjectActor.h"
+#include "StaticObjectActor.h"
+#include "DynamicProjectileObject.h"
 
-class ProjectileObject : public DynamicObjectActor
+class StaticProjectileObject : public StaticObjectActor
 {
 public:
-	ProjectileObject(const bool genID = true);
+	StaticProjectileObject(const bool genID = false);	
 	/*! Note: ID from Actor will not be copied. IT will auto generate a new ID.*/
-	ProjectileObject(const ProjectileObject& other);
-	/*! Note: ID from Actor will not be copied. IT will auto generate a new ID.*/
-	ProjectileObject& operator= (const ProjectileObject& other);
+	StaticProjectileObject(const StaticProjectileObject& other, bool genID = false);
+	StaticProjectileObject(const StaticProjectileObject* other, bool genID = false);
+	StaticProjectileObject(const DynamicProjectileObject* other, bool genID = false);
 	/*! */
-	virtual ~ProjectileObject();
+	virtual ~StaticProjectileObject();
 
 	float GetVelocity() const {return this->zVelocity;}
 	/*! Returns number of stacks the item has.*/
@@ -27,8 +28,6 @@ public:
 	void SetVelocity(const float velocity){this->zVelocity = velocity;}
 	void ModifyStackSize(const unsigned int size) {this->zStacks += size;}
 	void SetDamage(const float damage) {this->zDamage = damage;}
-
-	virtual void Update(float deltaTime);
 
 private:
 	float zVelocity;

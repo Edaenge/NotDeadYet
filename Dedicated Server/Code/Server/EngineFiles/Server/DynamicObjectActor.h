@@ -7,11 +7,12 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "Actor.h"
 
+
 class DynamicObjectActor : public Actor
 {
 public:
-	DynamicObjectActor(bool genID = true);
-	DynamicObjectActor(const std::string& meshModel, bool genID = true);
+	DynamicObjectActor(bool genID = false);
+	DynamicObjectActor(const std::string& meshModel, bool genID = false);
 	virtual ~DynamicObjectActor();
 
 	virtual void Update(float deltaTime) = 0;

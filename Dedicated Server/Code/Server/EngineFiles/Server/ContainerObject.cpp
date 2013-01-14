@@ -8,9 +8,13 @@ ContainerObject::ContainerObject(const bool genID) : StaticObjectActor(genID)
 }
 
 
-ContainerObject::ContainerObject(const ContainerObject& other)
+ContainerObject::ContainerObject(const ContainerObject& other, const bool genID /*= false*/)
 {
-	this->GenerateID();
+	if(genID)
+		this->GenerateID();
+	else
+		this->SetID(other.GetID());
+
 	this->zMaxUse = other.zMaxUse;
 	this->zUsesLeft = other.zUsesLeft;
 	this->zWeight = other.zWeight;
@@ -24,26 +28,26 @@ ContainerObject::ContainerObject(const ContainerObject& other)
 	this->zPos = other.zPos;
 }
 
-ContainerObject& ContainerObject::operator= (const ContainerObject& other)
+ContainerObject::ContainerObject( const ContainerObject* other, const bool genID /*= false*/ )
 {
-	if(this == &other)
-		return *this;
+	if(genID)
+		this->GenerateID();
+	else
+		this->SetID(other->GetID());
 
-	this->GenerateID();
-	this->zMaxUse = other.zMaxUse;
-	this->zUsesLeft = other.zUsesLeft;
-	this->zWeight = other.zWeight;
-	this->zActorModel = other.zActorModel;
-	this->zType = other.zType;
-	this->zActorObjectName = other.zActorObjectName;
-	this->zIconPath = other.zIconPath;
-	this->zDescription = other.zDescription;
-	this->zScale = other.zScale;
-	this->zRot = other.zRot;
-	this->zPos = other.zPos;
-
-	return *this;
+	this->zMaxUse = other->zMaxUse;
+	this->zUsesLeft = other->zUsesLeft;
+	this->zWeight = other->zWeight;
+	this->zActorModel = other->zActorModel;
+	this->zType = other->zType;
+	this->zActorObjectName = other->zActorObjectName;
+	this->zIconPath = other->zIconPath;
+	this->zDescription = other->zDescription;
+	this->zScale = other->zScale;
+	this->zRot = other->zRot;
+	this->zPos = other->zPos;
 }
+
 
 ContainerObject::~ContainerObject()
 {

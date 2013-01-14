@@ -187,6 +187,15 @@
     <ClCompile Include="..\Source\GUI\TextBox.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\SoundEngine\SoundHandler.cpp">
+      <Filter>Sound Engine Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\ClientObjectHandler.cpp">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Items\Projectile.cpp">
+      <Filter>Game Files\Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -399,10 +408,18 @@
     <ClInclude Include="..\Source\GUI\TextBox.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\SoundEngine\SoundHandler.h">
+      <Filter>Sound Engine Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ClientServerMessages.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Items\Projectile.h">
+      <Filter>Game Files\Items</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameIcon.ico" />
-    <None Include="Client_ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="NotDeadYet.rc" />

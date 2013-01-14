@@ -5,16 +5,18 @@ SoundHandler::SoundHandler()
 
 	this->zSoundChannel = 0;
 	this->zMusicChannel = 0;
-	this->zGeometry = 0;
 	this->zIsPaused = 0;
 	this->zIsMuted = 0;
-	
-	this->zNrOfSounds = 1;
 
-	this->zEcho = 0;
-	this->zLowpass = 0;
-	this->zParameq = 0;
-	
+	this->zLandGeometry = 0;
+	this->zObjectGeometry = 0;
+
+	this->zNrOfGeometryObjects = 0;
+
+	//this->zEcho = 0;
+	//this->zLowpass = 0;
+	//this->zParameq = 0;
+
 	this->zPlayerPos = FMOD_VECTOR();
 	this->zPlayerPos.x = 0;
 	this->zPlayerPos.y = 0;
@@ -41,14 +43,24 @@ SoundHandler::~SoundHandler()
 {
 	FMOD_RESULT result;
 
-	for(int i = 0; i < this->zNrOfSounds; i++)
+	/*for(int i = 0; i < this->zNrOfSounds; i++)
 	{
 		result = this->zSounds[i]->release();
 		ERRCHECK(result);
+	}*/
+
+	for(auto it = zSoundList.begin(); it != zSoundList.end(); it++)
+	{
+		it->sound->release();
 	}
 
-	result = this->zTrack1->release();
-	ERRCHECK(result);
+	for(auto it = zMusicList.begin(); it != zMusicList.end(); it++)
+	{
+		it->sound->release();
+	}
+
+	/*result = this->zTrack1->release();
+	ERRCHECK(result);*/
 
 	result = this->zSoundGroup->release();
 	ERRCHECK(result);
@@ -56,11 +68,34 @@ SoundHandler::~SoundHandler()
 	result = this->zMusicGroup->release();
 	ERRCHECK(result);
 
+	//TODO: Release geometry here.
+
+	result = this->zLandGeometry->release();
+	ERRCHECK(result);
+
+	for(int i = 0; i < this->zNrOfGeometryObjects; i++)
+	{
+		result = this->zObjectGeometry[i]->release();
+		ERRCHECK(result);
+	}
+
+	delete this->zObjectGeometry; //It might be that I need to do delete [] this->zObjectGeometry, I'm not sure.
+	this->zObjectGeometry = 0;
+
+
 	result = this->zSystem->close();
     ERRCHECK(result);
 
 	result = this->zSystem->release();
     ERRCHECK(result);
+
+	/*delete this->zLandscape;
+	this->zLandscape = 0;
+
+	delete this->zObjects;
+	this->zObjects = 0;*/
+
+
 }
 
 int SoundHandler::Init() //This is a barebones initialization.
@@ -87,23 +122,21 @@ int SoundHandler::Init() //This is a barebones initialization.
         ERRCHECK(result);
     };
 
-	//result = this->zSystem->set3DSettings(0.0, 0.1f, 0.1f);
-
-
+	
 	//Initiating sounds
 
-	result = this->zSystem->createSound("Media/Sounds/SoundEffects/Ambient/forestTest.mp3", FMOD_SOFTWARE | FMOD_3D, 0, &this->zSounds[0]);
-    ERRCHECK(result);
-	result = zSounds[0]->set3DMinMaxDistance(1.0f,10000.0f);
-	ERRCHECK(result);
+	//result = this->zSystem->createSound("Media/Sounds/SoundEffects/Ambient/forestTest.mp3", FMOD_SOFTWARE | FMOD_3D, 0, &this->zSounds[0]);
+ //   ERRCHECK(result);
+	//result = zSounds[0]->set3DMinMaxDistance(1.0f,10000.0f);
+	//ERRCHECK(result);
 
-    result = this->zSounds[0]->setMode(FMOD_LOOP_OFF);    /* drumloop.wav has embedded loop points which automatically makes looping turn on, */
-    ERRCHECK(result);                           /* so turn it off here.  We could have also just put FMOD_LOOP_OFF in the above CreateSound call. */
+ //   result = this->zSounds[0]->setMode(FMOD_LOOP_OFF);    // drumloop.wav has embedded loop points which automatically makes looping turn on,
+ //   ERRCHECK(result);                           // so turn it off here.  We could have also just put FMOD_LOOP_OFF in the above CreateSound call. 
 
-	result = this->zSystem->createSound("Media/Sounds/Songs/america_fuck_yeah.mp3",FMOD_SOFTWARE,0,&this->zTrack1);
-	ERRCHECK(result);
-	result = this->zTrack1->setMode(FMOD_LOOP_NORMAL); //To make sure the song loops. Songs should have loop points to automatically loop at the right places.
-	ERRCHECK(result);
+	//result = this->zSystem->createSound("Media/Sounds/Songs/america_fuck_yeah.mp3",FMOD_SOFTWARE,0,&this->zTrack1);
+	//ERRCHECK(result);
+	//result = this->zTrack1->setMode(FMOD_LOOP_NORMAL); //To make sure the song loops. Songs should have loop points to automatically loop at the right places.
+	//ERRCHECK(result);
 
 	
 
@@ -126,17 +159,24 @@ int SoundHandler::Init() //This is a barebones initialization.
 	result = this->zMasterGroup->addGroup(this->zMusicGroup);
 	ERRCHECK(result);
 
+	//Initializing geometry objects(might not be used here)
+	//this->InitLandGeometry();
+	
+	//this->InitObjectGeometry();
 
-	//Initiating effects
 
-	result = this->zSystem->createDSPByType(FMOD_DSP_TYPE_ECHO, &this->zEcho);
-	ERRCHECK(result);
 
-	result = this->zSystem->createDSPByType(FMOD_DSP_TYPE_LOWPASS,&this->zLowpass);
-	ERRCHECK(result);
+	////Initiating effects
 
-	result = this->zSystem->createDSPByType(FMOD_DSP_TYPE_PARAMEQ,&this->zParameq);
-	ERRCHECK(result);
+	//result = this->zSystem->createDSPByType(FMOD_DSP_TYPE_ECHO, &this->zEcho);
+	//ERRCHECK(result);
+
+	//result = this->zSystem->createDSPByType(FMOD_DSP_TYPE_LOWPASS,&this->zLowpass);
+	//ERRCHECK(result);
+
+	//result = this->zSystem->createDSPByType(FMOD_DSP_TYPE_PARAMEQ,&this->zParameq);
+	//ERRCHECK(result);
+
 
 	result = this->zSystem->setGeometrySettings(10000.0f);
 	ERRCHECK(result);
@@ -144,36 +184,232 @@ int SoundHandler::Init() //This is a barebones initialization.
 	return 0;
 }
 
-void SoundHandler::PlaySound(int sound, D3DXVECTOR3 p_sPos)
+bool SoundHandler::LoadSoundIntoSystem(char* filename, bool loop) throw (...)
+{
+
+	FMOD_RESULT result;
+
+
+	std::ifstream checkForFile(filename);
+	if(checkForFile.good())
+	{
+		FMOD::Sound* soundToInsert = NULL;
+
+		SoundStruct soundStructToInsert(soundToInsert, filename);
+
+		this->zSoundList.push_front( soundStructToInsert );
+
+		result = this->zSystem->createSound(filename, FMOD_SOFTWARE | FMOD_3D, 0, &this->zSoundList.front().sound);
+		ERRCHECK(result);
+		result = this->zSoundList.front().sound->set3DMinMaxDistance(1.0f,10000.0f);
+		ERRCHECK(result);
+
+		if(!loop)
+		{
+			result = this->zSoundList.front().sound->setMode(FMOD_LOOP_OFF);
+			ERRCHECK(result);                          
+		}
+		else
+		{
+			result = this->zSoundList.front().sound->setMode(FMOD_LOOP_NORMAL);
+			ERRCHECK(result);
+		}
+		if(checkForFile.is_open())
+		{
+			checkForFile.close();
+		}
+		return true;
+	}
+	else
+	{
+		throw("File using filepath given was not found");
+		return false;
+		//File did not exist. That's just plain wrong.
+	}
+
+	
+}
+
+bool SoundHandler::LoadMusicIntoSystem(char* filename, bool loop) throw (...)
+{
+	FMOD_RESULT result;
+
+	std::ifstream checkForFile(filename);
+	if(checkForFile.good())
+	{
+		FMOD::Sound* soundToInsert = NULL;
+
+		SoundStruct soundStructToInsert(soundToInsert, filename);
+
+		this->zMusicList.push_front( soundStructToInsert );
+
+		result = this->zSystem->createSound(filename, FMOD_SOFTWARE | FMOD_3D, 0, &this->zMusicList.front().sound);
+		ERRCHECK(result);
+		result = this->zMusicList.front().sound->set3DMinMaxDistance(1.0f,10000.0f);
+		ERRCHECK(result);
+
+		if(!loop)
+		{
+			result = this->zMusicList.front().sound->setMode(FMOD_LOOP_OFF);
+			ERRCHECK(result);                          
+		}
+		else
+		{
+			result = this->zMusicList.front().sound->setMode(FMOD_LOOP_NORMAL);
+			ERRCHECK(result);
+		}
+		if(checkForFile.is_open())
+		{
+			checkForFile.close();
+		}
+		return true;
+	}
+	else
+	{
+		throw("File using filepath given was not found");
+		return false;
+		
+		//File did not exist. That's just plain wrong.
+	}
+}
+
+
+//void SoundHandler::InitLandGeometry()
+//{
+//	FMOD_RESULT result;
+//
+//	//Get the number of vertices.
+//	int numberOfVertices = 1200; //simple test value;
+//
+//	//I think that based on topology, the number of polygons and vertices can be different in unexpected ways, maybe.
+//	//I might need to simply ask for help when I come to that stage.
+//	int numberOfPolygons = 400; //simple test value;
+//
+//
+//	//Get a way to read vertices from the ground.
+//		//Probably read from a file.
+//
+//
+//
+//
+//	//Creating ground geometry to block sound.
+//	result = this->zSystem->createGeometry(numberOfPolygons, numberOfVertices, &this->zLandGeometry);
+//	ERRCHECK(result);
+//
+//	int polygonIndex = 0;
+//
+//	//Add the polygons to the geometry
+//	//this->zLandGeometry->addPolygon(
+//	
+//
+//
+//
+//}
+
+//void SoundHandler::InitObjectGeometry()
+//{
+//	//get the number of all trees, rocks, buildings, whatever in the level.
+//	this->zNrOfGeometryObjects = 1; //dummy thing
+//	this->zObjectGeometry = new FMOD::Geometry*[this->zNrOfGeometryObjects];
+//
+//	for(int i = 0; i < this->zNrOfGeometryObjects; i++)
+//	{
+//		//Get number of vertices for object number i
+//		int nrOfVertices = 3;
+//		
+//		//Decide polygons
+//		int nrOfPolygons = 1;
+//
+//		
+//
+//
+//		this->zSystem->createGeometry(nrOfPolygons, nrOfVertices, &this->zObjectGeometry[i]);
+//
+//		int polygonIndex = 0;
+//
+//		//add polygons to the geometry thing.
+//		//this->zObjectGeometry[i]->addPolygon
+//
+//	}
+//
+//}
+
+//void SoundHandler::clearGeometry()
+//{
+//	
+//}
+
+void SoundHandler::PlaySounds(char* filename, Vector3 p_sPos)
 {
 	FMOD_RESULT result;
 	this->zSoundPos.x = p_sPos.x;
 	this->zSoundPos.y = p_sPos.y;
 	this->zSoundPos.z = p_sPos.z;
 
-	FMOD_VECTOR vel = {0.0f,0.0f,0.0f}; //This is not currently necessary.
+	//FMOD_VECTOR vel = {0.0f,0.0f,0.0f}; //This is not currently necessary.
 
-	switch (sound)
+	bool found = false;
+	bool rectified = false;
+
+	for(auto it = zSoundList.begin(); it != zSoundList.end(); it++)
 	{
-	case 0: //test sound basically
+		if(it->name == filename)
 		{
-			
-				result = this->zSystem->playSound(FMOD_CHANNEL_FREE, this->zSounds[0], false, &this->zSoundChannel);
+				result = this->zSystem->playSound(FMOD_CHANNEL_FREE, it->sound, false, &this->zSoundChannel);
 				ERRCHECK(result);
 				
 				result = this->zSoundChannel->setChannelGroup(this->zSoundGroup);
 				ERRCHECK(result);
-				
+			
 				result = this->zSoundChannel->set3DAttributes(&this->zSoundPos,0);
 				ERRCHECK(result);
-				
+			
+				found = true;
+				break;
 				//result = this->zSoundChannel->set3DSpread(40.0f);//Unsure how to properly use this, needs to check more.
 				//ERRCHECK(result);
-			break;
 		}
-		
-    
 	}
+
+	if(!found) //Specific sound could not be found out of loaded sounds, checking to see if it exists anyway.
+	{
+		rectified = LoadSoundIntoSystem(filename, false);     
+
+		//Playing it,
+		if(rectified) //if it exists.
+		{
+			result = this->zSystem->playSound(FMOD_CHANNEL_FREE, this->zSoundList.front().sound, false, &this->zSoundChannel);
+			ERRCHECK(result);
+			result = this->zSoundChannel->setChannelGroup(this->zSoundGroup);
+			ERRCHECK(result);
+			result = this->zSoundChannel->set3DAttributes(&this->zSoundPos,0);
+			ERRCHECK(result);
+		}
+
+	}
+
+	
+	//switch (sound)
+	//{
+	//case 0: //test sound basically
+	//	{
+	//		
+	//			result = this->zSystem->playSound(FMOD_CHANNEL_FREE, this->zSounds[0], false, &this->zSoundChannel);
+	//			ERRCHECK(result);
+	//			
+	//			result = this->zSoundChannel->setChannelGroup(this->zSoundGroup);
+	//			ERRCHECK(result);
+	//			
+	//			result = this->zSoundChannel->set3DAttributes(&this->zSoundPos,0);
+	//			ERRCHECK(result);
+	//			
+	//			//result = this->zSoundChannel->set3DSpread(40.0f);//Unsure how to properly use this, needs to check more.
+	//			//ERRCHECK(result);
+	//		break;
+	//	}
+	//	
+ //   
+	//}
 	//this->zSystem->update();
 }
 
@@ -229,11 +465,68 @@ void SoundHandler::PauseAllAudio() //It's a bit odd right now.
 	}
 }
 
-void SoundHandler::PlayMusic(int music)
+void SoundHandler::PlayMusic(char* filename)
 {
+
 	FMOD_RESULT result;
 
-	switch (music)
+	//FMOD_VECTOR vel = {0.0f,0.0f,0.0f}; //This is not currently necessary.
+
+	bool found = false;
+	bool rectified = false;
+
+	for(auto it = zSoundList.begin(); it != zSoundList.end(); it++)
+	{
+		if(it->name == filename)
+		{
+				result = this->zSystem->playSound(FMOD_CHANNEL_FREE, it->sound, false, &this->zSoundChannel);
+				ERRCHECK(result);
+				
+				result = this->zSoundChannel->setChannelGroup(this->zSoundGroup);
+				ERRCHECK(result);
+			
+				result = this->zSoundChannel->set3DAttributes(&this->zSoundPos,0);
+				ERRCHECK(result);
+			
+				found = true;
+				break;
+				//result = this->zSoundChannel->set3DSpread(40.0f);//Unsure how to properly use this, needs to check more.
+				//ERRCHECK(result);
+		}
+	}
+
+	if(!found) //Sound could not be found among loaded sounds, checking to see if it exists anyway.
+	{
+		rectified = LoadMusicIntoSystem(filename, false);     
+
+		//Playing it,
+		if(rectified) //if it exists
+		{
+			result = this->zSystem->playSound(FMOD_CHANNEL_FREE, this->zMusicList.front().sound, false, &this->zMusicChannel);
+			ERRCHECK(result);
+			result = this->zMusicChannel->setChannelGroup(this->zMusicGroup);
+			ERRCHECK(result);
+		}
+
+	}
+	/*FMOD_RESULT result;
+
+	for(auto it = zMusicList.begin(); it != zMusicList.end(); it++)
+	{
+		if(it->name == filename)
+		{
+				result = this->zSystem->playSound(FMOD_CHANNEL_FREE, it->sound, false, &this->zMusicChannel);
+				ERRCHECK(result);
+				
+				result = this->zMusicChannel->setChannelGroup(this->zMusicGroup);
+				ERRCHECK(result);
+
+		}
+	}*/
+
+
+
+	/*switch (music)
 	{
 	case 0 :
 		{
@@ -243,7 +536,7 @@ void SoundHandler::PlayMusic(int music)
 			ERRCHECK(result);
 			break;
 		}
-	}
+	}*/
 }
 void SoundHandler::StopMusic()
 {
@@ -354,6 +647,13 @@ void SoundHandler::SetMusicVolume(float volume)
 	ERRCHECK(result);
 }
 
+void SoundHandler::SetMasterVolume(float volume)
+{
+	FMOD_RESULT result;
+	result = this->zMasterGroup->setVolume(volume);
+	ERRCHECK(result);
+}
+
 void SoundHandler::Mute()
 {
 	FMOD_RESULT result;
@@ -376,7 +676,7 @@ void SoundHandler::updateSystem()
 	this->zSystem->update();
 }
 
-void SoundHandler::UpdateListenerPos(D3DXVECTOR3 p_pPos, D3DXVECTOR3 forward, D3DXVECTOR3 up)
+void SoundHandler::UpdateListenerPos(Vector3 p_pPos, Vector3 forward, Vector3 up)
 {
 	FMOD_RESULT result;
 	this->zPlayerPos.x = p_pPos.x;
@@ -385,7 +685,7 @@ void SoundHandler::UpdateListenerPos(D3DXVECTOR3 p_pPos, D3DXVECTOR3 forward, D3
 
 	
 	this->zForwardVector.x = forward.x;
-	this->zForwardVector.y = 0.0;
+	this->zForwardVector.y = forward.y;
 	this->zForwardVector.z = forward.z;
 
 	
@@ -394,7 +694,7 @@ void SoundHandler::UpdateListenerPos(D3DXVECTOR3 p_pPos, D3DXVECTOR3 forward, D3
 	this->zUpVector.z = up.z;
 
 
-									//Forward and up need to be perpendicular to each other. It is not so properly currently.
+									//Forward and up need to be perpendicular to each other.
 	result = this->zSystem->set3DListenerAttributes(0,&this->zPlayerPos,0,&this->zForwardVector,&this->zUpVector);
 
 	ERRCHECK(result);

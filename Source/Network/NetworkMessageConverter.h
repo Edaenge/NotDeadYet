@@ -64,7 +64,9 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_CONTAINER_MAX,
 	MESSAGE_TYPE_CONTAINER_CURRENT,
 	MESSAGE_TYPE_WEAPON_USE,
-	MESSAGE_TYPE_EQUIP_ITEM
+	MESSAGE_TYPE_EQUIP_ITEM,
+	MESSAGE_TYPE_PROJECTILE_DAMAGE,
+	MESSAGE_TYPE_PROJECTILE_VELOCITY
 };
 //Data Messages
 static const std::string M_POSITION					= "P";
@@ -88,6 +90,8 @@ static const std::string M_ITEM_WEIGHT				= "IW";
 static const std::string M_ITEM_USE					= "IU";
 static const std::string M_WEAPON_DAMAGE			= "WD";
 static const std::string M_WEAPON_RANGE				= "WR";
+static const std::string M_PROJECTILE_DAMAGE		= "PD";
+static const std::string M_PROJECTILE_VELOCITY		= "PV";
 static const std::string M_WEAPON_USE				= "WU";
 static const std::string M_CONTAINER_CURRENT		= "COCU";
 static const std::string M_CONTAINER_MAX			= "COMA";
