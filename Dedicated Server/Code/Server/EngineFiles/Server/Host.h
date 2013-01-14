@@ -53,7 +53,7 @@ public:
 	virtual ~Host();
 	/*! Creates a Server locally
 	returns a code that describes error or success*/
-	int InitHost(int port, unsigned int maxClients);
+	int InitHost(const int PORT, const unsigned int MAX_CLIENTS);
 	/*! Main loop for this thread*/
 	void Life();
 	/*! Checks if the server have players connected.*/
@@ -78,6 +78,10 @@ public:
 	void SendNewObjectMessage(DynamicObjectActor* dynamicObj);
 	/*! Sends new Animal Object Data to Clients*/
 	void SendNewObjectMessage(AnimalActor* animalObj);
+	/*! Sends a Message To the Client.*/
+	void SendErrorMessage(const int ID, const std::string error_Message);
+	/*! Sends UnEquip Message To Client*/
+	void SendUnEquipMessage(const int PlayerID, const int ID, const int Slot);
 	/*! Notifies all clients, the server is shutting down.*/
 	void BroadCastServerShutdown();
 	/*! Pings the clients.*/
@@ -145,8 +149,7 @@ private:
 	bool CreateStaticObjectActor(const int type, ContainerObject** containerObj, const bool genID = false);
 	bool CreateStaticObjectActor(const int type, StaticProjectileObject** projectileObj, const bool genID = false);
 	/*! Creates a DynamicObject with default values.*/
-	bool CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID = false);	
-	void SendErrorMessage(const int id, const std::string error_Message);
+	bool CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID = false);
 	bool CheckCollision(Vector3 position);
 	void HandleConversion(DynamicProjectileObject* dynamicProjObj);
 private:

@@ -907,14 +907,13 @@ void Client::HandleUnEquipItem( const int ItemID, const int Slot )
 		}
 		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
 	}
-
 }
 
 void Client::SendUnEquipItem(const int ID, const int Slot)
 {
 	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, ID);
 
-	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, ID);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, Slot);
 
 	this->zServerChannel->sendData(msg);
 }

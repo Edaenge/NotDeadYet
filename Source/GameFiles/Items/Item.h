@@ -56,7 +56,8 @@ public:
 	void SetItemDescription(const std::string& description) {this->zItemDescription = description;}
 	/*! Sets the Item Stack Size.*/
 	void SetStackSize(const unsigned int size) {this->zStacks = size;}
-	void ModifyStackSize(const unsigned int size) {this->zStacks += size;}
+	void IncreaseStackSize(const unsigned int size) {this->zStacks += size;}
+	void DecreaseStackSize(const unsigned int size) {this->zStacks -= size;}
 	bool IsStacking() {return this->zStacking;}
 	virtual bool Use() = 0;
 
