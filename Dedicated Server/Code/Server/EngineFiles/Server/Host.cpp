@@ -679,7 +679,7 @@ void Host::SendNewObjectMessage(AnimalActor* animalObj)
 	this->SendToAllClients(msg);
 }
 
-}bool Host::CheckCollision(Vector3 position)
+bool Host::CheckCollision(Vector3 position)
 {
 	return false;
 }
