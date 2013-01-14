@@ -81,6 +81,10 @@ extern "C"
 		virtual Vector3 GetSceneAmbientLight() const = 0;
 
 		virtual void ResizeGraphicsEngine(unsigned int width, unsigned int height) = 0;
+
+		virtual void DebugDummyFunction(Vector3* arr) = 0;
+
+		virtual void LoadingScreen(const char* BackgroundTexture = "", const char* ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, float FadeBlackOutOutTime = 0.0f) = 0;
 	};
 
 	/*
@@ -94,7 +98,7 @@ extern "C"
 
 
 	// To do:
-	void LoadingScreen(string BackgroundTexture = "", string ProgressBarTexture = "", float FadeBlackInInTime = 0.0f, float FadeBlackInOutTime = 0.0f, float FadeBlackOutInTime = 0.0f, float FadeBlackOutOutTime = 0.0f);
+	
 	HWND GetWindowHandle() const { return this->hWnd; }
 	*/
 
