@@ -320,13 +320,13 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const int id)
+bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const int ID)
 {
 	//Get ID and Position Depending on type
-	if (id == -1)
+	if (ID == -1)
 		return false;
 
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, ID);
 
 	//Check if object was found
 	if(index == -1)
@@ -422,13 +422,13 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const int id)
+bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const int ID)
 {
 	//Get ID and Position Depending on type
-	if (id == -1)
+	if (ID == -1)
 		return false;
 
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, ID);
 
 	//Check if object was found
 	if(index == -1)
@@ -521,13 +521,13 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const int id)
+bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const int ID)
 {
 	//Get ID and Position Depending on type
-	if (id == -1)
+	if (ID == -1)
 		return false;
 
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, ID);
 	//Check if object was found
 	if(index == -1)
 		return false;	
@@ -607,13 +607,13 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, const int id)
+bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, const int ID)
 {
 	//Get ID and Position Depending on type
-	if (id == -1)
+	if (ID == -1)
 		return false;
 
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, ID);
 
 	//Check if object was found
 	if(index == -1)
@@ -710,18 +710,18 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 	return true;
 }
 
-bool Client::RemovePlayerObject(const int id)
+bool Client::RemovePlayerObject(const int ID)
 {
-	if (id == -1)
+	if (ID == -1)
 		return false;
 
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, ID);
 
 	//Check if object was found in the array
 	if(index == -1)
 		return false;
 
-	if(this->zID == id)
+	if(this->zID == ID)
 	{
 		this->CloseConnection("Unknown reason possible Kicked");
 	}
@@ -734,17 +734,17 @@ bool Client::RemovePlayerObject(const int id)
 	}
 	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_PLAYER, index))
 	{
-		MaloW::Debug("Failed To Remove Player with id: " + MaloW::convertNrToString(id));
+		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString(ID));
 	}
 	return true;
 }
 
-bool Client::RemoveAnimalObject(const int id)
+bool Client::RemoveAnimalObject(const int ID)
 {
-	if (id == -1)
+	if (ID == -1)
 		return false;
 
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, ID);
 
 	//Check if object was found in the array
 	if(index == -1)
@@ -758,18 +758,18 @@ bool Client::RemoveAnimalObject(const int id)
 	}
 	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_ANIMAL, index))
 	{
-		MaloW::Debug("Failed To Remove Animal with id: " + MaloW::convertNrToString(id));
+		MaloW::Debug("Failed To Remove Animal with ID: " + MaloW::convertNrToString(ID));
 	}
 
 	return true;
 }
 
-bool Client::RemoveStaticObject(const int id)
+bool Client::RemoveStaticObject(const int ID)
 {
-	if (id == -1)
+	if (ID == -1)
 		return false;
 
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, id);
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, ID);
 
 	//Check if object was found in the array
 	if(index == -1)
@@ -783,7 +783,7 @@ bool Client::RemoveStaticObject(const int id)
 	}
 	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_STATIC_OBJECT, index))
 	{
-		MaloW::Debug("Failed To Remove Static Object with id: " + MaloW::convertNrToString(id));
+		MaloW::Debug("Failed To Remove Static Object with ID: " + MaloW::convertNrToString(ID));
 		return false;
 	}
 	if(Messages::FileWrite())
@@ -792,12 +792,12 @@ bool Client::RemoveStaticObject(const int id)
 	return true;
 }
 
-bool Client::RemoveDynamicObject(const int id)
+bool Client::RemoveDynamicObject(const int ID)
 {
-	if (id == -1)
+	if (ID == -1)
 		return false;
 
-	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, id);
+	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, ID);
 
 	//Check if client was found in the array
 	if(pos == -1)
@@ -811,7 +811,7 @@ bool Client::RemoveDynamicObject(const int id)
 	}
 	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_DYNAMIC_OBJECT, pos))
 	{
-		MaloW::Debug("Failed To Remove Player with id: " + MaloW::convertNrToString(id));
+		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString(ID));
 	}
 
 	return true;

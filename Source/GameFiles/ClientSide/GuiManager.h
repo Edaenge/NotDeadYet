@@ -24,6 +24,7 @@ public:
 	void ToggleInventoryGui();
 	void HideInventoryGui();
 	void AddInventoryItemToGui(const Gui_Item_Data gid);
+	void RemoveInventoryItemFromGui(const int ID);
 	void ShowCircularItemGui();
 	void HideCircularItemGui();
 	void ShowLootingGui(std::vector<Gui_Item_Data> gui_Item_Data);
