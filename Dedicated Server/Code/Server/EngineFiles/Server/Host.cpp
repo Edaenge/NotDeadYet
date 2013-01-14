@@ -545,7 +545,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectID)
 	{
 		if (!pActor->PickUpObject(food))
 		{
-			this->SendErrorMessage(pActor->GetID(), "Failed To Pickup Item " + food->GetActorObjectName());
+			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Item " + food->GetActorObjectName());
 			return false;
 		}
 		this->CreateItemFromObject(pActor, food);
@@ -560,7 +560,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectID)
 	{
 		if (!pActor->PickUpObject(weapon))
 		{
-			this->SendErrorMessage(pActor->GetID(), "Failed To Pickup Item " + weapon->GetActorObjectName());
+			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Item " + weapon->GetActorObjectName());
 			return false;
 		}
 
@@ -576,7 +576,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectID)
 	{
 		if (!pActor->PickUpObject(container))
 		{
-			this->SendErrorMessage(pActor->GetID(), "Failed To Pickup Item " + container->GetActorObjectName());
+			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Item " + container->GetActorObjectName());
 			return false;
 		}
 
@@ -592,7 +592,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectID)
 	{
 		if (!pActor->PickUpObject(projectile))
 		{
-			this->SendErrorMessage(pActor->GetID(), "Failed To Pickup Item " + projectile->GetActorObjectName());
+			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Item " + projectile->GetActorObjectName());
 			return false;
 		}
 
@@ -601,7 +601,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectID)
 		return true;
 	}
 	
-	this->SendErrorMessage(pActor->GetID(), "Couldn't Pickup Object");
+	this->SendErrorMessage(pActor->GetID(), "Couldn't_Pickup_Object");
 
 	return false;
 }
@@ -1118,7 +1118,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID )
 {
 	Inventory* inv = pActor->GetInventory();
 
-	Item* item = inv->GetItem(ItemID);
+	Item* item = inv->SearchAndGetItem(ItemID);
 
 	if (!item)
 	{
@@ -1197,7 +1197,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID )
 		{
 			inv->AddItem(oldWeapon);
 		}
-		
+		MaloW::Debug("Weapon Equipped" + rWpn->GetItemName());
 		eq->EquipWeapon(rWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, rWpn->GetID());
@@ -1227,7 +1227,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID )
 		{
 			inv->AddItem(oldWeapon);
 		}
-
+		MaloW::Debug("Weapon Equipped" + rWpn->GetItemName());
 		eq->EquipWeapon(rWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, rWpn->GetID());
@@ -1257,7 +1257,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID )
 		{
 			inv->AddItem(oldWeapon);
 		}
-
+		MaloW::Debug("Weapon Equipped" + mWpn->GetItemName());
 		eq->EquipWeapon(mWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, mWpn->GetID());
@@ -1287,7 +1287,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID )
 		{
 			inv->AddItem(oldWeapon);
 		}
-
+		MaloW::Debug("Weapon Equipped" + mWpn->GetItemName());
 		eq->EquipWeapon(mWpn);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, mWpn->GetID());
@@ -1318,7 +1318,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID )
 		{
 			inv->AddItem(oldProjectile);
 		}
-
+		MaloW::Debug("Weapon Equipped" + arrow->GetItemName());
 		eq->EquipAmmo(arrow);
 
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, arrow->GetID());

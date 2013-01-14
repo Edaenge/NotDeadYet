@@ -321,48 +321,72 @@ void Client::HandleKeyboardInput()
 	this->CheckMovementKeys();
 
 	Menu_select_data msd;
-	if(this->zGuiManager->IsGuiOpen())
+	if(zShowCursor)
 	{
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
+
+		if (msd.zAction != -1)
+		{
+			if (msd.zID != -1)
+			{
+				if (msd.zAction == USE)
+				{
+					Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
+
+					if (item)
+					{
+						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());	
+						this->zServerChannel->sendData(msg);
+					}
+				}
+				else if (msd.zAction == DROP)
+				{
+					this->SendDropItemMessage(msd.zID);
+				}
+			}
+		}
 	}
 
 	//Used For Testing ATM
-	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_JUMP)))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_JUMP))
-		{
-			if (this->zPlayerInventory->GetItems().size() > 0)
-			{
-				int id = this->zPlayerInventory->GetItem(0)->GetID();
-				this->SendDropItemMessage(id);
-			}
-		}
-		this->zKeyInfo.SetKeyState(KEY_JUMP, true);
-	}
-	else
-	{
-		this->zKeyInfo.SetKeyState(KEY_JUMP, false);
-	}
+	//if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_JUMP)))
+	//{
+	//	if (!this->zKeyInfo.GetKeyState(KEY_JUMP))
+	//	{
+	//		if (this->zPlayerInventory->GetItems().size() > 0)
+	//		{
+	//			int id = this->zPlayerInventory->GetItem(0)->GetID();
+	//			this->SendDropItemMessage(id);
+	//		}
+	//	}
+	//	this->zKeyInfo.SetKeyState(KEY_JUMP, true);
+	//}
+	//else
+	//{
+	//	this->zKeyInfo.SetKeyState(KEY_JUMP, false);
+	//}
 	//Used For Testing
-	if (this->zEng->GetKeyListener()->IsPressed('Q'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+	//if (this->zEng->GetKeyListener()->IsPressed('Q'))
+	//{
+	//	if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+	//	{
+	//		this->zKeyInfo.SetKeyState(KEY_TEST, true);
 
-			Item* item = this->zPlayerInventory->GetItem(0);
+	//		Item* item = this->zPlayerInventory->GetItem(0);
 
-			if (item)
-			{
-				MaloW::Debug("Item Equipped" + item->GetItemName());				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());				this->zServerChannel->sendData(msg);			}		}
-	}
-	else
-	{
-		if (this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, false);
-		}
-	}
+	//		if (item)
+	//		{
+	//			MaloW::Debug("Item Equipped" + item->GetItemName());
+	//			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());	
+	//			this->zServerChannel->sendData(msg);
+	//		}
+	//}
+	//else
+	//{
+	//	if (this->zKeyInfo.GetKeyState(KEY_TEST))
+	//	{
+	//		this->zKeyInfo.SetKeyState(KEY_TEST, false);
+	//	}
+	//}
 
 	if (this->zIsHuman)
 	{
