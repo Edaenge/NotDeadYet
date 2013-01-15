@@ -8,6 +8,11 @@ Host::Host()
 {
 	MaloW::ClearDebug();
 	Messages::ClearDebug();
+#ifdef INCLUDE_MODEL_VIEWER
+	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	MaloW::Debug("(DEBUG): Server: Debug flag set to: _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF). ");
+	MaloW::Debug("(DEBUG): Server: vld.h included.");
+#endif
 
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
