@@ -679,11 +679,6 @@ void Host::SendNewObjectMessage(AnimalActor* animalObj)
 	this->SendToAllClients(msg);
 }
 
-bool Host::CheckCollision(Vector3 position)
-{
-	return false;
-}
-
 void Host::HandleRecivedMessages()
 {
 	
@@ -990,6 +985,9 @@ float Host::Update()
 void Host::UpdateObjects()
 {
 	this->zActorHandler->UpdateObjects(zDeltaTime);
+
+	/*CheckCollisions is not complete.*/
+	this->zActorHandler->CheckCollisions();
 
 	std::vector<DynamicProjectileObject*> dynamicProjectileObj = this->zActorHandler->GetDynamicProjectiles();
 	std::vector<DynamicProjectileObject*> toBeRemoved;

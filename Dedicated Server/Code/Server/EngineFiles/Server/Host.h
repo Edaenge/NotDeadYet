@@ -88,7 +88,7 @@ public:
 	void PingClients();
 	/*! Updates the server clock.*/
 	float Update();
-	/*! Updates the players.*/
+	/*! Updates the objects.*/
 	void UpdateObjects();
 	/*! Kicks client. Sends a message if reason is given.
 		If sendAMessage is false, the client will not be notified.
@@ -150,7 +150,6 @@ private:
 	bool CreateStaticObjectActor(const int type, StaticProjectileObject** projectileObj, const bool genID = false);
 	/*! Creates a DynamicObject with default values.*/
 	bool CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID = false);
-	bool CheckCollision(Vector3 position);
 	void HandleConversion(DynamicProjectileObject* dynamicProjObj);
 	void SendRemoveEquipment(const int ClientID, const int ItemID, const int Slot);
 private:

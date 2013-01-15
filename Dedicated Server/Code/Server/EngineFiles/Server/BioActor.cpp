@@ -22,6 +22,7 @@ BioActor::~BioActor()
 
 void BioActor::InitValues()
 {
+	this->zPreviousPos = this->zPos;
 	this->zState = STATE_IDLE;
 	this->zVelocity = V_WALK_SPEED;
 	this->zDir = Vector3(1,0,0);
@@ -68,3 +69,7 @@ bool BioActor::Sprint(float dt)
 
 	return true;
 }
+
+
+	
+

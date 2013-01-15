@@ -26,6 +26,8 @@ public:
 	/*! Returns false if player cannot sprint, due to stamina.*/
 	virtual bool Sprint(float dt);
 	virtual bool IsAlive() const;
+	/*! Rewinds the position the the old position.*/
+	virtual void RewindPosition(){};
 
 	int GetState() const {return this->zState;}
 	float GetVelocity() const {return this->zVelocity;}
@@ -68,6 +70,7 @@ protected:
 
 	Vector3 zDir;
 	Vector3 zUp;
+	Vector3 zPreviousPos;
 
 	PhysicsObject* zPhysicObj;
 

@@ -13,8 +13,8 @@ namespace MaloW
 	{
 		if(erase)
 		{
-			ofstream writeFile;
-			writeFile.open ("MaloWDebug.txt", ios::out | ios::trunc);
+			std::ofstream writeFile;
+			writeFile.open ("MaloWDebug.txt", std::ios::out | std::ios::trunc);
 
 			writeFile << "";
 
@@ -23,10 +23,10 @@ namespace MaloW
 		}
 		
 
-		fstream writeFile;
-		writeFile.open ("MaloWDebug.txt", fstream::in | fstream::out | fstream::app);
+		std::fstream writeFile;
+		writeFile.open ("MaloWDebug.txt", std::fstream::in | std::fstream::out | std::fstream::app);
 
-		writeFile << msg << endl;
+		writeFile << msg << std::endl;
 
 		writeFile.close();
 	}
@@ -35,8 +35,8 @@ namespace MaloW
 	{
 		if(erase)
 		{
-			ofstream writeFile;
-			writeFile.open ("MaloWDebug.txt", ios::out | ios::trunc);
+			std::ofstream writeFile;
+			writeFile.open ("MaloWDebug.txt", std::ios::out | std::ios::trunc);
 
 			writeFile << "";
 
@@ -45,10 +45,10 @@ namespace MaloW
 		}
 		
 
-		fstream writeFile;
-		writeFile.open ("MaloWDebug.txt", fstream::in | fstream::out | fstream::app);
+		std::fstream writeFile;
+		writeFile.open ("MaloWDebug.txt", std::fstream::in | std::fstream::out | std::fstream::app);
 
-		writeFile << MaloW::convertNrToString(nr) << endl;
+		writeFile << MaloW::convertNrToString(nr) << std::endl;
 
 		writeFile.close();
 	}
@@ -57,8 +57,8 @@ namespace MaloW
 	{
 		//if(erase)
 		//{
-			ofstream writeFile;
-			writeFile.open ("MaloWDebug.txt", ios::out | ios::trunc);
+			std::ofstream writeFile;
+			writeFile.open ("MaloWDebug.txt", std::ios::out | std::ios::trunc);
 
 			writeFile << "";
 

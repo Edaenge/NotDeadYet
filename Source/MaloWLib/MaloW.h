@@ -5,19 +5,17 @@
 #include <sstream>
 #include <Windows.h>
 
-using namespace std;
-
 #define MEMLEAKTEST _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF)
 
 namespace MaloW
 {
-	inline void convertToCharArr(char arr[], string msg)
+	inline void convertToCharArr(char arr[], std::string msg)
 	{
 		for(int i = 0; i < (int)msg.length(); i++)
 			arr[i] = msg[i];
 	}
 
-	inline void convertFromCharArr(char arr[], string& msg)
+	inline void convertFromCharArr(char arr[], std::string& msg)
 	{
 		msg = "";
 		for(int i = 0; i < arr[i] != 0 && i < 512; i++)
@@ -46,7 +44,7 @@ namespace MaloW
 	inline float convertStringToFloat(const std::string& str)
 	{
 		float ret;
-		stringstream ss;
+		std::stringstream ss;
 		ss << str;
 		ss >> ret;
 

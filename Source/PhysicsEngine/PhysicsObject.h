@@ -48,7 +48,7 @@ public:
 	PhysicsObject(Vector3 position = Vector3(0, 0, 0));
 	virtual ~PhysicsObject();
 
-	void SetPosition(const Vector3& pos);
+	inline void SetPosition(const Vector3& pos){this->pos = pos; this->RecreateWorldMatrix();}
 	void SetQuaternion(const Vector4& quat);
 	void MoveBy(const Vector3& moveby);
 	void Rotate(const Vector4& quat);

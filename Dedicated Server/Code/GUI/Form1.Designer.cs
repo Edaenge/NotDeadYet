@@ -51,6 +51,7 @@
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.button_copy = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -72,6 +73,7 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Silver;
+            this.tabPage1.Controls.Add(this.button_copy);
             this.tabPage1.Controls.Add(this.label_IP_address);
             this.tabPage1.Controls.Add(this.textBox_public_ip);
             this.tabPage1.Controls.Add(this.panel1);
@@ -112,7 +114,7 @@
             this.panel1.Controls.Add(this.textBox_Players);
             this.panel1.Location = new System.Drawing.Point(49, 78);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(200, 202);
+            this.panel1.Size = new System.Drawing.Size(208, 202);
             this.panel1.TabIndex = 8;
             // 
             // button_Shutdown
@@ -251,6 +253,16 @@
             // 
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
+            // button_copy
+            // 
+            this.button_copy.Location = new System.Drawing.Point(237, 301);
+            this.button_copy.Name = "button_copy";
+            this.button_copy.Size = new System.Drawing.Size(42, 23);
+            this.button_copy.TabIndex = 16;
+            this.button_copy.Text = "Copy";
+            this.button_copy.UseVisualStyleBackColor = true;
+            this.button_copy.MouseClick += new System.Windows.Forms.MouseEventHandler(this.button_copy_MouseClick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -299,6 +311,7 @@
         private System.Windows.Forms.Label label_IP_address;
         private System.Windows.Forms.TextBox textBox_public_ip;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Button button_copy;
 
     }
 }

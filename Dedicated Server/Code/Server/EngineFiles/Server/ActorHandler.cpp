@@ -40,6 +40,7 @@ ActorHandler::~ActorHandler()
 	}
 
 	SAFE_DELETE(this->zObjManager);
+	SAFE_DELETE(this->zPhysicsEngine);
 }
 
 void ActorHandler::UpdateObjects( float deltaTime )
@@ -124,7 +125,7 @@ bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Pr
 
 	PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(new_Projectile->GetActorModel(), 
 																		new_Projectile->GetPosition());
-	new_Projectile->SetPhysicObj(pObj);
+	new_Projectile->SetPhysicObject(pObj);
 	this->zDynamicProjectiles.push_back(new_Projectile);
 
 	if(!pObj)
@@ -242,7 +243,7 @@ bool ActorHandler::RemoveDynamicProjectileActor( const int ID )
 	DynamicProjectileObject* temp = this->zDynamicProjectiles[index];
 
 	this->zDynamicProjectiles.erase(this->zDynamicProjectiles.begin() + index);
-	this->zPhysicsEngine->DeletePhysicsObject(temp->GetPhysicObj());
+	this->zPhysicsEngine->DeletePhysicsObject(temp->GetPhysicObject());
 	SAFE_DELETE(temp);
 
 	return true;
@@ -416,3 +417,104 @@ ObjectManager* ActorHandler::GetObjManager() const
 {
 	return this->zObjManager;
 }
+
+/*Not Complete*/
+const std::vector<CollisionEvent>& ActorHandler::CheckCollisions()
+{
+
+	std::vector<CollisionEvent> cEvent;
+
+	/*TESTS PLAYERS VS PLAYERS*/
+	std::vector<PlayerActor*> pCol;
+
+	for(auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
+	{
+		PlayerVsPlayers(*it, pCol);
+
+		if(pCol.size() > 0)
+			(*it)->RewindPosition();
+
+		pCol.clear();
+	}
+
+	/*TESTS PLAYERS VS PROJECTILES*/
+	std::vector<DynamicProjectileObject*> dCol; 
+	std::vector<PhysicsCollisionData> pcd;
+
+	for(auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
+	{
+		PlayerVsDynamics(*it, dCol, pcd);
+
+		if(dCol.size() != 0)
+		{
+			float totalDamageTaken = 0.0f;
+
+			for (auto it_s = dCol.begin(); it_s < dCol.end(); it_s++)
+			{
+				if((*it)->IsAlive())
+				{
+					totalDamageTaken += (*it_s)->GetDamage();
+					if((*it)->TakeDamage(totalDamageTaken))
+					{
+						CollisionEvent ce;
+						ce.actor_aggressor_ID	= (*it_s)->GetObjPlayerOwner();
+						ce.actor_victim_ID		= (*it)->GetID();
+						ce.actor_victim_type	= ACTOR_TYPE_PLAYER;
+						ce.event_type			= COLLISION_EVENT_DEATH;
+						cEvent.push_back(ce);
+					}
+				}
+
+				(*it_s)->SetMoving(false);
+			}
+
+		}
+	}
+
+	return cEvent;
+}
+
+void ActorHandler::PlayerVsPlayers( PlayerActor* pTest, std::vector<PlayerActor*> &pCollide )
+{
+	PhysicsObject* pTemp = pTest->GetPhysicObject();
+	PhysicsCollisionData pcd;
+
+	for(auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
+	{
+		if(!(*it)->IsAlive())
+			continue;
+
+		if((*it) != pTest)
+		{
+			pcd = this->zPhysicsEngine->GetCollision(pTemp, (*it)->GetPhysicObject());
+			
+			if(pcd.collision)
+				pCollide.push_back(*it);
+		}
+		
+	}
+}
+
+void ActorHandler::PlayerVsDynamics( PlayerActor* pTest, std::vector<DynamicProjectileObject*> &pCollide, 
+									std::vector<PhysicsCollisionData> &pcd )
+{
+	PhysicsObject *pTemp = pTest->GetPhysicObject();
+	PhysicsCollisionData temp_pcd;
+
+	for(auto it = this->zDynamicProjectiles.begin(); it < this->zDynamicProjectiles.end(); it++)
+	{
+		if(!(*it)->IsMoving())
+			continue;		
+		
+		temp_pcd = this->zPhysicsEngine->GetCollision(pTemp, (*it)->GetPhysicObject());
+
+		if (temp_pcd.collision)
+		{
+			pCollide.push_back(*it);
+			pcd.push_back(temp_pcd);
+		}
+
+	}
+}
+
+

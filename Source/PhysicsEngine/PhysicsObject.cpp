@@ -31,12 +31,6 @@ PhysicsObject::~PhysicsObject()
 		delete [] this->indicies;
 }
 
-void PhysicsObject::SetPosition( const Vector3& pos )
-{
-	this->pos = pos;
-	this->RecreateWorldMatrix();
-}
-
 void PhysicsObject::SetQuaternion( const Vector4& quat )
 {
 	this->rotQuat = quat;
@@ -49,7 +43,6 @@ void PhysicsObject::MoveBy( const Vector3& moveby )
 	this->pos += moveby;
 	this->RecreateWorldMatrix();
 }
-
 
 void PhysicsObject::Rotate( const Vector4& quat )
 {

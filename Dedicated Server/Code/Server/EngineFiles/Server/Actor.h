@@ -50,12 +50,12 @@ public:
 	std::string GetActorModel() const {return zActorModel;}
 	std::string GetActorObjectName() const {return zActorObjectName;}
 
-	void SetPosition(const Vector3& pos) {zPos = pos;}
-	void SetRotation(const Vector4& rot) {zRot = rot;}
-	void SetScale(const Vector3& scale) {zScale = scale;}
-	void SetID(const int id) {this->zID = id;}
-	void SetActorModel(const std::string& modelStr) {zActorModel = modelStr;}
-	void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
+	 void SetPosition(const Vector3& pos) {zPos = pos;}
+	 void SetRotation(const Vector4& rot) {zRot = rot;}
+	 void SetScale(const Vector3& scale) {zScale = scale;}
+	 void SetID(const int id) {this->zID = id;}
+	 void SetActorModel(const std::string& modelStr) {zActorModel = modelStr;}
+	 void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
 
 	virtual void Update(float deltaTime) = 0;
 protected:
