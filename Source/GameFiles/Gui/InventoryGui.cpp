@@ -64,15 +64,21 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, GraphicsEngine* ge)
 
 bool InventoryGui::RemoveItemFromGui(const unsigned int ID)
 {
+	int size = zSlotGui.size();
 	for (auto it = this->zSlotGui.begin(); it < this->zSlotGui.end(); it++)
 	{
 		if ((*it)->GetID() == ID)
 		{
 			if(this->zSlotGui.end()-- != it)
 			{
-				auto i = zSlotGui.end();
-				i--;
-				(*i)->SetPosition((*it)->GetPosition());
+				for(auto i = this->zSlotGui.begin(); i < this->zSlotGui.end(); i++)
+				{
+					if((*i)->GetPosition().x == zSlotPositions[size-1].x && (*i)->GetPosition().y == zSlotPositions[size].y)
+					{
+						(*i)->SetPosition((*it)->GetPosition());
+					}
+				}
+				
 			}
 			(*it)->RemoveFromRenderer(GetGraphics());
 			this->zSlotGui.erase(it);
