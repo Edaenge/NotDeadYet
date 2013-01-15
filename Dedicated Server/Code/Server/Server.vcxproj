@@ -73,7 +73,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)..\Bin\x64\</OutDir>
-    <IntDir>$(SolutionDir)..\Obj\x86\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)..\Obj\x64\$(ProjectName)\$(Configuration)\</IntDir>
+    <LibraryPath>$(SolutionDir)..\..\External\VLD\lib\Win64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\..\External\VLD\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

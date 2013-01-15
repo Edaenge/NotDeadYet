@@ -11,10 +11,10 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "PlayerActor.h"
 #include "ActorHandler.h"
 
-#if defined(DEBUG) || defined(_DEBUG)
-	#include <vld.h>
-	#define INCLUDE_MODEL_VIEWER
-#endif
+//#if defined(DEBUG) || defined(_DEBUG)
+//#include <vld.h>
+//	#define INCLUDE_MODEL_VIEWER
+//#endif
 
 struct ClientData
 {
