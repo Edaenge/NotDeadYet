@@ -10,18 +10,10 @@
 class Material : public Item
 {
 public:
-	Material(const unsigned int id, const unsigned int itemType, float velocity, float damage);
+	Material(const unsigned int id, const unsigned int itemType);
 	virtual ~Material();
 
-	void SetVelocity(float vel) {this->zVelocity = vel;}
-	void SetDamage(float damage) {this->zDamage = damage;}
-
-	float GetVelocity() const {return this->zVelocity;}
-	float GetDamage() const {return this->zDamage;}
-
-	virtual bool Use();
-	virtual Item* Craft();
+	virtual bool Use() = 0;
+	virtual Item* Craft() = 0;
 private:
-	float zDamage;
-	float zVelocity;
 };
