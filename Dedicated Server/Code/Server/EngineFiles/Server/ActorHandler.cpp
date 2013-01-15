@@ -437,39 +437,39 @@ const std::vector<CollisionEvent>& ActorHandler::CheckCollisions()
 		pCol.clear();
 	}
 
-	/*TESTS PLAYERS VS PROJECTILES*/
-	std::vector<DynamicProjectileObject*> dCol; 
-	std::vector<PhysicsCollisionData> pcd;
+	///*TESTS PLAYERS VS PROJECTILES*/
+	//std::vector<DynamicProjectileObject*> dCol; 
+	//std::vector<PhysicsCollisionData> pcd;
 
-	for(auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
-	{
-		PlayerVsDynamics(*it, dCol, pcd);
+	//for(auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
+	//{
+	//	PlayerVsDynamics(*it, dCol, pcd);
 
-		if(dCol.size() != 0)
-		{
-			float totalDamageTaken = 0.0f;
+	//	if(dCol.size() != 0)
+	//	{
+	//		float totalDamageTaken = 0.0f;
 
-			for (auto it_s = dCol.begin(); it_s < dCol.end(); it_s++)
-			{
-				if((*it)->IsAlive())
-				{
-					totalDamageTaken += (*it_s)->GetDamage();
-					if((*it)->TakeDamage(totalDamageTaken))
-					{
-						CollisionEvent ce;
-						ce.actor_aggressor_ID	= (*it_s)->GetObjPlayerOwner();
-						ce.actor_victim_ID		= (*it)->GetID();
-						ce.actor_victim_type	= ACTOR_TYPE_PLAYER;
-						ce.event_type			= COLLISION_EVENT_DEATH;
-						cEvent.push_back(ce);
-					}
-				}
+	//		for (auto it_s = dCol.begin(); it_s < dCol.end(); it_s++)
+	//		{
+	//			if((*it)->IsAlive())
+	//			{
+	//				totalDamageTaken += (*it_s)->GetDamage();
+	//				if((*it)->TakeDamage(totalDamageTaken))
+	//				{
+	//					CollisionEvent ce;
+	//					ce.actor_aggressor_ID	= (*it_s)->GetObjPlayerOwner();
+	//					ce.actor_victim_ID		= (*it)->GetID();
+	//					ce.actor_victim_type	= ACTOR_TYPE_PLAYER;
+	//					ce.event_type			= COLLISION_EVENT_DEATH;
+	//					cEvent.push_back(ce);
+	//				}
+	//			}
 
-				(*it_s)->SetMoving(false);
-			}
+	//			(*it_s)->SetMoving(false);
+	//		}
 
-		}
-	}
+	//	}
+	//}
 
 	return cEvent;
 }
@@ -477,21 +477,21 @@ const std::vector<CollisionEvent>& ActorHandler::CheckCollisions()
 void ActorHandler::PlayerVsPlayers( PlayerActor* pTest, std::vector<PlayerActor*> &pCollide )
 {
 	PhysicsObject* pTemp = pTest->GetPhysicObject();
-	PhysicsCollisionData pcd;
+	Vector3 pPos = pTemp->GetPosition();
 
-	for(auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
+	for (auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
 	{
-		if(!(*it)->IsAlive())
+		if((*it) == pTest)
 			continue;
 
-		if((*it) != pTest)
+		Vector3 tPos = (*it)->GetPhysicObject()->GetPosition();
+		float lenght = (pPos - tPos).GetLength();
+
+		if(lenght <= MAX_COLLISION_DISTANCE_PLAYER)
 		{
-			pcd = this->zPhysicsEngine->GetCollision(pTemp, (*it)->GetPhysicObject());
-			
-			if(pcd.collision)
-				pCollide.push_back(*it);
+			pCollide.push_back(*it);
 		}
-		
+
 	}
 }
 
