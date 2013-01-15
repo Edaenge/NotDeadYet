@@ -1,8 +1,8 @@
 #pragma once
 
-static const float V_WALK_SPEED		= 6.0f;
-static const float V_RUN_SPEED		= 10.0f;
-static const float V_CROUCH_SPEED	= 2.0f;
+static const float V_WALK_SPEED		= 1.0f;
+static const float V_RUN_SPEED		= 2.0f;
+static const float V_CROUCH_SPEED	= 0.5f;
 
 /*! Animation states*/
 static const enum PlayerState

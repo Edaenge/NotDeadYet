@@ -35,7 +35,7 @@ struct CollisionEvent
 	unsigned int event_type;
 };
 
-static const float MAX_COLLISION_DISTANCE_PLAYER = 0.30f;
+static const float MAX_COLLISION_DISTANCE_PLAYER = 1.0f;
 
 class ActorHandler
 {
