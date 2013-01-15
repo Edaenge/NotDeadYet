@@ -13,7 +13,10 @@ public:
 	Material(const unsigned int id, const unsigned int itemType);
 	virtual ~Material();
 
+	int GetCraftingType() const {return this->zCraftingType;}
+	void SetCraftingType(const int TYPE) {this->zCraftingType = TYPE;}
+
 	virtual bool Use() = 0;
-	virtual Item* Craft() = 0;
-private:
+protected:
+	int zCraftingType;
 };

@@ -5,15 +5,15 @@
 
 #pragma once
 
-#include "Item.h"
+#include "Material.h"
 
-class LargeStick : public Item
+class LargeStick : public Material
 {
 public:
 	LargeStick(const unsigned int id, const unsigned int itemType);
 	virtual ~LargeStick();
 
 	virtual bool Use();
-	virtual Item* Craft();
+
 private:
 };
