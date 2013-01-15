@@ -1,4 +1,5 @@
 #include "Equipment.h"
+#include "../../MaloWLib/Safe.h"
 
 const unsigned int GEAR_SLOTS = 4;
 
@@ -14,18 +15,12 @@ Equipment::Equipment()
 
 Equipment::~Equipment()
 {
-	if (this->zWeapon)
-	{
-		delete this->zWeapon;
-		this->zWeapon = NULL;
-	}
+	SAFE_DELETE(this->zWeapon);
+	SAFE_DELETE(this->zProjectile);
+
 	for (auto x = this->zGear.begin(); x < this->zGear.end(); x++)
 	{
-		if ((*x))
-		{
-			delete (*x);
-			(*x) = NULL;
-		}
+		SAFE_DELETE((*x));
 	}
 }
 

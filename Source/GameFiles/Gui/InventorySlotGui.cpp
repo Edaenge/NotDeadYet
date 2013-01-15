@@ -1,4 +1,5 @@
 #include "GameFiles/Gui/InventorySlotGui.h"
+#include "../../MaloWLib/Safe.h"
 
 InventorySlotGui::InventorySlotGui()
 {
@@ -14,11 +15,7 @@ InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, 
 
 InventorySlotGui::~InventorySlotGui()
 {
-	if (this->zSlotImage)
-	{
-		delete this->zSlotImage;
-		this->zSlotImage = NULL;
-	}
+	SAFE_DELETE(this->zSlotImage);
 }
 
 bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)

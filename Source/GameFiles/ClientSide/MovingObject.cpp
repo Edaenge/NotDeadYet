@@ -39,21 +39,12 @@ float MovingObject::GetInterpolationType(const float deltaTime, const unsigned i
 
 void MovingObject::LinearInterpolation( Vector3& CurrPos, const Vector3& newPos, float t )
 {
-	bool bLarger = false;
-	if (CurrPos.GetLength() < newPos.GetLength())
-		bLarger = true;
+	float oldlength = (CurrPos - newPos).GetLength();
 
 	CurrPos = CurrPos + (newPos - CurrPos) * t * zVelocity;
-
-	if (!bLarger)
-	{
-		if (CurrPos.GetLength() < newPos.GetLength())
-			CurrPos = newPos;
-	}
-	else
-	{
-		if (CurrPos.GetLength() > newPos.GetLength())
-			CurrPos = newPos;
-	}
 	
+	float newLength = (CurrPos - newPos).GetLength();
+
+	if (newLength > oldlength)
+		CurrPos = newPos;
 }

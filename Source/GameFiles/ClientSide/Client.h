@@ -4,6 +4,7 @@
 */
 #pragma once
 #include "Process.h"
+#include "../../MaloWLib/Safe.h"
 #include "GraphicsEngine.h"
 #include "Network/ServerChannel.h"
 #include "GameFiles/Items/Inventory.h"

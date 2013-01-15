@@ -9,7 +9,6 @@
 #include "MeleeWeapon.h"
 #include "Gear.h"
 #include "Projectile.h"
-
 #include <vector>
 
 enum EQUIPMENT_SLOT

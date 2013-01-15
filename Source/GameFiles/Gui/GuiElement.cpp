@@ -1,4 +1,5 @@
 #include "GameFiles/Gui/GuiElement.h"
+#include "../../MaloWLib/Safe.h"
 
 GuiElement::GuiElement()
 {
@@ -26,11 +27,7 @@ GuiElement::GuiElement(float x, float y, float width, float height, std::string 
 
 GuiElement::~GuiElement()
 {
-	if (this->zGuiImage)
-	{
-		delete this->zGuiImage;
-		this->zGuiImage = 0;
-	}
+	SAFE_DELETE(this->zGuiImage);
 }
 
 bool GuiElement::AddToRenderer(GraphicsEngine* ge)

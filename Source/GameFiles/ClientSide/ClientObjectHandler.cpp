@@ -61,6 +61,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 			this->zCreated = true;
 		}
 	}
+	MaloW::Debug("Player ID " + MaloW::convertNrToString(ID) +" Added");
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->SetQuaternion(rotation);
@@ -127,6 +128,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewAnimalObject");
 		}
 	}
+	MaloW::Debug("Animal Added ID: " + MaloW::convertNrToString(ID));
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->SetQuaternion(rotation);
@@ -212,7 +214,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewStaticObject");
 		}
 	}
-
+	MaloW::Debug("Static Object Added ID: " + MaloW::convertNrToString(ID) + " " + filename);
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->SetQuaternion(rotation);
@@ -306,7 +308,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewDynamicObject");
 		}
 	}
-
+	MaloW::Debug("Dynamic Object Added ID: " + MaloW::convertNrToString(ID) + " " + dynamicObject->GetName());
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->SetQuaternion(rotation);

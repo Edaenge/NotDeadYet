@@ -100,10 +100,20 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 
 		if (oldWeapon)
 		{
-			this->zPlayerInventory->AddItem(oldWeapon);
+			if(this->zPlayerInventory->AddItem(oldWeapon))
+			{
+				Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription());
+				this->zGuiManager->AddInventoryItemToGui(gid);
+				if (Messages::FileWrite())
+				{
+					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)rWpn->GetID()));
+				}
+			}
 		}
 
 		eq->EquipWeapon(rWpn);
+		MaloW::Debug(rWpn->GetItemName() + " Equipped");
+		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID());
 
 		return;
 	}
@@ -111,7 +121,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 	{
 		if (Slot != EQUIPMENT_SLOT_WEAPON)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString((float)Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + " != Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 
@@ -128,10 +138,20 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 
 		if (oldWeapon)
 		{
-			this->zPlayerInventory->AddItem(oldWeapon);
+			if(this->zPlayerInventory->AddItem(oldWeapon))
+			{
+				Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription());
+				this->zGuiManager->AddInventoryItemToGui(gid);
+				if (Messages::FileWrite())
+				{
+					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)rWpn->GetID()));
+				}
+			}
 		}
 
 		eq->EquipWeapon(rWpn);
+		MaloW::Debug(rWpn->GetItemName() + " Equipped");
+		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID());
 
 		return;
 	}
@@ -139,7 +159,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 	{
 		if (Slot != EQUIPMENT_SLOT_AMMO)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not an Ammo ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_AMMO) + "!= Slot: " + MaloW::convertNrToString((float)Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not an Ammo: " + MaloW::convertNrToString(EQUIPMENT_SLOT_AMMO) + " != Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 
@@ -155,9 +175,19 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 		Projectile* oldProjectile = eq->GetProjectile();
 		if (oldProjectile)
 		{
-			this->zPlayerInventory->AddItem(oldProjectile);
+			if(this->zPlayerInventory->AddItem(oldProjectile))
+			{
+				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription());
+				this->zGuiManager->AddInventoryItemToGui(gid);
+				if (Messages::FileWrite())
+				{
+					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)projectile->GetID()));
+				}
+			}
 		}
 		eq->EquipProjectile(projectile);
+		MaloW::Debug(projectile->GetItemName() + " Equipped");
+		this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID());
 
 		return;
 	}
@@ -165,7 +195,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 	{
 		if (Slot != EQUIPMENT_SLOT_WEAPON)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString((float)Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + " != Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 
@@ -183,10 +213,20 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 
 		if (oldWeapon)
 		{
-			this->zPlayerInventory->AddItem(oldWeapon);
+			if(this->zPlayerInventory->AddItem(oldWeapon))
+			{
+				Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription());
+				this->zGuiManager->AddInventoryItemToGui(gid);
+				if (Messages::FileWrite())
+				{
+					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)mWpn->GetID()));
+				}
+			}
 		}
 
 		eq->EquipWeapon(mWpn);
+
+		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID());
 
 		return;
 	}
@@ -596,10 +636,6 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	}
 	else
 	{
-		if (item)
-		{
-			delete item;
-			item = NULL;
-		}
+		SAFE_DELETE(item);
 	}
 }

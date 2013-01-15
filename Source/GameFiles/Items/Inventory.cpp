@@ -1,4 +1,5 @@
 #include "Inventory.h"
+#include "../../MaloWLib/Safe.h"
 
 Inventory::Inventory()
 {
@@ -35,11 +36,8 @@ Inventory::~Inventory()
 	//Remove Item Arrays
 	for (auto x = this->zItems.begin(); x < this->zItems.end(); x++)
 	{
-		if((*x))
-		{
-			delete (*x);
-			(*x) = 0;
-		}
+		SAFE_DELETE((*x));
+
 	}
 }
 
@@ -151,11 +149,8 @@ bool Inventory::RemoveItem(const unsigned int index)
 		Item* item = this->zItems.at(index);
 		this->zItems.erase(this->zItems.begin() + index);
 
-		if (item)
-		{
-			delete item;
-			item = NULL;
-		}
+		SAFE_DELETE((item));
+
 		return true;
 	}
 	return false;

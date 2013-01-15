@@ -1,6 +1,5 @@
 #include "GameFiles/ClientSide/Client.h"
 #include "Graphics.h"
-#include "Safe.h"
 #include "Network/NetworkPacket.h"
 #include "ClientServerMessages.h"
 
@@ -10,7 +9,7 @@ using namespace MaloW;
 static const float TIMEOUT_VALUE = 10.0f;
 // 30 updates per sec
 static const float UPDATE_DELAY = 0.0333f;
-static const float MAX_DISTANCE_TO_OBJECT = 10.0f;
+static const float MAX_DISTANCE_TO_OBJECT = 3.0f;
 
 Client::Client()
 {
@@ -58,29 +57,34 @@ Client::~Client()
 	this->Close();
 	this->WaitUntillDone();
 
-	if (this->zGuiManager)
-	{
-		delete this->zGuiManager;
-		this->zGuiManager = NULL;
-	}
+	SAFE_DELETE(this->zGuiManager);
+	SAFE_DELETE(this->zObjectManager);
+	SAFE_DELETE(this->zServerChannel);
+	SAFE_DELETE(this->zPlayerInventory);
 
-	if (this->zObjectManager)
-	{
-		delete this->zObjectManager;
-		this->zObjectManager = NULL;
-	}
+	//if (this->zGuiManager)
+	//{
+	//	delete this->zGuiManager;
+	//	this->zGuiManager = NULL;
+	//}
 
-	if (this->zServerChannel)
-	{
-		delete this->zServerChannel;
-		this->zServerChannel = NULL;
-	}
+	//if (this->zObjectManager)
+	//{
+	//	delete this->zObjectManager;
+	//	this->zObjectManager = NULL;
+	//}
 
-	if (this->zPlayerInventory)
-	{
-		delete this->zPlayerInventory;
-		this->zPlayerInventory = NULL;
-	}
+	//if (this->zServerChannel)
+	//{
+	//	delete this->zServerChannel;
+	//	this->zServerChannel = NULL;
+	//}
+
+	//if (this->zPlayerInventory)
+	//{
+	//	delete this->zPlayerInventory;
+	//	this->zPlayerInventory = NULL;
+	//}
 }
 
 float Client::Update()
@@ -109,7 +113,7 @@ void Client::InitGraphics()
 	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
 	this->zEng->GetCamera()->LookAt( Vector3(0, 0, 0) );
 
-	
+	//this->zEng->LoadingScreen("Media/LoadingScreenBG.png", "Media/LoadingScreenPG.png");
 	//iTerrain* terrain = this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 20);
 
 	//this->zObjectManager->AddTerrain(terrain);
@@ -446,34 +450,37 @@ void Client::HandleKeyboardInput()
 				this->zGuiManager->HideCircularItemGui();
 			}
 		}*/
-
-		if (this->zEng->GetKeyListener()->IsClicked(1))
+		if (!this->zShowCursor)
 		{
-			if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			if (this->zEng->GetKeyListener()->IsClicked(1))
 			{
-				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
-				PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
-
-				Equipment* eq = player->GetEquipmentPtr();
-
-				Weapon* weapon = eq->GetWeapon();
-
-				if (!weapon)
+				if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
 				{
-					this->DisplayMessageToClient("No Weapon is Equipped");
-				}
-				else
-				{
-					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
-					this->zServerChannel->sendData(msg);
+					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+					PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
+
+					Equipment* eq = player->GetEquipmentPtr();
+
+					Weapon* weapon = eq->GetWeapon();
+
+					if (!weapon)
+					{
+						this->DisplayMessageToClient("No Weapon is Equipped");
+					}
+					else
+					{
+						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
+						this->zServerChannel->sendData(msg);
+					}
 				}
 			}
+			else
+			{
+				if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
+			}
 		}
-		else
-		{
-			if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
-				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
-		}
+		
 	}
 
 	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
@@ -669,6 +676,7 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		else
 		{
 			MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[0] + " in HandleNetworkMessage");
+			MaloW::Debug("C: " + msg);
 		}
 	}
 }

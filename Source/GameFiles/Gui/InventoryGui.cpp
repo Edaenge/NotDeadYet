@@ -1,4 +1,5 @@
 #include "GameFiles/Gui/InventoryGui.h"
+#include "../../MaloWLib/Safe.h"
 
 InventoryGui::InventoryGui()
 {
@@ -38,11 +39,7 @@ InventoryGui::~InventoryGui()
 {
 	for (auto it = this->zSlotGui.begin(); it < this->zSlotGui.end(); it++)
 	{
-		if ((*it))
-		{
-			delete (*it);
-			(*it) = NULL;
-		}
+		SAFE_DELETE((*it));
 	}
 }
 

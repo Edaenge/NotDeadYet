@@ -613,7 +613,8 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 			{
 				eq->UnEquipProjectile();
 
-				inv->AddItem(projectile);
+				if(inv->AddItem(projectile))
+					this->SendAddInventoryItemMessage(pActor->GetID(), projectile);
 
 				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
 
@@ -634,7 +635,10 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 			{
 				eq->UnEquipWeapon();
 
-				inv->AddItem(wpn);
+				
+
+				if(inv->AddItem(wpn))
+					this->SendAddInventoryItemMessage(pActor->GetID(), wpn);
 
 				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
 
@@ -742,7 +746,7 @@ void Host::SendUnEquipMessage(const int PlayerID, const int ID, const int Slot)
 void Host::SendEquipMessage(const int PlayerID, const int ID, const int Slot)
 {
 	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)ID);
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)Slot);
 
 	this->SendToClient(PlayerID, msg);
 }

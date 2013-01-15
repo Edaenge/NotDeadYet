@@ -1,4 +1,5 @@
 #include "GameFiles/Gui/CircularListGui.h"
+#include "../../MaloWLib/Safe.h"
 
 CircularListGui::CircularListGui() 
 	: GuiElement()
@@ -24,11 +25,7 @@ CircularListGui::CircularListGui(float x, float y, float width, float height, st
 
 CircularListGui::~CircularListGui()
 {
-	if (this->zItemImage)
-	{
-		delete this->zItemImage;
-		this->zItemImage = NULL;
-	}
+	SAFE_DELETE(this->zItemImage);
 }
 
 bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
