@@ -14,6 +14,7 @@ public:
 	virtual ~SmallStick();
 
 	virtual bool Use();
+	virtual bool IsUsable();
 
 private:
 };

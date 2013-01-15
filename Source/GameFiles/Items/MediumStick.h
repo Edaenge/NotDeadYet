@@ -14,6 +14,7 @@ public:
 	virtual ~MediumStick();
 
 	virtual bool Use();
+	virtual bool IsUsable();
 
 private:
 };

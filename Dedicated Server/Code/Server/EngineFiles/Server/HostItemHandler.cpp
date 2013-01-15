@@ -9,7 +9,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 
 	if (!weapon)
 	{
-		SendErrorMessage(pActor->GetID(),"No Weapon is Equipped");
+		SendErrorMessage(pActor->GetID(),"No_Weapon_is_Equipped");
 		return;
 	}
 	if (weapon->GetID() != ItemID)
@@ -66,7 +66,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 				projectile->SetStackSize(projectile->GetStackSize() - 1);
 				if (projectile->GetStackSize() <= 0)
 				{
-					SendRemoveEquipment(pActor->GetID(), projectile->GetID(), EQUIPMENT_SLOT_AMMO);
+					this->SendRemoveItemMessage(pActor->GetID(), projectile->GetID(), EQUIPMENT_SLOT_AMMO);
 
 					if (projectile)
 					{
@@ -114,7 +114,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 			rWpn->SetStackSize(rWpn->GetStackSize() - 1);
 			if (rWpn->GetStackSize() <= 0)
 			{
-				SendRemoveEquipment(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
+				this->SendRemoveItemMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
 
 				if (rWpn)
 				{
@@ -155,7 +155,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 
 	if (!item)
 	{
-		this->SendErrorMessage(pActor->GetID(), "Item Doesn't Exist");
+		this->SendErrorMessage(pActor->GetID(), "Item_Doesn't_Exist");
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_FOOD_DEER_MEAT || item->GetItemType() == ITEM_TYPE_FOOD_WOLF_MEAT)
@@ -170,7 +170,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 
 		if (!food->Use())
 		{
-			this->SendErrorMessage(pActor->GetID(), "Stack is Empty");
+			this->SendErrorMessage(pActor->GetID(), "Stack_is_Empty");
 			return;
 		}
 		pActor->EatFood(food->GetHunger());
@@ -183,9 +183,8 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		{
 			pActor->GetInventory()->RemoveItem(food);
 
-
+			this->SendRemoveItemMessage(pActor->GetID(), food->GetID());
 		}
-
 
 		return;
 	}
@@ -201,7 +200,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 
 		if (!container->Use())
 		{
-			this->SendErrorMessage(pActor->GetID(), "Stack is Empty");
+			this->SendErrorMessage(pActor->GetID(), "Stack_is_Empty");
 			return;
 		}
 		float hydration = (container->GetRemainingUses() + 1) * 15.0f;
@@ -214,12 +213,90 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 	}
 	if (item->GetItemType() == ITEM_TYPE_MATERIAL_SMALL_STICK)
 	{
+		Material* crafting_Material = dynamic_cast<Material*>(item);
+		if (!crafting_Material)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Material)");
+			return;
+		}
+		if (!crafting_Material->Use())
+		{
+			this->SendErrorMessage(pActor->GetID(), "Not_Enough_Materials_To_Craft");
+		}
 
+		Item* item = CreateItemFromDefault(crafting_Material->GetCraftingType());
+
+		if (!item)
+		{
+			MaloW::Debug("Failed to Create Item With Default Values in Host::UseItem (Small Stick)");
+			return;
+		}
+		if (item->GetItemType() == ITEM_TYPE_PROJECTILE_ARROW)
+		{
+			Projectile* new_Arrow = dynamic_cast<Projectile*>(item);
+
+			if (!new_Arrow)
+			{
+				MaloW::Debug("dynamic cast Failed in Host::UseItem (Projectile)");
+				return;
+			}
+			this->SendAddInventoryItemMessage(pActor->GetID(), new_Arrow);
+
+			return;
+		}
+		
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_MATERIAL_MEDIUM_STICK)
 	{
-		return;
+		MediumStick* material_Medium_Stick = dynamic_cast<MediumStick*>(item);
+		if (!material_Medium_Stick)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Medium Stick)");
+			return;
+		}
+		Inventory* inventory = pActor->GetInventory();
+		Item* thread = inventory->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL_THREAD);
+
+		if (!thread)
+		{
+			this->SendErrorMessage(pActor->GetID(), "Missing_Material_Thread_in_Inventory");
+			return;
+		}
+		Thread* material_Thread = dynamic_cast<Thread*>(item);
+
+		if (!material_Thread)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Thread)");
+			return;
+		}
+		if (!material_Medium_Stick->IsUsable() || !material_Thread->IsUsable())
+		{
+			this->SendErrorMessage(pActor->GetID(), "Not_Enough_Materials_To_Craft");
+		}
+		material_Medium_Stick->Use();
+		thread->Use();
+
+		Item* item = CreateItemFromDefault(material_Medium_Stick->GetCraftingType());
+
+		if (!item)
+		{
+			MaloW::Debug("Failed to Create Item With Default Values in Host::UseItem (Medium Stick)");
+			return;
+		}
+
+		if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
+		{
+			RangedWeapon* new_Bow = dynamic_cast<RangedWeapon*>(item);
+
+			if (!new_Bow)
+			{
+				MaloW::Debug("dynamic cast Failed in Host::UseItem (Bow)");
+				return;
+			}
+
+			this->SendAddInventoryItemMessage(pActor->GetID(), new_Bow);
+		}
 	}
 	if (item->GetItemType() == ITEM_TYPE_MATERIAL_LARGE_STICK)
 	{
@@ -248,10 +325,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Weapon Equipped" + rWpn->GetItemName());
 		eq->EquipWeapon(rWpn);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)rWpn->GetID());
-		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
-
-		this->SendToClient(pActor->GetID(), msg);
+		this->SendEquipMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
 
 		return;
 	}
@@ -278,10 +352,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Weapon Equipped" + rWpn->GetItemName());
 		eq->EquipWeapon(rWpn);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)rWpn->GetID());
-		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
-
-		this->SendToClient(pActor->GetID(), msg);
+		this->SendEquipMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
 
 		return;
 	}
@@ -308,10 +379,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Weapon Equipped" + mWpn->GetItemName());
 		eq->EquipWeapon(mWpn);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)mWpn->GetID());
-		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
-
-		this->SendToClient(pActor->GetID(), msg);
+		this->SendEquipMessage(pActor->GetID(), mWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
 
 		return;
 	}
@@ -338,10 +406,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Weapon Equipped" + mWpn->GetItemName());
 		eq->EquipWeapon(mWpn);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)mWpn->GetID());
-		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
-
-		this->SendToClient(pActor->GetID(), msg);
+		this->SendEquipMessage(pActor->GetID(), mWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
 
 		return;
 	}
@@ -369,21 +434,10 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Weapon Equipped " + arrow->GetItemName());
 		eq->EquipProjectile(arrow);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)arrow->GetID());
-		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_AMMO);
-
-		this->SendToClient(pActor->GetID(), msg);
+		this->SendEquipMessage(pActor->GetID(), arrow->GetID(), EQUIPMENT_SLOT_AMMO);
 
 		return;
 	}
-}
-
-void Host::SendRemoveEquipment(const int ClientID, const int ItemID, const int Slot)
-{
-	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)ItemID);
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)Slot);
-
-	this->SendToClient(ClientID, msg);
 }
 
 void Host::HandleDropItem(PlayerActor* pActor, const int ItemID)
@@ -393,12 +447,12 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemID)
 
 	if (!item)
 	{
-		this->SendErrorMessage(pActor->GetID(), "Failed To find Item");
+		this->SendErrorMessage(pActor->GetID(), "Failed_To_find_Item");
 		return;
 	}
 	int item_type = item->GetItemType();
 
-	if (item_type == ITEM_TYPE_FOOD_DEER_MEAT)
+	if (item_type == ITEM_TYPE_FOOD_DEER_MEAT || item_type == ITEM_TYPE_FOOD_WOLF_MEAT)
 	{
 		Food* item_Food = dynamic_cast<Food*>(item);
 		if (!item_Food)
@@ -411,7 +465,8 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemID)
 		pActor->DropObject(ItemID);
 		return;
 	}
-	if (item_type == ITEM_TYPE_WEAPON_RANGED_BOW)
+	if (item_type == ITEM_TYPE_WEAPON_RANGED_BOW || item_type == ITEM_TYPE_WEAPON_RANGED_ROCK || 
+		item_type == ITEM_TYPE_WEAPON_MELEE_AXE || item_type == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
 	{
 		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
 		if (!item_Weapon)
@@ -423,22 +478,9 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemID)
 		pActor->DropObject(ItemID);
 		return;
 	}
-	if (item_type == ITEM_TYPE_WEAPON_RANGED_ROCK)
+	if (item_type == ITEM_TYPE_PROJECTILE_ARROW)
 	{
-		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
-		if (!item_Weapon)
-		{
-			MaloW::Debug("Wrong Item Type Set");
-			return;
-		}
-
-		this->CreateObjectFromItem(pActor, item_Weapon);
-		pActor->DropObject(ItemID);
-		return;
-	}
-	if (item_type == ITEM_TYPE_WEAPON_MELEE_AXE)
-	{
-		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
+		Projectile* item_Weapon = dynamic_cast<Projectile*>(item);
 		if (!item_Weapon)
 		{
 			MaloW::Debug("Wrong Item Type Set");
@@ -449,20 +491,20 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemID)
 		pActor->DropObject(ItemID);
 		return;
 	}
-	if (item_type == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
-	{
-		Weapon* item_Weapon = dynamic_cast<Weapon*>(item);
-		if (!item_Weapon)
-		{
-			MaloW::Debug("Wrong Item Type Set");
-			return;
-		}
-
-		this->CreateObjectFromItem(pActor, item_Weapon);
-		pActor->DropObject(ItemID);
-		return;
-	}
-	if (item_type == ITEM_TYPE_CONTAINER_CANTEEN)
+	//if (item_type == ITEM_TYPE_MATERIAL_SMALL_STICK || item_type == ITEM_TYPE_MATERIAL_MEDIUM_STICK || 
+	//	item_type == ITEM_TYPE_MATERIAL_LARGE_STICK || item_type == ITEM_TYPE_MATERIAL_THREAD)
+	//{
+	//	Material* item_Material = dynamic_cast<Material*>(item);
+	//	if (!item_Material)
+	//	{
+	//		MaloW::Debug("Wrong Item Type Set");
+	//		return;
+	//	}
+	//	this->CreateObjectFromItem(pActor, item_Material);
+	//	pActor->DropObject(ItemID);
+	//	return;
+	//}
+	if (item_type == ITEM_TYPE_CONTAINER_CANTEEN || item_type == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
 	{
 		Container* item_Container = dynamic_cast<Container*>(item);
 		if (!item_Container)
@@ -697,7 +739,124 @@ void Host::SendUnEquipMessage(const int PlayerID, const int ID, const int Slot)
 	this->SendToClient(PlayerID, message);
 }
 
-Item* Host::CreateItemWithDefaultValues(const int ItemType)
+void Host::SendEquipMessage(const int PlayerID, const int ID, const int Slot)
+{
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)ID);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+
+	this->SendToClient(PlayerID, msg);
+}
+
+void Host::SendRemoveItemMessage(const int PlayerID, const int ID, const int Slot)
+{
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)ID);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)Slot);
+
+	this->SendToClient(PlayerID, msg);
+}
+
+void Host::SendRemoveItemMessage(const int PlayerID, const int ID)
+{
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
+	this->SendToClient(PlayerID, msg);
+}
+
+void Host::SendAddInventoryItemMessage(const int PlayerID, StaticProjectileObject* projectileObj)
+{
+	std::string msg;
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)projectileObj->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)projectileObj->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, projectileObj->GetDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, projectileObj->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, projectileObj->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)projectileObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_DAMAGE, projectileObj->GetDamage());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_VELOCITY, projectileObj->GetVelocity());
+
+	this->SendToClient(PlayerID, msg);
+}
+
+void Host::SendAddInventoryItemMessage(const int PlayerID, Projectile* projectile)
+{
+	std::string msg;
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)projectile->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)projectile->GetItemType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, projectile->GetItemDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, projectile->GetItemName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)projectile->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, projectile->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_VELOCITY, projectile->GetVelocity());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_DAMAGE, projectile->GetDamage());
+
+	this->SendToClient(PlayerID, msg);
+}
+
+void Host::SendAddInventoryItemMessage(const int PlayerID, ContainerObject* containerObj)
+{
+	std::string msg;
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)containerObj->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)containerObj->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, containerObj->GetDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, containerObj->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, containerObj->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)containerObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_CONTAINER_MAX, (float)containerObj->GetMaxUses());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)containerObj->GetCurrentUses());
+
+	this->SendToClient(PlayerID, msg);
+}
+
+void Host::SendAddInventoryItemMessage(const int PlayerID, FoodObject* foodObj)
+{
+	std::string msg;
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)foodObj->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)foodObj->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, foodObj->GetDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, foodObj->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)foodObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, foodObj->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_HUNGER, foodObj->GetHunger());
+
+	this->SendToClient(PlayerID, msg);
+}
+
+void Host::SendAddInventoryItemMessage(const int PlayerID, WeaponObject* weaponObj)
+{
+	std::string msg;
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)weaponObj->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)weaponObj->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, weaponObj->GetDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, weaponObj->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, weaponObj->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)weaponObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_DAMAGE, weaponObj->GetDamage());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_RANGE, weaponObj->GetRange());
+
+	this->SendToClient(PlayerID, msg);
+}
+
+void Host::SendAddInventoryItemMessage(const int PlayerID, Weapon* weapon)
+{
+	std::string msg;
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)weapon->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)weapon->GetItemType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, weapon->GetItemDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, weapon->GetItemName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, weapon->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)weapon->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_DAMAGE, weapon->GetDamage());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_RANGE, weapon->GetRange());
+
+	this->SendToClient(PlayerID, msg);
+}
+
+Item* Host::CreateItemFromDefault(const int ItemType)
 {
 	if (ItemType == ITEM_TYPE_PROJECTILE_ARROW)
 	{

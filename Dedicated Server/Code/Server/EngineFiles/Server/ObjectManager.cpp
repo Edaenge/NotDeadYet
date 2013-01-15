@@ -37,15 +37,22 @@ ObjectManager::ObjectManager()
 
 ObjectManager::~ObjectManager()
 {
-	auto x = zWeapons.begin();
-	auto i = zFood.begin();
-
-	for(; x < zWeapons.end(); x++)
+	for(auto x = zWeapons.begin(); x < zWeapons.end(); x++)
 	{
 		SAFE_DELETE((*x));
 	}
 
-	for(; i < zFood.end(); i++)
+	for(auto i = zFood.begin(); i < zFood.end(); i++)
+	{
+		SAFE_DELETE((*i));
+	}
+
+	for(auto x = zContainers.begin(); x < zContainers.end(); x++)
+	{
+		SAFE_DELETE((*x));
+	}
+
+	for(auto i = zStaticProjectiles.begin(); i < zStaticProjectiles.end(); i++)
 	{
 		SAFE_DELETE((*i));
 	}

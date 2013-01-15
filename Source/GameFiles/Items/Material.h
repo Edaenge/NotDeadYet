@@ -14,9 +14,14 @@ public:
 	virtual ~Material();
 
 	int GetCraftingType() const {return this->zCraftingType;}
+	int GetRequiredStackToCraft() const {return this->zRequiredStackToCraft;}
+
 	void SetCraftingType(const int TYPE) {this->zCraftingType = TYPE;}
+	void SetRequiredStackToCraft(const int size) {this->zRequiredStackToCraft = size;}
 
 	virtual bool Use() = 0;
+	virtual bool IsUsable() = 0;
 protected:
 	int zCraftingType;
+	int zRequiredStackToCraft;
 };

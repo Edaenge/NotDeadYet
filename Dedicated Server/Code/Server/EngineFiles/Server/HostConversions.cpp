@@ -15,9 +15,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
 	foodObj->SetID(food_Item->GetID());
 	foodObj->SetPosition(pActor->GetPosition());
 
-	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)food_Item->GetID());
-
-	this->SendToClient(pActor->GetID(), msg);
+	this->SendRemoveItemMessage(pActor->GetID(), food_Item->GetID());
 
 	this->zActorHandler->AddNewStaticFoodActor(foodObj);
 
@@ -40,13 +38,57 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 	weaponObj->SetID(weapon_Item->GetID());
 	weaponObj->SetPosition(pActor->GetPosition());
 
-	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)weapon_Item->GetID());
-
-	this->SendToClient(pActor->GetID(), msg);
+	this->SendRemoveItemMessage(pActor->GetID(), weapon_Item->GetID());
 
 	this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
 	this->SendNewObjectMessage(weaponObj);
+
+	return true;
+}
+
+bool Host::CreateObjectFromItem(PlayerActor* pActor, Projectile* projectile_Item)
+{
+	StaticProjectileObject* projectileObj = NULL;/* = new WeaponObject(false);*/
+
+	if (!this->CreateStaticObjectActor(projectile_Item->GetItemType(), &projectileObj))
+	{
+		MaloW::Debug("Failed to Create StaticObject Projectile");
+		SAFE_DELETE(projectileObj);
+		return false;
+	}
+	//Creates A New WeaponObject With an Id And Default Values
+	projectileObj->SetID(projectile_Item->GetID());
+	projectileObj->SetPosition(pActor->GetPosition());
+
+	this->SendRemoveItemMessage(pActor->GetID(), projectile_Item->GetID());
+
+	this->zActorHandler->AddNewStaticProjectileActor(projectileObj);
+
+	this->SendNewObjectMessage(projectileObj);
+
+	return true;
+}
+
+bool Host::CreateObjectFromItem(PlayerActor* pActor, Material* material_Item)
+{
+	//StaticProjectileObject* projectileObj = NULL;/* = new WeaponObject(false);*/
+
+	//if (!this->CreateStaticObjectActor(material_Item->GetItemType(), &projectileObj))
+	//{
+	//	MaloW::Debug("Failed to Create StaticObject Projectile");
+	//	SAFE_DELETE(projectileObj);
+	//	return false;
+	//}
+	////Creates A New WeaponObject With an Id And Default Values
+	//projectileObj->SetID(material_Item->GetID());
+	//projectileObj->SetPosition(pActor->GetPosition());
+
+	//this->SendRemoveItemMessage(pActor->GetID(), material_Item->GetID());
+
+	//this->zActorHandler->AddNewStaticProjectileActor(projectileObj);
+
+	//this->SendNewObjectMessage(projectileObj);
 
 	return true;
 }
@@ -65,9 +107,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Container* container_Item)
 	containerObj->SetID(container_Item->GetID());
 	containerObj->SetPosition(pActor->GetPosition());
 
-	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)container_Item->GetID());
-
-	this->SendToClient(pActor->GetID(), msg);
+	SendRemoveItemMessage(pActor->GetID(), container_Item->GetID());
 
 	this->zActorHandler->AddNewStaticContainerActor(containerObj);
 
@@ -78,21 +118,11 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Container* container_Item)
 
 bool Host::CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj)
 {
-	std::string msg;
-
-	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)foodObj->GetID());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)foodObj->GetType());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, foodObj->GetDescription());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, foodObj->GetActorObjectName());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)foodObj->GetWeight());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, foodObj->GetIconPath());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_HUNGER, foodObj->GetHunger());
+	this->SendAddInventoryItemMessage(pActor->GetID(), foodObj);
 
 	std::string removeMsg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_STATIC_OBJECT, (float)foodObj->GetID());
 
 	this->SendToAllClients(removeMsg);
-
-	this->SendToClient(pActor->GetID(), msg);
 
 	if(!this->zActorHandler->RemoveStaticFoodActor(foodObj->GetID()))
 		MaloW::Debug("Failed to remove static object.");
@@ -102,22 +132,11 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj)
 
 bool Host::CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj)
 {
-	std::string msg;
-
-	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)weaponObj->GetID());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)weaponObj->GetType());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, weaponObj->GetDescription());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, weaponObj->GetActorObjectName());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, weaponObj->GetIconPath());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)weaponObj->GetWeight());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_DAMAGE, weaponObj->GetDamage());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_RANGE, weaponObj->GetRange());
+	this->SendAddInventoryItemMessage(pActor->GetID(), weaponObj);
 
 	std::string removeMsg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_STATIC_OBJECT, (float)weaponObj->GetID());
 
 	this->SendToAllClients(removeMsg);
-
-	this->SendToClient(pActor->GetID(), msg);
 
 	this->zActorHandler->RemoveStaticWeaponActor(weaponObj->GetID());
 
@@ -126,22 +145,11 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj)
 
 bool Host::CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerObj)
 {
-	std::string msg;
-
-	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)containerObj->GetID());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)containerObj->GetType());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, containerObj->GetDescription());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, containerObj->GetActorObjectName());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, containerObj->GetIconPath());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)containerObj->GetWeight());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_CONTAINER_MAX, (float)containerObj->GetMaxUses());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)containerObj->GetCurrentUses());
+	this->SendAddInventoryItemMessage(pActor->GetID(), containerObj);
 
 	std::string removeMsg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_STATIC_OBJECT, (float)containerObj->GetID());
 
 	this->SendToAllClients(removeMsg);
-
-	this->SendToClient(pActor->GetID(), msg);
 
 	this->zActorHandler->RemoveStaticContainerActor(containerObj->GetID());
 
@@ -150,22 +158,11 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerO
 
 bool Host::CreateItemFromObject(PlayerActor* pActor, StaticProjectileObject* projectileObj)
 {
-	std::string msg;
-
-	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)projectileObj->GetID());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)projectileObj->GetType());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, projectileObj->GetDescription());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, projectileObj->GetActorObjectName());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, projectileObj->GetIconPath());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)projectileObj->GetWeight());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_DAMAGE, projectileObj->GetDamage());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_VELOCITY, projectileObj->GetVelocity());
+	this->SendAddInventoryItemMessage(pActor->GetID(), projectileObj);
 
 	std::string removeMsg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_STATIC_OBJECT, (float)projectileObj->GetID());
 
 	this->SendToAllClients(removeMsg);
-
-	this->SendToClient(pActor->GetID(), msg);
 
 	this->zActorHandler->RemoveStaticContainerActor(projectileObj->GetID());
 

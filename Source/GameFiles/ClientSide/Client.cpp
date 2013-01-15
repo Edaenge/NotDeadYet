@@ -591,6 +591,11 @@ void Client::HandleNetworkMessage(const std::string& msg)
 			}
 			this->HandleEquipItem(id, slot);
 		}
+		else if(strcmp(key, M_ITEM_USE.c_str()) == 0)
+		{
+			int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
+			this->HandleUseItem(id);
+		}
 		else if(strcmp(key, M_REMOVE_EQUIPMENT.c_str()) == 0)
 		{
 			int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_EQUIPMENT, msgArray[0]);

@@ -11,7 +11,7 @@ void Client::HandleUseItem(const int ID)
 		return;
 	}
 
-	if(item->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN)
+	if(item->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN || item->GetItemType() == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
 	{
 		Container* container = dynamic_cast<Container*>(item);
 
@@ -20,6 +20,7 @@ void Client::HandleUseItem(const int ID)
 			MaloW::Debug("dynamic cast Failed in Client::UseItem (Container)");
 			return;
 		}
+		MaloW::Debug("Drinking");
 		container->Use();
 
 		return;
@@ -39,8 +40,27 @@ void Client::HandleUseItem(const int ID)
 			MaloW::Debug("Stack is Empty");
 			return;
 		}
-
+		MaloW::Debug("Eating");
 		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_MATERIAL_SMALL_STICK ||
+		item->GetItemType() == ITEM_TYPE_MATERIAL_MEDIUM_STICK ||
+		item->GetItemType() == ITEM_TYPE_MATERIAL_LARGE_STICK)
+	{
+
+		Material* material = dynamic_cast<Material*>(item);
+
+		if (!material)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Food)");
+			return;
+		}
+		MaloW::Debug("Crafting");
+		if (!material->Use())
+		{
+			MaloW::Debug("Not Enough materials to Craft");
+			return;
+		}
 	}
 }
 

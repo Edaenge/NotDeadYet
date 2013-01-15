@@ -142,6 +142,8 @@ private:
 	bool CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item);
 	bool CreateObjectFromItem(PlayerActor* pActor, Food* food_Item);
 	bool CreateObjectFromItem(PlayerActor* pActor, Container* weapon_Item);
+	bool CreateObjectFromItem(PlayerActor* pActor, Projectile* projectile_Item);
+	bool CreateObjectFromItem(PlayerActor* pActor, Material* material_Item);
 	/*! Creates An Item From the Object Data.*/
 	bool CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj);
 	bool CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj);
@@ -156,8 +158,16 @@ private:
 	bool CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID = false);
 	bool CheckCollision(Vector3 position);
 	void HandleConversion(DynamicProjectileObject* dynamicProjObj);
-	void SendRemoveEquipment(const int ClientID, const int ItemID, const int Slot);
-	Item* CreateItemWithDefaultValues(const int ItemType);
+	Item* CreateItemFromDefault(const int ItemType);
+	void SendEquipMessage(const int PlayerID, const int ID, const int Slot);
+	void SendRemoveItemMessage(const int PlayerID, const int ID, const int Slot);
+	void SendRemoveItemMessage(const int PlayerID, const int ID);
+	void SendAddInventoryItemMessage(const int PlayerID, StaticProjectileObject* projectileObj);
+	void SendAddInventoryItemMessage(const int PlayerID, FoodObject* foodObj);
+	void SendAddInventoryItemMessage(const int PlayerID, ContainerObject* containerObj);
+	void SendAddInventoryItemMessage(const int PlayerID, WeaponObject* weaponObj);
+	void SendAddInventoryItemMessage(const int PlayerID, Projectile* projectile);
+	void SendAddInventoryItemMessage(const int PlayerID, Weapon* weapon);
 private:
 	ServerListener* zServerListener;
 

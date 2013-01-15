@@ -14,6 +14,7 @@ public:
 	virtual ~LargeStick();
 
 	virtual bool Use();
+	virtual bool IsUsable();
 
 private:
 };

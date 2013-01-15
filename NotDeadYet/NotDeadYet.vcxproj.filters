@@ -211,6 +211,9 @@
     <ClCompile Include="..\Source\GameFiles\Items\SmallStick.cpp">
       <Filter>Game Files\Items</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Items\Thread.cpp">
+      <Filter>Game Files\Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -442,6 +445,9 @@
       <Filter>Game Files\Items</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\Items\SmallStick.h">
+      <Filter>Game Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Items\Thread.h">
       <Filter>Game Files\Items</Filter>
     </ClInclude>
   </ItemGroup>
