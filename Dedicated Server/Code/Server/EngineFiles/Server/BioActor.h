@@ -8,6 +8,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "Actor.h"
 #include "../../../../../Source/GameFiles/AnimationStates.h"
 #include <string>
+#include "../../../../../Source/PhysicsEngine/PhysicsObject.h"
 
 /*This class is Abstract, this class is used to create living creatures such as humans, animals etc. */
 class BioActor : public Actor
@@ -32,6 +33,7 @@ public:
 	const Vector3& GetUpVector() const {return this->zUp;}
 	float GetStamina() const {return this->zStamina;}
 	float GetHealth() const {return this->zHealth;}
+	inline PhysicsObject* GetPhysicObject() const {return this->zPhysicObj;}
 
 	/*! Sets the player state.
 		Enum is defined in AnimationStates.h.
@@ -42,6 +44,7 @@ public:
 	inline void SetUpVector(const Vector3& up){this->zUp = up;}
 	void SetHealth(const float health){this->zHealth = health;}
 	void SetStamina(const float stamina){this->zStamina = stamina;}
+	void SetPhysicObj(PhysicsObject* pObj){this->zPhysicObj = pObj;}
 
 private:
 	void InitValues();
@@ -65,6 +68,8 @@ protected:
 
 	Vector3 zDir;
 	Vector3 zUp;
+
+	PhysicsObject* zPhysicObj;
 
 
 

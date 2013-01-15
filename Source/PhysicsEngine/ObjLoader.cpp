@@ -1,5 +1,5 @@
 #include "ObjLoader.h"
-#include "MaloWFileDebug.h"
+#include "../../Source/MaloWLib/MaloWFileDebug.h"
 
 
 Vector3 ObjLoader::GetVertPosData(string line)

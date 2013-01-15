@@ -548,17 +548,6 @@ bool Host::CreateStaticObjectActor(const int type, WeaponObject** weaponObj, con
 	if (!weapon)
 		return false;
 
-	//Creates A New WeaponObject With an Id And Default Values 
-	//weaponObj->SetType(type);
-	//weaponObj->SetRange(weapon->GetRange());
-	//weaponObj->SetWeight(weapon->GetWeight());
-	//weaponObj->SetDamage(weapon->GetDamage());
-	//weaponObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	//weaponObj->SetIconPath(weapon->GetIconPath());
-	//weaponObj->SetActorModel(weapon->GetActorModel());
-	//weaponObj->SetDescription(weapon->GetDescription());
-	//weaponObj->SetActorObjectName(weapon->GetActorObjectName());
-
 	*weaponObj = new WeaponObject(weapon, genID);
 
 	return true;
@@ -571,16 +560,6 @@ bool Host::CreateStaticObjectActor(const int type, FoodObject** foodObj, const b
 
 	if (!food)
 		return false;
-
-	//Creates A New WeaponObject With an Id And Default Values 
-	//foodObj->SetType(type);
-	//foodObj->SetWeight(food->GetWeight());
-	//foodObj->SetHunger(food->GetHunger());
-	//foodObj->SetIconPath(food->GetIconPath());
-	//foodObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	//foodObj->SetActorModel(food->GetActorModel());
-	//foodObj->SetDescription(food->GetDescription());
-	//foodObj->SetActorObjectName(food->GetActorObjectName());
 
 	*foodObj = new FoodObject(food, genID);
 
@@ -595,17 +574,6 @@ bool Host::CreateStaticObjectActor(const int type, ContainerObject** containerOb
 	if (!container)
 		return false;
 
-	//Creates A New WeaponObject With an Id And Default Values 
-	//containerObj->SetType(type);
-	//containerObj->SetWeight(container->GetWeight());
-	//containerObj->SetMaxUses(container->GetMaxUses());
-	//containerObj->SetIconPath(container->GetIconPath());
-	//containerObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	//containerObj->SetActorModel(container->GetActorModel());
-	//containerObj->SetDescription(container->GetDescription());
-	//containerObj->SetCurrentUses(container->GetCurrentUses());
-	//containerObj->SetActorObjectName(container->GetActorObjectName());
-
 	*containerObj = new ContainerObject(container, genID);
 
 	return true;
@@ -618,17 +586,6 @@ bool Host::CreateStaticObjectActor(const int type, StaticProjectileObject** proj
 
 	if (!projectile)
 		return false;
-
-	//Creates A New ProjectileObject With an Id And Default Values 
-	//projectileObj->SetType(type);
-	//projectileObj->SetWeight(projectile->GetWeight());
-	//projectileObj->SetDamage(projectile->GetDamage());
-	//projectileObj->SetIconPath(projectile->GetIconPath());
-	//projectileObj->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	//projectileObj->SetActorModel(projectile->GetActorModel());
-	//projectileObj->SetDescription(projectile->GetDescription());
-	//projectileObj->SetVelocity(projectile->GetVelocity());
-	//projectileObj->SetActorObjectName(projectile->GetActorObjectName());
 
 	*projectileObj = new StaticProjectileObject(projectile, genID);
 

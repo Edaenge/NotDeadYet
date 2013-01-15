@@ -6,13 +6,14 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "Actor.h"
-
+#include "../../../../../Source/PhysicsEngine/PhysicsObject.h"
 
 class DynamicObjectActor : public Actor
 {
 public:
 	DynamicObjectActor(bool genID = false);
 	DynamicObjectActor(const std::string& meshModel, bool genID = false);
+	DynamicObjectActor(const std::string& meshModel, int objOwner, bool genID = false);
 	virtual ~DynamicObjectActor();
 
 	virtual void Update(float deltaTime) = 0;
@@ -22,18 +23,32 @@ public:
 	std::string GetDescription() const {return this->zDescription;}
 	std::string GetIconPath() const {return this->zIconPath;}
 	Vector3 GetDirection() const {return this->zDirection;}
+	inline  PhysicsObject* GetPhysicObj() const {return this->zPhysicObj;}
+	/*! Returns the ID of the player who created this object.
+		Returns -1 if this object has no owner.
+	*/
+	int GetObjPlayerOwner(){return this->zObjPlayerOwner;}
 
+	/*! Sets the player owner of this object.*/
+	void SetObjOwner(int ID){this->zObjPlayerOwner = ID;}
 	void SetIconPath(const std::string& path) {this->zIconPath = path;}
 	void SetDescription(const std::string& description) {this->zDescription = description;}
 	void SetWeight(const int weight) {this->zWeight = weight;}
 	void SetType(const int TYPE) {this->zType = TYPE;}
 	void SetDirection(Vector3 dir) {this->zDirection = dir;}
+	void SetPhysicObj(PhysicsObject* pObj){this->zPhysicObj = pObj;}
+
+private:
+	void InitValues();
+
 protected:
 	int zWeight;
 	int zType;
+	int zObjPlayerOwner;
 	Vector3 zDirection;
 	std::string zDescription;
 	std::string zIconPath;
+	PhysicsObject* zPhysicObj;
 	
 private:
 };

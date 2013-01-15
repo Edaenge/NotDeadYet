@@ -14,8 +14,15 @@ PhysicsEngine::~PhysicsEngine()
 PhysicsObject* PhysicsEngine::CreatePhysicsObject( string path, Vector3 pos )
 {
 	PhysicsObject* obj = new PhysicsObject(pos);
+
+	if(!obj->LoadFromFile(path))
+	{
+		delete obj;
+		return NULL;
+	}
+
 	this->objects.add(obj);
-	obj->LoadFromFile(path);
+
 	return obj;
 }
 

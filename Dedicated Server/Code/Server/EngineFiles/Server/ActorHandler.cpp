@@ -4,6 +4,7 @@ ActorHandler::ActorHandler()
 {
 	this->zObjManager = new ObjectManager();
 	this->zObjManager->ReadObjects();
+	this->zPhysicsEngine = new PhysicsEngine();
 }
 
 ActorHandler::~ActorHandler()
@@ -65,8 +66,13 @@ bool ActorHandler::AddNewPlayer(PlayerActor* new_player)
 	if(!new_player)
 		return false;
 
+	PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(new_player->GetActorModel(), new_player->GetPosition());
+	new_player->SetPhysicObj(pObj);
 	new_player->SetObjManager(this->zObjManager);
 	this->zPlayers.push_back(new_player);
+
+	if(!pObj)
+		MaloW::Debug("Error in function AddNewPlayer in ActorHandler: PhysicObj is null.");
 
 	return true;
 }
@@ -116,7 +122,13 @@ bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Pr
 	if(!new_Projectile)
 		return false;
 
+	PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(new_Projectile->GetActorModel(), 
+																		new_Projectile->GetPosition());
+	new_Projectile->SetPhysicObj(pObj);
 	this->zDynamicProjectiles.push_back(new_Projectile);
+
+	if(!pObj)
+		MaloW::Debug("Error in function AddNewDynamicProjectileActor in ActorHandler: PhysicObj is null.");
 
 	return true;
 }
@@ -138,7 +150,7 @@ bool ActorHandler::RemovePlayerActor( const int ID )
 
 	PlayerActor* temp = this->zPlayers[index];
 	this->zPlayers.erase(this->zPlayers.begin() + index);
-	
+	this->zPhysicsEngine->DeletePhysicsObject(temp->GetPhysicObject());
 	SAFE_DELETE(temp);
 
 	return true;
@@ -230,7 +242,7 @@ bool ActorHandler::RemoveDynamicProjectileActor( const int ID )
 	DynamicProjectileObject* temp = this->zDynamicProjectiles[index];
 
 	this->zDynamicProjectiles.erase(this->zDynamicProjectiles.begin() + index);
-
+	this->zPhysicsEngine->DeletePhysicsObject(temp->GetPhysicObj());
 	SAFE_DELETE(temp);
 
 	return true;

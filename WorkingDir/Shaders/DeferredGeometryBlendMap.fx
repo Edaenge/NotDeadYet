@@ -13,7 +13,7 @@
 Texture2D tex0; //R-channel in blendmap. ex: grass
 Texture2D tex1; //G-channel in blendmap. ex: dirt
 Texture2D tex2; //B-channel in blendmap. ex: leaves
-Texture2D tex3; //A-channel in blendmap. ex: footprints?**TILLMAN**
+Texture2D tex3; //A-channel in blendmap. ex: extra
 Texture2D<float4> blendMap;
 //Texture2D tex4; //**extra, ex: blood, footprints**
 
@@ -79,10 +79,10 @@ PSSceneIn VSScene(VSIn input)
 
 	PSSceneIn output = (PSSceneIn)0;
 	output.pos = mul(float4(input.pos, 1.0f), WVP);
-	output.posW = mul(float4(input.pos, 1.0f), worldMatrix);
 	output.tex = input.tex;
-	output.norm = -normalize(mul(input.norm, (float3x3)worldMatrixInverseTranspose)); //**OBS! invert because of how normals are generated**
+	output.norm = normalize(mul(input.norm, (float3x3)worldMatrixInverseTranspose));
 	output.color = input.color;
+	output.posW = mul(float4(input.pos, 1.0f), worldMatrix);
 
 	return output;
 }
@@ -111,7 +111,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 		if(blendMapped)
 		{
 			//Sample blend map texture
-			float4 blendMapColor = normalize(blendMap.Sample(LinearWrapSampler, input.tex)); //normalize
+			float4 blendMapColor = normalize(blendMap.Sample(LinearClampSampler, input.tex)); //normalize
 		
 			//Inverse of all blend weights to scale final color to be in range [0,1]
 			float inverseTotal = 1.0f / (blendMapColor.r + blendMapColor.g + blendMapColor.b + blendMapColor.a);
@@ -139,7 +139,7 @@ PSOut PSScene(PSSceneIn input) : SV_Target
 	output.Texture.w = -1.0f;
 
 	//NormalAndDepth RT
-	output.NormalAndDepth = float4(input.norm.xyz, input.pos.z / input.pos.w);	
+	output.NormalAndDepth = float4(input.norm, input.pos.z / input.pos.w);	
 	float depth = length(CameraPosition.xyz - input.posW.xyz) / 200.0f;		// Haxfix
 	output.NormalAndDepth.w = depth;
 

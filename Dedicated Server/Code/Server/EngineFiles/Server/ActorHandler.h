@@ -10,6 +10,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "AnimalActor.h"
 #include "ObjectManager.h"
 #include "DynamicProjectileObject.h"
+#include "../../../../../Source/PhysicsEngine/PhysicsEngine.h"
 
 static const enum ACTOR_TYPE
 {
@@ -104,5 +105,6 @@ private:
 	std::vector<DynamicProjectileObject*> zDynamicProjectiles;
 	std::vector<StaticProjectileObject*> zStaticProjectiles;
 	ObjectManager* zObjManager;
+	PhysicsEngine* zPhysicsEngine;
 
 };
