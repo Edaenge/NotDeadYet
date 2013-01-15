@@ -8,6 +8,11 @@ Host::Host()
 {
 	MaloW::ClearDebug();
 	Messages::ClearDebug();
+#ifdef INCLUDE_MODEL_VIEWER
+	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	MaloW::Debug("(DEBUG): Server: Debug flag set to: _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF). ");
+	MaloW::Debug("(DEBUG): Server: vld.h included.");
+#endif
 
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
@@ -579,7 +584,7 @@ bool Host::CreateStaticObjectActor(const int type, ContainerObject** containerOb
 	return true;
 }
 
-bool Host::CreateStaticObjectActor(const int type, StaticProjectileObject** projectileObj, bool genID /*= false*/)
+bool Host::CreateStaticObjectActor(const int type, StaticProjectileObject** projectileObj, const bool genID /*= false*/)
 {
 	//Get Default Values For a Projectile Object
 	const StaticProjectileObject* projectile = this->zActorHandler->GetObjManager()->GetStaticProjectileObject(type);

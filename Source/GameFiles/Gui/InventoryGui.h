@@ -33,6 +33,10 @@ struct Gui_Item_Data
 	bool zPressed;
 };
 
+const int ROWS = 7;
+const int COL = 7;
+const int SLOTS = ROWS * COL;
+
 class InventoryGui : public GuiElement
 {
 public:
@@ -45,13 +49,13 @@ public:
 
 	int CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 	bool AddItemToGui(Gui_Item_Data gid, GraphicsEngine* ge);
-	bool RemoveItemFromGui(const unsigned int position);
+	bool RemoveItemFromGui(const unsigned int ID);
 
 	void FadeOut(float value);
 	void ShowGui();
 	void HideGui();
 	std::string GetImageName(unsigned int position);
 private:
-	Vector2 zNrOfSlots;
 	std::vector<InventorySlotGui*> zSlotGui;
+	Vector2 zSlotPositions[SLOTS];
 };
