@@ -153,6 +153,7 @@ private:
 	bool CheckCollision(Vector3 position);
 	void HandleConversion(DynamicProjectileObject* dynamicProjObj);
 	void SendRemoveEquipment(const int ClientID, const int ItemID, const int Slot);
+	Item* CreateItemWithDefaultValues(const int ItemType);
 private:
 	ServerListener* zServerListener;
 

@@ -147,7 +147,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 	return;
 }
 
-void Host::HandleItemUse(PlayerActor* pActor, const int ItemID )
+void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 {
 	Inventory* inv = pActor->GetInventory();
 
@@ -210,6 +210,19 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID )
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_USE, container->GetID());
 		this->SendToClient(pActor->GetID(), msg);
 
+		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_MATERIAL_SMALL_STICK)
+	{
+
+		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_MATERIAL_MEDIUM_STICK)
+	{
+		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_MATERIAL_LARGE_STICK)
+	{
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
@@ -682,4 +695,58 @@ void Host::SendUnEquipMessage(const int PlayerID, const int ID, const int Slot)
 	message += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, Slot);
 
 	this->SendToClient(PlayerID, message);
+}
+
+Item* Host::CreateItemWithDefaultValues(const int ItemType)
+{
+	if (ItemType == ITEM_TYPE_PROJECTILE_ARROW)
+	{
+		StaticProjectileObject* new_Arrow = NULL;
+		this->CreateStaticObjectActor(ItemType, &new_Arrow, true);
+
+		if (!new_Arrow)
+		{
+			MaloW::Debug("Unable To Create Arrow Actor From Crafting");
+			return NULL;
+		}
+
+		Projectile* arrow = new Projectile(new_Arrow->GetID(), new_Arrow->GetType(),
+			new_Arrow->GetVelocity(), new_Arrow->GetDamage());
+
+		arrow->SetStacking(true);
+		arrow->SetItemWeight(new_Arrow->GetWeight());
+		arrow->SetIconPath(new_Arrow->GetIconPath());
+		arrow->SetStackSize(new_Arrow->GetStackSize());
+		arrow->SetItemName(new_Arrow->GetActorObjectName());
+		arrow->SetItemDescription(new_Arrow->GetDescription());
+
+		SAFE_DELETE(new_Arrow);
+
+		return arrow;
+	}
+	if (ItemType == ITEM_TYPE_WEAPON_RANGED_BOW)
+	{
+		WeaponObject* new_Bow = NULL;
+		this->CreateStaticObjectActor(ItemType, &new_Bow, true);
+
+		if (!new_Bow)
+		{
+			MaloW::Debug("Unable To Create Arrow Actor From Crafting");
+			return NULL;
+		}
+
+		RangedWeapon* bow = new RangedWeapon(new_Bow->GetID(), new_Bow->GetType(), new_Bow->GetDamage(), new_Bow->GetRange());
+
+		bow->SetStacking(false);
+		bow->SetItemWeight(new_Bow->GetWeight());
+		bow->SetIconPath(new_Bow->GetIconPath());
+		bow->SetStackSize(new_Bow->GetStackSize());
+		bow->SetItemName(new_Bow->GetActorObjectName());
+		bow->SetItemDescription(new_Bow->GetDescription());
+
+		SAFE_DELETE(new_Bow);
+	}
+
+
+	return NULL;
 }

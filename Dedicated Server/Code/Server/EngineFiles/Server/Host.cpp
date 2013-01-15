@@ -579,7 +579,7 @@ bool Host::CreateStaticObjectActor(const int type, ContainerObject** containerOb
 	return true;
 }
 
-bool Host::CreateStaticObjectActor(const int type, StaticProjectileObject** projectileObj, bool genID /*= false*/)
+bool Host::CreateStaticObjectActor(const int type, StaticProjectileObject** projectileObj, const bool genID /*= false*/)
 {
 	//Get Default Values For a Projectile Object
 	const StaticProjectileObject* projectile = this->zActorHandler->GetObjManager()->GetStaticProjectileObject(type);

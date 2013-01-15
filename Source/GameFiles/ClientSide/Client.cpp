@@ -265,7 +265,7 @@ bool Client::CheckKey(const unsigned int ID)
 		if (!this->zKeyInfo.GetKeyState(ID))
 		{
 			std::string msg = "";
-			msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, ID);
+			msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, (float)ID);
 
 			this->zServerChannel->sendData(msg);
 		}
@@ -278,7 +278,7 @@ bool Client::CheckKey(const unsigned int ID)
 		if (this->zKeyInfo.GetKeyState(ID))
 		{
 			std::string msg = "";
-			msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, ID);
+			msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)ID);
 
 			this->zServerChannel->sendData(msg);
 		}
@@ -335,7 +335,7 @@ void Client::HandleKeyboardInput()
 
 					if (item)
 					{
-						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, item->GetID());	
+						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, (float)item->GetID());	
 						this->zServerChannel->sendData(msg);
 					}
 				}
@@ -377,7 +377,7 @@ void Client::HandleKeyboardInput()
 			if (item)
 			{
 				MaloW::Debug("Item UnEquipped " + item->GetItemName());
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, item->GetID());
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
 				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
 
 				this->zServerChannel->sendData(msg);
@@ -464,7 +464,7 @@ void Client::HandleKeyboardInput()
 				}
 				else
 				{
-					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, weapon->GetID());
+					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
 					this->zServerChannel->sendData(msg);
 				}
 			}
@@ -479,7 +479,7 @@ void Client::HandleKeyboardInput()
 	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 	{
 		this->zGuiManager->ToggleIngameMenu();
-		std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, this->zID);
+		std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID);
 		this->zServerChannel->sendData(msg);
 		this->CloseConnection("Escape was pressed");
 	}
