@@ -174,7 +174,7 @@ void Client::Life()
 			}
 			else if (this->zTimeSinceLastPing > TIMEOUT_VALUE)
 			{
-				MaloW::Debug("Timeout From Server");
+				MaloW::Debug("Timeout From Server!");
 				//Print a Timeout Message to Client
 			}
 			Sleep(5);
