@@ -44,6 +44,7 @@ PlayerActor::~PlayerActor()
 void PlayerActor::Update(float deltaTime)
 {
 	float dt = deltaTime + this->zLatency;
+	this->zPreviousPos = this->zPos;
 
 	if(this->zKeyStates.GetKeyState(KEY_SPRINT))
 	{
@@ -108,6 +109,8 @@ void PlayerActor::Update(float deltaTime)
 
 		this->zStaminaChanged = true;
 	}
+
+	this->zPhysicObj->SetPosition(this->zPos);
 }
 
 bool PlayerActor::PickUpObject( DynamicObjectActor* object )
@@ -302,4 +305,9 @@ void PlayerActor::AddChangedHData( string& mess, NetworkMessageConverter* nmc )
 		mess += nmc->Convert(MESSAGE_TYPE_HYDRATION, this->zHydrationChanged);
 		this->zHydrationChanged = false;
 	}
+}
+
+void PlayerActor::RewindPosition()
+{
+	this->zPos = this->zPreviousPos;
 }

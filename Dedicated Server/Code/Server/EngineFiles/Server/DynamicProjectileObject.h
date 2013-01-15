@@ -24,6 +24,7 @@ public:
 	/*! Returns The Weapon Damage*/
 	float GetDamage() const {return this->zDamage;}
 
+	void SetMoving(const bool op){this->zMoving = op;}
 	void SetVelocity(const float velocity){this->zVelocity = velocity;}
 	void ModifyStackSize(const unsigned int size) {this->zStacks += size;}
 	void SetDamage(const float damage) {this->zDamage = damage;}

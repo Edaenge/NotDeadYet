@@ -177,5 +177,10 @@ namespace GUI
 
         }
 
+        private void button_copy_MouseClick(object sender, MouseEventArgs e)
+        {
+            Clipboard.SetText(textBox_public_ip.Text);
+        }
+
     }
 }

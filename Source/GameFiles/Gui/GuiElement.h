@@ -16,9 +16,13 @@ public:
 	GuiElement(float x, float y, float width, float height, std::string textureName);
 	virtual ~GuiElement();
 	/*! Sets the Position of the GuiElement*/
-	void SetPosition(const float x, const float y) {this->zX = x; this->zY = y;}
+	void SetPosition(const float x, const float y) {this->zX = x; this->zY = y; if(zGuiImage) zGuiImage->SetPosition(Vector2(x, y));}
+	/*! Sets the Position of the GuiElement*/
+	void SetPosition(Vector2 pos) {this->zX = pos.x; this->zY = pos.y; if(zGuiImage) zGuiImage->SetPosition(pos);}
 	/*! Saves the Position to the Parameters*/
 	void GetPosition(float& x, float& y) {x = this->zX; y = this->zY;}
+	/*! Returns position in a Vector2*/
+	Vector2 GetPosition() { return Vector2(this->zX, this->zY); }
 	/*! Sets the Width of the GuiElement*/
 	void SetWidth(float width) {this->zWidth = width;}
 	/*! Saves the Width to the Parameter*/

@@ -23,7 +23,7 @@ public:
 	std::string GetDescription() const {return this->zDescription;}
 	std::string GetIconPath() const {return this->zIconPath;}
 	Vector3 GetDirection() const {return this->zDirection;}
-	inline  PhysicsObject* GetPhysicObj() const {return this->zPhysicObj;}
+	inline  PhysicsObject* GetPhysicObject() const {return this->zPhysicObj;}
 	/*! Returns the ID of the player who created this object.
 		Returns -1 if this object has no owner.
 	*/
@@ -36,7 +36,7 @@ public:
 	void SetWeight(const int weight) {this->zWeight = weight;}
 	void SetType(const int TYPE) {this->zType = TYPE;}
 	void SetDirection(Vector3 dir) {this->zDirection = dir;}
-	void SetPhysicObj(PhysicsObject* pObj){this->zPhysicObj = pObj;}
+	void SetPhysicObject(PhysicsObject* pObj){this->zPhysicObj = pObj;}
 
 private:
 	void InitValues();

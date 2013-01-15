@@ -45,6 +45,7 @@ public:
 		The parameter string is a network message string.
 	*/
 	void AddChangedHData(string& mess, NetworkMessageConverter* nmc);
+	virtual void RewindPosition();
 
 	Item* GetItem(const int ID){return this->zInventory->SearchAndGetItem(ID);}
 	float GetLatency() const {return this->zLatency;}
@@ -65,6 +66,7 @@ public:
 
 	inline void SetFrameTime(const float frameTime){this->zFrameTime = frameTime;}
 	inline void SetLatency(const float latency){this->zLatency = latency;}
+
 	/*! Sets the objm. This class is not responsible for deallocation.*/
 	void SetObjManager(ObjectManager* objm) {this->zObjManager = objm;}
 	Equipment* GetEquipment() {return this->zEquipment;}

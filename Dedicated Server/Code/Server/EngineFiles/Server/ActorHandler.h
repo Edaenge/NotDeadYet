@@ -22,6 +22,18 @@ static const enum ACTOR_TYPE
 	ACTOR_TYPE_STATIC_OBJECT_PROJECTILE,
 	ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE
 };
+static const enum COLLISION_EVENT_TYPE
+{
+	COLLISION_EVENT_DEATH
+};
+struct CollisionEvent
+{
+	int actor_aggressor_ID;
+	int actor_victim_ID;
+	unsigned int actor_aggressor_type;
+	unsigned int actor_victim_type;
+	unsigned int event_type;
+};
 
 class ActorHandler
 {
@@ -30,13 +42,20 @@ public:
 	ActorHandler();
 	virtual ~ActorHandler();
 
+	void UpdateObjects(float deltaTime);
+	/*! Checks collisions against objects.*/
+	const std::vector<CollisionEvent>& CheckCollisions();
+	/*! pCollide lists all collisions.*/
+	void PlayerVsPlayers(PlayerActor* pTest, std::vector<PlayerActor*> &pCollide);
+	/*! pCollide lists all collisions.
+		pcd is the collision test data. The data is mapped with pCollide.
+	*/
+	void PlayerVsDynamics(PlayerActor* pTest, std::vector<DynamicProjectileObject*> &pCollide, std::vector<PhysicsCollisionData> &pcd);
 
 ////////////////////////////////
 //			PLAYERS		     //
 ///////////////////////////////
 
-	/*! Updates the players.*/
-	void UpdateObjects(float deltaTime);
 	bool AddNewPlayer(PlayerActor* new_player);
 	/*! Removes the Player Object.*/
 	bool RemovePlayerActor(const int ID);
