@@ -25,7 +25,7 @@ ClientChannel::~ClientChannel()
 	{
 		retCode = closesocket(this->sock);
 		if(retCode == SOCKET_ERROR) 
-			MaloW::Debug("CC: Error failed to close socket. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+			MaloW::Debug("CC: Error failed to close socket. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
 	}
 }
 
@@ -55,7 +55,7 @@ string ClientChannel::receiveData()
 			if(retCode == SOCKET_ERROR)
 			{
 				this->Close();
-				MaloW::Debug("CC: Error receiving data. Error: " + MaloW::convertNrToString(WSAGetLastError()) + ". Probably due to crash/improper disconnect");
+				MaloW::Debug("CC: Error receiving data. Error: " + MaloW::convertNrToString((float)WSAGetLastError()) + ". Probably due to crash/improper disconnect");
 			}
 			else if(retCode == 0)
 			{
@@ -106,7 +106,7 @@ void ClientChannel::sendData(string msg)
 	int retCode = send(this->sock, bufs, sizeof(bufs), 0);
 	if(retCode == SOCKET_ERROR)
 	{
-		MaloW::Debug("CC: Error sending data. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("CC: Error sending data. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
 	}
 	if (Messages::FileWrite())
 		Messages::Debug("Sent to Client " + msg);
@@ -134,5 +134,5 @@ void ClientChannel::CloseSpecific()
 {
 	int retCode = shutdown(this->sock, SD_RECEIVE);
 	if(retCode == SOCKET_ERROR) 
-		MaloW::Debug("CC: Error trying to perform shutdown on socket from a ->Close() call. Error: " + MaloW::convertNrToString(WSAGetLastError()));
+		MaloW::Debug("CC: Error trying to perform shutdown on socket from a ->Close() call. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
 }

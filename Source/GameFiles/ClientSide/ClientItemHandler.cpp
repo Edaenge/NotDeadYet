@@ -64,7 +64,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 	{
 		if (Slot != EQUIPMENT_SLOT_WEAPON)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString(Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 		RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item);
@@ -91,7 +91,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 	{
 		if (Slot != EQUIPMENT_SLOT_WEAPON)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString(Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 
@@ -119,7 +119,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 	{
 		if (Slot != EQUIPMENT_SLOT_AMMO)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not an Ammo ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_AMMO) + "!= Slot: " + MaloW::convertNrToString(Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not an Ammo ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_AMMO) + "!= Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 
@@ -145,7 +145,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 	{
 		if (Slot != EQUIPMENT_SLOT_WEAPON)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString(Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 
@@ -199,9 +199,9 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 				this->zGuiManager->AddInventoryItemToGui(gid);
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
 	if (Slot == EQUIPMENT_SLOT_WEAPON)
@@ -222,9 +222,9 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 				this->zGuiManager->AddInventoryItemToGui(gid);
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
 	if (Slot == EQUIPMENT_SLOT_HEAD)
@@ -245,9 +245,9 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 				this->zGuiManager->AddInventoryItemToGui(gid);
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Head Slot ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Head Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
 	if (Slot == EQUIPMENT_SLOT_CHEST)
@@ -269,9 +269,9 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Chest Slot ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Chest Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
 	if (Slot == EQUIPMENT_SLOT_LEGS)
@@ -293,9 +293,9 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Legs Slot ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Legs Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
 	if (Slot == EQUIPMENT_SLOT_BOOTS)
@@ -317,9 +317,9 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Boots Slot ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Boots Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 }
 
@@ -365,9 +365,9 @@ void Client::HandleRemoveEquipment(const int ItemID, const int Slot)
 
 void Client::SendUnEquipItem(const int ID, const int Slot)
 {
-	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, ID);
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)ID);
 
-	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, Slot);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)Slot);
 
 	this->zServerChannel->sendData(msg);
 }
@@ -376,7 +376,7 @@ void Client::SendPickupItemMessage(const int ID)
 {
 	std::string msg;
 
-	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PICKUP_ITEM, ID);
+	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PICKUP_ITEM, (float)ID);
 
 	this->zServerChannel->sendData(msg);
 }
@@ -385,7 +385,7 @@ void Client::SendDropItemMessage(const int ID)
 {
 	std::string msg;
 
-	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_DROP_ITEM, ID);
+	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_DROP_ITEM, (float)ID);
 
 	this->zServerChannel->sendData(msg);
 }
@@ -471,7 +471,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	}
 	if (itemType == -1)
 	{
-		MaloW::Debug("Wrong or no Item Type sent from server in Client::HandleAddInventoryItem ItemType: " + MaloW::convertNrToString(itemType));
+		MaloW::Debug("Wrong or no Item Type sent from server in Client::HandleAddInventoryItem ItemType: " + MaloW::convertNrToString((float)itemType));
 		return;
 	}
 	//Todo add more data to item to identify type ex Bow/Axe/Pocket Knife
@@ -479,6 +479,13 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	switch (itemType)
 	{
 	case ITEM_TYPE_FOOD_DEER_MEAT:
+		item = new Food(ID, itemType, hunger);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
+		break;
+	case ITEM_TYPE_FOOD_WOLF_MEAT:
 		item = new Food(ID, itemType, hunger);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
@@ -564,7 +571,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		this->zGuiManager->AddInventoryItemToGui(gid);
 		if (Messages::FileWrite())
 		{
-			Messages::Debug("Added Image ID: " + MaloW::convertNrToString(ID));
+			Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)ID));
 		}
 	}
 	else

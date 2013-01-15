@@ -7,7 +7,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 
 	if (index != -1)
 	{
-		MaloW::Debug("Cant create a new Player Object. ID: " + MaloW::convertNrToString(ID) + " already exists");
+		MaloW::Debug("Cant create a new Player Object. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
 		return false;
 	}
 	Vector3 position = Vector3(0, 0, 0);
@@ -80,7 +80,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 
 	if (index != -1)
 	{
-		MaloW::Debug("Cant create a new Animal Object. ID: " + MaloW::convertNrToString(ID) + " already exists");
+		MaloW::Debug("Cant create a new Animal Object. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
 		return false;
 	}
 	Vector3 position = Vector3(0, 0, 0);
@@ -146,7 +146,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 
 	if (index != -1)
 	{
-		MaloW::Debug("Cant create a new Static Object. ID: " + MaloW::convertNrToString(ID) + " already exists");
+		MaloW::Debug("Cant create a new Static Object. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
 		return false;
 	}
 	Vector3 position = Vector3(0, 0, 0);
@@ -232,7 +232,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 
 	if (index != -1)
 	{
-		MaloW::Debug("Cant create a new Dynamic Object. ID: " + MaloW::convertNrToString(ID) + "already exists");
+		MaloW::Debug("Cant create a new Dynamic Object. ID: " + MaloW::convertNrToString((float)ID) + "already exists");
 		return false;
 	}
 	Vector3 position = Vector3(0, 0, 0);
@@ -734,7 +734,7 @@ bool Client::RemovePlayerObject(const int ID)
 	}
 	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_PLAYER, index))
 	{
-		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString(ID));
+		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString((float)ID));
 	}
 	return true;
 }
@@ -758,7 +758,7 @@ bool Client::RemoveAnimalObject(const int ID)
 	}
 	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_ANIMAL, index))
 	{
-		MaloW::Debug("Failed To Remove Animal with ID: " + MaloW::convertNrToString(ID));
+		MaloW::Debug("Failed To Remove Animal with ID: " + MaloW::convertNrToString((float)ID));
 	}
 
 	return true;
@@ -783,11 +783,11 @@ bool Client::RemoveStaticObject(const int ID)
 	}
 	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_STATIC_OBJECT, index))
 	{
-		MaloW::Debug("Failed To Remove Static Object with ID: " + MaloW::convertNrToString(ID));
+		MaloW::Debug("Failed To Remove Static Object with ID: " + MaloW::convertNrToString((float)ID));
 		return false;
 	}
 	if(Messages::FileWrite())
-		Messages::Debug("Removed Static Object, Number of Objects remaining = " + MaloW::convertNrToString(this->zObjectManager->GetStaticObjects().size()));
+		Messages::Debug("Removed Static Object, Number of Objects remaining = " + MaloW::convertNrToString((float)this->zObjectManager->GetStaticObjects().size()));
 
 	return true;
 }
@@ -811,7 +811,7 @@ bool Client::RemoveDynamicObject(const int ID)
 	}
 	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_DYNAMIC_OBJECT, pos))
 	{
-		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString(ID));
+		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString((float)ID));
 	}
 
 	return true;

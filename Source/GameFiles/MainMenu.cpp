@@ -157,7 +157,6 @@ void MainMenu::PrintToScreen(const std::string msg )
 
 void MainMenu::StartTestRun()
 {
-	int hostErrorCode = 0;
 	int clientErrorCode;
 	// Initializes the Client and returns a code that explains what happend
 	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 11521);	

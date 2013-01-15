@@ -337,11 +337,11 @@ bool ObjectManager::InterpCommand(char* command, char* key, ContainerObject* ct)
 	}
 	else if(strcmp(command, MAX_USE.c_str()) == 0)
 	{
-		ct->SetMaxUses(MaloW::convertStringToFloat(key));
+		ct->SetMaxUses((int)MaloW::convertStringToFloat(key));
 	}
 	else if(strcmp(command, CURRENT_USE.c_str()) == 0)
 	{
-		ct->SetCurrentUses(MaloW::convertStringToFloat(key));
+		ct->SetCurrentUses((int)MaloW::convertStringToFloat(key));
 	}
 	else if(strcmp(command, WEIGHT.c_str()) == 0)
 	{

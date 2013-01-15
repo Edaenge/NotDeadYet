@@ -75,11 +75,11 @@ bool Inventory::AddItem(Item* item)
 			}
 		}
 		this->zItems.push_back(item);
-		MaloW::Debug("Added Item " + item->GetItemName() + MaloW::convertNrToString(item->GetID()));
+		MaloW::Debug("Added Item " + item->GetItemName() + MaloW::convertNrToString((float)item->GetID()));
 		return true;
 	}
 
-	MaloW::Debug("Failed to add item "+item->GetItemName() + MaloW::convertNrToString(item->GetID()));
+	MaloW::Debug("Failed to add item "+item->GetItemName() + MaloW::convertNrToString((float)item->GetID()));
 	return false;
 }
 

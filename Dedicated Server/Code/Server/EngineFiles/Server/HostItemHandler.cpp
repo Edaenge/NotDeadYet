@@ -44,7 +44,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 					SAFE_DELETE(projectileObj);
 					return;
 				}
-				MaloW::Debug("Created Arrow With ID: " + MaloW::convertNrToString(projectileObj->GetID()));
+				MaloW::Debug("Created Arrow With ID: " + MaloW::convertNrToString((float)projectileObj->GetID()));
 
 				float damage = 0.0f;
 				float velocity = 5.0f;
@@ -95,7 +95,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 				SAFE_DELETE(projectileObj);
 				return;
 			}
-			MaloW::Debug("Created Rock With ID: " + MaloW::convertNrToString(projectileObj->GetID()));
+			MaloW::Debug("Created Rock With ID: " + MaloW::convertNrToString((float)projectileObj->GetID()));
 
 			float damage = 0.0f;
 			float velocity = 5.0f;
@@ -177,7 +177,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 
 		std::string msg;
 
-		msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_USE, food->GetID());
+		msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_USE, (float)food->GetID());
 		this->SendToClient(pActor->GetID(), msg);
 		if (food->GetStackSize() <= 0)
 		{
@@ -207,7 +207,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		float hydration = (container->GetRemainingUses() + 1) * 15.0f;
 		pActor->Drink(hydration);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_USE, container->GetID());
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_USE, (float)container->GetID());
 		this->SendToClient(pActor->GetID(), msg);
 
 		return;
@@ -248,7 +248,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Weapon Equipped" + rWpn->GetItemName());
 		eq->EquipWeapon(rWpn);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, rWpn->GetID());
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)rWpn->GetID());
 		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
 
 		this->SendToClient(pActor->GetID(), msg);
@@ -278,7 +278,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Weapon Equipped" + rWpn->GetItemName());
 		eq->EquipWeapon(rWpn);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, rWpn->GetID());
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)rWpn->GetID());
 		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
 
 		this->SendToClient(pActor->GetID(), msg);
@@ -308,7 +308,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Weapon Equipped" + mWpn->GetItemName());
 		eq->EquipWeapon(mWpn);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, mWpn->GetID());
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)mWpn->GetID());
 		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
 
 		this->SendToClient(pActor->GetID(), msg);
@@ -338,7 +338,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Weapon Equipped" + mWpn->GetItemName());
 		eq->EquipWeapon(mWpn);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, mWpn->GetID());
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)mWpn->GetID());
 		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
 
 		this->SendToClient(pActor->GetID(), msg);
@@ -369,7 +369,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Weapon Equipped " + arrow->GetItemName());
 		eq->EquipProjectile(arrow);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, arrow->GetID());
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)arrow->GetID());
 		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_AMMO);
 
 		this->SendToClient(pActor->GetID(), msg);
@@ -380,8 +380,8 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 
 void Host::SendRemoveEquipment(const int ClientID, const int ItemID, const int Slot)
 {
-	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, ItemID);
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, Slot);
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)ItemID);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)Slot);
 
 	this->SendToClient(ClientID, msg);
 }
@@ -577,9 +577,9 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
 	if (Slot == EQUIPMENT_SLOT_WEAPON)
@@ -598,9 +598,9 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
 	if (Slot == EQUIPMENT_SLOT_HEAD)
@@ -619,9 +619,9 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Head Slot ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Head Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
 	if (Slot == EQUIPMENT_SLOT_CHEST)
@@ -640,9 +640,9 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Chest Slot ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Chest Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
 	if (Slot == EQUIPMENT_SLOT_LEGS)
@@ -661,9 +661,9 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Legs Slot ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Legs Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
 	if (Slot == EQUIPMENT_SLOT_BOOTS)
@@ -682,17 +682,17 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 
 				return;
 			}
-			MaloW::Debug("Item With ID doesn't exist in Boots Slot ID: " + MaloW::convertNrToString(ItemID));
+			MaloW::Debug("Item With ID doesn't exist in Boots Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
-		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString(Slot));
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
 }
 
 void Host::SendUnEquipMessage(const int PlayerID, const int ID, const int Slot)
 {
-	std::string message = this->zMessageConverter.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, ID);
-	message += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, Slot);
+	std::string message = this->zMessageConverter.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)ID);
+	message += this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)Slot);
 
 	this->SendToClient(PlayerID, message);
 }

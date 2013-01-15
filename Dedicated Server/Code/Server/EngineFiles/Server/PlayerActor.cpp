@@ -256,11 +256,11 @@ bool PlayerActor::DropObject( const int ID )
 
 	if(!item)
 	{
-		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString(ID));
+		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString((float)ID));
 		return false;
 	}
 	this->zInventory->RemoveItem(item);
-	MaloW::Debug("Removed successes: " + MaloW::convertNrToString(ID));
+	MaloW::Debug("Removed successes: " + MaloW::convertNrToString((float)ID));
 
 	return true;
 }
