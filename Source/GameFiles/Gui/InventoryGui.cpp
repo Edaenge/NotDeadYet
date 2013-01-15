@@ -2,15 +2,36 @@
 
 InventoryGui::InventoryGui()
 {
-	zNrOfSlots = Vector2(7, 7);
 	zPressed = false;
 }
 
 InventoryGui::InventoryGui(float x, float y, float width, float height, std::string textureName) 
 	: GuiElement(x, y, width, height, textureName)
 {
-	zPressed = false;
-	zNrOfSlots = Vector2(7, 7);
+	float startOffsetX = (32.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowWidth;
+	float startOffsetY = (32.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	float widthTemp = (50.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowWidth;
+	float heightTemp = (50.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	float paddingX = (13.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowWidth;
+	float paddingY = (13.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	float xTemp;
+	float yTemp;
+	int row = 0;
+	int col = 0;
+	for(int i = 0; i < SLOTS; i++)
+	{
+		xTemp = this->zX + startOffsetX + (widthTemp + paddingX) * col;
+		col++;
+		yTemp = this->zY + startOffsetY + (heightTemp + paddingY) * row;
+
+		if(col >= 7)
+		{
+			row++;
+			col = 0;
+		}
+		
+		zSlotPositions[i] = Vector2(xTemp, yTemp);
+	}
 }
 
 InventoryGui::~InventoryGui()
@@ -28,51 +49,38 @@ InventoryGui::~InventoryGui()
 bool InventoryGui::AddItemToGui(Gui_Item_Data gid, GraphicsEngine* ge)
 {
 	int size = this->zSlotGui.size();
-	int posX = (int)(size % (int)zNrOfSlots.x);
-	int posY = (int)(size / zNrOfSlots.x);
-	float startOffsetX = (32.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowWidth;
-	float startOffsetY = (32.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
-	if (posX * posY < (zNrOfSlots.x * zNrOfSlots.y))
-	{
-		float width = (50.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowWidth;
-		float height = (50.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
-		float paddingX = (13.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowWidth;
-		float paddingY = (13.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
-		float x = this->zX + (width + paddingX) * posX + startOffsetX;
-		float y = this->zY + (height + paddingY) * posY + startOffsetY;
-		InventorySlotGui* gui = new InventorySlotGui(x, y, width, height, gid.zFilePath, gid.zID);
-		this->zSlotGui.push_back(gui);
 
-		return true;
-	}
-	
+	if(size >=  SLOTS)
+		return false;
 
-	return false;
-}
+	float width = (50.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowWidth;
+	float height = (50.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
 
-bool InventoryGui::RemoveItemFromGui(const unsigned int position)
-{
-	this->zSlotGui.erase(this->zSlotGui.begin() + position);
-	std::vector<InventorySlotGui*> temp;
-	int pos = 0;
-	for (auto it = this->zSlotGui.begin(); it < this->zSlotGui.end(); it++)
-	{
-		if ((*it))
-		{
-			int posX = (temp.size() % (int)zNrOfSlots.x);
-			int posY = (int)(temp.size() / zNrOfSlots.x);
-			float width = 50.0f;
-			float height = 50.0f;
-			float x = this->zX + width * posX + 15;
-			float y = this->zY + height * posY + 15;
-			(*it)->SetPosition(x, y);
-			temp.push_back((*it));
-		}
-		pos++;
-	}
-	this->zSlotGui = temp;
+	InventorySlotGui* gui = new InventorySlotGui(zSlotPositions[size].x, zSlotPositions[size].y, width, height, gid.zFilePath, gid.zID);
+	this->zSlotGui.push_back(gui);
 
 	return true;
+}
+
+bool InventoryGui::RemoveItemFromGui(const unsigned int ID)
+{
+	for (auto it = this->zSlotGui.begin(); it < this->zSlotGui.end(); it++)
+	{
+		if ((*it)->GetID() == ID)
+		{
+			if(this->zSlotGui.end()-- != it)
+			{
+				auto i = zSlotGui.end();
+				i--;
+				(*i)->SetPosition((*it)->GetPosition());
+			}
+			(*it)->RemoveFromRenderer(GetGraphics());
+			this->zSlotGui.erase(it);
+			return true;
+		}
+	}
+	return false;
+	
 }
 
 bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
