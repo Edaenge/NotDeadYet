@@ -14,18 +14,21 @@ struct Gui_Item_Data
 	Gui_Item_Data()
 	{
 		this->zID = -1;
+		this->zWeight = 0;
 		this->zName = "Unknown";
 		this->zFilePath = "Unknown";
 		this->zDescription = "Unknown";
 	}
-	Gui_Item_Data(const int id, const std::string& name, const std::string& filePath, const std::string& description)
+	Gui_Item_Data(const int ID, const int weight, const std::string& name, const std::string& filePath, const std::string& description)
 	{
-		this->zID = id;
+		this->zID = ID;
 		this->zName = name;
+		this->zWeight = weight;
 		this->zFilePath = filePath;
 		this->zDescription = description;
 	}
-	int zID;	
+	int zID;
+	int zWeight;
 	std::string zName;
 	std::string zFilePath;
 	std::string zDescription;

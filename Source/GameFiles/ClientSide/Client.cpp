@@ -710,7 +710,7 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
-			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription());
+			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription());
 			Collisions.push_back(gui_Data);
 		}
 	}
@@ -728,7 +728,7 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
-			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription());
+			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription());
 			Collisions.push_back(gui_Data);
 		}
 	}

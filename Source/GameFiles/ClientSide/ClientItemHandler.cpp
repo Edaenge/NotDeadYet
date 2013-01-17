@@ -102,7 +102,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 		{
 			if(this->zPlayerInventory->AddItem(oldWeapon))
 			{
-				Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription());
+				Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription());
 				this->zGuiManager->AddInventoryItemToGui(gid);
 				if (Messages::FileWrite())
 				{
@@ -140,7 +140,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 		{
 			if(this->zPlayerInventory->AddItem(oldWeapon))
 			{
-				Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription());
+				Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription());
 				this->zGuiManager->AddInventoryItemToGui(gid);
 				if (Messages::FileWrite())
 				{
@@ -177,7 +177,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 		{
 			if(this->zPlayerInventory->AddItem(oldProjectile))
 			{
-				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription());
+				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription());
 				this->zGuiManager->AddInventoryItemToGui(gid);
 				if (Messages::FileWrite())
 				{
@@ -215,7 +215,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 		{
 			if(this->zPlayerInventory->AddItem(oldWeapon))
 			{
-				Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription());
+				Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription());
 				this->zGuiManager->AddInventoryItemToGui(gid);
 				if (Messages::FileWrite())
 				{
@@ -255,7 +255,7 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 				eq->UnEquipProjectile();
 
 				this->zPlayerInventory->AddItem(projectile);
-				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription());
+				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription());
 				this->zGuiManager->AddInventoryItemToGui(gid);
 				return;
 			}
@@ -276,7 +276,7 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 
 				this->zPlayerInventory->AddItem(wpn);
 
-				Gui_Item_Data gid = Gui_Item_Data(wpn->GetID(), wpn->GetItemName(),
+				Gui_Item_Data gid = Gui_Item_Data(wpn->GetID(), wpn->GetWeight(), wpn->GetItemName(),
 					wpn->GetIconPath(), wpn->GetItemDescription());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -299,7 +299,7 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 
 				this->zPlayerInventory->AddItem(head);
 
-				Gui_Item_Data gid = Gui_Item_Data(head->GetID(), head->GetItemName(),
+				Gui_Item_Data gid = Gui_Item_Data(head->GetID(), head->GetWeight(), head->GetItemName(),
 					head->GetIconPath(), head->GetItemDescription());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -322,7 +322,7 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 
 				this->zPlayerInventory->AddItem(chest);
 
-				Gui_Item_Data gid = Gui_Item_Data(chest->GetID(), chest->GetItemName(),
+				Gui_Item_Data gid = Gui_Item_Data(chest->GetID(), chest->GetWeight(), chest->GetItemName(),
 					chest->GetIconPath(), chest->GetItemDescription());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -346,7 +346,7 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 
 				this->zPlayerInventory->AddItem(legs);
 
-				Gui_Item_Data gid = Gui_Item_Data(legs->GetID(), legs->GetItemName(),
+				Gui_Item_Data gid = Gui_Item_Data(legs->GetID(), legs->GetWeight(), legs->GetItemName(),
 					legs->GetIconPath(), legs->GetItemDescription());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -370,7 +370,7 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 
 				this->zPlayerInventory->AddItem(boots);
 
-				Gui_Item_Data gid = Gui_Item_Data(boots->GetID(), boots->GetItemName(),
+				Gui_Item_Data gid = Gui_Item_Data(boots->GetID(), boots->GetWeight(), boots->GetItemName(),
 					boots->GetIconPath(), boots->GetItemDescription());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -395,6 +395,7 @@ void Client::HandleRemoveEquipment(const int ItemID, const int Slot)
 
 		if (weapon)
 		{
+			MaloW::Debug("Weapon UnEquipped " + weapon->GetItemName() + " ID: " + MaloW::convertNrToString((float)weapon->GetID()));
 			delete weapon;
 			weapon = NULL;
 		}
@@ -413,6 +414,7 @@ void Client::HandleRemoveEquipment(const int ItemID, const int Slot)
 
 		if (projectile)
 		{
+			MaloW::Debug("Ammo UnEquipped " + projectile->GetItemName() + " ID: " + MaloW::convertNrToString((float)projectile->GetID()));
 			delete projectile;
 			projectile = NULL;
 		}
@@ -627,7 +629,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	}
 	if (this->zPlayerInventory->AddItem(item))
 	{
-		Gui_Item_Data gid = Gui_Item_Data(ID, itemName, itemIconFilePath, itemDescription);
+		Gui_Item_Data gid = Gui_Item_Data(ID, itemWeight, itemName, itemIconFilePath, itemDescription);
 		this->zGuiManager->AddInventoryItemToGui(gid);
 		if (Messages::FileWrite())
 		{

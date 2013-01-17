@@ -17,12 +17,6 @@
 
 using namespace MaloW;
 
-struct TempImage 
-{
-	iImage* image;
-	int id;
-};
-
 class Client : public MaloW::Process
 {
 public:
@@ -37,24 +31,73 @@ public:
 	bool GetCursorVisibility();
 
 private:
-	/*! Handle Keyboard Input */
-	void HandleKeyboardInput();
-	/*! Splits Network Message and detects what type was sent*/
-	void HandleNetworkMessage(const std::string& msg);
+
+	//////////////////////
+	//					//
+	//	   Init			//
+	//			  		//
+	//////////////////////
+
+	/*! Initiates all the Client Data*/
+	void Init();
+
+	/*! Initializes the graphic stuff*/
+	void InitGraphics();
+
+
+	//////////////////////
+	//					//
+	//	  Messaging		//
+	//			  		//
+	//////////////////////
+
 	/*! Pings client to check if server is still running*/
 	void Ping();
 	/*! Close the connection and print the reason to the client*/
 	void CloseConnection(const std::string& reason);
-	/*! Initializes the graphic stuff*/
-	void InitGraphics();
-	/*! Updates The Clock and returns the DeltaTime*/
-	float Update();
+	/*! Send Camera Info and Rotation to Server*/
+	void SendClientUpdate();
+	/*! Splits Network Message and detects what type was sent*/
+	void HandleNetworkMessage(const std::string& msg);
+	/*! Reads Messages from the server*/
+	void ReadMessage();
+
+	//////////////////////
+	//					//
+	//	   Input		//
+	//			  		//
+	//////////////////////
+
+	void CheckMovementKeys();
+	/*! Handle Keyboard Input */
+	void HandleKeyboardInput();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
+
+	//////////////////////
+	//					//
+	//	   Updates		//
+	//			  		//
+	//////////////////////
 	/*! Updates The Positions*/
 	void UpdateWorldObjects();
 	/*! Updates the camera position to follow the mesh.*/
 	void UpdateCameraPos();
+	/*! Updates The Clock and returns the DeltaTime*/
+	float Update();
+
+	/*! Checks Ray Vs Static/Dynamic Objects*/
+	std::vector<Gui_Item_Data> RayVsWorld();
+	/*! Checks PlayerMesh vs WorldMesh Collision*/
+	bool CheckCollision();
+
+	
+
+	//////////////////////
+	//					//
+	//	   Objects		//
+	//			  		//
+	//////////////////////
 	/*! Updates A Static Object.*/
 	bool UpdateStaticObjects(const std::vector<std::string>& msgArray, const int ID);
 	/*! Updates An Animal Object.*/
@@ -82,23 +125,16 @@ private:
 	/*! Adds A Dynamic Object*/
 	bool AddNewDynamicObject(const std::vector<std::string>& msgArray, const int ID);
 
-	/*! Send Camera Info and Rotation to Server*/
-	void SendClientUpdate();
-	/*! Checks Ray Vs Static/Dynamic Objects*/
-	std::vector<Gui_Item_Data> RayVsWorld();
-	/*! Checks PlayerMesh vs WorldMesh Collision*/
-	bool CheckCollision();
+	//////////////////////
+	//					//
+	//		Items		//
+	//			  		//
+	//////////////////////
 
 	void SendPickupItemMessage(const int ID);
 	void SendDropItemMessage(const int ID);
 	void HandleRemoveInventoryItem(const int ID);
 	void HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id);
-	/*! Initiates all the Client Data*/
-	void Init();
-	/*! Reads Messages from the server*/
-	void ReadMessage();
-
-	void CheckMovementKeys();
 	/*! Uses the Selected Item*/
 	void HandleUseItem(const int ID);
 	void DisplayMessageToClient(const std::string& msg);
@@ -106,6 +142,7 @@ private:
 	void HandleUnEquipItem(const int ItemID, const int Slot);
 	void SendUnEquipItem(const int ID, const int Slot);
 	void HandleRemoveEquipment(const int ItemID, const int Slot);
+
 private:
 	/*! Current Client ID*/
 	int zID;
@@ -135,5 +172,4 @@ private:
 	WorldObjectManager* zObjectManager;
 	NetworkMessageConverter zMsgHandler;
 	Inventory* zPlayerInventory;
-	std::vector<TempImage> images;
 };
