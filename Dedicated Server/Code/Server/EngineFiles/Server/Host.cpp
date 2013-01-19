@@ -1,8 +1,8 @@
 #include "Host.h"
 #include "../../../../../Source/GameFiles/ClientServerMessages.h"
 
-// 30 updates per sec
-static const float UPDATE_DELAY = 0.0333f;
+// 50 updates per sec
+static const float UPDATE_DELAY = 0.02f;
 
 Host::Host()
 {
@@ -55,7 +55,8 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
 		
-		MaloW::Debug("Created Deer Meat Object ID: " + MaloW::convertNrToString((float)foodObj->GetID()));
+		if (Messages::FileWrite())
+			Messages::Debug("Created Deer Meat Object ID: " + MaloW::convertNrToString((float)foodObj->GetID()));
 
 		counter++;
 	}
@@ -66,7 +67,8 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
 
-		MaloW::Debug("Created Wolf Meat Object ID: " + MaloW::convertNrToString((float)foodObj->GetID()));
+		if (Messages::FileWrite())
+			Messages::Debug("Created Wolf Meat Object ID: " + MaloW::convertNrToString((float)foodObj->GetID()));
 
 		counter++;
 	}
@@ -79,7 +81,8 @@ void Host::Init()
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
 
-		MaloW::Debug("Created Bow Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
+		if (Messages::FileWrite())
+			Messages::Debug("Created Bow Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
 
 		counter++;
 	}
@@ -91,7 +94,8 @@ void Host::Init()
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
 
-		MaloW::Debug("Created Rock Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
+		if (Messages::FileWrite())
+			Messages::Debug("Created Rock Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
 
 		counter++;
 	}
@@ -102,7 +106,8 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 		
-		MaloW::Debug("Created Axe Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
+		if (Messages::FileWrite())
+			Messages::Debug("Created Axe Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
 
 		counter++;
 	}
@@ -113,7 +118,8 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
-		MaloW::Debug("Created Pocket Knife Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
+		if (Messages::FileWrite())
+			Messages::Debug("Created Pocket Knife Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
 
 		counter++;
 	}
@@ -125,7 +131,8 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticContainerActor(containerObj);
 		
-		MaloW::Debug("Created Canteen Object ID: " + MaloW::convertNrToString((float)containerObj->GetID()));
+		if (Messages::FileWrite())
+			Messages::Debug("Created Canteen Object ID: " + MaloW::convertNrToString((float)containerObj->GetID()));
 
 		counter++;
 	}
@@ -136,7 +143,8 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticContainerActor(containerObj);
 
-		MaloW::Debug("Created Water Bottle Object ID: " + MaloW::convertNrToString((float)containerObj->GetID()));
+		if (Messages::FileWrite())
+			Messages::Debug("Created Water Bottle Object ID: " + MaloW::convertNrToString((float)containerObj->GetID()));
 
 		counter++;
 	}
@@ -148,11 +156,14 @@ void Host::Init()
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticProjectileActor(projectileObj);
 
-		MaloW::Debug("Created Arrow Object ID: " + MaloW::convertNrToString((float)projectileObj->GetID()));
+		if (Messages::FileWrite())
+			Messages::Debug("Created Arrow Object ID: " + MaloW::convertNrToString((float)projectileObj->GetID()));
 
 		counter++;
 	}
-	MaloW::Debug("Created " + MaloW::convertNrToString((float)counter) + " Objects");
+
+	if (Messages::FileWrite())
+		Messages::Debug("Created " + MaloW::convertNrToString((float)counter) + " Objects");
 }
 
 void Host::Life()
@@ -190,10 +201,17 @@ void Host::Life()
 		
 		if(waitTimer >= UPDATE_DELAY)
 		{
+			waitTimer -= UPDATE_DELAY;
+			if (waitTimer < 0.0f)
+				waitTimer = 0.0f;
+
+			/*if (Messages::FileWrite())
+				Messages::Debug("WaitTime left from last update " + MaloW::convertNrToString(waitTimer));*/
+
 			SendPlayerActorUpdates();
 			SendAnimalActorUpdates();
 			SendDynamicActorUpdates();
-			waitTimer = 0.0f;
+			
 		}
 
 		Sleep(5);
@@ -636,6 +654,7 @@ void Host::SendNewObjectMessage(StaticObjectActor* staticObj)
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, staticObj->GetActorModel());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)staticObj->GetType());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)staticObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_STACK_SIZE, (float)staticObj->GetStackSize());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, staticObj->GetActorObjectName());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, staticObj->GetDescription());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, staticObj->GetIconPath());
@@ -657,6 +676,7 @@ void Host::SendNewObjectMessage(DynamicObjectActor* dynamicObj)
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, dynamicObj->GetActorModel());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)dynamicObj->GetType());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)dynamicObj->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_STACK_SIZE, (float)dynamicObj->GetStackSize());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, dynamicObj->GetActorObjectName());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, dynamicObj->GetDescription());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, dynamicObj->GetIconPath());

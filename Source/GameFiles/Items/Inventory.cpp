@@ -73,6 +73,7 @@ bool Inventory::AddItem(Item* item)
 			}
 		}
 		this->zItems.push_back(item);
+
 		MaloW::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
 		return true;
 	}

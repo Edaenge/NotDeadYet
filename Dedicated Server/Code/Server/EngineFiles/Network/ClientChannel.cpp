@@ -91,7 +91,7 @@ string ClientChannel::receiveData()
 		}
 		while(goAgain && this->stayAlive);
 	}
-	if (Messages::FileWrite())
+	if (Messages::MsgFileWrite())
 		Messages::Debug("CC: Received from Client " + msg);
 	return msg;
 }
@@ -108,7 +108,7 @@ void ClientChannel::sendData(string msg)
 	{
 		MaloW::Debug("CC: Error sending data. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
 	}
-	if (Messages::FileWrite())
+	if (Messages::MsgFileWrite())
 		Messages::Debug("Sent to Client " + msg);
 }
 

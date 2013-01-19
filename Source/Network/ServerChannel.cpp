@@ -139,14 +139,14 @@ string ServerChannel::receiveData()
 		}
 		while(goAgain && this->stayAlive);
 	}
-	if (Messages::FileWrite())
+	if (Messages::MsgFileWrite())
 		Messages::Debug("SC: Received from Server " + msg);
 	return msg;
 }
 
 void ServerChannel::sendData(string msg)
 {
-	if (Messages::FileWrite())
+	if (Messages::MsgFileWrite())
 		Messages::Debug("Sc: Sending to Server " + msg);
 
 	msg += 10;

@@ -61,7 +61,9 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 			this->zCreated = true;
 		}
 	}
-	MaloW::Debug("Player ID " + MaloW::convertNrToString((float)ID) +" Added");
+	if (Messages::FileWrite())
+		Messages::Debug("Player ID " + MaloW::convertNrToString((float)ID) +" Added");
+	
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->SetQuaternion(rotation);
@@ -128,7 +130,10 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewAnimalObject");
 		}
 	}
-	MaloW::Debug("Animal Added ID: " + MaloW::convertNrToString((float)ID));
+
+	if (Messages::FileWrite())
+		Messages::Debug("Animal Added ID: " + MaloW::convertNrToString((float)ID));
+
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->SetQuaternion(rotation);
@@ -190,6 +195,11 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it));
 			staticObject->SetWeight(weight);
 		}
+		else if(strcmp(key, M_ITEM_STACK_SIZE.c_str()) == 0)
+		{
+			int stackSize = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, (*it));
+			staticObject->SetStackSize(stackSize);
+		}
 		else if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
 		{
 			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it));
@@ -214,7 +224,10 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewStaticObject");
 		}
 	}
-	MaloW::Debug("Static Object Added ID: " + MaloW::convertNrToString((float)ID) + " " + filename);
+	
+	if (Messages::FileWrite())
+		Messages::Debug("Static Object Added ID: " + MaloW::convertNrToString((float)ID) + " " + filename);
+
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->SetQuaternion(rotation);
@@ -284,6 +297,11 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 			int weight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it));
 			dynamicObject->SetWeight(weight);
 		}
+		else if(strcmp(key, M_ITEM_STACK_SIZE.c_str()) == 0)
+		{
+			int stackSize = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, (*it));
+			dynamicObject->SetStackSize(stackSize);
+		}
 		else if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
 		{
 			std::string name = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it));
@@ -308,7 +326,10 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewDynamicObject");
 		}
 	}
-	MaloW::Debug("Dynamic Object Added ID: " + MaloW::convertNrToString((float)ID) + " " + dynamicObject->GetName());
+
+	if (Messages::FileWrite())
+		Messages::Debug("Dynamic Object Added ID: " + MaloW::convertNrToString((float)ID) + " " + dynamicObject->GetName());
+
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->SetQuaternion(rotation);

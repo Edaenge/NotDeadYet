@@ -14,5 +14,10 @@ Projectile::~Projectile()
 
 bool Projectile::Use()
 {
-	return true;
+	if (this->zStacks > 0)
+	{
+		this->zStacks -= 1;
+		return true;
+	}
+	return false;
 }

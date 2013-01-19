@@ -7,8 +7,8 @@ using namespace MaloW;
 
 //Timeout_value = 10 sek
 static const float TIMEOUT_VALUE = 10.0f;
-// 30 updates per sec
-static const float UPDATE_DELAY = 0.0333f;
+// 50 updates per sec
+static const float UPDATE_DELAY = 0.02f;
 static const float MAX_DISTANCE_TO_OBJECT = 3.0f;
 
 Client::Client()
@@ -161,7 +161,13 @@ void Client::Life()
 
 			if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
 			{
-				this->zSendUpdateDelayTimer = 0.0f;
+				this->zSendUpdateDelayTimer -= UPDATE_DELAY;
+				if (this->zSendUpdateDelayTimer < 0.0f)
+					this->zSendUpdateDelayTimer = 0.0f;
+
+				/*if (Messages::FileWrite())
+					Messages::Debug("zSendUpdateDelayTimer left from last update " + MaloW::convertNrToString(zSendUpdateDelayTimer));*/
+
 				this->SendClientUpdate();
 			}
 			this->UpdateCameraPos();
@@ -502,9 +508,10 @@ void Client::HandleNetworkMessage(const std::string& msg)
 {
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
-	char key[1024];
+	
 	if(msgArray.size() > 0)
 	{
+		char key[1024];
 		sscanf_s(msgArray[0].c_str(), "%s ", &key, sizeof(key));
 
 		//Checks what type of message was sent
@@ -641,6 +648,11 @@ void Client::HandleNetworkMessage(const std::string& msg)
 			int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_INVENTORY_ITEM, msgArray[0]);
 			this->HandleRemoveInventoryItem(id);
 		}
+		else if(strcmp(key, M_WEAPON_USE.c_str()) == 0)
+		{
+			int id = this->zMsgHandler.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
+			this->HandleWeaponUse(id);
+		}
 		else if(strcmp(key, M_SELF_ID.c_str()) == 0)
 		{
 			this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
@@ -710,7 +722,7 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
-			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription());
+			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), (*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription());
 			Collisions.push_back(gui_Data);
 		}
 	}
@@ -728,7 +740,7 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
-			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription());
+			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), (*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription());
 			Collisions.push_back(gui_Data);
 		}
 	}

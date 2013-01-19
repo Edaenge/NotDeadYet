@@ -23,6 +23,7 @@ public:
 	std::string GetDescription() const {return this->zDescription;}
 	std::string GetIconPath() const {return this->zIconPath;}
 	Vector3 GetDirection() const {return this->zDirection;}
+	int GetStackSize() const {return this->zStackSize;}
 	inline  PhysicsObject* GetPhysicObject() const {return this->zPhysicObj;}
 	/*! Returns the ID of the player who created this object.
 		Returns -1 if this object has no owner.
@@ -37,13 +38,16 @@ public:
 	void SetType(const int TYPE) {this->zType = TYPE;}
 	void SetDirection(Vector3 dir) {this->zDirection = dir;}
 	void SetPhysicObject(PhysicsObject* pObj){this->zPhysicObj = pObj;}
+	void SetStackSize(const int size) {this->zStackSize = size;}
+	void ModifyStackSize(const int size) {this->zStackSize += size;}
 
 private:
 	void InitValues();
 
 protected:
-	int zWeight;
 	int zType;
+	int zWeight;
+	int zStackSize;
 	int zObjPlayerOwner;
 	Vector3 zDirection;
 	std::string zDescription;

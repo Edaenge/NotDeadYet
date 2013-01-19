@@ -148,6 +148,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_ADD_INVENTORY_ITEM:
 		ss << M_ADD_INVENTORY_ITEM;
 		break;
+	case MESSAGE_TYPE_ITEM_STACK_SIZE:
+		ss << M_ITEM_STACK_SIZE;
+		break;
 	case MESSAGE_TYPE_ITEM_WEIGHT:
 		ss << M_ITEM_WEIGHT;
 		break;

@@ -33,6 +33,7 @@ void DynamicObjectActor::InitValues()
 {
 	this->zType = 0;
 	this->zWeight = 1;
+	this->zStackSize = 1;
 	this->zDescription = "none";
 	this->zIconPath = "none";
 	this->zDirection = Vector3(1, 0, 0);

@@ -38,7 +38,7 @@ public:
 	std::string GetDescription() const {return this->zDescription;}
 	std::string GetIconPath() const {return this->zIconPath;}
 	/*! Returns number of stacks the object has.*/
-	unsigned int GetStackSize() const {return this->zStacks;}
+	int GetStackSize() const {return this->zStacks;}
 
 	void SetIconPath(const std::string& path) {this->zIconPath = path;}
 	void SetDescription(const std::string& description) {this->zDescription = description;}

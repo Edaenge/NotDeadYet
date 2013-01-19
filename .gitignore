@@ -59,3 +59,4 @@
 /Dedicated Server/Bin/x64/*.config
 /Dedicated Server/Bin/x64/MaloWDebug.txt
 /Dedicated Server/Bin/x64/ServerClientMessages.txt
+/Dedicated Server/Code/C++CLI/ARM/Debug

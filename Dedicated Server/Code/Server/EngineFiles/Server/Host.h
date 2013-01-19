@@ -167,6 +167,7 @@ private:
 	void SendAddInventoryItemMessage(const int PlayerID, WeaponObject* weaponObj);
 	void SendAddInventoryItemMessage(const int PlayerID, Projectile* projectile);
 	void SendAddInventoryItemMessage(const int PlayerID, Weapon* weapon);
+	void SendWeaponUseMessage(const int PlayerID, const int ID);
 private:
 	ServerListener* zServerListener;
 

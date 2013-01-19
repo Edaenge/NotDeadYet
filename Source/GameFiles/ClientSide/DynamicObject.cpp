@@ -14,6 +14,7 @@ DynamicObject::DynamicObject(const unsigned int id) : MovingObject(id)
 {
 	this->zType = 0;
 	this->zWeight = 0;
+	this->zStackSize = 1;
 	this->zName = "Unknown";
 	this->zIconPath = "Unknown";
 	this->zDescription = "Unknown";

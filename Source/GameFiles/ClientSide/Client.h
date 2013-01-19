@@ -142,7 +142,7 @@ private:
 	void HandleUnEquipItem(const int ItemID, const int Slot);
 	void SendUnEquipItem(const int ID, const int Slot);
 	void HandleRemoveEquipment(const int ItemID, const int Slot);
-
+	void HandleWeaponUse(const int ID);
 private:
 	/*! Current Client ID*/
 	int zID;

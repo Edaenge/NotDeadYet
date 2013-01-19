@@ -6,6 +6,8 @@
 
 static bool eraseFile = false;
 static bool writeToFile = true;
+static bool msgWrites = false;
+
 namespace Messages
 {
 	inline void Debug(std::string msg)
@@ -68,5 +70,9 @@ namespace Messages
 	inline bool FileWrite()
 	{
 		return writeToFile;
+	}
+	inline bool MsgFileWrite()
+	{
+		return msgWrites;
 	}
 }

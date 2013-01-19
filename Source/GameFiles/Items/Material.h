@@ -22,6 +22,6 @@ public:
 	virtual bool Use() = 0;
 	virtual bool IsUsable() = 0;
 protected:
-	int zCraftingType;
-	int zRequiredStackToCraft;
+	unsigned int zCraftingType;
+	unsigned int zRequiredStackToCraft;
 };

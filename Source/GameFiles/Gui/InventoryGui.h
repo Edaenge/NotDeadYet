@@ -19,16 +19,18 @@ struct Gui_Item_Data
 		this->zFilePath = "Unknown";
 		this->zDescription = "Unknown";
 	}
-	Gui_Item_Data(const int ID, const int weight, const std::string& name, const std::string& filePath, const std::string& description)
+	Gui_Item_Data(const int ID, const int weight, const int stack, const std::string& name, const std::string& filePath, const std::string& description)
 	{
 		this->zID = ID;
 		this->zName = name;
+		this->zStacks = stack;
 		this->zWeight = weight;
 		this->zFilePath = filePath;
 		this->zDescription = description;
 	}
 	int zID;
 	int zWeight;
+	int zStacks;
 	std::string zName;
 	std::string zFilePath;
 	std::string zDescription;
@@ -52,7 +54,7 @@ public:
 
 	int CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 	bool AddItemToGui(Gui_Item_Data gid, GraphicsEngine* ge);
-	bool RemoveItemFromGui(const unsigned int ID);
+	bool RemoveItemFromGui(const int ID);
 
 	void FadeOut(float value);
 	void ShowGui();

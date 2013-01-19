@@ -60,7 +60,7 @@ ClientChannel* NetworkServer::ListenForNewClients()
 
 void NetworkServer::Life()
 {
-	if (Messages::FileWrite())
+	if (Messages::MsgFileWrite())
 		Messages::Debug("NetworkServer Process Started");
 	while(this->stayAlive)
 	{

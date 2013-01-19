@@ -61,6 +61,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_ITEM_DESCRIPTION,
 	MESSAGE_TYPE_ITEM_ICON_PATH,
 	MESSAGE_TYPE_ITEM_WEIGHT,
+	MESSAGE_TYPE_ITEM_STACK_SIZE,
 	MESSAGE_TYPE_WEAPON_DAMAGE,
 	MESSAGE_TYPE_WEAPON_RANGE,
 	MESSAGE_TYPE_CONTAINER_MAX,
@@ -91,6 +92,7 @@ static const std::string M_ITEM_DESCRIPTION			= "ID";
 static const std::string M_ITEM_ICON_PATH			= "IIP";
 static const std::string M_ITEM_WEIGHT				= "IW";
 static const std::string M_ITEM_USE					= "IU";
+static const std::string M_ITEM_STACK_SIZE			= "ISS";
 static const std::string M_WEAPON_DAMAGE			= "WD";
 static const std::string M_WEAPON_RANGE				= "WR";
 static const std::string M_PROJECTILE_DAMAGE		= "PD";

@@ -59,7 +59,7 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, GraphicsEngine* ge)
 	return true;
 }
 
-bool InventoryGui::RemoveItemFromGui(const unsigned int ID)
+bool InventoryGui::RemoveItemFromGui(const int ID)
 {
 	int size = zSlotGui.size();
 	for (auto it = this->zSlotGui.begin(); it < this->zSlotGui.end(); it++)
@@ -75,7 +75,6 @@ bool InventoryGui::RemoveItemFromGui(const unsigned int ID)
 						(*i)->SetPosition((*it)->GetPosition());
 					}
 				}
-				
 			}
 			(*it)->RemoveFromRenderer(GetGraphics());
 			this->zSlotGui.erase(it);
