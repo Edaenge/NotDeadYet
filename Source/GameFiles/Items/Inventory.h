@@ -12,7 +12,6 @@
 #include "Container.h"
 #include "Material.h"
 #include <vector>
-#include "../../MaloWLib/MaloWFileDebug.h"
 
 /*! Class That keeps track of the inventory data*/
 class Inventory

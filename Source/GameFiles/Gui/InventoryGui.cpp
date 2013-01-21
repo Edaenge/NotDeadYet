@@ -78,6 +78,7 @@ bool InventoryGui::RemoveItemFromGui(const int ID)
 			}
 			(*it)->RemoveFromRenderer(GetGraphics());
 			this->zSlotGui.erase(it);
+
 			return true;
 		}
 	}

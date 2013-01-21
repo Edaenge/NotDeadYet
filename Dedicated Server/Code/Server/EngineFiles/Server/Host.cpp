@@ -25,6 +25,8 @@ Host::Host()
 	this->zDeltaTime = 0.0f;
 	this->zTimeOut = 15.0f;
 	this->zPingMessageInterval = 5.0f;
+
+	//timer = 0;
 }
 
 Host::~Host()
@@ -64,7 +66,7 @@ void Host::Init()
 	foodObj = NULL; /*new FoodObject(true);*/
 	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_WOLF_MEAT, &foodObj, true))
 	{
-		foodObj->SetPosition(Vector3(5.0f, 1.0f, 5.0f));
+		foodObj->SetPosition(Vector3(4.0f, 0.0f, 5.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
 
@@ -77,7 +79,7 @@ void Host::Init()
 	WeaponObject* weaponObj = NULL;/*new WeaponObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, &weaponObj, true))
 	{
-		weaponObj->SetPosition(Vector3(0.0f, 0.0f, -5.0f));
+		weaponObj->SetPosition(Vector3(5.0f, 0.0f, 3.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
@@ -90,7 +92,7 @@ void Host::Init()
 	weaponObj = NULL;/*new WeaponObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_ROCK, &weaponObj, true))
 	{
-		weaponObj->SetPosition(Vector3(2.0f, 0.0f, -5.0f));
+		weaponObj->SetPosition(Vector3(4.0f, 0.0f, 3.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
@@ -103,7 +105,7 @@ void Host::Init()
 	weaponObj = NULL; /*new WeaponObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, &weaponObj, true))
 	{
-		weaponObj->SetPosition(Vector3(4.0f, 0.0f, -5.0f));
+		weaponObj->SetPosition(Vector3(2.0f, 0.0f, 3.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 		
@@ -115,7 +117,7 @@ void Host::Init()
 	weaponObj = NULL; /*new WeaponObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_POCKET_KNIFE, &weaponObj, true))
 	{
-		weaponObj->SetPosition(Vector3(6.0f, 0.0f, -5.0f));
+		weaponObj->SetPosition(Vector3(1.0f, 0.0f, 3.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
@@ -128,7 +130,7 @@ void Host::Init()
 	ContainerObject* containerObj = NULL; /*new ContainerObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, &containerObj, true))
 	{
-		containerObj->SetPosition(Vector3(-5.0f, 0.0f, 0.0f));
+		containerObj->SetPosition(Vector3(-1.0f, 0.0f, 4.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticContainerActor(containerObj);
 		
@@ -140,7 +142,7 @@ void Host::Init()
 	containerObj = NULL; /*new ContainerObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_WATER_BOTTLE, &containerObj, true))
 	{
-		containerObj->SetPosition(Vector3(-5.0f, 0.0f, 2.0f));
+		containerObj->SetPosition(Vector3(3.0f, 0.0f, 2.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticContainerActor(containerObj);
 
@@ -152,7 +154,7 @@ void Host::Init()
 	StaticProjectileObject* projectileObj = NULL; /*new ContainerObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_PROJECTILE_ARROW, &projectileObj, true))
 	{
-		projectileObj->SetPosition(Vector3(0.0f, 0.0f, -4.0f));
+		projectileObj->SetPosition(Vector3(3.0f, 0.0f, 3.0f));
 		projectileObj->SetStackSize(10);
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticProjectileActor(projectileObj);
@@ -162,10 +164,50 @@ void Host::Init()
 
 		counter++;
 	}
+	MaterialObject* material = NULL;
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_SMALL_STICK, &material, true))
+	{
+		material->SetPosition(Vector3(2.0f, 0.0f, 2.0f));
+
+
+		//Adds The Object To the Array
+		this->zActorHandler->AddNewStaticMaterialObject(material);
+
+		if (Messages::FileWrite())
+			Messages::Debug("Created Small Stick Object ID: " + MaloW::convertNrToString((float)material->GetID()));
+
+		counter++;
+	}
+	material = NULL;
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_MEDIUM_STICK, &material, true))
+	{
+		material->SetPosition(Vector3(1.0f, 0.0f, 2.0f));
+
+
+		//Adds The Object To the Array
+		this->zActorHandler->AddNewStaticMaterialObject(material);
+
+		if (Messages::FileWrite())
+			Messages::Debug("Created Medium Stick Object ID: " + MaloW::convertNrToString((float)material->GetID()));
+
+		counter++;
+	}
+	material = NULL;
+	if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_THREAD, &material, true))
+	{
+		material->SetPosition(Vector3(0.0f, 0.0f, 2.0f));
+
+		//Adds The Object To the Array
+		this->zActorHandler->AddNewStaticMaterialObject(material);
+
+		if (Messages::FileWrite())
+			Messages::Debug("Created Thread Object ID: " + MaloW::convertNrToString((float)material->GetID()));
+
+		counter++;
+	}
 
 	DeerActor* testDeer = new DeerActor(Vector3(0,0,0), true, false);
 	testDeer->SetActorModel("Media/Tree_02_v02_r.obj");
-	testDeer->SetScale(Vector3(1, 1, 1));
 
 	this->zActorHandler->AddAnimalActor(testDeer);
 
@@ -180,7 +222,7 @@ void Host::Life()
 	this->zServerListener->Start();
 	
 	this->Init();
-
+	//static int counter = 0;
 	INT64 frequency;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 	
@@ -193,6 +235,8 @@ void Host::Life()
 	while(this->stayAlive)
 	{
 		waitTimer += Update();
+
+		//timer += zDeltaTime;
 
 		//Checks if ServerListener is still working
 		if(!this->zServerListener->IsAlive())
@@ -214,13 +258,19 @@ void Host::Life()
 
 			/*if (Messages::FileWrite())
 				Messages::Debug("WaitTime left from last update " + MaloW::convertNrToString(waitTimer));*/
-
+			//counter++;
 			SendPlayerActorUpdates();
 			SendAnimalActorUpdates();
 			SendDynamicActorUpdates();
-			
 		}
 
+		//if (timer >= 1.0f)
+		//{
+		//	if (Messages::FileWrite())
+		//		Messages::Debug(MaloW::convertNrToString(counter));
+		//	counter = 0;
+		//	timer -= 1.0f;
+		//}
 		Sleep(5);
 	}
 }
@@ -645,6 +695,18 @@ bool Host::CreateStaticObjectActor(const int type, StaticProjectileObject** proj
 		return false;
 
 	*projectileObj = new StaticProjectileObject(projectile, genID);
+
+	return true;
+}
+
+bool Host::CreateStaticObjectActor(const int type, MaterialObject** materialObj, const bool genID /*= false*/)
+{
+	const MaterialObject* material = this->zActorHandler->GetObjManager()->GetMaterialObject(type);
+
+	if (!material)
+		return false;
+
+	*materialObj = new MaterialObject(material, genID);
 
 	return true;
 }
@@ -1198,7 +1260,7 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 		static_Objects.push_back(mess);
 
 	}
-	std::vector<WeaponObject *> static_Weapon = this->zActorHandler->GetWeapons();
+	std::vector<WeaponObject*> static_Weapon = this->zActorHandler->GetWeapons();
 	//Gets Static Weapon Objects Data
 	for(auto it = static_Weapon.begin(); it < static_Weapon.end(); it++)
 	{
@@ -1220,8 +1282,8 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 		static_Objects.push_back(mess);
 	}
 
-	std::vector<ContainerObject *> static_Container = this->zActorHandler->GetContainers();
-	//Gets Static Weapon Objects Data
+	std::vector<ContainerObject*> static_Container = this->zActorHandler->GetContainers();
+	//Gets Static Container Objects Data
 	for(auto it = static_Container.begin(); it < static_Container.end(); it++)
 	{
 		Vector3 pos = (*it)->GetPosition();
@@ -1242,9 +1304,31 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 		static_Objects.push_back(mess);
 	}
 
-	std::vector<StaticProjectileObject *> static_Projectile = this->zActorHandler->GetStaticProjectiles();
-	//Gets Static Weapon Objects Data
+	std::vector<StaticProjectileObject*> static_Projectile = this->zActorHandler->GetStaticProjectiles();
+	//Gets Static Projectile Objects Data
 	for(auto it = static_Projectile.begin(); it < static_Projectile.end(); it++)
+	{
+		Vector3 pos = (*it)->GetPosition();
+		Vector3 scale = (*it)->GetScale();
+		Vector4 rot = (*it)->GetRotation();
+
+		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, (float)(*it)->GetID());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)(*it)->GetType());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it)->GetActorObjectName());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)(*it)->GetWeight());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it)->GetIconPath());
+		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it)->GetDescription());
+
+		static_Objects.push_back(mess);
+	}
+
+	std::vector<MaterialObject*> static_Material = this->zActorHandler->GetMaterials();
+	//Gets Static Weapon Objects Data
+	for(auto it = static_Material.begin(); it < static_Material.end(); it++)
 	{
 		Vector3 pos = (*it)->GetPosition();
 		Vector3 scale = (*it)->GetScale();

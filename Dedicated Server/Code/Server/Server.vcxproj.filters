@@ -92,9 +92,6 @@
     <ClCompile Include="EngineFiles\Server\MaterialObject.cpp">
       <Filter>Server</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\PhysicsEngine\ObjLoader.cpp">
       <Filter>PhysicsEngine</Filter>
     </ClCompile>
@@ -119,11 +116,14 @@
     <ClCompile Include="..\..\..\Source\MaloWLib\Process.cpp">
       <Filter>MalowLib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\RangedWeapon.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
     <ClCompile Include="EngineFiles\Network\NetworkServer.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\RangedWeapon.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.cpp">
+      <Filter>Items</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -233,9 +233,6 @@
     <ClInclude Include="EngineFiles\Server\MaterialObject.h">
       <Filter>Server</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.h">
-      <Filter>Server</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\PhysicsEngine\ObjLoader.h">
       <Filter>PhysicsEngine</Filter>
     </ClInclude>
@@ -272,11 +269,14 @@
     <ClInclude Include="EngineFiles\Network\Winsock.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\RangedWeapon.h">
-      <Filter>Server</Filter>
-    </ClInclude>
     <ClInclude Include="EngineFiles\Network\NetworkServer.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\RangedWeapon.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.h">
+      <Filter>Items</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

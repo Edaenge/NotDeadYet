@@ -1,5 +1,6 @@
 #include "Equipment.h"
 #include "../../MaloWLib/Safe.h"
+#include "../ClientServerMessages.h"
 
 const unsigned int GEAR_SLOTS = 4;
 
@@ -63,6 +64,9 @@ Weapon* Equipment::GetWeapon()
 
 void Equipment::UnEquipWeapon()
 {
+	if (Messages::FileWrite())
+		Messages::Debug("UnEquipped Weapon");
+
 	this->zWeapon = NULL;
 }
 
@@ -73,6 +77,9 @@ void Equipment::EquipProjectile(Projectile* projectile)
 
 	if (this->zProjectile)
 	{
+		if (Messages::FileWrite())
+			Messages::Debug("Equipped projectile");
+
 		if (this->zProjectile->GetItemType() == projectile->GetItemType())
 		{
 			int totalStacks = this->zProjectile->GetStackSize() + projectile->GetStackSize();
@@ -92,6 +99,9 @@ void Equipment::EquipProjectile(Projectile* projectile)
 
 void Equipment::UnEquipProjectile()
 {
+	if (Messages::FileWrite())
+		Messages::Debug("UnEquipped Projectile");
+
 	this->zProjectile = NULL;
 }
 Projectile* Equipment::GetProjectile()

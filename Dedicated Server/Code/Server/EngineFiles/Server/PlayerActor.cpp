@@ -119,12 +119,13 @@ bool PlayerActor::PickUpObject( DynamicObjectActor* object )
 	return false;
 }
 
-bool PlayerActor::PickUpObject( StaticObjectActor* object )
+bool PlayerActor::PickUpObject(StaticObjectActor* object)
 {
 	FoodObject* fo				= NULL;
 	WeaponObject* wo			= NULL;
 	ContainerObject* co			= NULL;
 	StaticProjectileObject* spo = NULL;
+	MaterialObject*	mo			= NULL;
 	Item* item					= NULL; 
 
 	fo = dynamic_cast<FoodObject*>(object);
@@ -240,6 +241,27 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 		item->SetStackSize(spo->GetStackSize());
 		item->SetItemName(spo->GetActorObjectName());
 		item->SetItemDescription(spo->GetDescription());
+
+		if(!this->zInventory->AddItem(item))
+		{
+			SAFE_DELETE(item);
+			return false;
+		}
+
+		return true;
+	}
+
+	mo = dynamic_cast<MaterialObject*>(object);
+	if(mo)
+	{
+		item = new Material(mo->GetID(), mo->GetType(), mo->GetCraftingType(), mo->GetRequiredStackToCraft());
+
+		item->SetStacking(true);
+		item->SetItemWeight(mo->GetWeight());
+		item->SetIconPath(mo->GetIconPath());
+		item->SetStackSize(mo->GetStackSize());
+		item->SetItemName(mo->GetActorObjectName());
+		item->SetItemDescription(mo->GetDescription());
 
 		if(!this->zInventory->AddItem(item))
 		{

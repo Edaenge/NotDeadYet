@@ -21,6 +21,7 @@ static const enum ACTOR_TYPE
 	ACTOR_TYPE_STATIC_OBJECT_WEAPON,
 	ACTOR_TYPE_STATIC_OBJECT_CONTAINER,
 	ACTOR_TYPE_STATIC_OBJECT_PROJECTILE,
+	ACTOR_TYPE_STATIC_OBJECT_MATERIAL,
 	ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE
 };
 static const enum COLLISION_EVENT_TYPE
@@ -80,13 +81,15 @@ public:
 ///////////////////////////////
 	bool AddNewStaticFoodActor(FoodObject* new_Food);
 	bool AddNewStaticWeaponActor(WeaponObject* new_Weapon);
+	bool AddNewStaticMaterialObject(MaterialObject* new_Material);
 	bool AddNewStaticContainerActor(ContainerObject* new_Container);
 	bool AddNewStaticProjectileActor(StaticProjectileObject* new_Projectile);
-
+	
 	bool AddNewDynamicProjectileActor(DynamicProjectileObject* new_Projectile);
 	/*! Removes the Static Object.*/
 	bool RemoveStaticFoodActor(const int ID);
 	bool RemoveStaticWeaponActor(const int ID);
+	bool RemoveStaticMaterialActor(const int ID);
 	bool RemoveStaticContainerActor(const int ID);
 	bool RemoveStaticProjectileActor(const int ID);
 	/*! Removes the Dynamic Object.*/
@@ -97,9 +100,11 @@ public:
 	inline const std::vector<WeaponObject*>& GetWeapons() const {return this->zWeapons;}
 	/*! Returns Container Objects.*/
 	inline const std::vector<ContainerObject*>& GetContainers() const {return this->zContainers;}
-	/*! Returns Dynamic Projectiles Objects.*/
+	/*! Returns Material Objects.*/
+	inline const std::vector<MaterialObject*>& GetMaterials() const {return this->zMaterials;}
+	/*! Returns Dynamic Projectile Objects.*/
 	inline const std::vector<DynamicProjectileObject*>& GetDynamicProjectiles() const {return this->zDynamicProjectiles;}
-	/*! Returns Static Projectiles Objects.*/
+	/*! Returns Static Projectile Objects.*/
 	inline const std::vector<StaticProjectileObject*>& GetStaticProjectiles() const {return this->zStaticProjectiles;}
 //////////////////////////////
 	/*! Returns an Actor. TYPE is a enum to identify which Actor to get.
@@ -123,6 +128,7 @@ private:
 	std::vector<FoodObject*> zFoods;
 	std::vector<WeaponObject*> zWeapons;
 	std::vector<ContainerObject*> zContainers;
+	std::vector<MaterialObject*> zMaterials;
 	std::vector<DynamicProjectileObject*> zDynamicProjectiles;
 	std::vector<StaticProjectileObject*> zStaticProjectiles;
 	ObjectManager* zObjManager;

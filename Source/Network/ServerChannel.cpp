@@ -2,7 +2,7 @@
 #include "NetworkPacket.h"
 #include "Winsock.h"
 #include "NetworkMessageConverter.h"
-#include "ClientServerMessages.h"
+#include "../GameFiles/ClientServerMessages.h"
 
 using namespace MaloW;
 

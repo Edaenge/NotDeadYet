@@ -70,7 +70,9 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_EQUIP_ITEM,
 	MESSAGE_TYPE_UNEQUIP_ITEM,
 	MESSAGE_TYPE_PROJECTILE_DAMAGE,
-	MESSAGE_TYPE_PROJECTILE_VELOCITY
+	MESSAGE_TYPE_PROJECTILE_VELOCITY,
+	MESSAGE_TYPE_MATERIAL_STACKS_REQUIRED,
+	MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE
 };
 //Data Messages
 static const std::string M_POSITION					= "P";
@@ -95,6 +97,8 @@ static const std::string M_ITEM_USE					= "IU";
 static const std::string M_ITEM_STACK_SIZE			= "ISS";
 static const std::string M_WEAPON_DAMAGE			= "WD";
 static const std::string M_WEAPON_RANGE				= "WR";
+static const std::string M_MATERIAL_CRAFTING_TYPE	= "MCT";
+static const std::string M_MATERIAL_STACKS_REQUIRED	= "MSR";
 static const std::string M_PROJECTILE_DAMAGE		= "PD";
 static const std::string M_PROJECTILE_VELOCITY		= "PV";
 static const std::string M_WEAPON_USE				= "WU";

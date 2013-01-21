@@ -1,7 +1,7 @@
 #include "GameFiles/ClientSide/Client.h"
 #include "Graphics.h"
 #include "Network/NetworkPacket.h"
-#include "ClientServerMessages.h"
+#include "../ClientServerMessages.h"
 
 using namespace MaloW;
 
@@ -36,6 +36,8 @@ Client::Client()
 	this->zKeyInfo.InitKeyBinds();
 	
 	this->zMsgHandler = NetworkMessageConverter();
+
+	//timer = 0;
 }
 
 int Client::Connect(const std::string& ip, const int port)
@@ -147,10 +149,11 @@ void Client::Life()
 	this->zServerChannel->Start();
 
 	this->Init();
-
+	//static int counter = 0;
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->Update();
+		//timer += zDeltaTime;
 
 		this->zSendUpdateDelayTimer += this->zDeltaTime;
 		this->zTimeSinceLastPing += this->zDeltaTime;
@@ -167,9 +170,18 @@ void Client::Life()
 
 				/*if (Messages::FileWrite())
 					Messages::Debug("zSendUpdateDelayTimer left from last update " + MaloW::convertNrToString(zSendUpdateDelayTimer));*/
+				//counter++;
 
 				this->SendClientUpdate();
 			}
+
+			//if (timer >= 1.0f)
+			//{
+			//	if (Messages::FileWrite())
+			//		Messages::Debug(MaloW::convertNrToString(counter));
+			//	counter = 0;
+			//	timer -= 1.0f;
+			//}
 			this->UpdateCameraPos();
 
 			this->UpdateWorldObjects();
@@ -607,7 +619,7 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		}
 		else if(strcmp(key, M_ITEM_USE.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
+			int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
 			this->HandleUseItem(id);
 		}
 		else if(strcmp(key, M_REMOVE_EQUIPMENT.c_str()) == 0)

@@ -2,7 +2,7 @@
 
 bool Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
 {
-	FoodObject* foodObj = NULL;/* = new FoodObject(false);*/
+	FoodObject* foodObj = NULL;
 	if (!this->CreateStaticObjectActor(food_Item->GetItemType(), &foodObj))
 	{
 		MaloW::Debug("Failed to Create StaticObject Food");
@@ -26,7 +26,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
 
 bool Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 {
-	WeaponObject* weaponObj = NULL;/* = new WeaponObject(false);*/
+	WeaponObject* weaponObj = NULL;
 
 	if (!this->CreateStaticObjectActor(weapon_Item->GetItemType(), &weaponObj))
 	{
@@ -49,7 +49,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 
 bool Host::CreateObjectFromItem(PlayerActor* pActor, Projectile* projectile_Item)
 {
-	StaticProjectileObject* projectileObj = NULL;/* = new WeaponObject(false);*/
+	StaticProjectileObject* projectileObj = NULL;
 
 	if (!this->CreateStaticObjectActor(projectile_Item->GetItemType(), &projectileObj))
 	{
@@ -57,7 +57,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Projectile* projectile_Item
 		SAFE_DELETE(projectileObj);
 		return false;
 	}
-	//Creates A New WeaponObject With an Id And Default Values
+	//Creates A New StaticProjectileObject With an Id And Default Values
 	projectileObj->SetID(projectile_Item->GetID());
 	projectileObj->SetPosition(pActor->GetPosition());
 
@@ -72,30 +72,30 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Projectile* projectile_Item
 
 bool Host::CreateObjectFromItem(PlayerActor* pActor, Material* material_Item)
 {
-	//StaticProjectileObject* projectileObj = NULL;/* = new WeaponObject(false);*/
+	MaterialObject* materialObj = NULL;
 
-	//if (!this->CreateStaticObjectActor(material_Item->GetItemType(), &projectileObj))
-	//{
-	//	MaloW::Debug("Failed to Create StaticObject Projectile");
-	//	SAFE_DELETE(projectileObj);
-	//	return false;
-	//}
-	////Creates A New WeaponObject With an Id And Default Values
-	//projectileObj->SetID(material_Item->GetID());
-	//projectileObj->SetPosition(pActor->GetPosition());
+	if (!this->CreateStaticObjectActor(material_Item->GetItemType(), &materialObj))
+	{
+		MaloW::Debug("Failed to Create StaticObject Projectile");
+		SAFE_DELETE(materialObj);
+		return false;
+	}
+	//Creates A New MaterialObject With an Id And Default Values
+	materialObj->SetID(material_Item->GetID());
+	materialObj->SetPosition(pActor->GetPosition());
 
-	//this->SendRemoveItemMessage(pActor->GetID(), material_Item->GetID());
+	this->SendRemoveItemMessage(pActor->GetID(), material_Item->GetID());
 
-	//this->zActorHandler->AddNewStaticProjectileActor(projectileObj);
+	this->zActorHandler->AddNewStaticMaterialObject(materialObj);
 
-	//this->SendNewObjectMessage(projectileObj);
+	this->SendNewObjectMessage(materialObj);
 
 	return true;
 }
 
 bool Host::CreateObjectFromItem(PlayerActor* pActor, Container* container_Item)
 {
-	ContainerObject* containerObj = NULL; /*= new ContainerObject(false);*/
+	ContainerObject* containerObj = NULL;
 
 	if (!this->CreateStaticObjectActor(container_Item->GetItemType(), &containerObj))
 	{
@@ -169,6 +169,19 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, StaticProjectileObject* pro
 	return true;
 }
 
+bool Host::CreateItemFromObject(PlayerActor* pActor, MaterialObject* materialObj)
+{
+	this->SendAddInventoryItemMessage(pActor->GetID(), materialObj);
+
+	std::string removeMsg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_STATIC_OBJECT, (float)materialObj->GetID());
+
+	this->SendToAllClients(removeMsg);
+
+	this->zActorHandler->RemoveStaticContainerActor(materialObj->GetID());
+
+	return true;
+}
+
 void Host::HandleConversion(DynamicProjectileObject* dynamicProjObj)
 {
 	StaticProjectileObject* staticProjObj = new StaticProjectileObject(dynamicProjObj, false);
@@ -182,21 +195,5 @@ void Host::HandleConversion(DynamicProjectileObject* dynamicProjObj)
 	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT, (float)dynamicProjObj->GetID());
 	this->SendToAllClients(msg);
 
-	Vector3 pos = staticProjObj->GetPosition();
-	Vector3 scale = staticProjObj->GetScale();
-	Vector4 rot = staticProjObj->GetRotation();
-
-	msg =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, (float)staticProjObj->GetID());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, staticProjObj->GetActorModel());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)staticProjObj->GetType());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, staticProjObj->GetActorObjectName());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)staticProjObj->GetWeight());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_STACK_SIZE, (float)staticProjObj->GetStackSize());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, staticProjObj->GetIconPath());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, staticProjObj->GetDescription());
-
-	this->SendToAllClients(msg);
+	this->SendNewObjectMessage(staticProjObj);
 }

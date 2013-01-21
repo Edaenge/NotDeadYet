@@ -11,10 +11,10 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "PlayerActor.h"
 #include "ActorHandler.h"
 
-//#if defined(DEBUG) || defined(_DEBUG)
-//#include <vld.h>
-//	#define INCLUDE_MODEL_VIEWER
-//#endif
+#if defined(DEBUG) || defined(_DEBUG)
+#include <vld.h>
+#define INCLUDE_MODEL_VIEWER
+#endif
 
 struct ClientData
 {
@@ -84,8 +84,6 @@ public:
 	void SendNewObjectMessage(AnimalActor* animalObj);
 	/*! Sends a Message To the Client.*/
 	void SendErrorMessage(const int ID, const std::string error_Message);
-	/*! Sends UnEquip Message To Client*/
-	void SendUnEquipMessage(const int PlayerID, const int ID, const int Slot);
 	/*! Notifies all clients, the server is shutting down.*/
 	void BroadCastServerShutdown();
 	/*! Pings the clients.*/
@@ -131,13 +129,15 @@ private:
 	int SearchForClient(const int ID) const;
 	/*! Creates a new player and notifies all clients.*/
 	void CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data);
-	bool HandlePickupItem(PlayerActor* pActor, const int ObjectId);
-	void HandleDropItem(PlayerActor* pActor, const int ItemID);
-	void HandleItemUse(PlayerActor* pActor, const int ItemID);
-	void HandleWeaponUse(PlayerActor* pActor, const int ItemID);
-	void HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Slot);
 	/*! Returns an Array Containing Existing Static Objects Messages.*/
 	void GetExistingObjects(std::vector<std::string>& static_Objects);
+
+	//////////////////////////////////////
+	//									//
+	//	   Objects/Items Conversions	//
+	//			  						//
+	//////////////////////////////////////
+
 	/*! Creates an Object From the Item Data.*/
 	bool CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item);
 	bool CreateObjectFromItem(PlayerActor* pActor, Food* food_Item);
@@ -149,25 +149,47 @@ private:
 	bool CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj);
 	bool CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerObj);
 	bool CreateItemFromObject(PlayerActor* pActor, StaticProjectileObject* projectileObj);
+	bool CreateItemFromObject(PlayerActor* pActor, MaterialObject* materialObj);
 	/*! Creates a StaticObject with default values.*/
-	bool CreateStaticObjectActor(const int type, WeaponObject** weaponObj, const bool genID = false);
 	bool CreateStaticObjectActor(const int type, FoodObject** foodObj, const bool genID = false);
+	bool CreateStaticObjectActor(const int type, WeaponObject** weaponObj, const bool genID = false);
+	bool CreateStaticObjectActor(const int type, MaterialObject** materialObj, const bool genID = false);
 	bool CreateStaticObjectActor(const int type, ContainerObject** containerObj, const bool genID = false);
 	bool CreateStaticObjectActor(const int type, StaticProjectileObject** projectileObj, const bool genID = false);
 	/*! Creates a DynamicObject with default values.*/
 	bool CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID = false);
+
 	void HandleConversion(DynamicProjectileObject* dynamicProjObj);
-	Item* CreateItemFromDefault(const int ItemType);
-	void SendEquipMessage(const int PlayerID, const int ID, const int Slot);
-	void SendRemoveItemMessage(const int PlayerID, const int ID, const int Slot);
-	void SendRemoveItemMessage(const int PlayerID, const int ID);
+	
+	//////////////////////
+	//					//
+	//		Items		//
+	//			  		//
+	//////////////////////
+
 	void SendAddInventoryItemMessage(const int PlayerID, StaticProjectileObject* projectileObj);
 	void SendAddInventoryItemMessage(const int PlayerID, FoodObject* foodObj);
 	void SendAddInventoryItemMessage(const int PlayerID, ContainerObject* containerObj);
 	void SendAddInventoryItemMessage(const int PlayerID, WeaponObject* weaponObj);
 	void SendAddInventoryItemMessage(const int PlayerID, Projectile* projectile);
 	void SendAddInventoryItemMessage(const int PlayerID, Weapon* weapon);
+	void SendAddInventoryItemMessage(const int PlayerID, MaterialObject* material);
+
+	bool HandlePickupItem(PlayerActor* pActor, const int ObjectId);
+	void HandleDropItem(PlayerActor* pActor, const int ItemID);
+	void HandleItemUse(PlayerActor* pActor, const int ItemID);
+	void HandleWeaponUse(PlayerActor* pActor, const int ItemID);
+	void HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Slot);
+
+	Item* CreateItemFromDefault(const int ItemType);
+
+	/*! Sends UnEquip Message To Client*/
+	void SendUnEquipMessage(const int PlayerID, const int ID, const int Slot);
 	void SendWeaponUseMessage(const int PlayerID, const int ID);
+	void SendRemoveItemMessage(const int PlayerID, const int ID, const int Slot);
+	void SendRemoveItemMessage(const int PlayerID, const int ID);
+	void SendEquipMessage(const int PlayerID, const int ID, const int Slot);
+	void SendUseItem(const int PlayerID, const int ID);
 private:
 	ServerListener* zServerListener;
 
@@ -186,4 +208,7 @@ private:
 	float zDeltaTime;
 	float zTimeOut;
 	float zPingMessageInterval;
+
+
+	//float timer;
 };
