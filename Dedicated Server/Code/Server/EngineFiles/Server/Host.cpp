@@ -1295,11 +1295,12 @@ void Host::onEvent( Event* e )
 		if(playerTempPos.x > 0 || playerTempPos.y > 0)
 		{
 			float yPos = this->zWorld->GetHeightAtWorldPos(playerTempPos.x, playerTempPos.z);
-			if((yPos - playerTempPos.y) < 0.6f)
+			if((yPos - playerTempPos.y) <= 0.3f)
 			{
 				PUE->playerActor->SetPosition(Vector3(playerTempPos.x, yPos, playerTempPos.z));
+				this->zAnchorPlayerMap[PUE->playerActor]->position = Vector2(playerTempPos.x, playerTempPos.z);
+				PUE->validMove = true;
 			}
 		}
-		this->zAnchorPlayerMap[PUE->playerActor]->position = Vector2(playerTempPos.x, playerTempPos.z);
 	}
 }

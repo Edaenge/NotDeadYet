@@ -114,14 +114,21 @@ void PlayerActor::Update(float deltaTime)
 
 		this->zStaminaChanged = true;
 	}
+	bool validMove = false;
 	if(changed)
 	{
-		this->zPhysicObj->SetPosition(this->zPos);
-		NotifyObservers( &PlayerUpdatedEvent(this));
+		PlayerUpdatedEvent temp = PlayerUpdatedEvent(this, validMove);
+		NotifyObservers( &temp);
+		if(temp.validMove)
+			this->zPhysicObj->SetPosition(this->zPos);
+		else
+		{
+			this->zPos = zPreviousPos;
+		}
 	}
 }
 
-bool PlayerActor::PickUpObject( DynamicObjectActor* object )
+bool PlayerActor::PickUpObject( DynamicObjectActor* object)
 {
 	//Not yet implemented
 	return false;
