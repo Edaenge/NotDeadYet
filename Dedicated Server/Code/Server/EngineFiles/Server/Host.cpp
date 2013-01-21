@@ -163,6 +163,9 @@ void Host::Init()
 		counter++;
 	}
 
+	DeerActor* testDeer = new DeerActor(Vector3(), true, false);
+	testDeer->SetActorModel("Media/Stone_01_v02.obj");
+
 	if (Messages::FileWrite())
 		Messages::Debug("Created " + MaloW::convertNrToString((float)counter) + " Objects");
 }

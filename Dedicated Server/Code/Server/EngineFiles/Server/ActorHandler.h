@@ -7,7 +7,8 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "../../../../../Source/MaloWLib/Safe.h"
 #include "PlayerActor.h"
-#include "AnimalActor.h"
+#include "DeerActor.h"
+#include "WolfActor.h"
 #include "ObjectManager.h"
 #include "DynamicProjectileObject.h"
 #include "../../../../../Source/PhysicsEngine/PhysicsEngine.h"
