@@ -45,14 +45,32 @@ ActorHandler::~ActorHandler()
 
 void ActorHandler::UpdateObjects( float deltaTime )
 {
+	Vector3 playersPos[32];
+	float playerVelocity[32];
+	float playerHealth[32];
+
+	int nrOfPlayers = 0;
+
 	//Update Players
 	for (auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
 	{
 		(*it)->Update(deltaTime);
+		playersPos[nrOfPlayers] = (*it)->GetPosition();
+		playerVelocity[nrOfPlayers] = (*it)->GetVelocity();
+		playerHealth[nrOfPlayers] = (*it)->GetHealth();
+	
+		nrOfPlayers++;
 	}
+
+	
 	//Update Animals
 	for (auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
 	{
+		for(int i = 0; i < nrOfPlayers; i++)	//Potential area for optimization, probably.
+		{
+			(*it)->SetPlayerInfo(i,playersPos[i], playerVelocity[i], playerHealth[i]);
+		}
+		(*it)->SetCurrentPlayers(nrOfPlayers);
 		(*it)->Update(deltaTime);
 	}
 	//Update DynamicObjects
@@ -74,6 +92,16 @@ bool ActorHandler::AddNewPlayer(PlayerActor* new_player)
 
 	if(!pObj)
 		MaloW::Debug("Error in function AddNewPlayer in ActorHandler: PhysicObj is null.");
+
+	return true;
+}
+
+bool ActorHandler::AddAnimalActor(AnimalActor* new_animal)
+{
+	if(!new_animal)
+		return false;
+
+	this->zAnimals.push_back(new_animal);
 
 	return true;
 }

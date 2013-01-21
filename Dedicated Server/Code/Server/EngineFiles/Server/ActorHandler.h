@@ -68,8 +68,7 @@ public:
 //			ANIMALS		     //
 ///////////////////////////////
 
-	/*! Updates the animals*/
-	void UpdateA(float deltaTime);
+	bool AddAnimalActor(AnimalActor* new_player);
 	/*! Removes the Animal Object.*/
 	bool RemoveAnimalActor(const int ID);
 	/*! Returns Animals.*/

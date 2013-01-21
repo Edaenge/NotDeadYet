@@ -184,6 +184,7 @@
     <ClInclude Include="EngineFiles\Server\StaticObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\StaticProjectileObject.h" />
     <ClInclude Include="EngineFiles\Server\WeaponObject.h" />
+    <ClInclude Include="EngineFiles\Server\WolfActor.h" />
     <ClInclude Include="Wrapper\ServerEngineWrapper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -219,8 +220,8 @@
     <ClCompile Include="EngineFiles\Server\AnimalActor.cpp" />
     <ClCompile Include="EngineFiles\Server\BioActor.cpp" />
     <ClCompile Include="EngineFiles\Server\ContainerObject.cpp" />
-    <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp" />
     <ClCompile Include="EngineFiles\Server\FoodObject.cpp" />
     <ClCompile Include="EngineFiles\Server\Host.cpp" />
@@ -231,6 +232,7 @@
     <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\StaticProjectileObject.cpp" />
     <ClCompile Include="EngineFiles\Server\WeaponObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\WolfActor.cpp" />
     <ClCompile Include="Wrapper\ServerEngineWrapper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
