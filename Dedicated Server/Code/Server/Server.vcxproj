@@ -181,6 +181,14 @@
     <ClInclude Include="EngineFiles\Server\StaticObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\StaticProjectileObject.h" />
     <ClInclude Include="EngineFiles\Server\WeaponObject.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\CircleAndRect.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\Entity.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\EntityList.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\Observer.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\Sector.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\World.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\WorldEvents.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\WorldFile.h" />
     <ClInclude Include="Wrapper\ServerEngineWrapper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -225,6 +233,11 @@
     <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\StaticProjectileObject.cpp" />
     <ClCompile Include="EngineFiles\Server\WeaponObject.cpp" />
+    <ClCompile Include="EngineFiles\WorldFiles\Entity.cpp" />
+    <ClCompile Include="EngineFiles\WorldFiles\EntityList.cpp" />
+    <ClCompile Include="EngineFiles\WorldFiles\Sector.cpp" />
+    <ClCompile Include="EngineFiles\WorldFiles\World.cpp" />
+    <ClCompile Include="EngineFiles\WorldFiles\WorldFile.cpp" />
     <ClCompile Include="Wrapper\ServerEngineWrapper.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

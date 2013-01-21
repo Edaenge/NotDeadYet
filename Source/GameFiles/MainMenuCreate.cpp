@@ -11,8 +11,6 @@ void MainMenu::Init()
 	GraphicsEngine* eng = GetGraphics();
 	eng->StartRendering();
 
-	Sleep(100);
-
 	Element* temp;
 
 	//MAINMENU

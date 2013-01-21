@@ -176,6 +176,7 @@ private:
 	World* zWorld;
 	WorldRenderer* zWorldRenderer;
 	WorldAnchor* zAnchor;
+	iImage* zCrossHair;
 protected:
 	virtual void onEvent( Event* e );
 };

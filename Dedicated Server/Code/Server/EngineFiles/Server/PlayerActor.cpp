@@ -45,6 +45,7 @@ void PlayerActor::Update(float deltaTime)
 {
 	float dt = deltaTime + this->zLatency;
 	this->zPreviousPos = this->zPos;
+	bool changed = false;
 
 	if(this->zKeyStates.GetKeyState(KEY_SPRINT))
 	{
@@ -84,20 +85,24 @@ void PlayerActor::Update(float deltaTime)
 	if(this->zKeyStates.GetKeyState(KEY_FORWARD))
 	{
 		this->zPos = this->zPos + this->zDir * dt * this->zVelocity;
+		changed = true;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
 	{
 		this->zPos = this->zPos + this->zDir * -1 * dt * this->zVelocity;
+		changed = true;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_RIGHT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDir);
 		this->zPos = this->zPos + (right * dt * this->zVelocity);
+		changed = true;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_LEFT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDir);
 		this->zPos = this->zPos + (right * -1 * dt * this->zVelocity);
+		changed = true;
 	}
 
 	if(this->zState != STATE_RUNNING && (this->zStamina < this->zStaminaMax))
@@ -109,8 +114,11 @@ void PlayerActor::Update(float deltaTime)
 
 		this->zStaminaChanged = true;
 	}
-
-	this->zPhysicObj->SetPosition(this->zPos);
+	if(changed)
+	{
+		this->zPhysicObj->SetPosition(this->zPos);
+		NotifyObservers( &PlayerUpdatedEvent(this));
+	}
 }
 
 bool PlayerActor::PickUpObject( DynamicObjectActor* object )

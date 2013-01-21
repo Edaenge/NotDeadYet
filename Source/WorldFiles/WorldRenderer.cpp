@@ -95,12 +95,21 @@ void WorldRenderer::onEvent( Event* e )
 		{
 			UPDATEENUM& u = zUpdatesRequired[ Vector2UINT(SHMC->sectorx, SHMC->sectory) ];
 			u = (UPDATEENUM)(u | UPDATE_HEIGHTMAP);
-			//UpdateSectorHeightMap(SHMC->sectorx, SHMC->sectory);
 		}
 	}
 	else if ( EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e) )
 	{
-		zEntities[ELE->entity] = GetGraphics()->CreateMesh(GetEntModel(ELE->entity->GetType()).c_str(), ELE->entity->GetPosition());
+		const std::string& model = GetEntModel(ELE->entity->GetType());
+
+		if ( model.substr(model.size()-4,4) == ".ani" )
+		{
+			zEntities[ELE->entity] = GetGraphics()->CreateAnimatedMesh(model.c_str(), ELE->entity->GetPosition());
+		}
+		else
+		{
+			zEntities[ELE->entity] = GetGraphics()->CreateMesh(model.c_str(), ELE->entity->GetPosition());
+		}
+
 		zEntities[ELE->entity]->Scale(ELE->entity->GetScale());
 		ELE->entity->AddObserver(this);
 	}
@@ -135,16 +144,14 @@ void WorldRenderer::onEvent( Event* e )
 		{
 			UPDATEENUM& u = zUpdatesRequired[ Vector2UINT(SHMC->sectorx, SHMC->sectory) ];
 			u = (UPDATEENUM)(u | UPDATE_BLENDMAP);
-			//UpdateSectorBlendMap( SHMC->sectorx, SHMC->sectory );
 		}
 	}
 	else if ( SectorBlendTexturesChanged* SBTC = dynamic_cast<SectorBlendTexturesChanged*>(e) )
 	{
 		if ( SBTC->world == zWorld )
 		{
-			UPDATEENUM& u = zUpdatesRequired[ Vector2UINT(SHMC->sectorx, SHMC->sectory) ];
+			UPDATEENUM& u = zUpdatesRequired[ Vector2UINT(SBTC->sectorX, SBTC->sectorY) ];
 			u = (UPDATEENUM)(u | UPDATE_TEXTURES);
-			//UpdateSectorTextures(SBTC->sectorX,SBTC->sectorY);
 		}
 	}
 }
@@ -155,14 +162,13 @@ float WorldRenderer::GetYPosFromHeightMap( float x, float y )
 	if(zWorld == NULL)
 		return std::numeric_limits<float>::infinity();
 
-	unsigned int tIndex = (unsigned int)y/SECTOR_LENGTH * zWorld->GetNumSectorsWidth() + (unsigned int)x/SECTOR_LENGTH;
-	if(zTerrain.size() > tIndex)
+	unsigned int tIndex = (unsigned int)(y/SECTOR_WORLD_SIZE) * zWorld->GetNumSectorsWidth() + (unsigned int)(x/SECTOR_WORLD_SIZE);
+	
+	if ( zTerrain[tIndex] )
 	{
-		if ( zTerrain[tIndex] )
-		{
-			return zTerrain[tIndex]->GetYPositionAt(fmod(x, (float)SECTOR_LENGTH), fmod(y, (float)SECTOR_LENGTH));
-		}
+		return zTerrain[tIndex]->GetYPositionAt(fmod(x, (float)SECTOR_WORLD_SIZE), fmod(y, (float)SECTOR_WORLD_SIZE));
 	}
+	
 	return std::numeric_limits<float>::infinity();
 }
 

@@ -125,6 +125,21 @@
     <ClCompile Include="EngineFiles\Network\NetworkServer.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\WorldFiles\Entity.cpp">
+      <Filter>WorldFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\WorldFiles\EntityList.cpp">
+      <Filter>WorldFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\WorldFiles\Sector.cpp">
+      <Filter>WorldFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\WorldFiles\World.cpp">
+      <Filter>WorldFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\WorldFiles\WorldFile.cpp">
+      <Filter>WorldFiles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\External\NDYGFX\Include\Vector.h" />
@@ -278,6 +293,30 @@
     <ClInclude Include="EngineFiles\Network\NetworkServer.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\CircleAndRect.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\Entity.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\EntityList.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\Observer.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\Sector.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\World.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\WorldEvents.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\WorldFile.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Items">
@@ -300,6 +339,9 @@
     </Filter>
     <Filter Include="Wrapper">
       <UniqueIdentifier>{1612e473-1e41-4541-a0b8-09fd50212dba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorldFiles">
+      <UniqueIdentifier>{413b5f07-d6cc-4b76-b72e-2fde6c5fc537}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

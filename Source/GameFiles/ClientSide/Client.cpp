@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "Network/NetworkPacket.h"
 #include "ClientServerMessages.h"
+#include "../WorldFiles/EntityList.h"
 
 using namespace MaloW;
 
@@ -39,6 +40,8 @@ Client::Client()
 
 	this->zWorld = 0;
 	this->zWorldRenderer = 0;
+	this->zAnchor = 0;
+	this->zCrossHair = 0;
 }
 
 int Client::Connect(const std::string& ip, const int port)
@@ -98,6 +101,11 @@ Client::~Client()
 		delete this->zWorldRenderer;
 		this->zWorldRenderer = NULL;
 	}
+	if(zCrossHair)
+	{
+		delete this->zCrossHair;
+		zCrossHair = NULL;
+	}
 }
 
 float Client::Update()
@@ -117,10 +125,15 @@ float Client::Update()
 
 	this->zGuiManager->Update(this->zDeltaTime);
 
+	
+
 	//Anchors with the world to decide what to render.
 	if(zWorld && zAnchor)
 	{
-		this->zAnchor->position = Vector2(this->zEng->GetCamera()->GetPosition().x, this->zEng->GetCamera()->GetPosition().z);
+		Vector2 cameraPos = this->zEng->GetCamera()->GetPosition().GetXZ();
+
+		this->zAnchor->position = cameraPos;
+		this->zEng->SetSceneAmbientLight(this->zWorld->GetAmbientAtWorldPos(cameraPos));
 
 		this->zAnchor->radius = this->zEng->GetEngineParameters()->FarClip;
 	}
@@ -136,9 +149,24 @@ void Client::InitGraphics()
 	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
 	this->zEng->GetCamera()->LookAt( Vector3(0, 0, 0) );
 	
-	if ( zWorld ) delete zWorld, zWorld=0;	
-		this->zWorld = new World(this, 10, 10);	
+	LoadEntList("Entities.txt");
+
+	if ( zWorld ) delete zWorld, zWorld=0;
+	this->zWorld = new World(this, "3x3.map");
 	this->zWorldRenderer = new WorldRenderer(zWorld, GetGraphics());
+
+	this->zAnchor = this->zWorld->CreateAnchor();
+
+	iGraphicsEngineParams* GEP = GetGraphics()->GetEngineParameters();
+	int windowWidth = GEP->windowWidth;
+	int windowHeight = GEP->windowHeight;
+	float dx = ((float)windowHeight * 4.0f) / 3.0f;
+	float offSet = (float)(windowWidth - dx) / 2.0f;
+	float length = ((25.0f / 1024.0f) * dx);
+	float x = offSet + (0.5f * dx) - length * 0.5f;
+	float y = (windowHeight / 2.0f) - length * 0.5f;
+
+	this->zCrossHair = this->zEng->CreateImage(Vector2(x, y), Vector2(length, length), "Media/cross.png");
 
 	//this->zEng->LoadingScreen("Media/LoadingScreenBG.png", "Media/LoadingScreenPG.png");
 	//iTerrain* terrain = this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 20);
@@ -270,13 +298,8 @@ void Client::UpdateCameraPos()
 	if (index != -1)
 	{
 		Vector3 position = this->zObjectManager->GetPlayerObject(index)->GetPosition();
-		iTerrain* terrain = this->zObjectManager->GetTerrain();
-		if (terrain)
-		{
-			position.y = terrain->GetYPositionAt(position.x, position.z);
-			terrain = NULL;
-		}
-		position.y += 2.5f;
+
+		position.y += 1.8f;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
 }

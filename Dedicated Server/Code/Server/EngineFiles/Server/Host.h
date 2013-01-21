@@ -10,6 +10,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "../../../../../Source/Network/NetworkMessageConverter.h"
 #include "PlayerActor.h"
 #include "ActorHandler.h"
+#include "../WorldFiles/World.h"
 
 //#if defined(DEBUG) || defined(_DEBUG)
 //#include <vld.h>
@@ -50,7 +51,7 @@ struct ClientData
 
 };
 
-class Host : public MaloW::Process
+class Host : public MaloW::Process, public Observer	
 {
 public:
 	Host();
@@ -186,4 +187,9 @@ private:
 	float zDeltaTime;
 	float zTimeOut;
 	float zPingMessageInterval;
+
+	World* zWorld;
+	std::map<PlayerActor*, WorldAnchor*> zAnchorPlayerMap;
+protected:
+	virtual void onEvent( Event* e );
 };
