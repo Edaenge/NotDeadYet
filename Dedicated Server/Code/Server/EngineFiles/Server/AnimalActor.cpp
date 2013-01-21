@@ -25,10 +25,20 @@ AnimalActor::AnimalActor( const Vector3& startPos, const Vector4& rot, bool genI
 
 AnimalActor::~AnimalActor()
 {
-	zTargets.clear();
+	zPlayers.clear();
 }
 
 void AnimalActor::Update( float deltaTime )
+{
+
+}
+
+void AnimalActor::UpdateForAnimal( float deltaTime )
+{
+
+}
+
+void AnimalActor::UpdateForPlayer( float deltaTime )
 {
 
 }
@@ -58,33 +68,33 @@ void AnimalActor::SetIfNeedPath(bool needPath)
 	this->zNeedPath = needPath;
 }
 
-float AnimalActor::GetAlertnessLevel()
-{
-	return this->zAlertnessLevel;
-}
-
-void AnimalActor::SetAlertnessLevel(float alertness)
-{
-	this->zAlertnessLevel = alertness;
-	if(this->zAlertnessLevel > this->zAlertnessMax)
-	{
-		this->zAlertnessLevel = this->zAlertnessMax;
-	}
-	else if(this->zAlertnessLevel < 0)
-	{
-		this->zAlertnessLevel = 0;
-	}
-}
-
-float AnimalActor::GetAlertnessMax()
-{
-	return this->zAlertnessMax;
-}
-
-void AnimalActor::SetAlertnessMax(float max)
-{
-	this->zAlertnessMax = max;
-}
+//float AnimalActor::GetAlertnessLevel()
+//{
+//	return this->zAlertnessLevel;
+//}
+//
+//void AnimalActor::SetAlertnessLevel(float alertness)
+//{
+//	this->zAlertnessLevel = alertness;
+//	if(this->zAlertnessLevel > this->zAlertnessMax)
+//	{
+//		this->zAlertnessLevel = this->zAlertnessMax;
+//	}
+//	else if(this->zAlertnessLevel < 0)
+//	{
+//		this->zAlertnessLevel = 0;
+//	}
+//}
+//
+//float AnimalActor::GetAlertnessMax()
+//{
+//	return this->zAlertnessMax;
+//}
+//
+//void AnimalActor::SetAlertnessMax(float max)
+//{
+//	this->zAlertnessMax = max;
+//}
 
 float AnimalActor::GetFearLevel()
 {
@@ -122,4 +132,51 @@ int AnimalActor::GetLastDistanceCheck()
 void AnimalActor::SetLastDistanceCheck(int distance)
 {
 	this->zLastDistanceCheck = distance;
+}
+
+void AnimalActor::LargeSuddenSoundReaction()
+{
+	this->SetFearLevel(this->GetFearLevel());
+}
+
+std::vector<Vector2>& AnimalActor::GetPath()
+{
+	return this->zCurrentPath;
+}
+
+void AnimalActor::SetPlayerInfo(int number, Vector3 pos, float velocity, float health)
+{
+	this->zPlayers[number].position = pos;
+	this->zPlayers[number].movementNoise = velocity;
+	this->zPlayers[number].health = health;
+}
+
+int AnimalActor::GetCurrentPlayers()
+{
+	return this->zCurrentNrOfPlayers;
+}
+
+void AnimalActor::SetCurrentPlayers(int number)
+{
+	this->zCurrentNrOfPlayers = number;
+}
+
+float AnimalActor::GetPreviousHealth()
+{
+	return this->zPreviousHealth;
+}
+
+void AnimalActor::SetPreviousHealth(float oldHealth)
+{
+	this->zPreviousHealth = oldHealth;
+}
+
+bool AnimalActor::GetIfPlayerControlled()
+{
+	return this->zIsPlayerControlled;
+}
+
+void AnimalActor::SetIfPlayerControlled(bool isControlled)
+{
+	this->zIsPlayerControlled = isControlled;
 }
