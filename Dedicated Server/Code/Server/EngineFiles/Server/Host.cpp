@@ -1,5 +1,6 @@
 #include "Host.h"
 #include "../../../../../Source/GameFiles/ClientServerMessages.h"
+#include "DeerActor.h"
 
 // 50 updates per sec
 static const float UPDATE_DELAY = 0.02f;
@@ -161,6 +162,9 @@ void Host::Init()
 
 		counter++;
 	}
+
+	DeerActor* testDeer = new DeerActor(Vector3(0,0,0), true, false );
+	this->zActorHandler->AddAnimalActor(testDeer);
 
 	if (Messages::FileWrite())
 		Messages::Debug("Created " + MaloW::convertNrToString((float)counter) + " Objects");

@@ -58,7 +58,7 @@ void DeerActor::InitDeer() throw(...)
 	}
 	else
 	{
-		throw("File could not be opened!");
+		//throw("File could not be opened!");
 	}
 	if(infile.is_open())
 	{
@@ -118,23 +118,23 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 
 	for(int i = 0; i < this->GetCurrentPlayers(); i++)
 	{
-		xDistance = this->GetPosition().x - this->zPlayers[i].position.x; //Math, could use optimization, I think.
-		//yDistance = this->GetPosition().y - this->zPlayers[i].position.y;
-		zDistance = this->GetPosition().z - this->zPlayers[i].position.z;
+		xDistance = this->GetPosition().x - this->zTargets[i].position.x; //Math, could use optimization, I think.
+		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
+		zDistance = this->GetPosition().z - this->zTargets[i].position.z;
 		finalDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
 		if( finalDistance < minimumDistance ) 
 		{
-			this->zPlayers[i].valid = true;
+			this->zTargets[i].valid = true;
 			if(finalDistance < shortestDistance)
 			{
 				shortestDistance = finalDistance;
-				this->zMainTarget = this->zPlayers[i]; //Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.
+				this->zMainTarget = this->zTargets[i]; //Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.
 			}
 			nrOfPredators++;
 		}
 		else
 		{
-			this->zPlayers[i].valid = false;
+			this->zTargets[i].valid = false;
 		}
 		
 	}
@@ -183,23 +183,23 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 
 			for(int i = 0; i < this->GetCurrentPlayers(); i++)
 			{
-				if(this->zPlayers[i].valid == true)
+				if(this->zTargets[i].valid == true)
 				{
 				//Do a mathematical check, see if anyone is right in front of the deer. But... how? http://www.youtube.com/watch?v=gENVB6tjq_M
-					float dotProduct = this->GetDirection().GetDotProduct( this->zPlayers[i].position - this->GetPosition() );
+					float dotProduct = this->GetDirection().GetDotProduct( this->zTargets[i].position - this->GetPosition() );
 					if(dotProduct > 0.4)//This sight is relatively wide, since it is a deer. If this is true, then the deer sees a player.
 					{
 						//Which means, it is even more afraid.
 						fear += 10;
 					}
-					if(this->zPlayers[i].movementNoise > 5) //5 is just a temporary number right now. It is supposed to be the speed of a running player.
+					if(this->zTargets[i].movementNoise > 5) //5 is just a temporary number right now. It is supposed to be the speed of a running player.
 					{
 						fear += 4;
 					}
 
-					if(this->zPlayers[i].health != 0) // No dbz here!
+					if(this->zTargets[i].health != 0) // No dbz here!
 					{
-						fear -= (this->GetHealth() / this->zPlayers[i].health) / nrOfPredators; //If the animal is faced with a very weak player(s), it gets some confidence. This is reduced with each player present.
+						fear -= (this->GetHealth() / this->zTargets[i].health) / nrOfPredators; //If the animal is faced with a very weak player(s), it gets some confidence. This is reduced with each player present.
 					}
 					
 				}
@@ -295,17 +295,17 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 			for(int i = 0; i < this->GetCurrentPlayers(); i++)
 			{
 				
-				if(this->zPlayers[i].valid == true)
+				if(this->zTargets[i].valid == true)
 				{
-					xDistance = this->GetPosition().x - this->zPlayers[i].position.x;
-					//yDistance = this->GetPosition().y - this->zPlayers[i].position.y;
-					zDistance = this->GetPosition().z - this->zPlayers[i].position.z;
+					xDistance = this->GetPosition().x - this->zTargets[i].position.x;
+					//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
+					zDistance = this->GetPosition().z - this->zTargets[i].position.z;
 					distance = sqrt(xDistance * xDistance + zDistance * zDistance);
 					
 					if(distance < shortestDistance) //Something that is a larger threat is based on distance.
 					{
 						shortestDistance = distance;
-						mostLikelyTarget = this->zPlayers[i];
+						mostLikelyTarget = this->zTargets[i];
 					}
 				}
 			}

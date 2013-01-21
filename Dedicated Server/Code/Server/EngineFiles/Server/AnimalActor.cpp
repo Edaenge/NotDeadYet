@@ -6,6 +6,17 @@ AnimalActor::AnimalActor( bool genID /*= true*/ ) : BioActor()
 	if(genID)
 		this->GenerateID();
 	this->InitPathfinder();
+	
+	Target vectorFilling; 
+	vectorFilling.health = NULL;
+	vectorFilling.movementNoise = NULL;
+	vectorFilling.position = NULL;
+	vectorFilling.valid = false;
+
+	for(int i = 0; i < 32; i++)
+	{
+	this->zTargets.push_back(vectorFilling);
+	}
 
 }
 
@@ -14,6 +25,17 @@ AnimalActor::AnimalActor( const Vector3& startPos, bool genID /*= true*/ ) : Bio
 	if(genID)
 		this->GenerateID();
 	this->InitPathfinder();
+
+	Target vectorFilling; 
+	vectorFilling.health = NULL;
+	vectorFilling.movementNoise = NULL;
+	vectorFilling.position = NULL;
+	vectorFilling.valid = false;
+
+	for(int i = 0; i < 32; i++)
+	{
+	this->zTargets.push_back(vectorFilling);
+	}
 }
 
 AnimalActor::AnimalActor( const Vector3& startPos, const Vector4& rot, bool genID /*= true*/ ) : BioActor(startPos, rot)
@@ -21,11 +43,22 @@ AnimalActor::AnimalActor( const Vector3& startPos, const Vector4& rot, bool genI
 	if(genID)
 		this->GenerateID();
 	this->InitPathfinder();
+
+	Target vectorFilling; 
+	vectorFilling.health = NULL;
+	vectorFilling.movementNoise = NULL;
+	vectorFilling.position = NULL;
+	vectorFilling.valid = false;
+
+	for(int i = 0; i < 32; i++)
+	{
+	this->zTargets.push_back(vectorFilling);
+	}
 }
 
 AnimalActor::~AnimalActor()
 {
-	zPlayers.clear();
+	zTargets.clear();
 }
 
 void AnimalActor::Update( float deltaTime )
@@ -146,9 +179,10 @@ std::vector<Vector2>& AnimalActor::GetPath()
 
 void AnimalActor::SetPlayerInfo(int number, Vector3 pos, float velocity, float health)
 {
-	this->zPlayers[number].position = pos;
-	this->zPlayers[number].movementNoise = velocity;
-	this->zPlayers[number].health = health;
+	this->zTargets[number].position = pos;
+	this->zTargets[number].movementNoise = velocity;
+	this->zTargets[number].health = health;
+
 }
 
 int AnimalActor::GetCurrentPlayers()

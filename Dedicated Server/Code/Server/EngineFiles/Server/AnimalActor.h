@@ -86,7 +86,7 @@ protected:
 	AI		zPathfinder;
 
 	std::vector<Vector2>	zCurrentPath;
-	std::vector<Target>		zPlayers;
+	std::vector<Target>		zTargets;
 	Target					zMainTarget;
 
 	float	zCalmActionInterval;
