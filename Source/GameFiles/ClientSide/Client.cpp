@@ -36,6 +36,9 @@ Client::Client()
 	this->zKeyInfo.InitKeyBinds();
 	
 	this->zMsgHandler = NetworkMessageConverter();
+
+	this->zWorld = 0;
+	this->zWorldRenderer = 0;
 }
 
 int Client::Connect(const std::string& ip, const int port)
@@ -85,6 +88,16 @@ Client::~Client()
 	//	delete this->zPlayerInventory;
 	//	this->zPlayerInventory = NULL;
 	//}
+	if (this->zWorld)
+	{
+		delete this->zWorld;
+		this->zWorld = NULL;
+	}
+	if (this->zWorldRenderer)
+	{
+		delete this->zWorldRenderer;
+		this->zWorldRenderer = NULL;
+	}
 }
 
 float Client::Update()
@@ -104,6 +117,16 @@ float Client::Update()
 
 	this->zGuiManager->Update(this->zDeltaTime);
 
+	//Anchors with the world to decide what to render.
+	if(zWorld && zAnchor)
+	{
+		this->zAnchor->position = Vector2(this->zEng->GetCamera()->GetPosition().x, this->zEng->GetCamera()->GetPosition().z);
+
+		this->zAnchor->radius = this->zEng->GetEngineParameters()->FarClip;
+	}
+	if(zWorld)
+		this->zWorld->Update();
+
 	return this->zDeltaTime;
 }
 
@@ -112,6 +135,10 @@ void Client::InitGraphics()
 	this->zEng->CreateSkyBox("Media/skymap.dds");
 	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
 	this->zEng->GetCamera()->LookAt( Vector3(0, 0, 0) );
+	
+	if ( zWorld ) delete zWorld, zWorld=0;	
+		this->zWorld = new World(this, 10, 10);	
+	this->zWorldRenderer = new WorldRenderer(zWorld, GetGraphics());
 
 	//this->zEng->LoadingScreen("Media/LoadingScreenBG.png", "Media/LoadingScreenPG.png");
 	//iTerrain* terrain = this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 20);
@@ -782,4 +809,22 @@ bool Client::GetCursorVisibility()
 void Client::DisplayMessageToClient(const std::string& msg)
 {
 	MaloW::Debug(msg);
+}
+void Client::onEvent( Event* e )
+{
+	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
+	{
+		// Create Anchor
+		zAnchor = WLE->world->CreateAnchor();
+	}
+	else if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )
+	{
+		if ( zWorldRenderer ) delete zWorldRenderer, zWorldRenderer = 0;
+		if ( zAnchor ) zWorld->DeleteAnchor( zAnchor );
+		if ( zWorld ) zWorld = 0;
+	}
+	else if ( EntityRemovedEvent *ERE = dynamic_cast<EntityRemovedEvent*>(e) )
+	{
+		//zTargetedEntities.erase(ERE->entity);
+	}
 }
