@@ -10,10 +10,7 @@
 #include "Gear.h"
 #include "Food.h"
 #include "Container.h"
-#include "SmallStick.h"
-#include "MediumStick.h"
-#include "LargeStick.h"
-#include "Thread.h"
+#include "Material.h"
 #include <vector>
 #include "../../MaloWLib/MaloWFileDebug.h"
 

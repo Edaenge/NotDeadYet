@@ -251,7 +251,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 	}
 	if (item->GetItemType() == ITEM_TYPE_MATERIAL_MEDIUM_STICK)
 	{
-		MediumStick* material_Medium_Stick = dynamic_cast<MediumStick*>(item);
+		Material* material_Medium_Stick = dynamic_cast<Material*>(item);
 		if (!material_Medium_Stick)
 		{
 			MaloW::Debug("dynamic cast Failed in Host::UseItem (Medium Stick)");
@@ -265,7 +265,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 			this->SendErrorMessage(pActor->GetID(), "Missing_Material_Thread_in_Inventory");
 			return;
 		}
-		Thread* material_Thread = dynamic_cast<Thread*>(item);
+		Material* material_Thread = dynamic_cast<Material*>(item);
 
 		if (!material_Thread)
 		{
@@ -427,7 +427,6 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		inv->EquipItem(ItemID);
 
 		Projectile* oldProjectile = eq->GetProjectile();
-
 
 		if (oldProjectile)
 		{

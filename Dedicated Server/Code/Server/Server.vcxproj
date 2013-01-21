@@ -138,14 +138,10 @@
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Gear.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Inventory.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Item.h" />
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\LargeStick.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Material.h" />
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\MediumStick.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Projectile.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\RangedWeapon.h" />
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\SmallStick.h" />
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\Thread.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Weapon.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\KeyUtil\KeyStates.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\KeyUtil\KeyValues.h" />
@@ -179,6 +175,7 @@
     <ClInclude Include="EngineFiles\Server\DynamicProjectileObject.h" />
     <ClInclude Include="EngineFiles\Server\FoodObject.h" />
     <ClInclude Include="EngineFiles\Server\Host.h" />
+    <ClInclude Include="EngineFiles\Server\MaterialObject.h" />
     <ClInclude Include="EngineFiles\Server\ObjectManager.h" />
     <ClInclude Include="EngineFiles\Server\PlayerActor.h" />
     <ClInclude Include="EngineFiles\Server\StaticObjectActor.h" />
@@ -193,14 +190,10 @@
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Gear.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Inventory.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Item.cpp" />
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\LargeStick.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Material.cpp" />
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\MediumStick.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Projectile.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\RangedWeapon.cpp" />
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\SmallStick.cpp" />
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\Thread.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\KeyUtil\KeyStates.cpp" />
     <ClCompile Include="..\..\..\Source\MaloWLib\Process.cpp" />
     <ClCompile Include="..\..\..\Source\Network\NetworkMessageConverter.cpp" />
@@ -226,6 +219,7 @@
     <ClCompile Include="EngineFiles\Server\Host.cpp" />
     <ClCompile Include="EngineFiles\Server\HostConversions.cpp" />
     <ClCompile Include="EngineFiles\Server\HostItemHandler.cpp" />
+    <ClCompile Include="EngineFiles\Server\MaterialObject.cpp" />
     <ClCompile Include="EngineFiles\Server\ObjectManager.cpp" />
     <ClCompile Include="EngineFiles\Server\PlayerActor.cpp" />
     <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp" />

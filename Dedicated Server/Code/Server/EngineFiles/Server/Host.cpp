@@ -286,7 +286,7 @@ void Host::HandleNewConnections()
 
 	//Collect player infos
 	message = "";
-	std::vector<std::string> temp;
+	std::vector<std::string> tempPlayer;
 	std::vector<PlayerActor *> players = this->zActorHandler->GetPlayers();
 
 	//Gets PlayerInformation
@@ -303,11 +303,37 @@ void Host::HandleNewConnections()
 		message += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
 		message += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)(*it)->GetState());
 
-		temp.push_back(message);
+		tempPlayer.push_back(message);
 	}
 
 	//Send the players to player
-	for (auto it = temp.begin(); it < temp.end(); it++)
+	for (auto it = tempPlayer.begin(); it < tempPlayer.end(); it++)
+	{
+		client->sendData(*it);
+	}
+
+	message = "";
+	std::vector<std::string> tempAnimal;
+	std::vector<AnimalActor *> animals = this->zActorHandler->GetAnimals();
+	//Gets PlayerInformation
+	for(auto it = animals.begin(); it < animals.end(); it++)
+	{
+		Vector3 pos = (*it)->GetPosition();
+		Vector3 scale = (*it)->GetScale();
+		Vector4 rot = (*it)->GetRotation();
+
+		message =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_ANIMAL, (float)(*it)->GetID());
+		message += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		message += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+		message += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		message += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
+		message += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)(*it)->GetState());
+
+		tempAnimal.push_back(message);
+	}
+
+	//Send the players to player
+	for (auto it = tempPlayer.begin(); it < tempPlayer.end(); it++)
 	{
 		client->sendData(*it);
 	}

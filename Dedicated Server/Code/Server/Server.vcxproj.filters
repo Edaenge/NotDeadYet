@@ -176,20 +176,11 @@
     <ClInclude Include="..\..\..\Source\PhysicsEngine\PhysicsObject.h">
       <Filter>EngineFiles\PhysicsEngine</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\SmallStick.h">
-      <Filter>EngineFiles\Items</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\LargeStick.h">
-      <Filter>EngineFiles\Items</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Material.h">
       <Filter>EngineFiles\Items</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\MediumStick.h">
-      <Filter>EngineFiles\Items</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\Thread.h">
-      <Filter>EngineFiles\Items</Filter>
+    <ClInclude Include="EngineFiles\Server\MaterialObject.h">
+      <Filter>EngineFiles\Server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -309,20 +300,11 @@
     <ClCompile Include="..\..\..\Source\PhysicsEngine\PhysicsObject.cpp">
       <Filter>EngineFiles\PhysicsEngine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\SmallStick.cpp">
-      <Filter>EngineFiles\Items</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\LargeStick.cpp">
-      <Filter>EngineFiles\Items</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Material.cpp">
       <Filter>EngineFiles\Items</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\MediumStick.cpp">
-      <Filter>EngineFiles\Items</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\Thread.cpp">
-      <Filter>EngineFiles\Items</Filter>
+    <ClCompile Include="EngineFiles\Server\MaterialObject.cpp">
+      <Filter>EngineFiles\Server</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
