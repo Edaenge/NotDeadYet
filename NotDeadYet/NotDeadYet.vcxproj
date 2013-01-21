@@ -72,6 +72,12 @@
     <ClCompile Include="..\Source\SoundEngine\SoundEngine.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundHandler.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundSong.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\Entity.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\EntityList.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\Sector.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\World.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\WorldFile.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\WorldRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\NDYGFX\Include\GraphicsEngine.h" />
@@ -148,6 +154,15 @@
     <ClInclude Include="..\Source\SoundEngine\SoundEngine.h" />
     <ClInclude Include="..\Source\SoundEngine\SoundHandler.h" />
     <ClInclude Include="..\Source\SoundEngine\SoundSong.h" />
+    <ClInclude Include="..\Source\WorldFiles\CircleAndRect.h" />
+    <ClInclude Include="..\Source\WorldFiles\Entity.h" />
+    <ClInclude Include="..\Source\WorldFiles\EntityList.h" />
+    <ClInclude Include="..\Source\WorldFiles\Observer.h" />
+    <ClInclude Include="..\Source\WorldFiles\Sector.h" />
+    <ClInclude Include="..\Source\WorldFiles\World.h" />
+    <ClInclude Include="..\Source\WorldFiles\WorldEvents.h" />
+    <ClInclude Include="..\Source\WorldFiles\WorldFile.h" />
+    <ClInclude Include="..\Source\WorldFiles\WorldRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GameIcon.ico" />

@@ -26,7 +26,12 @@ Host::Host()
 	this->zTimeOut = 15.0f;
 	this->zPingMessageInterval = 5.0f;
 
+<<<<<<< HEAD
 	//timer = 0;
+=======
+	this->zWorld = 0;
+	zAnchorPlayerMap.clear();
+>>>>>>> 8b93855f462eb366e5d1b2751a3834f9dc2c71e2
 }
 
 Host::~Host()
@@ -45,6 +50,7 @@ Host::~Host()
 	{
 		SAFE_DELETE(*x);
 	}
+	SAFE_DELETE(this->zWorld);
 }
 //NEEDS FIXING
 void Host::Init()
@@ -292,6 +298,9 @@ int Host::InitHost( const int PORT, const unsigned int MAX_CLIENTS )
 	this->zMaxClients = MAX_CLIENTS;
 	this->zPort	= PORT;
 	
+	if ( zWorld ) delete zWorld, zWorld=0;
+	this->zWorld = new World(this, "3x3.map");
+
 	return code;
 }
 
@@ -1215,6 +1224,9 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	//Add new player to the list
 	this->zActorHandler->AddNewPlayer(pi);
 
+	pi->AddObserver(this);
+	zAnchorPlayerMap[pi] = this->zWorld->CreateAnchor();
+
 	//Gather New player information
 	Vector3 pos = pi->GetPosition();
 	Vector3 scale = pi->GetScale();
@@ -1352,4 +1364,29 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 int Host::GetNrOfPlayers() const
 {
 	return this->zClients.size();
+}
+void Host::onEvent( Event* e )
+{
+	if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )
+	{
+		if ( zWorld ) zWorld = 0;
+	}
+	else if ( EntityRemovedEvent *ERE = dynamic_cast<EntityRemovedEvent*>(e) )
+	{
+		//zTargetedEntities.erase(ERE->entity);
+	}
+	else if( PlayerUpdatedEvent* PUE = dynamic_cast<PlayerUpdatedEvent*>(e) )
+	{
+		Vector3 playerTempPos = PUE->playerActor->GetPosition();
+		if(playerTempPos.x > 0 || playerTempPos.y > 0)
+		{
+			float yPos = this->zWorld->GetHeightAtWorldPos(playerTempPos.x, playerTempPos.z);
+			if((yPos - playerTempPos.y) <= 0.3f)
+			{
+				PUE->playerActor->SetPosition(Vector3(playerTempPos.x, yPos, playerTempPos.z));
+				this->zAnchorPlayerMap[PUE->playerActor]->position = Vector2(playerTempPos.x, playerTempPos.z);
+				PUE->validMove = true;
+			}
+		}
+	}
 }

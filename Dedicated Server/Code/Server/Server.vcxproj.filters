@@ -119,11 +119,28 @@
     <ClCompile Include="EngineFiles\Network\NetworkServer.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="..\..\..\Source\GameFiles\Items\RangedWeapon.cpp">
       <Filter>Items</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.cpp">
       <Filter>Items</Filter>
+=======
+    <ClCompile Include="EngineFiles\WorldFiles\Entity.cpp">
+      <Filter>WorldFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\WorldFiles\EntityList.cpp">
+      <Filter>WorldFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\WorldFiles\Sector.cpp">
+      <Filter>WorldFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\WorldFiles\World.cpp">
+      <Filter>WorldFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\WorldFiles\WorldFile.cpp">
+      <Filter>WorldFiles</Filter>
+>>>>>>> 8b93855f462eb366e5d1b2751a3834f9dc2c71e2
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -272,11 +289,37 @@
     <ClInclude Include="EngineFiles\Network\NetworkServer.h">
       <Filter>Network</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="..\..\..\Source\GameFiles\Items\RangedWeapon.h">
       <Filter>Items</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.h">
       <Filter>Items</Filter>
+=======
+    <ClInclude Include="EngineFiles\WorldFiles\CircleAndRect.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\Entity.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\EntityList.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\Observer.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\Sector.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\World.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\WorldEvents.h">
+      <Filter>WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\WorldFiles\WorldFile.h">
+      <Filter>WorldFiles</Filter>
+>>>>>>> 8b93855f462eb366e5d1b2751a3834f9dc2c71e2
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -300,6 +343,9 @@
     </Filter>
     <Filter Include="Wrapper">
       <UniqueIdentifier>{1612e473-1e41-4541-a0b8-09fd50212dba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="WorldFiles">
+      <UniqueIdentifier>{413b5f07-d6cc-4b76-b72e-2fde6c5fc537}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
