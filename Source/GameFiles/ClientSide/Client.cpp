@@ -70,44 +70,9 @@ Client::~Client()
 	SAFE_DELETE(this->zServerChannel);
 	SAFE_DELETE(this->zPlayerInventory);
 
-	//if (this->zGuiManager)
-	//{
-	//	delete this->zGuiManager;
-	//	this->zGuiManager = NULL;
-	//}
-
-	//if (this->zObjectManager)
-	//{
-	//	delete this->zObjectManager;
-	//	this->zObjectManager = NULL;
-	//}
-
-	//if (this->zServerChannel)
-	//{
-	//	delete this->zServerChannel;
-	//	this->zServerChannel = NULL;
-	//}
-
-	//if (this->zPlayerInventory)
-	//{
-	//	delete this->zPlayerInventory;
-	//	this->zPlayerInventory = NULL;
-	//}
-	if (this->zWorld)
-	{
-		delete this->zWorld;
-		this->zWorld = NULL;
-	}
-	if (this->zWorldRenderer)
-	{
-		delete this->zWorldRenderer;
-		this->zWorldRenderer = NULL;
-	}
-	if(zCrossHair)
-	{
-		delete this->zCrossHair;
-		zCrossHair = NULL;
-	}
+	SAFE_DELETE(this->zWorld);
+	SAFE_DELETE(this->zWorldRenderer);
+	SAFE_DELETE(this->zCrossHair);
 }
 
 float Client::Update()
@@ -128,7 +93,6 @@ float Client::Update()
 	this->zGuiManager->Update(this->zDeltaTime);
 
 	
-
 	//Anchors with the world to decide what to render.
 	if(zWorld && zAnchor)
 	{

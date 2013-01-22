@@ -17,7 +17,6 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Server weapon isn't the same as Client Weapon");
 	}
 
-
 	float range;
 	RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(weapon);
 
