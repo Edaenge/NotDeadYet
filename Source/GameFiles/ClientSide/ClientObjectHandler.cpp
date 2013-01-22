@@ -319,6 +319,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 
 	mesh->Scale(scale);
+	mesh->SetQuaternion(rotation);
 
 	//Create player data
 	dynamicObject->SetStaticMesh(mesh);
@@ -413,10 +414,7 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 		//Create a new Mesh with the current values
 		iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), PlayerObjectPointer->GetPosition());
 		float scale = PlayerObjectPointer->GetScale().y;
-		Vector4 quat = PlayerObjectPointer->GetRotation();
 
-		mesh->SetQuaternion(Vector4(0,0,0,1));
-		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
 		mesh->Scale(scale);
 
 		if (PlayerObjectPointer->HasMesh())
@@ -513,8 +511,7 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		float scale = StaticObjectPointer->GetScale().y;
 		Vector4 quat = StaticObjectPointer->GetRotation();
 
-		mesh->SetQuaternion(Vector4(0,0,0,1));
-		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
+		mesh->SetQuaternion(quat);
 		mesh->Scale(scale);
 
 		if (StaticObjectPointer->HasMesh())
@@ -596,8 +593,7 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		float scale = AnimalObjectPointer->GetScale().y;
 		Vector4 quat = AnimalObjectPointer->GetRotation();
 
-		mesh->SetQuaternion(Vector4(0,0,0,1));
-		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
+		mesh->SetQuaternion(quat);
 		mesh->Scale(scale);
 
 		if (AnimalObjectPointer->HasMesh())
@@ -695,8 +691,10 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 		//Create a new Mesh with the current values
 		iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), DynamicObjectPointer->GetPosition());
 		float scale = DynamicObjectPointer->GetScale().y;
+		Vector4 quad = DynamicObjectPointer->GetRotation();
 
 		mesh->Scale(scale);
+		mesh->SetQuaternion(quad);
 
 		if (DynamicObjectPointer->HasMesh())
 		{

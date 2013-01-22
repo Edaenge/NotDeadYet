@@ -55,7 +55,6 @@ bool BioActor::IsAlive() const
 
 bool BioActor::Sprint(float dt)
 {
-
 	float temp = this->zStamina;
 	temp -= dt * this->zStaminaCof;
 

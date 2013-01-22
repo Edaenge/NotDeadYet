@@ -54,7 +54,6 @@ ActorHandler::~ActorHandler()
 	SAFE_DELETE(this->zPhysicsEngine);
 }
 
-
 void ActorHandler::UpdateObjects( float deltaTime )
 {
 	Vector3 playersPos[32];
@@ -187,15 +186,13 @@ bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Pr
 
 	Vector3 around = ArrowDirection.GetCrossProduct(CameraDirection);
 	float angle = acos(ArrowDirection.GetDotProduct(CameraDirection) / (ArrowDirection.GetLength() * CameraDirection.GetLength()));
-	/*pObj->SetQuaternion(Vector4(0, 0, 0, 1));
+	pObj->SetQuaternion(Vector4(0, 0, 0, 1));
 	pObj->RotateAxis(around, angle);
-	*/
-
 
 	//Set new data
 	new_Projectile->SetDirection(direction);
 	new_Projectile->SetPosition(pos);
-	new_Projectile->SetRotation(Vector4(around.x, around.y, around.z, angle));
+	//new_Projectile->SetRotation(Vector4(around.x, around.y, around.z, angle));
 
 	this->zDynamicProjectiles.push_back(new_Projectile);
 

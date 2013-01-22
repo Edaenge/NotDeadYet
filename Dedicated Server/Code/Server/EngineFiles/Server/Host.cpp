@@ -3,7 +3,7 @@
 #include "DeerActor.h"
 
 // 50 updates per sec
-static const float UPDATE_DELAY = 0.02f;
+static const float UPDATE_DELAY = 0.020f;
 
 Host::Host()
 {
@@ -285,8 +285,8 @@ void Host::Life()
 		
 		if(waitTimer >= UPDATE_DELAY)
 		{
-			waitTimer -= UPDATE_DELAY;
-			if (waitTimer < 0.0f)
+// 			waitTimer -= UPDATE_DELAY;
+// 			if (waitTimer < 0.0f)
 				waitTimer = 0.0f;
 
 			//if (Messages::FileWrite())
@@ -631,8 +631,6 @@ void Host::SendDynamicActorUpdates()
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it_Dynamic)->GetActorObjectName());
 
 		dynamicData.push_back(mess);
-
-		MaloW::Debug(MaloW::convertNrToString(rot.x)+ " "+ MaloW::convertNrToString(rot.y)+ " " + MaloW::convertNrToString(rot.z) + " "+ MaloW::convertNrToString(rot.w));
 	}
 
 	//Send Data to clients

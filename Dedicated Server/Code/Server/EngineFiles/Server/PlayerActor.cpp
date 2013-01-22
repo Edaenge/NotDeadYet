@@ -47,7 +47,7 @@ void PlayerActor::Update(float deltaTime)
 	this->zPreviousPos = GetPosition();
 	Vector3 modified = GetPosition();
 
-	this->zDirection.y = 0;
+	//this->zDirection.y = 0;
 	if(this->zKeyStates.GetKeyState(KEY_SPRINT))
 	{
 		if(Sprint(dt))

@@ -23,24 +23,7 @@ public:
 		this->zDirection = Vector3(0.0f, 0.0f, -1.0f);
 		this->zUp = Vector3(0.0f, 1.0f, 0.0f);
 	}
-	Actor(const Vector3& pos)
-	{
-		this->zID = -1;
 
-		this->zActorModel = "none";
-		this->zActorObjectName = "none";
-		this->zDirection = Vector3(0.0f, 0.0f, -1.0f);
-		this->zUp = Vector3(0.0f, 1.0f, 0.0f);
-	}
-	Actor(const Vector3& pos, const Vector4& rot) 
-	{
-		this->zID = -1;
-
-		this->zActorModel = "none";
-		this->zActorObjectName = "none";
-		this->zDirection = Vector3(0.0f, 0.0f, -1.0f);
-		this->zUp = Vector3(0.0f, 1.0f, 0.0f);
-	}
 	virtual ~Actor(){}
 	
 	inline int  GetID() const {return this->zID;}
@@ -49,10 +32,10 @@ public:
 	Vector3 GetDirection() const {return this->zDirection;}
 	const Vector3& GetUpVector() const {return this->zUp;}
 
-	inline virtual void SetID(const int id) {this->zID = id;}
+	inline  void SetID(const int id) {this->zID = id;}
 	virtual void SetActorModel(const std::string& modelStr) {zActorModel = modelStr;}
 	virtual void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
-	inline virtual void SetDirection(Vector3 dir) {this->zDirection = dir;}
+	inline  void SetDirection(Vector3 dir) {this->zDirection = dir;}
 	virtual void SetUpVector(const Vector3& up){this->zUp = up;}
 
 	virtual void Update(float deltaTime) = 0;

@@ -10,7 +10,7 @@ using namespace MaloW;
 //Timeout_value = 10 sek
 static const float TIMEOUT_VALUE = 10.0f;
 // 50 updates per sec
-static const float UPDATE_DELAY = 0.02f;
+static const float UPDATE_DELAY = 0.020f;
 static const float MAX_DISTANCE_TO_OBJECT = 3.0f;
 
 Client::Client()
@@ -176,10 +176,10 @@ void Client::Life()
 		{
 			this->HandleKeyboardInput();
 
-			if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
-			{
-				this->zSendUpdateDelayTimer -= UPDATE_DELAY;
-				if (this->zSendUpdateDelayTimer < 0.0f)
+ 			if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
+ 			{
+// 				this->zSendUpdateDelayTimer -= UPDATE_DELAY;
+ 				//if (this->zSendUpdateDelayTimer < 0.0f)
 					this->zSendUpdateDelayTimer = 0.0f;
 
 				/*if (Messages::FileWrite())

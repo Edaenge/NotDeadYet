@@ -16,11 +16,10 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& 
 	else
 		this->SetID(other.GetID());
 
-	SetRotation(other.GetRotation());
-	SetPosition(other.GetPosition());
+
+	this->zPhysicObj = other.zPhysicObj;
 
 	this->zType = other.zType;
-	SetScale(other.GetScale());
 	this->zStacks = other.zStacks;
 	this->zDamage = other.zDamage;
 	this->zWeight = other.zWeight;
@@ -29,6 +28,7 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& 
 	this->zActorModel = other.zActorModel;
 	this->zDescription = other.zDescription;
 	this->zActorObjectName = other.zActorObjectName;
+	this->zDirection = other.zDirection;
 }
 
 DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* other, bool genID)
@@ -48,9 +48,7 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* 
 	this->zActorObjectName = other->zActorObjectName;
 	this->zIconPath = other->zIconPath;
 	this->zDescription = other->zDescription;
-	SetScale(other->GetScale());
-	SetScale(other->GetScale());
-	SetPosition(other->GetPosition());
+	this->zPhysicObj = other->zPhysicObj;
 }
 
 DynamicProjectileObject::~DynamicProjectileObject()
