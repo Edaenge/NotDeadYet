@@ -29,6 +29,28 @@ Host::Host()
 	//timer = 0;
 	this->zWorld = 0;
 	zAnchorPlayerMap.clear();
+
+	//Temporary spawn points
+	this->pSpawnPosition = 0;
+	this->aSpawnPosition = 0;
+
+	this->zPlayerSpawnPoints.push_back(Vector3(35.6f, 0, 22.8f));
+	this->zPlayerSpawnPoints.push_back(Vector3(68.8f, 0, 21.8f));
+	this->zPlayerSpawnPoints.push_back(Vector3(63.77f, 0, 31.0f));
+	this->zPlayerSpawnPoints.push_back(Vector3(73.4f, 0, 44.0f));
+	this->zPlayerSpawnPoints.push_back(Vector3(72.1f, 0, 57.3f));
+	this->zPlayerSpawnPoints.push_back(Vector3(62.5f, 0, 69.9f));
+	this->zPlayerSpawnPoints.push_back(Vector3(48.0f, 0, 67.0f));
+
+	this->zPlayerSpawnPoints.push_back(Vector3(33.6f, 0, 65.8f));
+	this->zPlayerSpawnPoints.push_back(Vector3(19.3f, 0, 61.0f));
+	this->zPlayerSpawnPoints.push_back(Vector3(18.7f, 0, 44.3f));
+	this->zPlayerSpawnPoints.push_back(Vector3(25.25f, 0, 29.7f));
+
+	this->zAnimalSpawnPoints.push_back(Vector3(27.6f, 0, 32.4f));
+	this->zAnimalSpawnPoints.push_back(Vector3(38.0f, 0, 44.2f));
+	this->zAnimalSpawnPoints.push_back(Vector3(48.8f, 0, 45.9f));
+	this->zAnimalSpawnPoints.push_back(Vector3(51.6f, 0, 37.7f));
 }
 
 Host::~Host()
@@ -57,7 +79,7 @@ void Host::Init()
 	FoodObject* foodObj = NULL; /*new FoodObject(true);*/
 	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, &foodObj, true))
 	{
-		foodObj->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
+		foodObj->SetPosition(Vector3(45.0f, 0.0f, 45.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
 		
@@ -69,7 +91,7 @@ void Host::Init()
 	foodObj = NULL; /*new FoodObject(true);*/
 	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_WOLF_MEAT, &foodObj, true))
 	{
-		foodObj->SetPosition(Vector3(4.0f, 0.0f, 5.0f));
+		foodObj->SetPosition(Vector3(44.0f, 0.0f, 45.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticFoodActor(foodObj);
 
@@ -82,7 +104,7 @@ void Host::Init()
 	WeaponObject* weaponObj = NULL;/*new WeaponObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, &weaponObj, true))
 	{
-		weaponObj->SetPosition(Vector3(5.0f, 0.0f, 3.0f));
+		weaponObj->SetPosition(Vector3(45.0f, 0.0f, 43.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
@@ -95,7 +117,7 @@ void Host::Init()
 	weaponObj = NULL;/*new WeaponObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_ROCK, &weaponObj, true))
 	{
-		weaponObj->SetPosition(Vector3(4.0f, 0.0f, 3.0f));
+		weaponObj->SetPosition(Vector3(44.0f, 0.0f, 43.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
@@ -108,7 +130,7 @@ void Host::Init()
 	weaponObj = NULL; /*new WeaponObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, &weaponObj, true))
 	{
-		weaponObj->SetPosition(Vector3(2.0f, 0.0f, 3.0f));
+		weaponObj->SetPosition(Vector3(42.0f, 0.0f, 43.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 		
@@ -120,7 +142,7 @@ void Host::Init()
 	weaponObj = NULL; /*new WeaponObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_POCKET_KNIFE, &weaponObj, true))
 	{
-		weaponObj->SetPosition(Vector3(1.0f, 0.0f, 3.0f));
+		weaponObj->SetPosition(Vector3(41.0f, 0.0f, 43.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
@@ -133,7 +155,7 @@ void Host::Init()
 	ContainerObject* containerObj = NULL; /*new ContainerObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, &containerObj, true))
 	{
-		containerObj->SetPosition(Vector3(-1.0f, 0.0f, 4.0f));
+		containerObj->SetPosition(Vector3(39.0f, 0.0f, 44.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticContainerActor(containerObj);
 		
@@ -145,7 +167,7 @@ void Host::Init()
 	containerObj = NULL; /*new ContainerObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_WATER_BOTTLE, &containerObj, true))
 	{
-		containerObj->SetPosition(Vector3(3.0f, 0.0f, 2.0f));
+		containerObj->SetPosition(Vector3(43.0f, 0.0f, 42.0f));
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticContainerActor(containerObj);
 
@@ -157,7 +179,7 @@ void Host::Init()
 	StaticProjectileObject* projectileObj = NULL; /*new ContainerObject(true);*/
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_PROJECTILE_ARROW, &projectileObj, true))
 	{
-		projectileObj->SetPosition(Vector3(3.0f, 0.0f, 3.0f));
+		projectileObj->SetPosition(Vector3(43.0f, 0.0f, 43.0f));
 		projectileObj->SetStackSize(10);
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticProjectileActor(projectileObj);
@@ -170,7 +192,7 @@ void Host::Init()
 	MaterialObject* material = NULL;
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_SMALL_STICK, &material, true))
 	{
-		material->SetPosition(Vector3(2.0f, 0.0f, 2.0f));
+		material->SetPosition(Vector3(42.0f, 0.0f, 42.0f));
 
 
 		//Adds The Object To the Array
@@ -184,7 +206,7 @@ void Host::Init()
 	material = NULL;
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_MEDIUM_STICK, &material, true))
 	{
-		material->SetPosition(Vector3(1.0f, 0.0f, 2.0f));
+		material->SetPosition(Vector3(41.0f, 0.0f, 42.0f));
 
 
 		//Adds The Object To the Array
@@ -198,7 +220,7 @@ void Host::Init()
 	material = NULL;
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_THREAD, &material, true))
 	{
-		material->SetPosition(Vector3(0.0f, 0.0f, 2.0f));
+		material->SetPosition(Vector3(40.0f, 0.0f, 42.0f));
 
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticMaterialObject(material);
@@ -208,8 +230,10 @@ void Host::Init()
 
 		counter++;
 	}
+	if (this->aSpawnPosition > this->zAnimalSpawnPoints.size())
+		this->aSpawnPosition = 0;
 
-	DeerActor* testDeer = new DeerActor(Vector3(0,0,0), true, false);
+	DeerActor* testDeer = new DeerActor(zAnimalSpawnPoints[this->aSpawnPosition], true, false);
 	testDeer->SetActorModel("Media/Tree_02_v02_r.obj");
 
 	this->zActorHandler->AddAnimalActor(testDeer);
@@ -1217,7 +1241,10 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	}
 
 	//Debug Pos
-	pi->SetPosition(Vector3((float)(pi->GetID()%4), 0.0f, 1.0f)); 
+	if (this->pSpawnPosition > this->zPlayerSpawnPoints.size())
+		this->pSpawnPosition = 0;
+
+	pi->SetPosition(zPlayerSpawnPoints[this->pSpawnPosition]);
 	//Add new player to the list
 	this->zActorHandler->AddNewPlayer(pi);
 

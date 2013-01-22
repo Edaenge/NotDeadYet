@@ -92,7 +92,6 @@ float Client::Update()
 
 	this->zGuiManager->Update(this->zDeltaTime);
 
-	
 	//Anchors with the world to decide what to render.
 	if(zWorld && zAnchor)
 	{
@@ -397,7 +396,7 @@ void Client::HandleKeyboardInput()
 	//	this->zKeyInfo.SetKeyState(KEY_JUMP, false);
 	//}
 	//Used For Testing
-	if (this->zEng->GetKeyListener()->IsPressed('Q'))
+	if (this->zEng->GetKeyListener()->IsPressed('1'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
@@ -416,6 +415,25 @@ void Client::HandleKeyboardInput()
 			}
 		}
 	}
+	else if (this->zEng->GetKeyListener()->IsPressed('2'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
+			Equipment* eq = pObject->GetEquipmentPtr();
+
+			Item* item = eq->GetProjectile();
+			if (item)
+			{
+				MaloW::Debug("Item UnEquipped " + item->GetItemName());
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
+				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_AMMO);
+
+				this->zServerChannel->sendData(msg);
+			}
+		}
+	}
 	else
 	{
 		if (this->zKeyInfo.GetKeyState(KEY_TEST))
@@ -423,7 +441,6 @@ void Client::HandleKeyboardInput()
 			this->zKeyInfo.SetKeyState(KEY_TEST, false);
 		}
 	}
-
 	if (this->zIsHuman)
 	{
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
@@ -796,6 +813,7 @@ void Client::DisplayMessageToClient(const std::string& msg)
 {
 	MaloW::Debug(msg);
 }
+
 void Client::onEvent( Event* e )
 {
 	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )

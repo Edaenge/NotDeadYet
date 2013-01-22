@@ -98,7 +98,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-
+			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z);
 			animalObject->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -360,11 +360,7 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			//iTerrain* terrain = this->zObjectManager->GetTerrain();
-			//if (terrain)
-			//{
-			//	position.y = terrain->GetYPositionAt(position.x, position.z);
-			//}
+
 			PlayerObjectPointer->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -463,6 +459,7 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
+			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
@@ -559,7 +556,7 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-
+			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z);
 			AnimalObjectPointer->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
