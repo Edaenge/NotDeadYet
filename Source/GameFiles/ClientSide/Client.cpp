@@ -26,7 +26,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Bow_v01.obj";
+	this->zMeshID = "Media/Arrow_v01.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -170,10 +170,6 @@ void Client::InitGraphics()
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(x, y), Vector2(length, length), "Media/cross.png");
 
-	//this->zEng->LoadingScreen("Media/LoadingScreenBG.png", "Media/LoadingScreenPG.png");
-	//iTerrain* terrain = this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 20);
-
-	//this->zObjectManager->AddTerrain(terrain);
 	//this->zEng->StartRendering();
 }
 
@@ -823,15 +819,6 @@ bool Client::CheckCollision()
 
 	if (!playerMesh)
 		return false;
-
-	std::vector<iMesh*> mapObjects = this->zObjectManager->GetMapObjects();
-
-	for (auto it_Map = mapObjects.begin(); it_Map < mapObjects.end(); it_Map++)
-	{
-		data = this->zEng->GetPhysicsEngine()->GetCollisionMeshMesh(playerMesh, (*it_Map));
-		if (data.collision)
-			return true;
-	}
 
 	return false;
 }
