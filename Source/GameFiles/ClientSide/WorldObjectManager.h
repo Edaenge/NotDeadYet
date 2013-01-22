@@ -37,7 +37,6 @@ public:
 	inline std::vector<AnimalObject*>& GetAnimals() {return this->zAnimalObjects;}
 	inline std::vector<StaticObject*>& GetStaticObjects() {return this->zStaticObjects;}
 	inline std::vector<DynamicObject*>& GetDynamicObjects() {return this->zDynamicObjects;}
-	inline std::vector<iMesh*>& GetMapObjects() {return this->zMapObjects;}
 
 	PlayerObject* GetPlayerObject(const unsigned int pos);
 	AnimalObject* GetAnimalObject(const unsigned int pos);
@@ -53,13 +52,7 @@ public:
 	DynamicObject* SearchAndGetDynamicObject(const unsigned int id);
 	/*! Interpolates all the Objects towards their final Position*/
 	void UpdateObjects(float deltaTime);
-	/*! Adds a Map Object to the Array.*/
-	bool AddMapObject(iMesh* object);
-	bool AddTerrain(iTerrain* terrain);
 
-	iMesh* GetMapObject(unsigned int position);
-	/*! Returns Pointer to the Terrain.*/
-	iTerrain* GetTerrain();
 private:
 	/*! Search for the object with the correct ID and returns a Position if found.*/
 	int SearchForPlayerObject(const unsigned int id);
@@ -76,9 +69,4 @@ private:
 	std::vector<AnimalObject*> zAnimalObjects;
 	std::vector<StaticObject*> zStaticObjects;
 	std::vector<DynamicObject*> zDynamicObjects;
-	/*! Objects that are part part of the map are stored here
-	for example trees.*/
-	std::vector<iMesh*> zMapObjects;
-	/*! Pointer to the Terrain.*/
-	iTerrain* zTerrain;
 };

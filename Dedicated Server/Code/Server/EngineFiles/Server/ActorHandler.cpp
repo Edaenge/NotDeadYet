@@ -1,3 +1,4 @@
+
 #include "ActorHandler.h"
 
 ActorHandler::ActorHandler()
@@ -29,6 +30,16 @@ ActorHandler::~ActorHandler()
 		SAFE_DELETE((*x));
 	}
 
+	for(auto x = this->zContainers.begin(); x < this->zContainers.end(); x++)
+	{
+		SAFE_DELETE((*x));
+	}
+
+	for(auto x = this->zMaterials.begin(); x < this->zMaterials.end(); x++)
+	{
+		SAFE_DELETE((*x));
+	}
+
 	for(auto x = this->zStaticProjectiles.begin(); x < this->zStaticProjectiles.end(); x++)
 	{
 		SAFE_DELETE((*x));
@@ -42,6 +53,7 @@ ActorHandler::~ActorHandler()
 	SAFE_DELETE(this->zObjManager);
 	SAFE_DELETE(this->zPhysicsEngine);
 }
+
 
 void ActorHandler::UpdateObjects( float deltaTime )
 {

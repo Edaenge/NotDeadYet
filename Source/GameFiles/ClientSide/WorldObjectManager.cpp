@@ -3,7 +3,7 @@
 
 WorldObjectManager::WorldObjectManager()
 {
-	this->zTerrain = NULL;
+
 }
 
 WorldObjectManager::~WorldObjectManager()
@@ -42,13 +42,6 @@ WorldObjectManager::~WorldObjectManager()
 			delete (*x);
 			(*x) = 0;
 		}
-	}
-	this->zMapObjects.erase(this->zMapObjects.begin(), this->zMapObjects.end());
-
-	if (this->zTerrain)
-	{
-		//delete this->zTerrain;
-		this->zTerrain = NULL;
 	}
 }
 
@@ -302,40 +295,6 @@ void WorldObjectManager::UpdateObjects( float deltaTime )
 	{
 		(*x)->Update(deltaTime);
 	}
-}
-
-bool WorldObjectManager::AddMapObject(iMesh* object)
-{
-	if (object)
-	{
-		this->zMapObjects.push_back(object);
-		return true;
-	}
-	return false;
-}
-
-bool WorldObjectManager::AddTerrain(iTerrain* terrain)
-{
-	if (terrain)
-	{
-		this->zTerrain = terrain;
-		return true;
-	}
-	return false;
-}
-
-iMesh* WorldObjectManager::GetMapObject(unsigned int position)
-{
-	if (position < this->zMapObjects.size())
-	{
-		return this->zMapObjects[position];
-	}
-	return NULL;
-}
-
-iTerrain* WorldObjectManager::GetTerrain()
-{
-	return this->zTerrain;
 }
 
 PlayerObject* WorldObjectManager::SearchAndGetPlayerObject(const unsigned int id)

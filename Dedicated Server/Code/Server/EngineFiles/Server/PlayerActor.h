@@ -102,5 +102,6 @@ class PlayerUpdatedEvent : public Event
 public:
 	PlayerActor* playerActor;
 	bool validMove;
-	PlayerUpdatedEvent(PlayerActor* playerActor, bool& validMove) : playerActor(playerActor), validMove(validMove){}
+	Vector3 prevPos;
+	PlayerUpdatedEvent(PlayerActor* playerActor, bool& validMove, Vector3 prevPos) : playerActor(playerActor), validMove(validMove), prevPos(prevPos){}
 };

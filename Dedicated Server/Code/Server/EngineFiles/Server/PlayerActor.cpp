@@ -47,8 +47,7 @@ void PlayerActor::Update(float deltaTime)
 	this->zPreviousPos = GetPosition();
 	Vector3 modified = GetPosition();
 
-	bool changed = false;
-
+	this->zDirection.y = 0;
 	if(this->zKeyStates.GetKeyState(KEY_SPRINT))
 	{
 		if(Sprint(dt))
@@ -87,31 +86,30 @@ void PlayerActor::Update(float deltaTime)
 	if(this->zKeyStates.GetKeyState(KEY_FORWARD))
 	{
 		modified = (modified + this->zDirection * dt * this->zVelocity);
-		changed = true;
+	}/*
+	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
+	{
+		this->zPos = this->zPos + this->zDirection * dt * this->zVelocity;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
 	{
 		modified = (modified + this->zDirection * -1 * dt * this->zVelocity);
 
 		modified = (modified + this->zDirection * dt * this->zVelocity);
-		changed = true;
-	}
+	}*/
 	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
 	{
 		modified = (modified + this->zDirection * -1 * dt * this->zVelocity);
-		changed = true;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_RIGHT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDirection);
 		modified = (modified + (right * dt * this->zVelocity));
-		changed = true;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_LEFT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDirection);
 		modified = (modified + (right * -1 * dt * this->zVelocity));
-		changed = true;
 	}
 
 	if(this->zState != STATE_RUNNING && (this->zStamina < this->zStaminaMax))
@@ -123,17 +121,15 @@ void PlayerActor::Update(float deltaTime)
 
 		this->zStaminaChanged = true;
 	}
-	bool validMove = false;
-	if(changed)
-	{
-		SetPosition(modified);
 
-		PlayerUpdatedEvent temp = PlayerUpdatedEvent(this, validMove);
-		NotifyObservers( &temp);
-		if(!temp.validMove)
-			SetPosition(zPreviousPos);
-		
-	}
+	bool validMove = false;
+	SetPosition(modified);
+
+	PlayerUpdatedEvent temp = PlayerUpdatedEvent(this, validMove, this->zPreviousPos);
+	NotifyObservers( &temp);
+	if(!temp.validMove)
+		SetPosition(zPreviousPos);
+	
 }
 
 bool PlayerActor::PickUpObject( DynamicObjectActor* object)
@@ -351,4 +347,3 @@ void PlayerActor::AddChangedHData( string& mess, NetworkMessageConverter* nmc )
 		this->zHydrationChanged = false;
 	}
 }
-
