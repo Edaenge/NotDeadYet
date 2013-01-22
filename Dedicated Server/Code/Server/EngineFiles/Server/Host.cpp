@@ -1375,15 +1375,52 @@ void Host::onEvent( Event* e )
 	else if( PlayerUpdatedEvent* PUE = dynamic_cast<PlayerUpdatedEvent*>(e) )
 	{
 		Vector3 playerTempPos = PUE->playerActor->GetPosition();
-		if(playerTempPos.x > 0 || playerTempPos.y > 0)
+		
+		if(playerTempPos.x >= 0 && playerTempPos.z >= 0)
 		{
+			Vector3 oldPos = PUE->prevPos; 
 			float yPos = this->zWorld->GetHeightAtWorldPos(playerTempPos.x, playerTempPos.z);
-			if((yPos - playerTempPos.y) <= 0.3f)
+			Vector3 dir = playerTempPos - oldPos;
+			Vector3 groundNormal = this->zWorld->GetNormalAtWorldPos(playerTempPos.x, playerTempPos.z);
+
+			playerTempPos.y -= (9.82 * this->zDeltaTime);
+			if(playerTempPos.y < yPos)
+				playerTempPos.y = yPos;
+
+			//dir.y = groundNormal.y;
+			//dir.y = yPos;
+			dir.Normalize();
+			Vector3 tempGround = groundNormal;
+			tempGround.y = 0;
+			tempGround.Normalize();
+			float dot = dir.GetDotProduct(tempGround);
+			if(dot > 0.2)
 			{
-				PUE->playerActor->SetPosition(Vector3(playerTempPos.x, yPos, playerTempPos.z));
+				PUE->validMove = true;
+				PUE->playerActor->SetPosition(Vector3(playerTempPos.x, playerTempPos.y, playerTempPos.z));
+				this->zAnchorPlayerMap[PUE->playerActor]->position = Vector2(playerTempPos.x, playerTempPos.z);
+			}
+			/*
+			if((yPos - playerTempPos.y) < 0.0f)
+			{
+				PUE->validMove = true;
+				PUE->playerActor->SetPosition(Vector3(playerTempPos.x, yPos, 
+					playerTempPos.z));
+				this->zAnchorPlayerMap[PUE->playerActor]->position = Vector2(playerTempPos.x, playerTempPos.z);
+			}
+			*/
+			
+			else if(groundNormal.y > 0.6f)
+			{
+				PUE->playerActor->SetPosition(Vector3(playerTempPos.x, yPos, 
+					playerTempPos.z));
 				this->zAnchorPlayerMap[PUE->playerActor]->position = Vector2(playerTempPos.x, playerTempPos.z);
 				PUE->validMove = true;
 			}
+		}
+		else
+		{
+			PUE->validMove = true;
 		}
 	}
 }

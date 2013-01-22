@@ -129,6 +129,9 @@ public:
 	unsigned int GetTextureNodesInCircle( const Vector2& center, float radius, std::set<Vector2>& out ) const;
 	const std::set< Vector2UINT >& GetLoadedSectors() const { return zLoadedSectors; }
 
+	// Normals
+	Vector3 GetNormalAtWorldPos( float posx, float posz );
+
 protected:
 	// Engine Events
 	virtual void onEvent( Event* e );

@@ -311,7 +311,7 @@ void Client::UpdateCameraPos()
 	{
 		Vector3 position = this->zObjectManager->GetPlayerObject(index)->GetPosition();
 
-		position.y += 1.8f;
+		position.y += 1.7f;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
 }

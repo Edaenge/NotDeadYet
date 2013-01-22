@@ -79,5 +79,5 @@ public:
 	// Inline Functions
 	inline int GetSectorLength() { return SECTOR_LENGTH; }
 	inline void SetEdited( bool state ) { zEditedFlag = state; }
-	inline bool IsEdited() const { return zEditedFlag; }	
+	inline bool IsEdited() const { return zEditedFlag; }
 };

@@ -42,7 +42,7 @@ void Sector::Reset()
 float Sector::GetHeightAt( float x, float y ) const throw(...)
 {
 	if ( x < 0.0f || x >= 1.0f || y < 0.0f || y >= 1.0f )
-		throw("Out Of Bounds!");
+		return 0.0f;
 
 	// Find pixel
 	float snapX = floor(x * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
@@ -190,3 +190,23 @@ bool Sector::GetBlocking( const Vector2& pos ) const
 	// Set Values
 	return zAiGrid[ scaledY * SECTOR_AI_GRID_SIZE + scaledX ];
 }
+
+/*Vector3 Sector::GetNormalAt( float x, float z )
+{
+	if(x >= 0.9f || z >= 0.9f )
+	{
+		return Vector3(0, 1, 0);
+	}
+	int x2 = x * SECTOR_WORLD_SIZE;
+	int z2 =  z * SECTOR_WORLD_SIZE;
+
+	float d = 1.0f / (float)SECTOR_WORLD_SIZE;
+	Vector3 v1 = Vector3(x2, this->GetHeightAt(x,z), z2);
+	Vector3 v2 = Vector3(x2 + 1, this->GetHeightAt(x + d,z), z2);
+	Vector3 v3 = Vector3(x2, this->GetHeightAt(x,z + d), z2 + 1);
+	Vector3 v4 = Vector3(x2 + 1, this->GetHeightAt(x + d,z + d), z2 + 1);
+	
+	Vector3 returnVector = ((v1 - v4)).GetCrossProduct( (v3 - v2));
+	returnVector.Normalize();
+	return returnVector;
+}*/
