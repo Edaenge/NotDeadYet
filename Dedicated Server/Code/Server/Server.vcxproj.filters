@@ -1,47 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="EngineFiles\Server\Actor.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineFiles\Server\ActorHandler.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineFiles\Server\AnimalActor.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineFiles\Server\BioActor.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
     <ClCompile Include="EngineFiles\Network\ClientChannel.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="EngineFiles\Network\ClientConnectedEvent.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="EngineFiles\Server\DeerActor.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Container.cpp">
       <Filter>Items</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineFiles\Server\FoodObject.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\Food.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\Gear.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineFiles\Server\ContainerObject.cpp">
-      <Filter>Server</Filter>
     </ClCompile>
     <ClCompile Include="EngineFiles\Server\Host.cpp">
       <Filter>Server</Filter>
@@ -59,9 +26,6 @@
       <Filter>Server</Filter>
     </ClCompile>
     <ClCompile Include="EngineFiles\Server\HostConversions.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineFiles\Server\WeaponObject.cpp">
       <Filter>Server</Filter>
     </ClCompile>
     <ClCompile Include="EngineFiles\Server\MaterialObject.cpp">
@@ -94,16 +58,7 @@
     <ClCompile Include="..\..\..\Source\PhysicsEngine\Physics.cpp">
       <Filter>PhysicsEngine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\PhysicsEngine\ObjLoader.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
     <ClCompile Include="EngineFiles\Server\ObjectManager.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineFiles\Server\StaticProjectileObject.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp">
       <Filter>Server</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\MaloWLib\Process.cpp">
@@ -142,23 +97,56 @@
     <ClCompile Include="EngineFiles\Server\AI.cpp">
       <Filter>Server</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Food.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Gear.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\Actor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\BioActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\AnimalActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\DeerActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\WeaponObject.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\ContainerObject.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\FoodObject.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\ActorHandler.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\StaticProjectileObject.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\PhysicsEngine\ObjLoader.cpp">
+      <Filter>PhysicsEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\GameFiles\AnimationStates.h" />
     <ClInclude Include="..\..\..\Source\MaloWLib\Safe.h" />
     <ClInclude Include="EngineFiles\Network\Winsock.h" />
-    <ClInclude Include="EngineFiles\Server\Actor.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineFiles\Server\ActorHandler.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineFiles\Server\AnimalActor.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineFiles\Server\BioActor.h">
-      <Filter>Server</Filter>
-    </ClInclude>
     <ClInclude Include="EngineFiles\Network\ClientChannel.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -168,26 +156,8 @@
     <ClInclude Include="..\..\..\Source\GameFiles\ClientServerMessages.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="EngineFiles\Server\DeerActor.h">
-      <Filter>Server</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Container.h">
       <Filter>Items</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineFiles\Server\DynamicProjectileObject.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineFiles\Server\DynamicObjectActor.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\Food.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineFiles\Server\FoodObject.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\GameFiles\Items\Gear.h">
-      <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="EngineFiles\Server\Host.h">
       <Filter>Server</Filter>
@@ -203,9 +173,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Weapon.h">
       <Filter>Items</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineFiles\Server\WeaponObject.h">
-      <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="EngineFiles\Server\MaterialObject.h">
       <Filter>Material</Filter>
@@ -249,16 +216,7 @@
     <ClInclude Include="..\..\..\Source\PhysicsEngine\Physics.h">
       <Filter>PhysicsEngine</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\PhysicsEngine\ObjLoader.h">
-      <Filter>Server</Filter>
-    </ClInclude>
     <ClInclude Include="EngineFiles\Server\ObjectManager.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineFiles\Server\StaticProjectileObject.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineFiles\Server\StaticObjectActor.h">
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\MaloWLib\Process.h">
@@ -294,9 +252,6 @@
     <ClInclude Include="EngineFiles\WorldFiles\Sector.h">
       <Filter>WorldFiles</Filter>
     </ClInclude>
-    <ClInclude Include="EngineFiles\Server\ContainerObject.h">
-      <Filter>Server</Filter>
-    </ClInclude>
     <ClInclude Include="Wrapper\ServerEngineWrapper.h">
       <Filter>Wrapper</Filter>
     </ClInclude>
@@ -320,6 +275,51 @@
     </ClInclude>
     <ClInclude Include="EngineFiles\Server\AI.h">
       <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Food.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Gear.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\Actor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\AnimalActor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\BioActor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\StaticObjectActor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\DeerActor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\DynamicObjectActor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\ContainerObject.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\DynamicProjectileObject.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\FoodObject.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\ActorHandler.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\StaticProjectileObject.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\PhysicsEngine\ObjLoader.h">
+      <Filter>PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\WeaponObject.h">
+      <Filter>Server\Actors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -352,6 +352,9 @@
     </Filter>
     <Filter Include="ServerEngine">
       <UniqueIdentifier>{fb3fcaf8-234a-4152-88ac-c19aed3a0b16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\Actors">
+      <UniqueIdentifier>{83846198-259b-44a7-b606-604372e74ae6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
