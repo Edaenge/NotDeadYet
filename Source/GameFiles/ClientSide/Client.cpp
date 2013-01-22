@@ -273,6 +273,20 @@ void Client::UpdateCameraPos()
 		position.y += 1.8f;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
+
+	//Rotate Mesh
+	//Vector3 meshDir = Vector3(0.0f, 0.0f, -1.0f);
+
+	//Vector3 camDir = this->zEng->GetCamera()->GetForward();
+	//camDir.Normalize();
+
+	//Vector3 around = Vector3(0.0f, 1.0f, 0.0f);
+	//float angle = acos(meshDir.GetDotProduct(camDir));
+
+	//PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
+	//
+	//player->SetRotation(Vector4(around.x, around.y, around.z, angle));
+
 }
 
 void Client::UpdateWorldObjects()

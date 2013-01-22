@@ -688,13 +688,11 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 		{
 			if (projectile->GetID() == ItemID)
 			{
-				eq->UnEquipProjectile();
-
 				if(inv->AddItem(projectile))
-					this->SendAddInventoryItemMessage(pActor->GetID(), projectile);
-
-				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
-
+				{
+					eq->UnEquipProjectile();
+					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+				}
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString((float)ItemID));
@@ -710,15 +708,11 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 		{
 			if (wpn->GetID() == ItemID)
 			{
-				eq->UnEquipWeapon();
-
-				
-
 				if(inv->AddItem(wpn))
-					this->SendAddInventoryItemMessage(pActor->GetID(), wpn);
-
-				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
-
+				{
+					eq->UnEquipWeapon();
+					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+				}
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString((float)ItemID));
@@ -734,11 +728,11 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 		{
 			if (head->GetID() == ItemID)
 			{
-				eq->UnEquipGear(EQUIPMENT_SLOT_HEAD);
-
-				inv->AddItem(head);
-
-				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+				if(inv->AddItem(head))
+				{
+					eq->UnEquipGear(EQUIPMENT_SLOT_HEAD);
+					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+				}
 
 				return;
 			}
@@ -755,11 +749,11 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 		{
 			if (chest->GetID() == ItemID)
 			{
-				eq->UnEquipGear(EQUIPMENT_SLOT_CHEST);
-
-				inv->AddItem(chest);
-
-				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+				if(inv->AddItem(chest))
+				{
+					eq->UnEquipGear(EQUIPMENT_SLOT_CHEST);
+					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+				}
 
 				return;
 			}
@@ -776,11 +770,11 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 		{
 			if (legs->GetID() == ItemID)
 			{
-				eq->UnEquipGear(EQUIPMENT_SLOT_LEGS);
-
-				inv->AddItem(legs);
-
-				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+				if(inv->AddItem(legs))
+				{
+					eq->UnEquipGear(EQUIPMENT_SLOT_LEGS);
+					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+				}
 
 				return;
 			}
@@ -797,11 +791,11 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 		{
 			if (boots->GetID() == ItemID)
 			{
-				eq->UnEquipGear(EQUIPMENT_SLOT_BOOTS);
-
-				inv->AddItem(boots);
-
-				this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+				if(inv->AddItem(boots))
+				{
+					eq->UnEquipGear(EQUIPMENT_SLOT_BOOTS);
+					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+				}
 
 				return;
 			}

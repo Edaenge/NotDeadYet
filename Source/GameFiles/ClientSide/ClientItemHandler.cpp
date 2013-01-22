@@ -311,11 +311,11 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 			if (projectile->GetID() == ItemID)
 			{
 				eq->UnEquipProjectile();
-
 				if(this->zPlayerInventory->AddItem(projectile))
 				{
 					Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription());
 					this->zGuiManager->AddInventoryItemToGui(gid);
+
 					return;
 				}
 				return;
@@ -335,12 +335,15 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 			{
 				eq->UnEquipWeapon();
 
-				this->zPlayerInventory->AddItem(wpn);
+				if(this->zPlayerInventory->AddItem(wpn))
+				{
+					Gui_Item_Data gid = Gui_Item_Data(wpn->GetID(), wpn->GetWeight(), wpn->GetStackSize(), wpn->GetItemName(),
+						wpn->GetIconPath(), wpn->GetItemDescription());
 
-				Gui_Item_Data gid = Gui_Item_Data(wpn->GetID(), wpn->GetWeight(), wpn->GetStackSize(), wpn->GetItemName(),
-					wpn->GetIconPath(), wpn->GetItemDescription());
+					this->zGuiManager->AddInventoryItemToGui(gid);
 
-				this->zGuiManager->AddInventoryItemToGui(gid);
+					return;
+				}
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString((float)ItemID));
@@ -358,12 +361,15 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 			{
 				eq->UnEquipGear(EQUIPMENT_SLOT_HEAD);
 
-				this->zPlayerInventory->AddItem(head);
+				if(this->zPlayerInventory->AddItem(head))
+				{
+					Gui_Item_Data gid = Gui_Item_Data(head->GetID(), head->GetWeight(), head->GetStackSize(), head->GetItemName(),
+						head->GetIconPath(), head->GetItemDescription());
 
-				Gui_Item_Data gid = Gui_Item_Data(head->GetID(), head->GetWeight(), head->GetStackSize(), head->GetItemName(),
-					head->GetIconPath(), head->GetItemDescription());
+					this->zGuiManager->AddInventoryItemToGui(gid);
 
-				this->zGuiManager->AddInventoryItemToGui(gid);
+					return;
+				}
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Head Slot ID: " + MaloW::convertNrToString((float)ItemID));
@@ -381,13 +387,15 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 			{
 				eq->UnEquipGear(EQUIPMENT_SLOT_CHEST);
 
-				this->zPlayerInventory->AddItem(chest);
+				if(this->zPlayerInventory->AddItem(chest))
+				{
+					Gui_Item_Data gid = Gui_Item_Data(chest->GetID(), chest->GetWeight(), chest->GetStackSize(), chest->GetItemName(),
+						chest->GetIconPath(), chest->GetItemDescription());
 
-				Gui_Item_Data gid = Gui_Item_Data(chest->GetID(), chest->GetWeight(), chest->GetStackSize(), chest->GetItemName(),
-					chest->GetIconPath(), chest->GetItemDescription());
+					this->zGuiManager->AddInventoryItemToGui(gid);
 
-				this->zGuiManager->AddInventoryItemToGui(gid);
-
+					return;
+				}
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Chest Slot ID: " + MaloW::convertNrToString((float)ItemID));
@@ -405,13 +413,15 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 			{
 				eq->UnEquipGear(EQUIPMENT_SLOT_LEGS);
 
-				this->zPlayerInventory->AddItem(legs);
+				if(this->zPlayerInventory->AddItem(legs))
+				{
+					Gui_Item_Data gid = Gui_Item_Data(legs->GetID(), legs->GetWeight(), legs->GetStackSize(), legs->GetItemName(),
+						legs->GetIconPath(), legs->GetItemDescription());
 
-				Gui_Item_Data gid = Gui_Item_Data(legs->GetID(), legs->GetWeight(), legs->GetStackSize(), legs->GetItemName(),
-					legs->GetIconPath(), legs->GetItemDescription());
+					this->zGuiManager->AddInventoryItemToGui(gid);
 
-				this->zGuiManager->AddInventoryItemToGui(gid);
-
+					return;
+				}
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Legs Slot ID: " + MaloW::convertNrToString((float)ItemID));
@@ -429,13 +439,15 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 			{
 				eq->UnEquipGear(EQUIPMENT_SLOT_BOOTS);
 
-				this->zPlayerInventory->AddItem(boots);
+				if(this->zPlayerInventory->AddItem(boots))
+				{
+					Gui_Item_Data gid = Gui_Item_Data(boots->GetID(), boots->GetWeight(), boots->GetStackSize(), boots->GetItemName(),
+						boots->GetIconPath(), boots->GetItemDescription());
 
-				Gui_Item_Data gid = Gui_Item_Data(boots->GetID(), boots->GetWeight(), boots->GetStackSize(), boots->GetItemName(),
-					boots->GetIconPath(), boots->GetItemDescription());
+					this->zGuiManager->AddInventoryItemToGui(gid);
 
-				this->zGuiManager->AddInventoryItemToGui(gid);
-
+					return;
+				}
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Boots Slot ID: " + MaloW::convertNrToString((float)ItemID));
