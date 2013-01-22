@@ -1,12 +1,9 @@
 #include "GameFiles/ClientSide/Client.h"
 #include "Graphics.h"
 #include "Network/NetworkPacket.h"
-<<<<<<< HEAD
 #include "../ClientServerMessages.h"
-=======
 #include "ClientServerMessages.h"
 #include "../WorldFiles/EntityList.h"
->>>>>>> 8b93855f462eb366e5d1b2751a3834f9dc2c71e2
 
 using namespace MaloW;
 
@@ -42,14 +39,11 @@ Client::Client()
 	
 	this->zMsgHandler = NetworkMessageConverter();
 
-<<<<<<< HEAD
 	//timer = 0;
-=======
 	this->zWorld = 0;
 	this->zWorldRenderer = 0;
 	this->zAnchor = 0;
 	this->zCrossHair = 0;
->>>>>>> 8b93855f462eb366e5d1b2751a3834f9dc2c71e2
 }
 
 int Client::Connect(const std::string& ip, const int port)

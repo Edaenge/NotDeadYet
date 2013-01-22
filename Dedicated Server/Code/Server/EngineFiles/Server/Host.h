@@ -210,13 +210,9 @@ private:
 	float zTimeOut;
 	float zPingMessageInterval;
 
-<<<<<<< HEAD
-
 	//float timer;
-=======
 	World* zWorld;
 	std::map<PlayerActor*, WorldAnchor*> zAnchorPlayerMap;
 protected:
 	virtual void onEvent( Event* e );
->>>>>>> 8b93855f462eb366e5d1b2751a3834f9dc2c71e2
 };
