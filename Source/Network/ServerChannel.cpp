@@ -101,6 +101,14 @@ string ServerChannel::receiveData()
 			char bufs[1024] = {0};
 			int retCode = 0;
 			retCode = recv(this->sock, bufs, sizeof(bufs), 0);
+			
+			//DEBUG
+			int asd = WSAGetLastError();
+			if(asd!=0)
+			{
+				int a = 5;
+			}
+
 			if(retCode == SOCKET_ERROR)
 			{
 				this->Close();

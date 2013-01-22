@@ -808,7 +808,6 @@ bool World::IsBlockingAt( const Vector2& pos )
 
 	return GetSector(sectorX, sectorY)->GetBlocking( Vector2(localX, localY) );
 }
-
 Vector3 World::GetNormalAtWorldPos( float posx, float posz )
 {
 	// 1 vector

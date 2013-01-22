@@ -136,10 +136,10 @@ bool Inventory::RemoveItemStack(const int ID, const unsigned int numberOfStacks)
 		{
 			this->zInventorySlotBlocked[zSlotsAvailable++] = false;
 		}
-		Item* item = this->zItems.at(index);
-		
-		item->DecreaseStackSize(numberOfStacks);
-
+		if (Messages::FileWrite())
+		{
+			Messages::Debug("Removed Stacks: " + MaloW::convertNrToString(numberOfStacks) + " TotalWeight: " + MaloW::convertNrToString(zWeightTotal));
+		}
 		return true;
 	}
 	return false;

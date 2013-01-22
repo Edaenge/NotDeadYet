@@ -24,10 +24,7 @@ static const enum ACTOR_TYPE
 	ACTOR_TYPE_STATIC_OBJECT_MATERIAL,
 	ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE
 };
-static const enum COLLISION_EVENT_TYPE
-{
-	COLLISION_EVENT_DEATH
-};
+
 struct CollisionEvent
 {
 	int actor_aggressor_ID;
@@ -48,13 +45,14 @@ public:
 
 	void UpdateObjects(float deltaTime);
 	/*! Checks collisions against objects.*/
-	const std::vector<CollisionEvent>& CheckCollisions();
-	/*! pCollide lists all collisions.*/
-	void PlayerVsPlayers(PlayerActor* pTest, std::vector<PlayerActor*> &pCollide);
+	void CheckCollisions();
 	/*! pCollide lists all collisions.
-		pcd is the collision test data. The data is mapped with pCollide.
+		Rewinds target BioActor in actors if there was a collision.
+		pTest will not be Rewinded.
 	*/
-	void PlayerVsDynamics(PlayerActor* pTest, std::vector<DynamicProjectileObject*> &pCollide, std::vector<PhysicsCollisionData> &pcd);
+	void BioActorVSBioActor(BioActor* pTest, std::vector<AnimalActor*> &actors, std::vector<BioActor*> &pCollide);
+	void BioActorVSBioActor(BioActor* pTest, std::vector<PlayerActor*> &actors, std::vector<BioActor*> &pCollide);
+
 
 ////////////////////////////////
 //			PLAYERS		     //
@@ -70,8 +68,7 @@ public:
 //			ANIMALS		     //
 ///////////////////////////////
 
-	bool AddAnimalActor(AnimalActor* new_player);
-	/*! Removes the Animal Object.*/
+	bool AddAnimalActor(AnimalActor* new_player);	/*! Removes the Animal Object.*/
 	bool RemoveAnimalActor(const int ID);
 	/*! Returns Animals.*/
 	inline const std::vector<AnimalActor*>& GetAnimals() const {return this->zAnimals;}
@@ -85,7 +82,7 @@ public:
 	bool AddNewStaticContainerActor(ContainerObject* new_Container);
 	bool AddNewStaticProjectileActor(StaticProjectileObject* new_Projectile);
 	
-	bool AddNewDynamicProjectileActor(DynamicProjectileObject* new_Projectile);
+	bool AddNewDynamicProjectileActor(DynamicProjectileObject* new_Projectile, Vector3 direction);
 	/*! Removes the Static Object.*/
 	bool RemoveStaticFoodActor(const int ID);
 	bool RemoveStaticWeaponActor(const int ID);

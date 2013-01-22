@@ -60,6 +60,11 @@ ObjectManager::~ObjectManager()
 	{
 		SAFE_DELETE((*i));
 	}
+
+	for(auto i = zMaterials.begin(); i < zMaterials.end(); i++)
+	{
+		SAFE_DELETE((*i));
+	}
 }
 
 bool ObjectManager::ReadObjects()

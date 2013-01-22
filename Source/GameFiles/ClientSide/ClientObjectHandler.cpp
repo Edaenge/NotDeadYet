@@ -25,11 +25,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			iTerrain* terrain = this->zObjectManager->GetTerrain();
-			if (terrain)
-			{
-				position.y = terrain->GetYPositionAt(position.x, position.z);
-			}
+
 			playerObject->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -66,6 +62,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
+	mesh->SetQuaternion(Vector4(0,0,0,1));
 	mesh->SetQuaternion(rotation);
 	mesh->Scale(scale);
 
@@ -101,11 +98,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			iTerrain* terrain = this->zObjectManager->GetTerrain();
-			if (terrain)
-			{
-				position.y = terrain->GetYPositionAt(position.x, position.z);
-			}
+			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z);
 			animalObject->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -136,6 +129,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
+	mesh->SetQuaternion(Vector4(0,0,0,1));
 	mesh->SetQuaternion(rotation);
 	mesh->Scale(scale);
 
@@ -171,11 +165,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			iTerrain* terrain = this->zObjectManager->GetTerrain();
-			if (terrain)
-			{
-				position.y = terrain->GetYPositionAt(position.x, position.z);
-			}
+			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
@@ -230,6 +220,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
+	mesh->SetQuaternion(Vector4(0,0,0,1));
 	mesh->SetQuaternion(rotation);
 	mesh->Scale(scale);
 
@@ -265,13 +256,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			iTerrain* terrain = this->zObjectManager->GetTerrain();
-			if (terrain)
-			{
-				float y = terrain->GetYPositionAt(position.x, position.z);
-				if (position.y < y)
-					position.y = y;
-			}
+			
 			dynamicObject->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -332,6 +317,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
+	mesh->SetQuaternion(Vector4(0,0,0,1));
 	mesh->SetQuaternion(rotation);
 	mesh->Scale(scale);
 
@@ -374,11 +360,7 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			//iTerrain* terrain = this->zObjectManager->GetTerrain();
-			//if (terrain)
-			//{
-			//	position.y = terrain->GetYPositionAt(position.x, position.z);
-			//}
+
 			PlayerObjectPointer->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -433,8 +415,10 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 		float scale = PlayerObjectPointer->GetScale().y;
 		Vector4 quat = PlayerObjectPointer->GetRotation();
 
-		mesh->Scale(scale);
+		mesh->SetQuaternion(Vector4(0,0,0,1));
 		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
+		mesh->Scale(scale);
+
 		if (PlayerObjectPointer->HasMesh())
 		{
 			this->zEng->DeleteMesh(PlayerObjectPointer->GetMesh());
@@ -475,11 +459,7 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			iTerrain* terrain = this->zObjectManager->GetTerrain();
-			if (terrain)
-			{
-				position.y = terrain->GetYPositionAt(position.x, position.z);
-			}
+			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
@@ -533,8 +513,10 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		float scale = StaticObjectPointer->GetScale().y;
 		Vector4 quat = StaticObjectPointer->GetRotation();
 
-		mesh->Scale(scale);
+		mesh->SetQuaternion(Vector4(0,0,0,1));
 		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
+		mesh->Scale(scale);
+
 		if (StaticObjectPointer->HasMesh())
 		{
 			this->zEng->DeleteMesh(StaticObjectPointer->GetMesh());
@@ -574,11 +556,7 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			iTerrain* terrain = this->zObjectManager->GetTerrain();
-			if (terrain)
-			{
-				position.y = terrain->GetYPositionAt(position.x, position.z);
-			}
+			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z);
 			AnimalObjectPointer->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -618,8 +596,10 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		float scale = AnimalObjectPointer->GetScale().y;
 		Vector4 quat = AnimalObjectPointer->GetRotation();
 
-		mesh->Scale(scale);
+		mesh->SetQuaternion(Vector4(0,0,0,1));
 		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
+		mesh->Scale(scale);
+
 		if (AnimalObjectPointer->HasMesh())
 		{
 			this->zEng->DeleteMesh(AnimalObjectPointer->GetMesh());
@@ -662,11 +642,7 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			iTerrain* terrain = this->zObjectManager->GetTerrain();
-			if (terrain)
-			{
-				position.y = terrain->GetYPositionAt(position.x, position.z);
-			}
+
 			DynamicObjectPointer->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -721,8 +697,10 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 		float scale = DynamicObjectPointer->GetScale().y;
 		Vector4 quat = DynamicObjectPointer->GetRotation();
 
-		mesh->Scale(scale);
+		mesh->SetQuaternion(Vector4(0,0,0,1));
 		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
+		mesh->Scale(scale);
+
 		if (DynamicObjectPointer->HasMesh())
 		{
 			this->zEng->DeleteMesh(DynamicObjectPointer->GetMesh());

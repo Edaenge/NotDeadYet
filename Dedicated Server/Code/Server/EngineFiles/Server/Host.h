@@ -210,9 +210,14 @@ private:
 	float zTimeOut;
 	float zPingMessageInterval;
 
+	//Temporary
+	int pSpawnPosition;
+	int aSpawnPosition;
+	std::vector<Vector3> zPlayerSpawnPoints;
+	std::vector<Vector3> zAnimalSpawnPoints;
 	//float timer;
 	World* zWorld;
 	std::map<PlayerActor*, WorldAnchor*> zAnchorPlayerMap;
 protected:
-	virtual void onEvent( Event* e );
+	virtual void onEvent(Event* e);
 };

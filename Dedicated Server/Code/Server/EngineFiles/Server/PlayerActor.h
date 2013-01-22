@@ -46,7 +46,6 @@ public:
 		The parameter string is a network message string.
 	*/
 	void AddChangedHData(string& mess, NetworkMessageConverter* nmc);
-	virtual void RewindPosition();
 
 	Item* GetItem(const int ID){return this->zInventory->SearchAndGetItem(ID);}
 	float GetLatency() const {return this->zLatency;}

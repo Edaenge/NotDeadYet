@@ -17,7 +17,6 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 		MaloW::Debug("Server weapon isn't the same as Client Weapon");
 	}
 
-
 	float range;
 	RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(weapon);
 
@@ -55,11 +54,12 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 
 				Vector3 position = pActor->GetPosition();
 				projectileObj->SetPosition(position);
-				projectileObj->SetDirection(direction);
 				projectileObj->SetDamage(damage);
 				projectileObj->SetVelocity(velocity);
-				//Adds The Object To the Array
-				this->zActorHandler->AddNewDynamicProjectileActor(projectileObj);
+				projectileObj->SetUpVector(pActor->GetUpVector());
+
+			    //Adds The Object To the Array
+				this->zActorHandler->AddNewDynamicProjectileActor(projectileObj, pActor->GetDirection());
 
 				SendNewObjectMessage(projectileObj);
 
@@ -107,7 +107,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 			projectileObj->SetDamage(damage);
 			projectileObj->SetVelocity(velocity);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewDynamicProjectileActor(projectileObj);
+			this->zActorHandler->AddNewDynamicProjectileActor(projectileObj, pActor->GetDirection());
 
 			SendNewObjectMessage(projectileObj);
 

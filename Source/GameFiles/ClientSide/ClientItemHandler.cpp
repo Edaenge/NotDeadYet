@@ -78,11 +78,16 @@ void Client::HandleUseItem(const int ID)
 			return;
 		}
 
+		int oldStacks = food->GetStackSize();
 		if (!food->Use())
 		{
 			MaloW::Debug("Stack is Empty");
 			return;
 		}
+		
+		int newStacks = food->GetStackSize();
+		this->zPlayerInventory->RemoveItemStack(food->GetID(), oldStacks - newStacks);
+
 		MaloW::Debug("Eating");
 		return;
 	}
@@ -101,11 +106,14 @@ void Client::HandleUseItem(const int ID)
 		if (Messages::FileWrite())
 			Messages::Debug("Crafting");
 
+		int oldStacks = material->GetStackSize();
 		if (!material->Use())
 		{
 			MaloW::Debug("Not Enough materials to Craft");
 			return;
 		}
+		int newStacks = material->GetStackSize();
+		this->zPlayerInventory->RemoveItemStack(material->GetID(), oldStacks - newStacks);
 	}
 }
 
@@ -304,9 +312,12 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 			{
 				eq->UnEquipProjectile();
 
-				this->zPlayerInventory->AddItem(projectile);
-				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription());
-				this->zGuiManager->AddInventoryItemToGui(gid);
+				if(this->zPlayerInventory->AddItem(projectile))
+				{
+					Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription());
+					this->zGuiManager->AddInventoryItemToGui(gid);
+					return;
+				}
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString((float)ItemID));

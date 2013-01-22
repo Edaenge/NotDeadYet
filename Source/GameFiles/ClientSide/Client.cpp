@@ -26,7 +26,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Bow_v01.obj";
+	this->zMeshID = "Media/Arrow_v01.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -70,44 +70,9 @@ Client::~Client()
 	SAFE_DELETE(this->zServerChannel);
 	SAFE_DELETE(this->zPlayerInventory);
 
-	//if (this->zGuiManager)
-	//{
-	//	delete this->zGuiManager;
-	//	this->zGuiManager = NULL;
-	//}
-
-	//if (this->zObjectManager)
-	//{
-	//	delete this->zObjectManager;
-	//	this->zObjectManager = NULL;
-	//}
-
-	//if (this->zServerChannel)
-	//{
-	//	delete this->zServerChannel;
-	//	this->zServerChannel = NULL;
-	//}
-
-	//if (this->zPlayerInventory)
-	//{
-	//	delete this->zPlayerInventory;
-	//	this->zPlayerInventory = NULL;
-	//}
-	if (this->zWorld)
-	{
-		delete this->zWorld;
-		this->zWorld = NULL;
-	}
-	if (this->zWorldRenderer)
-	{
-		delete this->zWorldRenderer;
-		this->zWorldRenderer = NULL;
-	}
-	if(zCrossHair)
-	{
-		delete this->zCrossHair;
-		zCrossHair = NULL;
-	}
+	SAFE_DELETE(this->zWorld);
+	SAFE_DELETE(this->zWorldRenderer);
+	SAFE_DELETE(this->zCrossHair);
 }
 
 float Client::Update()
@@ -126,8 +91,6 @@ float Client::Update()
 	this->zFrameTime += this->zDeltaTime;
 
 	this->zGuiManager->Update(this->zDeltaTime);
-
-	
 
 	//Anchors with the world to decide what to render.
 	if(zWorld && zAnchor)
@@ -170,10 +133,6 @@ void Client::InitGraphics()
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(x, y), Vector2(length, length), "Media/cross.png");
 
-	//this->zEng->LoadingScreen("Media/LoadingScreenBG.png", "Media/LoadingScreenPG.png");
-	//iTerrain* terrain = this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 20);
-
-	//this->zObjectManager->AddTerrain(terrain);
 	//this->zEng->StartRendering();
 }
 
@@ -437,7 +396,7 @@ void Client::HandleKeyboardInput()
 	//	this->zKeyInfo.SetKeyState(KEY_JUMP, false);
 	//}
 	//Used For Testing
-	if (this->zEng->GetKeyListener()->IsPressed('Q'))
+	if (this->zEng->GetKeyListener()->IsPressed('1'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
@@ -456,6 +415,25 @@ void Client::HandleKeyboardInput()
 			}
 		}
 	}
+	else if (this->zEng->GetKeyListener()->IsPressed('2'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
+			Equipment* eq = pObject->GetEquipmentPtr();
+
+			Item* item = eq->GetProjectile();
+			if (item)
+			{
+				MaloW::Debug("Item UnEquipped " + item->GetItemName());
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
+				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_AMMO);
+
+				this->zServerChannel->sendData(msg);
+			}
+		}
+	}
 	else
 	{
 		if (this->zKeyInfo.GetKeyState(KEY_TEST))
@@ -463,7 +441,6 @@ void Client::HandleKeyboardInput()
 			this->zKeyInfo.SetKeyState(KEY_TEST, false);
 		}
 	}
-
 	if (this->zIsHuman)
 	{
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
@@ -824,15 +801,6 @@ bool Client::CheckCollision()
 	if (!playerMesh)
 		return false;
 
-	std::vector<iMesh*> mapObjects = this->zObjectManager->GetMapObjects();
-
-	for (auto it_Map = mapObjects.begin(); it_Map < mapObjects.end(); it_Map++)
-	{
-		data = this->zEng->GetPhysicsEngine()->GetCollisionMeshMesh(playerMesh, (*it_Map));
-		if (data.collision)
-			return true;
-	}
-
 	return false;
 }
 
@@ -845,6 +813,7 @@ void Client::DisplayMessageToClient(const std::string& msg)
 {
 	MaloW::Debug(msg);
 }
+
 void Client::onEvent( Event* e )
 {
 	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
