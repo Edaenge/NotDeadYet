@@ -1,6 +1,6 @@
 #include "DynamicObjectActor.h"
 
-DynamicObjectActor::DynamicObjectActor(bool genID) : Actor()
+DynamicObjectActor::DynamicObjectActor(bool genID) : PhysicsActor()
 {
 	if(genID)
 		this->GenerateID();
@@ -9,7 +9,7 @@ DynamicObjectActor::DynamicObjectActor(bool genID) : Actor()
 	InitValues();
 }
 
-DynamicObjectActor::DynamicObjectActor(const std::string& meshModel, bool genID) : Actor()
+DynamicObjectActor::DynamicObjectActor(const std::string& meshModel, bool genID) : PhysicsActor()
 {
 	if(genID)
 		this->GenerateID();
@@ -19,7 +19,7 @@ DynamicObjectActor::DynamicObjectActor(const std::string& meshModel, bool genID)
 	this->InitValues();
 }
 
-DynamicObjectActor::DynamicObjectActor( const std::string& meshModel, int objOwner, bool genID /*= false*/ )
+DynamicObjectActor::DynamicObjectActor( const std::string& meshModel, int objOwner, bool genID /*= false*/ ) : PhysicsActor()
 {
 	if(genID)
 		this->GenerateID();

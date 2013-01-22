@@ -1,7 +1,7 @@
 #pragma once
 
-static const float V_WALK_SPEED		= 1.0f;
-static const float V_RUN_SPEED		= 2.0f;
+static const float V_WALK_SPEED		= 3.25f;
+static const float V_RUN_SPEED		= 5.36f;
 static const float V_CROUCH_SPEED	= 0.5f;
 
 /*! Animation states*/

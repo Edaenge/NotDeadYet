@@ -22,7 +22,11 @@ public:
 	/*! Sets object Mesh data*/
 	inline void SetPosition(const Vector3& pos) {this->zMesh->SetPosition(pos);}
 	void SetScale(const Vector3& scale) {this->zMesh->Scale(scale);}
-	inline void SetRotation(const Vector4& rot) {this->zMesh->SetQuaternion(rot);}
+	inline void SetRotation(const Vector4& rot) 
+	{
+		this->zMesh->SetQuaternion(Vector4(0,0,0,1));
+		this->zMesh->RotateAxis(Vector3(rot.x,rot.y,rot.z), rot.w);
+	}
 	/*! Returns the object ID*/
 	inline unsigned int GetID() const {return this->zID;}
 	/*! Adds a Pointer to the Player Model Mesh*/

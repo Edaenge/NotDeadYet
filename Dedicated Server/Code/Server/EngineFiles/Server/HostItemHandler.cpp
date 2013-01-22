@@ -35,7 +35,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 				{
 					type = ITEM_TYPE_PROJECTILE_ARROW;
 				}
-				DynamicProjectileObject* projectileObj = new DynamicProjectileObject(true);
+				DynamicProjectileObject* projectileObj = NULL;
 
 				if(!this->CreateDynamicObjectActor(type, &projectileObj, true))
 				{
@@ -87,7 +87,8 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 		{
 			type = ITEM_TYPE_WEAPON_RANGED_ROCK;
 
-			DynamicProjectileObject* projectileObj = new DynamicProjectileObject(true);
+
+			DynamicProjectileObject* projectileObj = NULL;
 
 			if(!this->CreateDynamicObjectActor(type, &projectileObj, true))
 			{
@@ -103,7 +104,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 
 			Vector3 position = pActor->GetPosition();
 			projectileObj->SetPosition(position);
-			projectileObj->SetDirection(direction);
+
 			projectileObj->SetDamage(damage);
 			projectileObj->SetVelocity(velocity);
 			//Adds The Object To the Array
@@ -688,10 +689,14 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 		{
 			if (projectile->GetID() == ItemID)
 			{
-				if(inv->AddItem(projectile))
+				if (projectile->GetID() == ItemID)
 				{
-					eq->UnEquipProjectile();
-					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+					if(inv->AddItem(projectile))
+					{
+						eq->UnEquipProjectile();
+						this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+					}
+					return;
 				}
 				return;
 			}
@@ -708,10 +713,14 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 		{
 			if (wpn->GetID() == ItemID)
 			{
-				if(inv->AddItem(wpn))
+				if (wpn->GetID() == ItemID)
 				{
-					eq->UnEquipWeapon();
-					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+					if(inv->AddItem(wpn))
+					{
+						eq->UnEquipWeapon();
+						this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+					}
+					return;
 				}
 				return;
 			}
@@ -733,7 +742,6 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 					eq->UnEquipGear(EQUIPMENT_SLOT_HEAD);
 					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
 				}
-
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Head Slot ID: " + MaloW::convertNrToString((float)ItemID));
@@ -754,7 +762,6 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 					eq->UnEquipGear(EQUIPMENT_SLOT_CHEST);
 					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
 				}
-
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Chest Slot ID: " + MaloW::convertNrToString((float)ItemID));
@@ -775,7 +782,6 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 					eq->UnEquipGear(EQUIPMENT_SLOT_LEGS);
 					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
 				}
-
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Legs Slot ID: " + MaloW::convertNrToString((float)ItemID));
@@ -796,7 +802,6 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 					eq->UnEquipGear(EQUIPMENT_SLOT_BOOTS);
 					this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
 				}
-
 				return;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Boots Slot ID: " + MaloW::convertNrToString((float)ItemID));

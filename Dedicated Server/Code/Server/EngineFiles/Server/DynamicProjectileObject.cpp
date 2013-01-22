@@ -15,20 +15,20 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& 
 		this->GenerateID();
 	else
 		this->SetID(other.GetID());
-	
-	this->zVelocity = other.zVelocity;
+
+	SetRotation(other.GetRotation());
+	SetPosition(other.GetPosition());
+
+	this->zType = other.zType;
+	SetScale(other.GetScale());
 	this->zStacks = other.zStacks;
 	this->zDamage = other.zDamage;
-	this->zDirection = other.zDirection;
 	this->zWeight = other.zWeight;
-	this->zActorModel = other.zActorModel;
-	this->zType = other.zType;
-	this->zActorObjectName = other.zActorObjectName;
 	this->zIconPath = other.zIconPath;
+	this->zVelocity = other.zVelocity;
+	this->zActorModel = other.zActorModel;
 	this->zDescription = other.zDescription;
-	this->zScale = other.zScale;
-	this->zRot = other.zRot;
-	this->zPos = other.zPos;
+	this->zActorObjectName = other.zActorObjectName;
 }
 
 DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* other, bool genID)
@@ -48,9 +48,9 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* 
 	this->zActorObjectName = other->zActorObjectName;
 	this->zIconPath = other->zIconPath;
 	this->zDescription = other->zDescription;
-	this->zScale = other->zScale;
-	this->zRot = other->zRot;
-	this->zPos = other->zPos;
+	SetScale(other->GetScale());
+	SetScale(other->GetScale());
+	SetPosition(other->GetPosition());
 }
 
 DynamicProjectileObject::~DynamicProjectileObject()
@@ -60,14 +60,15 @@ DynamicProjectileObject::~DynamicProjectileObject()
 
 void DynamicProjectileObject::Update(float deltaTime)
 {
-	Vector3 oldPosition = this->zPos;
+	Vector3 oldPosition = GetPosition();
+	Vector3 modifiedPos = oldPosition;
 
-	this->zPos += (this->zDirection * deltaTime * this->zVelocity);
-	this->zPhysicObj->SetPosition(this->zPos);
+	modifiedPos += (this->zDirection * deltaTime * this->zVelocity);
+	SetPosition(modifiedPos);
 
 	//this->zPos.y += (-9.82f) * deltaTime;
 
-	if (oldPosition == this->zPos)
+	if (oldPosition == modifiedPos)
 	{
 		this->zMoving = false;
 	}

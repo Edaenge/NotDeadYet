@@ -1,17 +1,17 @@
 #include "BioActor.h"
 
 
-BioActor::BioActor() : Actor()
+BioActor::BioActor() : PhysicsActor()
 {
 	InitValues();
 }
 
-BioActor::BioActor(const Vector3& startPos) : Actor(startPos)
+BioActor::BioActor(const Vector3& startPos, PhysicsObject* pObj) : PhysicsActor(startPos, pObj)
 {
 	InitValues();
 }
 
-BioActor::BioActor(const Vector3& startPos, const Vector4& rot) : Actor(startPos, rot)
+BioActor::BioActor(const Vector3& startPos, PhysicsObject* pObj, const Vector4& rot) : PhysicsActor(startPos, pObj, rot)
 {
 	InitValues();
 }
@@ -22,10 +22,11 @@ BioActor::~BioActor()
 
 void BioActor::InitValues()
 {
-	this->zPreviousPos = this->zPos;
+	if(zPhysicObj)
+		this->zPreviousPos = this->zPhysicObj->GetPosition();
+	
 	this->zState = STATE_IDLE;
 	this->zVelocity = V_WALK_SPEED;
-	this->zUp = Vector3(0,1,0);
 	this->zActorModel = "none";
 
 	this->zAlive = true;
@@ -35,7 +36,6 @@ void BioActor::InitValues()
 	this->zStaminaMax = 100;
 	this->zStamina = zStaminaMax;
 	this->zStaminaCof = 0.10f;
-	zPhysicObj = NULL;
 }
 
 bool BioActor::TakeDamage( const float dmg )
@@ -76,7 +76,7 @@ void BioActor::RewindPosition()
 
 bool BioActor::HasMoved()
 {
-	if(this->zPos == this->zPreviousPos)
+	if(GetPosition() == this->zPreviousPos)
 		return false;
 	
 	return true;

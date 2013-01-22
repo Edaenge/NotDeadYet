@@ -58,6 +58,10 @@ public:
 //			PLAYERS		     //
 ///////////////////////////////
 
+	/*! Adds new actor.
+		NOTE: Physic mesh will not be created in this function.
+		You have to do it manually.
+	*/
 	bool AddNewPlayer(PlayerActor* new_player);
 	/*! Removes the Player Object.*/
 	bool RemovePlayerActor(const int ID);
@@ -68,7 +72,11 @@ public:
 //			ANIMALS		     //
 ///////////////////////////////
 
-	bool AddAnimalActor(AnimalActor* new_player);	/*! Removes the Animal Object.*/
+	/*! Adds new actor.
+		NOTE: Physic mesh will not be created in this function.
+		You have to do it manually.
+	*/
+	bool AddNewAnimalActor(AnimalActor* new_player);	/*! Removes the Animal Object.*/
 	bool RemoveAnimalActor(const int ID);
 	/*! Returns Animals.*/
 	inline const std::vector<AnimalActor*>& GetAnimals() const {return this->zAnimals;}
@@ -82,6 +90,10 @@ public:
 	bool AddNewStaticContainerActor(ContainerObject* new_Container);
 	bool AddNewStaticProjectileActor(StaticProjectileObject* new_Projectile);
 	
+	/*! Adds new actor.
+		NOTE: Physic mesh will not be created in this function.
+		You have to do it manually.
+	*/
 	bool AddNewDynamicProjectileActor(DynamicProjectileObject* new_Projectile, Vector3 direction);
 	/*! Removes the Static Object.*/
 	bool RemoveStaticFoodActor(const int ID);
@@ -114,6 +126,7 @@ public:
 	*/
 	Actor* GetActor(const int ID, const int TYPE) const;
 	ObjectManager* GetObjManager() const;
+	PhysicsEngine* GetPhysicEnginePtr() const {return this->zPhysicsEngine;}
 private:
 	const int SearchForActor(const int ID, int TYPE) const;
 	const int SearchForActor(const int ID, int TYPE, Actor** aOut) const;

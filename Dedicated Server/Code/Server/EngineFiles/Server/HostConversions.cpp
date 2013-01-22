@@ -196,4 +196,6 @@ void Host::HandleConversion(DynamicProjectileObject* dynamicProjObj)
 	this->SendToAllClients(msg);
 
 	this->SendNewObjectMessage(staticProjObj);
+
+	this->zActorHandler->AddNewStaticProjectileActor(staticProjObj);
 }

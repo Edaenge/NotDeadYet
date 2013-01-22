@@ -20,7 +20,7 @@ AnimalActor::AnimalActor( bool genID /*= true*/ ) : BioActor()
 
 }
 
-AnimalActor::AnimalActor( const Vector3& startPos, bool genID /*= true*/ ) : BioActor(startPos)
+AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, bool genID /*= true*/ ) : BioActor(startPos, pObj)
 {
 	if(genID)
 		this->GenerateID();
@@ -34,11 +34,11 @@ AnimalActor::AnimalActor( const Vector3& startPos, bool genID /*= true*/ ) : Bio
 
 	for(int i = 0; i < 32; i++)
 	{
-	this->zTargets.push_back(vectorFilling);
+		this->zTargets.push_back(vectorFilling);
 	}
 }
 
-AnimalActor::AnimalActor( const Vector3& startPos, const Vector4& rot, bool genID /*= true*/ ) : BioActor(startPos, rot)
+AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, const Vector4& rot, bool genID /*= true*/ ) : BioActor(startPos, pObj, rot)
 {
 	if(genID)
 		this->GenerateID();

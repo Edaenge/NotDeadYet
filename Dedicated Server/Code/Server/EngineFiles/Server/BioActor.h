@@ -5,19 +5,19 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #pragma once
 
-#include "Actor.h"
+#include "PhysicsActor.h"
 #include "../../../../../Source/GameFiles/AnimationStates.h"
 #include <string>
 #include "../../../../../Source/PhysicsEngine/PhysicsObject.h"
 
 /*This class is Abstract, this class is used to create living creatures such as humans, animals etc. */
-class BioActor : public Actor
+class BioActor : public PhysicsActor
 {
 public:
 
 	BioActor();
-	BioActor(const Vector3& startPos);
-	BioActor(const Vector3& startPos, const Vector4& rot);
+	BioActor(const Vector3& startPos, PhysicsObject* pObj);
+	BioActor(const Vector3& startPos, PhysicsObject* pObj, const Vector4& rot);
 	virtual ~BioActor();
 
 	virtual void Update(float deltaTime) = 0;
@@ -46,29 +46,6 @@ public:
 	void SetVelocity(const float velocity){this->zVelocity = velocity;}
 	void SetHealth(const float health){this->zHealth = health;}
 	void SetStamina(const float stamina){this->zStamina = stamina;}
-	void SetPhysicObj(PhysicsObject* pObj){this->zPhysicObj = pObj;}
-	/*! Sets Actor position and physical object position.*/
-	inline virtual void SetPosition(const Vector3& pos)
-	{
-		this->zPos = pos;
-		if(zPhysicObj)
-			this->zPhysicObj->SetPosition(pos);
-	}
-	/*! Sets Actor scale and physical object scale.*/
-	virtual void SetScale(const Vector3& scale)
-	{
-		this->zScale = scale;
-		if(zPhysicObj)
-			this->zPhysicObj->Scale(scale);
-	}
-	/*! Sets Actor rotation and physical object rotation.*/
-	inline virtual void SetRotation(const Vector4& rot)
-	{
-		this->zRot = rot;
-		if(zPhysicObj)
-			this->zPhysicObj->SetQuaternion(rot);
-	}
-
 
 private:
 	void InitValues();
@@ -91,9 +68,4 @@ protected:
 	bool	zAlive;
 
 	Vector3 zPreviousPos;
-
-	PhysicsObject* zPhysicObj;
-
-
-
 };

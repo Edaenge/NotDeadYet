@@ -24,9 +24,9 @@ public:
 	/*! ID should be the same ID as in ClientChannel.*/
 	PlayerActor(const int ID);
 	/*! ID should be the same ID as in ClientChannel.*/
-	PlayerActor(const int ID, const Vector3& startPos);
+	PlayerActor(const int ID, const Vector3& startPos, PhysicsObject* pObj);
 	/*! ID should be the same ID as in ClientChannel.*/
-	PlayerActor(const int ID, const Vector3& startPos, const Vector4& startRot);
+	PlayerActor(const int ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj);
 
 	virtual ~PlayerActor();
 
@@ -102,5 +102,6 @@ class PlayerUpdatedEvent : public Event
 public:
 	PlayerActor* playerActor;
 	bool validMove;
-	PlayerUpdatedEvent(PlayerActor* playerActor, bool& validMove) : playerActor(playerActor), validMove(validMove){}
+	Vector3 prevPos;
+	PlayerUpdatedEvent(PlayerActor* playerActor, bool& validMove, Vector3 prevPos) : playerActor(playerActor), validMove(validMove), prevPos(prevPos){}
 };

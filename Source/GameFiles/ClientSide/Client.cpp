@@ -259,7 +259,7 @@ void Client::SendClientUpdate()
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, up.x, up.y, up.z);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-
+	
 	this->zServerChannel->sendData(msg);
 }
 
@@ -270,7 +270,7 @@ void Client::UpdateCameraPos()
 	{
 		Vector3 position = this->zObjectManager->GetPlayerObject(index)->GetPosition();
 
-		position.y += 1.8f;
+		position.y += 1.7f;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
 

@@ -177,6 +177,7 @@
     <ClInclude Include="EngineFiles\Server\Host.h" />
     <ClInclude Include="EngineFiles\Server\MaterialObject.h" />
     <ClInclude Include="EngineFiles\Server\ObjectManager.h" />
+    <ClInclude Include="EngineFiles\Server\PhysicsActor.h" />
     <ClInclude Include="EngineFiles\Server\PlayerActor.h" />
     <ClInclude Include="EngineFiles\Server\StaticObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\StaticProjectileObject.h" />
@@ -229,6 +230,7 @@
     <ClCompile Include="EngineFiles\Server\HostItemHandler.cpp" />
     <ClCompile Include="EngineFiles\Server\MaterialObject.cpp" />
     <ClCompile Include="EngineFiles\Server\ObjectManager.cpp" />
+    <ClCompile Include="EngineFiles\Server\PhysicsActor.cpp" />
     <ClCompile Include="EngineFiles\Server\PlayerActor.cpp" />
     <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\StaticProjectileObject.cpp" />
