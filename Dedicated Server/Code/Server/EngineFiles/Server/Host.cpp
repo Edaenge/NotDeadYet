@@ -47,10 +47,13 @@ Host::Host()
 	this->zPlayerSpawnPoints.push_back(Vector3(18.7f, 0, 44.3f));
 	this->zPlayerSpawnPoints.push_back(Vector3(25.25f, 0, 29.7f));
 
+	this->zAnimalSpawnPoints.push_back(Vector3(44.1f, 0, 47.0f));
 	this->zAnimalSpawnPoints.push_back(Vector3(27.6f, 0, 32.4f));
 	this->zAnimalSpawnPoints.push_back(Vector3(38.0f, 0, 44.2f));
 	this->zAnimalSpawnPoints.push_back(Vector3(48.8f, 0, 45.9f));
 	this->zAnimalSpawnPoints.push_back(Vector3(51.6f, 0, 37.7f));
+
+	//Terrain Center around 42, 0, 42
 }
 
 Host::~Host()
