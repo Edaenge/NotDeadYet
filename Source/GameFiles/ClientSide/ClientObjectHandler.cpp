@@ -66,6 +66,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
+	mesh->SetQuaternion(Vector4(0,0,0,1));
 	mesh->SetQuaternion(rotation);
 	mesh->Scale(scale);
 
@@ -136,6 +137,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
+	mesh->SetQuaternion(Vector4(0,0,0,1));
 	mesh->SetQuaternion(rotation);
 	mesh->Scale(scale);
 
@@ -230,6 +232,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
+	mesh->SetQuaternion(Vector4(0,0,0,1));
 	mesh->SetQuaternion(rotation);
 	mesh->Scale(scale);
 
@@ -332,6 +335,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
+	mesh->SetQuaternion(Vector4(0,0,0,1));
 	mesh->SetQuaternion(rotation);
 	mesh->Scale(scale);
 
@@ -433,8 +437,10 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 		float scale = PlayerObjectPointer->GetScale().y;
 		Vector4 quat = PlayerObjectPointer->GetRotation();
 
-		mesh->Scale(scale);
+		mesh->SetQuaternion(Vector4(0,0,0,1));
 		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
+		mesh->Scale(scale);
+
 		if (PlayerObjectPointer->HasMesh())
 		{
 			this->zEng->DeleteMesh(PlayerObjectPointer->GetMesh());
@@ -533,8 +539,10 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		float scale = StaticObjectPointer->GetScale().y;
 		Vector4 quat = StaticObjectPointer->GetRotation();
 
-		mesh->Scale(scale);
+		mesh->SetQuaternion(Vector4(0,0,0,1));
 		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
+		mesh->Scale(scale);
+
 		if (StaticObjectPointer->HasMesh())
 		{
 			this->zEng->DeleteMesh(StaticObjectPointer->GetMesh());
@@ -618,8 +626,10 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		float scale = AnimalObjectPointer->GetScale().y;
 		Vector4 quat = AnimalObjectPointer->GetRotation();
 
-		mesh->Scale(scale);
+		mesh->SetQuaternion(Vector4(0,0,0,1));
 		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
+		mesh->Scale(scale);
+
 		if (AnimalObjectPointer->HasMesh())
 		{
 			this->zEng->DeleteMesh(AnimalObjectPointer->GetMesh());
@@ -721,8 +731,10 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 		float scale = DynamicObjectPointer->GetScale().y;
 		Vector4 quat = DynamicObjectPointer->GetRotation();
 
-		mesh->Scale(scale);
+		mesh->SetQuaternion(Vector4(0,0,0,1));
 		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
+		mesh->Scale(scale);
+
 		if (DynamicObjectPointer->HasMesh())
 		{
 			this->zEng->DeleteMesh(DynamicObjectPointer->GetMesh());

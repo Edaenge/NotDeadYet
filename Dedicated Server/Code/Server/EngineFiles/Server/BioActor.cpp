@@ -25,7 +25,6 @@ void BioActor::InitValues()
 	this->zPreviousPos = this->zPos;
 	this->zState = STATE_IDLE;
 	this->zVelocity = V_WALK_SPEED;
-	this->zDir = Vector3(1,0,0);
 	this->zUp = Vector3(0,1,0);
 	this->zActorModel = "none";
 
@@ -70,6 +69,15 @@ bool BioActor::Sprint(float dt)
 	return true;
 }
 
+void BioActor::RewindPosition()
+{
+	SetPosition(zPreviousPos);
+}
 
+bool BioActor::HasMoved()
+{
+	if(this->zPos == this->zPreviousPos)
+		return false;
 	
-
+	return true;
+}

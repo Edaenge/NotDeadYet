@@ -22,7 +22,6 @@ public:
 	int GetType() const {return this->zType;}
 	std::string GetDescription() const {return this->zDescription;}
 	std::string GetIconPath() const {return this->zIconPath;}
-	Vector3 GetDirection() const {return this->zDirection;}
 	int GetStackSize() const {return this->zStackSize;}
 	inline  PhysicsObject* GetPhysicObject() const {return this->zPhysicObj;}
 	/*! Returns the ID of the player who created this object.
@@ -36,9 +35,29 @@ public:
 	void SetDescription(const std::string& description) {this->zDescription = description;}
 	void SetWeight(const int weight) {this->zWeight = weight;}
 	void SetType(const int TYPE) {this->zType = TYPE;}
-	void SetDirection(Vector3 dir) {this->zDirection = dir;}
 	void SetPhysicObject(PhysicsObject* pObj){this->zPhysicObj = pObj;}
 	void SetStackSize(const int size) {this->zStackSize = size;}
+	/*! Sets Actor position and physical object position.*/
+	inline virtual void SetPosition(const Vector3& pos)
+	{
+		this->zPos = pos;
+		if(zPhysicObj)
+			this->zPhysicObj->SetPosition(pos);
+	}
+	/*! Sets Actor scale and physical object scale.*/
+	virtual void SetScale(const Vector3& scale)
+	{
+		this->zScale = scale;
+		if(zPhysicObj)
+			this->zPhysicObj->Scale(scale);
+	}
+	/*! Sets Actor rotation and physical object rotation.*/
+	inline virtual void SetRotation(const Vector4& rot)
+	{
+		this->zRot = rot;
+		if(zPhysicObj)
+			this->zPhysicObj->SetQuaternion(rot);
+	}
 	void ModifyStackSize(const int size) {this->zStackSize += size;}
 
 private:
@@ -49,7 +68,6 @@ protected:
 	int zWeight;
 	int zStackSize;
 	int zObjPlayerOwner;
-	Vector3 zDirection;
 	std::string zDescription;
 	std::string zIconPath;
 	PhysicsObject* zPhysicObj;

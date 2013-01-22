@@ -26,13 +26,15 @@ public:
 	/*! Returns false if player cannot sprint, due to stamina.*/
 	virtual bool Sprint(float dt);
 	virtual bool IsAlive() const;
-	/*! Rewinds the position the the old position.*/
-	virtual void RewindPosition(){};
+	/*! Rewinds to previous position.*/
+	virtual void RewindPosition();
+	/*! Check if the player has moved after last update.
+		Note that it may change if the player collides with an other Actor.
+	*/
+	virtual bool HasMoved();
 
 	int GetState() const {return this->zState;}
 	float GetVelocity() const {return this->zVelocity;}
-	const Vector3& GetDirection() const {return this->zDir;}
-	const Vector3& GetUpVector() const {return this->zUp;}
 	float GetStamina() const {return this->zStamina;}
 	float GetHealth() const {return this->zHealth;}
 	inline PhysicsObject* GetPhysicObject() const {return this->zPhysicObj;}
@@ -42,11 +44,31 @@ public:
 	*/
 	void SetState(const int state){this->zState = state;}
 	void SetVelocity(const float velocity){this->zVelocity = velocity;}
-	inline void SetDirection(const Vector3& dir){this->zDir = dir;}
-	inline void SetUpVector(const Vector3& up){this->zUp = up;}
 	void SetHealth(const float health){this->zHealth = health;}
 	void SetStamina(const float stamina){this->zStamina = stamina;}
 	void SetPhysicObj(PhysicsObject* pObj){this->zPhysicObj = pObj;}
+	/*! Sets Actor position and physical object position.*/
+	inline virtual void SetPosition(const Vector3& pos)
+	{
+		this->zPos = pos;
+		if(zPhysicObj)
+			this->zPhysicObj->SetPosition(pos);
+	}
+	/*! Sets Actor scale and physical object scale.*/
+	virtual void SetScale(const Vector3& scale)
+	{
+		this->zScale = scale;
+		if(zPhysicObj)
+			this->zPhysicObj->Scale(scale);
+	}
+	/*! Sets Actor rotation and physical object rotation.*/
+	inline virtual void SetRotation(const Vector4& rot)
+	{
+		this->zRot = rot;
+		if(zPhysicObj)
+			this->zPhysicObj->SetQuaternion(rot);
+	}
+
 
 private:
 	void InitValues();
@@ -68,8 +90,6 @@ protected:
 
 	bool	zAlive;
 
-	Vector3 zDir;
-	Vector3 zUp;
 	Vector3 zPreviousPos;
 
 	PhysicsObject* zPhysicObj;
