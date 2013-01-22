@@ -84,23 +84,29 @@ void PlayerActor::Update(float deltaTime)
 
 	if(this->zKeyStates.GetKeyState(KEY_FORWARD))
 	{
-		this->zPos = this->zPos + this->zDir * dt * this->zVelocity;
+		this->zPos = this->zPos + this->zDirection * dt * this->zVelocity;
+	}
+	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
+	{
+		this->zPos = this->zPos + this->zDirection * -1 * dt * this->zVelocity;
+
+		this->zPos = this->zPos + this->zDirection * dt * this->zVelocity;
 		changed = true;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
 	{
-		this->zPos = this->zPos + this->zDir * -1 * dt * this->zVelocity;
+		this->zPos = this->zPos + this->zDirection * -1 * dt * this->zVelocity;
 		changed = true;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_RIGHT))
 	{
-		Vector3 right = this->zUp.GetCrossProduct(this->zDir);
+		Vector3 right = this->zUp.GetCrossProduct(this->zDirection);
 		this->zPos = this->zPos + (right * dt * this->zVelocity);
 		changed = true;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_LEFT))
 	{
-		Vector3 right = this->zUp.GetCrossProduct(this->zDir);
+		Vector3 right = this->zUp.GetCrossProduct(this->zDirection);
 		this->zPos = this->zPos + (right * -1 * dt * this->zVelocity);
 		changed = true;
 	}
@@ -342,9 +348,4 @@ void PlayerActor::AddChangedHData( string& mess, NetworkMessageConverter* nmc )
 		mess += nmc->Convert(MESSAGE_TYPE_HYDRATION, this->zHydrationChanged);
 		this->zHydrationChanged = false;
 	}
-}
-
-void PlayerActor::RewindPosition()
-{
-	this->zPos = this->zPreviousPos;
 }

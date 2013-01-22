@@ -156,14 +156,45 @@ bool ActorHandler::AddNewStaticMaterialObject(MaterialObject* new_Material)
 	return true;
 }
 
-bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Projectile )
+bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Projectile, Vector3 direction )
 {
 	if(!new_Projectile)
 		return false;
 
-	PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(new_Projectile->GetActorModel(), 
-																		new_Projectile->GetPosition());
+	//Move arrow
+	Vector3 pos = new_Projectile->GetPosition();
+	Vector3 tempPos = pos;
+	tempPos.y = 1.75f;
+	pos += direction * 2;
+	pos.y += 1.75f;
+
+	//Create physic obj
+	PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(new_Projectile->GetActorModel(), pos);
+	pObj->Scale(new_Projectile->GetScale());
+	
+	//CALC ROT
+
+	Vector3 ArrowDirection = new_Projectile->GetDirection();
+	ArrowDirection.Normalize();
+	Vector3 CameraDirection = direction;
+	Vector3 around = ArrowDirection.GetCrossProduct(CameraDirection);
+	float angle = -acos(ArrowDirection.GetDotProduct(CameraDirection));
+	pObj->SetQuaternion(Vector4(0, 0, 0, 1));
+	pObj->RotateAxis(around, angle);
+
+
+
+	/*
+	float angle = acos(direction.GetDotProduct(new_Projectile->GetDirection()));
+	pObj->SetQuaternion(Vector4(0,0,0,1));
+	pObj->RotateAxis(new_Projectile->GetUpVector(), angle);
+	*/
+	//Set new data
+	new_Projectile->SetDirection(direction);
+	new_Projectile->SetPosition(pos);
+	new_Projectile->SetRotation(Vector4(around.x, around.y, around.z, angle));
 	new_Projectile->SetPhysicObject(pObj);
+
 	this->zDynamicProjectiles.push_back(new_Projectile);
 
 	if(!pObj)
@@ -494,17 +525,20 @@ ObjectManager* ActorHandler::GetObjManager() const
 }
 
 /*Not Complete*/
-const std::vector<CollisionEvent>& ActorHandler::CheckCollisions()
+void ActorHandler::CheckCollisions()
 {
 
 	std::vector<CollisionEvent> cEvent;
 
-	/*TESTS PLAYERS VS PLAYERS*/
-	std::vector<PlayerActor*> pCol;
+	/*PLAYERS VS PLAYERS*/
+	std::vector<BioActor*> pCol;
 
 	for(auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
 	{
-		PlayerVsPlayers(*it, pCol);
+		if(!(*it)->HasMoved())
+			continue;
+
+		BioActorVSBioActor(*it, zPlayers, pCol);
 
 		if(pCol.size() > 0)
 			(*it)->RewindPosition();
@@ -512,51 +546,58 @@ const std::vector<CollisionEvent>& ActorHandler::CheckCollisions()
 		pCol.clear();
 	}
 
-	///*TESTS PLAYERS VS PROJECTILES*/
-	//std::vector<DynamicProjectileObject*> dCol; 
-	//std::vector<PhysicsCollisionData> pcd;
+	/*ANIMALS VS PLAYERS*/
+	for(auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
+	{
+		if(!(*it)->HasMoved());
+		continue;
 
-	//for(auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
-	//{
-	//	PlayerVsDynamics(*it, dCol, pcd);
+		BioActorVSBioActor(*it, zPlayers, pCol);
 
-	//	if(dCol.size() != 0)
-	//	{
-	//		float totalDamageTaken = 0.0f;
+		if(pCol.size() > 0)
+			(*it)->RewindPosition();
 
-	//		for (auto it_s = dCol.begin(); it_s < dCol.end(); it_s++)
-	//		{
-	//			if((*it)->IsAlive())
-	//			{
-	//				totalDamageTaken += (*it_s)->GetDamage();
-	//				if((*it)->TakeDamage(totalDamageTaken))
-	//				{
-	//					CollisionEvent ce;
-	//					ce.actor_aggressor_ID	= (*it_s)->GetObjPlayerOwner();
-	//					ce.actor_victim_ID		= (*it)->GetID();
-	//					ce.actor_victim_type	= ACTOR_TYPE_PLAYER;
-	//					ce.event_type			= COLLISION_EVENT_DEATH;
-	//					cEvent.push_back(ce);
-	//				}
-	//			}
+		pCol.clear();
+	}
 
-	//			(*it_s)->SetMoving(false);
-	//		}
+	/**/
 
-	//	}
-	//}
 
-	return cEvent;
 }
 
-void ActorHandler::PlayerVsPlayers( PlayerActor* pTest, std::vector<PlayerActor*> &pCollide )
+void ActorHandler::BioActorVSBioActor(BioActor* pTest, std::vector<AnimalActor*> &actors, std::vector<BioActor*> &pCollide)
 {
 	PhysicsObject* pTemp = pTest->GetPhysicObject();
 	Vector3 pPos = pTemp->GetPosition();
 
-	for (auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
+	for (auto it = actors.begin(); it < actors.end(); it++)
 	{
 		if((*it) == pTest)
+			continue;
+
+
+		Vector3 tPos = (*it)->GetPhysicObject()->GetPosition();
+		float lenght = (pPos - tPos).GetLength();
+
+		if(lenght <= MAX_COLLISION_DISTANCE_PLAYER)
+		{
+			(*it)->RewindPosition();
+			pCollide.push_back(*it);
+		}
+
+	}
+}
+
+void ActorHandler::BioActorVSBioActor( BioActor* pTest, std::vector<PlayerActor*> &actors, std::vector<BioActor*> &pCollide )
+{
+	PhysicsObject* pTemp = pTest->GetPhysicObject();
+	Vector3 pPos = pTemp->GetPosition();
+
+	for (auto it = actors.begin(); it < actors.end(); it++)
+	{
+		if((*it) == pTest)
+			continue;
+		if(!(pTest)->HasMoved())
 			continue;
 
 		Vector3 tPos = (*it)->GetPhysicObject()->GetPosition();
@@ -564,29 +605,8 @@ void ActorHandler::PlayerVsPlayers( PlayerActor* pTest, std::vector<PlayerActor*
 
 		if(lenght <= MAX_COLLISION_DISTANCE_PLAYER)
 		{
+			(*it)->RewindPosition();
 			pCollide.push_back(*it);
-		}
-
-	}
-}
-
-void ActorHandler::PlayerVsDynamics( PlayerActor* pTest, std::vector<DynamicProjectileObject*> &pCollide, 
-									std::vector<PhysicsCollisionData> &pcd )
-{
-	PhysicsObject *pTemp = pTest->GetPhysicObject();
-	PhysicsCollisionData temp_pcd;
-
-	for(auto it = this->zDynamicProjectiles.begin(); it < this->zDynamicProjectiles.end(); it++)
-	{
-		if(!(*it)->IsMoving())
-			continue;		
-		
-		temp_pcd = this->zPhysicsEngine->GetCollision(pTemp, (*it)->GetPhysicObject());
-
-		if (temp_pcd.collision)
-		{
-			pCollide.push_back(*it);
-			pcd.push_back(temp_pcd);
 		}
 
 	}

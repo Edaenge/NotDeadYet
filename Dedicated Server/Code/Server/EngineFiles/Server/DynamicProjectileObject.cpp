@@ -67,7 +67,7 @@ void DynamicProjectileObject::Update(float deltaTime)
 
 	//this->zPos.y += (-9.82f) * deltaTime;
 
-	if (oldPosition.x == this->zPos.x && oldPosition.y == this->zPos.x && oldPosition.z == this->zPos.z)
+	if (oldPosition == this->zPos)
 	{
 		this->zMoving = false;
 	}

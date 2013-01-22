@@ -21,6 +21,8 @@ public:
 		this->zScale = Vector3(0.05f,0.05f,0.05f);
 		this->zActorModel = "none";
 		this->zActorObjectName = "none";
+		this->zDirection = Vector3(0.0f, 0.0f, -1.0f);
+		this->zUp = Vector3(0.0f, 1.0f, 0.0f);
 	}
 	Actor(const Vector3& pos)
 	{
@@ -30,6 +32,8 @@ public:
 		this->zScale = Vector3(0.05f,0.05f,0.05f);
 		this->zActorModel = "none";
 		this->zActorObjectName = "none";
+		this->zDirection = Vector3(0.0f, 0.0f, -1.0f);
+		this->zUp = Vector3(0.0f, 1.0f, 0.0f);
 	}
 	Actor(const Vector3& pos, const Vector4& rot) 
 	{
@@ -40,6 +44,8 @@ public:
 		this->zScale = Vector3(0.05f,0.05f,0.05f);
 		this->zActorModel = "none";
 		this->zActorObjectName = "none";
+		this->zDirection = Vector3(0.0f, 0.0f, -1.0f);
+		this->zUp = Vector3(0.0f, 1.0f, 0.0f);
 	}
 	virtual ~Actor(){}
 	
@@ -49,13 +55,17 @@ public:
 	inline int  GetID() const {return this->zID;}
 	std::string GetActorModel() const {return zActorModel;}
 	std::string GetActorObjectName() const {return zActorObjectName;}
+	Vector3 GetDirection() const {return this->zDirection;}
+	const Vector3& GetUpVector() const {return this->zUp;}
 
-	 void SetPosition(const Vector3& pos) {zPos = pos;}
-	 void SetRotation(const Vector4& rot) {zRot = rot;}
-	 void SetScale(const Vector3& scale) {zScale = scale;}
-	 void SetID(const int id) {this->zID = id;}
-	 void SetActorModel(const std::string& modelStr) {zActorModel = modelStr;}
-	 void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
+	inline virtual void SetPosition(const Vector3& pos) {zPos = pos;}
+	inline virtual void SetRotation(const Vector4& rot) {zRot = rot;}
+	virtual void SetScale(const Vector3& scale) {zScale = scale;}
+	inline virtual void SetID(const int id) {this->zID = id;}
+	virtual void SetActorModel(const std::string& modelStr) {zActorModel = modelStr;}
+	virtual void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
+	inline virtual void SetDirection(Vector3 dir) {this->zDirection = dir;}
+	virtual void SetUpVector(const Vector3& up){this->zUp = up;}
 
 	virtual void Update(float deltaTime) = 0;
 protected:
@@ -68,6 +78,8 @@ protected:
 	Vector3 zPos;
 	Vector3 zScale;
 	Vector4 zRot;
+	Vector3 zDirection;
+	Vector3 zUp;
 	std::string zActorModel;
 	std::string zActorObjectName;
 private:

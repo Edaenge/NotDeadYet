@@ -1217,7 +1217,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	}
 
 	//Debug Pos
-	pi->SetPosition(Vector3((float)pi->GetID() * 15.0f, 0.0f, 1.0f)); 
+	pi->SetPosition(Vector3((float)(pi->GetID()%4), 0.0f, 1.0f)); 
 	//Add new player to the list
 	this->zActorHandler->AddNewPlayer(pi);
 
