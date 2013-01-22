@@ -159,8 +159,8 @@ void MainMenu::StartTestRun()
 {
 	int clientErrorCode;
 	// Initializes the Client and returns a code that explains what happend
-	//clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 11521);	
-	clientErrorCode  = this->zGame->InitGameClient("194.47.150.16", 11521);
+	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 11521);	
+	//clientErrorCode  = this->zGame->InitGameClient("194.47.150.16", 11521);
 	if(clientErrorCode == 0)
 	{
 		MaloW::Debug("Game Running");

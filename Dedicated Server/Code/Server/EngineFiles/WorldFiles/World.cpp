@@ -808,6 +808,3 @@ bool World::IsBlockingAt( const Vector2& pos )
 
 	return GetSector(sectorX, sectorY)->GetBlocking( Vector2(localX, localY) );
 }
-
-
-

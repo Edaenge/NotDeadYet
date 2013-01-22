@@ -1362,6 +1362,7 @@ int Host::GetNrOfPlayers() const
 {
 	return this->zClients.size();
 }
+
 void Host::onEvent( Event* e )
 {
 	if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )
