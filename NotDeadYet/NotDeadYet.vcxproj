@@ -41,14 +41,10 @@
     <ClCompile Include="..\Source\GameFiles\Items\Gear.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Inventory.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Item.cpp" />
-    <ClCompile Include="..\Source\GameFiles\Items\LargeStick.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Material.cpp" />
-    <ClCompile Include="..\Source\GameFiles\Items\MediumStick.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\MeleeWeapon.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\Projectile.cpp" />
     <ClCompile Include="..\Source\GameFiles\Items\RangedWeapon.cpp" />
-    <ClCompile Include="..\Source\GameFiles\Items\SmallStick.cpp" />
-    <ClCompile Include="..\Source\GameFiles\Items\Thread.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyBindConfig.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\Keybinds.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyConverter.cpp" />
@@ -76,6 +72,12 @@
     <ClCompile Include="..\Source\SoundEngine\SoundEngine.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundHandler.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundSong.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\Entity.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\EntityList.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\Sector.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\World.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\WorldFile.cpp" />
+    <ClCompile Include="..\Source\WorldFiles\WorldRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\NDYGFX\Include\GraphicsEngine.h" />
@@ -113,14 +115,10 @@
     <ClInclude Include="..\Source\GameFiles\Items\Gear.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Inventory.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Item.h" />
-    <ClInclude Include="..\Source\GameFiles\Items\LargeStick.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Material.h" />
-    <ClInclude Include="..\Source\GameFiles\Items\MediumStick.h" />
     <ClInclude Include="..\Source\GameFiles\Items\MeleeWeapon.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Projectile.h" />
     <ClInclude Include="..\Source\GameFiles\Items\RangedWeapon.h" />
-    <ClInclude Include="..\Source\GameFiles\Items\SmallStick.h" />
-    <ClInclude Include="..\Source\GameFiles\Items\Thread.h" />
     <ClInclude Include="..\Source\GameFiles\Items\Weapon.h" />
     <ClInclude Include="..\Source\GameFiles\KeyUtil\KeyBindConfig.h" />
     <ClInclude Include="..\Source\GameFiles\KeyUtil\Keybinds.h" />
@@ -156,6 +154,15 @@
     <ClInclude Include="..\Source\SoundEngine\SoundEngine.h" />
     <ClInclude Include="..\Source\SoundEngine\SoundHandler.h" />
     <ClInclude Include="..\Source\SoundEngine\SoundSong.h" />
+    <ClInclude Include="..\Source\WorldFiles\CircleAndRect.h" />
+    <ClInclude Include="..\Source\WorldFiles\Entity.h" />
+    <ClInclude Include="..\Source\WorldFiles\EntityList.h" />
+    <ClInclude Include="..\Source\WorldFiles\Observer.h" />
+    <ClInclude Include="..\Source\WorldFiles\Sector.h" />
+    <ClInclude Include="..\Source\WorldFiles\World.h" />
+    <ClInclude Include="..\Source\WorldFiles\WorldEvents.h" />
+    <ClInclude Include="..\Source\WorldFiles\WorldFile.h" />
+    <ClInclude Include="..\Source\WorldFiles\WorldRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GameIcon.ico" />

@@ -45,14 +45,32 @@ ActorHandler::~ActorHandler()
 
 void ActorHandler::UpdateObjects( float deltaTime )
 {
+	Vector3 playersPos[32];
+	float playerVelocity[32];
+	float playerHealth[32];
+
+	int nrOfPlayers = 0;
+
 	//Update Players
 	for (auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
 	{
 		(*it)->Update(deltaTime);
+		playersPos[nrOfPlayers] = (*it)->GetPosition();
+		playerVelocity[nrOfPlayers] = (*it)->GetVelocity();
+		playerHealth[nrOfPlayers] = (*it)->GetHealth();
+	
+		nrOfPlayers++;
 	}
+
+	
 	//Update Animals
 	for (auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
 	{
+		for(int i = 0; i < nrOfPlayers; i++)	//Potential area for optimization, probably.
+		{
+			(*it)->SetPlayerInfo(i,playersPos[i], playerVelocity[i], playerHealth[i]);
+		}
+		(*it)->SetCurrentPlayers(nrOfPlayers);
 		(*it)->Update(deltaTime);
 	}
 	//Update DynamicObjects
@@ -78,7 +96,17 @@ bool ActorHandler::AddNewPlayer(PlayerActor* new_player)
 	return true;
 }
 
-bool ActorHandler::AddNewStaticFoodActor( FoodObject* new_Food )
+bool ActorHandler::AddAnimalActor(AnimalActor* new_animal)
+{
+	if(!new_animal)
+		return false;
+
+	this->zAnimals.push_back(new_animal);
+
+	return true;
+}
+
+bool ActorHandler::AddNewStaticFoodActor(FoodObject* new_Food)
 {
 	if(!new_Food)
 		return false;
@@ -88,7 +116,7 @@ bool ActorHandler::AddNewStaticFoodActor( FoodObject* new_Food )
 	return true;
 }
 
-bool ActorHandler::AddNewStaticWeaponActor( WeaponObject* new_Weapon )
+bool ActorHandler::AddNewStaticWeaponActor(WeaponObject* new_Weapon)
 {
 	if(!new_Weapon)
 		return false;
@@ -98,7 +126,7 @@ bool ActorHandler::AddNewStaticWeaponActor( WeaponObject* new_Weapon )
 	return true;
 }
 
-bool ActorHandler::AddNewStaticContainerActor( ContainerObject* new_Container )
+bool ActorHandler::AddNewStaticContainerActor(ContainerObject* new_Container)
 {
 	if(!new_Container)
 		return false;
@@ -108,12 +136,22 @@ bool ActorHandler::AddNewStaticContainerActor( ContainerObject* new_Container )
 	return true;
 }
 
-bool ActorHandler::AddNewStaticProjectileActor( StaticProjectileObject* new_Projectile )
+bool ActorHandler::AddNewStaticProjectileActor(StaticProjectileObject* new_Projectile)
 {
 	if(!new_Projectile)
 		return false;
 
 	this->zStaticProjectiles.push_back(new_Projectile);
+
+	return true;
+}
+
+bool ActorHandler::AddNewStaticMaterialObject(MaterialObject* new_Material)
+{
+	if(!new_Material)
+		return false;
+
+	this->zMaterials.push_back(new_Material);
 
 	return true;
 }
@@ -264,6 +302,22 @@ bool ActorHandler::RemoveStaticProjectileActor( const int ID )
 	return true;
 }
 
+bool ActorHandler::RemoveStaticMaterialActor( const int ID )
+{
+	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_MATERIAL);
+
+	if(index == -1)
+		return false;
+
+	MaterialObject* temp = this->zMaterials[index];
+
+	this->zMaterials.erase(this->zMaterials.begin() + index);
+
+	SAFE_DELETE(temp);
+
+	return true;
+}
+
 bool ActorHandler::RemoveDynamicProjectileActor( const int ID )
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE);
@@ -335,6 +389,15 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE ) const
 		for (unsigned int it = 0; it < this->zStaticProjectiles.size(); it++)
 		{
 			if(this->zStaticProjectiles[it]->GetID() == ID)
+				return it;
+		}
+	}
+
+	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_MATERIAL)
+	{
+		for (unsigned int it = 0; it < this->zMaterials.size(); it++)
+		{
+			if(this->zMaterials[it]->GetID() == ID)
 				return it;
 		}
 	}
@@ -423,6 +486,18 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE, Actor** aOut ) c
 			if(this->zStaticProjectiles[it]->GetID() == ID)
 			{
 				*aOut = this->zStaticProjectiles[it];
+				return it;
+			}
+		}
+	}
+
+	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_MATERIAL)
+	{
+		for (unsigned int it = 0; it < this->zMaterials.size(); it++)
+		{
+			if(this->zMaterials[it]->GetID() == ID)
+			{
+				*aOut = this->zMaterials[it];
 				return it;
 			}
 		}

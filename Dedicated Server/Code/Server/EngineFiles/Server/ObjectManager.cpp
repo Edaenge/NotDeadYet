@@ -11,6 +11,7 @@ static const std::string OBJECT_FOOD		=	"[Object.Food]";
 static const std::string OBJECT_CONTAINER	=	"[Object.Container]";
 static const std::string OBJECT_GEAR		=	"[Object.Gear]";
 static const std::string OBJECT_PROJECTILE	=	"[Object.Projectile]";
+static const std::string OBJECT_MATERIAL	=	"[Object.Material]";
 
 static const std::string END				=	"#END";
 static const std::string TYPE				=	"TYPE";
@@ -29,6 +30,9 @@ static const std::string RANGE				=	"RANGE";
 static const std::string MAX_USE			=	"MAX_USE";
 static const std::string CURRENT_USE		=	"CURRENT_USE";
 static const std::string VELOCITY			=	"VELOCITY";
+static const std::string CRAFTING_TYPE		=	"CRAFTING_TYPE";
+static const std::string STACKS_REQUIREMENT =	"STACKS_REQUIREMENT";
+
 
 ObjectManager::ObjectManager()
 {
@@ -144,6 +148,22 @@ bool ObjectManager::ReadObjects()
 			}
 
 			this->zStaticProjectiles.push_back(ct);
+		}
+		else if(strcmp(key, OBJECT_MATERIAL.c_str()) == 0)
+		{
+			MaterialObject* ma = new MaterialObject(false);
+			while(!read.eof() && strcmp(command, END.c_str()) != 0)
+			{
+				read.getline(line, sizeof(line));
+				TrimAndSet(line);
+
+				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
+
+				if(strcmp(command,END.c_str()) != 0)
+					InterpCommand(command, key, ma);
+			}
+
+			this->zMaterials.push_back(ma);
 		}
 	}
 
@@ -398,6 +418,75 @@ bool ObjectManager::InterpCommand(char* command, char* key, ContainerObject* ct)
 	return true;
 }
 
+bool ObjectManager::InterpCommand(char* command, char* key, MaterialObject* ma)
+{
+	if(strcmp(key, "") == 0)
+		return false;
+
+	string CC(command);
+	std::transform(CC.begin(), CC.end(), CC.begin(), ::toupper);
+	strcpy(command, CC.c_str());
+
+	if(strcmp(command, TYPE.c_str()) == 0)
+	{
+		ma->SetType(MaloW::convertStringToInt(key));
+	}
+	else if(strcmp(command, CRAFTING_TYPE.c_str()) == 0)
+	{
+		ma->SetCraftingType((int)MaloW::convertStringToFloat(key));
+	}
+	else if(strcmp(command, STACKS_REQUIREMENT.c_str()) == 0)
+	{
+		ma->SetRequiredStackToCraft((int)MaloW::convertStringToFloat(key));
+	}
+	else if(strcmp(command, WEIGHT.c_str()) == 0)
+	{
+		ma->SetWeight(MaloW::convertStringToInt(key));
+	}
+	else if(strcmp(command, PATH.c_str()) == 0)
+	{
+		ma->SetIconPath(key);
+	}
+	else if(strcmp(command, DESCRIPTION.c_str()) == 0)
+	{
+		ma->SetDescription(key);
+	}
+	else if(strcmp(command, MODEL.c_str()) == 0)
+	{
+		ma->SetActorModel(key);
+	}
+	else if(strcmp(command, NAME.c_str()) == 0)
+	{
+		ma->SetActorObjectName(key);
+	}
+	else if(strcmp(command, STACKS.c_str()) == 0)
+	{
+		ma->SetStackSize(MaloW::convertStringToInt(key));
+	}
+	else if (strcmp(command, SCALE.c_str()) == 0)
+	{
+		char x[52];
+		char y[52];
+		char z[52];
+
+		unsigned int index = 0;
+		while(key[index] != '\0')
+		{
+			if(key[index] == ',')
+				key[index] = ' ';
+
+			index++;
+		}
+
+		sscanf_s(key, "%s %s %s", &x, sizeof(x), &y, sizeof(y), &z, sizeof(z));
+		Vector3 vec(MaloW::convertStringToFloat(x), MaloW::convertStringToFloat(y), MaloW::convertStringToFloat(z));
+
+		ma->SetScale(vec);
+	}
+
+	return true;
+}
+
 bool ObjectManager::InterpCommand(char* command, char* key, StaticProjectileObject* pt)
 {
 	if(strcmp(key, "") == 0)
@@ -509,4 +598,20 @@ const StaticProjectileObject* ObjectManager::SearchType(std::vector<StaticProjec
 	}
 
 	return NULL;
+}
+
+const MaterialObject* ObjectManager::SearchType(std::vector<MaterialObject*>& materials, const int type) const
+{
+	for(auto it = materials.begin(); it < materials.end(); it++)
+	{
+		if((*it)->GetType() == type)
+			return (*it);
+	}
+
+	return NULL;
+}
+
+const MaterialObject* ObjectManager::GetMaterialObject(const int type)
+{
+	return SearchType(this->zMaterials, type);
 }

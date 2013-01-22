@@ -8,16 +8,15 @@
 #include "GraphicsEngine.h"
 #include "Network/ServerChannel.h"
 #include "GameFiles/Items/Inventory.h"
-#include "GameFiles/Gui/InventoryGui.h"
 #include "GameFiles/KeyUtil/KeyHandler.h"
-#include "GameFiles/Gui/CircularListGui.h"
 #include "Network/NetworkMessageConverter.h"
 #include "GameFiles/ClientSide/WorldObjectManager.h"
 #include "GameFiles/ClientSide/GuiManager.h"
+#include "../WorldFiles/WorldRenderer.h"
 
 using namespace MaloW;
 
-class Client : public MaloW::Process
+class Client : public MaloW::Process, public Observer
 {
 public:
 	Client();
@@ -43,7 +42,6 @@ private:
 
 	/*! Initializes the graphic stuff*/
 	void InitGraphics();
-
 
 	//////////////////////
 	//					//
@@ -79,6 +77,7 @@ private:
 	//	   Updates		//
 	//			  		//
 	//////////////////////
+
 	/*! Updates The Positions*/
 	void UpdateWorldObjects();
 	/*! Updates the camera position to follow the mesh.*/
@@ -91,13 +90,12 @@ private:
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
 	bool CheckCollision();
 
-	
-
 	//////////////////////
 	//					//
 	//	   Objects		//
 	//			  		//
 	//////////////////////
+
 	/*! Updates A Static Object.*/
 	bool UpdateStaticObjects(const std::vector<std::string>& msgArray, const int ID);
 	/*! Updates An Animal Object.*/
@@ -172,4 +170,12 @@ private:
 	WorldObjectManager* zObjectManager;
 	NetworkMessageConverter zMsgHandler;
 	Inventory* zPlayerInventory;
+
+	//float timer;
+	World* zWorld;
+	WorldRenderer* zWorldRenderer;
+	WorldAnchor* zAnchor;
+	iImage* zCrossHair;
+protected:
+	virtual void onEvent( Event* e );
 };

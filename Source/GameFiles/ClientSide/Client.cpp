@@ -1,7 +1,9 @@
 #include "GameFiles/ClientSide/Client.h"
 #include "Graphics.h"
 #include "Network/NetworkPacket.h"
+#include "../ClientServerMessages.h"
 #include "ClientServerMessages.h"
+#include "../WorldFiles/EntityList.h"
 
 using namespace MaloW;
 
@@ -36,6 +38,12 @@ Client::Client()
 	this->zKeyInfo.InitKeyBinds();
 	
 	this->zMsgHandler = NetworkMessageConverter();
+
+	//timer = 0;
+	this->zWorld = 0;
+	this->zWorldRenderer = 0;
+	this->zAnchor = 0;
+	this->zCrossHair = 0;
 }
 
 int Client::Connect(const std::string& ip, const int port)
@@ -85,6 +93,21 @@ Client::~Client()
 	//	delete this->zPlayerInventory;
 	//	this->zPlayerInventory = NULL;
 	//}
+	if (this->zWorld)
+	{
+		delete this->zWorld;
+		this->zWorld = NULL;
+	}
+	if (this->zWorldRenderer)
+	{
+		delete this->zWorldRenderer;
+		this->zWorldRenderer = NULL;
+	}
+	if(zCrossHair)
+	{
+		delete this->zCrossHair;
+		zCrossHair = NULL;
+	}
 }
 
 float Client::Update()
@@ -104,6 +127,21 @@ float Client::Update()
 
 	this->zGuiManager->Update(this->zDeltaTime);
 
+	
+
+	//Anchors with the world to decide what to render.
+	if(zWorld && zAnchor)
+	{
+		Vector2 cameraPos = this->zEng->GetCamera()->GetPosition().GetXZ();
+
+		this->zAnchor->position = cameraPos;
+		this->zEng->SetSceneAmbientLight(this->zWorld->GetAmbientAtWorldPos(cameraPos));
+
+		this->zAnchor->radius = this->zEng->GetEngineParameters()->FarClip;
+	}
+	if(zWorld)
+		this->zWorld->Update();
+
 	return this->zDeltaTime;
 }
 
@@ -112,6 +150,25 @@ void Client::InitGraphics()
 	this->zEng->CreateSkyBox("Media/skymap.dds");
 	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
 	this->zEng->GetCamera()->LookAt( Vector3(0, 0, 0) );
+	
+	LoadEntList("Entities.txt");
+
+	if ( zWorld ) delete zWorld, zWorld=0;
+	this->zWorld = new World(this, "3x3.map");
+	this->zWorldRenderer = new WorldRenderer(zWorld, GetGraphics());
+
+	this->zAnchor = this->zWorld->CreateAnchor();
+
+	iGraphicsEngineParams* GEP = GetGraphics()->GetEngineParameters();
+	int windowWidth = GEP->windowWidth;
+	int windowHeight = GEP->windowHeight;
+	float dx = ((float)windowHeight * 4.0f) / 3.0f;
+	float offSet = (float)(windowWidth - dx) / 2.0f;
+	float length = ((25.0f / 1024.0f) * dx);
+	float x = offSet + (0.5f * dx) - length * 0.5f;
+	float y = (windowHeight / 2.0f) - length * 0.5f;
+
+	this->zCrossHair = this->zEng->CreateImage(Vector2(x, y), Vector2(length, length), "Media/cross.png");
 
 	//this->zEng->LoadingScreen("Media/LoadingScreenBG.png", "Media/LoadingScreenPG.png");
 	//iTerrain* terrain = this->zEng->CreateTerrain(Vector3(0, 0, 0), Vector3(10, 10, 10), 20);
@@ -147,10 +204,11 @@ void Client::Life()
 	this->zServerChannel->Start();
 
 	this->Init();
-
+	//static int counter = 0;
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->Update();
+		//timer += zDeltaTime;
 
 		this->zSendUpdateDelayTimer += this->zDeltaTime;
 		this->zTimeSinceLastPing += this->zDeltaTime;
@@ -167,9 +225,18 @@ void Client::Life()
 
 				/*if (Messages::FileWrite())
 					Messages::Debug("zSendUpdateDelayTimer left from last update " + MaloW::convertNrToString(zSendUpdateDelayTimer));*/
+				//counter++;
 
 				this->SendClientUpdate();
 			}
+
+			//if (timer >= 1.0f)
+			//{
+			//	if (Messages::FileWrite())
+			//		Messages::Debug(MaloW::convertNrToString(counter));
+			//	counter = 0;
+			//	timer -= 1.0f;
+			//}
 			this->UpdateCameraPos();
 
 			this->UpdateWorldObjects();
@@ -243,13 +310,8 @@ void Client::UpdateCameraPos()
 	if (index != -1)
 	{
 		Vector3 position = this->zObjectManager->GetPlayerObject(index)->GetPosition();
-		iTerrain* terrain = this->zObjectManager->GetTerrain();
-		if (terrain)
-		{
-			position.y = terrain->GetYPositionAt(position.x, position.z);
-			terrain = NULL;
-		}
-		position.y += 2.5f;
+
+		position.y += 1.8f;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
 }
@@ -607,7 +669,7 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		}
 		else if(strcmp(key, M_ITEM_USE.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
+			int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
 			this->HandleUseItem(id);
 		}
 		else if(strcmp(key, M_REMOVE_EQUIPMENT.c_str()) == 0)
@@ -782,4 +844,22 @@ bool Client::GetCursorVisibility()
 void Client::DisplayMessageToClient(const std::string& msg)
 {
 	MaloW::Debug(msg);
+}
+void Client::onEvent( Event* e )
+{
+	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
+	{
+		// Create Anchor
+		zAnchor = WLE->world->CreateAnchor();
+	}
+	else if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )
+	{
+		if ( zWorldRenderer ) delete zWorldRenderer, zWorldRenderer = 0;
+		if ( zAnchor ) zWorld->DeleteAnchor( zAnchor );
+		if ( zWorld ) zWorld = 0;
+	}
+	else if ( EntityRemovedEvent *ERE = dynamic_cast<EntityRemovedEvent*>(e) )
+	{
+		//zTargetedEntities.erase(ERE->entity);
+	}
 }

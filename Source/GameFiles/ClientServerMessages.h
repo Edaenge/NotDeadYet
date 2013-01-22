@@ -2,11 +2,11 @@
 
 #include <string>
 #include <fstream>
-#include "../MaloWLib/MaloW.h"
+#include "../MaloWLib/Malow.h"
 
 static bool eraseFile = false;
 static bool writeToFile = true;
-static bool msgWrites = false;
+static bool msgWrites = true;
 
 namespace Messages
 {
@@ -14,8 +14,8 @@ namespace Messages
 	{
 		if(eraseFile)
 		{
-			ofstream writeFile;
-			writeFile.open ("ServerClientMessages.txt", ios::out | ios::trunc);
+			std::ofstream writeFile;
+			writeFile.open ("ServerClientMessages.txt", std::ios::out | std::ios::trunc);
 
 			writeFile << "";
 
@@ -24,10 +24,10 @@ namespace Messages
 		}
 
 
-		fstream writeFile;
-		writeFile.open ("ServerClientMessages.txt", fstream::in | fstream::out | fstream::app);
+		std::fstream writeFile;
+		writeFile.open ("ServerClientMessages.txt", std::fstream::in | std::fstream::out | std::fstream::app);
 
-		writeFile << msg << endl;
+		writeFile << msg << std::endl;
 
 		writeFile.close();
 	}
@@ -36,8 +36,8 @@ namespace Messages
 	{
 		if(eraseFile)
 		{
-			ofstream writeFile;
-			writeFile.open ("ServerClientMessages.txt", ios::out | ios::trunc);
+			std::ofstream writeFile;
+			writeFile.open ("ServerClientMessages.txt", std::ios::out | std::ios::trunc);
 
 			writeFile << "";
 
@@ -46,10 +46,10 @@ namespace Messages
 		}
 
 
-		fstream writeFile;
-		writeFile.open ("ServerClientMessages.txt", fstream::in | fstream::out | fstream::app);
+		std::fstream writeFile;
+		writeFile.open ("ServerClientMessages.txt", std::fstream::in | std::fstream::out | std::fstream::app);
 
-		writeFile << MaloW::convertNrToString(nr) << endl;
+		writeFile << MaloW::convertNrToString(nr) << std::endl;
 
 		writeFile.close();
 	}
@@ -58,8 +58,8 @@ namespace Messages
 	{
 		//if(eraseFile)
 		//{
-		ofstream writeFile;
-		writeFile.open ("ServerClientMessages.txt", ios::out | ios::trunc);
+		std::ofstream writeFile;
+		writeFile.open ("ServerClientMessages.txt", std::ios::out | std::ios::trunc);
 
 		writeFile << "";
 

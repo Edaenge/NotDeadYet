@@ -45,6 +45,7 @@ void PlayerActor::Update(float deltaTime)
 {
 	float dt = deltaTime + this->zLatency;
 	this->zPreviousPos = this->zPos;
+	bool changed = false;
 
 	if(this->zKeyStates.GetKeyState(KEY_SPRINT))
 	{
@@ -88,16 +89,26 @@ void PlayerActor::Update(float deltaTime)
 	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
 	{
 		this->zPos = this->zPos + this->zDirection * -1 * dt * this->zVelocity;
+
+		this->zPos = this->zPos + this->zDirection * dt * this->zVelocity;
+		changed = true;
+	}
+	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
+	{
+		this->zPos = this->zPos + this->zDirection * -1 * dt * this->zVelocity;
+		changed = true;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_RIGHT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDirection);
 		this->zPos = this->zPos + (right * dt * this->zVelocity);
+		changed = true;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_LEFT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDirection);
 		this->zPos = this->zPos + (right * -1 * dt * this->zVelocity);
+		changed = true;
 	}
 
 	if(this->zState != STATE_RUNNING && (this->zStamina < this->zStaminaMax))
@@ -109,22 +120,33 @@ void PlayerActor::Update(float deltaTime)
 
 		this->zStaminaChanged = true;
 	}
-
-	this->zPhysicObj->SetPosition(this->zPos);
+	bool validMove = false;
+	if(changed)
+	{
+		PlayerUpdatedEvent temp = PlayerUpdatedEvent(this, validMove);
+		NotifyObservers( &temp);
+		if(temp.validMove)
+			this->zPhysicObj->SetPosition(this->zPos);
+		else
+		{
+			this->zPos = zPreviousPos;
+		}
+	}
 }
 
-bool PlayerActor::PickUpObject( DynamicObjectActor* object )
+bool PlayerActor::PickUpObject( DynamicObjectActor* object)
 {
 	//Not yet implemented
 	return false;
 }
 
-bool PlayerActor::PickUpObject( StaticObjectActor* object )
+bool PlayerActor::PickUpObject(StaticObjectActor* object)
 {
 	FoodObject* fo				= NULL;
 	WeaponObject* wo			= NULL;
 	ContainerObject* co			= NULL;
 	StaticProjectileObject* spo = NULL;
+	MaterialObject*	mo			= NULL;
 	Item* item					= NULL; 
 
 	fo = dynamic_cast<FoodObject*>(object);
@@ -240,6 +262,27 @@ bool PlayerActor::PickUpObject( StaticObjectActor* object )
 		item->SetStackSize(spo->GetStackSize());
 		item->SetItemName(spo->GetActorObjectName());
 		item->SetItemDescription(spo->GetDescription());
+
+		if(!this->zInventory->AddItem(item))
+		{
+			SAFE_DELETE(item);
+			return false;
+		}
+
+		return true;
+	}
+
+	mo = dynamic_cast<MaterialObject*>(object);
+	if(mo)
+	{
+		item = new Material(mo->GetID(), mo->GetType(), mo->GetCraftingType(), mo->GetRequiredStackToCraft());
+
+		item->SetStacking(true);
+		item->SetItemWeight(mo->GetWeight());
+		item->SetIconPath(mo->GetIconPath());
+		item->SetStackSize(mo->GetStackSize());
+		item->SetItemName(mo->GetActorObjectName());
+		item->SetItemDescription(mo->GetDescription());
 
 		if(!this->zInventory->AddItem(item))
 		{

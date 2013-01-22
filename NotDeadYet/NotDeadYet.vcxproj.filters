@@ -41,6 +41,9 @@
     <Filter Include="GUI">
       <UniqueIdentifier>{e1502db5-db6a-44ef-8c56-2d9b1044d15d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Files\WorldFiles">
+      <UniqueIdentifier>{4d92d010-72ba-4418-ba48-6657fb8fb35e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\main.cpp">
@@ -202,17 +205,23 @@
     <ClCompile Include="..\Source\GameFiles\Items\Material.cpp">
       <Filter>Game Files\Items</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\Items\LargeStick.cpp">
-      <Filter>Game Files\Items</Filter>
+    <ClCompile Include="..\Source\WorldFiles\Entity.cpp">
+      <Filter>Game Files\WorldFiles</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\Items\MediumStick.cpp">
-      <Filter>Game Files\Items</Filter>
+    <ClCompile Include="..\Source\WorldFiles\EntityList.cpp">
+      <Filter>Game Files\WorldFiles</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\Items\SmallStick.cpp">
-      <Filter>Game Files\Items</Filter>
+    <ClCompile Include="..\Source\WorldFiles\Sector.cpp">
+      <Filter>Game Files\WorldFiles</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\Items\Thread.cpp">
-      <Filter>Game Files\Items</Filter>
+    <ClCompile Include="..\Source\WorldFiles\World.cpp">
+      <Filter>Game Files\WorldFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\WorldFiles\WorldFile.cpp">
+      <Filter>Game Files\WorldFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\WorldFiles\WorldRenderer.cpp">
+      <Filter>Game Files\WorldFiles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -438,17 +447,32 @@
     <ClInclude Include="..\Source\GameFiles\Items\Material.h">
       <Filter>Game Files\Items</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\Items\LargeStick.h">
-      <Filter>Game Files\Items</Filter>
+    <ClInclude Include="..\Source\WorldFiles\CircleAndRect.h">
+      <Filter>Game Files\WorldFiles</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\Items\MediumStick.h">
-      <Filter>Game Files\Items</Filter>
+    <ClInclude Include="..\Source\WorldFiles\Entity.h">
+      <Filter>Game Files\WorldFiles</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\Items\SmallStick.h">
-      <Filter>Game Files\Items</Filter>
+    <ClInclude Include="..\Source\WorldFiles\EntityList.h">
+      <Filter>Game Files\WorldFiles</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\GameFiles\Items\Thread.h">
-      <Filter>Game Files\Items</Filter>
+    <ClInclude Include="..\Source\WorldFiles\Observer.h">
+      <Filter>Game Files\WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\WorldFiles\Sector.h">
+      <Filter>Game Files\WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\WorldFiles\World.h">
+      <Filter>Game Files\WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\WorldFiles\WorldEvents.h">
+      <Filter>Game Files\WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\WorldFiles\WorldFile.h">
+      <Filter>Game Files\WorldFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\WorldFiles\WorldRenderer.h">
+      <Filter>Game Files\WorldFiles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -71,9 +71,9 @@ private:
 	void InitValues(const int id = -1, const unsigned int itemType = 0, const unsigned int weight = 0, 
 		const std::string& name = "Unknown", const std::string& description = "Unknown", const std::string iconPath = "Unknown");
 protected:
-	unsigned int zStacks;
-	unsigned int zID;
-	unsigned int zWeight;
+	int zStacks;
+	int zID;
+	int zWeight;
 	std::string zItemName;
 	unsigned int zItemType;
 	std::string zItemDescription;

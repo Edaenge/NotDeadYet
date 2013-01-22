@@ -13,11 +13,12 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "../../../../../Source/GameFiles/Items/Inventory.h"
 #include "../../../../../Source/GameFiles/Items/Equipment.h"
 #include "../../../../../Source/Network/NetworkMessageConverter.h"
+#include "../WorldFiles/WorldEvents.h"
 
 /*This class is used to save player information such as position and states.
   This information is sent to clients.
 */
-class PlayerActor : public BioActor
+class PlayerActor : public BioActor, public Observed
 {
 public:
 	/*! ID should be the same ID as in ClientChannel.*/
@@ -94,4 +95,12 @@ private:
 	Equipment* zEquipment;
 
 	ObjectManager* zObjManager;
+};
+
+class PlayerUpdatedEvent : public Event
+{
+public:
+	PlayerActor* playerActor;
+	bool validMove;
+	PlayerUpdatedEvent(PlayerActor* playerActor, bool& validMove) : playerActor(playerActor), validMove(validMove){}
 };

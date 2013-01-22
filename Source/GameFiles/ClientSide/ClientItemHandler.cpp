@@ -98,7 +98,9 @@ void Client::HandleUseItem(const int ID)
 			MaloW::Debug("dynamic cast Failed in Host::UseItem (Food)");
 			return;
 		}
-		MaloW::Debug("Crafting");
+		if (Messages::FileWrite())
+			Messages::Debug("Crafting");
+
 		if (!material->Use())
 		{
 			MaloW::Debug("Not Enough materials to Craft");
@@ -527,6 +529,8 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	float weaponRange = 0.0f;
 	float projectileDamage = 0.0f;
 	float projectileVelocity = 0.0f;
+	int craftingType = -1;
+	int stacksRequired = 10000;
 	float hunger = 0.0f;
 	int maxUse = 0;
 	int currUse = 0;
@@ -586,6 +590,14 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		else if(strcmp(key, M_CONTAINER_CURRENT.c_str()) == 0)
 		{
 			currUse = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_CURRENT, (*it));
+		}
+		else if(strcmp(key, M_MATERIAL_CRAFTING_TYPE.c_str()) == 0)
+		{
+			craftingType = this->zMsgHandler.ConvertStringToInt(M_MATERIAL_CRAFTING_TYPE, (*it));
+		}
+		else if(strcmp(key, M_MATERIAL_STACKS_REQUIRED.c_str()) == 0)
+		{
+			stacksRequired = this->zMsgHandler.ConvertStringToInt(M_MATERIAL_STACKS_REQUIRED, (*it));
 		}
 	}
 	if (itemType == -1)
@@ -655,6 +667,38 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_PROJECTILE_ARROW:
 		item = new Projectile(ID, itemType, projectileVelocity, projectileDamage);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
+		break;
+	case ITEM_TYPE_MATERIAL_SMALL_STICK:
+		item = new Material(ID, itemType, craftingType, stacksRequired);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
+		break;
+	case ITEM_TYPE_MATERIAL_MEDIUM_STICK:
+		item = new Material(ID, itemType, craftingType, stacksRequired);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
+		break;
+	case ITEM_TYPE_MATERIAL_THREAD:
+		item = new Material(ID, itemType, craftingType, stacksRequired);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
+		break;
+	case ITEM_TYPE_MATERIAL_LARGE_STICK:
+		item = new Material(ID, itemType, craftingType, stacksRequired);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);

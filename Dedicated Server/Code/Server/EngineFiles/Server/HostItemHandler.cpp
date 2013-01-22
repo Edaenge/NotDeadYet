@@ -178,10 +178,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		}
 		pActor->EatFood(food->GetHunger());
 
-		std::string msg;
-
-		msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_USE, (float)food->GetID());
-		this->SendToClient(pActor->GetID(), msg);
+		this->SendUseItem(pActor->GetID(), food->GetID());
 		if (food->GetStackSize() <= 0)
 		{
 			pActor->GetInventory()->RemoveItem(food);
@@ -209,8 +206,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		float hydration = (container->GetRemainingUses() + 1) * 15.0f;
 		pActor->Drink(hydration);
 
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_USE, (float)container->GetID());
-		this->SendToClient(pActor->GetID(), msg);
+		this->SendUseItem(pActor->GetID(), container->GetID());
 
 		return;
 	}
@@ -226,6 +222,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		{
 			this->SendErrorMessage(pActor->GetID(), "Not_Enough_Materials_To_Craft");
 		}
+		this->SendUseItem(pActor->GetID(), crafting_Material->GetID());
 
 		Item* item = CreateItemFromDefault(crafting_Material->GetCraftingType());
 
@@ -243,6 +240,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 				MaloW::Debug("dynamic cast Failed in Host::UseItem (Projectile)");
 				return;
 			}
+			pActor->GetInventory()->AddItem(new_Arrow);
 			this->SendAddInventoryItemMessage(pActor->GetID(), new_Arrow);
 
 			return;
@@ -252,7 +250,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 	}
 	if (item->GetItemType() == ITEM_TYPE_MATERIAL_MEDIUM_STICK)
 	{
-		MediumStick* material_Medium_Stick = dynamic_cast<MediumStick*>(item);
+		Material* material_Medium_Stick = dynamic_cast<Material*>(item);
 		if (!material_Medium_Stick)
 		{
 			MaloW::Debug("dynamic cast Failed in Host::UseItem (Medium Stick)");
@@ -266,7 +264,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 			this->SendErrorMessage(pActor->GetID(), "Missing_Material_Thread_in_Inventory");
 			return;
 		}
-		Thread* material_Thread = dynamic_cast<Thread*>(item);
+		Material* material_Thread = dynamic_cast<Material*>(thread);
 
 		if (!material_Thread)
 		{
@@ -277,8 +275,6 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 		{
 			this->SendErrorMessage(pActor->GetID(), "Not_Enough_Materials_To_Craft");
 		}
-		material_Medium_Stick->Use();
-		thread->Use();
 
 		Item* item = CreateItemFromDefault(material_Medium_Stick->GetCraftingType());
 
@@ -287,6 +283,12 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 			MaloW::Debug("Failed to Create Item With Default Values in Host::UseItem (Medium Stick)");
 			return;
 		}
+
+		material_Medium_Stick->Use();
+		material_Thread->Use();
+
+		this->SendUseItem(pActor->GetID(), material_Medium_Stick->GetID());
+		this->SendUseItem(pActor->GetID(), material_Thread->GetID());
 
 		if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
 		{
@@ -297,13 +299,72 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 				MaloW::Debug("dynamic cast Failed in Host::UseItem (Bow)");
 				return;
 			}
-
+			pActor->GetInventory()->AddItem(new_Bow);
 			this->SendAddInventoryItemMessage(pActor->GetID(), new_Bow);
+
+			return;
 		}
+
+		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_MATERIAL_LARGE_STICK)
 	{
 		return;
+	}
+	if (item->GetItemType() == ITEM_TYPE_MATERIAL_THREAD)
+	{
+		Material* material_Thread = dynamic_cast<Material*>(item);
+		if (!material_Thread)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Thread)");
+			return;
+		}
+		Inventory* inventory = pActor->GetInventory();
+		Item* mediumStick = inventory->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL_MEDIUM_STICK);
+
+		if (!mediumStick)
+		{
+			this->SendErrorMessage(pActor->GetID(), "Missing_Material_Thread_in_Inventory");
+			return;
+		}
+		Material* material_Medium_Stick = dynamic_cast<Material*>(mediumStick);
+
+		if (!material_Medium_Stick)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Medium Stick)");
+			return;
+		}
+		if (!material_Thread->IsUsable() || !material_Medium_Stick->IsUsable())
+		{
+			this->SendErrorMessage(pActor->GetID(), "Not_Enough_Materials_To_Craft");
+		}
+
+		Item* item = CreateItemFromDefault(material_Thread->GetCraftingType());
+
+		if (!item)
+		{
+			MaloW::Debug("Failed to Create Item With Default Values in Host::UseItem (Medium Stick)");
+			return;
+		}
+
+		material_Medium_Stick->Use();
+		material_Thread->Use();
+
+		this->SendUseItem(pActor->GetID(), material_Medium_Stick->GetID());
+		this->SendUseItem(pActor->GetID(), material_Thread->GetID());
+
+		if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
+		{
+			RangedWeapon* new_Bow = dynamic_cast<RangedWeapon*>(item);
+
+			if (!new_Bow)
+			{
+				MaloW::Debug("dynamic cast Failed in Host::UseItem (Bow)");
+				return;
+			}
+			pActor->GetInventory()->AddItem(new_Bow);
+			this->SendAddInventoryItemMessage(pActor->GetID(), new_Bow);
+		}
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
 	{
@@ -429,7 +490,6 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 
 		Projectile* oldProjectile = eq->GetProjectile();
 
-
 		if (oldProjectile)
 		{
 			inv->AddItem(oldProjectile);
@@ -494,19 +554,19 @@ void Host::HandleDropItem(PlayerActor* pActor, const int ItemID)
 		pActor->DropObject(ItemID);
 		return;
 	}
-	//if (item_type == ITEM_TYPE_MATERIAL_SMALL_STICK || item_type == ITEM_TYPE_MATERIAL_MEDIUM_STICK || 
-	//	item_type == ITEM_TYPE_MATERIAL_LARGE_STICK || item_type == ITEM_TYPE_MATERIAL_THREAD)
-	//{
-	//	Material* item_Material = dynamic_cast<Material*>(item);
-	//	if (!item_Material)
-	//	{
-	//		MaloW::Debug("Wrong Item Type Set");
-	//		return;
-	//	}
-	//	this->CreateObjectFromItem(pActor, item_Material);
-	//	pActor->DropObject(ItemID);
-	//	return;
-	//}
+	if (item_type == ITEM_TYPE_MATERIAL_SMALL_STICK || item_type == ITEM_TYPE_MATERIAL_MEDIUM_STICK || 
+		item_type == ITEM_TYPE_MATERIAL_LARGE_STICK || item_type == ITEM_TYPE_MATERIAL_THREAD)
+	{
+		Material* item_Material = dynamic_cast<Material*>(item);
+		if (!item_Material)
+		{
+			MaloW::Debug("Wrong Item Type Set");
+			return;
+		}
+		this->CreateObjectFromItem(pActor, item_Material);
+		pActor->DropObject(ItemID);
+		return;
+	}
 	if (item_type == ITEM_TYPE_CONTAINER_CANTEEN || item_type == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
 	{
 		Container* item_Container = dynamic_cast<Container*>(item);
@@ -574,7 +634,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectID)
 		return true;
 	}
 
-	//Check For Container Object
+	//Check For Projectile Object
 	StaticProjectileObject* projectile = dynamic_cast<StaticProjectileObject*>(this->zActorHandler->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_PROJECTILE));
 
 	if (projectile)
@@ -590,6 +650,21 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const int ObjectID)
 		return true;
 	}
 
+	//Check For Material Object
+	MaterialObject* material = dynamic_cast<MaterialObject*>(this->zActorHandler->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_MATERIAL));
+
+	if (material)
+	{
+		if (!pActor->PickUpObject(material))
+		{
+			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_material" + material->GetActorObjectName());
+			return false;
+		}
+
+		this->CreateItemFromObject(pActor, material);
+
+		return true;
+	}
 	this->SendErrorMessage(pActor->GetID(), "Couldn't_Pickup_Object");
 
 	return false;
@@ -753,6 +828,13 @@ void Host::SendUnEquipMessage(const int PlayerID, const int ID, const int Slot)
 	this->SendToClient(PlayerID, message);
 }
 
+void Host::SendUseItem(const int PlayerID, const int ID)
+{
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+	
+	this->SendToClient(PlayerID, msg);
+}
+
 void Host::SendEquipMessage(const int PlayerID, const int ID, const int Slot)
 {
 	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)ID);
@@ -784,7 +866,7 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, StaticProjectileObjec
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, projectileObj->GetDescription());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, projectileObj->GetActorObjectName());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, projectileObj->GetIconPath());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_STACK_SIZE, projectileObj->GetStackSize());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_STACK_SIZE, (float)projectileObj->GetStackSize());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)projectileObj->GetWeight());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_DAMAGE, projectileObj->GetDamage());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_VELOCITY, projectileObj->GetVelocity());
@@ -876,6 +958,23 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, Weapon* weapon)
 	this->SendToClient(PlayerID, msg);
 }
 
+void Host::SendAddInventoryItemMessage(const int PlayerID, MaterialObject* material)
+{
+	std::string msg;
+
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)material->GetID());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)material->GetType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, material->GetDescription());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, material->GetActorObjectName());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, material->GetIconPath());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)material->GetWeight());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_STACK_SIZE, (float)material->GetStackSize());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE, (float)material->GetCraftingType());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MATERIAL_STACKS_REQUIRED, (float)material->GetRequiredStackToCraft());
+
+	this->SendToClient(PlayerID, msg);
+}
+
 Item* Host::CreateItemFromDefault(const int ItemType)
 {
 	if (ItemType == ITEM_TYPE_PROJECTILE_ARROW)
@@ -923,7 +1022,10 @@ Item* Host::CreateItemFromDefault(const int ItemType)
 		bow->SetItemName(new_Bow->GetActorObjectName());
 		bow->SetItemDescription(new_Bow->GetDescription());
 
+		
 		SAFE_DELETE(new_Bow);
+
+		return bow;
 	}
 
 

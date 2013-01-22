@@ -1,5 +1,7 @@
 #include "Inventory.h"
 #include "../../MaloWLib/Safe.h"
+#include "../ClientServerMessages.h"
+#include "../../MaloWLib/MaloWFileDebug.h"
 
 Inventory::Inventory()
 {
@@ -67,14 +69,21 @@ bool Inventory::AddItem(Item* item)
 			Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType());
 			if (existingItem)
 			{
-				existingItem->IncreaseStackSize(item->GetStackSize());
-				MaloW::Debug("Added Stack to inventory " + item->GetItemName());
-				return true;
+				if (existingItem->GetItemType() == item->GetItemType())
+				{
+					existingItem->IncreaseStackSize(item->GetStackSize());
+					if (Messages::FileWrite())
+						Messages::Debug("Added Stack to inventory " + item->GetItemName());
+
+					return true;
+				}
 			}
 		}
 		this->zItems.push_back(item);
 
-		MaloW::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
+		if (Messages::FileWrite())
+			Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
+
 		return true;
 	}
 
@@ -218,14 +227,15 @@ Item* Inventory::EquipItem(const int ID)
 	
 	if ((unsigned int)index < this->zItems.size())
 	{
-		int weight = GetItem(index)->GetWeight();
+		Item* item = GetItem(index);
+		int weight = item->GetWeight() * item->GetStackSize();
 		this->zWeightTotal -= weight;
 
 		for (int i = 0; i < weight - 1; i++)
 		{
 			this->zInventorySlotBlocked[zSlotsAvailable++] = false;
 		}
-		Item* item = this->zItems.at(index);
+		item = this->zItems.at(index);
 		this->zItems.erase(this->zItems.begin() + index);
 
 		return item;
