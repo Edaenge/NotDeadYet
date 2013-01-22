@@ -55,6 +55,8 @@ public:
 	void RotateAxis(const Vector3& around, float angle);
 	void Scale(const Vector3& scale);
 	void Scale(float scale);
+	void SetScaling(const Vector3& scale);
+	void SetScaling(const float scale);
 	Vector3 GetPosition() const;
 	Vector4 GetRotationQuaternion() const;
 	Vector3 GetScaling() const;

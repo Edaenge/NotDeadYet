@@ -40,14 +40,8 @@
     <ClCompile Include="..\..\..\Source\Network\NetworkMessageConverter.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="EngineFiles\Server\PlayerActor.cpp">
-      <Filter>PhysicsEngine</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\GameFiles\KeyUtil\KeyStates.cpp">
       <Filter>KeyUtil</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.cpp">
-      <Filter>MalowLib</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\PhysicsEngine\PhysicsObject.cpp">
       <Filter>PhysicsEngine</Filter>
@@ -142,6 +136,15 @@
     <ClCompile Include="..\..\..\Source\PhysicsEngine\ObjLoader.cpp">
       <Filter>PhysicsEngine</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\PlayerActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\PhysicsActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Source\GameFiles\AnimationStates.h" />
@@ -188,9 +191,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\Network\NetworkMessageConverter.h">
       <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineFiles\Server\PlayerActor.h">
-      <Filter>PhysicsEngine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Source\GameFiles\KeyUtil\KeyValues.h">
       <Filter>KeyUtil</Filter>
@@ -309,9 +309,6 @@
     <ClInclude Include="EngineFiles\Server\FoodObject.h">
       <Filter>Server\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="EngineFiles\Server\ActorHandler.h">
-      <Filter>Server</Filter>
-    </ClInclude>
     <ClInclude Include="EngineFiles\Server\StaticProjectileObject.h">
       <Filter>Server\Actors</Filter>
     </ClInclude>
@@ -319,6 +316,15 @@
       <Filter>PhysicsEngine</Filter>
     </ClInclude>
     <ClInclude Include="EngineFiles\Server\WeaponObject.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\PlayerActor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\ActorHandler.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\PhysicsActor.h">
       <Filter>Server\Actors</Filter>
     </ClInclude>
   </ItemGroup>

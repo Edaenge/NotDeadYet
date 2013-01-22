@@ -10,8 +10,8 @@ class DeerActor : public AnimalActor
 {
 public:
 	DeerActor(bool genID = true, bool isPlayerControlled = false);
-	DeerActor(const Vector3& startPos, bool genID = true, bool isPlayerControlled = false);
-	DeerActor(const Vector3& startPos, const Vector4& rot, bool genID = true, bool isPlayerControlled = false);
+	DeerActor(const Vector3& startPos, PhysicsObject* pObj, bool genID = true, bool isPlayerControlled = false);
+	DeerActor(const Vector3& startPos, PhysicsObject* pObj, const Vector4& rot, bool genID = true, bool isPlayerControlled = false);
 	virtual ~DeerActor();
 
 	void InitDeer() throw(...);

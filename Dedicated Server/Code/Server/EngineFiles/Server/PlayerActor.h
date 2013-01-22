@@ -24,9 +24,9 @@ public:
 	/*! ID should be the same ID as in ClientChannel.*/
 	PlayerActor(const int ID);
 	/*! ID should be the same ID as in ClientChannel.*/
-	PlayerActor(const int ID, const Vector3& startPos);
+	PlayerActor(const int ID, const Vector3& startPos, PhysicsObject* pObj);
 	/*! ID should be the same ID as in ClientChannel.*/
-	PlayerActor(const int ID, const Vector3& startPos, const Vector4& startRot);
+	PlayerActor(const int ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj);
 
 	virtual ~PlayerActor();
 

@@ -34,7 +34,7 @@ PhysicsObject::~PhysicsObject()
 void PhysicsObject::SetQuaternion( const Vector4& quat )
 {
 	this->rotQuat = quat;
-	this->rotQuat.Normalize();
+	//this->rotQuat.Normalize();
 	this->RecreateWorldMatrix();
 }
 
@@ -54,10 +54,13 @@ void PhysicsObject::Rotate( const Vector4& quat )
 void PhysicsObject::RotateAxis( const Vector3& around, float angle )
 {
 	Vector4 quaternion = Vector4(0, 0, 0, 1);
-	quaternion.x = cos(angle/2);
-	quaternion.y = sin(angle/2) * cos(around.x);
-	quaternion.z = sin(angle/2) * cos(around.y);
-	quaternion.w = sin(angle/2) * cos(around.z);
+	Vector3 temp = around;
+	temp.Normalize();
+	
+	quaternion.x = sin(angle/2) * temp.x;
+	quaternion.y = sin(angle/2) * temp.y;
+	quaternion.z = sin(angle/2) * temp.z;
+	quaternion.w = cos(angle/2);
 
 	this->rotQuat = QuatMult(this->rotQuat, quaternion);
 	this->rotQuat.Normalize();
@@ -180,4 +183,16 @@ bool PhysicsObject::LoadFromFile( string file )
 Matrix4 PhysicsObject::GetWorldMatrix() const
 {
 	return this->worldMatrix;
+}
+
+void PhysicsObject::SetScaling( const Vector3& scale )
+{
+	this->scale = scale;
+	RecreateWorldMatrix();
+}
+
+void PhysicsObject::SetScaling( const float scale )
+{
+	this->scale = Vector3(scale, scale, scale);
+	RecreateWorldMatrix();
 }

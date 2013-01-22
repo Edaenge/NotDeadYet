@@ -36,7 +36,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 				{
 					type = ITEM_TYPE_PROJECTILE_ARROW;
 				}
-				DynamicProjectileObject* projectileObj = new DynamicProjectileObject(true);
+				DynamicProjectileObject* projectileObj = NULL;
 
 				if(!this->CreateDynamicObjectActor(type, &projectileObj, true))
 				{
@@ -88,7 +88,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 		{
 			type = ITEM_TYPE_WEAPON_RANGED_ROCK;
 
-			DynamicProjectileObject* projectileObj = new DynamicProjectileObject(true);
+			DynamicProjectileObject* projectileObj = NULL;
 
 			if(!this->CreateDynamicObjectActor(type, &projectileObj, true))
 			{
@@ -104,7 +104,6 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 
 			Vector3 position = pActor->GetPosition();
 			projectileObj->SetPosition(position);
-			projectileObj->SetDirection(direction);
 			projectileObj->SetDamage(damage);
 			projectileObj->SetVelocity(velocity);
 			//Adds The Object To the Array

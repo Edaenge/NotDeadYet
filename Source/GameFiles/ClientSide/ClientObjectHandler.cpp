@@ -335,12 +335,12 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
-	mesh->SetQuaternion(Vector4(0,0,0,1));
-	mesh->SetQuaternion(rotation);
+
 	mesh->Scale(scale);
 
 	//Create player data
 	dynamicObject->SetStaticMesh(mesh);
+	dynamicObject->SetRotation(rotation);
 
 	this->zObjectManager->AddObject(dynamicObject);
 
@@ -729,10 +729,7 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 		//Create a new Mesh with the current values
 		iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), DynamicObjectPointer->GetPosition());
 		float scale = DynamicObjectPointer->GetScale().y;
-		Vector4 quat = DynamicObjectPointer->GetRotation();
 
-		mesh->SetQuaternion(Vector4(0,0,0,1));
-		mesh->SetQuaternion(Vector4(quat.x, quat.y, quat.z, quat.w));
 		mesh->Scale(scale);
 
 		if (DynamicObjectPointer->HasMesh())

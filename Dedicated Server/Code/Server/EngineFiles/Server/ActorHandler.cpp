@@ -85,18 +85,13 @@ bool ActorHandler::AddNewPlayer(PlayerActor* new_player)
 	if(!new_player)
 		return false;
 
-	PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(new_player->GetActorModel(), new_player->GetPosition());
-	new_player->SetPhysicObj(pObj);
 	new_player->SetObjManager(this->zObjManager);
 	this->zPlayers.push_back(new_player);
-
-	if(!pObj)
-		MaloW::Debug("Error in function AddNewPlayer in ActorHandler: PhysicObj is null.");
 
 	return true;
 }
 
-bool ActorHandler::AddAnimalActor(AnimalActor* new_animal)
+bool ActorHandler::AddNewAnimalActor(AnimalActor* new_animal)
 {
 	if(!new_animal)
 		return false;
@@ -161,44 +156,36 @@ bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Pr
 	if(!new_Projectile)
 		return false;
 
+	PhysicsObject* pObj = new_Projectile->GetPhysicObject();
+
+	if(!pObj)
+		MaloW::Debug("Error in function AddNewDynamicProjectileActor in ActorHandler: PhysicObj is null.");
+
 	//Move arrow
 	Vector3 pos = new_Projectile->GetPosition();
-	Vector3 tempPos = pos;
-	tempPos.y = 1.75f;
 	pos += direction * 2;
 	pos.y += 1.75f;
 
-	//Create physic obj
-	PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(new_Projectile->GetActorModel(), pos);
-	pObj->Scale(new_Projectile->GetScale());
-	
 	//CALC ROT
 
 	Vector3 ArrowDirection = new_Projectile->GetDirection();
-	ArrowDirection.Normalize();
 	Vector3 CameraDirection = direction;
+	ArrowDirection.Normalize();
+	CameraDirection.Normalize();
+
 	Vector3 around = ArrowDirection.GetCrossProduct(CameraDirection);
-	float angle = -acos(ArrowDirection.GetDotProduct(CameraDirection));
-	pObj->SetQuaternion(Vector4(0, 0, 0, 1));
+	float angle = acos(ArrowDirection.GetDotProduct(CameraDirection) / (ArrowDirection.GetLength() * CameraDirection.GetLength()));
+	/*pObj->SetQuaternion(Vector4(0, 0, 0, 1));
 	pObj->RotateAxis(around, angle);
-
-
-
-	/*
-	float angle = acos(direction.GetDotProduct(new_Projectile->GetDirection()));
-	pObj->SetQuaternion(Vector4(0,0,0,1));
-	pObj->RotateAxis(new_Projectile->GetUpVector(), angle);
 	*/
+
+
 	//Set new data
 	new_Projectile->SetDirection(direction);
 	new_Projectile->SetPosition(pos);
 	new_Projectile->SetRotation(Vector4(around.x, around.y, around.z, angle));
-	new_Projectile->SetPhysicObject(pObj);
 
 	this->zDynamicProjectiles.push_back(new_Projectile);
-
-	if(!pObj)
-		MaloW::Debug("Error in function AddNewDynamicProjectileActor in ActorHandler: PhysicObj is null.");
 
 	return true;
 }

@@ -209,10 +209,15 @@ void Host::Init()
 		counter++;
 	}
 
-	DeerActor* testDeer = new DeerActor(Vector3(0,0,0), true, false);
-	testDeer->SetActorModel("Media/Tree_02_v02_r.obj");
+	std::string path = "Media/Tree_02_v02_r.obj";
+	DeerActor* testDeer = new DeerActor(true);
+	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(
+												path, Vector3(0,1,0));
 
-	this->zActorHandler->AddAnimalActor(testDeer);
+	testDeer->SetActorModel(path);
+	testDeer->SetPhysicObject(pObj);
+
+	this->zActorHandler->AddNewAnimalActor(testDeer);
 
 	if (Messages::FileWrite())
 		Messages::Debug("Created " + MaloW::convertNrToString((float)counter) + " Objects");
@@ -594,7 +599,6 @@ void Host::SendDynamicActorUpdates()
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_DYNAMIC_OBJECT, (float)(*it_Dynamic)->GetID());
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)(*it_Dynamic)->GetType());
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)(*it_Dynamic)->GetWeight());
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it_Dynamic)->GetDescription());
@@ -602,6 +606,8 @@ void Host::SendDynamicActorUpdates()
 		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it_Dynamic)->GetActorObjectName());
 
 		dynamicData.push_back(mess);
+
+		MaloW::Debug(MaloW::convertNrToString(rot.x)+ " "+ MaloW::convertNrToString(rot.y)+ " " + MaloW::convertNrToString(rot.z) + " "+ MaloW::convertNrToString(rot.w));
 	}
 
 	//Send Data to clients
@@ -724,20 +730,25 @@ bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject** pr
 
 	if (!projectile)
 		return false;
+	
+	string modelPath = projectile->GetActorModel();
 
 	(*projectileObj) = new DynamicProjectileObject(genID);
+
+	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(modelPath, Vector3(0,0,0));
+
+	(*projectileObj)->SetPhysicObject(pObj);
+
 	//Creates A New ProjectileObject With an Id And Default Values 
 	(*projectileObj)->SetType(type);
 	(*projectileObj)->SetWeight(projectile->GetWeight());
 	(*projectileObj)->SetDamage(projectile->GetDamage());
 	(*projectileObj)->SetIconPath(projectile->GetIconPath());
 	(*projectileObj)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	(*projectileObj)->SetActorModel(projectile->GetActorModel());
+	(*projectileObj)->SetActorModel(modelPath);
 	(*projectileObj)->SetDescription(projectile->GetDescription());
 	(*projectileObj)->SetVelocity(projectile->GetVelocity());
 	(*projectileObj)->SetActorObjectName(projectile->GetActorObjectName());
-
-	//*projectileObj = new DynamicProjectileObject(projectile, genID);
 
 	return true;
 }
@@ -1216,8 +1227,15 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 		}
 	}
 
-	//Debug Pos
-	pi->SetPosition(Vector3((float)(pi->GetID()%4), 0.0f, 1.0f)); 
+	/*Debug Pos*/
+	Vector3 pos = Vector3((Vector3((float)(pi->GetID()%4), 0.0f, 1.0f))); 
+	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(pi->GetActorModel(), pos);
+	pi->SetPhysicObject(pObj);
+
+	if(!pObj)
+		MaloW::Debug("Error in function AddNewPlayer in ActorHandler: PhysicObj is null.");
+	/*End debug*/
+
 	//Add new player to the list
 	this->zActorHandler->AddNewPlayer(pi);
 
@@ -1225,7 +1243,6 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	zAnchorPlayerMap[pi] = this->zWorld->CreateAnchor();
 
 	//Gather New player information
-	Vector3 pos = pi->GetPosition();
 	Vector3 scale = pi->GetScale();
 	Vector4 rot = pi->GetRotation();
 
@@ -1362,6 +1379,7 @@ int Host::GetNrOfPlayers() const
 {
 	return this->zClients.size();
 }
+
 void Host::onEvent( Event* e )
 {
 	if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )

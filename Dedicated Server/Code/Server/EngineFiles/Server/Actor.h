@@ -18,7 +18,6 @@ public:
 	Actor()
 	{
 		this->zID = -1;
-		this->zScale = Vector3(0.05f,0.05f,0.05f);
 		this->zActorModel = "none";
 		this->zActorObjectName = "none";
 		this->zDirection = Vector3(0.0f, 0.0f, -1.0f);
@@ -28,8 +27,6 @@ public:
 	{
 		this->zID = -1;
 
-		this->zPos = pos;
-		this->zScale = Vector3(0.05f,0.05f,0.05f);
 		this->zActorModel = "none";
 		this->zActorObjectName = "none";
 		this->zDirection = Vector3(0.0f, 0.0f, -1.0f);
@@ -39,9 +36,6 @@ public:
 	{
 		this->zID = -1;
 
-		this->zPos = pos; 
-		this->zRot = rot;
-		this->zScale = Vector3(0.05f,0.05f,0.05f);
 		this->zActorModel = "none";
 		this->zActorObjectName = "none";
 		this->zDirection = Vector3(0.0f, 0.0f, -1.0f);
@@ -49,18 +43,12 @@ public:
 	}
 	virtual ~Actor(){}
 	
-	inline const Vector3& GetPosition() const {return zPos;}
-	const Vector3& GetScale() const {return zScale;}
-	inline const Vector4& GetRotation() const {return zRot;}
 	inline int  GetID() const {return this->zID;}
 	std::string GetActorModel() const {return zActorModel;}
 	std::string GetActorObjectName() const {return zActorObjectName;}
 	Vector3 GetDirection() const {return this->zDirection;}
 	const Vector3& GetUpVector() const {return this->zUp;}
 
-	inline virtual void SetPosition(const Vector3& pos) {zPos = pos;}
-	inline virtual void SetRotation(const Vector4& rot) {zRot = rot;}
-	virtual void SetScale(const Vector3& scale) {zScale = scale;}
 	inline virtual void SetID(const int id) {this->zID = id;}
 	virtual void SetActorModel(const std::string& modelStr) {zActorModel = modelStr;}
 	virtual void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
@@ -75,9 +63,6 @@ protected:
 		this->zNextAID++;
 	}
 protected:
-	Vector3 zPos;
-	Vector3 zScale;
-	Vector4 zRot;
 	Vector3 zDirection;
 	Vector3 zUp;
 	std::string zActorModel;

@@ -43,12 +43,18 @@ public:
 	std::string GetIconPath() const {return this->zIconPath;}
 	/*! Returns number of stacks the object has.*/
 	int GetStackSize() const {return this->zStacks;}
+	inline const Vector3& GetPosition() const {return zPos;}
+	const Vector3& GetScale() const {return zScale;}
+	inline const Vector4& GetRotation() const {return zRot;}
 
 	void SetIconPath(const std::string& path) {this->zIconPath = path;}
 	void SetDescription(const std::string& description) {this->zDescription = description;}
 	void SetWeight(const int weight) {this->zWeight = weight;}
 	void SetType(const int TYPE) {this->zType = TYPE;}
 	void SetStackSize(const int size) {this->zStacks = size;}
+	inline void SetPosition(const Vector3& pos) {zPos = pos;}
+	inline void SetRotation(const Vector4& rot) {zRot = rot;}
+	virtual void SetScale(const Vector3& scale) {zScale = scale;}
 	void ModifyStackSize(const int size) {this->zStacks += size;}
 
 protected:
@@ -57,6 +63,10 @@ protected:
 	int zStacks;
 	std::string zDescription;
 	std::string zIconPath;
+
+	Vector3 zPos;
+	Vector3 zScale;
+	Vector4 zRot;
 
 private:
 };
