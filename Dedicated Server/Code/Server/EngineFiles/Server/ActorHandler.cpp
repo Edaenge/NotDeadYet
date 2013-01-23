@@ -545,7 +545,7 @@ void ActorHandler::CheckCollisions()
 	/*ANIMALS VS PLAYERS*/
 	for(auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
 	{
-		if(!(*it)->HasMoved());
+		if(!(*it)->HasMoved())
 		continue;
 
 		BioActorVSBioActor(*it, zPlayers, pCol);
