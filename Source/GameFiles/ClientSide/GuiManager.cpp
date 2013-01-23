@@ -1,4 +1,5 @@
 #include "GameFiles/ClientSide/GuiManager.h"
+#include "../ClientServerMessages.h";
 
 static const std::string DEATH_GUI_PATH						= "Media/Use_v02.png";
 static const std::string LOOTING_GUI_PATH					= "Media/Use_v02.png";
@@ -7,6 +8,7 @@ static const std::string IN_GAME_MENU_GUI_PATH				= "Media/Use_v02.png";
 static const std::string INVENTORY_ITEM_SELECTION_GUI_PATH	= "Media/Use_v02.png";
 
 static const float GUI_DISPLAY_TIMER					= 2.0f;
+
 
 GuiManager::GuiManager()
 {
@@ -121,6 +123,9 @@ void GuiManager::ToggleInventoryGui()
 
 void GuiManager::AddInventoryItemToGui(const Gui_Item_Data gid)
 {
+	if (Messages::FileWrite())
+		Messages::Debug("Image Added Filename: " + gid.zFilePath);
+
 	this->zInvGui->AddItemToGui(gid, this->zInventoryOpen, this->zGraphicEngine);
 }
 

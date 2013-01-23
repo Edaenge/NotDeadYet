@@ -164,8 +164,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 					oldWeapon->GetItemName(), oldWeapon->GetIconPath(), oldWeapon->GetItemDescription(), oldWeapon->GetItemType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
-				if (Messages::FileWrite())
-					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldWeapon->GetID()));
 
 				eq->UnEquipWeapon();
 			}
@@ -188,8 +186,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 							projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType());
 
 						this->zGuiManager->AddInventoryItemToGui(gid);
-						if (Messages::FileWrite())
-							Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldWeapon->GetID()));
 						
 						eq->UnEquipProjectile();
 					}
@@ -203,9 +199,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		}
 		this->zPlayerInventory->EquipItem(rWpn->GetID());
 		eq->EquipWeapon(rWpn);
-
-		if (Messages::FileWrite())
-			Messages::Debug(rWpn->GetItemName() + " Equipped");
 
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID());
 
@@ -242,8 +235,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 					oldWeapon->GetItemName(), oldWeapon->GetIconPath(), oldWeapon->GetItemDescription(), oldWeapon->GetItemType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
-				if (Messages::FileWrite())
-					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldWeapon->GetID()));
 
 				eq->UnEquipWeapon();
 			}
@@ -262,8 +253,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 					oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
-				if (Messages::FileWrite())
-					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldProjectile->GetID()));
 
 				eq->UnEquipProjectile();
 			}
@@ -275,9 +264,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		}
 		this->zPlayerInventory->EquipItem(rWpn->GetID());
 		eq->EquipWeapon(rWpn);
-
-		if (Messages::FileWrite())
-			Messages::Debug(rWpn->GetItemName() + " Equipped");
 
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID());
 
@@ -311,8 +297,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 						oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
-					if (Messages::FileWrite())
-						Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldProjectile->GetID()));
 
 					eq->UnEquipProjectile();
 				}
@@ -329,9 +313,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		}
 		this->zPlayerInventory->EquipItem(projectile->GetID());
 		eq->EquipProjectile(projectile);
-
-		if (Messages::FileWrite())
-			Messages::Debug(projectile->GetItemName() + " Equipped");
 
 		this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID());
 
@@ -365,8 +346,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 					mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
-				if (Messages::FileWrite())
-					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)mWpn->GetID()));
 
 				eq->UnEquipWeapon();	
 			}
@@ -385,8 +364,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 					oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
-				if (Messages::FileWrite())
-					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldProjectile->GetID()));
 
 				eq->UnEquipProjectile();
 			}
@@ -398,9 +375,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		}
 		this->zPlayerInventory->EquipItem(mWpn->GetID());
 		eq->EquipWeapon(mWpn);
-
-		if (Messages::FileWrite())
-			Messages::Debug(mWpn->GetItemName() + " Equipped");
 
 		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID());
 

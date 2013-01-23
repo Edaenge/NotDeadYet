@@ -59,11 +59,11 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		}
 	}
 	if (Messages::FileWrite())
-		Messages::Debug("Player ID " + MaloW::convertNrToString((float)ID) +" Added");
+		Messages::Debug("Player ID: " + MaloW::convertNrToString((float)ID) +" Added");
 	
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
-	mesh->SetQuaternion(Vector4(0,0,0,1));
+	mesh->ResetRotation();
 	mesh->SetQuaternion(rotation);
 	mesh->SetScale(scale);
 
@@ -130,7 +130,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
-	mesh->SetQuaternion(Vector4(0,0,0,1));
+	mesh->ResetRotation();
 	mesh->SetQuaternion(rotation);
 	mesh->SetScale(scale);
 
@@ -320,9 +320,9 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 
-	mesh->SetScale(scale);
 	mesh->ResetRotation();
 	mesh->SetQuaternion(rotation);
+	mesh->SetScale(scale);
 
 	//Create player data
 	dynamicObject->SetStaticMesh(mesh);
@@ -513,10 +513,8 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), StaticObjectPointer->GetPosition());
 		float scale = StaticObjectPointer->GetScale().y;
 		Vector4 quat = StaticObjectPointer->GetRotation();
-		if (ID == 8)
-		{
-			scale = 1;
-		}
+
+		mesh->ResetRotation();
 		mesh->SetQuaternion(quat);
 		mesh->SetScale(scale);
 
