@@ -26,7 +26,7 @@ public:
 
 	virtual ~Actor(){}
 	
-	inline long  GetID() const {return this->zID;}
+	inline long GetID() const {return this->zID;}
 	std::string GetActorModel() const {return zActorModel;}
 	std::string GetActorObjectName() const {return zActorObjectName;}
 	Vector3 GetDirection() const {return this->zDirection;}

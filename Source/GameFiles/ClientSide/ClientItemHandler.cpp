@@ -119,7 +119,7 @@ void Client::HandleUseItem(const long ID)
 
 void Client::HandleEquipItem(const long ItemID, const int Slot)
 {
-	Item* item = this->zPlayerInventory->EquipItem(ItemID);
+	Item* item = this->zPlayerInventory->SearchAndGetItem(ItemID);
 
 	if (!item)
 	{
@@ -153,17 +153,55 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 
 		if (oldWeapon)
 		{
+			//HandleUnEquipItem(oldWeapon->GetID(), EQUIPMENT_SLOT_WEAPON);
 			if(this->zPlayerInventory->AddItem(oldWeapon))
 			{
-				Gui_Item_Data gid = Gui_Item_Data(oldWeapon->GetID(), oldWeapon->GetWeight(), oldWeapon->GetStackSize(),
+				int stack = 0;
+				if (oldWeapon->GetStacking())
+					stack = oldWeapon->GetStackSize();
+
+				Gui_Item_Data gid = Gui_Item_Data(oldWeapon->GetID(), oldWeapon->GetWeight(), stack,
 					oldWeapon->GetItemName(), oldWeapon->GetIconPath(), oldWeapon->GetItemDescription(), oldWeapon->GetItemType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
 				if (Messages::FileWrite())
 					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldWeapon->GetID()));
+
+				eq->UnEquipWeapon();
+			}
+			else
+			{
+				MaloW::Debug("Failed to add Equipped weapon to inventory");
+				return;
+			}
+			Projectile* projectile = eq->GetProjectile();
+
+			if (projectile)
+			{
+				
+				if (projectile->GetItemType() != ITEM_TYPE_PROJECTILE_ARROW)
+				{
+					//HandleUnEquipItem(projectile->GetID(), EQUIPMENT_SLOT_AMMO);
+					if(this->zPlayerInventory->AddItem(projectile))
+					{
+						Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(),
+							projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType());
+
+						this->zGuiManager->AddInventoryItemToGui(gid);
+						if (Messages::FileWrite())
+							Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldWeapon->GetID()));
+						
+						eq->UnEquipProjectile();
+					}
+					else
+					{
+						MaloW::Debug("Failed to add Equipped project to inventory");
+						return;
+					}
+				}
 			}
 		}
-		eq->UnEquipWeapon();
+		this->zPlayerInventory->EquipItem(rWpn->GetID());
 		eq->EquipWeapon(rWpn);
 
 		if (Messages::FileWrite())
@@ -196,15 +234,46 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		{
 			if(this->zPlayerInventory->AddItem(oldWeapon))
 			{
-				Gui_Item_Data gid = Gui_Item_Data(oldWeapon->GetID(), oldWeapon->GetWeight(), oldWeapon->GetStackSize(),
+				int stack = 0;
+				if (oldWeapon->GetStacking())
+					stack = oldWeapon->GetStackSize();
+
+				Gui_Item_Data gid = Gui_Item_Data(oldWeapon->GetID(), oldWeapon->GetWeight(), stack,
 					oldWeapon->GetItemName(), oldWeapon->GetIconPath(), oldWeapon->GetItemDescription(), oldWeapon->GetItemType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
 				if (Messages::FileWrite())
 					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldWeapon->GetID()));
+
+				eq->UnEquipWeapon();
+			}
+			else
+			{
+				MaloW::Debug("Failed to add Equipped weapon to inventory");
+				return;
 			}
 		}
+		Projectile* oldProjectile = eq->GetProjectile();
+		if (oldProjectile)
+		{
+			if(this->zPlayerInventory->AddItem(oldProjectile))
+			{
+				Gui_Item_Data gid = Gui_Item_Data(oldProjectile->GetID(), oldProjectile->GetWeight(), oldProjectile->GetStackSize(),
+					oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
 
+				this->zGuiManager->AddInventoryItemToGui(gid);
+				if (Messages::FileWrite())
+					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldProjectile->GetID()));
+
+				eq->UnEquipProjectile();
+			}
+			else
+			{
+				MaloW::Debug("Failed to add Equipped projectile to inventory");
+				return;
+			}
+		}
+		this->zPlayerInventory->EquipItem(rWpn->GetID());
 		eq->EquipWeapon(rWpn);
 
 		if (Messages::FileWrite())
@@ -234,16 +303,31 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		Projectile* oldProjectile = eq->GetProjectile();
 		if (oldProjectile)
 		{
-			if(this->zPlayerInventory->AddItem(oldProjectile))
+			if (oldProjectile->GetItemType() != projectile->GetItemType())
 			{
-				Gui_Item_Data gid = Gui_Item_Data(oldProjectile->GetID(), oldProjectile->GetWeight(), oldProjectile->GetStackSize(), 
-					oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
+				if(this->zPlayerInventory->AddItem(oldProjectile))
+				{
+					Gui_Item_Data gid = Gui_Item_Data(oldProjectile->GetID(), oldProjectile->GetWeight(), oldProjectile->GetStackSize(), 
+						oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
 
-				this->zGuiManager->AddInventoryItemToGui(gid);
-				if (Messages::FileWrite())
-					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldProjectile->GetID()));
+					this->zGuiManager->AddInventoryItemToGui(gid);
+					if (Messages::FileWrite())
+						Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldProjectile->GetID()));
+
+					eq->UnEquipProjectile();
+				}
+				else
+				{
+					return;
+				}
+			}
+			else
+			{
+				int stacks = oldProjectile->GetStackSize() + projectile->GetStackSize();
+				oldProjectile->SetStackSize(stacks);
 			}
 		}
+		this->zPlayerInventory->EquipItem(projectile->GetID());
 		eq->EquipProjectile(projectile);
 
 		if (Messages::FileWrite())
@@ -283,10 +367,36 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 				this->zGuiManager->AddInventoryItemToGui(gid);
 				if (Messages::FileWrite())
 					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)mWpn->GetID()));
-				
+
+				eq->UnEquipWeapon();	
+			}
+			else
+			{
+				MaloW::Debug("Failed to add Equipped weapon to inventory");
+				return;
 			}
 		}
+		Projectile* oldProjectile = eq->GetProjectile();
+		if (oldProjectile)
+		{
+			if(this->zPlayerInventory->AddItem(oldProjectile))
+			{
+				Gui_Item_Data gid = Gui_Item_Data(oldProjectile->GetID(), oldProjectile->GetWeight(), oldProjectile->GetStackSize(),
+					oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
 
+				this->zGuiManager->AddInventoryItemToGui(gid);
+				if (Messages::FileWrite())
+					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldProjectile->GetID()));
+
+				eq->UnEquipProjectile();
+			}
+			else
+			{
+				MaloW::Debug("Failed to add Equipped projectile to inventory");
+				return;
+			}
+		}
+		this->zPlayerInventory->EquipItem(mWpn->GetID());
 		eq->EquipWeapon(mWpn);
 
 		if (Messages::FileWrite())
@@ -318,7 +428,6 @@ void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 		{
 			if (projectile->GetID() == ItemID)
 			{
-				eq->UnEquipProjectile();
 				if(this->zPlayerInventory->AddItem(projectile))
 				{
 					Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
@@ -326,6 +435,7 @@ void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
 
+					eq->UnEquipProjectile();
 					return;
 				}
 				return;
@@ -343,8 +453,6 @@ void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 		{
 			if (wpn->GetID() == ItemID)
 			{
-				eq->UnEquipWeapon();
-
 				if(this->zPlayerInventory->AddItem(wpn))
 				{
 					int stacks = 0;
@@ -357,6 +465,7 @@ void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
 
+					eq->UnEquipWeapon();
 					return;
 				}
 				return;

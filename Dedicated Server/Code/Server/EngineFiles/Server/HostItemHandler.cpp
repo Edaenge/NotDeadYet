@@ -378,15 +378,33 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 			return;
 		}
 
-		inv->EquipItem(ItemID);
-
 		Weapon* oldWeapon = eq->GetWeapon();
 
 		if (oldWeapon)
 		{
-			inv->AddItem(oldWeapon);
+			if(inv->AddItem(oldWeapon))
+			{
+				Projectile* oldProjectile = eq->GetProjectile();
+				if (oldProjectile)
+				{
+					if (oldProjectile->GetItemType() != ITEM_TYPE_PROJECTILE_ARROW)
+					{
+						if(!inv->AddItem(oldProjectile))
+						{
+							MaloW::Debug("Failed to Add Projectile to inventory when Equipping Bow");
+						}
+					}
+				}
+			}
+			else
+			{
+				this->SendErrorMessage(pActor->GetID(), "Failed_to_add_UnEquipped_weapon");
+				return;
+			}
 		}
-		MaloW::Debug("Weapon Equipped" + rWpn->GetItemName());
+		MaloW::Debug("Weapon Equipped " + rWpn->GetItemName());
+
+		inv->EquipItem(ItemID);
 		eq->EquipWeapon(rWpn);
 
 		this->SendEquipMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
@@ -405,15 +423,25 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 			return;
 		}
 
-		inv->EquipItem(ItemID);
-
 		Weapon* oldWeapon = eq->GetWeapon();
 
 		if (oldWeapon)
 		{
-			inv->AddItem(oldWeapon);
+			if(inv->AddItem(oldWeapon))
+			{
+				Projectile* oldProjectile = eq->GetProjectile();
+				if (oldProjectile)
+				{
+					if(!inv->AddItem(oldProjectile))
+					{
+						MaloW::Debug("Failed to Add Projectile to inventory when Equipping Rock");
+					}
+				}
+			}
 		}
-		MaloW::Debug("Weapon Equipped" + rWpn->GetItemName());
+		MaloW::Debug("Weapon Equipped " + rWpn->GetItemName());
+
+		inv->EquipItem(ItemID);
 		eq->EquipWeapon(rWpn);
 
 		this->SendEquipMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
@@ -432,15 +460,29 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 			return;
 		}
 
-		inv->EquipItem(ItemID);
 
 		Weapon* oldWeapon = eq->GetWeapon();
 
 		if (oldWeapon)
 		{
-			inv->AddItem(oldWeapon);
+			if(inv->AddItem(oldWeapon))
+			{
+				Projectile* oldProjectile = eq->GetProjectile();
+				if (oldProjectile)
+				{
+					if (oldProjectile->GetItemType() != ITEM_TYPE_PROJECTILE_ARROW)
+					{
+						if(!inv->AddItem(oldProjectile))
+						{
+							MaloW::Debug("Failed to Add Projectile to inventory when Equipping Rock");
+						}
+					}
+				}
+			}
 		}
-		MaloW::Debug("Weapon Equipped" + mWpn->GetItemName());
+		MaloW::Debug("Weapon Equipped " + mWpn->GetItemName());
+
+		inv->EquipItem(ItemID);
 		eq->EquipWeapon(mWpn);
 
 		this->SendEquipMessage(pActor->GetID(), mWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
@@ -465,9 +507,22 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 
 		if (oldWeapon)
 		{
-			inv->AddItem(oldWeapon);
+			if(inv->AddItem(oldWeapon))
+			{
+				Projectile* oldProjectile = eq->GetProjectile();
+				if (oldProjectile)
+				{
+					if (oldProjectile->GetItemType() != ITEM_TYPE_PROJECTILE_ARROW)
+					{
+						if(!inv->AddItem(oldProjectile))
+						{
+							MaloW::Debug("Failed to Add Projectile to inventory when Equipping Rock");
+						}
+					}
+				}
+			}
 		}
-		MaloW::Debug("Weapon Equipped" + mWpn->GetItemName());
+		MaloW::Debug("Weapon Equipped " + mWpn->GetItemName());
 		eq->EquipWeapon(mWpn);
 
 		this->SendEquipMessage(pActor->GetID(), mWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
@@ -486,19 +541,40 @@ void Host::HandleItemUse(PlayerActor* pActor, const int ItemID)
 			return;
 		}
 
-		inv->EquipItem(ItemID);
-
+		
 		Projectile* oldProjectile = eq->GetProjectile();
 
 		if (oldProjectile)
 		{
-			inv->AddItem(oldProjectile);
+			if (oldProjectile->GetItemType() != arrow->GetItemType())
+			{
+				if(inv->AddItem(oldProjectile))
+				{
+					MaloW::Debug("Failed to Add Projectile to inventory when Equipping Arrow");
+					return;
+				}
+			}
+			else
+			{
+				int stacks = oldProjectile->GetStackSize() + arrow->GetStackSize();
+				oldProjectile->SetStackSize(stacks);
+			}
+			
 		}
-		MaloW::Debug("Weapon Equipped " + arrow->GetItemName());
-		eq->EquipProjectile(arrow);
+		Weapon* weapon = eq->GetWeapon();
+		if (weapon)
+		{
+			if (weapon->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
+			{
+				MaloW::Debug("Weapon Equipped " + arrow->GetItemName());
+				inv->EquipItem(ItemID);
+				eq->EquipProjectile(arrow);
 
-		this->SendEquipMessage(pActor->GetID(), arrow->GetID(), EQUIPMENT_SLOT_AMMO);
-
+				this->SendEquipMessage(pActor->GetID(), arrow->GetID(), EQUIPMENT_SLOT_AMMO);
+				return;
+			}
+		}
+		this->SendErrorMessage(pActor->GetID(), "Failed_to_Equip_Arrow_because_No_Weapon_is_Equipped");
 		return;
 	}
 }
@@ -694,7 +770,7 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 					if(inv->AddItem(projectile))
 					{
 						eq->UnEquipProjectile();
-						this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+						this->SendUnEquipMessage(pActor->GetID(), ItemID, EQUIPMENT_SLOT_AMMO);
 					}
 					return;
 				}
@@ -713,12 +789,19 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const int ItemID, const int Sl
 		{
 			if (wpn->GetID() == ItemID)
 			{
-				if (wpn->GetID() == ItemID)
+				if(inv->AddItem(wpn))
 				{
-					if(inv->AddItem(wpn))
+					eq->UnEquipWeapon();
+					this->SendUnEquipMessage(pActor->GetID(), ItemID, EQUIPMENT_SLOT_WEAPON);
+				}
+				Projectile* projectile = eq->GetProjectile();
+
+				if (projectile)
+				{
+					if(inv->AddItem(projectile))
 					{
-						eq->UnEquipWeapon();
-						this->SendUnEquipMessage(pActor->GetID(), ItemID, Slot);
+						eq->UnEquipProjectile();
+						this->SendUnEquipMessage(pActor->GetID(), projectile->GetID(), EQUIPMENT_SLOT_AMMO);
 					}
 					return;
 				}
