@@ -267,23 +267,14 @@ bool ObjectManager::InterpCommand(char* command, char* key, WeaponObject* wp)
 	}
 	else if (strcmp(command, SCALE.c_str()) == 0)
 	{
-		char x[52];
-		char y[52];
-		char z[52];
-		unsigned int index = 0;
+		char a[10];
+		char b[10];
+		char c[10];
 
-		while(key[index] != '\0')
-		{
-			if(key[index] == ',')
-				key[index] = ' ';
+		sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
 
-			index++;
-		}
-
-		sscanf_s(key, "%s %s %s", &x, sizeof(x), &y, sizeof(y), &z, sizeof(z));
-		Vector3 vec(MaloW::convertStringToFloat(x), MaloW::convertStringToFloat(y), MaloW::convertStringToFloat(z));
-
-		wp->SetScale(vec);
+		Vector3 scale(atof(a), atof(b), atof(c));
+		wp->SetScale(scale);
 	}
 
 	return true;
@@ -332,23 +323,14 @@ bool ObjectManager::InterpCommand(char* command, char* key, FoodObject* fd)
 	}
 	else if (strcmp(command, SCALE.c_str()) == 0)
 	{
-		char x[52];
-		char y[52];
-		char z[52];
+		char a[10];
+		char b[10];
+		char c[10];
 
-		unsigned int index = 0;
-		while(key[index] != '\0')
-		{
-			if(key[index] == ',')
-				key[index] = ' ';
+		sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
 
-			index++;
-		}
-
-		sscanf_s(key, "%s %s %s", &x, sizeof(x), &y, sizeof(y), &z, sizeof(z));
-		Vector3 vec(MaloW::convertStringToFloat(x), MaloW::convertStringToFloat(y), MaloW::convertStringToFloat(z));
-
-		fd->SetScale(vec);
+		Vector3 scale(atof(a), atof(b), atof(c));
+		fd->SetScale(scale);
 	}
 
 	return true;
@@ -401,23 +383,14 @@ bool ObjectManager::InterpCommand(char* command, char* key, ContainerObject* ct)
 	}
 	else if (strcmp(command, SCALE.c_str()) == 0)
 	{
-		char x[52];
-		char y[52];
-		char z[52];
+		char a[10];
+		char b[10];
+		char c[10];
 
-		unsigned int index = 0;
-		while(key[index] != '\0')
-		{
-			if(key[index] == ',')
-				key[index] = ' ';
+		sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
 
-			index++;
-		}
-
-		sscanf_s(key, "%s %s %s", &x, sizeof(x), &y, sizeof(y), &z, sizeof(z));
-		Vector3 vec(MaloW::convertStringToFloat(x), MaloW::convertStringToFloat(y), MaloW::convertStringToFloat(z));
-
-		ct->SetScale(vec);
+		Vector3 scale(atof(a), atof(b), atof(c));
+		ct->SetScale(scale);
 	}
 
 	return true;
@@ -470,23 +443,14 @@ bool ObjectManager::InterpCommand(char* command, char* key, MaterialObject* ma)
 	}
 	else if (strcmp(command, SCALE.c_str()) == 0)
 	{
-		char x[52];
-		char y[52];
-		char z[52];
+		char a[10];
+		char b[10];
+		char c[10];
 
-		unsigned int index = 0;
-		while(key[index] != '\0')
-		{
-			if(key[index] == ',')
-				key[index] = ' ';
+		sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
 
-			index++;
-		}
-
-		sscanf_s(key, "%s %s %s", &x, sizeof(x), &y, sizeof(y), &z, sizeof(z));
-		Vector3 vec(MaloW::convertStringToFloat(x), MaloW::convertStringToFloat(y), MaloW::convertStringToFloat(z));
-
-		ma->SetScale(vec);
+		Vector3 scale(atof(a), atof(b), atof(c));
+		ma->SetScale(scale);
 	}
 
 	return true;
@@ -536,6 +500,17 @@ bool ObjectManager::InterpCommand(char* command, char* key, StaticProjectileObje
 	else if(strcmp(command, STACKS.c_str()) == 0)
 	{
 		pt->SetStackSize(MaloW::convertStringToInt(key));
+	}
+	else if(strcmp(command, SCALE.c_str()) == 0)
+	{
+		char a[10];
+		char b[10];
+		char c[10];
+
+		sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
+
+		Vector3 scale(atof(a), atof(b), atof(c));
+		pt->SetScale(scale);
 	}
 
 	return true;
