@@ -3,6 +3,7 @@
 Material::Material(const unsigned int id, const unsigned int itemType, const unsigned int craftingType, const int stacksRequiredToCraft)
 	: Item(id, itemType)
 {
+	this->zStacking = true;
 	this->zCraftingType = craftingType;
 	this->zRequiredStackToCraft = stacksRequiredToCraft;
 }

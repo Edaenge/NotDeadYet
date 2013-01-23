@@ -35,7 +35,7 @@ Host::Host()
 	this->aSpawnPosition = 0;
 
 	this->zPlayerSpawnPoints.push_back(Vector3(35.6f, 0, 22.8f));
-	this->zPlayerSpawnPoints.push_back(Vector3(68.8f, 0, 21.8f));
+	this->zPlayerSpawnPoints.push_back(Vector3(59.2f, 0, 26.8f));
 	this->zPlayerSpawnPoints.push_back(Vector3(63.77f, 0, 31.0f));
 	this->zPlayerSpawnPoints.push_back(Vector3(73.4f, 0, 44.0f));
 	this->zPlayerSpawnPoints.push_back(Vector3(72.1f, 0, 57.3f));
@@ -183,7 +183,7 @@ void Host::Init()
 	if (this->CreateStaticObjectActor(OBJECT_TYPE_PROJECTILE_ARROW, &projectileObj, true))
 	{
 		projectileObj->SetPosition(Vector3(43.0f, 0.0f, 43.0f));
-		projectileObj->SetStackSize(10);
+		
 		//Adds The Object To the Array
 		this->zActorHandler->AddNewStaticProjectileActor(projectileObj);
 
@@ -238,8 +238,10 @@ void Host::Init()
 
 
 	DeerActor* testDeer = new DeerActor( true);
-	std::string path = "Media/Tree_02_v02_r.obj";	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(
-												path, zAnimalSpawnPoints[this->aSpawnPosition++]);	testDeer->SetActorModel(path);
+	std::string path = "Media/Tree_02_v02_r.obj";	
+	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(
+												path, zAnimalSpawnPoints[this->aSpawnPosition++]);	
+	testDeer->SetActorModel(path);
 	testDeer->SetPhysicObject(pObj);
 
 	this->zActorHandler->AddNewAnimalActor(testDeer);

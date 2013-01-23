@@ -64,7 +64,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->SetQuaternion(Vector4(0,0,0,1));
 	mesh->SetQuaternion(rotation);
-	mesh->Scale(scale);
+	mesh->SetScale(scale);
 
 	//Create player data
 	playerObject->SetStaticMesh(mesh);
@@ -98,7 +98,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z);
+			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z) + 0.1f;
 			animalObject->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -131,7 +131,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->SetQuaternion(Vector4(0,0,0,1));
 	mesh->SetQuaternion(rotation);
-	mesh->Scale(scale);
+	mesh->SetScale(scale);
 
 	//Create player data
 	animalObject->SetStaticMesh(mesh);
@@ -165,7 +165,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z);
+			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z) + 0.1f;
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
@@ -220,9 +220,10 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
-	mesh->SetQuaternion(Vector4(0,0,0,1));
+	mesh->ResetRotation();
 	mesh->SetQuaternion(rotation);
-	mesh->Scale(scale);
+
+	mesh->SetScale(scale);
 
 	//Create player data
 	staticObject->SetStaticMesh(mesh);
@@ -318,7 +319,8 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 
-	mesh->Scale(scale);
+	mesh->SetScale(scale);
+	mesh->ResetRotation();
 	mesh->SetQuaternion(rotation);
 
 	//Create player data
@@ -457,7 +459,7 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z);
+			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z) + 0.1f;
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
@@ -510,9 +512,12 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), StaticObjectPointer->GetPosition());
 		float scale = StaticObjectPointer->GetScale().y;
 		Vector4 quat = StaticObjectPointer->GetRotation();
-
+		if (ID == 8)
+		{
+			scale = 1;
+		}
 		mesh->SetQuaternion(quat);
-		mesh->Scale(scale);
+		mesh->SetScale(scale);
 
 		if (StaticObjectPointer->HasMesh())
 		{
@@ -553,7 +558,7 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z);
+			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z) + 0.1f;
 			AnimalObjectPointer->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)

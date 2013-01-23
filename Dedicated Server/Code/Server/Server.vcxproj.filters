@@ -142,6 +142,9 @@
     <ClCompile Include="Wrapper\ServerEngineWrapper.cpp">
       <Filter>Wrapper</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Server\PhysicsActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineFiles\Server\Actor.h">
@@ -326,6 +329,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\GameFiles\AnimationStates.h">
       <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\PhysicsActor.h">
+      <Filter>Server\Actors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
