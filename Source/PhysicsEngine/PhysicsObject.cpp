@@ -131,9 +131,44 @@ void PhysicsObject::RecreateWorldMatrix()
 	this->worldMatrix = world;
 }
 
+inline void DoMinMax(Vector3& min, Vector3& max, Vector3 v)
+{
+	min.x = min(min.x, v.x);
+	min.y = min(min.y, v.y);
+	min.z = min(min.z, v.z);
+
+	max.x = max(max.x, v.x);
+	max.y = max(max.y, v.y);
+	max.z = max(max.z, v.z);
+}
+
 bool PhysicsObject::LoadFromFile( string file )
 {
 	// if substr of the last 4 = .obj do this:    - else load other format / print error
+	if(file.substr(file.length()-4) == ".ani")
+	{
+		// Get the directory correct
+		string tempFilename = file;
+		string pathfolder = "";
+		size_t slashpos = tempFilename.find("/");
+		while(slashpos != string::npos)
+		{
+			slashpos = tempFilename.find("/");
+			pathfolder += tempFilename.substr(0, slashpos + 1);
+			tempFilename = tempFilename.substr(slashpos + 1);
+		}
+		
+		ifstream anifile;
+		anifile.open(file);
+		string line = "";
+		getline(anifile, line);
+		getline(anifile, line);
+		getline(anifile, line);
+		file = pathfolder + line;
+		anifile.close();
+	}
+
+
 
 	ObjLoader oj;
 	ObjData* od = oj.LoadObjFile(file);
@@ -141,6 +176,9 @@ bool PhysicsObject::LoadFromFile( string file )
 	if(od)
 	{
 		int nrOfVerts = 0;
+
+		Vector3 min = Vector3(99999.9f, 99999.9f, 99999.9f);
+		Vector3 max = min * -1;
 
 		Vertex* tempverts = new Vertex[od->faces->size()*3];
 
@@ -150,18 +188,21 @@ bool PhysicsObject::LoadFromFile( string file )
 			int textcoord = od->faces->get(i).data[0][1] - 1;
 			int norm = od->faces->get(i).data[0][2] - 1;
 			tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->vertsnorms->get(norm));
+			DoMinMax(min, max, tempverts[nrOfVerts].pos);
 			nrOfVerts++;
 
 			vertpos = od->faces->get(i).data[2][0] - 1;
 			textcoord = od->faces->get(i).data[2][1] - 1;
 			norm = od->faces->get(i).data[2][2] - 1;
 			tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->vertsnorms->get(norm));
+			DoMinMax(min, max, tempverts[nrOfVerts].pos);
 			nrOfVerts++;
 
 			vertpos = od->faces->get(i).data[1][0] - 1;
 			textcoord = od->faces->get(i).data[1][1] - 1;
 			norm = od->faces->get(i).data[1][2] - 1;
 			tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->vertsnorms->get(norm));
+			DoMinMax(min, max, tempverts[nrOfVerts].pos);
 			nrOfVerts++;
 		}
 
@@ -175,7 +216,7 @@ bool PhysicsObject::LoadFromFile( string file )
 		this->SetVerts(verts);
 		
 		delete od;
-
+		this->SetBoundingSphere(BoundingSphere(min, max));
 		return true;
 	}
 

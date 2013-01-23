@@ -7,12 +7,14 @@ struct PhysicsCollisionData
 	PhysicsCollisionData()
 	{
 		this->collision = false;
+		this->BoundingSphereCollision = false;
 		this->distance = 999999.0f;
 		this->posx = 0.0f;
 		this->posy = 0.0f;
 		this->posz = 0.0f;
 	}
 	bool collision;
+	bool BoundingSphereCollision;
 	float distance;
 	float posx;
 	float posy;
@@ -37,6 +39,9 @@ private:
 		Vertex* vert2, int nrOfVerts2, int* inds2, int nrOfInds2, Matrix4 worldMat2, PhysicsCollisionData& cd);
 	bool DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vector3 v02, Vector3 v10, Vector3 v11, Vector3 v12,
 		PhysicsCollisionData& tempCD);
+	bool DoCollisionSphereVsRay(BoundingSphere bs, Matrix4 world, float scale, Vector3 rayOrigin, Vector3 rayDirection);
+	bool DoCollisionSphereVsSphere(BoundingSphere bs1, Matrix4 world1, float scale1, BoundingSphere bs2, Matrix4 world2, float scale2);
+
 
 public:
 	PhysicsEngine();
@@ -46,13 +51,15 @@ public:
 	void DeletePhysicsObject(PhysicsObject* obj);
 
 	virtual PhysicsCollisionData GetCollisionRayMesh(Vector3 rayOrigin, Vector3 rayDirection, PhysicsObject* imesh);
-	//virtual PhysicsCollisionData GetCollisionRayTerrain(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iTerr);
+	/*virtual PhysicsCollisionData GetCollisionRayTerrain(Vector3 rayOrigin, Vector3 rayDirection, Vector3 position, 
+		float heightMap[], float distanceXZBetweenVerts, int nrOfVertsPerRow);*/
 	virtual PhysicsCollisionData GetCollisionMeshMesh(PhysicsObject* mesh1, PhysicsObject* mesh2);
 	//virtual PhysicsCollisionData GetCollisionMeshTerrain(PhysicsObject* mesh, iTerrain* terr);
 
 	// Overloaded
 	virtual PhysicsCollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, PhysicsObject* mesh);
-	//virtual PhysicsCollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iTerr);
+	/*virtual PhysicsCollisionData GetCollision(Vector3 rayOrigin, Vector3 rayDirection, Vector3 position, 
+		float heightMap[], float distanceXZBetweenVerts, int nrOfVertsPerRow);*/
 	virtual PhysicsCollisionData GetCollision(PhysicsObject* mesh1, PhysicsObject* mesh2);
 	//virtual PhysicsCollisionData GetCollision(PhysicsObject* mesh, iTerrain* terr);
 };
