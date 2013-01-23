@@ -8,6 +8,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "AI.h"
 #include "BioActor.h"
 #include <fstream>
+#include <time.h>
 
 enum Behaviour
 {

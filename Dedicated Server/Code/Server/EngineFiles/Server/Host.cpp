@@ -243,7 +243,7 @@ void Host::Init()
 												path, zAnimalSpawnPoints[this->aSpawnPosition++]);	
 	testDeer->SetActorModel(path);
 	testDeer->SetPhysicObject(pObj);
-
+	testDeer->SetScale(Vector3(0.04f,0.04f,0.04f));
 	this->zActorHandler->AddNewAnimalActor(testDeer);
 
 	if (Messages::FileWrite())

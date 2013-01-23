@@ -11,7 +11,7 @@ AI::~AI()
 
 }
 
-void AI::InitAI(std::bitset<GRIDSIZE*GRIDSIZE> theGrid, int nodeDistance)
+void AI::InitAI(std::bitset<GRIDSIZE*GRIDSIZE> theGrid, float nodeDistance)
 {
 	this->zGrid = theGrid;
 
@@ -21,13 +21,61 @@ void AI::InitAI(std::bitset<GRIDSIZE*GRIDSIZE> theGrid, int nodeDistance)
 //Note: by Y, we of course mean Z. I was merely thinking in a 2-d grid when designing this.
 bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goalYPos, std::vector<Vector2> &inVector, int maximumPathLenght)
 {
+	//this->zNodeDistance was not made with a decimal value in mind, trying to work it out.
+	//float sizeOfField = GRIDSIZE * this->zNodeDistance;
+	//this->zNodeDistance = 20 * (0.5;
+
+
 	int startX = ceil((startXPos/this->zNodeDistance)-0.5);
 	int startY = ceil((startYPos/this->zNodeDistance)-0.5);
 	int goalX = ceil((goalXPos/this->zNodeDistance)-0.5);
 	int goalY = ceil((goalYPos/this->zNodeDistance)-0.5);
 
+	//int startX = startXPos;
+	//int startY = startYPos;
+	//int goalX = goalXPos;
+	//int goalY = goalYPos;
+
+	if(startX < 0)
+	{
+		startX = 0;
+	}
+	
+	if(startY < 0)
+	{
+		startY = 0;
+	}
+
+	if(startX >= GRIDSIZE)
+	{
+		startX = GRIDSIZE-1;
+	}
+	
+	if(startY >= GRIDSIZE)
+	{
+		startY = GRIDSIZE-1;
+	}
+
+	if(goalX < 0)
+	{
+		goalX = 0;
+	}
+	if(goalY < 0)
+	{
+		goalY = 0;
+	}
+
+	if(goalX >= GRIDSIZE)
+	{
+		goalX = GRIDSIZE-1;
+	}
+
+	if(goalY >= GRIDSIZE)
+	{
+		goalY = GRIDSIZE-1;
+	}
 	//Is the goal position in an impossible position in the bitset?
-	if(zGrid[startY * GRIDSIZE + goalX] == true)
+	if(zGrid[goalY * GRIDSIZE + goalX] == true)
 	{
 		return false;
 	}
@@ -215,6 +263,15 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 
 
 				//It is valid in terms of location.
+
+				if(nextY > GRIDSIZE - 1)
+				{
+					nextY = GRIDSIZE - 1;
+				}
+				if(nextX > GRIDSIZE - 1)
+				{
+					nextX = GRIDSIZE - 1;
+				}
 
 				//Is it valid in the bitset? If not, ignore.
 				if(zGrid[GRIDSIZE * nextY + nextX] == true )

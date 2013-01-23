@@ -18,6 +18,11 @@ AnimalActor::AnimalActor( bool genID /*= true*/ ) : BioActor()
 	this->zTargets.push_back(vectorFilling);
 	}
 
+	this->zIntervalCounter = 0;
+
+	
+
+
 }
 
 AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, bool genID /*= true*/ ) : BioActor(startPos, pObj)
@@ -34,8 +39,12 @@ AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, bool ge
 
 	for(int i = 0; i < 32; i++)
 	{
-		this->zTargets.push_back(vectorFilling);
+	this->zTargets.push_back(vectorFilling);
 	}
+
+	this->zIntervalCounter = 0;
+
+	
 }
 
 AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, const Vector4& rot, bool genID /*= true*/ ) : BioActor(startPos, pObj, rot)
@@ -54,6 +63,10 @@ AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, const V
 	{
 	this->zTargets.push_back(vectorFilling);
 	}
+
+	this->zIntervalCounter = 0;
+
+	
 }
 
 AnimalActor::~AnimalActor()
@@ -78,7 +91,9 @@ void AnimalActor::UpdateForPlayer( float deltaTime )
 
 void AnimalActor::InitPathfinder()
 {
-	//this->zPathfinder.InitAI(,5); //How to send in the bitset might be a bit of a hastle, oh well.
+	std::bitset<100*100> testGrid;
+	testGrid.reset();
+	this->zPathfinder.InitAI(testGrid,0.5); //How to send in the bitset might be a bit of a hastle, so there will be another class used for comparison, I believe.
 }
 
 Behaviour AnimalActor::GetBehaviour()
