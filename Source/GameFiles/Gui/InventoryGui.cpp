@@ -43,7 +43,7 @@ InventoryGui::~InventoryGui()
 	}
 }
 
-bool InventoryGui::AddItemToGui(Gui_Item_Data gid, GraphicsEngine* ge)
+bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
 	int size = this->zSlotGui.size();
 
@@ -55,6 +55,9 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, GraphicsEngine* ge)
 
 	InventorySlotGui* gui = new InventorySlotGui(zSlotPositions[size].x, zSlotPositions[size].y, width, height, gid.zFilePath, gid.zID);
 	this->zSlotGui.push_back(gui);
+
+	if(open)
+		gui->AddToRenderer(ge);
 
 	return true;
 }

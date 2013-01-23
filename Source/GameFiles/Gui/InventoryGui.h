@@ -15,6 +15,7 @@ struct Gui_Item_Data
 	{
 		this->zID = -1;
 		this->zWeight = 0;
+		this->zStacks = 0;
 		this->zName = "Unknown";
 		this->zFilePath = "Unknown";
 		this->zDescription = "Unknown";
@@ -53,7 +54,7 @@ public:
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
 	int CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
-	bool AddItemToGui(Gui_Item_Data gid, GraphicsEngine* ge);
+	bool AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	bool RemoveItemFromGui(const int ID);
 
 	void FadeOut(float value);
