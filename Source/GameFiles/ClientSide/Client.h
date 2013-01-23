@@ -97,31 +97,31 @@ private:
 	//////////////////////
 
 	/*! Updates A Static Object.*/
-	bool UpdateStaticObjects(const std::vector<std::string>& msgArray, const int ID);
+	bool UpdateStaticObjects(const std::vector<std::string>& msgArray, const long ID);
 	/*! Updates An Animal Object.*/
-	bool UpdateAnimalObjects(const std::vector<std::string>& msgArray, const int ID);
+	bool UpdateAnimalObjects(const std::vector<std::string>& msgArray, const long ID);
 	/*! Updates A Dynamic Object.*/
-	bool UpdateDynamicObjects(const std::vector<std::string>& msgArray, const int ID);
+	bool UpdateDynamicObjects(const std::vector<std::string>& msgArray, const long ID);
 	/*! Updates A Player Object*/
-	bool UpdatePlayerObjects(const std::vector<std::string>& msgArray, const int ID);
+	bool UpdatePlayerObjects(const std::vector<std::string>& msgArray, const long ID);
 	
 	/*! Removes A Player Object*/
-	bool RemovePlayerObject(const int ID);
+	bool RemovePlayerObject(const long ID);
 	/*! Removes An Animal Object*/
-	bool RemoveAnimalObject(const int ID);
+	bool RemoveAnimalObject(const long ID);
 	/*! Removes A Static Object*/
-	bool RemoveStaticObject(const int ID);
+	bool RemoveStaticObject(const long ID);
 	/*! Removes A Dynamic Object*/
-	bool RemoveDynamicObject(const int ID);
+	bool RemoveDynamicObject(const long ID);
 
 	/*! Adds A Player Object*/
-	bool AddNewPlayerObject(const std::vector<std::string>& msgArray, const int ID);
+	bool AddNewPlayerObject(const std::vector<std::string>& msgArray, const long ID);
 	/*! Adds An Animal Object*/
-	bool AddNewAnimalObject(const std::vector<std::string>& msgArray, const int ID);
+	bool AddNewAnimalObject(const std::vector<std::string>& msgArray, const long ID);
 	/*! Adds A Static Object*/
-	bool AddNewStaticObject(const std::vector<std::string>& msgArray, const int ID);
+	bool AddNewStaticObject(const std::vector<std::string>& msgArray, const long ID);
 	/*! Adds A Dynamic Object*/
-	bool AddNewDynamicObject(const std::vector<std::string>& msgArray, const int ID);
+	bool AddNewDynamicObject(const std::vector<std::string>& msgArray, const long ID);
 
 	//////////////////////
 	//					//
@@ -129,21 +129,21 @@ private:
 	//			  		//
 	//////////////////////
 
-	void SendPickupItemMessage(const int ID);
-	void SendDropItemMessage(const int ID);
-	void HandleRemoveInventoryItem(const int ID);
-	void HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id);
+	void SendPickupItemMessage(const long ID);
+	void SendDropItemMessage(const long ID);
+	void HandleRemoveInventoryItem(const long ID);
+	void HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned long id);
 	/*! Uses the Selected Item*/
-	void HandleUseItem(const int ID);
+	void HandleUseItem(const long ID);
 	void DisplayMessageToClient(const std::string& msg);
-	void HandleEquipItem(const int ItemID, const int Slot);
-	void HandleUnEquipItem(const int ItemID, const int Slot);
-	void SendUnEquipItem(const int ID, const int Slot);
-	void HandleRemoveEquipment(const int ItemID, const int Slot);
-	void HandleWeaponUse(const int ID);
+	void HandleEquipItem(const long ItemID, const int Slot);
+	void HandleUnEquipItem(const long ItemID, const int Slot);
+	void SendUnEquipItem(const long ID, const int Slot);
+	void HandleRemoveEquipment(const long ItemID, const int Slot);
+	void HandleWeaponUse(const long ID);
 private:
 	/*! Current Client ID*/
-	int zID;
+	long zID;
 	int	zPort;
 
 	INT64 zStartime;

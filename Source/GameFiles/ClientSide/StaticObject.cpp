@@ -1,6 +1,6 @@
 #include "GameFiles/ClientSide/StaticObject.h"
 
-StaticObject::StaticObject(const unsigned int id) : WorldObject(id)
+StaticObject::StaticObject(const long id) : WorldObject(id)
 {
 	this->zType = 0;
 	this->zWeight = 0;

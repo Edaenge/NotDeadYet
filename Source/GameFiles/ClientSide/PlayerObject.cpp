@@ -1,6 +1,6 @@
 #include "GameFiles/ClientSide/PlayerObject.h"
 
-PlayerObject::PlayerObject(const unsigned int id) : OrganicObject(id)
+PlayerObject::PlayerObject(const long id) : OrganicObject(id)
 {
 	this->zHunger = 0.0f;
 	this->zStamina = 0.0f;

@@ -2,7 +2,7 @@
 
 #define PI 3.14159265358979323846f
 
-MovingObject::MovingObject(const unsigned int id) : WorldObject(id)
+MovingObject::MovingObject(const long id) : WorldObject(id)
 {
 	this->zState = STATE_IDLE; 
 	this->zEndPosition = Vector3(0,0,0);

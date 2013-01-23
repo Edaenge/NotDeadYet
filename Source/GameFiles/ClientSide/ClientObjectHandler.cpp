@@ -1,7 +1,7 @@
 #include "Client.h"
 #include "ClientServerMessages.h"
 
-bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const int ID)
+bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const long ID)
 {
 	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, ID);
 
@@ -74,7 +74,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
-bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const int ID)
+bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const long ID)
 {
 	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, ID);
 
@@ -141,7 +141,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
-bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const int ID)
+bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const long ID)
 {
 	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, ID);
 
@@ -233,7 +233,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
-bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const int ID)
+bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const long ID)
 {
 	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, ID);
 
@@ -332,7 +332,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const int ID)
+bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const long ID)
 {
 	//Get ID and Position Depending on type
 	if (ID == -1)
@@ -429,7 +429,7 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const int ID)
+bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const long ID)
 {
 	//Get ID and Position Depending on type
 	if (ID == -1)
@@ -528,7 +528,7 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const int ID)
+bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const long ID)
 {
 	//Get ID and Position Depending on type
 	if (ID == -1)
@@ -611,7 +611,7 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, const int ID)
+bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, const long ID)
 {
 	//Get ID and Position Depending on type
 	if (ID == -1)
@@ -711,7 +711,7 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 	return true;
 }
 
-bool Client::RemovePlayerObject(const int ID)
+bool Client::RemovePlayerObject(const long ID)
 {
 	if (ID == -1)
 		return false;
@@ -740,7 +740,7 @@ bool Client::RemovePlayerObject(const int ID)
 	return true;
 }
 
-bool Client::RemoveAnimalObject(const int ID)
+bool Client::RemoveAnimalObject(const long ID)
 {
 	if (ID == -1)
 		return false;
@@ -765,7 +765,7 @@ bool Client::RemoveAnimalObject(const int ID)
 	return true;
 }
 
-bool Client::RemoveStaticObject(const int ID)
+bool Client::RemoveStaticObject(const long ID)
 {
 	if (ID == -1)
 		return false;
@@ -793,7 +793,7 @@ bool Client::RemoveStaticObject(const int ID)
 	return true;
 }
 
-bool Client::RemoveDynamicObject(const int ID)
+bool Client::RemoveDynamicObject(const long ID)
 {
 	if (ID == -1)
 		return false;

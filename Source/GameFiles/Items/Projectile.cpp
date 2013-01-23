@@ -1,6 +1,6 @@
 #include "Projectile.h"
 
-Projectile::Projectile(const unsigned int id, const unsigned int itemType, float velocity, float damage) 
+Projectile::Projectile(const long id, const unsigned int itemType, float velocity, float damage) 
 	: Item(id, itemType)
 {
 	this->zStacking = true;

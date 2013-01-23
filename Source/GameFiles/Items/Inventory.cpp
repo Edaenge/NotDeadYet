@@ -91,7 +91,7 @@ bool Inventory::AddItem(Item* item)
 	return false;
 }
 
-Item* Inventory::SearchAndGetItem(unsigned int ID) const
+Item* Inventory::SearchAndGetItem(long ID) const
 {
 	int position = this->Search(ID);
 
@@ -107,7 +107,7 @@ Item* Inventory::GetItem(const unsigned int index) const
 	return 0;
 }
 
-int Inventory::Search(const int ID) const
+int Inventory::Search(const long ID) const
 {
 	for (unsigned int i = 0; i < this->zItems.size(); i++)
 	{
@@ -121,7 +121,7 @@ int Inventory::Search(const int ID) const
 	return -1;
 }
 
-bool Inventory::RemoveItemStack(const int ID, const unsigned int numberOfStacks)
+bool Inventory::RemoveItemStack(const long ID, const unsigned int numberOfStacks)
 {
 	int index = this->Search(ID);
 	if (index == -1)
@@ -138,7 +138,7 @@ bool Inventory::RemoveItemStack(const int ID, const unsigned int numberOfStacks)
 		}*/
 		if (Messages::FileWrite())
 		{
-			Messages::Debug("Removed Stacks: " + MaloW::convertNrToString(numberOfStacks) + " TotalWeight: " + MaloW::convertNrToString(zWeightTotal));
+			Messages::Debug("Removed Stacks: " + MaloW::convertNrToString((float)numberOfStacks) + " TotalWeight: " + MaloW::convertNrToString((float)zWeightTotal));
 		}
 		return true;
 	}
@@ -218,7 +218,7 @@ Item* Inventory::SearchAndGetItemFromType( const unsigned int TYPE )
 	return NULL;
 }
 
-Item* Inventory::EquipItem(const int ID)
+Item* Inventory::EquipItem(const long ID)
 {
 	int index = this->Search(ID);
 

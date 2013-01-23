@@ -124,7 +124,7 @@ void GuiManager::AddInventoryItemToGui(const Gui_Item_Data gid)
 	this->zInvGui->AddItemToGui(gid, this->zGraphicEngine);
 }
 
-void GuiManager::RemoveInventoryItemFromGui(const int ID)
+void GuiManager::RemoveInventoryItemFromGui(const long ID)
 {
 	this->zInvGui->RemoveItemFromGui(ID);
 }

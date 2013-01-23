@@ -10,7 +10,7 @@
 class AnimalObject : public OrganicObject
 {
 public:
-	AnimalObject(const unsigned int id) : OrganicObject(id){};
+	AnimalObject(const long id) : OrganicObject(id){};
 	virtual ~AnimalObject(){}
 	/*! Updates the Animal*/
 	virtual void Update(float deltaTime);

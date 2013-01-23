@@ -1,7 +1,7 @@
 #include "Container.h"
 
 
-Container::Container(const unsigned int id, const unsigned int itemType, 
+Container::Container(const long id, const unsigned int itemType, 
 					 const int maxUse, const int currUse) : Item(id, itemType)
 {
 	this->zStacking = false;

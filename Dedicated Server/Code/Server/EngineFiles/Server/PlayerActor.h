@@ -22,11 +22,11 @@ class PlayerActor : public BioActor, public Observed
 {
 public:
 	/*! ID should be the same ID as in ClientChannel.*/
-	PlayerActor(const int ID);
+	PlayerActor(const long ID);
 	/*! ID should be the same ID as in ClientChannel.*/
-	PlayerActor(const int ID, const Vector3& startPos, PhysicsObject* pObj);
+	PlayerActor(const long ID, const Vector3& startPos, PhysicsObject* pObj);
 	/*! ID should be the same ID as in ClientChannel.*/
-	PlayerActor(const int ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj);
+	PlayerActor(const long ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj);
 
 	virtual ~PlayerActor();
 
@@ -39,7 +39,7 @@ public:
 	bool PickUpObject(StaticObjectActor* object);
 	bool PickUpObject(DynamicObjectActor* object);
 	/*! */
-	bool DropObject(const int ID);
+	bool DropObject(const long ID);
 	/*! Adds a message string with health,stamina,hunger, hydration to mess.
 	    This function checks if the data has changed since last update.
 		If it has changed, we need to send it to the client.
@@ -47,7 +47,7 @@ public:
 	*/
 	void AddChangedHData(string& mess, NetworkMessageConverter* nmc);
 
-	Item* GetItem(const int ID){return this->zInventory->SearchAndGetItem(ID);}
+	Item* GetItem(const long ID){return this->zInventory->SearchAndGetItem(ID);}
 	float GetLatency() const {return this->zLatency;}
 	inline float GetFrameTime() const {return this->zFrameTime;}
 	/*! Gets the current key state. This function is used

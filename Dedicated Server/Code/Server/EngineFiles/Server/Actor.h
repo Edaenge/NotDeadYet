@@ -26,13 +26,13 @@ public:
 
 	virtual ~Actor(){}
 	
-	inline int  GetID() const {return this->zID;}
+	inline long GetID() const {return this->zID;}
 	std::string GetActorModel() const {return zActorModel;}
 	std::string GetActorObjectName() const {return zActorObjectName;}
 	Vector3 GetDirection() const {return this->zDirection;}
 	const Vector3& GetUpVector() const {return this->zUp;}
 
-	inline  void SetID(const int id) {this->zID = id;}
+	inline  void SetID(const long id) {this->zID = id;}
 	virtual void SetActorModel(const std::string& modelStr) {zActorModel = modelStr;}
 	virtual void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
 	inline  void SetDirection(Vector3 dir) {this->zDirection = dir;}
@@ -52,6 +52,6 @@ protected:
 	std::string zActorObjectName;
 private:
 	static long zNextAID;
-	int zID;
+	long zID;
 	
 };

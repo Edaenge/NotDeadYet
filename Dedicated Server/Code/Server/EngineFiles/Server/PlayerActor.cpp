@@ -1,18 +1,18 @@
 #include "PlayerActor.h"
 
-PlayerActor::PlayerActor( const int ID ) : BioActor()
+PlayerActor::PlayerActor(const long ID) : BioActor()
 {
 	InitValues();
 	this->SetID(ID);
 }
 
-PlayerActor::PlayerActor( const int ID, const Vector3& startPos, PhysicsObject* pObj) : BioActor(startPos, pObj)
+PlayerActor::PlayerActor(const long ID, const Vector3& startPos, PhysicsObject* pObj) : BioActor(startPos, pObj)
 {
 	InitValues();
 	this->SetID(ID);
 }
 
-PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj ) : BioActor(startPos, pObj, startRot)
+PlayerActor::PlayerActor(const long ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj) : BioActor(startPos, pObj, startRot)
 {
 	InitValues();
 	this->SetID(ID);
@@ -131,7 +131,7 @@ void PlayerActor::Update(float deltaTime)
 	
 }
 
-bool PlayerActor::PickUpObject( DynamicObjectActor* object)
+bool PlayerActor::PickUpObject(DynamicObjectActor* object)
 {
 	//Not yet implemented
 	return false;
@@ -293,7 +293,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 	return false;
 }
 
-bool PlayerActor::DropObject( const int ID )
+bool PlayerActor::DropObject(const long ID)
 {
 	Item* item = this->zInventory->SearchAndGetItem(ID);
 
@@ -323,7 +323,7 @@ void PlayerActor::EatFood(float hunger)
 		this->zHunger = this->zHungerMax;
 }
 
-void PlayerActor::AddChangedHData( string& mess, NetworkMessageConverter* nmc )
+void PlayerActor::AddChangedHData(string& mess, NetworkMessageConverter* nmc)
 {
 	if(zHealthChanged)
 	{

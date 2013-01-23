@@ -1,7 +1,7 @@
 #include "Client.h"
 #include "ClientServerMessages.h"
 
-void Client::HandleWeaponUse(const int ID)
+void Client::HandleWeaponUse(const long ID)
 {
 	PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 
@@ -44,7 +44,7 @@ void Client::HandleWeaponUse(const int ID)
 	}
 }
 
-void Client::HandleUseItem(const int ID)
+void Client::HandleUseItem(const long ID)
 {
 	Item* item = this->zPlayerInventory->SearchAndGetItem(ID);
 
@@ -117,7 +117,7 @@ void Client::HandleUseItem(const int ID)
 	}
 }
 
-void Client::HandleEquipItem(const int ItemID, const int Slot)
+void Client::HandleEquipItem(const long ItemID, const int Slot)
 {
 	Item* item = this->zPlayerInventory->EquipItem(ItemID);
 
@@ -298,7 +298,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 	}
 }
 
-void Client::HandleUnEquipItem(const int ItemID, const int Slot)
+void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 {
 	PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 
@@ -471,7 +471,7 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 	}
 }
 
-void Client::HandleRemoveEquipment(const int ItemID, const int Slot)
+void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 {
 	if (Slot == EQUIPMENT_SLOT_WEAPON)
 	{
@@ -517,7 +517,7 @@ void Client::HandleRemoveEquipment(const int ItemID, const int Slot)
 	}
 }
 
-void Client::SendUnEquipItem(const int ID, const int Slot)
+void Client::SendUnEquipItem(const long ID, const int Slot)
 {
 	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)ID);
 
@@ -526,7 +526,7 @@ void Client::SendUnEquipItem(const int ID, const int Slot)
 	this->zServerChannel->sendData(msg);
 }
 
-void Client::SendPickupItemMessage(const int ID)
+void Client::SendPickupItemMessage(const long ID)
 {
 	std::string msg;
 
@@ -535,7 +535,7 @@ void Client::SendPickupItemMessage(const int ID)
 	this->zServerChannel->sendData(msg);
 }
 
-void Client::SendDropItemMessage(const int ID)
+void Client::SendDropItemMessage(const long ID)
 {
 	std::string msg;
 
@@ -544,7 +544,7 @@ void Client::SendDropItemMessage(const int ID)
 	this->zServerChannel->sendData(msg);
 }
 
-void Client::HandleRemoveInventoryItem(const int ID)
+void Client::HandleRemoveInventoryItem(const long ID)
 {
 	int index = this->zPlayerInventory->Search(ID);
 	if(this->zPlayerInventory->RemoveItem(index))
@@ -555,7 +555,7 @@ void Client::HandleRemoveInventoryItem(const int ID)
 	}
 }
 
-void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int ID)
+void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned long ID)
 {
 	std::string itemName = "Unknown";
 	std::string itemDescription = "<UNKNOWN DESCRIPTION>";

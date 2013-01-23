@@ -20,7 +20,7 @@ static const enum INTERPOLATION_TYPES
 class MovingObject : public WorldObject
 {
 public:
-	MovingObject(const unsigned int id);
+	MovingObject(const long id);
 	virtual ~MovingObject() {}
 	/*! Sets the State*/
 	inline void SetState(const int state) {this->zState = state;}

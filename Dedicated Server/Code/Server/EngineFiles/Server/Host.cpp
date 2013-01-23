@@ -233,7 +233,7 @@ void Host::Init()
 
 		counter++;
 	}
-	if (this->aSpawnPosition > this->zAnimalSpawnPoints.size())
+	if ((unsigned int)this->aSpawnPosition > this->zAnimalSpawnPoints.size())
 		this->aSpawnPosition = 0;
 
 
@@ -1253,7 +1253,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	}
 
 	//Debug Pos
-	if (this->pSpawnPosition > this->zPlayerSpawnPoints.size())
+	if ((unsigned int)this->pSpawnPosition > this->zPlayerSpawnPoints.size())
 		this->pSpawnPosition = 0;
 
 	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(pi->GetActorModel(), zPlayerSpawnPoints[this->pSpawnPosition++]);
@@ -1428,7 +1428,7 @@ void Host::onEvent( Event* e )
 			Vector3 dir = playerTempPos - oldPos;
 			Vector3 groundNormal = this->zWorld->GetNormalAtWorldPos(playerTempPos.x, playerTempPos.z);
 
-			playerTempPos.y -= (9.82 * this->zDeltaTime);
+			playerTempPos.y -= (9.82f * this->zDeltaTime);
 			if(playerTempPos.y < yPos)
 				playerTempPos.y = yPos;
 
