@@ -243,7 +243,7 @@ void Host::Init()
 												path, zAnimalSpawnPoints[this->aSpawnPosition++]);	
 	testDeer->SetActorModel(path);
 	testDeer->SetPhysicObject(pObj);
-	testDeer->SetScale(Vector3(0.04f,0.04f,0.04f));
+	testDeer->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 	this->zActorHandler->AddNewAnimalActor(testDeer);
 
 	if (Messages::FileWrite())
@@ -1258,6 +1258,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 
 	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(pi->GetActorModel(), zPlayerSpawnPoints[this->pSpawnPosition++]);
 	pi->SetPhysicObject(pObj);
+	pi->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 
 	if(!pObj)
 		MaloW::Debug("Error in function AddNewPlayer in ActorHandler: PhysicObj is null.");

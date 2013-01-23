@@ -1,7 +1,6 @@
 #include "Host.h"
 #include "../../../../../Source/GameFiles/ClientServerMessages.h"
 
-
 void Host::HandleWeaponUse(PlayerActor* pActor, const int ItemID)
 {
 	Equipment* eq = pActor->GetEquipment();

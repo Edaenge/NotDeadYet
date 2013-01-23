@@ -26,7 +26,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Arrow_v01.obj";
+	this->zMeshID = "Media/Tree_02_v02_r.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;

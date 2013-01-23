@@ -55,6 +55,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		if (ID == this->zID)
 		{
 			this->zCreated = true;
+			filename = "Media/Bush_01_v04_r.obj";
 		}
 	}
 	if (Messages::FileWrite())
