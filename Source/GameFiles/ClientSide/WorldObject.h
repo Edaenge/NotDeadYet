@@ -21,7 +21,7 @@ public:
 	inline Vector4 GetRotation() const {return this->zMesh->GetRotationQuaternion();}
 	/*! Sets object Mesh data*/
 	inline void SetPosition(const Vector3& pos) {this->zMesh->SetPosition(pos);}
-	void SetScale(const Vector3& scale) {this->zMesh->Scale(scale);}
+	void SetScale(const Vector3& scale) {this->zMesh->SetScale(scale);}
 	inline void SetRotation(const Vector4& rot) 
 	{
 		this->zMesh->SetQuaternion(rot);
