@@ -145,6 +145,7 @@
     <ClInclude Include="..\Source\Network\NetworkPacket.h" />
     <ClInclude Include="..\Source\Network\ServerChannel.h" />
     <ClInclude Include="..\Source\Network\Winsock.h" />
+    <ClInclude Include="..\Source\PhysicsEngine\BoundingSphere.h" />
     <ClInclude Include="..\Source\PhysicsEngine\ObjLoader.h" />
     <ClInclude Include="..\Source\PhysicsEngine\Physics.h" />
     <ClInclude Include="..\Source\PhysicsEngine\PhysicsEngine.h" />

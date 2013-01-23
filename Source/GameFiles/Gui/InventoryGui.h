@@ -58,7 +58,7 @@ public:
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
 	int CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
-	bool AddItemToGui(Gui_Item_Data gid, GraphicsEngine* ge);
+	bool AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	bool RemoveItemFromGui(const int ID);
 
 	void FadeOut(float value);

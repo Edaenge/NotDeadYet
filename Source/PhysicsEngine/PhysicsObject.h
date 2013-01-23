@@ -6,6 +6,7 @@
 #include "../MaloWLib/MaloW.h"
 #include "../MaloWLib/MaloWFileDebug.h"
 #include "ObjLoader.h"
+#include "BoundingSphere.h"
 
 struct Vertex
 {
@@ -42,6 +43,8 @@ private:
 	int nrOfIndicies;
 	int* indicies;
 
+	BoundingSphere bs;
+
 	void RecreateWorldMatrix();
 
 public:
@@ -73,4 +76,7 @@ public:
 	void SetIndicies(int* inds) { this->indicies = inds; }
 	int getNrOfIndicies() const { return this->nrOfIndicies; }
 	void setNrOfIndicies(int indcount) { this->nrOfIndicies = indcount; }
+
+	BoundingSphere GetBoundingSphere() const { return this->bs; }
+	void SetBoundingSphere(BoundingSphere bs) { this->bs = bs; }
 };

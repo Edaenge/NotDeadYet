@@ -474,6 +474,9 @@
     <ClInclude Include="..\Source\WorldFiles\WorldRenderer.h">
       <Filter>Game Files\WorldFiles</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\PhysicsEngine\BoundingSphere.h">
+      <Filter>PhysicsEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameIcon.ico" />

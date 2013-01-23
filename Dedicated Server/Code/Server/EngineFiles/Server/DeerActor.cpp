@@ -65,6 +65,7 @@ void DeerActor::InitDeer() throw(...)
 		infile.close();
 	}
 	this->SetFearLevel(0);
+	this->SetFearMax(100);
 	this->zFearIntervalCounter = 0;
 	//this->SetAlertnessLevel(0);
 	//this->zAlertnessIntervalCounter = 0;
@@ -91,6 +92,8 @@ void DeerActor::Update( float deltaTime ) //Has become a rather large funtion. C
 
 void DeerActor::UpdateForAnimal(float deltaTime)
 {
+	static float testInterval = 0; //Just for debugging.
+	testInterval += deltaTime;
 	this->zIntervalCounter += deltaTime;
 	this->zFearIntervalCounter += deltaTime;
 	//this->zAlertnessIntervalCounter += deltaTime;
@@ -102,11 +105,12 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 		//- How does it know about loud sounds? Some sort of event? 
 		//- How does it know when nearby sneaking entities make a sound?
 				//- Possible solution: getting the player's velocity could be enough.
+		//- I'm fairly sure that large bitset in the pathfinder leads to poor performance, especially since the clear is used regularly.
 
 	//Perform checking for entities here.
 	//Remember, deers are good at hearing, which will be what the minimumDistance variable is for.
 
-	int minimumDistance = 80; //80 is just a test value, I do not know the proper scale.
+	int minimumDistance = 5; //40 is just a random value, further testing will be required to settle on a proper value.
 	int shortestDistance = 99999;
 
 	float xDistance = 0;
@@ -115,7 +119,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 	float finalDistance = 0;
 
 	
-
+	//Determine closest threat/target
 	for(int i = 0; i < this->GetCurrentPlayers(); i++)
 	{
 		xDistance = this->GetPosition().x - this->zTargets[i].position.x; //Math, could use optimization, I think.
@@ -147,13 +151,6 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 		nearbyPredatorsExist = false;
 	}
 
-
-
-	/*if(this->zAlertnessIntervalCounter > 1)
-	{
-		this->SetAlertnessLevel( this->GetFearLevel() - 1);
-	}*/
-
 	
 	//Time to assess threats.
 
@@ -163,10 +160,10 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 	}
 	this->SetPreviousHealth( this->GetHealth() );
 	
-	if(this->zFearIntervalCounter > 1)
+	if(this->zFearIntervalCounter > 1) //Basically, each second the fear increases or decreases.
 	{
 		this->zFearIntervalCounter = 0;
-		//Basically, each second the fear increases or decreases.
+		
 		if(nearbyPredatorsExist)
 		{
 			//Getting values and such, comparing animal health against that of other entities, types and more.
@@ -192,7 +189,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 						//Which means, it is even more afraid.
 						fear += 10;
 					}
-					if(this->zTargets[i].movementNoise > 5) //5 is just a temporary number right now. It is supposed to be the speed of a running player.
+					if(this->zTargets[i].movementNoise > 1) //1 is just a temporary number right now. It is supposed to be the speed of a running player.
 					{
 						fear += 4;
 					}
@@ -206,7 +203,6 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 			}			
 
 			this->SetFearLevel( this->GetFearLevel() + fear / 5); //5 is unrelated to the movementNoise. Probably not good enough math. The theory is that the animal is constantly getting more afraid.
-	
 		}
 		else //No threat detected. Calming down.
 		{
@@ -217,46 +213,66 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 	
 	
 	
-	
-	if(this->GetFearLevel() == 0 && nearbyPredatorsExist)
+	//Change state of mind.
+	if(this->GetFearLevel() == 0 && !nearbyPredatorsExist)
 	{
 		this->SetBehaviour(CALM);
+		//this->SetScale(Vector3(0.01f, 0.01f, 0.01f));
 	}
-	else if(this->GetFearLevel() > 0 && this->GetFearLevel() <= 20 /*|| this->GetAlertnessLevel() > 20*/)
+	else if(this->GetFearLevel() > 0 && this->GetFearLevel() <= 20)
 	{
 		this->SetBehaviour(SUSPICIOUS);
+		//this->SetScale(Vector3(0.03f, 0.03f, 0.03f));
 	}
 	else if(this->GetFearLevel() > 20 && this->GetFearLevel() <= 35 && nearbyPredatorsExist)
 	{
-		this->SetBehaviour(AGGRESSIVE);
+		if(this->GetBehaviour() != AGGRESSIVE)
+		{
+			this->zCurrentPath.clear();
+			this->SetIfNeedPath(true);
+			this->SetBehaviour(AGGRESSIVE);
+			//this->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		}
+		
 	}
-	else if(this->GetFearLevel() < 35 && this->GetFearLevel() <= this->GetFearMax())
+	else if(this->GetFearLevel() > 35 && this->GetFearLevel() <= this->GetFearMax())
 	{
-		this->SetBehaviour(AFRAID);
+		if(this->GetBehaviour() != AFRAID)
+		{
+			this->zCurrentPath.clear();
+			this->SetIfNeedPath(true);
+			this->SetBehaviour(AFRAID);
+			//this->SetScale(Vector3(3.09f, 3.09f, 3.09f));
+			
+		}
+		
 	}
 	
-	//	
+	
+	//Act based on state of mind.
 	if(this->GetBehaviour() == CALM) //Relaxed behaviour. No threat detected.
 	{
-		if(this->zIntervalCounter > this->zCalmActionInterval)
+		if(this->zIntervalCounter > this->zCalmActionInterval && this->GetIfNeedPath())
 		{
+			Vector3 test = this->GetPosition();
 			this->zIntervalCounter = 0;
-			this->zCalmActionInterval = rand () % 5 + 3; 
+			srand(time(NULL));
+			this->zCalmActionInterval = rand() % 5 + 4; 
 			this->zCurrentPath.clear(); //Since a new path is gotten, and the old one might not have been completed, we clear it just in case.
-			this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, this->GetPosition().x + rand() % 30, this->GetPosition().z + rand() % 30, this->zCurrentPath, 30); //Get a small path to walk, short and does not have to lead anywhere.
-			this->SetIfNeedPath(true);
+			this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->GetPosition().x + rand() % 14 - 7, this->GetPosition().z + rand() % 14 - 7, this->zCurrentPath, 20); //Get a small path to walk, short and does not have to lead anywhere.
+			this->SetIfNeedPath(false);
 		}
 	}
 	else if(this->GetBehaviour() == SUSPICIOUS) //Might have heard something, is suspicious.
 	{
-		if(this->zIntervalCounter > this->zCalmActionInterval * 1.5) //The increase in time is supposed to represent listening, waiting for something to happen.
+		if(this->zIntervalCounter > this->zCalmActionInterval && this->GetIfNeedPath()) //The increase in time is supposed to represent listening, waiting for something to happen.
 		{
 			this->zIntervalCounter = 0;
-			this->zCalmActionInterval = rand () % 5 + 3;
+			srand(time(NULL));
+			this->zCalmActionInterval = rand() % 8 + 6;
 			this->zCurrentPath.clear();
-			this->SetIfNeedPath(true);
-			this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, this->GetPosition().x + rand() % 20, this->GetPosition().z + rand() % 20, this->zCurrentPath, 20); //Get a small path to walk, quite short (since the animal is nervous) and does not have to lead anywhere.
-
+			this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->GetPosition().x + rand() % 8 - 4, this->GetPosition().z + rand() % 8 - 4, this->zCurrentPath, 20); //Get a small path to walk, quite short (since the animal is nervous) and does not have to lead anywhere.
+			this->SetIfNeedPath(false);
 		}
 	}
 	else if(this->GetBehaviour() == AGGRESSIVE) //Is outright trying to harm the target.
@@ -269,7 +285,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 		{
 			this->SetIfNeedPath(false);
 			this->zCurrentPath.clear();
-			if( !this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 30) == false ); //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large.
+			if( !this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40) == false ) //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large.
 			{
 				this->SetIfNeedPath(true);
 			}
@@ -282,7 +298,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 			if( lastDistance < this->GetLastDistanceCheck() / 2) // The animal has traveled towards its goal halfway, at this point, it is safe to asume the goal has moved.
 			{
 				this->zCurrentPath.clear();
-				this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 100);
+				this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40);
 			}
 
 			xDistance = 0;
@@ -319,6 +335,8 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 	}
 	else if(this->GetBehaviour() == AFRAID) //Is afraid, running.
 	{
+		int	fleeDistance = 40; //could be larger, but it is functional for the current (small) environment.
+
 		if(this->GetIfNeedPath() == true)
 		{
 			this->SetIfNeedPath(false);
@@ -327,21 +345,22 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 
 			if(nearbyPredatorsExist)
 			{
+				srand(time(NULL));
 				if(this->zMainTarget.position.x < this->GetPosition().x )
 				{
-					awayFromThreatX = this->GetPosition().x + 100 + (rand() % 50 - 25 );//I just want to add a bit of a random element
+					awayFromThreatX = this->GetPosition().x + fleeDistance;
 				}
 				else
 				{
-					awayFromThreatX = this->GetPosition().x - 100 + (rand() % 50 - 25 );
+					awayFromThreatX = this->GetPosition().x - fleeDistance;
 				}
 				if(this->zMainTarget.position.z < this->GetPosition().z )
 				{
-					awayFromThreatZ = this->GetPosition().z + 100 + (rand() % 50 - 25 );
+					awayFromThreatZ = this->GetPosition().z + fleeDistance;
 				}
 				else
 				{
-					awayFromThreatZ = this->GetPosition().z - 100 + (rand() % 50 - 25 );
+					awayFromThreatZ = this->GetPosition().z - fleeDistance;
 				}
 
 			}
@@ -352,29 +371,96 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 				int directionZ = rand() % 1; 
 				if(directionX == 0)
 				{
-					awayFromThreatX = this->GetPosition().x + 100;
+					awayFromThreatX = this->GetPosition().x + fleeDistance;
 				}
 				else
 				{
-					awayFromThreatX = this->GetPosition().x - 100;
+					awayFromThreatX = this->GetPosition().x - fleeDistance;
 				}
 				if(directionZ == 0)
 				{
-					awayFromThreatZ = this->GetPosition().z + 100;
+					awayFromThreatZ = this->GetPosition().z + fleeDistance;
 				}
 				else
 				{
-					awayFromThreatZ = this->GetPosition().z - 100;
+					awayFromThreatZ = this->GetPosition().z - fleeDistance;
 				}
 				
 			}
 			this->zCurrentPath.clear();
-			if( !this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,100) )
+			if( !this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80) )
 			{
 				this->SetIfNeedPath(true);
 			}
 		}
 	}
+
+
+	//Move the animal along path.
+	if(this->zCurrentPath.size() > 0)
+	{
+		this->zPreviousPos = this->GetPosition();
+
+		bool reachedNode = false;
+		if( (this->GetPosition().x > this->zCurrentPath.back().x - 0.2 && this->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( this->GetPosition().z > this->zCurrentPath.back().y - 0.2 && this->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
+		{
+			reachedNode = true;
+		}
+
+		if(reachedNode)
+		{
+			this->zCurrentPath.pop_back();
+			//reachedNode = false;
+		}
+
+		if(this->GetBehaviour() == CALM && this->zCurrentPath.size() > 0 || this->GetBehaviour() == SUSPICIOUS && this->zCurrentPath.size() > 0) // && !this->zCurrentPath.empty() is necessary to be used again to avoid getting into an unlikely but posssible error.
+		{
+
+			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
+
+			result = result;
+			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
+
+
+			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+			Vector3 direction = goal - this->GetPosition();
+			direction.Normalize();
+			this->SetDirection( direction ); 
+			this->SetVelocity(1.0f);
+			/*if(testInterval > 1.0)
+			{
+				testInterval = 0;
+				this->SetPosition(Vector3(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y) );
+			}*/
+			
+			this->SetPosition(this->GetPosition() + this->GetDirection() * deltaTime * this->GetVelocity());
+		
+		}
+		else if(this->GetBehaviour() == AGGRESSIVE  && this->zCurrentPath.size() > 0 || this->GetBehaviour() == AFRAID && this->zCurrentPath.size() > 0)
+		{
+			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
+
+			result = result;
+			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
+
+			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+			Vector3 direction = goal - this->GetPosition();
+			direction.Normalize();
+			this->SetDirection( direction ); 
+			this->SetVelocity(3.0f);
+
+			this->SetPosition(this->GetPosition() + this->GetDirection() * deltaTime * this->GetVelocity());
+
+		}
+	
+	}
+	else
+	{
+		this->SetIfNeedPath(true);
+	}
+
+
+
 	
 }
 

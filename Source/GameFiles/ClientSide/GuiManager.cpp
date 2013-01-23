@@ -21,7 +21,7 @@ GuiManager::GuiManager()
 	
 	this->zInvGui = NULL;
 	//this->zLootingGui = NULL;
-	//this->zInvCircGui = NULL;
+	this->zInvCircGui = NULL;
 	this->zGraphicEngine = NULL;
 
 	zSelectedItem = 0;
@@ -121,7 +121,7 @@ void GuiManager::ToggleInventoryGui()
 
 void GuiManager::AddInventoryItemToGui(const Gui_Item_Data gid)
 {
-	this->zInvGui->AddItemToGui(gid, this->zGraphicEngine);
+	this->zInvGui->AddItemToGui(gid, this->zInventoryOpen, this->zGraphicEngine);
 }
 
 void GuiManager::RemoveInventoryItemFromGui(const long ID)
@@ -253,11 +253,11 @@ bool GuiManager::IsGuiOpen()
 
 Menu_select_data GuiManager::CheckCollisionInv()
 {
-	// Fixes so the circle menu won't pop up instantly after selecting an option. You have to release the button first.
-	if( zMinorFix && !zGraphicEngine->GetKeyListener()->IsClicked(2))
+	if(!zGraphicEngine->GetKeyListener()->IsClicked(2) && zMinorFix)
 	{
 		zMinorFix = false;
 	}
+
 	if(this->zCircularInventorySelectionOpen)
 	{
 		Vector2 mousePos = zGraphicEngine->GetKeyListener()->GetMousePosition();
@@ -265,7 +265,6 @@ Menu_select_data GuiManager::CheckCollisionInv()
 
 		if(this->zSelectedCircMenu >= 0 && this->zSelectedCircMenu < 4)
 		{
-			zMinorFix = true;
 			this->HideCircularItemGui();
 			Menu_select_data msd;
 			msd.zAction = (CIRCMENU)this->zSelectedCircMenu;
@@ -275,6 +274,7 @@ Menu_select_data GuiManager::CheckCollisionInv()
 		}
 		else if(!zGraphicEngine->GetKeyListener()->IsClicked(2))
 		{
+			zMinorFix = false;
 			this->HideCircularItemGui();
 		}
 
@@ -283,8 +283,9 @@ Menu_select_data GuiManager::CheckCollisionInv()
 	{
 		Vector2 mousePos = zGraphicEngine->GetKeyListener()->GetMousePosition();
 		this->zSelectedItem = this->zInvGui->CheckCollision(mousePos.x, mousePos.y, zGraphicEngine->GetKeyListener()->IsClicked(2), zGraphicEngine);
-		if(zSelectedItem != -1 && !this->zCircularInventorySelectionOpen)
+		if(zSelectedItem != -1 && !this->zCircularInventorySelectionOpen && !zMinorFix)
 		{
+			zMinorFix = true;
 			this->ShowCircularItemGui();
 		}
 		

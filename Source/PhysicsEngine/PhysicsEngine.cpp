@@ -50,21 +50,16 @@ void PhysicsEngine::DeletePhysicsObject( PhysicsObject* obj )
 
 
 
-
-
-
-
-#include "PhysicsEngine.h"
-
 //////////////////// Overloaded ////////////////////
 PhysicsCollisionData PhysicsEngine::GetCollision( Vector3 rayOrigin, Vector3 rayDirection, PhysicsObject* mesh )
 {
 	return this->GetCollisionRayMesh(rayOrigin, rayDirection, mesh);
 }
 /*
-PhysicsCollisionData PhysicsEngine::GetCollision( Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iTerr )
+PhysicsCollisionData PhysicsEngine::GetCollision( Vector3 rayOrigin, Vector3 rayDirection, Vector3 position, 
+												 float heightMap[], float distanceXZBetweenVerts, int nrOfVertsPerRow )
 {
-	return this->GetCollisionRayTerrain(rayOrigin, rayDirection, iTerr);
+	return this->GetCollisionRayTerrain(rayOrigin, rayDirection, position, heightMap, distanceXZBetweenVerts, nrOfVertsPerRow);
 }
 */
 PhysicsCollisionData PhysicsEngine::GetCollision( PhysicsObject* mesh1, PhysicsObject* mesh2 )
@@ -88,22 +83,27 @@ PhysicsCollisionData PhysicsEngine::GetCollisionRayMesh( Vector3 rayOrigin, Vect
 	return cd;
 }
 /*
-PhysicsCollisionData PhysicsEngine::GetCollisionRayTerrain( Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iTerr )
+PhysicsCollisionData PhysicsEngine::GetCollisionRayTerrain( Vector3 rayOrigin, Vector3 rayDirection, Vector3 position, 
+														   float heightMap[], float distanceXZBetweenVerts, int nrOfVertsPerRow )
 {
 	PhysicsCollisionData cd;
 
-	if(Terrain* terrain = dynamic_cast<Terrain*>(iTerr))
+	BoundingSphere bs = BoundingSphere(Vector3(position.x, heightMap[0], position.z), 
+		Vector3(position.x + nrOfVertsPerRow * distanceXZBetweenVerts, 
+			heightMap[nrOfVertsPerRow * nrOfVertsPerRow - 1], position.z + nrOfVertsPerRow * distanceXZBetweenVerts));
+
+	if(this->DoCollisionSphereVsRay(bs, Matrix4(), 1.0f, rayOrigin, rayDirection))
 	{
+		cd.BoundingSphereCollision = true;
 		this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, 
 			terrain->GetVerticesPointer(), terrain->GetNrOfVertices(), 
 			terrain->GetIndicesPointer(), terrain->GetNrOfIndices(), terrain->GetWorldMatrix(), cd);
 	}
-	else
-		MaloW::Debug("Failed to cast iTerrain to Terrain in PhysicsEngine.cpp");
 
 	return cd;
 }
 */
+
 PhysicsCollisionData PhysicsEngine::GetCollisionMeshMesh(PhysicsObject* mesh1, PhysicsObject* mesh2)
 {
 	PhysicsCollisionData cd;
@@ -113,10 +113,11 @@ PhysicsCollisionData PhysicsEngine::GetCollisionMeshMesh(PhysicsObject* mesh1, P
 	return cd;
 }
 /*
-PhysicsCollisionData PhysicsEngine::GetCollisionMeshTerrain( PhysicsObject* mesh, iTerrain* terr )
+PhysicsCollisionData PhysicsEngine::GetCollisionMeshTerrain( PhysicsObject* mesh, iTerrain* terr)
 {
 	PhysicsCollisionData cd;
 	// NYI
+	MaloW::Debug("NYI ERROR: Tried using GetCollisionMeshTerrain in PhysicsEngine.cpp, this function is not yet Implemented.");
 	return cd;
 }
 */
@@ -125,25 +126,109 @@ PhysicsCollisionData PhysicsEngine::GetCollisionMeshTerrain( PhysicsObject* mesh
 //////////////////////////////////////////////////////////////////////////
 /////////////////////////////    Privates      ///////////////////////////
 //////////////////////////////////////////////////////////////////////////
+bool PhysicsEngine::DoCollisionSphereVsRay(BoundingSphere bs, Matrix4 world, float scale, 
+										   Vector3 rayOrigin, Vector3 rayDirection)
+{
+	Vector4 pos;
+	float x = bs.center.x * world.value[0][0] + bs.center.y * world.value[1][0] +
+		bs.center.z * world.value[2][0] + world.value[3][0];
+	float y = bs.center.x * world.value[0][1] + bs.center.y * world.value[1][1] +
+		bs.center.z * world.value[2][1] + world.value[3][1];
+	float z = bs.center.x * world.value[0][2] + bs.center.y * world.value[1][2] +
+		bs.center.z * world.value[2][2] + world.value[3][2];
+	float w = bs.center.x * world.value[0][3] + bs.center.y * world.value[1][3] +
+		bs.center.z * world.value[2][3] + world.value[3][3];
+	pos.x = x/w;
+	pos.y = y/w;
+	pos.z = z/w;
+
+	Vector3 v = Vector3(rayOrigin.x - pos.x, rayOrigin.y - pos.y, rayOrigin.z - pos.z);
+	float b = rayDirection.GetDotProduct(v);
+	float rad = bs.radius * scale;
+
+	float c = v.GetDotProduct(v) - (pow(rad, 2));
+
+	if(pow(b,  2) - c > 0)
+		return true;
+	else if(pow(b,  2) - c == 0)
+		return true;
+	else
+		return false;
+}
+
+bool PhysicsEngine::DoCollisionSphereVsSphere(BoundingSphere bs1, Matrix4 world1, float scale1, 
+											  BoundingSphere bs2, Matrix4 world2, float scale2)
+{
+	Vector4 tpos1;
+	float x = bs1.center.x * world1.value[0][0] + bs1.center.y * world1.value[1][0] +
+		bs1.center.z * world1.value[2][0] + world1.value[3][0];
+	float y = bs1.center.x * world1.value[0][1] + bs1.center.y * world1.value[1][1] +
+		bs1.center.z * world1.value[2][1] + world1.value[3][1];
+	float z = bs1.center.x * world1.value[0][2] + bs1.center.y * world1.value[1][2] +
+		bs1.center.z * world1.value[2][2] + world1.value[3][2];
+	float w = bs1.center.x * world1.value[0][3] + bs1.center.y * world1.value[1][3] +
+		bs1.center.z * world1.value[2][3] + world1.value[3][3];
+	tpos1.x = x/w;
+	tpos1.y = y/w;
+	tpos1.z = z/w;
+
+
+	Vector4 tpos2;
+	x = bs2.center.x * world2.value[0][0] + bs2.center.y * world2.value[1][0] +
+		bs2.center.z * world2.value[2][0] + world2.value[3][0];
+	y = bs2.center.x * world2.value[0][1] + bs2.center.y * world2.value[1][1] +
+		bs2.center.z * world2.value[2][1] + world2.value[3][1];
+	z = bs2.center.x * world2.value[0][2] + bs2.center.y * world2.value[1][2] +
+		bs2.center.z * world2.value[2][2] + world2.value[3][2];
+	w = bs2.center.x * world2.value[0][3] + bs2.center.y * world2.value[1][3] +
+		bs2.center.z * world2.value[2][3] + world2.value[3][3];
+	tpos2.x = x/w;
+	tpos2.y = y/w;
+	tpos2.z = z/w;
+
+	Vector3 pos1 = Vector3(tpos1.x, tpos1.y, tpos1.z);
+	Vector3 pos2 = Vector3(tpos2.x, tpos2.y, tpos2.z);
+
+	float distance = (pos2 - pos1).GetLength();
+	float radiuses = bs1.radius * scale1 + bs2.radius * scale2;
+	if(distance <= radiuses)
+		return true;
+	return false;
+}
+
 void PhysicsEngine::DoCollisionRayVsMesh(Vector3 rayOrigin, Vector3 rayDirection, 
 		PhysicsObject* mesh, PhysicsCollisionData& cd)
 {
-	this->DoCollisionRayVsTriangles(rayOrigin, rayDirection, 
-		mesh->getVerts(), mesh->getNrOfVerts(), mesh->getIndicies(), mesh->getNrOfIndicies(), 
-		mesh->GetWorldMatrix(), cd);
+
+	float scale = max(mesh->GetScaling().x, max(mesh->GetScaling().y, mesh->GetScaling().z));
+
+	if(this->DoCollisionSphereVsRay(mesh->GetBoundingSphere(), mesh->GetWorldMatrix(), 
+		scale, rayOrigin, rayDirection))
+	{
+		cd.BoundingSphereCollision = true;
+		this->DoCollisionRayVsTriangles(rayOrigin, rayDirection,
+			mesh->getVerts(), mesh->getNrOfVerts(), mesh->getIndicies(), mesh->getNrOfIndicies(),
+			mesh->GetWorldMatrix(), cd);
+	}
 }
 
 void PhysicsEngine::DoCollisionMeshVsMesh( PhysicsObject* m1, PhysicsObject* m2, PhysicsCollisionData& cd )
 {
-
-	this->DoCollisionTrianglesVsTriangles(m1->GetPosition(), m1->getVerts(), m1->getNrOfVerts(),
-		m1->getIndicies(), m1->getNrOfIndicies(), m1->GetWorldMatrix(), 
-		m2->getVerts(), m2->getNrOfVerts(), m2->getIndicies(),
-		m2->getNrOfIndicies(), m2->GetWorldMatrix(), cd);
+	float scale1 = max(m1->GetScaling().x, max(m1->GetScaling().y, m1->GetScaling().z));
+	float scale2 = max(m2->GetScaling().x, max(m2->GetScaling().y, m2->GetScaling().z));
+	if(this->DoCollisionSphereVsSphere(m1->GetBoundingSphere(), m1->GetWorldMatrix(), scale1, 
+		m2->GetBoundingSphere(), m2->GetWorldMatrix(), scale2))
+	{
+		cd.BoundingSphereCollision = true;
+		this->DoCollisionTrianglesVsTriangles(m1->GetPosition(), m1->getVerts(), m1->getNrOfVerts(),
+			m1->getIndicies(), m1->getNrOfIndicies(), m1->GetWorldMatrix(),
+			m2->getVerts(), m2->getNrOfVerts(), m2->getIndicies(),
+			m2->getNrOfIndicies(), m2->GetWorldMatrix(), cd);
+	}
 }
 
-void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDirection, 
-		Vertex* vertices, int nrOfVertices, int* indices, int nrOfIndices, Matrix4 worldMat, PhysicsCollisionData& cd)
+void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDirection,
+											  Vertex* vertices, int nrOfVertices, int* indices, int nrOfIndices, Matrix4 worldMat, PhysicsCollisionData& cd)
 {
 	if(!indices)
 	{
@@ -155,41 +240,41 @@ void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDire
 			Vertex vert1 = vertices[i + 1];
 			Vertex vert2 = vertices[i + 2];
 
-			
+
 			Vector4 pos0;
-			float x = vert0.pos.x * worldMat.value[0][0] + vert0.pos.y * worldMat.value[1][0] + 
+			float x = vert0.pos.x * worldMat.value[0][0] + vert0.pos.y * worldMat.value[1][0] +
 				vert0.pos.z * worldMat.value[2][0] + worldMat.value[3][0];
-			float y = vert0.pos.x * worldMat.value[0][1] + vert0.pos.y * worldMat.value[1][1] + 
+			float y = vert0.pos.x * worldMat.value[0][1] + vert0.pos.y * worldMat.value[1][1] +
 				vert0.pos.z * worldMat.value[2][1] + worldMat.value[3][1];
-			float z = vert0.pos.x * worldMat.value[0][2] + vert0.pos.y * worldMat.value[1][2] + 
+			float z = vert0.pos.x * worldMat.value[0][2] + vert0.pos.y * worldMat.value[1][2] +
 				vert0.pos.z * worldMat.value[2][2] + worldMat.value[3][2];
-			float w = vert0.pos.x * worldMat.value[0][3] + vert0.pos.y * worldMat.value[1][3] + 
+			float w = vert0.pos.x * worldMat.value[0][3] + vert0.pos.y * worldMat.value[1][3] +
 				vert0.pos.z * worldMat.value[2][3] + worldMat.value[3][3];
 			pos0.x = x/w;
 			pos0.y = y/w;
 			pos0.z = z/w;
 
 			Vector4 pos1;
-			x = vert1.pos.x * worldMat.value[0][0] + vert1.pos.y * worldMat.value[1][0] + 
+			x = vert1.pos.x * worldMat.value[0][0] + vert1.pos.y * worldMat.value[1][0] +
 				vert1.pos.z * worldMat.value[2][0] + worldMat.value[3][0];
-			y = vert1.pos.x * worldMat.value[0][1] + vert1.pos.y * worldMat.value[1][1] + 
+			y = vert1.pos.x * worldMat.value[0][1] + vert1.pos.y * worldMat.value[1][1] +
 				vert1.pos.z * worldMat.value[2][1] + worldMat.value[3][1];
-			z = vert1.pos.x * worldMat.value[0][2] + vert1.pos.y * worldMat.value[1][2] + 
+			z = vert1.pos.x * worldMat.value[0][2] + vert1.pos.y * worldMat.value[1][2] +
 				vert1.pos.z * worldMat.value[2][2] + worldMat.value[3][2];
-			w = vert1.pos.x * worldMat.value[0][3] + vert1.pos.y * worldMat.value[1][3] + 
+			w = vert1.pos.x * worldMat.value[0][3] + vert1.pos.y * worldMat.value[1][3] +
 				vert1.pos.z * worldMat.value[2][3] + worldMat.value[3][3];
 			pos1.x = x/w;
 			pos1.y = y/w;
 			pos1.z = z/w;
 
 			Vector4 pos2;
-			x = vert2.pos.x * worldMat.value[0][0] + vert2.pos.y * worldMat.value[1][0] + 
+			x = vert2.pos.x * worldMat.value[0][0] + vert2.pos.y * worldMat.value[1][0] +
 				vert2.pos.z * worldMat.value[2][0] + worldMat.value[3][0];
-			y = vert2.pos.x * worldMat.value[0][1] + vert2.pos.y * worldMat.value[1][1] + 
+			y = vert2.pos.x * worldMat.value[0][1] + vert2.pos.y * worldMat.value[1][1] +
 				vert2.pos.z * worldMat.value[2][1] + worldMat.value[3][1];
-			z = vert2.pos.x * worldMat.value[0][2] + vert2.pos.y * worldMat.value[1][2] + 
+			z = vert2.pos.x * worldMat.value[0][2] + vert2.pos.y * worldMat.value[1][2] +
 				vert2.pos.z * worldMat.value[2][2] + worldMat.value[3][2];
-			w = vert2.pos.x * worldMat.value[0][3] + vert2.pos.y * worldMat.value[1][3] + 
+			w = vert2.pos.x * worldMat.value[0][3] + vert2.pos.y * worldMat.value[1][3] +
 				vert2.pos.z * worldMat.value[2][3] + worldMat.value[3][3];
 			pos2.x = x/w;
 			pos2.y = y/w;
@@ -225,39 +310,39 @@ void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDire
 			Vertex vert2 = vertices[indices[i + 2]];
 
 			Vector4 pos0;
-			float x = vert0.pos.x * worldMat.value[0][0] + vert0.pos.y * worldMat.value[1][0] + 
+			float x = vert0.pos.x * worldMat.value[0][0] + vert0.pos.y * worldMat.value[1][0] +
 				vert0.pos.z * worldMat.value[2][0] + worldMat.value[3][0];
-			float y = vert0.pos.x * worldMat.value[0][1] + vert0.pos.y * worldMat.value[1][1] + 
+			float y = vert0.pos.x * worldMat.value[0][1] + vert0.pos.y * worldMat.value[1][1] +
 				vert0.pos.z * worldMat.value[2][1] + worldMat.value[3][1];
-			float z = vert0.pos.x * worldMat.value[0][2] + vert0.pos.y * worldMat.value[1][2] + 
+			float z = vert0.pos.x * worldMat.value[0][2] + vert0.pos.y * worldMat.value[1][2] +
 				vert0.pos.z * worldMat.value[2][2] + worldMat.value[3][2];
-			float w = vert0.pos.x * worldMat.value[0][3] + vert0.pos.y * worldMat.value[1][3] + 
+			float w = vert0.pos.x * worldMat.value[0][3] + vert0.pos.y * worldMat.value[1][3] +
 				vert0.pos.z * worldMat.value[2][3] + worldMat.value[3][3];
 			pos0.x = x/w;
 			pos0.y = y/w;
 			pos0.z = z/w;
 
 			Vector4 pos1;
-			x = vert1.pos.x * worldMat.value[0][0] + vert1.pos.y * worldMat.value[1][0] + 
+			x = vert1.pos.x * worldMat.value[0][0] + vert1.pos.y * worldMat.value[1][0] +
 				vert1.pos.z * worldMat.value[2][0] + worldMat.value[3][0];
-			y = vert1.pos.x * worldMat.value[0][1] + vert1.pos.y * worldMat.value[1][1] + 
+			y = vert1.pos.x * worldMat.value[0][1] + vert1.pos.y * worldMat.value[1][1] +
 				vert1.pos.z * worldMat.value[2][1] + worldMat.value[3][1];
-			z = vert1.pos.x * worldMat.value[0][2] + vert1.pos.y * worldMat.value[1][2] + 
+			z = vert1.pos.x * worldMat.value[0][2] + vert1.pos.y * worldMat.value[1][2] +
 				vert1.pos.z * worldMat.value[2][2] + worldMat.value[3][2];
-			w = vert1.pos.x * worldMat.value[0][3] + vert1.pos.y * worldMat.value[1][3] + 
+			w = vert1.pos.x * worldMat.value[0][3] + vert1.pos.y * worldMat.value[1][3] +
 				vert1.pos.z * worldMat.value[2][3] + worldMat.value[3][3];
 			pos1.x = x/w;
 			pos1.y = y/w;
 			pos1.z = z/w;
 
 			Vector4 pos2;
-			x = vert2.pos.x * worldMat.value[0][0] + vert2.pos.y * worldMat.value[1][0] + 
+			x = vert2.pos.x * worldMat.value[0][0] + vert2.pos.y * worldMat.value[1][0] +
 				vert2.pos.z * worldMat.value[2][0] + worldMat.value[3][0];
-			y = vert2.pos.x * worldMat.value[0][1] + vert2.pos.y * worldMat.value[1][1] + 
+			y = vert2.pos.x * worldMat.value[0][1] + vert2.pos.y * worldMat.value[1][1] +
 				vert2.pos.z * worldMat.value[2][1] + worldMat.value[3][1];
-			z = vert2.pos.x * worldMat.value[0][2] + vert2.pos.y * worldMat.value[1][2] + 
+			z = vert2.pos.x * worldMat.value[0][2] + vert2.pos.y * worldMat.value[1][2] +
 				vert2.pos.z * worldMat.value[2][2] + worldMat.value[3][2];
-			w = vert2.pos.x * worldMat.value[0][3] + vert2.pos.y * worldMat.value[1][3] + 
+			w = vert2.pos.x * worldMat.value[0][3] + vert2.pos.y * worldMat.value[1][3] +
 				vert2.pos.z * worldMat.value[2][3] + worldMat.value[3][3];
 			pos2.x = x/w;
 			pos2.y = y/w;
@@ -283,9 +368,8 @@ void PhysicsEngine::DoCollisionRayVsTriangles(Vector3 rayOrigin, Vector3 rayDire
 		}
 	}
 }
-
-bool PhysicsEngine::DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirection, 
-		Vector3 v0, Vector3 v1, Vector3 v2, PhysicsCollisionData& tempCD)
+bool PhysicsEngine::DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirection,
+											 Vector3 v0, Vector3 v1, Vector3 v2, PhysicsCollisionData& tempCD)
 {
 	float eps = 0.000001f;
 	Vector3 e1 = v1 - v0;
@@ -295,7 +379,7 @@ bool PhysicsEngine::DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirec
 
 	if(a > -eps && a < eps)
 		return false;
-	
+
 	float f = 1.0f / a;
 	Vector3 s = rayOrigin - v0;
 	float u = f * (s.GetDotProduct(q));
@@ -315,7 +399,7 @@ bool PhysicsEngine::DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirec
 	float w = 1 - (u + v);
 
 	collPos = (v0 * w) + (v1 * u) + (v2 * v);
-			
+
 	tempCD.collision = true;
 	tempCD.posx = collPos.x;
 	tempCD.posy = collPos.y;
@@ -325,9 +409,9 @@ bool PhysicsEngine::DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirec
 	return true;
 }
 
-void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vector3 m1Pos, Vertex* vert1, int nrOfVerts1, int* inds1, int nrOfInds1, 
-	Matrix4 worldMat1, Vertex* vert2, int nrOfVerts2, int* inds2, int nrOfInds2, 
-	Matrix4 worldMat2, PhysicsCollisionData& cd )
+void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vector3 m1Pos, Vertex* vert1, int nrOfVerts1, int* inds1, int nrOfInds1,
+													Matrix4 worldMat1, Vertex* vert2, int nrOfVerts2, int* inds2, int nrOfInds2,
+													Matrix4 worldMat2, PhysicsCollisionData& cd )
 {
 	if(!inds1)
 	{
@@ -346,39 +430,39 @@ void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vector3 m1Pos, Vertex* vert1
 				// D3DX STUFF
 
 				Vector4 pos00;
-				float x = vert00.pos.x * worldMat1.value[0][0] + vert00.pos.y * worldMat1.value[1][0] + 
+				float x = vert00.pos.x * worldMat1.value[0][0] + vert00.pos.y * worldMat1.value[1][0] +
 					vert00.pos.z * worldMat1.value[2][0] + worldMat1.value[3][0];
-				float y = vert00.pos.x * worldMat1.value[0][1] + vert00.pos.y * worldMat1.value[1][1] + 
+				float y = vert00.pos.x * worldMat1.value[0][1] + vert00.pos.y * worldMat1.value[1][1] +
 					vert00.pos.z * worldMat1.value[2][1] + worldMat1.value[3][1];
-				float z = vert00.pos.x * worldMat1.value[0][2] + vert00.pos.y * worldMat1.value[1][2] + 
+				float z = vert00.pos.x * worldMat1.value[0][2] + vert00.pos.y * worldMat1.value[1][2] +
 					vert00.pos.z * worldMat1.value[2][2] + worldMat1.value[3][2];
-				float w = vert00.pos.x * worldMat1.value[0][3] + vert00.pos.y * worldMat1.value[1][3] + 
+				float w = vert00.pos.x * worldMat1.value[0][3] + vert00.pos.y * worldMat1.value[1][3] +
 					vert00.pos.z * worldMat1.value[2][3] + worldMat1.value[3][3];
 				pos00.x = x/w;
 				pos00.y = y/w;
 				pos00.z = z/w;
 
 				Vector4 pos01;
-				x = vert01.pos.x * worldMat1.value[0][0] + vert01.pos.y * worldMat1.value[1][0] + 
+				x = vert01.pos.x * worldMat1.value[0][0] + vert01.pos.y * worldMat1.value[1][0] +
 					vert01.pos.z * worldMat1.value[2][0] + worldMat1.value[3][0];
-				y = vert01.pos.x * worldMat1.value[0][1] + vert01.pos.y * worldMat1.value[1][1] + 
+				y = vert01.pos.x * worldMat1.value[0][1] + vert01.pos.y * worldMat1.value[1][1] +
 					vert01.pos.z * worldMat1.value[2][1] + worldMat1.value[3][1];
-				z = vert01.pos.x * worldMat1.value[0][2] + vert01.pos.y * worldMat1.value[1][2] + 
+				z = vert01.pos.x * worldMat1.value[0][2] + vert01.pos.y * worldMat1.value[1][2] +
 					vert01.pos.z * worldMat1.value[2][2] + worldMat1.value[3][2];
-				w = vert01.pos.x * worldMat1.value[0][3] + vert01.pos.y * worldMat1.value[1][3] + 
+				w = vert01.pos.x * worldMat1.value[0][3] + vert01.pos.y * worldMat1.value[1][3] +
 					vert01.pos.z * worldMat1.value[2][3] + worldMat1.value[3][3];
 				pos01.x = x/w;
 				pos01.y = y/w;
 				pos01.z = z/w;
 
 				Vector4 pos02;
-				x = vert02.pos.x * worldMat1.value[0][0] + vert02.pos.y * worldMat1.value[1][0] + 
+				x = vert02.pos.x * worldMat1.value[0][0] + vert02.pos.y * worldMat1.value[1][0] +
 					vert02.pos.z * worldMat1.value[2][0] + worldMat1.value[3][0];
-				y = vert02.pos.x * worldMat1.value[0][1] + vert02.pos.y * worldMat1.value[1][1] + 
+				y = vert02.pos.x * worldMat1.value[0][1] + vert02.pos.y * worldMat1.value[1][1] +
 					vert02.pos.z * worldMat1.value[2][1] + worldMat1.value[3][1];
-				z = vert02.pos.x * worldMat1.value[0][2] + vert02.pos.y * worldMat1.value[1][2] + 
+				z = vert02.pos.x * worldMat1.value[0][2] + vert02.pos.y * worldMat1.value[1][2] +
 					vert02.pos.z * worldMat1.value[2][2] + worldMat1.value[3][2];
-				w = vert02.pos.x * worldMat1.value[0][3] + vert02.pos.y * worldMat1.value[1][3] + 
+				w = vert02.pos.x * worldMat1.value[0][3] + vert02.pos.y * worldMat1.value[1][3] +
 					vert02.pos.z * worldMat1.value[2][3] + worldMat1.value[3][3];
 				pos02.x = x/w;
 				pos02.y = y/w;
@@ -400,39 +484,39 @@ void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vector3 m1Pos, Vertex* vert1
 					// D3DX STUFF
 
 					Vector4 pos10;
-					float x = vert10.pos.x * worldMat2.value[0][0] + vert10.pos.y * worldMat2.value[1][0] + 
+					float x = vert10.pos.x * worldMat2.value[0][0] + vert10.pos.y * worldMat2.value[1][0] +
 						vert10.pos.z * worldMat2.value[2][0] + worldMat2.value[3][0];
-					float y = vert10.pos.x * worldMat2.value[0][1] + vert10.pos.y * worldMat2.value[1][1] + 
+					float y = vert10.pos.x * worldMat2.value[0][1] + vert10.pos.y * worldMat2.value[1][1] +
 						vert10.pos.z * worldMat2.value[2][1] + worldMat2.value[3][1];
-					float z = vert10.pos.x * worldMat2.value[0][2] + vert10.pos.y * worldMat2.value[1][2] + 
+					float z = vert10.pos.x * worldMat2.value[0][2] + vert10.pos.y * worldMat2.value[1][2] +
 						vert10.pos.z * worldMat2.value[2][2] + worldMat2.value[3][2];
-					float w = vert10.pos.x * worldMat2.value[0][3] + vert10.pos.y * worldMat2.value[1][3] + 
+					float w = vert10.pos.x * worldMat2.value[0][3] + vert10.pos.y * worldMat2.value[1][3] +
 						vert10.pos.z * worldMat2.value[2][3] + worldMat2.value[3][3];
 					pos10.x = x/w;
 					pos10.y = y/w;
 					pos10.z = z/w;
 
 					Vector4 pos11;
-					x = vert11.pos.x * worldMat2.value[0][0] + vert11.pos.y * worldMat2.value[1][0] + 
+					x = vert11.pos.x * worldMat2.value[0][0] + vert11.pos.y * worldMat2.value[1][0] +
 						vert11.pos.z * worldMat2.value[2][0] + worldMat2.value[3][0];
-					y = vert11.pos.x * worldMat2.value[0][1] + vert11.pos.y * worldMat2.value[1][1] + 
+					y = vert11.pos.x * worldMat2.value[0][1] + vert11.pos.y * worldMat2.value[1][1] +
 						vert11.pos.z * worldMat2.value[2][1] + worldMat2.value[3][1];
-					z = vert11.pos.x * worldMat2.value[0][2] + vert11.pos.y * worldMat2.value[1][2] + 
+					z = vert11.pos.x * worldMat2.value[0][2] + vert11.pos.y * worldMat2.value[1][2] +
 						vert11.pos.z * worldMat2.value[2][2] + worldMat2.value[3][2];
-					w = vert11.pos.x * worldMat2.value[0][3] + vert11.pos.y * worldMat2.value[1][3] + 
+					w = vert11.pos.x * worldMat2.value[0][3] + vert11.pos.y * worldMat2.value[1][3] +
 						vert11.pos.z * worldMat2.value[2][3] + worldMat2.value[3][3];
 					pos11.x = x/w;
 					pos11.y = y/w;
 					pos11.z = z/w;
 
 					Vector4 pos12;
-					x = vert12.pos.x * worldMat2.value[0][0] + vert12.pos.y * worldMat2.value[1][0] + 
+					x = vert12.pos.x * worldMat2.value[0][0] + vert12.pos.y * worldMat2.value[1][0] +
 						vert12.pos.z * worldMat2.value[2][0] + worldMat2.value[3][0];
-					y = vert12.pos.x * worldMat2.value[0][1] + vert12.pos.y * worldMat2.value[1][1] + 
+					y = vert12.pos.x * worldMat2.value[0][1] + vert12.pos.y * worldMat2.value[1][1] +
 						vert12.pos.z * worldMat2.value[2][1] + worldMat2.value[3][1];
-					z = vert12.pos.x * worldMat2.value[0][2] + vert12.pos.y * worldMat2.value[1][2] + 
+					z = vert12.pos.x * worldMat2.value[0][2] + vert12.pos.y * worldMat2.value[1][2] +
 						vert12.pos.z * worldMat2.value[2][2] + worldMat2.value[3][2];
-					w = vert12.pos.x * worldMat2.value[0][3] + vert12.pos.y * worldMat2.value[1][3] + 
+					w = vert12.pos.x * worldMat2.value[0][3] + vert12.pos.y * worldMat2.value[1][3] +
 						vert12.pos.z * worldMat2.value[2][3] + worldMat2.value[3][3];
 					pos12.x = x/w;
 					pos12.y = y/w;
@@ -469,7 +553,7 @@ void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vector3 m1Pos, Vertex* vert1
 	}
 	else
 	{
-		
+
 		if(!inds2)
 		{
 			// Mesh1 is using inds, mesh 2 isnt
@@ -485,41 +569,40 @@ void PhysicsEngine::DoCollisionTrianglesVsTriangles(Vector3 m1Pos, Vertex* vert1
 		/*
 		for(int i = 0; i < nrOfIndices; i += 3)
 		{
-			PhysicsCollisionData tempCD;
+		PhysicsCollisionData tempCD;
 
-			Vertex vert0 = vertices[indices[i]];
-			Vertex vert1 = vertices[indices[i + 1]];
-			Vertex vert2 = vertices[indices[i + 2]];
+		Vertex vert0 = vertices[indices[i]];
+		Vertex vert1 = vertices[indices[i + 1]];
+		Vertex vert2 = vertices[indices[i + 2]];
 
-			// D3DX STUFF
+		// D3DX STUFF
 
-			D3DXVECTOR4 pos0;
-			D3DXVec3Transform(&pos0, &vert0.pos, &worldMat);
-			D3DXVECTOR4 pos1;
-			D3DXVec3Transform(&pos1, &vert1.pos, &worldMat);
-			D3DXVECTOR4 pos2;
-			D3DXVec3Transform(&pos2, &vert2.pos, &worldMat);
+		D3DXVECTOR4 pos0;
+		D3DXVec3Transform(&pos0, &vert0.pos, &worldMat);
+		D3DXVECTOR4 pos1;
+		D3DXVec3Transform(&pos1, &vert1.pos, &worldMat);
+		D3DXVECTOR4 pos2;
+		D3DXVec3Transform(&pos2, &vert2.pos, &worldMat);
 
-			Vector3 v0 = Vector3(pos0.x, pos0.y, pos0.z);
-			Vector3 v1 = Vector3(pos1.x, pos1.y, pos1.z);
-			Vector3 v2 = Vector3(pos2.x, pos2.y, pos2.z);
+		Vector3 v0 = Vector3(pos0.x, pos0.y, pos0.z);
+		Vector3 v1 = Vector3(pos1.x, pos1.y, pos1.z);
+		Vector3 v2 = Vector3(pos2.x, pos2.y, pos2.z);
 
-			// END OF D3DX STUFF
+		// END OF D3DX STUFF
 
-			if(this->DoCollisionRayVsTriangle(rayOrigin, rayDirection, v0, v1, v2, tempCD))
-			{
-				if(tempCD.distance < cd.distance)
-				{
-					cd.distance = tempCD.distance;
-					cd.position = tempCD.position;
-					cd.collision = true;
-				}
-			}
+		if(this->DoCollisionRayVsTriangle(rayOrigin, rayDirection, v0, v1, v2, tempCD))
+		{
+		if(tempCD.distance < cd.distance)
+		{
+		cd.distance = tempCD.distance;
+		cd.position = tempCD.position;
+		cd.collision = true;
+		}
+		}
 		}
 		*/
 	}
 }
-
 
 
 
@@ -821,7 +904,7 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 		V12[1] = v12.y;
 		V12[2] = v12.z;
 
-		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12);
+		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12) > 0;
 	}
 
 	float dsec = 0.0f;
@@ -867,7 +950,7 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 		V12[1] = v12.y;
 		V12[2] = v12.z;
 
-		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12);
+		return coplanar_tri_tri(N1, V00, V01, V02, V10, V11, V12)>0;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -927,16 +1010,3 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 
 	return true;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
