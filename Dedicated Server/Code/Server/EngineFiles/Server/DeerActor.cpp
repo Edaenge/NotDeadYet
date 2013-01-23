@@ -53,7 +53,7 @@ void DeerActor::InitDeer() throw(...)
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
 		numberFromFile = atoi(characters);
-		this->SetFearMax(numberFromFile);
+		this->SetFearMax((float)numberFromFile);
 
 	}
 	else
@@ -69,7 +69,7 @@ void DeerActor::InitDeer() throw(...)
 	//this->SetAlertnessLevel(0);
 	//this->zAlertnessIntervalCounter = 0;
 	this->SetBehaviour(CALM);
-	this->zCalmActionInterval = rand () % 5 + 3; 
+	this->zCalmActionInterval = (float)(rand () % 5 + 3); 
 	this->SetIfNeedPath(true);
 
 	this->SetPreviousHealth( this->GetHealth() );
@@ -127,7 +127,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 			this->zTargets[i].valid = true;
 			if(finalDistance < shortestDistance)
 			{
-				shortestDistance = finalDistance;
+				shortestDistance = (int)finalDistance;
 				this->zMainTarget = this->zTargets[i]; //Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.
 			}
 			nrOfPredators++;
@@ -241,7 +241,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 		if(this->zIntervalCounter > this->zCalmActionInterval)
 		{
 			this->zIntervalCounter = 0;
-			this->zCalmActionInterval = rand () % 5 + 3; 
+			this->zCalmActionInterval = (float)(rand () % 5 + 3); 
 			this->zCurrentPath.clear(); //Since a new path is gotten, and the old one might not have been completed, we clear it just in case.
 			this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, this->GetPosition().x + rand() % 30, this->GetPosition().z + rand() % 30, this->zCurrentPath, 30); //Get a small path to walk, short and does not have to lead anywhere.
 			this->SetIfNeedPath(true);
@@ -252,7 +252,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 		if(this->zIntervalCounter > this->zCalmActionInterval * 1.5) //The increase in time is supposed to represent listening, waiting for something to happen.
 		{
 			this->zIntervalCounter = 0;
-			this->zCalmActionInterval = rand () % 5 + 3;
+			this->zCalmActionInterval = (float)(rand () % 5 + 3);
 			this->zCurrentPath.clear();
 			this->SetIfNeedPath(true);
 			this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, this->GetPosition().x + rand() % 20, this->GetPosition().z + rand() % 20, this->zCurrentPath, 20); //Get a small path to walk, quite short (since the animal is nervous) and does not have to lead anywhere.
@@ -269,11 +269,11 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 		{
 			this->SetIfNeedPath(false);
 			this->zCurrentPath.clear();
-			if( !this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 30) == false ); //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large.
+			if( !this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 30) == false ) //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large.
 			{
 				this->SetIfNeedPath(true);
 			}
-			this->SetLastDistanceCheck( lastDistance );
+			this->SetLastDistanceCheck( (int)lastDistance );
 		}
 		if( this->zIntervalCounter > 1 && this->GetIfNeedPath() == false )
 		{

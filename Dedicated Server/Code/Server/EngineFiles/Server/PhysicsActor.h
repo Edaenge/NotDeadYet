@@ -18,35 +18,50 @@ public:
 	virtual ~PhysicsActor();
 
 	/*! PhysicsObject needs to be initialized.*/
-	inline Vector3& GetPosition() const 
+	inline Vector3 GetPosition() const 
 	{
-		if(zPhysicObj) return zPhysicObj->GetPosition(); return Vector3();
+		if(zPhysicObj) 
+			return zPhysicObj->GetPosition(); 
+
+		Vector3 def;
+		return def;
 	}
 	/*! PhysicsObject needs to be initialized.*/
-	const Vector3& GetScale() const 
+	const Vector3 GetScale() const 
 	{
-		if(zPhysicObj) return zPhysicObj->GetScaling(); return Vector3();
+		if(zPhysicObj) 
+			return zPhysicObj->GetScaling(); 
+		
+		Vector3 def;
+		return def;
 	}
 	/*! PhysicsObject needs to be initialized.*/
-	inline const Vector4& GetRotation() const 
+	inline const Vector4 GetRotation() const 
 	{
-		if(zPhysicObj) return zPhysicObj->GetRotationQuaternion(); return Vector4();
+		if(zPhysicObj) 
+			return zPhysicObj->GetRotationQuaternion(); 
+
+		Vector4 def;
+		return def;
 	}
 
 	/*! PhysicsObject needs to be initialized.*/
 	inline void SetPosition(const Vector3& pos) 
 	{
-		if(zPhysicObj) zPhysicObj->SetPosition(pos);
+		if(zPhysicObj) 
+			zPhysicObj->SetPosition(pos);
 	}
 	/*! PhysicsObject needs to be initialized.*/
 	inline void SetRotation(const Vector4& rot) 
 	{
-		if(zPhysicObj) zPhysicObj->SetQuaternion(rot);
+		if(zPhysicObj) 
+			zPhysicObj->SetQuaternion(rot);
 	}
 	/*! PhysicsObject needs to be initialized.*/
 	void SetScale(const Vector3& scale) 
 	{
-		if(zPhysicObj) zPhysicObj->SetScaling(scale);
+		if(zPhysicObj) 
+			zPhysicObj->SetScaling(scale);
 	}
 	/*! PhysicsObject needs to be initialized.*/
 	void SetPhysicObject(PhysicsObject* pObj)
