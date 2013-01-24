@@ -63,7 +63,6 @@ public:
 		if(zPhysicObj) 
 			zPhysicObj->SetScaling(scale);
 	}
-	/*! PhysicsObject needs to be initialized.*/
 	void SetPhysicObject(PhysicsObject* pObj)
 	{
 		this->zPhysicObj = pObj;

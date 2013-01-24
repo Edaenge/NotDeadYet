@@ -21,6 +21,8 @@ Vector4 QuatMult(Vector4 quat1, Vector4 quat2)
 PhysicsObject::PhysicsObject(Vector3 position)
 {
 	this->pos = position;
+	this->forceAccum = Vector3(0,0,0);
+	this->damping = 0.0f;
 	this->indicies = NULL;
 	this->mesh = NULL;
 	this->nrOfIndicies = 0;
@@ -238,4 +240,52 @@ void PhysicsObject::SetScaling( const float scale )
 {
 	this->scale = Vector3(scale, scale, scale);
 	RecreateWorldMatrix();
+}
+
+void PhysicsObject::SetMass( const float mass )
+{
+	assert(mass != 0);
+	this->inverseMass = ((float)1.0)/mass;
+}
+
+float PhysicsObject::GetMass() const
+{
+	if(inverseMass == 0)
+	{
+		return REAL_MAX;
+	}
+	else
+	{
+		return ((float)1.0)/inverseMass;
+	}
+}
+
+void PhysicsObject::ClearAccumulator()
+{
+	forceAccum = Vector3(.0f, .0f, .0f);
+}
+
+void PhysicsObject::Integrate( float dt )
+{
+	// We don't integrate things with zero mass.
+	if (inverseMass <= 0.0f)
+		return;
+
+	assert(dt > 0.0);
+
+	// Update linear position.
+	pos += (velocity* dt);
+
+	// Work out the acceleration from the force
+	Vector3 resultingAcc = acceleration;
+	resultingAcc += (forceAccum * inverseMass);
+
+	// Update linear velocity from the acceleration.
+	velocity += (resultingAcc * dt);
+
+	// Impose drag.
+	velocity *= pow(damping, dt);
+
+	// Clear the forces.
+	ClearAccumulator();
 }

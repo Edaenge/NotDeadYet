@@ -188,6 +188,11 @@ bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Pr
 	float angle = acos(ArrowDirection.GetDotProduct(CameraDirection) / (ArrowDirection.GetLength() * CameraDirection.GetLength()));
 	pObj->SetQuaternion(Vector4(0, 0, 0, 1));
 	pObj->RotateAxis(around, angle);
+	pObj->SetMass(1.0f);
+	pObj->SetVelocity(direction * new_Projectile->GetVelocity());
+	pObj->SetAcceleration(Vector3(.0f, -9.82f, 0.0f));
+	pObj->SetDamping(0.99f);
+	pObj->ClearAccumulator();
 
 	//Set new data
 	new_Projectile->SetDirection(direction);
