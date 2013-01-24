@@ -4,7 +4,7 @@
 */
 #pragma once
 
-#include "GameFiles/ClientSide/MovingObject.h"
+#include "MovingObject.h"
 #include <string>
 
 /*! Class to Handle Dynamic Objects*/

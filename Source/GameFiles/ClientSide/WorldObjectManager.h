@@ -4,10 +4,10 @@
 */
 #pragma once
 
-#include "GameFiles/ClientSide/PlayerObject.h"
-#include "GameFiles/ClientSide/AnimalObject.h"
-#include "GameFiles/ClientSide/StaticObject.h"
-#include "GameFiles/ClientSide/DynamicObject.h"
+#include "PlayerObject.h"
+#include "AnimalObject.h"
+#include "StaticObject.h"
+#include "DynamicObject.h"
 #include "iTerrain.h"
 #include <vector>
 

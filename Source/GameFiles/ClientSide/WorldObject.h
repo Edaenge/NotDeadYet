@@ -9,7 +9,7 @@
 class WorldObject
 {
 public:
-	WorldObject(const unsigned int id){this->zMesh = 0; this->zID = id;}
+	WorldObject(const long id){this->zMesh = 0; this->zID = id;}
 	virtual ~WorldObject(){ if (this->zMesh){ this->zMesh = 0; } }
 
 	/*!	Returns Pointer to the Player Mesh*/

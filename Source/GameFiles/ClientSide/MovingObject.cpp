@@ -1,4 +1,4 @@
-#include "GameFiles/ClientSide/MovingObject.h"
+#include "MovingObject.h"
 
 #define PI 3.14159265358979323846f
 

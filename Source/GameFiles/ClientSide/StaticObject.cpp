@@ -1,4 +1,4 @@
-#include "GameFiles/ClientSide/StaticObject.h"
+#include "StaticObject.h"
 
 StaticObject::StaticObject(const long id) : WorldObject(id)
 {

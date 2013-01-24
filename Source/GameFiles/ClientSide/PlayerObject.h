@@ -4,8 +4,8 @@
 */
 #pragma once
 
-#include "GameFiles/Items/Equipment.h"
-#include "GameFiles/ClientSide/OrganicObject.h"
+#include "../Items/Equipment.h"
+#include "OrganicObject.h"
 
 //Keeps track of player Info
 class PlayerObject : public OrganicObject

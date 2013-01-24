@@ -4,7 +4,7 @@
 */
 #pragma once
 
-#include "GameFiles/ClientSide/OrganicObject.h"
+#include "OrganicObject.h"
 
 /*! Class to Handle Animals*/
 class AnimalObject : public OrganicObject

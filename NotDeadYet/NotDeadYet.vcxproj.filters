@@ -223,6 +223,9 @@
     <ClCompile Include="..\Source\WorldFiles\WorldRenderer.cpp">
       <Filter>Game Files\WorldFiles</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\ClientSide\DeadPlayerObject.cpp">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -477,9 +480,13 @@
     <ClInclude Include="..\Source\PhysicsEngine\BoundingSphere.h">
       <Filter>PhysicsEngine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\ClientSide\DeadPlayerObject.h">
+      <Filter>Game Files\ClientSide</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameIcon.ico" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="NotDeadYet.rc" />

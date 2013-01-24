@@ -4,8 +4,8 @@
 */
 #pragma once
 
-#include "GameFiles/AnimationStates.h"
-#include "GameFiles/ClientSide/WorldObject.h"
+#include "../AnimationStates.h"
+#include "WorldObject.h"
 
 static const enum INTERPOLATION_TYPES
 {

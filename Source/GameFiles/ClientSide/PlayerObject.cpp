@@ -1,4 +1,4 @@
-#include "GameFiles/ClientSide/PlayerObject.h"
+#include "PlayerObject.h"
 
 PlayerObject::PlayerObject(const long id) : OrganicObject(id)
 {

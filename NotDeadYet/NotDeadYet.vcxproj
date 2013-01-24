@@ -23,6 +23,7 @@
     <ClCompile Include="..\Source\GameFiles\ClientSide\Client.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\ClientItemHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\ClientObjectHandler.cpp" />
+    <ClCompile Include="..\Source\GameFiles\ClientSide\DeadPlayerObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\DynamicObject.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\GuiManager.cpp" />
     <ClCompile Include="..\Source\GameFiles\ClientSide\MovingObject.cpp" />
@@ -95,6 +96,7 @@
     <ClInclude Include="..\Source\GameFiles\ClientServerMessages.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\AnimalObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\Client.h" />
+    <ClInclude Include="..\Source\GameFiles\ClientSide\DeadPlayerObject.h" />
     <ClInclude Include="..\source\gamefiles\clientside\DynamicObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\GuiManager.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\MovingObject.h" />
@@ -166,6 +168,7 @@
     <ClInclude Include="..\Source\WorldFiles\WorldRenderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="GameIcon.ico" />
   </ItemGroup>
   <ItemGroup>

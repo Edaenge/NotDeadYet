@@ -87,13 +87,18 @@ void Client::HandleUseItem(const long ID)
 		
 		int newStacks = food->GetStackSize();
 		this->zPlayerInventory->RemoveItemStack(food->GetID(), oldStacks - newStacks);
-
+		if (food->GetStackSize() <= 0)
+		{
+			this->zGuiManager->RemoveInventoryItemFromGui(food->GetID());
+		}
+		
 		MaloW::Debug("Eating");
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_MATERIAL_SMALL_STICK ||
 		item->GetItemType() == ITEM_TYPE_MATERIAL_MEDIUM_STICK ||
-		item->GetItemType() == ITEM_TYPE_MATERIAL_LARGE_STICK)
+		item->GetItemType() == ITEM_TYPE_MATERIAL_LARGE_STICK ||
+		item->GetItemType() == ITEM_TYPE_MATERIAL_THREAD)
 	{
 
 		Material* material = dynamic_cast<Material*>(item);
@@ -114,6 +119,11 @@ void Client::HandleUseItem(const long ID)
 		}
 		int newStacks = material->GetStackSize();
 		this->zPlayerInventory->RemoveItemStack(material->GetID(), oldStacks - newStacks);
+
+		if (material->GetStackSize() <= 0)
+		{
+			this->zGuiManager->RemoveInventoryItemFromGui(food->GetID());
+		}
 	}
 }
 

@@ -1,4 +1,4 @@
-#include "GameFiles/ClientSide/WorldObjectManager.h"
+#include "WorldObjectManager.h"
 
 
 WorldObjectManager::WorldObjectManager()

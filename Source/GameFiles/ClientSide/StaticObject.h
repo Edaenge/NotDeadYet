@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "GameFiles/ClientSide/WorldObject.h"
+#include "WorldObject.h"
 #include <string>
 
 /*! Class to Handle Static Objects*/
