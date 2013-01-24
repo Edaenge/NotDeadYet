@@ -1,4 +1,3 @@
-
 #include "ActorHandler.h"
 
 ActorHandler::ActorHandler()
@@ -518,6 +517,78 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE, Actor** aOut ) c
 ObjectManager* ActorHandler::GetObjManager() const
 {
 	return this->zObjManager;
+}
+
+CollisionEvent ActorHandler::CheckCollision(BioActor* bActor, float range)
+{
+	unsigned int agressor_Type = 100;
+	CollisionEvent cEvent = CollisionEvent();
+	PhysicsCollisionData pcd;
+
+	PhysicsObject* pObj = bActor->GetPhysicObject();
+	PhysicsObject* pOtherObj = NULL;
+
+	PlayerActor* pTemp = dynamic_cast<PlayerActor*>(bActor);
+	if (pTemp)
+	{
+		agressor_Type = ACTOR_TYPE_PLAYER;
+	}
+	else
+	{
+		AnimalActor* aTemp = dynamic_cast<AnimalActor*>(bActor);
+		if (aTemp)
+		{
+			agressor_Type = ACTOR_TYPE_ANIMAL;
+		}
+	}
+
+	for (auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
+	{
+		if ((*it)->GetID() == bActor->GetID() && agressor_Type == ACTOR_TYPE_PLAYER)
+			continue;
+		pOtherObj = (*it)->GetPhysicObject();
+
+		pcd = this->zPhysicsEngine->GetCollisionRayMesh(bActor->GetPosition(), bActor->GetDirection(), pOtherObj);
+
+		if (pcd.collision && pcd.distance <= range)
+		{
+			cEvent.actor_aggressor_ID = bActor->GetID();
+			cEvent.actor_aggressor_type = agressor_Type;
+
+			cEvent.actor_victim_ID = (*it)->GetID();
+			cEvent.actor_victim_type = ACTOR_TYPE_PLAYER;
+
+			cEvent.event_type = MELEE_ATTACK;
+
+			return cEvent;
+		}
+	}
+
+	for (auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
+	{
+		if ((*it)->GetID() == bActor->GetID() && agressor_Type == ACTOR_TYPE_ANIMAL)
+			continue;
+
+		pOtherObj = (*it)->GetPhysicObject();
+
+		Vector3 position = pObj->GetPosition();
+		Vector3 direction = bActor->GetDirection();
+		pcd = this->zPhysicsEngine->GetCollisionRayMesh(position, direction, pOtherObj);
+
+		if (pcd.collision && pcd.distance <= range)
+		{
+			cEvent.actor_aggressor_ID = bActor->GetID();
+			cEvent.actor_aggressor_type = agressor_Type;
+
+			cEvent.actor_victim_ID = (*it)->GetID();
+			cEvent.actor_victim_type = ACTOR_TYPE_ANIMAL;
+
+			cEvent.event_type = MELEE_ATTACK;
+
+			return cEvent;
+		}
+	}
+	return cEvent;
 }
 
 /*Not Complete*/

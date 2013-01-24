@@ -236,9 +236,7 @@ void Host::Init()
 	if ((unsigned int)this->aSpawnPosition > this->zAnimalSpawnPoints.size())
 		this->aSpawnPosition = 0;
 
-
 	DeerActor* testDeer = NULL;
-
 	if (this->CreateAnimalActor(&testDeer, true))
 	{
 		this->zActorHandler->AddNewAnimalActor(testDeer);
@@ -684,13 +682,14 @@ void Host::SendErrorMessage(const int id, const std::string error_Message)
 
 bool Host::CreateAnimalActor(DeerActor** deerAct, const bool genID)
 {
-	if (this->aSpawnPosition >= this->zAnimalSpawnPoints.size())
+	if ((unsigned int)this->aSpawnPosition >= this->zAnimalSpawnPoints.size())
 		this->aSpawnPosition = 0;
 
 	(*deerAct) = new DeerActor( true);
 	std::string path = "Media/Tree_02_v02_r.obj";	
 	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(
-		path, zAnimalSpawnPoints[this->aSpawnPosition++]);	
+		path, zAnimalSpawnPoints[this->aSpawnPosition++]);
+
 	(*deerAct)->SetActorModel(path);
 	(*deerAct)->SetPhysicObject(pObj);
 	(*deerAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
@@ -700,13 +699,14 @@ bool Host::CreateAnimalActor(DeerActor** deerAct, const bool genID)
 
 bool Host::CreateAnimalActor(WolfActor** wolfAct, const bool genID)
 {
-	if (this->aSpawnPosition >= this->zAnimalSpawnPoints.size())
+	if ((unsigned int)this->aSpawnPosition >= this->zAnimalSpawnPoints.size())
 		this->aSpawnPosition = 0;
 
 	(*wolfAct) = new WolfActor(genID);
 	std::string path = "Media/Tree_02_v02_r.obj";	
 	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(
-		path, zAnimalSpawnPoints[this->aSpawnPosition++]);	
+		path, zAnimalSpawnPoints[this->aSpawnPosition++]);
+
 	(*wolfAct)->SetActorModel(path);
 	(*wolfAct)->SetPhysicObject(pObj);
 	(*wolfAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));

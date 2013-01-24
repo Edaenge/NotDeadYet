@@ -55,7 +55,8 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		if (ID == this->zID)
 		{
 			this->zCreated = true;
-			filename = "Media/Bush_01_v04_r.obj";
+			filename = "Media/Ball.obj";
+			scale = Vector3(0.5f, 0.5f, 0.5f);
 		}
 	}
 	if (Messages::FileWrite())
@@ -578,6 +579,8 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		{
 			float health = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, (*it));
 			AnimalObjectPointer->SetHealth(health);
+			if (Messages::FileWrite())
+				Messages::Debug("Animal Health is: " + MaloW::convertNrToString(health));
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
@@ -597,6 +600,7 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		float scale = AnimalObjectPointer->GetScale().y;
 		Vector4 quat = AnimalObjectPointer->GetRotation();
 
+		mesh->ResetRotation();
 		mesh->SetQuaternion(quat);
 		mesh->Scale(scale);
 

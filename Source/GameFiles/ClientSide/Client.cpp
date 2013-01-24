@@ -531,6 +531,20 @@ void Client::HandleKeyboardInput()
 						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
 						this->zServerChannel->sendData(msg);
 					}
+
+					/*for (auto it = this->zObjectManager->GetAnimals().begin(); it < this->zObjectManager->GetAnimals().end(); it++)
+					{
+					iMesh* mesh  = (*it)->GetMesh();
+
+					Vector3 position = player->GetPosition();
+					Vector3 direction = this->zEng->GetCamera()->GetForward();
+					CollisionData cd = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(position, direction, mesh);
+
+					if (cd.collision && cd.distance <= 5.0f)
+					{
+					cd.distance = cd.distance;
+					}
+					}*/
 				}
 			}
 			else
@@ -831,7 +845,7 @@ void Client::DisplayMessageToClient(const std::string& msg)
 	MaloW::Debug(msg);
 }
 
-void Client::onEvent( Event* e )
+void Client::onEvent(Event* e)
 {
 	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{

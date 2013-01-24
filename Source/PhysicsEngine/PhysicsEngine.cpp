@@ -11,7 +11,7 @@ PhysicsEngine::~PhysicsEngine()
 		delete this->objects.getAndRemove(0);
 }
 
-PhysicsObject* PhysicsEngine::CreatePhysicsObject( string path, Vector3 pos )
+PhysicsObject* PhysicsEngine::CreatePhysicsObject(string path, Vector3 pos)
 {
 	PhysicsObject* obj = new PhysicsObject(pos);
 

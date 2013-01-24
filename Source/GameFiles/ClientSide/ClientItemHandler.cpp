@@ -732,6 +732,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	{
 	case ITEM_TYPE_FOOD_DEER_MEAT:
 		item = new Food(ID, itemType, hunger);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -740,6 +741,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_FOOD_WOLF_MEAT:
 		item = new Food(ID, itemType, hunger);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -788,6 +790,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_PROJECTILE_ARROW:
 		item = new Projectile(ID, itemType, projectileVelocity, projectileDamage);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -796,6 +799,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_MATERIAL_SMALL_STICK:
 		item = new Material(ID, itemType, craftingType, stacksRequired);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -804,6 +808,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_MATERIAL_MEDIUM_STICK:
 		item = new Material(ID, itemType, craftingType, stacksRequired);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -812,6 +817,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_MATERIAL_THREAD:
 		item = new Material(ID, itemType, craftingType, stacksRequired);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -820,6 +826,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_MATERIAL_LARGE_STICK:
 		item = new Material(ID, itemType, craftingType, stacksRequired);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
