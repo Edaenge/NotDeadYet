@@ -34,7 +34,7 @@ Host::Host()
 	this->pSpawnPosition = 0;
 	this->aSpawnPosition = 0;
 
-	this->zPlayerSpawnPoints.push_back(Vector3(20.6f, 14.0F, 20.8f));
+	this->zPlayerSpawnPoints.push_back(Vector3(35.6f, 14.0F, 22.8f));
 	this->zPlayerSpawnPoints.push_back(Vector3(59.2f, 0, 26.8f));
 	this->zPlayerSpawnPoints.push_back(Vector3(63.77f, 0, 31.0f));
 	this->zPlayerSpawnPoints.push_back(Vector3(73.4f, 0, 44.0f));

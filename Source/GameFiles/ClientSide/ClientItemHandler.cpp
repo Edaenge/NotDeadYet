@@ -870,7 +870,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	}
 	if (this->zPlayerInventory->AddItem(item))
 	{
-		if (item->GetStacking())
+		if (!item->GetStacking())
 		{
 			itemStackSize = 0;
 		}
