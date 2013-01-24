@@ -213,8 +213,8 @@ void Client::Life()
 				MaloW::Debug("Timeout From Server!");
 				//Print a Timeout Message to Client
 			}
-			Sleep(5);
 		}
+		Sleep(5);
 	}
 	this->zRunning = false;
 }
