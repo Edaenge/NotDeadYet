@@ -182,6 +182,7 @@
     <ClInclude Include="EngineFiles\Server\StaticObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\StaticProjectileObject.h" />
     <ClInclude Include="EngineFiles\Server\WeaponObject.h" />
+    <ClInclude Include="EngineFiles\Server\WolfActor.h" />
     <ClInclude Include="EngineFiles\WorldFiles\CircleAndRect.h" />
     <ClInclude Include="EngineFiles\WorldFiles\Entity.h" />
     <ClInclude Include="EngineFiles\WorldFiles\EntityList.h" />
@@ -235,6 +236,7 @@
     <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\StaticProjectileObject.cpp" />
     <ClCompile Include="EngineFiles\Server\WeaponObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\WolfActor.cpp" />
     <ClCompile Include="EngineFiles\WorldFiles\Entity.cpp" />
     <ClCompile Include="EngineFiles\WorldFiles\EntityList.cpp" />
     <ClCompile Include="EngineFiles\WorldFiles\Sector.cpp" />

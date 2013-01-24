@@ -12,7 +12,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "../../../../../Source/GameFiles/KeyUtil/KeyStates.h"
 #include "../../../../../Source/GameFiles/Items/Inventory.h"
 #include "../../../../../Source/GameFiles/Items/Equipment.h"
-#include "../../../../../Source/Network/NetworkMessageConverter.h"
 #include "../WorldFiles/WorldEvents.h"
 
 /*This class is used to save player information such as position and states.

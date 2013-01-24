@@ -314,6 +314,7 @@ void PlayerActor::Drink(float hydration)
 	if (this->zHydration >= this->zHydrationMax)
 		this->zHydration = this->zHydrationMax;
 
+	this->zHydrationChanged = true;
 }
 
 void PlayerActor::EatFood(float hunger)
@@ -321,20 +322,14 @@ void PlayerActor::EatFood(float hunger)
 	this->zHunger += hunger;
 	if (this->zHunger >= this->zHungerMax)
 		this->zHunger = this->zHungerMax;
+
+	this->zHungerChanged = true;
 }
 
 void PlayerActor::AddChangedHData(string& mess, NetworkMessageConverter* nmc)
 {
-	if(zHealthChanged)
-	{
-		mess += nmc->Convert(MESSAGE_TYPE_HEALTH, this->zHealth);
-		this->zHealthChanged = false;
-	}
-	if(zStaminaChanged)
-	{
-		mess += nmc->Convert(MESSAGE_TYPE_STAMINA, this->zStamina);
-		this->zStaminaChanged = false;
-	}
+	BioActor::AddChangedHData(mess, nmc);
+
 	if(zHungerChanged)
 	{
 		mess += nmc->Convert(MESSAGE_TYPE_HUNGER, this->zHunger);
@@ -342,7 +337,9 @@ void PlayerActor::AddChangedHData(string& mess, NetworkMessageConverter* nmc)
 	}
 	if(zHydrationChanged)
 	{
-		mess += nmc->Convert(MESSAGE_TYPE_HYDRATION, this->zHydrationChanged);
+		mess += nmc->Convert(MESSAGE_TYPE_HYDRATION, this->zHydration);
 		this->zHydrationChanged = false;
 	}
+
+	this->AddChangedData(mess, nmc);
 }
