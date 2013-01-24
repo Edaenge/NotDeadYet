@@ -170,6 +170,7 @@
     <ClInclude Include="EngineFiles\Server\AnimalActor.h" />
     <ClInclude Include="EngineFiles\Server\BioActor.h" />
     <ClInclude Include="EngineFiles\Server\ContainerObject.h" />
+    <ClInclude Include="EngineFiles\Server\DeadPlayerObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\DeerActor.h" />
     <ClInclude Include="EngineFiles\Server\DynamicObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\DynamicProjectileObject.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="EngineFiles\Server\AnimalActor.cpp" />
     <ClCompile Include="EngineFiles\Server\BioActor.cpp" />
     <ClCompile Include="EngineFiles\Server\ContainerObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeadPlayerObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp" />
