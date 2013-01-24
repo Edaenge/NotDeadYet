@@ -72,6 +72,18 @@ PhysicsCollisionData PhysicsEngine::GetCollision( PhysicsObject* mesh, iTerrain*
 	return this->GetCollisionMeshTerrain(mesh, terr);
 }
 */
+PhysicsCollisionData PhysicsEngine::GetCollisionBoundingOnly( Vector3 rayOrigin, Vector3 rayDirection, PhysicsObject* imesh )
+{
+	return this->GetCollisionRayMeshBoundingOnly(rayOrigin,  rayDirection, imesh);
+}
+
+PhysicsCollisionData PhysicsEngine::GetCollisionBoundingOnly( PhysicsObject* mesh1, PhysicsObject* mesh2 )
+{
+	return this->GetCollisionMeshMeshBoundingOnly(mesh1, mesh2);
+}
+
+
+
 
 
 PhysicsCollisionData PhysicsEngine::GetCollisionRayMesh( Vector3 rayOrigin, Vector3 rayDirection, PhysicsObject* imesh )
@@ -121,6 +133,49 @@ PhysicsCollisionData PhysicsEngine::GetCollisionMeshTerrain( PhysicsObject* mesh
 	return cd;
 }
 */
+PhysicsCollisionData PhysicsEngine::GetCollisionRayMeshBoundingOnly( Vector3 rayOrigin, Vector3 rayDirection, PhysicsObject* imesh )
+{
+	PhysicsCollisionData cd;
+
+	float scale = max(imesh->GetScaling().x, max(imesh->GetScaling().y, imesh->GetScaling().z));
+
+	PhysicsCollisionData tempCD = this->DoCollisionSphereVsRayDetailed(imesh->GetBoundingSphere(), 
+		imesh->GetWorldMatrix(), scale, rayOrigin, rayDirection);
+	if(tempCD.distance < cd.distance)
+	{
+		cd.distance = tempCD.distance;
+		cd.posx = tempCD.posx;
+		cd.posy = tempCD.posy;
+		cd.posz = tempCD.posz;
+		cd.collision = true;
+		cd.BoundingSphereCollision = true;
+	}
+
+	return cd;
+}
+
+PhysicsCollisionData PhysicsEngine::GetCollisionMeshMeshBoundingOnly( PhysicsObject* mesh1, PhysicsObject* mesh2 )
+{
+	PhysicsCollisionData cd;
+
+	float scale1 = max(mesh1->GetScaling().x, max(mesh1->GetScaling().y, mesh1->GetScaling().z));
+	float scale2 = max(mesh2->GetScaling().x, max(mesh2->GetScaling().y, mesh2->GetScaling().z));
+	PhysicsCollisionData tempCD = this->DoCollisionSphereVsSphereDetailed(mesh1->GetBoundingSphere(), 
+		mesh1->GetWorldMatrix(), scale1, mesh2->GetBoundingSphere(), mesh2->GetWorldMatrix(), scale2);
+	if(tempCD.distance < cd.distance)
+	{
+		cd.distance = tempCD.distance;
+		cd.posx = tempCD.posx;
+		cd.posy = tempCD.posy;
+		cd.posz = tempCD.posz;
+		cd.collision = true;
+		cd.BoundingSphereCollision = true;
+	}
+
+	return cd;
+}
+
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -195,6 +250,128 @@ bool PhysicsEngine::DoCollisionSphereVsSphere(BoundingSphere bs1, Matrix4 world1
 		return true;
 	return false;
 }
+
+PhysicsCollisionData PhysicsEngine::DoCollisionSphereVsRayDetailed( BoundingSphere bs, Matrix4 world, float scale, Vector3 rayOrigin, Vector3 rayDirection )
+{
+	PhysicsCollisionData tempCD;
+
+	Vector4 pos;
+	float x = bs.center.x * world.value[0][0] + bs.center.y * world.value[1][0] +
+		bs.center.z * world.value[2][0] + world.value[3][0];
+	float y = bs.center.x * world.value[0][1] + bs.center.y * world.value[1][1] +
+		bs.center.z * world.value[2][1] + world.value[3][1];
+	float z = bs.center.x * world.value[0][2] + bs.center.y * world.value[1][2] +
+		bs.center.z * world.value[2][2] + world.value[3][2];
+	float w = bs.center.x * world.value[0][3] + bs.center.y * world.value[1][3] +
+		bs.center.z * world.value[2][3] + world.value[3][3];
+	pos.x = x/w;
+	pos.y = y/w;
+	pos.z = z/w;
+
+	float rad = bs.radius * scale;
+
+	Vector3 C = Vector3(pos.x, pos.y, pos.z);
+	float r = rad;
+
+	Vector3 collisionPoint;
+	Vector3 v;
+	Vector3 CA = rayOrigin - C;
+	float rSquared = r*r;
+	float vSquared;
+	if(CA.GetDotProduct(CA) <= rSquared)
+	{
+		collisionPoint = rayOrigin;
+	}
+	else if(CA.GetDotProduct(rayDirection) <= 0)
+	{
+		v = CA - rayDirection * (CA.GetDotProduct(rayDirection) / rayDirection.GetDotProduct(rayDirection));
+		vSquared = v.GetDotProduct(v);
+		if(vSquared <= rSquared)
+		{
+			rayDirection.Normalize();
+			collisionPoint = C + v - (rayDirection * sqrt(rSquared-vSquared));
+			tempCD.collision = true;
+		}
+		else
+		{
+			tempCD.collision = false;
+		}
+	}
+	else
+	{
+		tempCD.collision = false;
+	}
+
+
+	if(tempCD.collision)
+	{
+		tempCD.BoundingSphereCollision = true;
+		tempCD.distance = (rayOrigin - collisionPoint).GetLength();
+		Vector3 colPos = collisionPoint;
+		tempCD.posx = colPos.x;
+		tempCD.posy = colPos.y;
+		tempCD.posz = colPos.z;
+	}
+
+	return tempCD;
+}
+
+PhysicsCollisionData PhysicsEngine::DoCollisionSphereVsSphereDetailed( BoundingSphere bs1, Matrix4 world1, float scale1, BoundingSphere bs2, Matrix4 world2, float scale2 )
+{
+	PhysicsCollisionData tempCD;
+
+	Vector4 tpos1;
+	float x = bs1.center.x * world1.value[0][0] + bs1.center.y * world1.value[1][0] +
+		bs1.center.z * world1.value[2][0] + world1.value[3][0];
+	float y = bs1.center.x * world1.value[0][1] + bs1.center.y * world1.value[1][1] +
+		bs1.center.z * world1.value[2][1] + world1.value[3][1];
+	float z = bs1.center.x * world1.value[0][2] + bs1.center.y * world1.value[1][2] +
+		bs1.center.z * world1.value[2][2] + world1.value[3][2];
+	float w = bs1.center.x * world1.value[0][3] + bs1.center.y * world1.value[1][3] +
+		bs1.center.z * world1.value[2][3] + world1.value[3][3];
+	tpos1.x = x/w;
+	tpos1.y = y/w;
+	tpos1.z = z/w;
+
+
+	Vector4 tpos2;
+	x = bs2.center.x * world2.value[0][0] + bs2.center.y * world2.value[1][0] +
+		bs2.center.z * world2.value[2][0] + world2.value[3][0];
+	y = bs2.center.x * world2.value[0][1] + bs2.center.y * world2.value[1][1] +
+		bs2.center.z * world2.value[2][1] + world2.value[3][1];
+	z = bs2.center.x * world2.value[0][2] + bs2.center.y * world2.value[1][2] +
+		bs2.center.z * world2.value[2][2] + world2.value[3][2];
+	w = bs2.center.x * world2.value[0][3] + bs2.center.y * world2.value[1][3] +
+		bs2.center.z * world2.value[2][3] + world2.value[3][3];
+	tpos2.x = x/w;
+	tpos2.y = y/w;
+	tpos2.z = z/w;
+
+
+	Vector3 pos1 = Vector3(tpos1.x, tpos1.y, tpos1.z);
+	Vector3 pos2 = Vector3(tpos2.x, tpos2.y, tpos2.z);
+
+	float distance = (pos2 - pos1).GetLength();
+	float radiuses = bs1.radius * scale1 + bs2.radius * scale2;
+	if(distance <= radiuses)
+	{
+		tempCD.collision = true;
+		tempCD.BoundingSphereCollision = true;
+		tempCD.distance = (pos1 - pos2).GetLength() * 0.5f;
+		Vector3 colPos = (pos1 + pos2) * 0.5f;
+		tempCD.posx = colPos.x;
+		tempCD.posy = colPos.y;
+		tempCD.posz = colPos.z;
+	}
+	else
+	{
+		tempCD.collision = false;
+		tempCD.BoundingSphereCollision = false;
+	}
+
+	return tempCD;
+}
+
 
 void PhysicsEngine::DoCollisionRayVsMesh(Vector3 rayOrigin, Vector3 rayDirection, 
 		PhysicsObject* mesh, PhysicsCollisionData& cd)
@@ -1010,3 +1187,7 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 
 	return true;
 }
+
+
+
+
