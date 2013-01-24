@@ -11,52 +11,76 @@ AI::~AI()
 
 }
 
-void AI::InitAI(std::bitset<GRIDSIZE*GRIDSIZE> theGrid, float nodeDistance)
+void AI::InitAI(std::bitset<GRIDSIZE*GRIDSIZE> theGrid, float nodeDistance, float mapRange)
 {
 	this->zGrid = theGrid;
-
 	this->zNodeDistance = nodeDistance;
+	this->zMaximumRange = mapRange;
 }
 
 //Note: by Y, we of course mean Z. I was merely thinking in a 2-d grid when designing this.
 bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goalYPos, std::vector<Vector2> &inVector, int maximumPathLenght)
 {
-	//this->zNodeDistance was not made with a decimal value in mind, trying to work it out.
-	//float sizeOfField = GRIDSIZE * this->zNodeDistance;
-	//this->zNodeDistance = 20 * (0.5;
+	// 3 Issues:
+		//- checking the world for good/bad nodes.
+		//- Make the system more dynamic
+		//- Make the returned vector correspond properly, have nice coords in it.
 
 
-	int startX = ceil((startXPos/this->zNodeDistance)-0.5);
-	int startY = ceil((startYPos/this->zNodeDistance)-0.5);
-	int goalX = ceil((goalXPos/this->zNodeDistance)-0.5);
-	int goalY = ceil((goalYPos/this->zNodeDistance)-0.5);
+	//int startX = ceil((startXPos/this->zNodeDistance)-0.5); //Static grid
+	//int startY = ceil((startYPos/this->zNodeDistance)-0.5); //Static grid
+	int startX = GRIDSIZE/2; //Dynamic grid, the animal always begins in the middle of it.
+	int startY = GRIDSIZE/2; //Dynamic grid, the animal always begins in the middle of it.
 
-	//int startX = startXPos;
-	//int startY = startYPos;
-	//int goalX = goalXPos;
-	//int goalY = goalYPos;
+	
+	//int goalX = ceil((goalXPos/this->zNodeDistance)-0.5); //Static grid
+	//int goalY = ceil((goalYPos/this->zNodeDistance)-0.5); //Static grid
 
-	if(startX < 0)
+	if(goalXPos < 1 ) //With a dynamic system, these branches make sure it does not get outside the level.
 	{
-		startX = 0;
+		goalXPos = 1;
+	}
+	else if ( goalXPos > this->zMaximumRange )
+	{
+		goalXPos = this->zMaximumRange - 1;
+	}
+	if(goalYPos < 1 ) //With a dynamic system, these branches make sure it does not get outside the level.
+	{
+		goalYPos = 1;
+	}
+	else if ( goalYPos > this->zMaximumRange )
+	{
+		goalYPos = this->zMaximumRange - 1;
 	}
 	
-	if(startY < 0)
-	{
-		startY = 0;
-	}
 
-	if(startX >= GRIDSIZE)
-	{
-		startX = GRIDSIZE-1;
-	}
+	int goalX =	ceil(( (goalXPos - startXPos)/this->zNodeDistance )-0.5); //Dynamic
+	goalX += startX;
+	int goalY = ceil(( (goalYPos - startYPos)/this->zNodeDistance )-0.5); //Dynamic
+	goalY += startY;
+
 	
-	if(startY >= GRIDSIZE)
-	{
-		startY = GRIDSIZE-1;
-	}
 
-	if(goalX < 0)
+	//if(startX < 0) //These branches are not necessary when it is dynamic
+	//{
+	//	startX = 0;
+	//}
+	//
+	//if(startY < 0)
+	//{
+	//	startY = 0;
+	//}
+	//if(startX >= GRIDSIZE)
+	//{
+	//	startX = GRIDSIZE-1;
+	//}
+	//
+	//if(startY >= GRIDSIZE)
+	//{
+	//	startY = GRIDSIZE-1;
+	//}
+
+	if(goalX < 0) 
 	{
 		goalX = 0;
 	}
@@ -74,6 +98,8 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 	{
 		goalY = GRIDSIZE-1;
 	}
+	
+
 	//Is the goal position in an impossible position in the bitset?
 	if(zGrid[goalY * GRIDSIZE + goalX] == true)
 	{
@@ -365,13 +391,20 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 		}
 
 	}
+	startXPos;
+	startYPos;
+	goalYPos;
+	goalXPos;
 
+	goalXPos - startXPos;
+	goalYPos - startYPos;
 
 	Node* tracer = zClosedList.front();
 
 	while(tracer->parent != NULL && tracer->parent != tracer)
 	{
-		inVector.push_back(Vector2(tracer->x * this->zNodeDistance, tracer->y * this->zNodeDistance) ); //zNodeDistance is just a value representing the distance between the nodes.
+		//inVector.push_back(Vector2(tracer->x * this->zNodeDistance, tracer->y * this->zNodeDistance) ); // Static
+		inVector.push_back(Vector2( (startXPos + (tracer->x - GRIDSIZE/2) * this->zNodeDistance ), (startYPos + (tracer->y - GRIDSIZE/2) * this->zNodeDistance)) ); //Dynamic
 		tracer = tracer->parent;
 	}
 
