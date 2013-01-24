@@ -46,14 +46,29 @@ InventoryGui::~InventoryGui()
 bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
 	int size = this->zSlotGui.size();
-
+	bool stacks = false;
 	if(size >=  SLOTS)
 		return false;
 
 	float width = (50.0f / 1024.0f) * GetGraphics()->GetEngineParameters()->windowWidth;
 	float height = (50.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	if(gid.zStacks > 0)
+	{
+		for(int i = 0; i < this->zSlotGui.size(); i++)
+		{
+			if(this->zSlotGui.at(i)->GetType() == gid.zType)
+			{
+				if(this->zSlotGui.at(i)->GetStacks() > 0)
+				{
+					this->zSlotGui.at(i)->SetStacks(this->zSlotGui.at(i)->GetStacks() + gid.zStacks);
+					stacks = true;
+					return true;
+				}
+			}
+		}
+	}
 
-	InventorySlotGui* gui = new InventorySlotGui(zSlotPositions[size].x, zSlotPositions[size].y, width, height, gid.zFilePath, gid.zID);
+	InventorySlotGui* gui = new InventorySlotGui(zSlotPositions[size].x, zSlotPositions[size].y, width, height, gid.zFilePath, gid.zID, gid.zType, gid.zStacks);
 	this->zSlotGui.push_back(gui);
 
 	if(open)
@@ -62,13 +77,19 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 	return true;
 }
 
-bool InventoryGui::RemoveItemFromGui(const int ID)
+bool InventoryGui::RemoveItemFromGui(const int ID, int stacks)
 {
 	int size = zSlotGui.size();
 	for (auto it = this->zSlotGui.begin(); it < this->zSlotGui.end(); it++)
 	{
 		if ((*it)->GetID() == ID)
 		{
+			if((*it)->GetStacks() > 0)
+			{
+				(*it)->SetStacks((*it)->GetStacks() - stacks);
+				if((*it)->GetStacks() > 0)
+					return true;
+			}
 			if(this->zSlotGui.end()-- != it)
 			{
 				for(auto i = this->zSlotGui.begin(); i < this->zSlotGui.end(); i++)

@@ -46,6 +46,7 @@ void PlayerActor::Update(float deltaTime)
 	float dt = deltaTime + this->zLatency;
 	this->zPreviousPos = GetPosition();
 	Vector3 modified = GetPosition();
+	this->zDirection.y = 0;
 
 	if(this->zKeyStates.GetKeyState(KEY_SPRINT))
 	{
@@ -123,7 +124,6 @@ void PlayerActor::Update(float deltaTime)
 
 	bool validMove = false;
 	SetPosition(modified);
-
 	PlayerUpdatedEvent temp = PlayerUpdatedEvent(this, validMove, this->zPreviousPos);
 	NotifyObservers( &temp);
 	if(!temp.validMove)

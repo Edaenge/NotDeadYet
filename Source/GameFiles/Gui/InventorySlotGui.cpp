@@ -6,11 +6,14 @@ InventorySlotGui::InventorySlotGui()
 	this->zSlotImage = NULL;
 }
 
-InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID)
+InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID, int Type, int Stacks)
 	: GuiElement(x, y, width, height, textureName)
 {
 	this->zSlotImage = NULL;
+	this->zStackText = NULL;
 	this->zID = ID;
+	this->zType = Type;
+	this->zStacks = Stacks;
 }
 
 InventorySlotGui::~InventorySlotGui()
@@ -23,7 +26,8 @@ bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)
 	if (ge)
 	{
 		GuiElement::AddToRenderer(ge);
-		//this->zGuiImage = ge->CreateImage(Vector2(this->zX , this->zY), this->GetDimension(), this->zTextureName.c_str());
+		if(this->zStacks > 0 && !this->zStackText)
+			this->zStackText = ge->CreateText(MaloW::convertNrToString(this->zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/1");
 		this->ShowGui();
 		return true;
 	}
@@ -34,6 +38,11 @@ bool InventorySlotGui::RemoveFromRenderer(GraphicsEngine* ge)
 {
 	if (this->zGuiImage)
 	{
+		if(this->zStackText)
+		{
+			ge->DeleteText(this->zStackText);
+			this->zStackText = 0;
+		}
 		ge->DeleteImage(this->zGuiImage);
 		this->zGuiImage = 0;
 		this->zHidden = true;
@@ -91,4 +100,11 @@ void InventorySlotGui::FadeOut(float value)
 	}
 	
 	GuiElement::FadeOut(value);
+}
+
+void InventorySlotGui::SetPosition( Vector2 pos )
+{
+	if(this->zStackText)
+		this->zStackText->SetPosition(pos);
+	GuiElement::SetPosition(pos);
 }

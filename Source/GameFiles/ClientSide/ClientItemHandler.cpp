@@ -169,7 +169,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 		if (Messages::FileWrite())
 			Messages::Debug(rWpn->GetItemName() + " Equipped");
 
-		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID());
+		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
 
 		return;
 	}
@@ -210,7 +210,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 		if (Messages::FileWrite())
 			Messages::Debug(rWpn->GetItemName() + " Equipped");
 
-		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID());
+		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
 
 		return;
 	}
@@ -249,7 +249,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 		if (Messages::FileWrite())
 			Messages::Debug(projectile->GetItemName() + " Equipped");
 
-		this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID());
+		this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID(), projectile->GetStackSize());
 
 		return;
 	}
@@ -292,7 +292,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 		if (Messages::FileWrite())
 			Messages::Debug(mWpn->GetItemName() + " Equipped");
 
-		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID());
+		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID(), mWpn->GetStackSize());
 
 		return;
 	}
@@ -547,9 +547,11 @@ void Client::SendDropItemMessage(const int ID)
 void Client::HandleRemoveInventoryItem(const int ID)
 {
 	int index = this->zPlayerInventory->Search(ID);
+	float tStack = this->zPlayerInventory->GetItem(index)->GetStackSize();
+
 	if(this->zPlayerInventory->RemoveItem(index))
 	{
-		this->zGuiManager->RemoveInventoryItemFromGui(ID);
+		this->zGuiManager->RemoveInventoryItemFromGui(ID, tStack);
 		if (Messages::FileWrite())
 			Messages::Debug("Item Removed on Client");
 	}
@@ -779,7 +781,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	}
 	if (this->zPlayerInventory->AddItem(item))
 	{
-		if (item->GetStacking())
+		if (!item->GetStacking())
 		{
 			itemStackSize = 0;
 		}
