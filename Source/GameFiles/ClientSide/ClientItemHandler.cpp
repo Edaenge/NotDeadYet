@@ -87,11 +87,7 @@ void Client::HandleUseItem(const long ID)
 		
 		int newStacks = food->GetStackSize();
 		this->zPlayerInventory->RemoveItemStack(food->GetID(), oldStacks - newStacks);
-		if (food->GetStackSize() <= 0)
-		{
-			this->zGuiManager->RemoveInventoryItemFromGui(food->GetID());
-		}
-		
+
 		MaloW::Debug("Eating");
 		return;
 	}
@@ -120,10 +116,6 @@ void Client::HandleUseItem(const long ID)
 		int newStacks = material->GetStackSize();
 		this->zPlayerInventory->RemoveItemStack(material->GetID(), oldStacks - newStacks);
 
-		if (material->GetStackSize() <= 0)
-		{
-			this->zGuiManager->RemoveInventoryItemFromGui(food->GetID());
-		}
 	}
 }
 
@@ -210,7 +202,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		this->zPlayerInventory->EquipItem(rWpn->GetID());
 		eq->EquipWeapon(rWpn);
 
-		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID());
+		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
 
 		return;
 	}
@@ -275,7 +267,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		this->zPlayerInventory->EquipItem(rWpn->GetID());
 		eq->EquipWeapon(rWpn);
 
-		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID());
+		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
 
 		return;
 	}
@@ -324,7 +316,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		this->zPlayerInventory->EquipItem(projectile->GetID());
 		eq->EquipProjectile(projectile);
 
-		this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID());
+		this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID(), projectile->GetStackSize());
 
 		return;
 	}
@@ -386,7 +378,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		this->zPlayerInventory->EquipItem(mWpn->GetID());
 		eq->EquipWeapon(mWpn);
 
-		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID());
+		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID(), mWpn->GetStackSize());
 
 		return;
 	}
@@ -640,9 +632,10 @@ void Client::SendDropItemMessage(const long ID)
 void Client::HandleRemoveInventoryItem(const long ID)
 {
 	int index = this->zPlayerInventory->Search(ID);
+	int stackSize = this->zPlayerInventory->GetItem(index)->GetStackSize();
 	if(this->zPlayerInventory->RemoveItem(index))
 	{
-		this->zGuiManager->RemoveInventoryItemFromGui(ID);
+		this->zGuiManager->RemoveInventoryItemFromGui(ID, stackSize);
 		if (Messages::FileWrite())
 			Messages::Debug("Item Removed on Client");
 	}
@@ -879,7 +872,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	}
 	if (this->zPlayerInventory->AddItem(item))
 	{
-		if (item->GetStacking())
+		if (!item->GetStacking())
 		{
 			itemStackSize = 0;
 		}

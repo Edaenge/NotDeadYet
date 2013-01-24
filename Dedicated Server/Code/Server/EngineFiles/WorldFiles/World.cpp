@@ -821,7 +821,9 @@ Vector3 World::GetNormalAtWorldPos( float posx, float posz )
 	Vector3 v1 = Vector3(posx, yPos, posz);
 
 	// 2 vertex
-	s = GetSector((posx+1) / SECTOR_WORLD_SIZE, posz / SECTOR_WORLD_SIZE);
+
+	if(((posx / SECTOR_WORLD_SIZE) != ((posx+1) / SECTOR_WORLD_SIZE)))
+		s = GetSector((posx+1) / SECTOR_WORLD_SIZE, posz / SECTOR_WORLD_SIZE);
 
 	localX = fmod(posx+1, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
 	localY = fmod(posz, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
@@ -831,8 +833,8 @@ Vector3 World::GetNormalAtWorldPos( float posx, float posz )
 	Vector3 v2 = Vector3(posx+1, yPos, posz);
 
 	// 3 vertex
-
-	s = GetSector((int)posx / SECTOR_WORLD_SIZE, ((int)posz+1) / SECTOR_WORLD_SIZE);
+	if(((posz / SECTOR_WORLD_SIZE) != ((int)posz+1) / SECTOR_WORLD_SIZE))
+		s = GetSector((int)posx / SECTOR_WORLD_SIZE, ((int)posz+1) / SECTOR_WORLD_SIZE);
 
 	localX = fmod(posx, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
 	localY = fmod(posz+1, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
@@ -842,8 +844,8 @@ Vector3 World::GetNormalAtWorldPos( float posx, float posz )
 	Vector3 v3 = Vector3(posx, yPos, posz+1);
 
 	// 4 vertex
-
-	s = GetSector((posx+1) / SECTOR_WORLD_SIZE, (posz+1) / SECTOR_WORLD_SIZE);
+	if(((posz / SECTOR_WORLD_SIZE) != ((int)posz+1) / SECTOR_WORLD_SIZE) || ((posx / SECTOR_WORLD_SIZE) != ((posx+1) / SECTOR_WORLD_SIZE)))
+		s = GetSector((posx+1) / SECTOR_WORLD_SIZE, (posz+1) / SECTOR_WORLD_SIZE);
 
 	localX = fmod(posx+1, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
 	localY = fmod(posz+1, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;

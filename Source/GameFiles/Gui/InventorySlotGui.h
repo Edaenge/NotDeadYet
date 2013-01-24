@@ -11,11 +11,13 @@ class InventorySlotGui : public GuiElement
 {
 public:
 	InventorySlotGui();
-	InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID);
+	InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID, int Type, int Stacks);
 	virtual ~InventorySlotGui();
 
 	virtual bool AddToRenderer(GraphicsEngine* ge);
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
+
+	virtual void SetPosition(Vector2 pos);
 
 	bool CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 	
@@ -24,7 +26,15 @@ public:
 	void HideGui();
 
 	int GetID(){ return this->zID; }
+
+	int GetType(){ return this->zType; }
+	int GetStacks(){ return this->zStacks; }
+
+	void SetStacks(int stacks) { this->zStacks = stacks; if(this->zStackText) this->zStackText->SetText(MaloW::convertNrToString(this->zStacks).c_str()); }
 private:
 	iImage* zSlotImage;
+	iText* zStackText;
 	int zID;
+	int zType;
+	int zStacks;
 };
