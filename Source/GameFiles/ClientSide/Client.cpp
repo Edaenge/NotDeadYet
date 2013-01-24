@@ -785,7 +785,7 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 			continue;
 		}
-		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(origin, camForward, mesh);
+		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
@@ -804,7 +804,7 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 			continue;
 		}
-		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(origin, camForward, mesh);
+		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{

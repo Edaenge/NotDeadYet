@@ -38,7 +38,8 @@ void PlayerActor::InitValues()
 
 PlayerActor::~PlayerActor()
 {
-	SAFE_DELETE(zInventory);
+	SAFE_DELETE(this->zInventory);
+	SAFE_DELETE(this->zEquipment);
 }
 
 void PlayerActor::Update(float deltaTime)
