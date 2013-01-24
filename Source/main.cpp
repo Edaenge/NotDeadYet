@@ -33,7 +33,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 	//test();
 	
 	// IMPLEMENT MAIN PROGRAM HERE.
-	MainMenu *menu = new MainMenu();
+	MainMenu* menu = new MainMenu();
 	menu->Init();
 	menu->Run();
 	delete menu;

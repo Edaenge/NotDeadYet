@@ -151,6 +151,9 @@ private:
 	bool CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerObj);
 	bool CreateItemFromObject(PlayerActor* pActor, StaticProjectileObject* projectileObj);
 	bool CreateItemFromObject(PlayerActor* pActor, MaterialObject* materialObj);
+	/*! Create Animal Actors*/
+	bool CreateAnimalActor(DeerActor** deerAct, const bool genID);
+	bool CreateAnimalActor(WolfActor** deerAct, const bool genID);
 	/*! Creates a StaticObject with default values.*/
 	bool CreateStaticObjectActor(const int type, FoodObject** foodObj, const bool genID = false);
 	bool CreateStaticObjectActor(const int type, WeaponObject** weaponObj, const bool genID = false);

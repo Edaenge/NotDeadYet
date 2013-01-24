@@ -126,6 +126,23 @@ void MainMenu::Run()
 
 }
 
+void MainMenu::StartTestRun()
+{
+	int clientErrorCode;
+	// Initializes the Client and returns a code that explains what happend
+	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 11521);	
+	//clientErrorCode  = this->zGame->InitGameClient("194.47.150.16", 11521);
+	if(clientErrorCode == 0)
+	{
+		MaloW::Debug("Game Running");
+		this->zGame->Run();
+	}
+	else
+	{
+		PrintClientError(clientErrorCode);
+	}
+}
+
 void MainMenu::PrintClientError(const int code)
 {
 	std::string errorMessage = "";
@@ -153,23 +170,6 @@ void MainMenu::PrintClientError(const int code)
 void MainMenu::PrintToScreen(const std::string msg)
 {
 	MaloW::Debug(msg);
-}
-
-void MainMenu::StartTestRun()
-{
-	int clientErrorCode;
-	// Initializes the Client and returns a code that explains what happend
-	clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 11521);	
-	//clientErrorCode  = this->zGame->InitGameClient("194.47.150.16", 11521);
-	if(clientErrorCode == 0)
-	{
-		MaloW::Debug("Game Running");
-		this->zGame->Run();
-	}
-	else
-	{
-		PrintClientError(clientErrorCode);
-	}
 }
 
 void MainMenu::SwapMenus(SET primary, SET secondary)

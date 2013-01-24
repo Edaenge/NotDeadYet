@@ -145,6 +145,9 @@
     <ClCompile Include="EngineFiles\Server\PhysicsActor.cpp">
       <Filter>Server\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Server\WolfActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineFiles\Server\Actor.h">
@@ -331,6 +334,9 @@
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="EngineFiles\Server\PhysicsActor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\WolfActor.h">
       <Filter>Server\Actors</Filter>
     </ClInclude>
   </ItemGroup>
