@@ -291,6 +291,13 @@ public:
         y *= scalar;
         z *= scalar;
     }
+	inline bool operator==(const Vector3& v)
+	{
+		if ((this->x == v.x) && (this->y == v.y) && (this->z == v.z))
+			return true;
+
+		return false;
+	}
 
 	inline float GetLengthSquared()
 	{
