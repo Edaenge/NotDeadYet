@@ -32,6 +32,12 @@ public:
 		Note that it may change if the player collides with an other Actor.
 	*/
 	virtual bool HasMoved();
+	/*! Adds a message string with health,stamina,hunger, hydration to mess.
+	    This function checks if the data has changed since last update.
+		If it has changed, we need to send it to the client.
+		The parameter string is a network message string.
+	*/
+	void AddChangedHData(string& mess, NetworkMessageConverter* nmc);
 
 	int GetState() const {return this->zState;}
 	float GetVelocity() const {return this->zVelocity;}
@@ -42,10 +48,10 @@ public:
 	/*! Sets the player state.
 		Enum is defined in AnimationStates.h.
 	*/
-	void SetState(const int state){this->zState = state;}
-	void SetVelocity(const float velocity){this->zVelocity = velocity;}
-	void SetHealth(const float health){this->zHealth = health;}
-	void SetStamina(const float stamina){this->zStamina = stamina;}
+	void SetState(const int state) {this->zState = state;}
+	void SetVelocity(const float velocity) {this->zVelocity = velocity;}
+	void SetHealth(const float health) {this->zHealth = health; this->zHealthChanged = true;}
+	void SetStamina(const float stamina) {this->zStamina = stamina; this->zStaminaChanged = true;}
 
 private:
 	void InitValues();

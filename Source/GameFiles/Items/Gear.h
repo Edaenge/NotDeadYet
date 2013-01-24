@@ -10,7 +10,7 @@
 class Gear : public Item
 {
 public:
-	Gear(const unsigned int ID, const unsigned int TYPE);
+	Gear(const long ID, const unsigned int TYPE);
 	virtual ~Gear();
 	virtual bool Use();
 private:

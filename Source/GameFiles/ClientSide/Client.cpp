@@ -26,7 +26,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Arrow_v01.obj";
+	this->zMeshID = "Media/Tree_02_v02_r.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -531,6 +531,20 @@ void Client::HandleKeyboardInput()
 						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
 						this->zServerChannel->sendData(msg);
 					}
+
+					/*for (auto it = this->zObjectManager->GetAnimals().begin(); it < this->zObjectManager->GetAnimals().end(); it++)
+					{
+					iMesh* mesh  = (*it)->GetMesh();
+
+					Vector3 position = player->GetPosition();
+					Vector3 direction = this->zEng->GetCamera()->GetForward();
+					CollisionData cd = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(position, direction, mesh);
+
+					if (cd.collision && cd.distance <= 5.0f)
+					{
+					cd.distance = cd.distance;
+					}
+					}*/
 				}
 			}
 			else
@@ -575,78 +589,78 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		//Player
 		else if(strcmp(key, M_UPDATE_PLAYER.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_PLAYER, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_PLAYER, msgArray[0]);
 			this->UpdatePlayerObjects(msgArray, id);
 		}
 		//Animal
 		else if(strcmp(key, M_UPDATE_ANIMAL.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ANIMAL, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ANIMAL, msgArray[0]);
 			this->UpdateAnimalObjects(msgArray, id);
 		}
 		//Static Object
 		else if(strcmp(key, M_UPDATE_STATIC_OBJECT.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_STATIC_OBJECT, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_STATIC_OBJECT, msgArray[0]);
 			this->UpdateStaticObjects(msgArray, id);
 		}
 		//Static Object
 		else if(strcmp(key, M_NEW_STATIC_OBJECT.c_str()) == 0)
 		{
-			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_STATIC_OBJECT, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_NEW_STATIC_OBJECT, msgArray[0]);
 			this->AddNewStaticObject(msgArray, id);
 		}
 		//Static Object
 		else if(strcmp(key, M_REMOVE_STATIC_OBJECT.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_STATIC_OBJECT, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_STATIC_OBJECT, msgArray[0]);
 			this->RemoveStaticObject(id);
 		}
 		//Dynamic Object
 		else if(strcmp(key, M_UPDATE_DYNAMIC_OBJECT.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_DYNAMIC_OBJECT, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_DYNAMIC_OBJECT, msgArray[0]);
 			this->UpdateDynamicObjects(msgArray, id);
 		}
 		//Dynamic Object
 		else if(strcmp(key, M_NEW_DYNAMIC_OBJECT.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_NEW_DYNAMIC_OBJECT, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_NEW_DYNAMIC_OBJECT, msgArray[0]);
 			this->AddNewDynamicObject(msgArray, id);
 		}
 		//Dynamic Object
 		else if(strcmp(key, M_REMOVE_DYNAMIC_OBJECT.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_DYNAMIC_OBJECT, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_DYNAMIC_OBJECT, msgArray[0]);
 			this->RemoveDynamicObject(id);
 		}
 		//Player
 		else if(strcmp(key, M_NEW_PLAYER.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_NEW_PLAYER, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_NEW_PLAYER, msgArray[0]);
 			this->AddNewPlayerObject(msgArray, id);
 		}
 		//Animal
 		else if(strcmp(key, M_NEW_ANIMAL.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ANIMAL, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_NEW_ANIMAL, msgArray[0]);
 			this->AddNewAnimalObject(msgArray, id);
 		}
 		//Animal
 		else if(strcmp(key, M_REMOVE_ANIMAL.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ANIMAL, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ANIMAL, msgArray[0]);
 			this->RemoveAnimalObject(id);
 		}
 		//Player
 		else if(strcmp(key, M_REMOVE_PLAYER.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_PLAYER, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_PLAYER, msgArray[0]);
 			this->RemovePlayerObject(id);
 		}
 		else if(strcmp(key, M_EQUIP_ITEM.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
 			int slot = -1;
 			if (msgArray.size() > 1)
 			{
@@ -660,12 +674,12 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		}
 		else if(strcmp(key, M_ITEM_USE.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
 			this->HandleUseItem(id);
 		}
 		else if(strcmp(key, M_REMOVE_EQUIPMENT.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_EQUIPMENT, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_EQUIPMENT, msgArray[0]);
 			int slot = -1;
 			if (msgArray.size() > 1)
 			{
@@ -679,7 +693,7 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		}
 		else if(strcmp(key, M_UNEQUIP_ITEM.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
 			int slot = -1;
 			if (msgArray.size() > 1)
 			{
@@ -693,17 +707,17 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		}
 		else if(strcmp(key, M_ADD_INVENTORY_ITEM.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_ADD_INVENTORY_ITEM, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_ADD_INVENTORY_ITEM, msgArray[0]);
 			this->HandleAddInventoryItem(msgArray, id);
 		}
 		else if(strcmp(key, M_REMOVE_INVENTORY_ITEM.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_INVENTORY_ITEM, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_INVENTORY_ITEM, msgArray[0]);
 			this->HandleRemoveInventoryItem(id);
 		}
 		else if(strcmp(key, M_WEAPON_USE.c_str()) == 0)
 		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
+			long id = this->zMsgHandler.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
 			this->HandleWeaponUse(id);
 		}
 		else if(strcmp(key, M_SELF_ID.c_str()) == 0)
@@ -771,7 +785,7 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 			continue;
 		}
-		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(origin, camForward, mesh);
+		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
@@ -790,7 +804,7 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 			continue;
 		}
-		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(origin, camForward, mesh);
+		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
 
 		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
@@ -831,7 +845,7 @@ void Client::DisplayMessageToClient(const std::string& msg)
 	MaloW::Debug(msg);
 }
 
-void Client::onEvent( Event* e )
+void Client::onEvent(Event* e)
 {
 	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{

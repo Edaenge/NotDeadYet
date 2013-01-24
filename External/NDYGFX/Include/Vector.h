@@ -13,6 +13,7 @@
 // EDIT 2013-01-07 by Tillman  - Optimized Constructors.
 // EDIT 2013-01-09 by Alexivan - GetXY, GetXZ, GetZY for Vector3
 // EDIT 2013-01-11 by Tillman - Added the class Vector2UINT.
+// EDIT 2013-01-22 by Alexivan - Vector2 Multiply.
 
 #pragma warning ( push ) 
 #pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -161,6 +162,31 @@ public:
 		return values[i];
 	}
 
+	inline Vector2 operator*( const float& t ) const
+	{
+		return Vector2( x * t, y * t );
+	}
+
+	inline Vector2& operator*=( const float& t )
+	{
+		x *= t;
+		y *= t;
+		return *this;
+	}
+
+	inline Vector2& operator+=( const float& t )
+	{
+		x += t;
+		y += t;
+		return *this;
+	}
+
+	inline Vector2& operator+=( const Vector2& t )
+	{
+		x += t.x;
+		y += t.y;
+		return *this;
+	}
 };
 
 
@@ -265,10 +291,9 @@ public:
         y *= scalar;
         z *= scalar;
     }
-
 	inline bool operator==(const Vector3& v)
 	{
-		if((x == v.x) && (y == v.y) && (z == v.z))
+		if ((this->x == v.x) && (this->y == v.y) && (this->z == v.z))
 			return true;
 
 		return false;
@@ -380,11 +405,6 @@ public:
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2) + pow(this->w, 2));
 	}
 
-	inline Vector4 operator+(const Vector4& v) const
-	{
-		return Vector4(this->x+v.x, this->y+v.y, this->z+v.z, this->w+v.w);
-	}
-
 	inline void Normalize()
 	{
 		float length = this->GetLength();
@@ -427,6 +447,55 @@ public:
 			throw("index out of bounds");
 		}
 		return values[i];
+	}
+
+	inline Vector4 operator+(const Vector4& v) const
+	{
+		return Vector4(this->x+v.x, this->y+v.y, this->z+v.z, this->w+v.w);
+	}
+
+	inline Vector4 operator-(const Vector4& v) const
+	{
+		return Vector4(this->x-v.x, this->y-v.y, this->z-v.z, w-v.w);
+	}
+
+	inline Vector4 operator*(const float& scalar) const
+	{
+		return Vector4(this->x*scalar, this->y*scalar, this->z*scalar, w*scalar);
+	}
+
+	inline Vector4 operator*(const Vector4& v) const
+	{
+		return Vector4(this->x*v.x, this->y*v.y, this->z*v.z, w*v.w);
+	}
+
+	inline Vector4 operator/(const float& scalar) const
+	{
+		return Vector4(this->x/scalar, this->y/scalar, this->z/scalar, w/scalar);
+	}
+
+	inline void operator+=(const Vector4& v)
+	{
+		x += v.x;
+		y += v.y;
+		z += v.z;
+		w += v.w;
+	}
+
+	inline void operator-=(const Vector4& v)
+	{
+		x -= v.x;
+		y -= v.y;
+		z -= v.z;
+		w -= v.w;
+	}
+
+	inline void operator*=(const float scalar)
+	{
+		x *= scalar;
+		y *= scalar;
+		z *= scalar;
+		w *= scalar;
 	}
 
 #ifdef D3DVECTOR_DEFINED

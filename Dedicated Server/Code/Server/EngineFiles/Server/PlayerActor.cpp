@@ -1,18 +1,18 @@
 #include "PlayerActor.h"
 
-PlayerActor::PlayerActor( const int ID ) : BioActor()
+PlayerActor::PlayerActor(const long ID) : BioActor()
 {
 	InitValues();
 	this->SetID(ID);
 }
 
-PlayerActor::PlayerActor( const int ID, const Vector3& startPos, PhysicsObject* pObj) : BioActor(startPos, pObj)
+PlayerActor::PlayerActor(const long ID, const Vector3& startPos, PhysicsObject* pObj) : BioActor(startPos, pObj)
 {
 	InitValues();
 	this->SetID(ID);
 }
 
-PlayerActor::PlayerActor( const int ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj ) : BioActor(startPos, pObj, startRot)
+PlayerActor::PlayerActor(const long ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj) : BioActor(startPos, pObj, startRot)
 {
 	InitValues();
 	this->SetID(ID);
@@ -38,7 +38,8 @@ void PlayerActor::InitValues()
 
 PlayerActor::~PlayerActor()
 {
-	SAFE_DELETE(zInventory);
+	SAFE_DELETE(this->zInventory);
+	SAFE_DELETE(this->zEquipment);
 }
 
 void PlayerActor::Update(float deltaTime)
@@ -46,7 +47,6 @@ void PlayerActor::Update(float deltaTime)
 	float dt = deltaTime + this->zLatency;
 	this->zPreviousPos = GetPosition();
 	Vector3 modified = GetPosition();
-	this->zDirection.y = 0;
 
 	if(this->zKeyStates.GetKeyState(KEY_SPRINT))
 	{
@@ -124,6 +124,7 @@ void PlayerActor::Update(float deltaTime)
 
 	bool validMove = false;
 	SetPosition(modified);
+
 	PlayerUpdatedEvent temp = PlayerUpdatedEvent(this, validMove, this->zPreviousPos);
 	NotifyObservers( &temp);
 	if(!temp.validMove)
@@ -131,7 +132,7 @@ void PlayerActor::Update(float deltaTime)
 	
 }
 
-bool PlayerActor::PickUpObject( DynamicObjectActor* object)
+bool PlayerActor::PickUpObject(DynamicObjectActor* object)
 {
 	//Not yet implemented
 	return false;
@@ -293,7 +294,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 	return false;
 }
 
-bool PlayerActor::DropObject( const int ID )
+bool PlayerActor::DropObject(const long ID)
 {
 	Item* item = this->zInventory->SearchAndGetItem(ID);
 
@@ -314,6 +315,7 @@ void PlayerActor::Drink(float hydration)
 	if (this->zHydration >= this->zHydrationMax)
 		this->zHydration = this->zHydrationMax;
 
+	this->zHydrationChanged = true;
 }
 
 void PlayerActor::EatFood(float hunger)
@@ -321,20 +323,14 @@ void PlayerActor::EatFood(float hunger)
 	this->zHunger += hunger;
 	if (this->zHunger >= this->zHungerMax)
 		this->zHunger = this->zHungerMax;
+
+	this->zHungerChanged = true;
 }
 
-void PlayerActor::AddChangedHData( string& mess, NetworkMessageConverter* nmc )
+void PlayerActor::AddChangedHData(string& mess, NetworkMessageConverter* nmc)
 {
-	if(zHealthChanged)
-	{
-		mess += nmc->Convert(MESSAGE_TYPE_HEALTH, this->zHealth);
-		this->zHealthChanged = false;
-	}
-	if(zStaminaChanged)
-	{
-		mess += nmc->Convert(MESSAGE_TYPE_STAMINA, this->zStamina);
-		this->zStaminaChanged = false;
-	}
+	BioActor::AddChangedHData(mess, nmc);
+
 	if(zHungerChanged)
 	{
 		mess += nmc->Convert(MESSAGE_TYPE_HUNGER, this->zHunger);
@@ -342,7 +338,9 @@ void PlayerActor::AddChangedHData( string& mess, NetworkMessageConverter* nmc )
 	}
 	if(zHydrationChanged)
 	{
-		mess += nmc->Convert(MESSAGE_TYPE_HYDRATION, this->zHydrationChanged);
+		mess += nmc->Convert(MESSAGE_TYPE_HYDRATION, this->zHydration);
 		this->zHydrationChanged = false;
 	}
+
+	this->AddChangedData(mess, nmc);
 }

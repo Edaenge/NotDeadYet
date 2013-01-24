@@ -8,6 +8,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "AI.h"
 #include "BioActor.h"
 #include <fstream>
+#include <time.h>
 
 enum Behaviour
 {
@@ -93,6 +94,8 @@ protected:
 	//float	zAlertnessIntervalCounter;
 	float	zFearIntervalCounter;
 	float	zIntervalCounter;
+
+	bool	zPanic;
 
 private: 
 	Behaviour	zMentalState;

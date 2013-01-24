@@ -48,7 +48,6 @@ protected:
 	int zObjPlayerOwner;
 	std::string zDescription;
 	std::string zIconPath;
-	PhysicsObject* zPhysicObj;
 	
 private:
 };

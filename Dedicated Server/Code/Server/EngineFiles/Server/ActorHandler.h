@@ -25,8 +25,18 @@ static const enum ACTOR_TYPE
 	ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE
 };
 
+static const enum COLLISION_EVENT_TYPE
+{
+	MELEE_ATTACK
+};
+
 struct CollisionEvent
 {
+	CollisionEvent()
+	{
+		actor_aggressor_ID = -1;
+		actor_victim_ID = -1;
+	}
 	int actor_aggressor_ID;
 	int actor_victim_ID;
 	unsigned int actor_aggressor_type;
@@ -44,6 +54,10 @@ public:
 	virtual ~ActorHandler();
 
 	void UpdateObjects(float deltaTime);
+	/*! Check collision against PlayerActors and Animal Actors
+		Used When Attacking with melee.
+	*/
+	CollisionEvent CheckCollision(BioActor* pActor, float range);
 	/*! Checks collisions against objects.*/
 	void CheckCollisions();
 	/*! pCollide lists all collisions.

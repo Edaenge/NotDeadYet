@@ -12,7 +12,7 @@
 class StaticObject : public WorldObject
 {
 public:
-	StaticObject(const unsigned int id);
+	StaticObject(const long id);
 	virtual ~StaticObject(){}
 	int GetWeight() const {return this->zWeight;}
 	int GetType() const {return this->zType;}

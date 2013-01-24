@@ -11,7 +11,7 @@
 class DynamicObject : public MovingObject
 {
 public:
-	DynamicObject(const unsigned int id);
+	DynamicObject(const long id);
 	virtual ~DynamicObject(){}
 	/*! Updates the Object*/
 	virtual void Update(float deltaTime);

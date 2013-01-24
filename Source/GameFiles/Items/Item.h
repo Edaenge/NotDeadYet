@@ -31,7 +31,7 @@ static const enum M_ITEM_TYPE
 class Item
 {
 public:
-	Item(const unsigned int id, const unsigned int itemType);
+	Item(const long id, const unsigned int itemType);
 	virtual ~Item(){}
 	/*! Returns Item ID*/
 	inline int GetID() const {return this->zID;}
@@ -50,7 +50,7 @@ public:
 
 	void SetIconPath(const std::string& path) {this->zIconPath = path;}
 	/*! Sets the Item ID*/
-	void SetItemID(const unsigned int id) {this->zID = id;}
+	void SetItemID(const long id) {this->zID = id;}
 	/*! Sets the Item Weight*/
 	void SetItemWeight(const unsigned int weight) {this->zWeight = weight;}
 	/*! Sets the Item Name*/
@@ -72,7 +72,7 @@ private:
 		const std::string& name = "Unknown", const std::string& description = "Unknown", const std::string iconPath = "Unknown");
 protected:
 	int zStacks;
-	int zID;
+	long zID;
 	int zWeight;
 	std::string zItemName;
 	unsigned int zItemType;

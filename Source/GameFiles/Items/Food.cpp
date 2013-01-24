@@ -1,6 +1,6 @@
 #include "Food.h"
 
-Food::Food(const unsigned int id, const unsigned int TYPE, const float hunger)
+Food::Food(const long id, const unsigned int TYPE, const float hunger)
 	: Item(id, TYPE)
 {
 	this->zHunger = hunger;

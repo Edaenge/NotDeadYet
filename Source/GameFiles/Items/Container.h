@@ -10,7 +10,7 @@
 class Container : public Item
 {
 public:
-	Container(const unsigned int id, const unsigned int itemType, 
+	Container(const long id, const unsigned int itemType, 
 		const int maxUse, const int currUse);
 	virtual ~Container();
 

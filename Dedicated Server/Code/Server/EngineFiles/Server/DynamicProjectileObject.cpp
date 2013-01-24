@@ -58,15 +58,14 @@ DynamicProjectileObject::~DynamicProjectileObject()
 
 void DynamicProjectileObject::Update(float deltaTime)
 {
+	if(!this->zPhysicObj)
+		return;
+
 	Vector3 oldPosition = GetPosition();
-	Vector3 modifiedPos = oldPosition;
 
-	modifiedPos += (this->zDirection * deltaTime * this->zVelocity);
-	SetPosition(modifiedPos);
+	this->zPhysicObj->Integrate(deltaTime);
 
-	//this->zPos.y += (-9.82f) * deltaTime;
-
-	if (oldPosition == modifiedPos)
+	if (oldPosition == GetPosition())
 	{
 		this->zMoving = false;
 	}

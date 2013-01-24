@@ -11,7 +11,7 @@
 class Weapon : public Item
 {
 public:
-	Weapon(const unsigned int id, const unsigned int itemType, 
+	Weapon(const long id, const unsigned int itemType, 
 		const float damage, const float range)
 		: Item(id, itemType)
 	{

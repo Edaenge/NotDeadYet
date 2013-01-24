@@ -10,7 +10,7 @@
 class Food : public Item
 {
 public:
-	Food(const unsigned int id, const unsigned int TYPE, const float hunger);
+	Food(const long id, const unsigned int TYPE, const float hunger);
 	virtual ~Food();
 	/*! Decreases Stacks by 1.*/
 	virtual bool Use();

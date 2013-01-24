@@ -32,18 +32,22 @@ void BioActor::InitValues()
 	this->zAlive = true;
 	this->zHealthMax = 100;
 	this->zHealth = zHealthMax;
-
+	this->zHealthChanged = false;
+	
 	this->zStaminaMax = 100;
 	this->zStamina = zStaminaMax;
 	this->zStaminaCof = 0.10f;
+	this->zStaminaChanged = false;
 }
 
-bool BioActor::TakeDamage( const float dmg )
+bool BioActor::TakeDamage(const float dmg)
 {
 	this->zHealth -= dmg; 
 	
 	if(zHealth <= 0.0f)
 		this->zAlive = false;
+
+	this->zHealthChanged = true;
 
 	return this->zAlive;
 }
@@ -63,7 +67,7 @@ bool BioActor::Sprint(float dt)
 	else
 		this->zStamina = temp;
 	
-
+	this->zStaminaChanged = true;
 
 	return true;
 }
@@ -79,4 +83,18 @@ bool BioActor::HasMoved()
 		return false;
 	
 	return true;
+}
+
+void BioActor::AddChangedHData(string& mess, NetworkMessageConverter* nmc)
+{
+	if(zHealthChanged)
+	{
+		mess += nmc->Convert(MESSAGE_TYPE_HEALTH, this->zHealth);
+		this->zHealthChanged = false;
+	}
+	if(zStaminaChanged)
+	{
+		mess += nmc->Convert(MESSAGE_TYPE_STAMINA, this->zStamina);
+		this->zStaminaChanged = false;
+	}
 }

@@ -1,6 +1,6 @@
 #include "Item.h"
 
-Item::Item(const unsigned int id, const unsigned int itemType)
+Item::Item(const long id, const unsigned int itemType)
 {
 	this->zStacks = 1;
 	this->InitValues(id, itemType);

@@ -11,7 +11,7 @@
 class PlayerObject : public OrganicObject
 {
 public:
-	PlayerObject(const unsigned int id);
+	PlayerObject(const long id);
 	virtual ~PlayerObject(){if(this->zEquipment) delete this->zEquipment; this->zEquipment = 0;}
 	
 	inline float GetHunger() const {return this->zHunger;}

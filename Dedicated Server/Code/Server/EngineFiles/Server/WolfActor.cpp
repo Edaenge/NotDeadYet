@@ -1,18 +1,18 @@
 #include "WolfActor.h"
 
-WolfActor::WolfActor( bool genID /*= true*/, bool isPlayerControlled /*= false*/  ) : AnimalActor(genID)
+WolfActor::WolfActor(bool genID /*= true*/, bool isPlayerControlled /*= false*/) : AnimalActor(genID)
 {
 	this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitWolf();
 }
 
-WolfActor::WolfActor( const Vector3& startPos, bool genID /*= true*/, bool isPlayerControlled /*= false*/  ) : AnimalActor(startPos, genID)
+WolfActor::WolfActor(const Vector3& startPos, PhysicsObject* pObj, bool genID /*= true*/, bool isPlayerControlled /*= false*/) : AnimalActor(startPos, pObj, genID)
 {
 	this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitWolf();
 }
 
-WolfActor::WolfActor( const Vector3& startPos, const Vector4& rot, bool genID /*= true*/, bool isPlayerControlled /*= false*/  ) : AnimalActor(startPos, rot, genID)
+WolfActor::WolfActor(const Vector3& startPos, PhysicsObject* pObj, const Vector4& rot, bool genID /*= true*/, bool isPlayerControlled /*= false*/) : AnimalActor(startPos, pObj, rot, genID)
 {
 	this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitWolf();

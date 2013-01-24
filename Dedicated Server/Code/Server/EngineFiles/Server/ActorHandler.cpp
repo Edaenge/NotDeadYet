@@ -1,4 +1,3 @@
-
 #include "ActorHandler.h"
 
 ActorHandler::ActorHandler()
@@ -188,6 +187,11 @@ bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Pr
 	float angle = acos(ArrowDirection.GetDotProduct(CameraDirection) / (ArrowDirection.GetLength() * CameraDirection.GetLength()));
 	pObj->SetQuaternion(Vector4(0, 0, 0, 1));
 	pObj->RotateAxis(around, angle);
+	pObj->SetMass(1.0f);
+	pObj->SetVelocity(direction * new_Projectile->GetVelocity());
+	pObj->SetAcceleration(Vector3(.0f, -9.82f, 0.0f));
+	pObj->SetDamping(0.99f);
+	pObj->ClearAccumulator();
 
 	//Set new data
 	new_Projectile->SetDirection(direction);
@@ -520,6 +524,78 @@ ObjectManager* ActorHandler::GetObjManager() const
 	return this->zObjManager;
 }
 
+CollisionEvent ActorHandler::CheckCollision(BioActor* bActor, float range)
+{
+	unsigned int agressor_Type = 100;
+	CollisionEvent cEvent = CollisionEvent();
+	PhysicsCollisionData pcd;
+
+	PhysicsObject* pObj = bActor->GetPhysicObject();
+	PhysicsObject* pOtherObj = NULL;
+
+	PlayerActor* pTemp = dynamic_cast<PlayerActor*>(bActor);
+	if (pTemp)
+	{
+		agressor_Type = ACTOR_TYPE_PLAYER;
+	}
+	else
+	{
+		AnimalActor* aTemp = dynamic_cast<AnimalActor*>(bActor);
+		if (aTemp)
+		{
+			agressor_Type = ACTOR_TYPE_ANIMAL;
+		}
+	}
+
+	for (auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
+	{
+		if ((*it)->GetID() == bActor->GetID() && agressor_Type == ACTOR_TYPE_PLAYER)
+			continue;
+		pOtherObj = (*it)->GetPhysicObject();
+
+		pcd = this->zPhysicsEngine->GetCollisionRayMesh(bActor->GetPosition(), bActor->GetDirection(), pOtherObj);
+
+		if (pcd.collision && pcd.distance <= range)
+		{
+			cEvent.actor_aggressor_ID = bActor->GetID();
+			cEvent.actor_aggressor_type = agressor_Type;
+
+			cEvent.actor_victim_ID = (*it)->GetID();
+			cEvent.actor_victim_type = ACTOR_TYPE_PLAYER;
+
+			cEvent.event_type = MELEE_ATTACK;
+
+			return cEvent;
+		}
+	}
+
+	for (auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
+	{
+		if ((*it)->GetID() == bActor->GetID() && agressor_Type == ACTOR_TYPE_ANIMAL)
+			continue;
+
+		pOtherObj = (*it)->GetPhysicObject();
+
+		Vector3 position = pObj->GetPosition();
+		Vector3 direction = bActor->GetDirection();
+		pcd = this->zPhysicsEngine->GetCollisionRayMesh(position, direction, pOtherObj);
+
+		if (pcd.collision && pcd.distance <= range)
+		{
+			cEvent.actor_aggressor_ID = bActor->GetID();
+			cEvent.actor_aggressor_type = agressor_Type;
+
+			cEvent.actor_victim_ID = (*it)->GetID();
+			cEvent.actor_victim_type = ACTOR_TYPE_ANIMAL;
+
+			cEvent.event_type = MELEE_ATTACK;
+
+			return cEvent;
+		}
+	}
+	return cEvent;
+}
+
 /*Not Complete*/
 void ActorHandler::CheckCollisions()
 {
@@ -545,7 +621,7 @@ void ActorHandler::CheckCollisions()
 	/*ANIMALS VS PLAYERS*/
 	for(auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
 	{
-		if(!(*it)->HasMoved());
+		if(!(*it)->HasMoved())
 		continue;
 
 		BioActorVSBioActor(*it, zPlayers, pCol);

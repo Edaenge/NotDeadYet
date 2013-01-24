@@ -10,7 +10,7 @@
 class Material : public Item
 {
 public:
-	Material(const unsigned int id, const unsigned int itemType, const unsigned int craftingType, const int stacksRequiredToCraft);
+	Material(const long id, const unsigned int itemType, const unsigned int craftingType, const int stacksRequiredToCraft);
 	virtual ~Material();
 
 	int GetCraftingType() const {return this->zCraftingType;}

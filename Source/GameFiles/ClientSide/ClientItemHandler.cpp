@@ -1,7 +1,7 @@
 #include "Client.h"
 #include "ClientServerMessages.h"
 
-void Client::HandleWeaponUse(const int ID)
+void Client::HandleWeaponUse(const long ID)
 {
 	PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 
@@ -44,7 +44,7 @@ void Client::HandleWeaponUse(const int ID)
 	}
 }
 
-void Client::HandleUseItem(const int ID)
+void Client::HandleUseItem(const long ID)
 {
 	Item* item = this->zPlayerInventory->SearchAndGetItem(ID);
 
@@ -117,9 +117,9 @@ void Client::HandleUseItem(const int ID)
 	}
 }
 
-void Client::HandleEquipItem(const int ItemID, const int Slot)
+void Client::HandleEquipItem(const long ItemID, const int Slot)
 {
-	Item* item = this->zPlayerInventory->EquipItem(ItemID);
+	Item* item = this->zPlayerInventory->SearchAndGetItem(ItemID);
 
 	if (!item)
 	{
@@ -153,21 +153,52 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 
 		if (oldWeapon)
 		{
+			//HandleUnEquipItem(oldWeapon->GetID(), EQUIPMENT_SLOT_WEAPON);
 			if(this->zPlayerInventory->AddItem(oldWeapon))
 			{
-				Gui_Item_Data gid = Gui_Item_Data(oldWeapon->GetID(), oldWeapon->GetWeight(), oldWeapon->GetStackSize(),
+				int stack = 0;
+				if (oldWeapon->GetStacking())
+					stack = oldWeapon->GetStackSize();
+
+				Gui_Item_Data gid = Gui_Item_Data(oldWeapon->GetID(), oldWeapon->GetWeight(), stack,
 					oldWeapon->GetItemName(), oldWeapon->GetIconPath(), oldWeapon->GetItemDescription(), oldWeapon->GetItemType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
-				if (Messages::FileWrite())
-					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldWeapon->GetID()));
+
+				eq->UnEquipWeapon();
+			}
+			else
+			{
+				MaloW::Debug("Failed to add Equipped weapon to inventory");
+				return;
+			}
+			Projectile* projectile = eq->GetProjectile();
+
+			if (projectile)
+			{
+				
+				if (projectile->GetItemType() != ITEM_TYPE_PROJECTILE_ARROW)
+				{
+					//HandleUnEquipItem(projectile->GetID(), EQUIPMENT_SLOT_AMMO);
+					if(this->zPlayerInventory->AddItem(projectile))
+					{
+						Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(),
+							projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType());
+
+						this->zGuiManager->AddInventoryItemToGui(gid);
+						
+						eq->UnEquipProjectile();
+					}
+					else
+					{
+						MaloW::Debug("Failed to add Equipped project to inventory");
+						return;
+					}
+				}
 			}
 		}
-		eq->UnEquipWeapon();
+		this->zPlayerInventory->EquipItem(rWpn->GetID());
 		eq->EquipWeapon(rWpn);
-
-		if (Messages::FileWrite())
-			Messages::Debug(rWpn->GetItemName() + " Equipped");
 
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
 
@@ -196,19 +227,43 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 		{
 			if(this->zPlayerInventory->AddItem(oldWeapon))
 			{
-				Gui_Item_Data gid = Gui_Item_Data(oldWeapon->GetID(), oldWeapon->GetWeight(), oldWeapon->GetStackSize(),
+				int stack = 0;
+				if (oldWeapon->GetStacking())
+					stack = oldWeapon->GetStackSize();
+
+				Gui_Item_Data gid = Gui_Item_Data(oldWeapon->GetID(), oldWeapon->GetWeight(), stack,
 					oldWeapon->GetItemName(), oldWeapon->GetIconPath(), oldWeapon->GetItemDescription(), oldWeapon->GetItemType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
-				if (Messages::FileWrite())
-					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldWeapon->GetID()));
+
+				eq->UnEquipWeapon();
+			}
+			else
+			{
+				MaloW::Debug("Failed to add Equipped weapon to inventory");
+				return;
 			}
 		}
+		Projectile* oldProjectile = eq->GetProjectile();
+		if (oldProjectile)
+		{
+			if(this->zPlayerInventory->AddItem(oldProjectile))
+			{
+				Gui_Item_Data gid = Gui_Item_Data(oldProjectile->GetID(), oldProjectile->GetWeight(), oldProjectile->GetStackSize(),
+					oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
 
+				this->zGuiManager->AddInventoryItemToGui(gid);
+
+				eq->UnEquipProjectile();
+			}
+			else
+			{
+				MaloW::Debug("Failed to add Equipped projectile to inventory");
+				return;
+			}
+		}
+		this->zPlayerInventory->EquipItem(rWpn->GetID());
 		eq->EquipWeapon(rWpn);
-
-		if (Messages::FileWrite())
-			Messages::Debug(rWpn->GetItemName() + " Equipped");
 
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
 
@@ -234,20 +289,30 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 		Projectile* oldProjectile = eq->GetProjectile();
 		if (oldProjectile)
 		{
-			if(this->zPlayerInventory->AddItem(oldProjectile))
+			if (oldProjectile->GetItemType() != projectile->GetItemType())
 			{
-				Gui_Item_Data gid = Gui_Item_Data(oldProjectile->GetID(), oldProjectile->GetWeight(), oldProjectile->GetStackSize(), 
-					oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
+				if(this->zPlayerInventory->AddItem(oldProjectile))
+				{
+					Gui_Item_Data gid = Gui_Item_Data(oldProjectile->GetID(), oldProjectile->GetWeight(), oldProjectile->GetStackSize(), 
+						oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
 
-				this->zGuiManager->AddInventoryItemToGui(gid);
-				if (Messages::FileWrite())
-					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)oldProjectile->GetID()));
+					this->zGuiManager->AddInventoryItemToGui(gid);
+
+					eq->UnEquipProjectile();
+				}
+				else
+				{
+					return;
+				}
+			}
+			else
+			{
+				int stacks = oldProjectile->GetStackSize() + projectile->GetStackSize();
+				oldProjectile->SetStackSize(stacks);
 			}
 		}
+		this->zPlayerInventory->EquipItem(projectile->GetID());
 		eq->EquipProjectile(projectile);
-
-		if (Messages::FileWrite())
-			Messages::Debug(projectile->GetItemName() + " Equipped");
 
 		this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID(), projectile->GetStackSize());
 
@@ -281,16 +346,35 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 					mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
-				if (Messages::FileWrite())
-					Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)mWpn->GetID()));
-				
+
+				eq->UnEquipWeapon();	
+			}
+			else
+			{
+				MaloW::Debug("Failed to add Equipped weapon to inventory");
+				return;
 			}
 		}
+		Projectile* oldProjectile = eq->GetProjectile();
+		if (oldProjectile)
+		{
+			if(this->zPlayerInventory->AddItem(oldProjectile))
+			{
+				Gui_Item_Data gid = Gui_Item_Data(oldProjectile->GetID(), oldProjectile->GetWeight(), oldProjectile->GetStackSize(),
+					oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
 
+				this->zGuiManager->AddInventoryItemToGui(gid);
+
+				eq->UnEquipProjectile();
+			}
+			else
+			{
+				MaloW::Debug("Failed to add Equipped projectile to inventory");
+				return;
+			}
+		}
+		this->zPlayerInventory->EquipItem(mWpn->GetID());
 		eq->EquipWeapon(mWpn);
-
-		if (Messages::FileWrite())
-			Messages::Debug(mWpn->GetItemName() + " Equipped");
 
 		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID(), mWpn->GetStackSize());
 
@@ -298,7 +382,7 @@ void Client::HandleEquipItem(const int ItemID, const int Slot)
 	}
 }
 
-void Client::HandleUnEquipItem(const int ItemID, const int Slot)
+void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 {
 	PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 
@@ -318,7 +402,6 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 		{
 			if (projectile->GetID() == ItemID)
 			{
-				eq->UnEquipProjectile();
 				if(this->zPlayerInventory->AddItem(projectile))
 				{
 					Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
@@ -326,6 +409,7 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
 
+					eq->UnEquipProjectile();
 					return;
 				}
 				return;
@@ -343,8 +427,6 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 		{
 			if (wpn->GetID() == ItemID)
 			{
-				eq->UnEquipWeapon();
-
 				if(this->zPlayerInventory->AddItem(wpn))
 				{
 					int stacks = 0;
@@ -357,6 +439,7 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
 
+					eq->UnEquipWeapon();
 					return;
 				}
 				return;
@@ -471,7 +554,7 @@ void Client::HandleUnEquipItem(const int ItemID, const int Slot)
 	}
 }
 
-void Client::HandleRemoveEquipment(const int ItemID, const int Slot)
+void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 {
 	if (Slot == EQUIPMENT_SLOT_WEAPON)
 	{
@@ -517,7 +600,7 @@ void Client::HandleRemoveEquipment(const int ItemID, const int Slot)
 	}
 }
 
-void Client::SendUnEquipItem(const int ID, const int Slot)
+void Client::SendUnEquipItem(const long ID, const int Slot)
 {
 	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)ID);
 
@@ -526,7 +609,7 @@ void Client::SendUnEquipItem(const int ID, const int Slot)
 	this->zServerChannel->sendData(msg);
 }
 
-void Client::SendPickupItemMessage(const int ID)
+void Client::SendPickupItemMessage(const long ID)
 {
 	std::string msg;
 
@@ -535,7 +618,7 @@ void Client::SendPickupItemMessage(const int ID)
 	this->zServerChannel->sendData(msg);
 }
 
-void Client::SendDropItemMessage(const int ID)
+void Client::SendDropItemMessage(const long ID)
 {
 	std::string msg;
 
@@ -544,20 +627,19 @@ void Client::SendDropItemMessage(const int ID)
 	this->zServerChannel->sendData(msg);
 }
 
-void Client::HandleRemoveInventoryItem(const int ID)
+void Client::HandleRemoveInventoryItem(const long ID)
 {
 	int index = this->zPlayerInventory->Search(ID);
-	float tStack = this->zPlayerInventory->GetItem(index)->GetStackSize();
-
+	int stackSize = this->zPlayerInventory->GetItem(index)->GetStackSize();
 	if(this->zPlayerInventory->RemoveItem(index))
 	{
-		this->zGuiManager->RemoveInventoryItemFromGui(ID, tStack);
+		this->zGuiManager->RemoveInventoryItemFromGui(ID, stackSize);
 		if (Messages::FileWrite())
 			Messages::Debug("Item Removed on Client");
 	}
 }
 
-void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int ID)
+void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned long ID)
 {
 	std::string itemName = "Unknown";
 	std::string itemDescription = "<UNKNOWN DESCRIPTION>";
@@ -651,6 +733,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	{
 	case ITEM_TYPE_FOOD_DEER_MEAT:
 		item = new Food(ID, itemType, hunger);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -659,6 +742,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_FOOD_WOLF_MEAT:
 		item = new Food(ID, itemType, hunger);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -707,6 +791,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_PROJECTILE_ARROW:
 		item = new Projectile(ID, itemType, projectileVelocity, projectileDamage);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -715,6 +800,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_MATERIAL_SMALL_STICK:
 		item = new Material(ID, itemType, craftingType, stacksRequired);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -723,6 +809,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_MATERIAL_MEDIUM_STICK:
 		item = new Material(ID, itemType, craftingType, stacksRequired);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -731,6 +818,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_MATERIAL_THREAD:
 		item = new Material(ID, itemType, craftingType, stacksRequired);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -739,6 +827,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_MATERIAL_LARGE_STICK:
 		item = new Material(ID, itemType, craftingType, stacksRequired);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -781,7 +870,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	}
 	if (this->zPlayerInventory->AddItem(item))
 	{
-		if (!item->GetStacking())
+		if (item->GetStacking())
 		{
 			itemStackSize = 0;
 		}

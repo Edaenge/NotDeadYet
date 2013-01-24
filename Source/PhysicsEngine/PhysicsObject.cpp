@@ -21,6 +21,8 @@ Vector4 QuatMult(Vector4 quat1, Vector4 quat2)
 PhysicsObject::PhysicsObject(Vector3 position)
 {
 	this->pos = position;
+	this->forceAccum = Vector3(0,0,0);
+	this->damping = 0.0f;
 	this->indicies = NULL;
 	this->mesh = NULL;
 	this->nrOfIndicies = 0;
@@ -131,9 +133,44 @@ void PhysicsObject::RecreateWorldMatrix()
 	this->worldMatrix = world;
 }
 
+inline void DoMinMax(Vector3& min, Vector3& max, Vector3 v)
+{
+	min.x = min(min.x, v.x);
+	min.y = min(min.y, v.y);
+	min.z = min(min.z, v.z);
+
+	max.x = max(max.x, v.x);
+	max.y = max(max.y, v.y);
+	max.z = max(max.z, v.z);
+}
+
 bool PhysicsObject::LoadFromFile( string file )
 {
 	// if substr of the last 4 = .obj do this:    - else load other format / print error
+	if(file.substr(file.length()-4) == ".ani")
+	{
+		// Get the directory correct
+		string tempFilename = file;
+		string pathfolder = "";
+		size_t slashpos = tempFilename.find("/");
+		while(slashpos != string::npos)
+		{
+			slashpos = tempFilename.find("/");
+			pathfolder += tempFilename.substr(0, slashpos + 1);
+			tempFilename = tempFilename.substr(slashpos + 1);
+		}
+		
+		ifstream anifile;
+		anifile.open(file);
+		string line = "";
+		getline(anifile, line);
+		getline(anifile, line);
+		getline(anifile, line);
+		file = pathfolder + line;
+		anifile.close();
+	}
+
+
 
 	ObjLoader oj;
 	ObjData* od = oj.LoadObjFile(file);
@@ -141,6 +178,9 @@ bool PhysicsObject::LoadFromFile( string file )
 	if(od)
 	{
 		int nrOfVerts = 0;
+
+		Vector3 min = Vector3(99999.9f, 99999.9f, 99999.9f);
+		Vector3 max = min * -1;
 
 		Vertex* tempverts = new Vertex[od->faces->size()*3];
 
@@ -150,18 +190,21 @@ bool PhysicsObject::LoadFromFile( string file )
 			int textcoord = od->faces->get(i).data[0][1] - 1;
 			int norm = od->faces->get(i).data[0][2] - 1;
 			tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->vertsnorms->get(norm));
+			DoMinMax(min, max, tempverts[nrOfVerts].pos);
 			nrOfVerts++;
 
 			vertpos = od->faces->get(i).data[2][0] - 1;
 			textcoord = od->faces->get(i).data[2][1] - 1;
 			norm = od->faces->get(i).data[2][2] - 1;
 			tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->vertsnorms->get(norm));
+			DoMinMax(min, max, tempverts[nrOfVerts].pos);
 			nrOfVerts++;
 
 			vertpos = od->faces->get(i).data[1][0] - 1;
 			textcoord = od->faces->get(i).data[1][1] - 1;
 			norm = od->faces->get(i).data[1][2] - 1;
 			tempverts[nrOfVerts] = Vertex(od->vertspos->get(vertpos), od->vertsnorms->get(norm));
+			DoMinMax(min, max, tempverts[nrOfVerts].pos);
 			nrOfVerts++;
 		}
 
@@ -175,7 +218,7 @@ bool PhysicsObject::LoadFromFile( string file )
 		this->SetVerts(verts);
 		
 		delete od;
-
+		this->SetBoundingSphere(BoundingSphere(min, max));
 		return true;
 	}
 
@@ -197,4 +240,52 @@ void PhysicsObject::SetScaling( const float scale )
 {
 	this->scale = Vector3(scale, scale, scale);
 	RecreateWorldMatrix();
+}
+
+void PhysicsObject::SetMass( const float mass )
+{
+	assert(mass != 0);
+	this->inverseMass = ((float)1.0)/mass;
+}
+
+float PhysicsObject::GetMass() const
+{
+	if(inverseMass == 0)
+	{
+		return REAL_MAX;
+	}
+	else
+	{
+		return ((float)1.0)/inverseMass;
+	}
+}
+
+void PhysicsObject::ClearAccumulator()
+{
+	forceAccum = Vector3(.0f, .0f, .0f);
+}
+
+void PhysicsObject::Integrate( float dt )
+{
+	// We don't integrate things with zero mass.
+	if (inverseMass <= 0.0f)
+		return;
+
+	assert(dt > 0.0);
+
+	// Update linear position.
+	pos += (velocity* dt);
+
+	// Work out the acceleration from the force
+	Vector3 resultingAcc = acceleration;
+	resultingAcc += (forceAccum * inverseMass);
+
+	// Update linear velocity from the acceleration.
+	velocity += (resultingAcc * dt);
+
+	// Impose drag.
+	velocity *= pow(damping, dt);
+
+	// Clear the forces.
+	ClearAccumulator();
 }

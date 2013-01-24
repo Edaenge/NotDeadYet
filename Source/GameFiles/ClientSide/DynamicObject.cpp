@@ -10,7 +10,7 @@ void DynamicObject::Update(float deltaTime)
 	this->SetPosition(currentPosition);
 }
 
-DynamicObject::DynamicObject(const unsigned int id) : MovingObject(id)
+DynamicObject::DynamicObject(const long id) : MovingObject(id)
 {
 	this->zType = 0;
 	this->zWeight = 0;

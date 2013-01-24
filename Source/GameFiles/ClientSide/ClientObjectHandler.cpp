@@ -1,7 +1,7 @@
 #include "Client.h"
 #include "ClientServerMessages.h"
 
-bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const int ID)
+bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const long ID)
 {
 	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, ID);
 
@@ -55,14 +55,16 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		if (ID == this->zID)
 		{
 			this->zCreated = true;
+			filename = "Media/Ball.obj";
+			scale = Vector3(0.5f, 0.5f, 0.5f);
 		}
 	}
 	if (Messages::FileWrite())
-		Messages::Debug("Player ID " + MaloW::convertNrToString((float)ID) +" Added");
+		Messages::Debug("Player ID: " + MaloW::convertNrToString((float)ID) +" Added");
 	
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
-	mesh->SetQuaternion(Vector4(0,0,0,1));
+	mesh->ResetRotation();
 	mesh->SetQuaternion(rotation);
 	mesh->SetScale(scale);
 
@@ -74,7 +76,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
-bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const int ID)
+bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const long ID)
 {
 	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, ID);
 
@@ -129,7 +131,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
-	mesh->SetQuaternion(Vector4(0,0,0,1));
+	mesh->ResetRotation();
 	mesh->SetQuaternion(rotation);
 	mesh->SetScale(scale);
 
@@ -141,7 +143,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
-bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const int ID)
+bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const long ID)
 {
 	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, ID);
 
@@ -233,7 +235,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
-bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const int ID)
+bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const long ID)
 {
 	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, ID);
 
@@ -319,9 +321,9 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 
-	mesh->SetScale(scale);
 	mesh->ResetRotation();
 	mesh->SetQuaternion(rotation);
+	mesh->SetScale(scale);
 
 	//Create player data
 	dynamicObject->SetStaticMesh(mesh);
@@ -332,7 +334,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const int ID)
+bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const long ID)
 {
 	//Get ID and Position Depending on type
 	if (ID == -1)
@@ -429,7 +431,7 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const int ID)
+bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const long ID)
 {
 	//Get ID and Position Depending on type
 	if (ID == -1)
@@ -512,10 +514,8 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), StaticObjectPointer->GetPosition());
 		float scale = StaticObjectPointer->GetScale().y;
 		Vector4 quat = StaticObjectPointer->GetRotation();
-		if (ID == 8)
-		{
-			scale = 1;
-		}
+
+		mesh->ResetRotation();
 		mesh->SetQuaternion(quat);
 		mesh->SetScale(scale);
 
@@ -528,7 +528,7 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const int ID)
+bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const long ID)
 {
 	//Get ID and Position Depending on type
 	if (ID == -1)
@@ -579,6 +579,8 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		{
 			float health = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, (*it));
 			AnimalObjectPointer->SetHealth(health);
+			if (Messages::FileWrite())
+				Messages::Debug("Animal Health is: " + MaloW::convertNrToString(health));
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
@@ -598,6 +600,7 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		float scale = AnimalObjectPointer->GetScale().y;
 		Vector4 quat = AnimalObjectPointer->GetRotation();
 
+		mesh->ResetRotation();
 		mesh->SetQuaternion(quat);
 		mesh->Scale(scale);
 
@@ -611,7 +614,7 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 	return true;
 }
 
-bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, const int ID)
+bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, const long ID)
 {
 	//Get ID and Position Depending on type
 	if (ID == -1)
@@ -711,7 +714,7 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 	return true;
 }
 
-bool Client::RemovePlayerObject(const int ID)
+bool Client::RemovePlayerObject(const long ID)
 {
 	if (ID == -1)
 		return false;
@@ -740,7 +743,7 @@ bool Client::RemovePlayerObject(const int ID)
 	return true;
 }
 
-bool Client::RemoveAnimalObject(const int ID)
+bool Client::RemoveAnimalObject(const long ID)
 {
 	if (ID == -1)
 		return false;
@@ -765,7 +768,7 @@ bool Client::RemoveAnimalObject(const int ID)
 	return true;
 }
 
-bool Client::RemoveStaticObject(const int ID)
+bool Client::RemoveStaticObject(const long ID)
 {
 	if (ID == -1)
 		return false;
@@ -793,7 +796,7 @@ bool Client::RemoveStaticObject(const int ID)
 	return true;
 }
 
-bool Client::RemoveDynamicObject(const int ID)
+bool Client::RemoveDynamicObject(const long ID)
 {
 	if (ID == -1)
 		return false;
