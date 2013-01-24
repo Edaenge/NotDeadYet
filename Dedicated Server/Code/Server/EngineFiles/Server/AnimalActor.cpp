@@ -91,9 +91,10 @@ void AnimalActor::UpdateForPlayer( float deltaTime )
 
 void AnimalActor::InitPathfinder()
 {
-	std::bitset<100*100> testGrid;
+	std::bitset<120*120> testGrid;
 	testGrid.reset();
-	this->zPathfinder.InitAI(testGrid,0.5); //How to send in the bitset might be a bit of a hastle, so there will be another class used for comparison, I believe.
+	this->zPathfinder.InitAI(testGrid,0.5,95);
+	//How to send in the bitset might be a bit of a hastle, so there will be another class used for comparison, I believe.
 }
 
 Behaviour AnimalActor::GetBehaviour()

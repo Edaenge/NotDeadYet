@@ -95,6 +95,8 @@ protected:
 	float	zFearIntervalCounter;
 	float	zIntervalCounter;
 
+	bool	zPanic;
+
 private: 
 	Behaviour	zMentalState;
 	//Type		zType;
