@@ -11,21 +11,46 @@ AI::~AI()
 
 }
 
-void AI::InitAI(std::bitset<GRIDSIZE*GRIDSIZE> theGrid, float nodeDistance, float mapRange)
+void AI::InitAI(float nodeDistance, float mapRange)
 {
-	this->zGrid = theGrid;
+	this->zGrid.reset();
 	this->zNodeDistance = nodeDistance;
 	this->zMaximumRange = mapRange;
+}
+
+void AI::SetWorldPointer(World* theWorld)
+{
+	this->zWorld = theWorld;
 }
 
 //Note: by Y, we of course mean Z. I was merely thinking in a 2-d grid when designing this.
 bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goalYPos, std::vector<Vector2> &inVector, int maximumPathLenght)
 {
-	// 3 Issues:
+	// 1 Issue(s):
 		//- checking the world for good/bad nodes.
-		//- Make the system more dynamic
-		//- Make the returned vector correspond properly, have nice coords in it.
 
+	//Here we determine which nodes are good or bad.
+	for(int j = 0; j < GRIDSIZE; j++)
+	{
+		for(int i = 0; i < GRIDSIZE; i++)
+		{
+			//If the position is outside the map then ignore it, otherwise there are sector problems!
+
+			Vector2 pos = Vector2((int) (startXPos + (i - GRIDSIZE/2) * this->zNodeDistance),(int) (startYPos + (j - GRIDSIZE/2) * this->zNodeDistance) );
+			if(pos.x < 0 || pos.x > this->zMaximumRange)
+			{
+				this->zGrid[j * GRIDSIZE + i] = true;
+			}
+			else if(pos.y < 0 || pos.y > this->zMaximumRange)
+			{
+				this->zGrid[j * GRIDSIZE + i] = true;
+			}
+			else
+			{
+				this->zGrid[j * GRIDSIZE + i] = this->zWorld->IsBlockingAt(pos);
+			}	
+		}
+	}
 
 	//int startX = ceil((startXPos/this->zNodeDistance)-0.5); //Static grid
 	//int startY = ceil((startYPos/this->zNodeDistance)-0.5); //Static grid

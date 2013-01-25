@@ -55,32 +55,48 @@ ActorHandler::~ActorHandler()
 
 void ActorHandler::UpdateObjects(float deltaTime)
 {
-	Vector3 playersPos[32];
-	float playerVelocity[32];
-	float playerHealth[32];
+	Vector3 entityPos[32+48]; //Number of players + number of animals
+	float entityVelocity[32+48];
+	float entityHealth[32+48];
 
 	int nrOfPlayers = 0;
+	int nrOfEntities = 0;
 
-	//Update Players
+	//Update Players (and get info about them)
 	for (auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
 	{
 		(*it)->Update(deltaTime);
-		playersPos[nrOfPlayers] = (*it)->GetPosition();
-		playerVelocity[nrOfPlayers] = (*it)->GetVelocity();
-		playerHealth[nrOfPlayers] = (*it)->GetHealth();
-	
+		entityPos[nrOfEntities] = (*it)->GetPosition();
+		entityVelocity[nrOfEntities] = (*it)->GetVelocity();
+		entityHealth[nrOfEntities] = (*it)->GetHealth();
+
 		nrOfPlayers++;
+		nrOfEntities++;
 	}
 
-	
-	//Update Animals
+	//Get information about all animals ahead of updating them.
 	for (auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
 	{
-		for(int i = 0; i < nrOfPlayers; i++)	//Potential area for optimization, probably.
+		entityPos[nrOfEntities] = (*it)->GetPosition();
+		entityVelocity[nrOfEntities] = (*it)->GetVelocity();
+		entityHealth[nrOfEntities] = (*it)->GetHealth();
+	
+		nrOfEntities++;
+	}
+	
+	//Update Animals (And set info about all the animals)
+	for (auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
+	{
+		for(int i = 0; i < nrOfPlayers; i++) //Giving info about players	//Potential area for optimization, probably.
 		{
-			(*it)->SetPlayerInfo(i,playersPos[i], playerVelocity[i], playerHealth[i]);
+			(*it)->SetTargetInfo(i,entityPos[i], entityVelocity[i], entityHealth[i]);
 		}
-		(*it)->SetCurrentPlayers(nrOfPlayers);
+		for(int i = nrOfEntities - nrOfPlayers; i < nrOfEntities; i++) //Giving info about other animals
+		{	//WARNING: There might be some problems if an animal essentially gets itself, requires testing and coding to avoid schizo hypocondria.
+			(*it)->SetTargetInfo(i,entityPos[i], entityVelocity[i], entityHealth[i], (*it)->GetType() ); 
+		}
+		
+		(*it)->SetCurrentTargets(nrOfEntities);
 		(*it)->Update(deltaTime);
 	}
 	//Update DynamicObjects
@@ -107,6 +123,8 @@ bool ActorHandler::AddNewDeadPlayer( DeadPlayerObjectActor* new_DeadPlayer )
 		return false;
 
 	this->zDeadPlayers.push_back(new_DeadPlayer);
+
+	return true;
 }
 
 bool ActorHandler::AddNewAnimalActor(AnimalActor* new_animal)

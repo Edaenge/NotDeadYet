@@ -91,10 +91,7 @@ void AnimalActor::UpdateForPlayer( float deltaTime )
 
 void AnimalActor::InitPathfinder()
 {
-	std::bitset<120*120> testGrid;
-	testGrid.reset();
-	this->zPathfinder.InitAI(testGrid,0.5,95);
-	//How to send in the bitset might be a bit of a hastle, so there will be another class used for comparison, I believe.
+	this->zPathfinder.InitAI(0.5,95);
 }
 
 Behaviour AnimalActor::GetBehaviour()
@@ -193,22 +190,22 @@ std::vector<Vector2>& AnimalActor::GetPath()
 	return this->zCurrentPath;
 }
 
-void AnimalActor::SetPlayerInfo(int number, Vector3 pos, float velocity, float health)
+void AnimalActor::SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind)
 {
 	this->zTargets[number].position = pos;
 	this->zTargets[number].movementNoise = velocity;
 	this->zTargets[number].health = health;
-
+	this->zTargets[number].kind = kind;
 }
 
-int AnimalActor::GetCurrentPlayers()
+int AnimalActor::GetCurrentTargets()
 {
-	return this->zCurrentNrOfPlayers;
+	return this->zCurrentNrOfTargets;
 }
 
-void AnimalActor::SetCurrentPlayers(int number)
+void AnimalActor::SetCurrentTargets(int number)
 {
-	this->zCurrentNrOfPlayers = number;
+	this->zCurrentNrOfTargets = number;
 }
 
 float AnimalActor::GetPreviousHealth()
@@ -229,4 +226,21 @@ bool AnimalActor::GetIfPlayerControlled()
 void AnimalActor::SetIfPlayerControlled(bool isControlled)
 {
 	this->zIsPlayerControlled = isControlled;
+}
+
+Type AnimalActor::GetType()
+{
+	return this->zType;
+}
+
+void AnimalActor::SetType(Type theType)
+{
+	this->zType = theType;
+}
+
+void AnimalActor::SetWorldPointer(World* theWorld)
+{
+	this->zWorld = theWorld;
+	this->zPathfinder.SetWorldPointer(this->zWorld);
+	
 }

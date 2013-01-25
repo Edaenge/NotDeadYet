@@ -33,7 +33,7 @@ Host::Host()
 	this->pSpawnPosition = 0;
 	this->aSpawnPosition = 0;
 
-	this->zPlayerSpawnPoints.push_back(Vector3(35.6f, 14.0F, 22.8f));
+	this->zPlayerSpawnPoints.push_back(Vector3(20.6f, 14.0F, 20.8f));
 	this->zPlayerSpawnPoints.push_back(Vector3(59.2f, 0, 26.8f));
 	this->zPlayerSpawnPoints.push_back(Vector3(63.77f, 0, 31.0f));
 	this->zPlayerSpawnPoints.push_back(Vector3(73.4f, 0, 44.0f));
@@ -862,6 +862,7 @@ bool Host::CreateAnimalActor(DeerActor** deerAct, const bool genID)
 	(*deerAct)->SetActorModel(path);
 	(*deerAct)->SetPhysicObject(pObj);
 	(*deerAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	(*deerAct)->SetWorldPointer(this->zWorld);
 
 	return true;
 }
@@ -879,6 +880,7 @@ bool Host::CreateAnimalActor(WolfActor** wolfAct, const bool genID)
 	(*wolfAct)->SetActorModel(path);
 	(*wolfAct)->SetPhysicObject(pObj);
 	(*wolfAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	(*wolfAct)->SetWorldPointer(this->zWorld);
 
 	return true;
 }
@@ -1661,7 +1663,8 @@ void Host::onEvent( Event* e )
 			Vector3 dir = playerTempPos - oldPos;
 			Vector3 groundNormal = this->zWorld->GetNormalAtWorldPos(playerTempPos.x, playerTempPos.z);
 
-			playerTempPos.y -= (9.82f * this->zDeltaTime);			if(playerTempPos.y < yPos)
+			playerTempPos.y -= (9.82f * this->zDeltaTime);			
+			if(playerTempPos.y < yPos)
 				playerTempPos.y = yPos;
 
 			//dir.y = groundNormal.y;
@@ -1671,34 +1674,36 @@ void Host::onEvent( Event* e )
 			tempGround.y = 0;
 			tempGround.Normalize();
 			float dot = dir.GetDotProduct(tempGround);
-			/*
-			Vector3 newPlayerTempPos = playerTempPos + (tempGround * (zDeltaTime));
-			Vector3 groundNormalNew = this->zWorld->GetNormalAtWorldPos(playerTempPos.x, playerTempPos.z);
-			float yPosNew = this->zWorld->GetHeightAtWorldPos(newPlayerTempPos.x, newPlayerTempPos.z);
-			if( groundNormalNew.y < sin(45 * (3.1415 / 180)) )
+			if( groundNormal.y <= 0.5f )
 			{
-				newPlayerTempPos.y += -1.82 * zDeltaTime;
+				Vector3 newPlayerTempPos = playerTempPos + (tempGround * (zDeltaTime * 4));
+
+				float yPosNew = this->zWorld->GetHeightAtWorldPos(newPlayerTempPos.x, newPlayerTempPos.z);
+				newPlayerTempPos.y += -9.82 * zDeltaTime;
 				if(newPlayerTempPos.y < yPosNew)
 					newPlayerTempPos.y = yPosNew;
-
-				PUE->playerActor->SetPosition(Vector3(newPlayerTempPos.x, newPlayerTempPos.y, newPlayerTempPos.z));
-			}*/
-			if(dot > 0.2)
+				PUE->validMove = false;
+				PUE->prevPos = newPlayerTempPos;
+			}
+			else if(dot > 0.2)
 			{
 				PUE->validMove = true;
-				playerTempPos.y += -1.82 * zDeltaTime;
+				playerTempPos.y += -9.82 * zDeltaTime;
 				if(playerTempPos.y < yPos)
 					playerTempPos.y = yPos;
 
-				PUE->playerActor->SetPosition(Vector3(playerTempPos.x, playerTempPos.y, playerTempPos.z));
+				PUE->playerActor->SetPosition(playerTempPos);
 				this->zAnchorPlayerMap[PUE->playerActor]->position = Vector2(playerTempPos.x, playerTempPos.z);
 			}			
-			else if(groundNormal.y > sin(45 * (3.1415 / 180)))
+			else if(groundNormal.y > 0.7f)
 			{
-				PUE->playerActor->SetPosition(Vector3(playerTempPos.x, yPos, playerTempPos.z));
+				playerTempPos.y = yPos;
+				PUE->playerActor->SetPosition(playerTempPos);
 				this->zAnchorPlayerMap[PUE->playerActor]->position = Vector2(playerTempPos.x, playerTempPos.z);
 				PUE->validMove = true;
 			}
+			
+
 		}
 		else
 		{
