@@ -9,6 +9,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "BioActor.h"
 #include <fstream>
 #include <time.h>
+#include "../WorldFiles/World.h"
 
 enum Behaviour
 {
@@ -19,11 +20,12 @@ enum Behaviour
 	AFRAID
 };
 
-//enum Type
-//{
-//	HUMAN,
-//	DEER
-//};
+enum Type
+{
+	HUMAN,
+	DEER,
+	WOLF
+};
 
 struct Target //Supposed to represent an entity near the animal, like a player, or possibly other animal (removed until deemed necessary)
 {
@@ -32,6 +34,7 @@ struct Target //Supposed to represent an entity near the animal, like a player, 
 	float	health;
 	float	movementNoise; //The velocity of movement, currently used here to determine how much an animal should hear.
 	bool	valid;
+	Type	kind;
 };
 
 /*This is a NPC animal. It inherits from BioActor.*/
@@ -66,9 +69,9 @@ public:
 	int			GetLastDistanceCheck();
 	void		SetLastDistanceCheck(int distance);
 	
-	void		SetPlayerInfo(int number, Vector3 pos, float velocity, float health);
-	int			GetCurrentPlayers();
-	void		SetCurrentPlayers(int number);
+	void		SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind = HUMAN);
+	int			GetCurrentTargets();
+	void		SetCurrentTargets(int number);
 	virtual void LargeSuddenSoundReaction();
 
 	std::vector<Vector2>& GetPath();
@@ -79,6 +82,10 @@ public:
 	bool		GetIfPlayerControlled();
 	void		SetIfPlayerControlled(bool isControlled);
 	//void		AddEntity(Vector3* pos, Type type);
+	Type		GetType();
+	void		SetType(Type theType);
+
+	void		SetWorldPointer(World* theWorld);
 
 private:
 	void	InitPathfinder();
@@ -87,7 +94,7 @@ protected:
 	AI		zPathfinder;
 
 	std::vector<Vector2>	zCurrentPath;
-	std::vector<Target>		zTargets;
+	std::vector<Target>		zTargets; //Humans and other animals
 	Target					zMainTarget;
 
 	float	zCalmActionInterval;
@@ -96,10 +103,11 @@ protected:
 	float	zIntervalCounter;
 
 	bool	zPanic;
+	World*	zWorld;
 
 private: 
 	Behaviour	zMentalState;
-	//Type		zType;
+	Type		zType;
 	bool		zNeedPath;
 	bool		zIsPlayerControlled;
 
@@ -111,7 +119,9 @@ private:
 	
 	int			zLastDistanceCheck;
 	
-	int			zCurrentNrOfPlayers;
+	int			zCurrentNrOfTargets;
+
+
 	
 
 };

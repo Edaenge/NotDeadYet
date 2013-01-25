@@ -23,7 +23,7 @@ Host::Host()
 	this->zStartime = 0;
 	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
-	this->zTimeOut = 10.0f;
+	this->zTimeOut = 15.0f;
 	this->zPingMessageInterval = 5.0f;
 
 	//timer = 0;
@@ -34,7 +34,6 @@ Host::Host()
 	this->pSpawnPosition = 0;
 	this->aSpawnPosition = 0;
 
-	this->zPlayerSpawnPoints.push_back(Vector3(35.6f, 14.0F, 22.8f));
 	this->zPlayerSpawnPoints.push_back(Vector3(59.2f, 0, 26.8f));
 	this->zPlayerSpawnPoints.push_back(Vector3(63.77f, 0, 31.0f));
 	this->zPlayerSpawnPoints.push_back(Vector3(73.4f, 0, 44.0f));
@@ -267,6 +266,7 @@ void Host::Life()
 	{
 		waitTimer += Update();
 
+
 		//Checks if ServerListener is still working
 		if(!this->zServerListener->IsAlive())
 		{
@@ -282,12 +282,15 @@ void Host::Life()
 		
 		if(waitTimer >= UPDATE_DELAY)
 		{
+
 			waitTimer = 0.0f;
+
 
 			SendPlayerActorUpdates();
 			SendAnimalActorUpdates();
 			SendDynamicActorUpdates();
 		}
+
 
 		Sleep(5);
 	}
@@ -383,7 +386,6 @@ void Host::HandleNewConnections()
 
 		temp.push_back(message);
 	}
-
 	message = "";
 	std::vector<AnimalActor *> animals = this->zActorHandler->GetAnimals();
 
@@ -404,13 +406,11 @@ void Host::HandleNewConnections()
 		temp.push_back(message);
 	}
 
-
 	//Sends All Actors to the player
 	for (auto it = temp.begin(); it < temp.end(); it++)
 	{
 		SendToClient(cd,*it, true);
 	}
-
 	//Sends All  objects To the Player
 	std::vector<std::string> static_Msg;
 	this->GetExistingObjects(static_Msg);
@@ -420,7 +420,6 @@ void Host::HandleNewConnections()
 	}
 
 }
-
 void Host::SendToAllClients(const std::string& message, bool sendIM /*= false*/ )
 {
 	if(!HasClients())
@@ -442,14 +441,12 @@ void Host::SendToAllClients(const std::string& message, bool sendIM /*= false*/ 
 		
 	}
 }
-
 void Host::SendToClient(int clientID, const std::string& message, bool sendIM /*= false*/ )
 {
 	int pos = SearchForClient(clientID);
 
 	if(pos == -1)
 		return;
-
 	ClientData* cd = this->zClients[pos];
 	if(!sendIM)
 	{
@@ -710,6 +707,7 @@ bool Host::CreateAnimalActor(DeerActor** deerAct, const bool genID)
 	(*deerAct)->SetActorModel(path);
 	(*deerAct)->SetPhysicObject(pObj);
 	(*deerAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	(*deerAct)->SetWorldPointer(this->zWorld);
 
 	return true;
 }
@@ -727,6 +725,7 @@ bool Host::CreateAnimalActor(WolfActor** wolfAct, const bool genID)
 	(*wolfAct)->SetActorModel(path);
 	(*wolfAct)->SetPhysicObject(pObj);
 	(*wolfAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	(*wolfAct)->SetWorldPointer(this->zWorld);
 
 	return true;
 }
@@ -889,7 +888,6 @@ void Host::SendNewObjectMessage(AnimalActor* animalObj)
 
 	this->SendToAllClients(msg, true);
 }
-
 void Host::HandleReceivedMessages()
 {
 	
@@ -1491,7 +1489,8 @@ void Host::onEvent( Event* e )
 			Vector3 dir = playerTempPos - oldPos;
 			Vector3 groundNormal = this->zWorld->GetNormalAtWorldPos(playerTempPos.x, playerTempPos.z);
 
-			playerTempPos.y -= (9.82f * this->zDeltaTime);			if(playerTempPos.y < yPos)
+			playerTempPos.y -= (9.82f * this->zDeltaTime);			
+			if(playerTempPos.y < yPos)
 				playerTempPos.y = yPos;
 
 			//dir.y = groundNormal.y;
@@ -1501,34 +1500,37 @@ void Host::onEvent( Event* e )
 			tempGround.y = 0;
 			tempGround.Normalize();
 			float dot = dir.GetDotProduct(tempGround);
-			/*
-			Vector3 newPlayerTempPos = playerTempPos + (tempGround * (zDeltaTime));
-			Vector3 groundNormalNew = this->zWorld->GetNormalAtWorldPos(playerTempPos.x, playerTempPos.z);
-			float yPosNew = this->zWorld->GetHeightAtWorldPos(newPlayerTempPos.x, newPlayerTempPos.z);
-			if( groundNormalNew.y < sin(45 * (3.1415 / 180)) )
+			if( groundNormal.y <= 0.5f )
 			{
-				newPlayerTempPos.y += -1.82 * zDeltaTime;
+				Vector3 newPlayerTempPos = playerTempPos + (tempGround * (zDeltaTime * 4));
+
+				float yPosNew = this->zWorld->GetHeightAtWorldPos(newPlayerTempPos.x, newPlayerTempPos.z);
+				newPlayerTempPos.y += -9.82 * zDeltaTime;
 				if(newPlayerTempPos.y < yPosNew)
 					newPlayerTempPos.y = yPosNew;
-
-				PUE->playerActor->SetPosition(Vector3(newPlayerTempPos.x, newPlayerTempPos.y, newPlayerTempPos.z));
-			}*/
-			if(dot > 0.2)
+				PUE->validMove = false;
+				PUE->prevPos = newPlayerTempPos;
+			}
+			else if(dot > 0.2)
 			{
 				PUE->validMove = true;
-				playerTempPos.y += -1.82f * zDeltaTime;
+//				playerTempPos.y += -1.82 * zDeltaTime;
+				playerTempPos.y += -9.82 * zDeltaTime;
 				if(playerTempPos.y < yPos)
 					playerTempPos.y = yPos;
 
-				PUE->playerActor->SetPosition(Vector3(playerTempPos.x, playerTempPos.y, playerTempPos.z));
+				PUE->playerActor->SetPosition(playerTempPos);
 				this->zAnchorPlayerMap[PUE->playerActor]->position = Vector2(playerTempPos.x, playerTempPos.z);
 			}			
-			else if(groundNormal.y > sin(45 * (3.1415 / 180)))
+			else if(groundNormal.y > 0.7f)
 			{
-				PUE->playerActor->SetPosition(Vector3(playerTempPos.x, yPos, playerTempPos.z));
+				playerTempPos.y = yPos;
+				PUE->playerActor->SetPosition(playerTempPos);
 				this->zAnchorPlayerMap[PUE->playerActor]->position = Vector2(playerTempPos.x, playerTempPos.z);
 				PUE->validMove = true;
 			}
+			
+
 		}
 		else
 		{

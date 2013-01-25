@@ -25,6 +25,8 @@ DeerActor::~DeerActor()
 
 void DeerActor::InitDeer() throw(...)
 {
+	this->SetType(DEER);
+
 	unsigned int numberFromFile = 0;
 	char characters[16];
 
@@ -94,8 +96,8 @@ void DeerActor::Update( float deltaTime ) //Has become a rather large funtion. C
 
 void DeerActor::UpdateForAnimal(float deltaTime)
 {
-	static float testInterval = 0; //Just for debugging.
-	testInterval += deltaTime;
+	//static float testInterval = 0; //Just for debugging.
+	//testInterval += deltaTime;
 	this->zIntervalCounter += deltaTime;
 	this->zFearIntervalCounter += deltaTime;
 	//this->zAlertnessIntervalCounter += deltaTime;
@@ -112,7 +114,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 	//Perform checking for entities here.
 	//Remember, deers are good at hearing, which will be what the minimumDistance variable is for.
 
-	int minimumDistance = 5; // is just a random value, further testing will be required to settle on a proper value.
+	int minimumDistance = 40; // is just a random value, further testing will be required to settle on a proper value.
 	int shortestDistance = 99999;
 
 	float xDistance = 0;
@@ -122,13 +124,13 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 
 	
 	//Determine closest threat/target
-	for(int i = 0; i < this->GetCurrentPlayers(); i++)
+	for(int i = 0; i < this->GetCurrentTargets(); i++)
 	{
 		xDistance = this->GetPosition().x - this->zTargets[i].position.x; //Math, could use optimization, I think.
 		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
 		zDistance = this->GetPosition().z - this->zTargets[i].position.z;
 		finalDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
-		if( finalDistance < minimumDistance ) 
+		if( finalDistance < minimumDistance && this->zTargets[i].kind != DEER) 
 		{
 			this->zTargets[i].valid = true;
 			if(finalDistance < shortestDistance)
@@ -180,7 +182,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 				fear += 20;
 			}
 
-			for(int i = 0; i < this->GetCurrentPlayers(); i++)
+			for(int i = 0; i < this->GetCurrentTargets(); i++)
 			{
 				if(this->zTargets[i].valid == true)
 				{
@@ -316,7 +318,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 			float shortestDistance = 99999;
 			Target mostLikelyTarget = this->zMainTarget;
 
-			for(int i = 0; i < this->GetCurrentPlayers(); i++)
+			for(int i = 0; i < this->GetCurrentTargets(); i++)
 			{
 				
 				if(this->zTargets[i].valid == true)
@@ -343,7 +345,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 	}
 	else if(this->GetBehaviour() == AFRAID) //Is afraid, running.
 	{
-		int	fleeDistance = 40; //could be larger, but it is functional for the current (small) environment.
+		int	fleeDistance = 40; 
 
 		if(this->GetIfNeedPath() == true)
 		{
@@ -372,7 +374,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 				}
 				
 				this->zCurrentPath.clear();
-				if( !this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
+				if( !this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,50) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
 				{
 					this->SetIfNeedPath(true);
 				}
@@ -403,7 +405,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 							awayFromThreatZ = this->GetPosition().z - fleeDistance;
 						}
 						this->zCurrentPath.clear();
-						if( !this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
+						if( !this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,50) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
 						{
 							this->SetIfNeedPath(true);
 						}
@@ -435,7 +437,7 @@ void DeerActor::UpdateForAnimal(float deltaTime)
 				}
 				
 				this->zCurrentPath.clear();
-				if( !this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
+				if( !this->zPathfinder.Pathfinding(this->GetPosition().x, this->GetPosition().z, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,50) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
 				{
 					this->SetIfNeedPath(true);
 				}

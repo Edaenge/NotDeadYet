@@ -82,35 +82,28 @@ void PlayerActor::Update(float deltaTime)
 	default:
 		break;
 	}
-
+	Vector3 moveMenT = Vector3(0,0,0);
 	if(this->zKeyStates.GetKeyState(KEY_FORWARD))
 	{
-		modified = (modified + this->zDirection * dt * this->zVelocity);
-	}/*
-	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
-	{
-		this->zPos = this->zPos + this->zDirection * dt * this->zVelocity;
+		moveMenT += this->zDirection;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
 	{
-		modified = (modified + this->zDirection * -1 * dt * this->zVelocity);
-
-		modified = (modified + this->zDirection * dt * this->zVelocity);
-	}*/
-	if(this->zKeyStates.GetKeyState(KEY_BACKWARD))
-	{
-		modified = (modified + this->zDirection * -1 * dt * this->zVelocity);
+		moveMenT -= this->zDirection;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_RIGHT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDirection);
-		modified = (modified + (right * dt * this->zVelocity));
+		moveMenT += right;
 	}
 	if(this->zKeyStates.GetKeyState(KEY_LEFT))
 	{
 		Vector3 right = this->zUp.GetCrossProduct(this->zDirection);
-		modified = (modified + (right * -1 * dt * this->zVelocity));
+		moveMenT -= right;
 	}
+	moveMenT.Normalize();
+	moveMenT *= dt * this->zVelocity;
+	modified += moveMenT;
 
 	if(this->zState != STATE_RUNNING && (this->zStamina < this->zStaminaMax))
 	{
@@ -128,7 +121,7 @@ void PlayerActor::Update(float deltaTime)
 	PlayerUpdatedEvent temp = PlayerUpdatedEvent(this, validMove, this->zPreviousPos);
 	NotifyObservers( &temp);
 	if(!temp.validMove)
-		SetPosition(zPreviousPos);
+		SetPosition(temp.prevPos);
 	
 }
 
