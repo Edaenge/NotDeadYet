@@ -53,7 +53,7 @@ ActorHandler::~ActorHandler()
 	SAFE_DELETE(this->zPhysicsEngine);
 }
 
-void ActorHandler::UpdateObjects( float deltaTime )
+void ActorHandler::UpdateObjects(float deltaTime)
 {
 	Vector3 entityPos[32+48]; //Number of players + number of animals
 	float entityVelocity[32+48];
@@ -113,6 +113,16 @@ bool ActorHandler::AddNewPlayer(PlayerActor* new_player)
 
 	new_player->SetObjManager(this->zObjManager);
 	this->zPlayers.push_back(new_player);
+
+	return true;
+}
+
+bool ActorHandler::AddNewDeadPlayer( DeadPlayerObjectActor* new_DeadPlayer )
+{
+	if (!new_DeadPlayer)
+		return false;
+
+	this->zDeadPlayers.push_back(new_DeadPlayer);
 
 	return true;
 }
@@ -219,7 +229,7 @@ bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Pr
 	return true;
 }
 
-Actor* ActorHandler::GetActor( const int ID, const int TYPE ) const
+Actor* ActorHandler::GetActor(const long ID, const int TYPE) const
 {
 	Actor* ac = NULL;
 	this->SearchForActor(ID, TYPE, &ac);
@@ -227,11 +237,11 @@ Actor* ActorHandler::GetActor( const int ID, const int TYPE ) const
 	return ac;
 }
 
-bool ActorHandler::RemovePlayerActor( const int ID )
+bool ActorHandler::RemovePlayerActor(const long ID)
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_PLAYER);
 
-	if(index == -1)
+	if(index == -1 || (unsigned int)index >= this->zPlayers.size())
 		return false;
 
 	PlayerActor* temp = this->zPlayers[index];
@@ -242,11 +252,28 @@ bool ActorHandler::RemovePlayerActor( const int ID )
 	return true;
 }
 
-bool ActorHandler::RemoveAnimalActor( const int ID )
+bool ActorHandler::RemovedDeadPlayerObject(const long ID)
+{
+	int index = this->SearchForActor(ID, ACTOR_TYPE_DEAD_PLAYER);
+
+	if(index == -1 || (unsigned int)index >= this->zDeadPlayers.size())
+		return false;
+
+	DeadPlayerObjectActor* temp = this->zDeadPlayers[index];
+
+	this->zDeadPlayers.erase(this->zDeadPlayers.begin() + index);
+	this->zPhysicsEngine->DeletePhysicsObject(temp->GetPhysicObject());
+
+	SAFE_DELETE(temp);
+
+	return true;
+}
+
+bool ActorHandler::RemoveAnimalActor(const long ID)
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_ANIMAL);
 
-	if(index == -1)
+	if(index == -1 || (unsigned int)index >= this->zAnimals.size())
 		return false;
 	
 	AnimalActor* temp = this->zAnimals[index];
@@ -257,11 +284,11 @@ bool ActorHandler::RemoveAnimalActor( const int ID )
 	return true;
 }
 
-bool ActorHandler::RemoveStaticFoodActor( const int ID )
+bool ActorHandler::RemoveStaticFoodActor(const long ID)
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_FOOD);
 
-	if(index == -1)
+	if(index == -1 || (unsigned int)index >= this->zFoods.size())
 		return false;
 
 	FoodObject* temp = this->zFoods[index];
@@ -272,11 +299,11 @@ bool ActorHandler::RemoveStaticFoodActor( const int ID )
 	return true;
 }
 
-bool ActorHandler::RemoveStaticWeaponActor( const int ID )
+bool ActorHandler::RemoveStaticWeaponActor( const long ID)
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_WEAPON);
 
-	if(index == -1)
+	if(index == -1 || (unsigned int)index >= this->zWeapons.size())
 		return false;
 
 	WeaponObject* temp = this->zWeapons[index];
@@ -287,11 +314,11 @@ bool ActorHandler::RemoveStaticWeaponActor( const int ID )
 	return true;
 }
 
-bool ActorHandler::RemoveStaticContainerActor( const int ID )
+bool ActorHandler::RemoveStaticContainerActor(const long ID)
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_CONTAINER);
 
-	if(index == -1)
+	if(index == -1 || (unsigned int)index >= this->zContainers.size())
 		return false;
 
 	ContainerObject* temp = this->zContainers[index];
@@ -302,11 +329,11 @@ bool ActorHandler::RemoveStaticContainerActor( const int ID )
 	return true;
 }
 
-bool ActorHandler::RemoveStaticProjectileActor( const int ID )
+bool ActorHandler::RemoveStaticProjectileActor(const long ID)
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_PROJECTILE);
 
-	if(index == -1)
+	if(index == -1 || (unsigned int)index >= this->zStaticProjectiles.size())
 		return false;
 
 	StaticProjectileObject* temp = this->zStaticProjectiles[index];
@@ -318,11 +345,11 @@ bool ActorHandler::RemoveStaticProjectileActor( const int ID )
 	return true;
 }
 
-bool ActorHandler::RemoveStaticMaterialActor( const int ID )
+bool ActorHandler::RemoveStaticMaterialActor(const long ID)
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_MATERIAL);
 
-	if(index == -1)
+	if(index == -1 || (unsigned int)index >= this->zMaterials.size())
 		return false;
 
 	MaterialObject* temp = this->zMaterials[index];
@@ -334,11 +361,11 @@ bool ActorHandler::RemoveStaticMaterialActor( const int ID )
 	return true;
 }
 
-bool ActorHandler::RemoveDynamicProjectileActor( const int ID )
+bool ActorHandler::RemoveDynamicProjectileActor(const long ID)
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE);
 
-	if(index == -1)
+	if(index == -1 || (unsigned int)index >= this->zDynamicProjectiles.size())
 		return false;
 
 	DynamicProjectileObject* temp = this->zDynamicProjectiles[index];
@@ -350,13 +377,23 @@ bool ActorHandler::RemoveDynamicProjectileActor( const int ID )
 	return true;
 }
 
-const int ActorHandler::SearchForActor( const int ID, int TYPE ) const
+const int ActorHandler::SearchForActor(const long ID, int TYPE) const
 {
 	if(TYPE == ACTOR_TYPE_PLAYER)
 	{
 		for (unsigned int it = 0; it < this->zPlayers.size(); it++)
 		{
 			if(this->zPlayers[it]->GetID() == ID)
+				return it;
+		}
+
+	}
+
+	else if(TYPE == ACTOR_TYPE_DEAD_PLAYER)
+	{
+		for (unsigned int it = 0; it < this->zDeadPlayers.size(); it++)
+		{
+			if(this->zDeadPlayers[it]->GetID() == ID)
 				return it;
 		}
 
@@ -430,7 +467,7 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE ) const
 	return -1;
 }
 
-const int ActorHandler::SearchForActor( const int ID, int TYPE, Actor** aOut ) const
+const int ActorHandler::SearchForActor(const long ID, int TYPE, Actor** aOut) const
 {
 	if(TYPE == ACTOR_TYPE_PLAYER)
 	{
@@ -442,7 +479,18 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE, Actor** aOut ) c
 				return it;
 			}
 		}
+	}
 
+	else if(TYPE == ACTOR_TYPE_DEAD_PLAYER)
+	{
+		for (unsigned int it = 0; it < this->zDeadPlayers.size(); it++)
+		{
+			if(this->zDeadPlayers[it]->GetID() == ID)	
+			{
+				*aOut = this->zDeadPlayers[it];
+				return it;
+			}
+		}
 	}
 
 	else if(TYPE == ACTOR_TYPE_ANIMAL)
@@ -455,7 +503,6 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE, Actor** aOut ) c
 				return it;
 			}
 		}
-
 	}
 
 	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_FOOD)
@@ -468,7 +515,6 @@ const int ActorHandler::SearchForActor( const int ID, int TYPE, Actor** aOut ) c
 				return it;
 			}
 		}
-
 	}
 
 	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_WEAPON)

@@ -104,25 +104,27 @@ private:
 	bool UpdateAnimalObjects(const std::vector<std::string>& msgArray, const long ID);
 	/*! Updates A Dynamic Object.*/
 	bool UpdateDynamicObjects(const std::vector<std::string>& msgArray, const long ID);
-	/*! Updates A Player Object*/
+	/*! Updates A Player Object.*/
 	bool UpdatePlayerObjects(const std::vector<std::string>& msgArray, const long ID);
 	
-	/*! Removes A Player Object*/
+	/*! Removes A Player Objec.t*/
 	bool RemovePlayerObject(const long ID);
-	/*! Removes An Animal Object*/
+	/*! Removes An Animal Object.*/
 	bool RemoveAnimalObject(const long ID);
-	/*! Removes A Static Object*/
+	/*! Removes A Static Object.*/
 	bool RemoveStaticObject(const long ID);
-	/*! Removes A Dynamic Object*/
+	/*! Removes A Dynamic Object.*/
 	bool RemoveDynamicObject(const long ID);
 
-	/*! Adds A Player Object*/
+	/*! Adds A Player Object.*/
 	bool AddNewPlayerObject(const std::vector<std::string>& msgArray, const long ID);
-	/*! Adds An Animal Object*/
+	/*! Adds a Dead Player Object.*/
+	bool AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, const long ID);
+	/*! Adds An Animal Object.*/
 	bool AddNewAnimalObject(const std::vector<std::string>& msgArray, const long ID);
-	/*! Adds A Static Object*/
+	/*! Adds A Static Object.*/
 	bool AddNewStaticObject(const std::vector<std::string>& msgArray, const long ID);
-	/*! Adds A Dynamic Object*/
+	/*! Adds A Dynamic Object.*/
 	bool AddNewDynamicObject(const std::vector<std::string>& msgArray, const long ID);
 
 	//////////////////////

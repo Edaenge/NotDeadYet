@@ -11,6 +11,8 @@ class Food : public Item
 {
 public:
 	Food(const long id, const unsigned int TYPE, const float hunger);
+	Food(const Food& other);
+	Food(const Food* other);
 	virtual ~Food();
 	/*! Decreases Stacks by 1.*/
 	virtual bool Use();

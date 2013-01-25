@@ -1,7 +1,5 @@
 #include "Host.h"
 #include "../../../../../Source/GameFiles/ClientServerMessages.h"
-#include "DeerActor.h"
-
 // 50 updates per sec
 static const float UPDATE_DELAY = 0.020f;
 
@@ -34,6 +32,7 @@ Host::Host()
 	this->pSpawnPosition = 0;
 	this->aSpawnPosition = 0;
 
+	this->zPlayerSpawnPoints.push_back(Vector3(36.0f, 14.0F, 22.0f));
 	this->zPlayerSpawnPoints.push_back(Vector3(59.2f, 0, 26.8f));
 	this->zPlayerSpawnPoints.push_back(Vector3(63.77f, 0, 31.0f));
 	this->zPlayerSpawnPoints.push_back(Vector3(73.4f, 0, 44.0f));
@@ -282,7 +281,6 @@ void Host::Life()
 		
 		if(waitTimer >= UPDATE_DELAY)
 		{
-
 			waitTimer = 0.0f;
 
 
@@ -402,15 +400,14 @@ void Host::HandleNewConnections()
 		message += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
 		message += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
 		message += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)(*it)->GetState());
-
 		temp.push_back(message);
 	}
-
 	//Sends All Actors to the player
 	for (auto it = temp.begin(); it < temp.end(); it++)
 	{
 		SendToClient(cd,*it, true);
 	}
+
 	//Sends All  objects To the Player
 	std::vector<std::string> static_Msg;
 	this->GetExistingObjects(static_Msg);
@@ -688,10 +685,180 @@ void Host::ReadMessages()
 	}
 }
 
-void Host::SendErrorMessage(const int id, const std::string error_Message)
+void Host::SendErrorMessage(const long id, const std::string error_Message)
 {
 	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ERROR_MESSAGE, error_Message);
 	this->SendToClient(id, msg);
+}
+
+std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectActor** dpoActor)
+{
+	(*dpoActor) = new DeadPlayerObjectActor(false);
+
+	std::vector<Item*> items;
+	Inventory* inv = pActor->GetInventory();
+	Equipment* eq = pActor->GetEquipment();
+	
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_DEAD_PLAYER_OBJECT, pActor->GetID());
+	std::vector<Item*> temp = inv->GetItems();
+	for (auto it = temp.begin(); it < temp.end(); it++)
+	{
+		if ((*it)->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN || (*it)->GetItemType() == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
+		{
+			Container* temp = dynamic_cast<Container*>((*it));
+			if (!temp)
+			{
+				MaloW::Debug("Failed to cast Container when Creating Dead Player items");
+				continue;
+			}
+
+			Container* cont = new Container(temp);
+
+			items.push_back(cont);
+
+			msg += this->AddItemMessage(cont);
+
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+		}
+		else if ((*it)->GetItemType() == ITEM_TYPE_MATERIAL_SMALL_STICK || (*it)->GetItemType() == ITEM_TYPE_MATERIAL_MEDIUM_STICK ||
+			(*it)->GetItemType() == ITEM_TYPE_MATERIAL_LARGE_STICK || (*it)->GetItemType() == ITEM_TYPE_MATERIAL_THREAD)
+		{
+			Material* temp = dynamic_cast<Material*>((*it));
+			if (!temp)
+			{
+				MaloW::Debug("Failed to cast Material when Creating Dead Player items");
+				continue;
+			}
+
+			Material* mat = new Material(temp);
+
+			items.push_back(mat);
+
+			msg += this->AddItemMessage(mat);
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+		}
+		else if ((*it)->GetItemType() == ITEM_TYPE_FOOD_DEER_MEAT || (*it)->GetItemType() == ITEM_TYPE_FOOD_WOLF_MEAT)
+		{
+			Food* temp = dynamic_cast<Food*>((*it));
+			if (!temp)
+			{
+				MaloW::Debug("Failed to cast Food when Creating Dead Player items");
+				continue;
+			}
+
+			Food* food = new Food(temp);
+
+			items.push_back(food);
+
+			msg += this->AddItemMessage(food);
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+		}
+		else if ((*it)->GetItemType() == ITEM_TYPE_PROJECTILE_ARROW)
+		{
+			Projectile* temp = dynamic_cast<Projectile*>((*it));
+			if (!temp)
+			{
+				MaloW::Debug("Failed to cast Projectile when Creating Dead Player items");
+				continue;
+			}
+
+			Projectile* proj = new Projectile(temp);
+
+			items.push_back(proj);
+
+			msg += this->AddItemMessage(proj);
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+		}
+		else if ((*it)->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW || (*it)->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
+		{
+			RangedWeapon* temp = dynamic_cast<RangedWeapon*>((*it));
+			if (!temp)
+			{
+				MaloW::Debug("Failed to cast Ranged Weapon when Creating Dead Player items");
+				continue;
+			}
+
+			RangedWeapon* rWpn = new RangedWeapon(temp);
+
+			items.push_back(rWpn);
+
+			msg += this->AddItemMessage(rWpn);
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+		}
+		else if ((*it)->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE || (*it)->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
+		{
+			MeleeWeapon* temp = dynamic_cast<MeleeWeapon*>((*it));
+			if (!temp)
+			{
+				MaloW::Debug("Failed to cast Melee Weapon when Creating Dead Player items");
+				continue;
+			}
+
+			MeleeWeapon* mWpn = new MeleeWeapon(temp);
+
+			items.push_back(mWpn);
+
+			msg += this->AddItemMessage(mWpn);
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+		}
+	}
+
+	Weapon* weapon = eq->GetWeapon();
+
+	if (weapon)
+	{
+		if(weapon->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW || weapon->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
+		{
+			RangedWeapon* temp = dynamic_cast<RangedWeapon*>(weapon);
+			if (!temp)
+			{
+				MaloW::Debug("Failed to cast Ranged Weapon when Creating Dead Player items");
+			}
+			else
+			{
+				RangedWeapon* rWpn = new RangedWeapon(temp);
+				items.push_back(rWpn);
+
+				msg += this->AddItemMessage(rWpn);
+				msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+			}
+		}
+		else if(weapon->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE|| weapon->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
+		{
+			MeleeWeapon* temp = dynamic_cast<MeleeWeapon*>(weapon);
+			if (!temp)
+			{
+				MaloW::Debug("Failed to cast Melee Weapon when Creating Dead Player items");
+			}
+			else
+			{
+				MeleeWeapon* mWpn = new MeleeWeapon(temp);
+				items.push_back(mWpn);
+
+				msg += this->AddItemMessage(mWpn);
+				msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+			}
+		}
+	}
+
+	Projectile* projectile = eq->GetProjectile();
+
+	if (projectile)
+	{
+		items.push_back(projectile);
+
+		msg += this->AddItemMessage(projectile);
+	}
+
+	std::string path = "Media/Ball.obj";	
+	PhysicsObject* dpoObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(path, pActor->GetPosition());
+
+	(*dpoActor)->SetActorModel(path);
+	(*dpoActor)->SetPhysicObject(dpoObj);
+	(*dpoActor)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	(*dpoActor)->SetItems(items);
+
+	return msg;
 }
 
 bool Host::CreateAnimalActor(DeerActor** deerAct, const bool genID)
@@ -1257,14 +1424,20 @@ bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 	if(sendAMessage)
 	{
 		mess = this->zMessageConverter.Convert(MESSAGE_TYPE_KICKED, reason);
-
 		temp_c->SendM(mess);
 	}
+	//Create Dead Player Object
+	
+	
+	std::string msg = "";
+	
+	OnPlayerRemove(ID, msg);
 
-	//create a remove player message.
+	
+	//Create a remove player message.
 	mess = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_PLAYER, (float)ID);
 
-	//remove the player
+	//Remove the player
 
 	this->zClients.erase(zClients.begin() + index);
 	this->zActorHandler->RemovePlayerActor(ID);
@@ -1274,11 +1447,47 @@ bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 	removed = true;
 	MaloW::Debug("Client"+MaloW::convertNrToString((float)ID)+" removed from server.");
 	
-
+	//this->SendToAllClients(msg);
 	//Notify clients
 	this->SendToAllClients(mess);
 
 	return removed;
+}
+
+void Host::OnPlayerRemove(unsigned int ID, std::string& message)
+{
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActorHandler->GetActor(ID, ACTOR_TYPE_PLAYER));
+	if (!pActor)
+		return;
+
+	DeadPlayerObjectActor* dpoActor = NULL;
+
+	message = this->CreateDeadPlayerObject(pActor, &dpoActor);
+
+	Vector3 pos = pActor->GetPosition();
+	Vector3 scale = pActor->GetScale();
+
+	Vector3 up = pActor->GetUpVector();
+	Vector3 forward = pActor->GetDirection();
+	Vector3 around = forward.GetCrossProduct(up);
+	float angle = 3.14f * 0.5f;
+
+	PhysicsObject* pObj = pActor->GetPhysicObject();
+
+	pObj->RotateAxis(around, angle);
+
+	Vector4 rot	= pActor->GetRotation();
+
+	dpoActor->SetPosition(pos);
+	dpoActor->SetRotation(rot);
+	dpoActor->SetScale(scale);
+
+	message += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+	message += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+	message += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	message += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, pActor->GetActorModel());
+
+	this->zActorHandler->AddNewDeadPlayer(dpoActor);
 }
 
 bool Host::IsAlive() const
@@ -1536,5 +1745,4 @@ void Host::onEvent( Event* e )
 		{
 			PUE->validMove = true;
 		}
-	}
-}
+	}}

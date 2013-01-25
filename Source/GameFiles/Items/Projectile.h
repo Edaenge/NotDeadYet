@@ -11,6 +11,8 @@ class Projectile : public Item
 {
 public:
 	Projectile(const long id, const unsigned int itemType, float velocity, float damage);
+	Projectile(const Projectile& other);
+	Projectile(const Projectile* other);
 	virtual ~Projectile();
 
 	void SetVelocity(float vel) {this->zVelocity = vel;}

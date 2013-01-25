@@ -88,6 +88,10 @@ void Client::HandleUseItem(const long ID)
 		int newStacks = food->GetStackSize();
 		this->zPlayerInventory->RemoveItemStack(food->GetID(), oldStacks - newStacks);
 
+		int stacks = oldStacks - newStacks;
+		this->zPlayerInventory->RemoveItemStack(food->GetID(), stacks);
+
+		this->zGuiManager->RemoveInventoryItemFromGui(food->GetID(), stacks);
 		MaloW::Debug("Eating");
 		return;
 	}
@@ -114,8 +118,11 @@ void Client::HandleUseItem(const long ID)
 			return;
 		}
 		int newStacks = material->GetStackSize();
-		this->zPlayerInventory->RemoveItemStack(material->GetID(), oldStacks - newStacks);
 
+		int stacks = oldStacks - newStacks;
+		this->zPlayerInventory->RemoveItemStack(material->GetID(), stacks);
+
+		this->zGuiManager->RemoveInventoryItemFromGui(material->GetID(), stacks);
 	}
 }
 
