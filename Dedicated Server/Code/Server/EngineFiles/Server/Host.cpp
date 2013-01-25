@@ -693,6 +693,7 @@ bool Host::CreateAnimalActor(DeerActor** deerAct, const bool genID)
 	(*deerAct)->SetActorModel(path);
 	(*deerAct)->SetPhysicObject(pObj);
 	(*deerAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	(*deerAct)->SetWorldPointer(this->zWorld);
 
 	return true;
 }
@@ -710,6 +711,7 @@ bool Host::CreateAnimalActor(WolfActor** wolfAct, const bool genID)
 	(*wolfAct)->SetActorModel(path);
 	(*wolfAct)->SetPhysicObject(pObj);
 	(*wolfAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	(*wolfAct)->SetWorldPointer(this->zWorld);
 
 	return true;
 }
