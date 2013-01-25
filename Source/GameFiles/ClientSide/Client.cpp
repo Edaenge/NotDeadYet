@@ -263,6 +263,14 @@ void Client::SendClientUpdate()
 	this->zServerChannel->sendData(msg);
 }
 
+void Client::SendAck(unsigned int IM_ID)
+{
+	std::string msg;
+	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACKNOWLEDGE, IM_ID);
+
+	this->zServerChannel->sendData(msg);
+}
+
 void Client::UpdateCameraPos()
 {
 	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
@@ -581,6 +589,15 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		char key[1024];
 		sscanf_s(msgArray[0].c_str(), "%s ", &key, sizeof(key));
 
+		//Checks if the message has a 'important' tag.
+		if(strcmp(key, M_IMPORTANT_MESSAGE.c_str()) == 0)
+		{
+			unsigned int IM_ID = this->zMsgHandler.ConvertStringToInt(M_IMPORTANT_MESSAGE, key);
+			SendAck(IM_ID);
+
+			sscanf_s(msgArray[1].c_str(), "%s ", &key, sizeof(key));
+		}
+
 		//Checks what type of message was sent
 		if(strcmp(key, M_PING.c_str()) == 0)
 		{
@@ -863,3 +880,4 @@ void Client::onEvent(Event* e)
 		//zTargetedEntities.erase(ERE->entity);
 	}
 }
+

@@ -229,6 +229,13 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_SELF_ID:
 		ss << M_SELF_ID;
 		break;
+	case MESSAGE_TYPE_IMPORTANT_MESSAGE:
+		ss << M_IMPORTANT_MESSAGE;
+		break;
+	case MESSAGE_TYPE_ACKNOWLEDGE:
+		ss << M_ACKNOWLEDGE_MESSAGE;
+		break;
+
 	default:
 		return "";
 		break;

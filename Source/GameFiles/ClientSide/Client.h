@@ -59,6 +59,8 @@ private:
 	void HandleNetworkMessage(const std::string& msg);
 	/*! Reads Messages from the server*/
 	void ReadMessage();
+	/*! Sends an acknowledge, important message received.*/
+	void SendAck(unsigned int IM_ID);
 
 	//////////////////////
 	//					//

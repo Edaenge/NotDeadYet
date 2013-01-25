@@ -10,46 +10,13 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "../../../../../Source/Network/NetworkMessageConverter.h"
 #include "PlayerActor.h"
 #include "ActorHandler.h"
+#include "ClientData.h"
 #include "../WorldFiles/World.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 //#include <vld.h>
 #define INCLUDE_MODEL_VIEWER
 #endif
-
-struct ClientData
-{
-	ClientData(MaloW::ClientChannel* cc)
-	{
-		zClient = cc;
-		zPinged = false;
-		zCurrentPingTime = 0.0f;
-		zTotalPingTime = 0.0f;
-		zNrOfPings = 0;
-	}
-
-	~ClientData()
-	{
-		SAFE_DELETE(zClient);
-	}
-
-	inline void IncPingTime(float dt)
-	{
-		zCurrentPingTime += dt;
-	}
-	inline void ResetPingCounter()
-	{
-		zPinged = 0;
-		zTotalPingTime = 0.0f;
-	}
-
-	bool zPinged;
-	float zCurrentPingTime;
-	float zTotalPingTime;
-	int zNrOfPings;
-	MaloW::ClientChannel* zClient;
-
-};
 
 class Host : public MaloW::Process, public Observer	
 {
@@ -109,7 +76,6 @@ private:
 	/*! Handles new incoming connections.*/
 	void HandleNewConnections();
 	/*! Handles messages from clients. This function will call the following functions:
-	HandlePingMsg
 	HandleCloseConnectionMsg
 	HandleKeyPress
 	HandleKeyRelease
@@ -118,8 +84,6 @@ private:
 	void HandleRecivedMessages();
 	/*! Read messages from queue and saves them in*/
 	void ReadMessages(); 
-	/*! Handles ping messages.*/
-	void HandlePingMsg(ClientData* cd);
 	/*! Handles clients key press.*/
 	void HandleKeyPress(PlayerActor* pl, const std::string& key);
 	/*! Handles clients key releases.*/

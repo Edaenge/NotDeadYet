@@ -447,7 +447,7 @@ void Host::SendToAllClients(const std::string& message)
 
 	for(auto it = zClients.begin(); it < zClients.end(); it++)
 	{
-		(*it)->zClient->sendData(message);
+		(*it)->GetClient()->sendData(message);
 	}
 }
 
@@ -458,7 +458,7 @@ void Host::SendToClient(int clientID, const std::string& message)
 	if(pos == -1)
 		return;
 
-	this->zClients[pos]->zClient->sendData(message);
+	this->zClients[pos]->GetClient()->sendData(message);
 }
 
 void Host::SendPlayerActorUpdates()
@@ -491,7 +491,7 @@ void Host::SendPlayerActorUpdates()
 	{
 		for (auto it_Message = playerData.begin(); it_Message < playerData.end(); it_Message++)
 		{
-			(*it_Client)->zClient->sendData((*it_Message));
+			(*it_Client)->GetClient()->sendData((*it_Message));
 		}
 	}
 }
@@ -524,7 +524,7 @@ void Host::SendAnimalActorUpdates()
 	{
 		for (auto it_Message = animalData.begin(); it_Message < animalData.end(); it_Message++)
 		{
-			(*it_Client)->zClient->sendData((*it_Message));
+			(*it_Client)->GetClient()->sendData((*it_Message));
 		}
 	}
 }
@@ -599,7 +599,7 @@ void Host::SendStaticActorUpdates()
 	{
 		for (auto it_Message = staticData.begin(); it_Message < staticData.end(); it_Message++)
 		{
-			(*it_Client)->zClient->sendData((*it_Message));
+			(*it_Client)->GetClient()->sendData((*it_Message));
 		}
 	}
 }
@@ -636,7 +636,7 @@ void Host::SendDynamicActorUpdates()
 	{
 		for (auto it_Message = dynamicData.begin(); it_Message < dynamicData.end(); it_Message++)
 		{
-			(*it_Client)->zClient->sendData((*it_Message));
+			(*it_Client)->GetClient()->sendData((*it_Message));
 		}
 	}
 }
@@ -919,7 +919,7 @@ void Host::HandleRecivedMessages()
 		//Handles Pings from client.
 		else if(strcmp(key, M_PING.c_str()) == 0 && (c_index != -1))
 		{
-			this->HandlePingMsg(this->zClients[c_index]);
+			this->zClients[c_index]->HandlePingMsg();
 		}
 		//Handle Item usage in Inventory
 		else if(strcmp(key, M_ITEM_USE.c_str()) == 0 && (c_index != -1))
@@ -1043,19 +1043,6 @@ void Host::HandleKeyRelease(PlayerActor* pl, const std::string& key)
 	}
 }
 
-void Host::HandlePingMsg(ClientData* cd)
-{
-	//Hard coded
-	if(cd->zTotalPingTime > 10.0f)
-		cd->ResetPingCounter();
-
-	cd->zTotalPingTime += cd->zCurrentPingTime;
-	cd->zNrOfPings++;
-
-	cd->zPinged = false;
-	cd->zCurrentPingTime = 0.0f;
-}
-
 void Host::HandlePlayerUpdate(PlayerActor* pl, ClientData* cd, const std::vector<std::string> &data)
 {
 	
@@ -1089,10 +1076,11 @@ void Host::HandlePlayerUpdate(PlayerActor* pl, ClientData* cd, const std::vector
 	}
 
 	//Update Latency
-	if( cd->zNrOfPings == 0)
+	float latency;
+
+	if(!cd->CalculateLatency(latency))
 		return;
 
-	float latency = cd->zTotalPingTime / cd->zNrOfPings;
 	pl->SetLatency(latency);
 }
 
@@ -1103,7 +1091,7 @@ int Host::SearchForClient(const int ID) const
 
 	for (unsigned int i = 0; i < this->zClients.size(); i++)
 	{
-		if(this->zClients.at(i)->zClient->getClientID() == ID)
+		if(this->zClients.at(i)->GetClient()->getClientID() == ID)
 		{
 			return i;
 		}
@@ -1124,33 +1112,35 @@ void Host::PingClients()
 		return;
 
 	ClientData* cd; 
+	MaloW::ClientChannel* ch;
 
 	for(unsigned int i = 0; i < (unsigned int)zClients.size(); i++)
 	{
 		cd = zClients.at(i);
+		ch = cd->GetClient();
 
 		//If client has not been pinged.
-		if(!cd->zPinged)
+		if(!cd->HasBeenPinged())
 		{
 			//If it was x sec ago we sent a ping, don't send a ping.
-			if(cd->zCurrentPingTime < zPingMessageInterval)
+			if(cd->GetCurrentPingTime() < zPingMessageInterval)
 				cd->IncPingTime(zDeltaTime);
 
 			//else send ping.
 			else
 			{
-				cd->zCurrentPingTime = 0.0f;
-				cd->zClient->sendData(this->zMessageConverter.Convert(MESSAGE_TYPE_PING));
-				cd->zPinged = true;
+				cd->SetCurrentPingTime(0.0f);
+				ch->sendData(this->zMessageConverter.Convert(MESSAGE_TYPE_PING));
+				cd->SetPinged(true);
 			}
 		}
 		//If he have sent a ping.
 		else
 		{
 			//If we sent a ping x sec ago, drop the client.
-			if(cd->zCurrentPingTime > zTimeOut)
+			if(cd->GetCurrentPingTime() > zTimeOut)
 			{
-				KickClient(cd->zClient->getClientID());
+				KickClient(ch->getClientID());
 			}
 			else
 				cd->IncPingTime(zDeltaTime);
@@ -1225,7 +1215,7 @@ bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 	{
 		mess = this->zMessageConverter.Convert(MESSAGE_TYPE_KICKED, reason);
 
-		temp_c->zClient->sendData(mess);
+		temp_c->GetClient()->sendData(mess);
 	}
 
 	//create a remove player message.
@@ -1257,7 +1247,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 {
 	std::string mess;
 	
-	PlayerActor* pi = new PlayerActor(cd->zClient->getClientID());
+	PlayerActor* pi = new PlayerActor(cd->GetClient()->getClientID());
 
 	for (auto it_m = data.begin() + 1; it_m < data.end(); it_m++)
 	{
@@ -1314,7 +1304,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	//Send new player to players
 	for (unsigned int i = 0; i < (unsigned int)this->zClients.size(); i++)
 	{
-		this->zClients[i]->zClient->sendData(mess);
+		this->zClients[i]->GetClient()->sendData(mess);
 	}
 
 }

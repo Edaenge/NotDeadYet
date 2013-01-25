@@ -151,6 +151,9 @@
     <ClCompile Include="EngineFiles\Server\DeadPlayerObjectActor.cpp">
       <Filter>Server\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Server\ClientData.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineFiles\Server\Actor.h">
@@ -344,6 +347,9 @@
     </ClInclude>
     <ClInclude Include="EngineFiles\Server\DeadPlayerObjectActor.h">
       <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\ClientData.h">
+      <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

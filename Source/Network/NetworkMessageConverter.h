@@ -22,6 +22,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_SERVER_FULL,
 	MESSAGE_TYPE_SERVER_SHUTDOWN,
 	MESSAGE_TYPE_ERROR_MESSAGE,
+	MESSAGE_TYPE_IMPORTANT_MESSAGE,
+	MESSAGE_TYPE_ACKNOWLEDGE,
 	MESSAGE_TYPE_UPDATE_PLAYER,
 	MESSAGE_TYPE_DEAD_PLAYER,
 	MESSAGE_TYPE_UPDATE_STATIC_OBJECT,
@@ -130,6 +132,9 @@ static const std::string M_SERVER_FULL				= "SF";
 static const std::string M_SERVER_SHUTDOWN			= "SS";
 //Error Message
 static const std::string M_ERROR_MESSAGE			= "EM";
+//Important Message Tag
+static const std::string M_IMPORTANT_MESSAGE		= "IM";
+static const std::string M_ACKNOWLEDGE_MESSAGE		= "ACK";
 //Player Messages
 static const std::string M_CLIENT_DATA				= "CD";
 static const std::string M_NEW_PLAYER				= "NP";
