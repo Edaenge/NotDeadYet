@@ -8,21 +8,29 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "../../../../../Source/MaloWLib/Safe.h"
 #include <vector>
 
-#define DEFAULT_MAX_TIME_RESEND		3.0f
-#define DEFAULT_MAX_NR_RESEND		2
+#define DEFAULT_MAX_TIME_RESEND		2.0f
+#define DEFAULT_MAX_NR_RESEND		1
 
-struct ImportantMSG
+struct IMessage
 {
-	ImportantMSG()
+	IMessage()
 	{
 		MSG_ID = 0;
 		msg = "None";
 		timeSent = 0.0f;
-		nrOfTimesSent = 0;
+		nrOfTimesResent = 0;
+
+		maxTimesToResend = 0;
+		maxTimeToResend = 0;
+
+		hasExceeded = false;
 	}
 
+	bool hasExceeded;
 	unsigned long MSG_ID ;
-	int nrOfTimesSent;
+	int nrOfTimesResent;
+	int maxTimesToResend;
+	float maxTimeToResend;
 	float timeSent;
 	std::string msg;
 };
@@ -38,8 +46,8 @@ public:
 	inline float GetTotalPingTime() const {return zTotalPingTime;}
 	inline int GetNrOfPings() const {return zNrOfPings;}
 	/*! Returns the next unique important message ID.*/
-	inline long GetNextIPID() const {return zUniqeIPID; zUniqeIPID++;}
-
+	inline const unsigned long GetNextIPID() {return zUniqeIPID++; }
+	
 	inline void SetPinged(const bool pinged) {zPinged = pinged;}
 	inline void SetCurrentPingTime(float const cpt) {zCurrentPingTime = cpt;}
 	inline bool HasBeenPinged() const {return zPinged;}
@@ -47,12 +55,12 @@ public:
 	inline void ResetPingCounter() {zPinged = 0; zTotalPingTime = 0.0f;}
 
 	/*! Sends a message to the client.*/
-	inline void SendMessage(const std::string& msg) {zClient->sendData(msg);}
+	inline void SendM(const std::string& msg) {zClient->sendData(msg);}
 	/*! Handle the ping from client.*/
 	void HandlePingMsg();
 	/*! Updates the latency of this client.*/
 	bool CalculateLatency(float& latencyOut);
-	/*! Creates and adds the message to the list.
+	/*! Creates and adds an important message to the list and sends it.
 		Returns false if the ID is not unique.
 		Note: Check the function GetNextIPID().
 
@@ -60,26 +68,36 @@ public:
 		Note: Message needs to contain the IMPORTANT_MESSAGE tag.
 
 	*/
-	bool CreateImportantMessage(const float sentTime, const std::string& message,
-							const float uniqe_ID,
-							const float timeToResend = DEFAULT_MAX_TIME_RESEND,  
-							const float nrToResend = DEFAULT_MAX_NR_RESEND);
+	bool SendIM(const float sentTime, const std::string& message, const unsigned long uniqe_ID, 
+				const float timeToResend = DEFAULT_MAX_TIME_RESEND, const int nrToResend = DEFAULT_MAX_NR_RESEND);
+
+	/*! Handle unanswered Important messages, check them, resend them.*/
+	void HandleNackIM(float dt);
+	/*! Removes an important message.*/
+	bool RemoveIM(unsigned long m_id);
+	/*! */
+	bool HasIM() const;
+	/*! */
+	int GetNrOfIMP() const {return zImportantMessages.size();}
+	/*! Returns the number of how many important messages that has been exceeded.*/
+	inline int GetNrOfExceededIM() const {return nrOfExceededMsg;}
 
 private:
 	/*! Sort the important message list using insertion.*/
-	void SortIPM();
+	void SortIM();
 	/*! Search in the important message list using binary search.*/
-	int SearchIPM(unsigned long key);
+	int SearchIM(unsigned long key);
 
 private:
-	static unsigned long zUniqeIPID;
+	unsigned long zUniqeIPID;
 	bool zPinged;
 	float zCurrentPingTime;
 	float zTotalPingTime;
 	float zMaxPingTime;
 	int zNrOfPings;
+	int nrOfExceededMsg;
 
 	MaloW::ClientChannel* zClient;
-	std::vector<ImportantMSG *> zImportantMessages;
+	std::vector<IMessage *> zImportantMessages;
 
 };

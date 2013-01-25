@@ -592,10 +592,11 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		//Checks if the message has a 'important' tag.
 		if(strcmp(key, M_IMPORTANT_MESSAGE.c_str()) == 0)
 		{
-			unsigned int IM_ID = this->zMsgHandler.ConvertStringToInt(M_IMPORTANT_MESSAGE, key);
+			unsigned int IM_ID = this->zMsgHandler.ConvertStringToInt(M_IMPORTANT_MESSAGE, msgArray[0]);
 			SendAck(IM_ID);
 
-			sscanf_s(msgArray[1].c_str(), "%s ", &key, sizeof(key));
+			msgArray.erase(msgArray.begin());
+			sscanf_s(msgArray[0].c_str(), "%s ", &key, sizeof(key));
 		}
 
 		//Checks what type of message was sent
@@ -605,7 +606,7 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		}
 		//Player
 		else if(strcmp(key, M_UPDATE_PLAYER.c_str()) == 0)
-		{
+		{ 
 			long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_PLAYER, msgArray[0]);
 			this->UpdatePlayerObjects(msgArray, id);
 		}

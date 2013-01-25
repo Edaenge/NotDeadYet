@@ -6,7 +6,7 @@
 
 static bool eraseFile = false;
 static bool writeToFile = true;
-static bool msgWrites = false;
+static bool msgWrites = true;
 
 namespace Messages
 {

@@ -23,7 +23,7 @@ Host::Host()
 	this->zStartime = 0;
 	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
-	this->zTimeOut = 15.0f;
+	this->zTimeOut = 10.0f;
 	this->zPingMessageInterval = 5.0f;
 
 	//timer = 0;
@@ -253,7 +253,7 @@ void Host::Life()
 	this->zServerListener->Start();
 	
 	this->Init();
-	//static int counter = 0;
+
 	INT64 frequency;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 	
@@ -267,41 +267,28 @@ void Host::Life()
 	{
 		waitTimer += Update();
 
-		//timer += zDeltaTime;
-
 		//Checks if ServerListener is still working
 		if(!this->zServerListener->IsAlive())
 		{
 			MaloW::Debug("Server Listener has died.");
 		}
 
+		HandleClientNackIM();
 		HandleNewConnections();
 		ReadMessages();
-		HandleRecivedMessages();
+		HandleReceivedMessages();
 		PingClients();
 		UpdateObjects();
 		
 		if(waitTimer >= UPDATE_DELAY)
 		{
-// 			waitTimer -= UPDATE_DELAY;
-// 			if (waitTimer < 0.0f)
-				waitTimer = 0.0f;
+			waitTimer = 0.0f;
 
-			//if (Messages::FileWrite())
-				//Messages::Debug("WaitTime left from last update " + MaloW::convertNrToString(waitTimer));
-			//counter++;
 			SendPlayerActorUpdates();
 			SendAnimalActorUpdates();
 			SendDynamicActorUpdates();
 		}
 
-		//if (timer >= 1.0f)
-		//{
-		//	if (Messages::FileWrite())
-		//		Messages::Debug(MaloW::convertNrToString(counter));
-		//	counter = 0;
-		//	timer -= 1.0f;
-		//}
 		Sleep(5);
 	}
 }
@@ -363,15 +350,15 @@ void Host::HandleNewConnections()
 		Messages::Debug("New Player Accepted.");
 
 	std::string message = "";
-
 	MaloW::ClientChannel* client = cce->GetClientChannel();
+	ClientData* cd = new ClientData(client);
 
 	client->setNotifier(this);
-	this->zClients.push_back(new ClientData(client));
+	this->zClients.push_back(cd);
 
 	message = this->zMessageConverter.Convert(MESSAGE_TYPE_SELF_ID, (float)client->getClientID());
 	client->Start();
-	client->sendData(message);
+	SendToClient(cd, message, true);
 	
 	SAFE_DELETE(pe);
 
@@ -380,7 +367,7 @@ void Host::HandleNewConnections()
 	std::vector<std::string> temp;
 	std::vector<PlayerActor *> players = this->zActorHandler->GetPlayers();
 
-	//Gets PlayerInformation
+	//Gets Players Information
 	for(auto it = players.begin(); it < players.end(); it++)
 	{
 		Vector3 pos = (*it)->GetPosition();
@@ -397,14 +384,7 @@ void Host::HandleNewConnections()
 		temp.push_back(message);
 	}
 
-	//Send the players to player
-	for (auto it = temp.begin(); it < temp.end(); it++)
-	{
-		client->sendData(*it);
-	}
-
 	message = "";
-	std::vector<std::string> tempAnimal;
 	std::vector<AnimalActor *> animals = this->zActorHandler->GetAnimals();
 
 	//Gets AnimalInformation
@@ -421,44 +401,81 @@ void Host::HandleNewConnections()
 		message += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
 		message += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)(*it)->GetState());
 
-		tempAnimal.push_back(message);
+		temp.push_back(message);
 	}
 
-	//Send the Animals to player
-	for (auto it = tempAnimal.begin(); it < tempAnimal.end(); it++)
+
+	//Sends All Actors to the player
+	for (auto it = temp.begin(); it < temp.end(); it++)
 	{
-		client->sendData(*it);
+		SendToClient(cd,*it, true);
 	}
 
-	//Sends All Static Objects To the Player
+	//Sends All  objects To the Player
 	std::vector<std::string> static_Msg;
 	this->GetExistingObjects(static_Msg);
 	for (auto sIt = static_Msg.begin(); sIt < static_Msg.end(); sIt++)
 	{
-		client->sendData(*sIt);
+		SendToClient(cd, *sIt, true);
 	}
-	
+
 }
 
-void Host::SendToAllClients(const std::string& message)
+void Host::SendToAllClients(const std::string& message, bool sendIM /*= false*/ )
 {
 	if(!HasClients())
 		return;
 
+	std::string im;
 	for(auto it = zClients.begin(); it < zClients.end(); it++)
 	{
-		(*it)->GetClient()->sendData(message);
+		if(sendIM)
+		{
+			unsigned long m_id = (*it)->GetNextIPID();
+			im = this->zMessageConverter.Convert(MESSAGE_TYPE_IMPORTANT_MESSAGE, (float)m_id);
+			(*it)->SendIM(this->zDeltaTime, (im+message), m_id);
+
+			continue;
+		}
+
+		(*it)->SendM(message);
+		
 	}
 }
 
-void Host::SendToClient(int clientID, const std::string& message)
+void Host::SendToClient(int clientID, const std::string& message, bool sendIM /*= false*/ )
 {
 	int pos = SearchForClient(clientID);
 
 	if(pos == -1)
 		return;
 
-	this->zClients[pos]->GetClient()->sendData(message);
+	ClientData* cd = this->zClients[pos];
+	if(!sendIM)
+	{
+		cd->SendM(message);
+		return;
+	}
+
+	unsigned long m_id = cd->GetNextIPID();
+	std::string im = this->zMessageConverter.Convert(MESSAGE_TYPE_IMPORTANT_MESSAGE, (float)m_id);
+	cd->SendIM(this->zDeltaTime, (im + message), m_id);
+}
+
+void Host::SendToClient( ClientData* cd, const std::string& message, bool sendIM /*= false*/ )
+{
+	if(cd == NULL)
+		return;
+
+	if(!sendIM)
+	{
+		cd->SendM(message);
+		return;
+	}
+
+	unsigned long m_id = cd->GetNextIPID();
+	std::string im = this->zMessageConverter.Convert(MESSAGE_TYPE_IMPORTANT_MESSAGE, (float)m_id);
+	cd->SendIM(this->zDeltaTime, (im + message), m_id);
 }
 
 void Host::SendPlayerActorUpdates()
@@ -491,7 +508,7 @@ void Host::SendPlayerActorUpdates()
 	{
 		for (auto it_Message = playerData.begin(); it_Message < playerData.end(); it_Message++)
 		{
-			(*it_Client)->GetClient()->sendData((*it_Message));
+			(*it_Client)->SendM((*it_Message));
 		}
 	}
 }
@@ -524,7 +541,7 @@ void Host::SendAnimalActorUpdates()
 	{
 		for (auto it_Message = animalData.begin(); it_Message < animalData.end(); it_Message++)
 		{
-			(*it_Client)->GetClient()->sendData((*it_Message));
+			(*it_Client)->SendM((*it_Message));
 		}
 	}
 }
@@ -599,7 +616,7 @@ void Host::SendStaticActorUpdates()
 	{
 		for (auto it_Message = staticData.begin(); it_Message < staticData.end(); it_Message++)
 		{
-			(*it_Client)->GetClient()->sendData((*it_Message));
+			(*it_Client)->SendM((*it_Message));
 		}
 	}
 }
@@ -636,7 +653,7 @@ void Host::SendDynamicActorUpdates()
 	{
 		for (auto it_Message = dynamicData.begin(); it_Message < dynamicData.end(); it_Message++)
 		{
-			(*it_Client)->GetClient()->sendData((*it_Message));
+			(*it_Client)->SendM((*it_Message));
 		}
 	}
 }
@@ -685,7 +702,7 @@ bool Host::CreateAnimalActor(DeerActor** deerAct, const bool genID)
 	if ((unsigned int)this->aSpawnPosition >= this->zAnimalSpawnPoints.size())
 		this->aSpawnPosition = 0;
 
-	(*deerAct) = new DeerActor( true);
+	(*deerAct) = new DeerActor(genID);
 	std::string path = "Media/Tree_02_v02_r.obj";	
 	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(
 		path, zAnimalSpawnPoints[this->aSpawnPosition++]);
@@ -827,7 +844,7 @@ void Host::SendNewObjectMessage(StaticObjectActor* staticObj)
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, staticObj->GetDescription());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, staticObj->GetIconPath());
 
-	this->SendToAllClients(msg);
+	this->SendToAllClients(msg, true);
 }
 
 void Host::SendNewObjectMessage(DynamicObjectActor* dynamicObj)
@@ -854,7 +871,7 @@ void Host::SendNewObjectMessage(DynamicObjectActor* dynamicObj)
 		//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_DAMAGE, projectileObj->GetDamage());
 	//}
 	
-	this->SendToAllClients(msg);
+	this->SendToAllClients(msg, true);
 }
 
 void Host::SendNewObjectMessage(AnimalActor* animalObj)
@@ -870,10 +887,10 @@ void Host::SendNewObjectMessage(AnimalActor* animalObj)
 	msg +=  this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)animalObj->GetState());
 	msg +=  this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, animalObj->GetActorModel());
 
-	this->SendToAllClients(msg);
+	this->SendToAllClients(msg, true);
 }
 
-void Host::HandleRecivedMessages()
+void Host::HandleReceivedMessages()
 {
 	
 	if(this->zMessages.empty())
@@ -920,6 +937,12 @@ void Host::HandleRecivedMessages()
 		else if(strcmp(key, M_PING.c_str()) == 0 && (c_index != -1))
 		{
 			this->zClients[c_index]->HandlePingMsg();
+		}
+		//Handles Ack Messages
+		else if(strcmp(key, M_ACKNOWLEDGE_MESSAGE.c_str()) == 0 && (c_index != -1))
+		{
+			int m_id = this->zMessageConverter.ConvertStringToInt(M_ACKNOWLEDGE_MESSAGE, msgArray[0]);
+			this->zClients[c_index]->RemoveIM(m_id);
 		}
 		//Handle Item usage in Inventory
 		else if(strcmp(key, M_ITEM_USE.c_str()) == 0 && (c_index != -1))
@@ -969,7 +992,7 @@ void Host::HandleRecivedMessages()
 		//Handles if not of the above.
 		else
 		{
-			MaloW::Debug("Warning: The host cannot handle the message \""+(*it)->getMessage()+"\" in HandleRecivedMessages.");
+			MaloW::Debug("Warning: The host cannot handle the message \""+(*it)->getMessage()+"\" in HandleReceivedMessages.");
 		}
 
 		SAFE_DELETE((*it));
@@ -1082,6 +1105,28 @@ void Host::HandlePlayerUpdate(PlayerActor* pl, ClientData* cd, const std::vector
 		return;
 
 	pl->SetLatency(latency);
+}
+
+void Host::HandleClientNackIM()
+{
+
+	if(!HasClients())
+		return;
+	std::vector<int> clientsToKick;
+
+	for(auto it = this->zClients.begin(); it < this->zClients.end(); it++)
+	{
+		(*it)->HandleNackIM(this->zDeltaTime);
+
+		if((*it)->GetNrOfExceededIM() > 0)
+			clientsToKick.push_back((*it)->GetClient()->getClientID());
+	}
+
+	for (auto it = clientsToKick.begin(); it < clientsToKick.end(); it++)
+	{
+		KickClient((*it), true, "No Ack on message.");
+	}
+
 }
 
 int Host::SearchForClient(const int ID) const
@@ -1215,7 +1260,7 @@ bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 	{
 		mess = this->zMessageConverter.Convert(MESSAGE_TYPE_KICKED, reason);
 
-		temp_c->GetClient()->sendData(mess);
+		temp_c->SendM(mess);
 	}
 
 	//create a remove player message.
@@ -1302,10 +1347,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)pi->GetState());
 
 	//Send new player to players
-	for (unsigned int i = 0; i < (unsigned int)this->zClients.size(); i++)
-	{
-		this->zClients[i]->GetClient()->sendData(mess);
-	}
+	SendToAllClients(mess, true);
 
 }
 
@@ -1474,7 +1516,7 @@ void Host::onEvent( Event* e )
 			if(dot > 0.2)
 			{
 				PUE->validMove = true;
-				playerTempPos.y += -1.82 * zDeltaTime;
+				playerTempPos.y += -1.82f * zDeltaTime;
 				if(playerTempPos.y < yPos)
 					playerTempPos.y = yPos;
 

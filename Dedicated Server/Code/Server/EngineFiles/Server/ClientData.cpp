@@ -1,7 +1,5 @@
 #include "ClientData.h"
 
-unsigned long ClientData::zUniqeIPID = 0;
-
 ClientData::ClientData(MaloW::ClientChannel* cc)
 {
 	zClient = cc;
@@ -10,12 +8,19 @@ ClientData::ClientData(MaloW::ClientChannel* cc)
 	zTotalPingTime = 0.0f;
 	zMaxPingTime = 0.0f;
 	zNrOfPings = 0;
+	nrOfExceededMsg = 0;
 	zMaxPingTime = 10.0f;
+	zUniqeIPID = 0;
 }
 
 ClientData::~ClientData()
 {
 	SAFE_DELETE(this->zClient);
+
+	for(auto it = zImportantMessages.begin(); it < zImportantMessages.end(); it++)
+	{
+		SAFE_DELETE((*it));
+	}
 }
 
 void ClientData::HandlePingMsg()
@@ -40,29 +45,34 @@ bool ClientData::CalculateLatency( float& latencyOut )
 	return true;
 }
 
-bool ClientData::CreateImportantMessage( const float sentTime, const std::string& message, const float timeToResend /*= DEFAULT_MAX_TIME_RESEND*/, const float nrToResend /*= DEFAULT_MAX_NR_RESEND*/, const float uniqe_ID )
+bool ClientData::SendIM( const float sentTime, const std::string& message, 
+						const unsigned long uniqe_ID, const float timeToResend /*= DEFAULT_MAX_TIME_RESEND*/, 
+						const int nrToResend /*= DEFAULT_MAX_NR_RESEND*/ )
 {
 	if(uniqe_ID >= this->zUniqeIPID)
 		return false;
 
-	ImportantMSG* new_important_msg = new ImportantMSG();
+	IMessage* new_important_msg = new IMessage();
 
 	new_important_msg->msg = message;
 	new_important_msg->timeSent = sentTime;
-	new_important_msg->nrOfTimesSent = nrToResend;
+	new_important_msg->maxTimesToResend = nrToResend;
+	new_important_msg->maxTimeToResend = timeToResend;
 	new_important_msg->MSG_ID = uniqe_ID;
 
 	this->zImportantMessages.push_back(new_important_msg);
 
-	SortIPM();
+	SortIM();
+
+	SendM(message);
 
 	return true;
 }
 
-void ClientData::SortIPM()
+void ClientData::SortIM()
 {
 	unsigned int i, j;
-	ImportantMSG* key;
+	IMessage* key;
 
 	for(i = 1; i < this->zImportantMessages.size(); i++)
 	{
@@ -79,10 +89,13 @@ void ClientData::SortIPM()
 	}
 }
 
-int ClientData::SearchIPM( unsigned long key )
+int ClientData::SearchIM( unsigned long key )
 {
-	unsigned int first = 0;
-	unsigned int last = this->zImportantMessages.size()-1;
+	if(!HasIM())
+		return -1;
+
+	 int first = 0;
+	 int last = this->zImportantMessages.size()-1;
 
 	while (first <= last) 
 	{
@@ -98,4 +111,56 @@ int ClientData::SearchIPM( unsigned long key )
 	}
 
 	return -1;    // failed to find key
+}
+
+void ClientData::HandleNackIM( float dt )
+{
+	if(!HasIM())
+		return;
+
+	float time;
+	for (auto it = this->zImportantMessages.begin(); it < this->zImportantMessages.end(); it++)
+	{
+		time = dt - (*it)->timeSent;
+		if(time >= (*it)->maxTimeToResend)
+		{
+			if((*it)->nrOfTimesResent >= (*it)->maxTimesToResend)
+			{
+				(*it)->hasExceeded = true;
+				this->nrOfExceededMsg++;
+
+				continue;
+			}
+			
+			SendM((*it)->msg);
+			(*it)->nrOfTimesResent++;
+			(*it)->timeSent = dt;
+		}
+	}
+}
+
+bool ClientData::HasIM() const
+{
+	if(zImportantMessages.empty())
+		return false;
+
+	return true;
+}
+
+bool ClientData::RemoveIM( unsigned long m_id )
+{
+	int index = SearchIM(m_id);
+
+	if(index == -1)
+		return false;
+
+	IMessage* im = zImportantMessages[index];
+
+	if(im->hasExceeded)
+		nrOfExceededMsg--;
+
+	this->zImportantMessages.erase(zImportantMessages.begin() + index);
+	SAFE_DELETE(im);
+
+	return true;
 }

@@ -32,10 +32,15 @@ public:
 	bool HasClients() const;
 	/*! Returns the port*/
 	inline int GetPort() const{return this->zPort;}
-	/*! Sends a message to all connected clients.*/
-	void SendToAllClients(const std::string& message);
-	/*! Sends to a specific client.*/
-	void SendToClient(int clientID, const std::string& message);
+	/*! Sends a message to all connected clients.
+		If sendIM is true, it will send a Important message to the client(s).
+	*/
+	void SendToAllClients(const std::string& message, bool sendIM = false);
+	/*! Sends to a specific client.
+		If sendIM is true, it will send a Important message to the client(s).
+	*/
+	void SendToClient(int clientID, const std::string& message, bool sendIM = false);
+	void SendToClient(ClientData* cd, const std::string& message, bool sendIM = false);
 	/*! Sends Player Actor updates to clients.*/
 	void SendPlayerActorUpdates();
 	/*! Sends Animal Actor updates to clients.*/
@@ -81,7 +86,7 @@ private:
 	HandleKeyRelease
 	CreateNewPlayer
 	*/
-	void HandleRecivedMessages();
+	void HandleReceivedMessages();
 	/*! Read messages from queue and saves them in*/
 	void ReadMessages(); 
 	/*! Handles clients key press.*/
@@ -90,6 +95,10 @@ private:
 	void HandleKeyRelease(PlayerActor* pl, const std::string& key);
 	/*! Handles incoming data from player, such as Direction, Up vector and Rotation.*/
 	void HandlePlayerUpdate(PlayerActor* pl, ClientData* cd, const std::vector<std::string> &data);
+	/*! Handles the players Important messages, updates them.
+		This function will call HandleNackIM / client.
+	*/
+	void HandleClientNackIM();
 	/*! Search for a client. Returns -1 if none was found.*/
 	int SearchForClient(const int ID) const;
 	/*! Creates a new player and notifies all clients.*/
