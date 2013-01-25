@@ -7,6 +7,33 @@ Projectile::Projectile(const long id, const unsigned int itemType, float velocit
 	this->zDamage = damage;
 	this->zVelocity = velocity;
 }
+
+Projectile::Projectile(const Projectile& other)
+{
+	this->zID = other.zID;
+	this->zStacks = other.zStacks;
+	this->zWeight = other.zWeight;
+	this->zDamage = other.zDamage;
+	this->zVelocity = other.zVelocity;
+	this->zItemName = other.zItemName;
+	this->zIconPath = other.zIconPath;
+	this->zItemType = other.zItemType;
+	this->zItemDescription = other.zItemDescription;
+}
+
+Projectile::Projectile(const Projectile* other)
+{
+	this->zID = other->zID;
+	this->zStacks = other->zStacks;
+	this->zWeight = other->zWeight;
+	this->zDamage = other->zDamage;
+	this->zVelocity = other->zVelocity;
+	this->zItemName = other->zItemName;
+	this->zIconPath = other->zIconPath;
+	this->zItemType = other->zItemType;
+	this->zItemDescription = other->zItemDescription;
+}
+
 Projectile::~Projectile()
 {
 

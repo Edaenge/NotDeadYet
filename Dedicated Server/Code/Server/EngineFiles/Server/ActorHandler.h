@@ -5,12 +5,13 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #pragma once
 
-#include "../../../../../Source/MaloWLib/Safe.h"
-#include "PlayerActor.h"
 #include "DeerActor.h"
 #include "WolfActor.h"
+#include "PlayerActor.h"
 #include "ObjectManager.h"
+#include "DeadPlayerObjectActor.h"
 #include "DynamicProjectileObject.h"
+#include "../../../../../Source/MaloWLib/Safe.h"
 #include "../../../../../Source/PhysicsEngine/PhysicsEngine.h"
 
 static const enum ACTOR_TYPE
@@ -22,7 +23,8 @@ static const enum ACTOR_TYPE
 	ACTOR_TYPE_STATIC_OBJECT_CONTAINER,
 	ACTOR_TYPE_STATIC_OBJECT_PROJECTILE,
 	ACTOR_TYPE_STATIC_OBJECT_MATERIAL,
-	ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE
+	ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE,
+	ACTOR_TYPE_DEAD_PLAYER
 };
 
 static const enum COLLISION_EVENT_TYPE
@@ -78,9 +80,17 @@ public:
 	*/
 	bool AddNewPlayer(PlayerActor* new_player);
 	/*! Removes the Player Object.*/
-	bool RemovePlayerActor(const int ID);
+	bool RemovePlayerActor(const long ID);
 	/*! Returns Player Objects.*/
 	inline const std::vector<PlayerActor*>& GetPlayers() const {return this->zPlayers;}
+	/*! Adds new actor.
+		NOTE: Physic mesh will not be created in this function.
+		You have to do it manually.
+	*/
+	bool AddNewDeadPlayer(DeadPlayerObjectActor* new_DeadPlayer);
+	/*! Removes the Dead Player Object*/
+	bool RemovedDeadPlayerObject(const long ID);
+	inline const std::vector<DeadPlayerObjectActor*>& GetDeadPlayers() const {return this->zDeadPlayers;}
 
 ////////////////////////////////
 //			ANIMALS		     //
@@ -91,7 +101,7 @@ public:
 		You have to do it manually.
 	*/
 	bool AddNewAnimalActor(AnimalActor* new_player);	/*! Removes the Animal Object.*/
-	bool RemoveAnimalActor(const int ID);
+	bool RemoveAnimalActor(const long ID);
 	/*! Returns Animals.*/
 	inline const std::vector<AnimalActor*>& GetAnimals() const {return this->zAnimals;}
 
@@ -110,13 +120,13 @@ public:
 	*/
 	bool AddNewDynamicProjectileActor(DynamicProjectileObject* new_Projectile, Vector3 direction);
 	/*! Removes the Static Object.*/
-	bool RemoveStaticFoodActor(const int ID);
-	bool RemoveStaticWeaponActor(const int ID);
-	bool RemoveStaticMaterialActor(const int ID);
-	bool RemoveStaticContainerActor(const int ID);
-	bool RemoveStaticProjectileActor(const int ID);
+	bool RemoveStaticFoodActor(const long ID);
+	bool RemoveStaticWeaponActor(const long ID);
+	bool RemoveStaticMaterialActor(const long ID);
+	bool RemoveStaticContainerActor(const long ID);
+	bool RemoveStaticProjectileActor(const long ID);
 	/*! Removes the Dynamic Object.*/
-	bool RemoveDynamicProjectileActor(const int ID);
+	bool RemoveDynamicProjectileActor(const long ID);
 	/*! Returns Food Objects.*/
 	inline const std::vector<FoodObject*>& GetFoods() const {return this->zFoods;}
 	/*! Returns Weapon Objects.*/
@@ -138,24 +148,24 @@ public:
 		ACTOR_TYPE_STATIC_OBJECT_PROJECTILE,
 		ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE
 	*/
-	Actor* GetActor(const int ID, const int TYPE) const;
+	Actor* GetActor(const long ID, const int TYPE) const;
 	ObjectManager* GetObjManager() const;
 	PhysicsEngine* GetPhysicEnginePtr() const {return this->zPhysicsEngine;}
 private:
-	const int SearchForActor(const int ID, int TYPE) const;
-	const int SearchForActor(const int ID, int TYPE, Actor** aOut) const;
+	const int SearchForActor(const long ID, int TYPE) const;
+	const int SearchForActor(const long ID, int TYPE, Actor** aOut) const;
 
 private:
 
-	std::vector<PlayerActor*> zPlayers;
-	std::vector<AnimalActor*> zAnimals;
-	std::vector<FoodObject*> zFoods;
-	std::vector<WeaponObject*> zWeapons;
-	std::vector<ContainerObject*> zContainers;
-	std::vector<MaterialObject*> zMaterials;
-	std::vector<DynamicProjectileObject*> zDynamicProjectiles;
-	std::vector<StaticProjectileObject*> zStaticProjectiles;
 	ObjectManager* zObjManager;
 	PhysicsEngine* zPhysicsEngine;
-
+	std::vector<FoodObject*> zFoods;
+	std::vector<PlayerActor*> zPlayers;
+	std::vector<AnimalActor*> zAnimals;
+	std::vector<WeaponObject*> zWeapons;
+	std::vector<MaterialObject*> zMaterials;
+	std::vector<ContainerObject*> zContainers;
+	std::vector<DeadPlayerObjectActor*> zDeadPlayers;
+	std::vector<StaticProjectileObject*> zStaticProjectiles;
+	std::vector<DynamicProjectileObject*> zDynamicProjectiles;
 };

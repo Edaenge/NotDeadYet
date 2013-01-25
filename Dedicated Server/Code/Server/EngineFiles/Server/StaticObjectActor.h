@@ -54,7 +54,7 @@ public:
 	void SetStackSize(const int size) {this->zStacks = size;}
 	inline void SetPosition(const Vector3& pos) {zPos = pos;}
 	inline void SetRotation(const Vector4& rot) {zRot = rot;}
-	virtual void SetScale(const Vector3& scale) {zScale = scale;}
+	void SetScale(const Vector3& scale) {zScale = scale;}
 	void ModifyStackSize(const int size) {this->zStacks += size;}
 
 protected:
@@ -67,6 +67,5 @@ protected:
 	Vector3 zPos;
 	Vector3 zScale;
 	Vector4 zRot;
-
 private:
 };

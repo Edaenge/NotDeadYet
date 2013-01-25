@@ -31,6 +31,7 @@ static const enum M_ITEM_TYPE
 class Item
 {
 public:
+	Item();
 	Item(const long id, const unsigned int itemType);
 	virtual ~Item(){}
 	/*! Returns Item ID*/

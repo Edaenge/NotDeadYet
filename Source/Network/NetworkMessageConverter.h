@@ -74,7 +74,12 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_PROJECTILE_DAMAGE,
 	MESSAGE_TYPE_PROJECTILE_VELOCITY,
 	MESSAGE_TYPE_MATERIAL_STACKS_REQUIRED,
-	MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE
+	MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE,
+	MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM,
+	MESSAGE_TYPE_DEAD_PLAYER_REMOVE_ITEM,
+	MESSAGE_TYPE_ADD_DEAD_PLAYER_OBJECT,
+	MESSAGE_TYPE_REMOVE_DEAD_PLAYER_OBJECT,
+	MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED
 };
 //Data Messages
 static const std::string M_POSITION					= "P";
@@ -141,6 +146,12 @@ static const std::string M_NEW_PLAYER				= "NP";
 static const std::string M_UPDATE_PLAYER			= "UP";
 static const std::string M_REMOVE_PLAYER			= "RP";
 static const std::string M_DEAD_PLAYER				= "DP";
+static const std::string M_ADD_DEAD_PLAYER_ITEM		= "ADI";
+static const std::string M_DEAD_PLAYER_ADD_ITEM		= "DPAI";
+static const std::string M_DEAD_PLAYER_REMOVE_ITEM	= "DPRI";
+static const std::string M_ADD_DEAD_PLAYER_OBJECT	= "ADPO";
+static const std::string M_REMOVE_DEAD_PLAYER_OBJECT= "RDPO";
+static const std::string M_DEAD_PLAYER_ITEM_FINISHED= "DPIF";
 //Static Object Messages
 static const std::string M_NEW_STATIC_OBJECT		= "NSO";
 static const std::string M_REMOVE_STATIC_OBJECT		= "RSO";

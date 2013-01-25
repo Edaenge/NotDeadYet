@@ -11,6 +11,8 @@ class Gear : public Item
 {
 public:
 	Gear(const long ID, const unsigned int TYPE);
+	Gear(const Gear& other);
+	Gear(const Gear* other);
 	virtual ~Gear();
 	virtual bool Use();
 private:

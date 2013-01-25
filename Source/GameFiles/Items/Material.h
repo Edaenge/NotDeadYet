@@ -11,6 +11,8 @@ class Material : public Item
 {
 public:
 	Material(const long id, const unsigned int itemType, const unsigned int craftingType, const int stacksRequiredToCraft);
+	Material(const Material& other);
+	Material(const Material* other);
 	virtual ~Material();
 
 	int GetCraftingType() const {return this->zCraftingType;}

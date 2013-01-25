@@ -76,6 +76,303 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
+bool Client::AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, const long ID)
+{
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_DEAD_PLAYER, ID);
+
+	if (index != -1)
+	{
+		MaloW::Debug("Cant create a new Dead Player Object. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
+		return false;
+	}
+
+	std::string itemName = "Unknown";
+	std::string itemDescription = "<UNKNOWN DESCRIPTION>";
+	std::string itemIconFilePath = "none";
+	int itemWeight = 0;
+	int itemStackSize = 0;
+	int itemType = -1;
+	float weaponDamage = 0.0f;
+	float weaponRange = 0.0f;
+	float projectileDamage = 0.0f;
+	float projectileVelocity = 0.0f;
+	int craftingType = -1;
+	int stacksRequired = 10000;
+	float hunger = 0.0f;
+	int maxUse = 0;
+	int currUse = 0;
+
+	Vector3 position = Vector3(0, 0, 0);
+	Vector3 scale = Vector3(0.05f, 0.05f, 0.05f);
+	Vector4 rotation = Vector4(0, 0, 0, 0);
+	std::string filename = "";
+
+	DeadPlayerObject* deadPlayerObject = new DeadPlayerObject(ID);
+
+	char key[512];
+	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
+	{
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
+		if(strcmp(key, M_DEAD_PLAYER_ADD_ITEM.c_str()) == 0)
+		{
+			it++;
+			while((!strcmp(key, M_DEAD_PLAYER_ITEM_FINISHED.c_str()) == 0) && it < msgArray.end())
+			{
+				sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
+
+				if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
+				{
+					itemName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it));
+				}
+				else if(strcmp(key, M_ITEM_DESCRIPTION.c_str()) == 0)
+				{
+					itemDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it));
+				}
+				else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
+				{
+					itemIconFilePath = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it));
+				}
+				else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
+				{
+					itemWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it));
+				}
+				else if(strcmp(key, M_ITEM_STACK_SIZE.c_str()) == 0)
+				{
+					itemStackSize = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, (*it));
+				}
+				else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
+				{
+					itemType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it));
+				}
+				else if(strcmp(key, M_WEAPON_DAMAGE.c_str()) == 0)
+				{
+					weaponDamage = this->zMsgHandler.ConvertStringToFloat(M_WEAPON_DAMAGE, (*it));
+				}
+				else if(strcmp(key, M_WEAPON_RANGE.c_str()) == 0)
+				{
+					weaponRange = this->zMsgHandler.ConvertStringToFloat(M_WEAPON_RANGE, (*it));
+				}
+				else if(strcmp(key, M_PROJECTILE_VELOCITY.c_str()) == 0)
+				{
+					projectileVelocity = this->zMsgHandler.ConvertStringToFloat(M_PROJECTILE_VELOCITY, (*it));
+				}
+				else if(strcmp(key, M_PROJECTILE_DAMAGE.c_str()) == 0)
+				{
+					projectileDamage = this->zMsgHandler.ConvertStringToFloat(M_PROJECTILE_DAMAGE, (*it));
+				}
+				else if(strcmp(key, M_HUNGER.c_str()) == 0)
+				{
+					hunger = this->zMsgHandler.ConvertStringToFloat(M_HUNGER, (*it));
+				}
+				else if(strcmp(key, M_CONTAINER_MAX.c_str()) == 0)
+				{
+					maxUse = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_MAX, (*it));
+				}
+				else if(strcmp(key, M_CONTAINER_CURRENT.c_str()) == 0)
+				{
+					currUse = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_CURRENT, (*it));
+				}
+				else if(strcmp(key, M_MATERIAL_CRAFTING_TYPE.c_str()) == 0)
+				{
+					craftingType = this->zMsgHandler.ConvertStringToInt(M_MATERIAL_CRAFTING_TYPE, (*it));
+				}
+				else if(strcmp(key, M_MATERIAL_STACKS_REQUIRED.c_str()) == 0)
+				{
+					stacksRequired = this->zMsgHandler.ConvertStringToInt(M_MATERIAL_STACKS_REQUIRED, (*it));
+				}
+
+				it++;
+			}
+			if (itemType == -1)
+			{
+				MaloW::Debug("Wrong or no Item Type sent from server in Client::HandleAddInventoryItem ItemType: " + MaloW::convertNrToString((float)itemType));
+				return false;
+			}
+			//Todo add more data to item to identify type ex Bow/Axe/Pocket Knife
+			Item* item = NULL;
+			switch (itemType)
+			{
+			case ITEM_TYPE_FOOD_DEER_MEAT:
+				item = new Food(ID, itemType, hunger);
+				item->SetStacking(true);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_FOOD_WOLF_MEAT:
+				item = new Food(ID, itemType, hunger);
+				item->SetStacking(true);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_WEAPON_RANGED_BOW:
+				item = new RangedWeapon(ID,itemType, weaponDamage, weaponRange);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_WEAPON_RANGED_ROCK:
+				item = new RangedWeapon(ID,itemType, weaponDamage, weaponRange);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_WEAPON_MELEE_AXE:
+				item = new MeleeWeapon(ID, itemType, weaponDamage, weaponRange);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
+				item = new MeleeWeapon(ID, itemType, weaponDamage, weaponRange);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_CONTAINER_CANTEEN:
+				item = new Container(ID, itemType, maxUse, currUse);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_PROJECTILE_ARROW:
+				item = new Projectile(ID, itemType, projectileVelocity, projectileDamage);
+				item->SetStacking(true);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_MATERIAL_SMALL_STICK:
+				item = new Material(ID, itemType, craftingType, stacksRequired);
+				item->SetStacking(true);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_MATERIAL_MEDIUM_STICK:
+				item = new Material(ID, itemType, craftingType, stacksRequired);
+				item->SetStacking(true);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_MATERIAL_THREAD:
+				item = new Material(ID, itemType, craftingType, stacksRequired);
+				item->SetStacking(true);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_MATERIAL_LARGE_STICK:
+				item = new Material(ID, itemType, craftingType, stacksRequired);
+				item->SetStacking(true);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_GEAR_HEAD:
+				item = new Gear(ID, itemType);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_GEAR_CHEST:
+				item = new Gear(ID, itemType);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_GEAR_LEGS:
+				item = new Gear(ID, itemType);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			case ITEM_TYPE_GEAR_BOOTS:
+				item = new Gear(ID, itemType);
+				item->SetItemName(itemName);
+				item->SetItemWeight(itemWeight);
+				item->SetStackSize(itemStackSize);
+				item->SetIconPath(itemIconFilePath);
+				item->SetItemDescription(itemDescription);
+				break;
+			default:
+				break;
+			}
+				
+		}
+
+		else if(strcmp(key, M_POSITION.c_str()) == 0)
+		{
+			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
+		}
+		else if(strcmp(key, M_ROTATION.c_str()) == 0)
+		{
+			rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
+		}
+		else if(strcmp(key, M_SCALE.c_str()) == 0)
+		{
+			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
+		}
+		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
+		{
+			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
+		}
+		else
+		{
+			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewPlayerObject");
+		}
+	}
+		
+	if (Messages::FileWrite())
+		Messages::Debug("Dead Player ID: " + MaloW::convertNrToString((float)ID) +" Added");
+
+	//Creates a StaticMesh from the given Filename
+	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
+	mesh->ResetRotation();
+	mesh->SetQuaternion(rotation);
+	mesh->SetScale(scale);
+
+	//Create player data
+	deadPlayerObject->SetStaticMesh(mesh);
+
+	this->zObjectManager->AddObject(deadPlayerObject);
+
+
+	return true;
+}
+
+
 bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const long ID)
 {
 	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, ID);

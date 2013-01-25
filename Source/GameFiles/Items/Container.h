@@ -12,6 +12,8 @@ class Container : public Item
 public:
 	Container(const long id, const unsigned int itemType, 
 		const int maxUse, const int currUse);
+	Container(const Container& other);
+	Container(const Container* other);
 	virtual ~Container();
 
 	void SetMaxUses(const int size) {this->zMaxUses = size;}

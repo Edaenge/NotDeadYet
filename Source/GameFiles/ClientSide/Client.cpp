@@ -737,6 +737,12 @@ void Client::HandleNetworkMessage(const std::string& msg)
 			long id = this->zMsgHandler.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
 			this->HandleWeaponUse(id);
 		}
+		else if(strcmp(key, M_ADD_DEAD_PLAYER_OBJECT.c_str()) == 0)
+		{
+			long id = this->zMsgHandler.ConvertStringToInt(M_ADD_DEAD_PLAYER_OBJECT, msgArray[0]);
+
+			this->AddNewDeadPlayerObject(msgArray, id);
+		}
 		else if(strcmp(key, M_SELF_ID.c_str()) == 0)
 		{
 			this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
@@ -880,4 +886,3 @@ void Client::onEvent(Event* e)
 		//zTargetedEntities.erase(ERE->entity);
 	}
 }
-
