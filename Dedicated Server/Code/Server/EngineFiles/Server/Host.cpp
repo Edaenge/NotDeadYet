@@ -429,7 +429,7 @@ void Host::SendToAllClients(const std::string& message, bool sendIM /*= false*/ 
 		{
 			unsigned long m_id = (*it)->GetNextIPID();
 			im = this->zMessageConverter.Convert(MESSAGE_TYPE_IMPORTANT_MESSAGE, (float)m_id);
-			(*it)->SendIM(this->zDeltaTime, (im+message), m_id);
+			(*it)->SendIM((im+message), m_id);
 
 			continue;
 		}
@@ -453,7 +453,7 @@ void Host::SendToClient(int clientID, const std::string& message, bool sendIM /*
 
 	unsigned long m_id = cd->GetNextIPID();
 	std::string im = this->zMessageConverter.Convert(MESSAGE_TYPE_IMPORTANT_MESSAGE, (float)m_id);
-	cd->SendIM(this->zDeltaTime, (im + message), m_id);
+	cd->SendIM((im + message), m_id);
 }
 
 void Host::SendToClient( ClientData* cd, const std::string& message, bool sendIM /*= false*/ )
@@ -469,7 +469,7 @@ void Host::SendToClient( ClientData* cd, const std::string& message, bool sendIM
 
 	unsigned long m_id = cd->GetNextIPID();
 	std::string im = this->zMessageConverter.Convert(MESSAGE_TYPE_IMPORTANT_MESSAGE, (float)m_id);
-	cd->SendIM(this->zDeltaTime, (im + message), m_id);
+	cd->SendIM((im + message), m_id);
 }
 
 void Host::SendPlayerActorUpdates()
@@ -699,7 +699,7 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 	Inventory* inv = pActor->GetInventory();
 	Equipment* eq = pActor->GetEquipment();
 	
-	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_DEAD_PLAYER_OBJECT, pActor->GetID());
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_DEAD_PLAYER_OBJECT, (float)pActor->GetID());
 	std::vector<Item*> temp = inv->GetItems();
 	for (auto it = temp.begin(); it < temp.end(); it++)
 	{
@@ -1714,7 +1714,7 @@ void Host::onEvent( Event* e )
 				Vector3 newPlayerTempPos = playerTempPos + (tempGround * (zDeltaTime * 4));
 
 				float yPosNew = this->zWorld->GetHeightAtWorldPos(newPlayerTempPos.x, newPlayerTempPos.z);
-				newPlayerTempPos.y += -9.82 * zDeltaTime;
+				newPlayerTempPos.y += -9.82f * zDeltaTime;
 				if(newPlayerTempPos.y < yPosNew)
 					newPlayerTempPos.y = yPosNew;
 				PUE->validMove = false;
@@ -1724,7 +1724,7 @@ void Host::onEvent( Event* e )
 			{
 				PUE->validMove = true;
 //				playerTempPos.y += -1.82 * zDeltaTime;
-				playerTempPos.y += -9.82 * zDeltaTime;
+				playerTempPos.y += -9.82f * zDeltaTime;
 				if(playerTempPos.y < yPos)
 					playerTempPos.y = yPos;
 

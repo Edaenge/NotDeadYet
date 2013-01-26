@@ -9,7 +9,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include <vector>
 
 #define DEFAULT_MAX_TIME_RESEND		2.0f
-#define DEFAULT_MAX_NR_RESEND		1
+#define DEFAULT_MAX_NR_RESEND		2
 
 struct IMessage
 {
@@ -17,7 +17,7 @@ struct IMessage
 	{
 		MSG_ID = 0;
 		msg = "None";
-		timeSent = 0.0f;
+		currentTime = 0.0f;
 		nrOfTimesResent = 0;
 
 		maxTimesToResend = 0;
@@ -31,7 +31,7 @@ struct IMessage
 	int nrOfTimesResent;
 	int maxTimesToResend;
 	float maxTimeToResend;
-	float timeSent;
+	float currentTime;
 	std::string msg;
 };
 
@@ -68,7 +68,7 @@ public:
 		Note: Message needs to contain the IMPORTANT_MESSAGE tag.
 
 	*/
-	bool SendIM(const float sentTime, const std::string& message, const unsigned long uniqe_ID, 
+	bool SendIM(const std::string& message, const unsigned long uniqe_ID, 
 				const float timeToResend = DEFAULT_MAX_TIME_RESEND, const int nrToResend = DEFAULT_MAX_NR_RESEND);
 
 	/*! Handle unanswered Important messages, check them, resend them.*/

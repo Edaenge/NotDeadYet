@@ -45,7 +45,7 @@ bool ClientData::CalculateLatency( float& latencyOut )
 	return true;
 }
 
-bool ClientData::SendIM( const float sentTime, const std::string& message, 
+bool ClientData::SendIM(const std::string& message, 
 						const unsigned long uniqe_ID, const float timeToResend /*= DEFAULT_MAX_TIME_RESEND*/, 
 						const int nrToResend /*= DEFAULT_MAX_NR_RESEND*/ )
 {
@@ -55,7 +55,7 @@ bool ClientData::SendIM( const float sentTime, const std::string& message,
 	IMessage* new_important_msg = new IMessage();
 
 	new_important_msg->msg = message;
-	new_important_msg->timeSent = sentTime;
+	new_important_msg->currentTime = 0.0f;
 	new_important_msg->maxTimesToResend = nrToResend;
 	new_important_msg->maxTimeToResend = timeToResend;
 	new_important_msg->MSG_ID = uniqe_ID;
@@ -118,11 +118,10 @@ void ClientData::HandleNackIM( float dt )
 	if(!HasIM())
 		return;
 
-	float time;
 	for (auto it = this->zImportantMessages.begin(); it < this->zImportantMessages.end(); it++)
 	{
-		time = dt - (*it)->timeSent;
-		if(time >= (*it)->maxTimeToResend)
+		(*it)->currentTime += dt;
+		if( (*it)->currentTime >= (*it)->maxTimeToResend )
 		{
 			if((*it)->nrOfTimesResent >= (*it)->maxTimesToResend)
 			{
@@ -134,7 +133,7 @@ void ClientData::HandleNackIM( float dt )
 			
 			SendM((*it)->msg);
 			(*it)->nrOfTimesResent++;
-			(*it)->timeSent = dt;
+			(*it)->currentTime = 0.0f;
 		}
 	}
 }
