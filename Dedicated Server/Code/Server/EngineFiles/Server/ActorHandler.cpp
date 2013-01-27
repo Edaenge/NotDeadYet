@@ -262,7 +262,6 @@ bool ActorHandler::RemovedDeadPlayerObject(const long ID)
 	DeadPlayerObjectActor* temp = this->zDeadPlayers[index];
 
 	this->zDeadPlayers.erase(this->zDeadPlayers.begin() + index);
-	this->zPhysicsEngine->DeletePhysicsObject(temp->GetPhysicObject());
 
 	SAFE_DELETE(temp);
 

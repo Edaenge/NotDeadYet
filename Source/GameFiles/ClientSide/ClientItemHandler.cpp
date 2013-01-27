@@ -768,6 +768,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_WEAPON_RANGED_ROCK:
 		item = new RangedWeapon(ID,itemType, weaponDamage, weaponRange);
+		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -776,6 +777,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_WEAPON_MELEE_AXE:
 		item = new MeleeWeapon(ID, itemType, weaponDamage, weaponRange);
+		item->SetStacking(false);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -784,6 +786,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
 		item = new MeleeWeapon(ID, itemType, weaponDamage, weaponRange);
+		item->SetStacking(false);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -792,6 +795,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_CONTAINER_CANTEEN:
 		item = new Container(ID, itemType, maxUse, currUse);
+		item->SetStacking(false);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);

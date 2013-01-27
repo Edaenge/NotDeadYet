@@ -4,7 +4,7 @@
 */
 #pragma once
 
-#include "PhysicsActor.h"
+#include "Actor.h"
 #include "../../../../../Source/GameFiles/Items/Container.h"
 #include "../../../../../Source/GameFiles/Items/Food.h"
 #include "../../../../../Source/GameFiles/Items/Material.h"
@@ -12,10 +12,12 @@
 #include "../../../../../Source/GameFiles/Items/MeleeWeapon.h"
 #include "../../../../../Source/GameFiles/Items/RangedWeapon.h"
 
-class DeadPlayerObjectActor : public PhysicsActor
+#include <vector>
+
+class DeadPlayerObjectActor : public Actor
 {
 public:
-	DeadPlayerObjectActor(const bool genID = true) {};
+	DeadPlayerObjectActor(const bool genID = false);
 	virtual ~DeadPlayerObjectActor() {};
 
 	inline const Vector3& GetPosition() const {return zPos;}

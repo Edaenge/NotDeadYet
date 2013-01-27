@@ -14,7 +14,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "../WorldFiles/World.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
-//#include <vld.h>
+#include <vld.h>
 #define INCLUDE_MODEL_VIEWER
 #endif
 

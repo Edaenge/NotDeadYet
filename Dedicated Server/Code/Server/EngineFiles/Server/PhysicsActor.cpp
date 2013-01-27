@@ -10,6 +10,7 @@ PhysicsActor::PhysicsActor() : Actor()
 PhysicsActor::PhysicsActor(const Vector3& startpos, PhysicsObject* pObj, const Vector4& rot) : Actor()
 {
 	this->zPhysicObj = pObj;
+	this->zScaleChanged = false;
 	this->zPhysicObj->SetPosition(startpos);
 	this->zPhysicObj->SetQuaternion(rot);
 }
@@ -17,6 +18,7 @@ PhysicsActor::PhysicsActor(const Vector3& startpos, PhysicsObject* pObj, const V
 PhysicsActor::PhysicsActor(const Vector3& startpos, PhysicsObject* pObj) : Actor()
 {
 	this->zPhysicObj = pObj;
+	this->zScaleChanged = false;
 	this->zPhysicObj->SetPosition(startpos);
 }
 
