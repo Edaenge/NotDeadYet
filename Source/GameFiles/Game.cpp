@@ -15,6 +15,7 @@ Game::~Game()
 void Game::Run()
 {
 	GraphicsEngine* eng = GetGraphics();
+
 	bool bLastCursorVisible = false;
 	bool bCurrentCursorVisible = false;
 	//Waits for client to exit.

@@ -16,6 +16,22 @@
 
 using namespace MaloW;
 
+static const struct Looting_Data
+{
+	Looting_Data()
+	{
+		owner = -1;
+		gid = Gui_Item_Data();
+		type = OBJECT_TYPE_STATIC_OBJECT;
+	}
+	int owner;
+	Gui_Item_Data gid;
+	/*
+		DYNAMIC, STATIC, DEAD_PLAYER
+	*/
+	int type;
+};
+
 class Client : public MaloW::Process, public Observer
 {
 public:
@@ -88,7 +104,7 @@ private:
 	float Update();
 
 	/*! Checks Ray Vs Static/Dynamic Objects*/
-	std::vector<Gui_Item_Data> RayVsWorld();
+	std::vector<Looting_Data> RayVsWorld();
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
 	bool CheckCollision();
 
@@ -133,7 +149,8 @@ private:
 	//			  		//
 	//////////////////////
 
-	bool CreateItemFromMessage( std::vector<std::string> msgArray, unsigned int& Index, Item** item, const long ID);
+	bool CreateItemFromMessage( std::vector<std::string> msgArray, int& Index, Item** item, const long ID);
+	void SendLootItemMessage(const long ID, const long ItemID, const int TYPE);
 	void SendPickupItemMessage(const long ID);
 	void SendDropItemMessage(const long ID);
 	void HandleRemoveInventoryItem(const long ID);
@@ -145,6 +162,7 @@ private:
 	void HandleUnEquipItem(const long ItemID, const int Slot);
 	void SendUnEquipItem(const long ID, const int Slot);
 	void HandleRemoveEquipment(const long ItemID, const int Slot);
+	void HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, const int type);
 	void HandleWeaponUse(const long ID);
 private:
 	/*! Current Client ID*/
@@ -176,11 +194,12 @@ private:
 	NetworkMessageConverter zMsgHandler;
 	Inventory* zPlayerInventory;
 
-	//float timer;
 	World* zWorld;
 	WorldRenderer* zWorldRenderer;
 	WorldAnchor* zAnchor;
 	iImage* zCrossHair;
+
+	Vector3 prevDirection;
 protected:
 	virtual void onEvent( Event* e );
 };

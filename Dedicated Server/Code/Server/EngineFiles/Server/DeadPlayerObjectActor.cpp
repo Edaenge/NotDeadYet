@@ -14,7 +14,7 @@ Item* DeadPlayerObjectActor::GetItem(const long ID) const
 
 Item* DeadPlayerObjectActor::GetItemAt( const int Index ) const
 {
-	if (Index >= this->zItems.size())
+	if ((unsigned int)Index >= this->zItems.size())
 		return NULL;
 
 	return this->zItems[Index];

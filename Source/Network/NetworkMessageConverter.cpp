@@ -139,11 +139,17 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_PICKUP_ITEM:
 		ss << M_PICKUP_ITEM;
 		break;
+	case MESSAGE_TYPE_LOOT_ITEM:
+		ss << M_LOOT_ITEM;
+		break;
 	case MESSAGE_TYPE_DROP_ITEM:
 		ss << M_DROP_ITEM;
 		break;
 	case MESSAGE_TYPE_ITEM_TYPE:
 		ss << M_ITEM_TYPE;
+		break;
+	case MESSAGE_TYPE_ITEM_ID:
+		ss << M_ITEM_ID;
 		break;
 	case MESSAGE_TYPE_ADD_INVENTORY_ITEM:
 		ss << M_ADD_INVENTORY_ITEM;
@@ -247,7 +253,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_ACKNOWLEDGE:
 		ss << M_ACKNOWLEDGE_MESSAGE;
 		break;
-
 	default:
 		return "";
 		break;

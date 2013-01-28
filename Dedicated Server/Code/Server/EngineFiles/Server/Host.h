@@ -106,7 +106,7 @@ private:
 	/*! Returns an Array Containing Existing Static Objects Messages.*/
 	void GetExistingObjects(std::vector<std::string>& static_Objects);
 	/*! Called When player Disconnects or Dies.*/
-	void OnPlayerRemove(unsigned int ID, std::string& message);
+	void OnPlayerRemove(unsigned int ID);
 	//////////////////////////////////////
 	//									//
 	//	   Objects/Items Conversions	//
@@ -154,13 +154,15 @@ private:
 	void SendAddInventoryItemMessage(const int PlayerID, Projectile* projectile);
 	void SendAddInventoryItemMessage(const int PlayerID, Weapon* weapon);
 	void SendAddInventoryItemMessage(const int PlayerID, MaterialObject* material);
-
+	void SendAddInventoryItemMessage(const int PlayerID, Container* container);
+	void SendAddInventoryItemMessage(const int PlayerID, Food* food);
+	void SendAddInventoryItemMessage(const int PlayerID, Material* material);
 	bool HandlePickupItem(PlayerActor* pActor, const long ObjectId);
 	void HandleDropItem(PlayerActor* pActor, const long ItemID);
 	void HandleItemUse(PlayerActor* pActor, const long ItemID);
 	void HandleWeaponUse(PlayerActor* pActor, const long ItemID);
 	void HandleUnEquipItem(PlayerActor* pActor, const long ItemID, const int Slot);
-
+	bool HandleLootItem(PlayerActor* pActor, const int deadPlayerID, const long id, const int type);
 	Item* CreateItemFromDefault(const int ItemType);
 
 	/*! Sends UnEquip Message To Client*/
@@ -168,6 +170,7 @@ private:
 	void SendWeaponUseMessage(const int PlayerID, const long ID);
 	void SendRemoveItemMessage(const int PlayerID, const long ID, const int Slot);
 	void SendRemoveItemMessage(const int PlayerID, const long ID);
+	void SendRemoveDeadPlayerItem(const int PlayerID, const long ObjID, const long ItemID, const int Type);
 	void SendEquipMessage(const int PlayerID, const long ID, const int Slot);
 	void SendUseItem(const int PlayerID, const long ID);
 

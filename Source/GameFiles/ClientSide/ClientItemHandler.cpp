@@ -618,6 +618,16 @@ void Client::SendUnEquipItem(const long ID, const int Slot)
 	this->zServerChannel->sendData(msg);
 }
 
+void Client::SendLootItemMessage(const long ID, const long ItemID, const int TYPE)
+{
+	std::string msg;
+
+	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_ITEM, (float)ID);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_ID, (float)ItemID);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)TYPE);
+	this->zServerChannel->sendData(msg);
+}
+
 void Client::SendPickupItemMessage(const long ID)
 {
 	std::string msg;
@@ -889,13 +899,53 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		}
 		Gui_Item_Data gid = Gui_Item_Data(ID, itemWeight, itemStackSize, itemName, itemIconFilePath, itemDescription, itemType);
 		this->zGuiManager->AddInventoryItemToGui(gid);
-		if (Messages::FileWrite())
-		{
-			Messages::Debug("Added Image ID: " + MaloW::convertNrToString((float)ID));
-		}
 	}
 	else
 	{
 		SAFE_DELETE(item);
 	}
+}
+
+void Client::HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, const int type)
+{
+	DeadPlayerObject* dpo = this->zObjectManager->SearchAndGetDeadPlayerObject(ObjID);
+
+	if (!dpo)
+	{
+		MaloW::Debug("Couldnt find Dead Player Object in Client::HandeRemoveDeadPlayerItem");
+		return;
+	}
+
+	std::vector<Item*> items = dpo->GetItems();
+
+	for (auto it = items.begin(); it < items.end(); it++)
+	{
+		if ((*it)->GetID() == ItemID)
+		{
+			if ((*it)->GetItemType() == type)
+			{
+				Item* temp = (*it);
+				items.erase(it);
+				SAFE_DELETE(temp);
+				dpo->SetItems(items);
+				/*if (this->zPlayerInventory->AddItem((*it)))
+				{
+					int stacks = 0;
+					if ((*it)->GetStacking())
+					{
+					stacks = (*it)->GetStackSize();
+					}
+					Gui_Item_Data gid = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), stacks, (*it)->GetItemName(), 
+					(*it)->GetIconPath(), (*it)->GetItemDescription(), (*it)->GetItemType());
+					this->zGuiManager->AddInventoryItemToGui(gid);
+					return;
+				}*/
+
+				return;
+			}
+			MaloW::Debug("Item Type isn't the same as the One send from Server");
+			return;
+		}
+	}
+	MaloW::Debug("Couldnt find the Item in Client::HandeRemoveDeadPlayerItem");
 }

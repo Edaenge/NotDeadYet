@@ -55,8 +55,9 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		if (ID == this->zID)
 		{
 			this->zCreated = true;
-			filename = "Media/Ball.obj";
-			scale = Vector3(0.5f, 0.5f, 0.5f);
+			//filename = "Media/Ball.obj";
+			scale = Vector3(0.05f, 0.05f, 0.05f);
+			prevDirection = this->zEng->GetCamera()->GetForward();
 		}
 	}
 	if (Messages::FileWrite())
@@ -76,8 +77,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
-
-bool Client::CreateItemFromMessage( std::vector<std::string> msgArray, unsigned int& Index, Item** item, const long ID)
+bool Client::CreateItemFromMessage(std::vector<std::string> msgArray, int& Index, Item** item, const long ID)
 {
 	std::string itemName = "Unknown";
 	std::string itemDescription = "<UNKNOWN DESCRIPTION>";
@@ -97,10 +97,8 @@ bool Client::CreateItemFromMessage( std::vector<std::string> msgArray, unsigned 
 
 	char key[512];
 
-
 	for (auto it = msgArray.begin() + Index + 1; (it < msgArray.end()) && (!strcmp(key, M_DEAD_PLAYER_ITEM_FINISHED.c_str()) == 0); it++)
 	{
-		Index++;
 		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 
 		if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
@@ -163,8 +161,8 @@ bool Client::CreateItemFromMessage( std::vector<std::string> msgArray, unsigned 
 		{
 			stacksRequired = this->zMsgHandler.ConvertStringToInt(M_MATERIAL_STACKS_REQUIRED, (*it));
 		}
+		Index++;
 	}
-	Index++;
 
 	if (itemType == -1)
 	{
@@ -356,16 +354,17 @@ bool Client::AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, co
 	std::vector<Item*> items;
 	
 	DeadPlayerObject* deadPlayerObject = new DeadPlayerObject(ID);
-	unsigned int counter = 0;
+	index = 0;
 	char key[512];
-
+	long id;
 	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
 		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 		if(strcmp(key, M_DEAD_PLAYER_ADD_ITEM.c_str()) == 0)
 		{
-			it++;
-			counter++;
+			id = this->zMsgHandler.ConvertStringToInt(M_DEAD_PLAYER_ADD_ITEM, (*it));
+			//it++;
+			//index++;
 			Item* item = NULL;
 			/*for(; (it < msgArray.end()) && (!strcmp(key, M_DEAD_PLAYER_ITEM_FINISHED.c_str()) == 0); it++)
 			{
@@ -587,14 +586,12 @@ bool Client::AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, co
 			default:
 				break;
 			}*/
-			this->CreateItemFromMessage(msgArray, counter, &item, ID);
-			counter++;
-			it = msgArray.begin() + (counter + 1);
+			this->CreateItemFromMessage(msgArray, index, &item, id);
+			it = msgArray.begin() + (index);
 			if (item)
 			{
 				items.push_back(item);
 			}
-			counter++;
 		}
 		else if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
@@ -616,9 +613,9 @@ bool Client::AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, co
 		{
 			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddDeadPlayerObject");
 		}
-		counter++;
+		index++;
 
-		if (counter > msgArray.size())
+		if (index > msgArray.size())
 		{
 			int test = 0;
 		}
@@ -635,7 +632,7 @@ bool Client::AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, co
 
 	//Create player data
 	deadPlayerObject->SetStaticMesh(mesh);
-
+	deadPlayerObject->SetItems(items);
 	this->zObjectManager->AddObject(deadPlayerObject);
 
 

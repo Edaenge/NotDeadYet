@@ -227,6 +227,8 @@ int WorldObjectManager::SearchForObject(const unsigned int type, const int ID)
 	case OBJECT_TYPE_DYNAMIC_OBJECT:
 		index = this->SearchForDynamicObject(ID);
 		break;
+	case OBJECT_TYPE_DEAD_PLAYER:
+		index = this->SearchForDeadPlayerObject(ID);
 	default:
 		index = -1;
 		break;

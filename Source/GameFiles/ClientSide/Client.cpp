@@ -26,7 +26,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Tree_02_v02_r.obj";
+	this->zMeshID = "Media/Scale.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -111,8 +111,8 @@ float Client::Update()
 void Client::InitGraphics()
 {
 	this->zEng->CreateSkyBox("Media/skymap.dds");
-	this->zEng->GetCamera()->SetPosition( Vector3(1, 4, -1) );
-	this->zEng->GetCamera()->LookAt( Vector3(0, 0, 0) );
+	this->zEng->GetCamera()->SetPosition( Vector3(42, 0, 42) );
+	this->zEng->GetCamera()->LookAt( Vector3(45, 0, 45) );
 	
 	LoadEntList("Entities.txt");
 
@@ -132,6 +132,8 @@ void Client::InitGraphics()
 	float y = (windowHeight / 2.0f) - length * 0.5f;
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(x, y), Vector2(length, length), "Media/cross.png");
+
+	//this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 1, 1, 1, 1);
 
 	//this->zEng->StartRendering();
 }
@@ -283,6 +285,7 @@ void Client::UpdateCameraPos()
 	}
 
 	//Rotate Mesh
+	//Vector3 meshDir = Vector3(0.0f, 0.0f, -1.0f);
 	Vector3 meshDir = Vector3(0.0f, 0.0f, -1.0f);
 	Vector3 camDir = this->zEng->GetCamera()->GetForward();
 	Vector3 around;
@@ -292,7 +295,6 @@ void Client::UpdateCameraPos()
 	camDir.Normalize();
 	meshDir.Normalize();
 	
-	//around y-axis
 	around = Vector3(0,1,0);
 
 	angle = acos(camDir.GetDotProduct(meshDir));
@@ -303,8 +305,7 @@ void Client::UpdateCameraPos()
 	iMesh* playerMesh = this->zObjectManager->SearchAndGetPlayerObject(this->zID)->GetMesh();
 
 	playerMesh->ResetRotation();
-	playerMesh->RotateAxis(around, angle);
-}
+	playerMesh->RotateAxis(around, angle);}
 
 void Client::UpdateWorldObjects()
 {
@@ -478,12 +479,24 @@ void Client::HandleKeyboardInput()
 		{
 			if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
 			{
-				std::vector<Gui_Item_Data> collisionObjects = this->RayVsWorld();
+				std::vector<Looting_Data> collisionObjects = this->RayVsWorld();
+				std::vector<Gui_Item_Data> gui_Item_Datas;
 				if (collisionObjects.size() > 0)
 				{
-					SendPickupItemMessage(collisionObjects[0].zID);
+					if (collisionObjects[0].type == OBJECT_TYPE_DYNAMIC_OBJECT || collisionObjects[0].type == OBJECT_TYPE_STATIC_OBJECT)
+					{
+						this->SendPickupItemMessage(collisionObjects[0].gid.zID);
+					}
+					else if (collisionObjects[0].type == OBJECT_TYPE_DEAD_PLAYER)
+					{
+						this->SendLootItemMessage(collisionObjects[0].owner, collisionObjects[0].gid.zID, collisionObjects[0].gid.zType);
+					}
+					for (auto x = collisionObjects.begin(); x < collisionObjects.end(); x++)
+					{
+						gui_Item_Datas.push_back((*x).gid);
+					}
 				}
-				this->zGuiManager->ShowLootingGui(collisionObjects);
+				this->zGuiManager->ShowLootingGui(gui_Item_Datas);
 				this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
 			}
 		}
@@ -753,6 +766,23 @@ void Client::HandleNetworkMessage(const std::string& msg)
 
 			this->AddNewDeadPlayerObject(msgArray, id);
 		}
+		else if(strcmp(key, M_DEAD_PLAYER_REMOVE_ITEM.c_str()) == 0)
+		{
+			long id = this->zMsgHandler.ConvertStringToInt(M_DEAD_PLAYER_REMOVE_ITEM, msgArray[0]);
+			int type = -1;
+			long itemID = -1;
+			if (msgArray.size() > 2)
+			{
+				itemID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, msgArray[1]);
+				type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
+
+				this->HandeRemoveDeadPlayerItem(id, itemID, type);
+			}
+			else
+			{
+				MaloW::Debug("Msg array size is to short size: " + MaloW::convertNrToString((float)msgArray.size()) + " Expected size 3");
+			}
+		}
 		else if(strcmp(key, M_SELF_ID.c_str()) == 0)
 		{
 			this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
@@ -801,18 +831,19 @@ void Client::CloseConnection(const std::string& reason)
 	this->Close();
 }
 
-std::vector<Gui_Item_Data> Client::RayVsWorld()
+std::vector<Looting_Data> Client::RayVsWorld()
 {
 	Vector3 origin = this->zEng->GetCamera()->GetPosition();
 	Vector3 camForward = this->zEng->GetCamera()->GetForward();
 
 	CollisionData data;
-	std::vector<Gui_Item_Data> Collisions;
+	std::vector<Looting_Data> Collisions;
 	//Static objects
 	std::vector<StaticObject*> staticObjects = this->zObjectManager->GetStaticObjects();
+	iMesh* mesh = NULL;
 	for(auto it = staticObjects.begin(); it < staticObjects.end(); it++)
 	{
-		iMesh* mesh = (*it)->GetMesh();
+		mesh = (*it)->GetMesh();
 		if (!mesh)
 		{
 			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
@@ -820,18 +851,24 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 		}
 		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
 
-		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
+		if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
+			Looting_Data ld;
 			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), 
 				(*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription(), (*it)->GetType());
-			Collisions.push_back(gui_Data);
+
+			ld.owner = gui_Data.zID;
+			ld.gid = gui_Data;
+			ld.type = OBJECT_TYPE_DYNAMIC_OBJECT;
+
+			Collisions.push_back(ld);
 		}
 	}
 	//Dynamic objects
 	std::vector<DynamicObject*> dynamicObjects = this->zObjectManager->GetDynamicObjects();
 	for(auto it = dynamicObjects.begin(); it < dynamicObjects.end(); it++)
 	{
-		iMesh* mesh = (*it)->GetMesh();
+		mesh = (*it)->GetMesh();
 		if (!mesh)
 		{
 			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
@@ -839,12 +876,48 @@ std::vector<Gui_Item_Data> Client::RayVsWorld()
 		}
 		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
 
-		if (data.collision &&  data.distance < MAX_DISTANCE_TO_OBJECT)
+		if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
+			Looting_Data ld;
 			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), 
 				(*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription(), (*it)->GetType());
 
-			Collisions.push_back(gui_Data);
+			ld.owner = gui_Data.zID;
+			ld.gid = gui_Data;
+			ld.type = OBJECT_TYPE_DYNAMIC_OBJECT;
+
+			Collisions.push_back(ld);
+		}
+	}
+
+	std::vector<DeadPlayerObject*> deadPlayerObjects = this->zObjectManager->GetDeadPlayerObjects();
+	for (auto it = deadPlayerObjects.begin(); it < deadPlayerObjects.end(); it++)
+	{
+		mesh = (*it)->GetMesh();
+		if (!mesh)
+		{
+			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
+			continue;
+		}
+
+		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
+
+		if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+		{
+			std::vector<Item*> items = (*it)->GetItems();
+			for (auto x = items.begin(); x < items.end(); x++)
+			{
+				Looting_Data ld;
+				Gui_Item_Data gui_Data = Gui_Item_Data((*x)->GetID(), (*x)->GetWeight(), (*x)->GetStackSize(), 
+					(*x)->GetItemName(), (*x)->GetIconPath(), (*x)->GetItemDescription(), (*x)->GetItemType());
+
+				ld.owner = (*it)->GetID();
+				ld.gid = gui_Data;
+				ld.type = OBJECT_TYPE_DEAD_PLAYER;
+
+				Collisions.push_back(ld);
+			}
+			
 		}
 	}
 

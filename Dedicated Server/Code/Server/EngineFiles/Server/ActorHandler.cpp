@@ -610,7 +610,11 @@ CollisionEvent ActorHandler::CheckCollision(BioActor* bActor, float range)
 
 		pOtherObj = (*it)->GetPhysicObject();
 
-		distance = pOtherObj->GetPosition() - pObj->GetPosition();
+		Vector3 position = bActor->GetPosition();
+		Vector3 direction = bActor->GetDirection();
+
+		pcd = this->zPhysicsEngine->GetCollisionRayMesh(position, direction, pOtherObj);
+		/*distance = pOtherObj->GetPosition() - pObj->GetPosition();
 
 		if (distance.GetLength() > range + 0.5f)
 			continue;
@@ -620,7 +624,10 @@ CollisionEvent ActorHandler::CheckCollision(BioActor* bActor, float range)
 
 		float angle = agressor_Victim_Direction.GetAngle(view_Direction);
 
-		if (angle <= 45)
+		if (angle <= 45)*/
+		
+
+		if (pcd.collision && pcd.distance <= range)
 		{
 			cEvent.actor_aggressor_ID = bActor->GetID();
 			cEvent.actor_aggressor_type = agressor_Type;
@@ -641,6 +648,13 @@ CollisionEvent ActorHandler::CheckCollision(BioActor* bActor, float range)
 
 		pOtherObj = (*it)->GetPhysicObject();
 
+		Vector3 position = bActor->GetPosition();
+		Vector3 direction = bActor->GetDirection();
+
+		pcd = this->zPhysicsEngine->GetCollisionRayMesh(position, direction, pOtherObj);
+
+		/*pOtherObj = (*it)->GetPhysicObject();
+
 		distance = pOtherObj->GetPosition() - pObj->GetPosition();
 		
 		if (distance.GetLength() > range + 0.5f)
@@ -651,7 +665,8 @@ CollisionEvent ActorHandler::CheckCollision(BioActor* bActor, float range)
 
 		float angle = view_Direction.GetAngle(agressor_Victim_Direction);
 
-		if (angle <= 45)
+		if (angle <= 45)*/
+		if (pcd.collision && pcd.distance <= range)
 		{
 			cEvent.actor_aggressor_ID = bActor->GetID();
 			cEvent.actor_aggressor_type = agressor_Type;
