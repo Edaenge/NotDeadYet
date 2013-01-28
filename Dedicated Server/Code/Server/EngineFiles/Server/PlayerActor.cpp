@@ -123,7 +123,7 @@ void PlayerActor::Update(float deltaTime)
 	NotifyObservers( &temp);
 	if(!temp.validMove)
 		SetPosition(temp.prevPos);
-	
+
 }
 
 bool PlayerActor::PickUpObject(DynamicObjectActor* object)

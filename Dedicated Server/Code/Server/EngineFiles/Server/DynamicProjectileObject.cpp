@@ -69,7 +69,8 @@ void DynamicProjectileObject::Update(float deltaTime)
 	CameraDirection.Normalize();
 
 	Vector3 around = ArrowDirection.GetCrossProduct(CameraDirection);
-	float angle = acos(ArrowDirection.GetDotProduct(CameraDirection) / (ArrowDirection.GetLength() * CameraDirection.GetLength()));
+	float angle = acos(ArrowDirection.GetDotProduct(CameraDirection));// / (ArrowDirection.GetLength() * CameraDirection.GetLength()));
+
 	zPhysicObj->SetQuaternion(Vector4(0,0,0,1));
 	zPhysicObj->RotateAxis(around, angle);
 
