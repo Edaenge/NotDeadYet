@@ -3,7 +3,7 @@
 
 StaticProjectileObject::StaticProjectileObject( const bool genID /*= true*/ ) : StaticObjectActor(genID)
 {
-	this->zVelocity = 1.0f;
+	this->zSpeed = 1.0f;
 	this->zStacks = 1;
 	this->zWeight = 1;
 }
@@ -25,7 +25,7 @@ StaticProjectileObject::StaticProjectileObject(const StaticProjectileObject& oth
 	this->zDamage = other.zDamage;
 	this->zWeight = other.zWeight;
 	this->zIconPath = other.zIconPath;
-	this->zVelocity = other.zVelocity;
+	this->zSpeed = other.zSpeed;
 	this->zActorModel = other.zActorModel;
 	this->zDescription = other.zDescription;
 	this->zActorObjectName = other.zActorObjectName;
@@ -48,7 +48,7 @@ StaticProjectileObject::StaticProjectileObject(const DynamicProjectileObject* ot
 	this->zWeight = other->GetWeight();
 	this->zStacks = other->GetStackSize();
 	this->zIconPath = other->GetIconPath();
-	this->zVelocity = other->GetVelocity();
+	this->zSpeed = other->GetSpeed();
 	this->zActorModel = other->GetActorModel();
 	this->zDescription = other->GetDescription();
 	this->zActorObjectName = other->GetActorObjectName();
@@ -69,7 +69,7 @@ StaticProjectileObject::StaticProjectileObject( const StaticProjectileObject* ot
 	this->zDamage = other->zDamage;
 	this->zWeight = other->zWeight;
 	this->zIconPath = other->zIconPath;
-	this->zVelocity = other->zVelocity;
+	this->zSpeed = other->zSpeed;
 	this->zActorModel = other->zActorModel;
 	this->zDescription = other->zDescription;
 	this->zActorObjectName = other->zActorObjectName;

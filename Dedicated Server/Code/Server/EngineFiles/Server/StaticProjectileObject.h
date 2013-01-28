@@ -19,15 +19,15 @@ public:
 	/*! */
 	virtual ~StaticProjectileObject();
 
-	float GetVelocity() const {return this->zVelocity;}
+	float GetSpeed() const {return this->zSpeed;}
 	/*! Returns The Weapon Damage*/
 	float GetDamage() const {return this->zDamage;}
 
-	void SetVelocity(const float velocity){this->zVelocity = velocity;}
+	void SetSpeed(const float speed){this->zSpeed = speed;}
 	
 	void SetDamage(const float damage) {this->zDamage = damage;}
 
 private:
-	float zVelocity;
+	float zSpeed;
 	float zDamage;
 };

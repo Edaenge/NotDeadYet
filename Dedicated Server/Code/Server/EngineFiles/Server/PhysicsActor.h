@@ -27,6 +27,9 @@ public:
 		Vector3 def;
 		return def;
 	}
+
+	/*! Returns the model initial direction, the direction in model space.*/
+	inline Vector3 GetInitialDirection() const {return zInitialDirection;}
 	/*! PhysicsObject needs to be initialized.*/
 	const Vector3 GetScale() const 
 	{
@@ -80,6 +83,8 @@ public:
 
 protected:
 	PhysicsObject* zPhysicObj;
+	/*! The models initial model direction, which direction the model is pointing in model space.*/
+	Vector3 zInitialDirection;
 
 private:
 	bool zScaleChanged;
