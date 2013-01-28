@@ -36,11 +36,10 @@ namespace GUI
 
         public void ServerLoop()
         {
+            backgroundWorker1.RunWorkerAsync(null);
+
             while(this.Created)
             {
-                if (IPADD != "")
-                    textBox_public_ip.Text = IPADD;
-
                 Run();
                 Application.DoEvents();
 
@@ -110,8 +109,8 @@ namespace GUI
                 else
                 {
                     this.button_Start.Enabled = false;
-                    backgroundWorker1.RunWorkerAsync(null);
                     max_pl = players;
+                    textBox_public_ip.Text = IPADD + ":" +textBox_Port.Text; 
                 }
             }
 
@@ -173,7 +172,7 @@ namespace GUI
             int first = direction.IndexOf("Address: ") + 9;
             int last = direction.LastIndexOf("</body>");
             direction = direction.Substring(first, last - first);
-            IPADD = direction+":"+textBox_Port.Text;
+            IPADD = direction;
 
         }
 

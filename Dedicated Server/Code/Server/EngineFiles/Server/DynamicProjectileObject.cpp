@@ -3,7 +3,7 @@
 
 DynamicProjectileObject::DynamicProjectileObject(const bool genID /*= true*/) : DynamicObjectActor(genID)
 {
-	this->zVelocity = 5.0f;
+	this->zSpeed = 5.0f;
 	this->zStacks = 1;
 	this->zWeight = 1;
 	this->zMoving = true;
@@ -24,11 +24,10 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& 
 	this->zDamage = other.zDamage;
 	this->zWeight = other.zWeight;
 	this->zIconPath = other.zIconPath;
-	this->zVelocity = other.zVelocity;
+	this->zSpeed = other.zSpeed;
 	this->zActorModel = other.zActorModel;
 	this->zDescription = other.zDescription;
 	this->zActorObjectName = other.zActorObjectName;
-	this->zDirection = other.zDirection;
 }
 
 DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* other, bool genID)
@@ -38,10 +37,9 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* 
 	else
 		this->SetID(other->GetID());
 
-	this->zVelocity = other->zVelocity;
+	this->zSpeed = other->zSpeed;
 	this->zStacks = other->zStacks;
 	this->zDamage = other->zDamage;
-	this->zDirection = other->zDirection;
 	this->zWeight = other->zWeight;
 	this->zActorModel = other->zActorModel;
 	this->zType = other->zType;
@@ -62,8 +60,19 @@ void DynamicProjectileObject::Update(float deltaTime)
 		return;
 
 	Vector3 oldPosition = GetPosition();
-
+	
 	this->zPhysicObj->Integrate(deltaTime);
+
+	Vector3 ArrowDirection = Vector3(0,0,-1);
+	Vector3 CameraDirection = zPhysicObj->GetVelocity();
+	ArrowDirection.Normalize();
+	CameraDirection.Normalize();
+
+	Vector3 around = ArrowDirection.GetCrossProduct(CameraDirection);
+	float angle = acos(ArrowDirection.GetDotProduct(CameraDirection));// / (ArrowDirection.GetLength() * CameraDirection.GetLength()));
+
+	zPhysicObj->SetQuaternion(Vector4(0,0,0,1));
+	zPhysicObj->RotateAxis(around, angle);
 
 	if (oldPosition == GetPosition())
 	{

@@ -58,7 +58,7 @@ Host::~Host()
 {
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
-
+	
 	this->Close();
 	this->WaitUntillDone();
 
@@ -70,6 +70,7 @@ Host::~Host()
 	{
 		SAFE_DELETE(*x);
 	}
+
 	SAFE_DELETE(this->zWorld);
 }
 //NEEDS FIXING
@@ -1097,7 +1098,7 @@ bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject** pr
 	(*projectileObj)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 	(*projectileObj)->SetActorModel(modelPath);
 	(*projectileObj)->SetDescription(projectile->GetDescription());
-	(*projectileObj)->SetVelocity(projectile->GetVelocity());
+	(*projectileObj)->SetSpeed(projectile->GetSpeed());
 	(*projectileObj)->SetActorObjectName(projectile->GetActorObjectName());
 
 	return true;

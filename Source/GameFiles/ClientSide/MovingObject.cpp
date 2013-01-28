@@ -1,7 +1,5 @@
 #include "MovingObject.h"
 
-#define PI 3.14159265358979323846f
-
 MovingObject::MovingObject(const long id) : WorldObject(id)
 {
 	this->zState = STATE_IDLE; 

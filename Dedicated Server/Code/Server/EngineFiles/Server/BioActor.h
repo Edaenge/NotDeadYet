@@ -43,6 +43,7 @@ public:
 	float GetVelocity() const {return this->zVelocity;}
 	float GetStamina() const {return this->zStamina;}
 	float GetHealth() const {return this->zHealth;}
+	Vector3 GetDirection() const {return this->zDirection;}
 	inline PhysicsObject* GetPhysicObject() const {return this->zPhysicObj;}
 
 	/*! Sets the player state.
@@ -52,6 +53,7 @@ public:
 	void SetVelocity(const float velocity) {this->zVelocity = velocity;}
 	void SetHealth(const float health) {this->zHealth = health; this->zHealthChanged = true;}
 	void SetStamina(const float stamina) {this->zStamina = stamina; this->zStaminaChanged = true;}
+	void SetDirection(const Vector3& dir) {this->zDirection = dir;}
 
 private:
 	void InitValues();
@@ -74,4 +76,5 @@ protected:
 	bool	zAlive;
 
 	Vector3 zPreviousPos;
+	Vector3 zDirection;
 };

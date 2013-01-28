@@ -29,7 +29,7 @@ static const std::string DAMAGE				=	"DAMAGE";
 static const std::string RANGE				=	"RANGE";
 static const std::string MAX_USE			=	"MAX_USE";
 static const std::string CURRENT_USE		=	"CURRENT_USE";
-static const std::string VELOCITY			=	"VELOCITY";
+static const std::string SPEED				=	"SPEED";
 static const std::string CRAFTING_TYPE		=	"CRAFTING_TYPE";
 static const std::string STACKS_REQUIREMENT =	"STACKS_REQUIREMENT";
 
@@ -469,9 +469,9 @@ bool ObjectManager::InterpCommand(char* command, char* key, StaticProjectileObje
 	{
 		pt->SetType(MaloW::convertStringToInt(key));
 	}
-	else if(strcmp(command, VELOCITY.c_str()) == 0)
+	else if(strcmp(command, SPEED.c_str()) == 0)
 	{
-		pt->SetVelocity(MaloW::convertStringToFloat(key));
+		pt->SetSpeed(MaloW::convertStringToFloat(key));
 	}
 	else if(strcmp(command, DAMAGE.c_str()) == 0)
 	{

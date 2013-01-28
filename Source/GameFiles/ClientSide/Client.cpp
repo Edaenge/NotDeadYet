@@ -283,18 +283,27 @@ void Client::UpdateCameraPos()
 	}
 
 	//Rotate Mesh
-	//Vector3 meshDir = Vector3(0.0f, 0.0f, -1.0f);
+	Vector3 meshDir = Vector3(0.0f, 0.0f, -1.0f);
+	Vector3 camDir = this->zEng->GetCamera()->GetForward();
+	Vector3 around;
+	float angle;
 
-	//Vector3 camDir = this->zEng->GetCamera()->GetForward();
-	//camDir.Normalize();
+	camDir.y = 0;
+	camDir.Normalize();
+	meshDir.Normalize();
+	
+	//around y-axis
+	around = Vector3(0,1,0);
 
-	//Vector3 around = Vector3(0.0f, 1.0f, 0.0f);
-	//float angle = acos(meshDir.GetDotProduct(camDir));
+	angle = acos(camDir.GetDotProduct(meshDir));
 
-	//PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
-	//
-	//player->SetRotation(Vector4(around.x, around.y, around.z, angle));
+	if(camDir.x > 0.0f)
+		angle *= -1;
 
+	iMesh* playerMesh = this->zObjectManager->SearchAndGetPlayerObject(this->zID)->GetMesh();
+
+	playerMesh->ResetRotation();
+	playerMesh->RotateAxis(around, angle);
 }
 
 void Client::UpdateWorldObjects()

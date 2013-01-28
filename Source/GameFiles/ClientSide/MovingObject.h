@@ -7,6 +7,8 @@
 #include "../AnimationStates.h"
 #include "WorldObject.h"
 
+#define PI 3.14159265358979323846f
+
 static const enum INTERPOLATION_TYPES
 {
 	IT_LINEAR,

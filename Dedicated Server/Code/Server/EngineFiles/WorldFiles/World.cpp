@@ -56,7 +56,11 @@ World::~World()
 	NotifyObservers( &WorldDeletedEvent(this) );
 
 	// Close File
-	if ( zFile ) delete zFile, zFile=0;
+	if ( zFile ) 
+	{
+		delete zFile;
+		zFile=0;
+	}
 
 	// Delete Entities
 	for( auto i = zEntities.begin(); i != zEntities.end(); )
