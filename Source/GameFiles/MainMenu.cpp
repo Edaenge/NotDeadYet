@@ -22,7 +22,7 @@ MainMenu::~MainMenu()
 
 void MainMenu::Run()
 {
-	bool proModeOrNot = false; // CHANGE HERE!!!!!!!
+	bool proModeOrNot = true; // CHANGE HERE!!!!!!!
 	if(!proModeOrNot)
 	{
 		this->StartTestRun();
@@ -56,10 +56,6 @@ void MainMenu::Run()
 				if(retEvent->GetEventMessage() == "ChangeSetEvent")
 				{
 					ChangeSetEvent* setEvent = (ChangeSetEvent*)retEvent;
-					if(this->zPrimarySet == FIND_SERVER || this->zPrimarySet == OPTIONS)
-					{
-						zSets[MAINMENU].RemoveSetFromRenderer(eng);
-					}
 
 					this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet); // THIS IS ALWAYS DONE IN THIS FUNCTION!
 					zPrimarySet = (SET)setEvent->GetSet(); // THIS IS ALWAYS DONE IN THIS FUNCTION!
@@ -83,11 +79,9 @@ void MainMenu::Run()
 
 						break;
 					case FIND_SERVER:
-						zSets[MAINMENU].AddSetToRenderer(eng);
 
 						break;
 					case OPTIONS:
-						zSets[MAINMENU].AddSetToRenderer(eng);
 
 						break;
 					case QUIT:
