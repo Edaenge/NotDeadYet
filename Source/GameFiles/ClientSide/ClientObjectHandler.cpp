@@ -937,7 +937,8 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
 			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
-			PlayerObjectPointer->SetRotation(rotation);
+			if(ID != this->zID)
+				PlayerObjectPointer->SetRotation(rotation);
 		}
 		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
 		{
