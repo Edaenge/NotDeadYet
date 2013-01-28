@@ -58,7 +58,7 @@ Host::~Host()
 {
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
-
+	
 	this->Close();
 	this->WaitUntillDone();
 
@@ -70,6 +70,7 @@ Host::~Host()
 	{
 		SAFE_DELETE(*x);
 	}
+
 	SAFE_DELETE(this->zWorld);
 }
 //NEEDS FIXING
@@ -417,6 +418,7 @@ void Host::HandleNewConnections()
 	}
 
 }
+
 void Host::SendToAllClients(const std::string& message, bool sendIM /*= false*/ )
 {
 	if(!HasClients())
@@ -438,6 +440,7 @@ void Host::SendToAllClients(const std::string& message, bool sendIM /*= false*/ 
 		
 	}
 }
+
 void Host::SendToClient(int clientID, const std::string& message, bool sendIM /*= false*/ )
 {
 	int pos = SearchForClient(clientID);
@@ -1055,6 +1058,7 @@ void Host::SendNewObjectMessage(AnimalActor* animalObj)
 
 	this->SendToAllClients(msg, true);
 }
+
 void Host::HandleReceivedMessages()
 {
 	
