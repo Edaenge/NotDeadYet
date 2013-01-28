@@ -1098,7 +1098,7 @@ bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject** pr
 	(*projectileObj)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 	(*projectileObj)->SetActorModel(modelPath);
 	(*projectileObj)->SetDescription(projectile->GetDescription());
-	(*projectileObj)->SetVelocity(projectile->GetVelocity());
+	(*projectileObj)->SetSpeed(projectile->GetSpeed());
 	(*projectileObj)->SetActorObjectName(projectile->GetActorObjectName());
 
 	return true;
