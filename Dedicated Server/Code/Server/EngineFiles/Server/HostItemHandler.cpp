@@ -54,7 +54,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 				Vector3 position = pActor->GetPosition();
 				projectileObj->SetPosition(position);
 				projectileObj->SetDamage(damage);
-				projectileObj->SetVelocity(velocity);
+				projectileObj->SetSpeed(velocity);
 				projectileObj->SetUpVector(pActor->GetUpVector());
 
 			    //Adds The Object To the Array
@@ -105,7 +105,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 			projectileObj->SetPosition(position);
 
 			projectileObj->SetDamage(damage);
-			projectileObj->SetVelocity(velocity);
+			projectileObj->SetSpeed(velocity);
 			//Adds The Object To the Array
 			this->zActorHandler->AddNewDynamicProjectileActor(projectileObj, pActor->GetDirection());
 
@@ -1107,7 +1107,7 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, StaticProjectileObjec
 	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_STACK_SIZE, (float)projectileObj->GetStackSize());
 	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)projectileObj->GetWeight());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_DAMAGE, projectileObj->GetDamage());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_VELOCITY, projectileObj->GetVelocity());
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_VELOCITY, projectileObj->GetSpeed());
 
 	this->SendToClient(PlayerID, msg);
 }
@@ -1394,7 +1394,7 @@ Item* Host::CreateItemFromDefault(const int ItemType)
 		}
 
 		Projectile* arrow = new Projectile(new_Arrow->GetID(), new_Arrow->GetType(),
-			new_Arrow->GetVelocity(), new_Arrow->GetDamage());
+			new_Arrow->GetSpeed(), new_Arrow->GetDamage());
 
 		arrow->SetStacking(true);
 		arrow->SetItemWeight(new_Arrow->GetWeight());

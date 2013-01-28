@@ -27,6 +27,7 @@ void PlayerActor::InitValues()
 	this->zHungerMax = 100.0f;
 	this->zHydration = 100.0f;
 	this->zHydrationMax = 100.0f;
+	this->zInitialDirection = Vector3(0,0,-1);
 	this->zInventory = new Inventory();
 	this->zEquipment = new Equipment();
 
@@ -122,7 +123,7 @@ void PlayerActor::Update(float deltaTime)
 	NotifyObservers( &temp);
 	if(!temp.validMove)
 		SetPosition(temp.prevPos);
-	
+
 }
 
 bool PlayerActor::PickUpObject(DynamicObjectActor* object)
@@ -245,7 +246,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 	spo = dynamic_cast<StaticProjectileObject*>(object);
 	if(spo)
 	{
-		item = new Projectile(spo->GetID(), spo->GetType(), spo->GetVelocity(), spo->GetDamage());
+		item = new Projectile(spo->GetID(), spo->GetType(), spo->GetSpeed(), spo->GetDamage());
 
 		item->SetStacking(true);
 		item->SetItemWeight(spo->GetWeight());

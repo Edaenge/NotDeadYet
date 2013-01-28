@@ -1,3 +1,3 @@
 #include "Actor.h"
 
-long Actor::zNextAID = 0;
+long Actor::zNextAID = 32;
