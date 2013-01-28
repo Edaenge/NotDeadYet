@@ -57,3 +57,13 @@ bool Material::IsUsable()
 
 	return false;
 }
+
+std::string Material::ToMessageString( NetworkMessageConverter* NMC )
+{
+	std::string msg = Item::ToMessageString(NMC);
+
+	msg += NMC->Convert(MESSAGE_TYPE_MATERIAL_STACKS_REQUIRED, (float)this->zRequiredStackToCraft);
+	msg += NMC->Convert(MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE, (float)this->zCraftingType);
+	
+	return msg;
+}

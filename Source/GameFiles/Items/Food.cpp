@@ -45,3 +45,12 @@ bool Food::Use()
 	}
 	return false;
 }
+
+std::string Food::ToMessageString( NetworkMessageConverter* NMC )
+{
+	std::string msg = Item::ToMessageString(NMC);
+
+	msg += NMC->Convert(MESSAGE_TYPE_HUNGER, (float)this->zHunger);
+
+	return msg;
+}

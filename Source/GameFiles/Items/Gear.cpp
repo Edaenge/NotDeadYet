@@ -38,3 +38,10 @@ bool Gear::Use()
 {
 	return true;
 }
+
+std::string Gear::ToMessageString( NetworkMessageConverter* NMC )
+{
+	std::string msg = Item::ToMessageString(NMC);
+
+	return msg;
+}

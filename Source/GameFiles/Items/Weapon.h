@@ -29,6 +29,7 @@ public:
 	void SetRange(const float range) {this->zRange = range;}
 
 	virtual bool Use() = 0;
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC) = 0;
 	virtual void UseWeapon(float& range, float& damage) = 0;
 protected:
 	float zDamage;

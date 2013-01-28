@@ -23,6 +23,7 @@ public:
 
 	virtual bool Use();
 	virtual bool IsUsable();
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
 
 private:
 	int zCraftingType;

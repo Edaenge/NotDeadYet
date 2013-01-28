@@ -819,8 +819,8 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*dpoActor)->GetActorModel());
 
-	std::vector<Item*> temp = inv->GetItems();
-	for (auto it = temp.begin(); it < temp.end(); it++)
+	std::vector<Item*> temp_items = inv->GetItems();
+	for (auto it = temp_items.begin(); it < temp_items.end(); it++)
 	{
 		if ((*it)->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN || (*it)->GetItemType() == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
 		{

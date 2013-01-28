@@ -22,6 +22,7 @@ public:
 	float GetDamage() const {return this->zDamage;}
 
 	virtual bool Use();
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
 private:
 	float zDamage;
 	float zVelocity;

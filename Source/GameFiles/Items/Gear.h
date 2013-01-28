@@ -15,6 +15,7 @@ public:
 	Gear(const Gear* other);
 	virtual ~Gear();
 	virtual bool Use();
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
 private:
 
 };

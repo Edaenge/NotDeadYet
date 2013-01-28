@@ -23,6 +23,7 @@ public:
 	inline int GetMaxUses() {return this->zMaxUses;}
 
 	virtual bool Use();
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC); 
 private:
 	int zMaxUses;
 	int zUsesRemaining;

@@ -48,3 +48,13 @@ bool Projectile::Use()
 	}
 	return false;
 }
+
+std::string Projectile::ToMessageString( NetworkMessageConverter* NMC )
+{
+	std::string msg = Item::ToMessageString(NMC);
+
+	msg += NMC->Convert(MESSAGE_TYPE_PROJECTILE_DAMAGE, (float)this->zDamage);
+	msg += NMC->Convert(MESSAGE_TYPE_PROJECTILE_VELOCITY, (float)this->zVelocity);
+
+	return msg;
+}

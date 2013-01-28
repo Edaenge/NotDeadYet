@@ -16,6 +16,7 @@ public:
 	virtual ~Food();
 	/*! Decreases Stacks by 1.*/
 	virtual bool Use();
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
 
 	float GetHunger() const {return this->zHunger;}
 

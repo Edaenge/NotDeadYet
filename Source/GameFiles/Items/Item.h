@@ -6,6 +6,8 @@
 #pragma once
 
 #include <string>
+#include "../../Network/NetworkMessageConverter.h"
+
 static const enum M_ITEM_TYPE
 {
 	ITEM_TYPE_WEAPON_RANGED_BOW,
@@ -67,6 +69,7 @@ public:
 	bool GetStacking() const {return this->zStacking;}
 	void SetStacking(bool value) {this->zStacking = value;}
 	virtual bool Use() = 0;
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC);  
 
 private:
 	void InitValues(const int id = -1, const unsigned int itemType = 0, const unsigned int weight = 0, 

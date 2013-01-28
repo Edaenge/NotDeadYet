@@ -49,3 +49,13 @@ bool Container::Use()
 	}
 	return false;
 }
+
+std::string Container::ToMessageString( NetworkMessageConverter* NMC )
+{
+	std::string msg = Item::ToMessageString(NMC);
+
+	msg += NMC->Convert(MESSAGE_TYPE_CONTAINER_MAX, (float)this->zMaxUses);
+	msg += NMC->Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)this->zUsesRemaining);
+	
+	return msg;
+}

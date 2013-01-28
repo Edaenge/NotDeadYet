@@ -16,6 +16,7 @@ public:
 	virtual ~MeleeWeapon();
 
 	virtual bool Use();
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
 	void UseWeapon(float& range, float& damage);
 private:
 	

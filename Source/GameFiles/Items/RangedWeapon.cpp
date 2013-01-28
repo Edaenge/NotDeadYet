@@ -47,3 +47,13 @@ bool RangedWeapon::Use()
 {
 	return true;
 }
+
+std::string RangedWeapon::ToMessageString( NetworkMessageConverter* NMC )
+{
+	std::string msg = Item::ToMessageString(NMC);
+
+	msg += NMC->Convert(MESSAGE_TYPE_WEAPON_DAMAGE, (float)this->zDamage);
+	msg += NMC->Convert(MESSAGE_TYPE_WEAPON_RANGE, (float)this->zRange);
+
+	return msg;
+}
