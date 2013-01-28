@@ -8,7 +8,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "../../../../../Source/MaloWLib/Safe.h"
 #include <vector>
 
-#define DEFAULT_MAX_TIME_RESEND		2.0f
+#define DEFAULT_MAX_TIME_RESEND		5.0f
 #define DEFAULT_MAX_NR_RESEND		2
 
 struct IMessage

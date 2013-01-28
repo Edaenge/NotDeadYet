@@ -47,12 +47,14 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_FRAME_TIME,
 	MESSAGE_TYPE_CLIENT_DATA,
 	MESSAGE_TYPE_PICKUP_ITEM,
+	MESSAGE_TYPE_LOOT_ITEM,
 	MESSAGE_TYPE_DROP_ITEM,
 	MESSAGE_TYPE_HEALTH,
 	MESSAGE_TYPE_HUNGER,
 	MESSAGE_TYPE_HYDRATION,
 	MESSAGE_TYPE_STAMINA,
 	MESSAGE_TYPE_ITEM_TYPE,
+	MESSAGE_TYPE_ITEM_ID,
 	MESSAGE_TYPE_FETCH_INVENTORY,
 	MESSAGE_TYPE_REMOVE_INVENTORY_ITEM,
 	MESSAGE_TYPE_ADD_INVENTORY_ITEM,
@@ -96,8 +98,9 @@ static const std::string M_FRAME_TIME				= "FT";
 static const std::string M_STAMINA					= "STAM";
 static const std::string M_STATE					= "STAT";
 static const std::string M_ITEM_TYPE				= "IT";
+static const std::string M_ITEM_ID					= "IID";
 static const std::string M_ITEM_NAME				= "IN";
-static const std::string M_ITEM_DESCRIPTION			= "ID";
+static const std::string M_ITEM_DESCRIPTION			= "IDE";
 static const std::string M_ITEM_ICON_PATH			= "IIP";
 static const std::string M_ITEM_WEIGHT				= "IW";
 static const std::string M_ITEM_USE					= "IU";
@@ -117,6 +120,7 @@ static const std::string M_REMOVE_EQUIPMENT			= "RE";
 static const std::string M_EQUIP_ITEM				= "EI";
 static const std::string M_UNEQUIP_ITEM				= "UEI";
 static const std::string M_PICKUP_ITEM				= "PI";
+static const std::string M_LOOT_ITEM				= "LI";
 static const std::string M_DROP_ITEM				= "DI";
 static const std::string M_FETCH_INVENTORY			= "FI";
 static const std::string M_ADD_INVENTORY_ITEM		= "AII";

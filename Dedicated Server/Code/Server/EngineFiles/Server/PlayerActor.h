@@ -70,7 +70,8 @@ public:
 	void SetObjManager(ObjectManager* objm) {this->zObjManager = objm;}
 	Equipment* GetEquipment() {return this->zEquipment;}
 	Inventory* GetInventory() {return this->zInventory;}
-
+	void SetInventory(Inventory* inv) {this->zInventory = inv;}
+	void SetEquipment(Equipment* eq) {this->zEquipment = eq;}
 	void EatFood(float hunger);
 	void Drink(float hydration);
 private:
