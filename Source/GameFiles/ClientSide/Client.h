@@ -133,6 +133,7 @@ private:
 	//			  		//
 	//////////////////////
 
+	bool CreateItemFromMessage( std::vector<std::string> msgArray, unsigned int& Index, Item** item, const long ID);
 	void SendPickupItemMessage(const long ID);
 	void SendDropItemMessage(const long ID);
 	void HandleRemoveInventoryItem(const long ID);

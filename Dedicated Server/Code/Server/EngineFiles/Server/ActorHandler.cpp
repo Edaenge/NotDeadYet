@@ -262,7 +262,6 @@ bool ActorHandler::RemovedDeadPlayerObject(const long ID)
 	DeadPlayerObjectActor* temp = this->zDeadPlayers[index];
 
 	this->zDeadPlayers.erase(this->zDeadPlayers.begin() + index);
-	this->zPhysicsEngine->DeletePhysicsObject(temp->GetPhysicObject());
 
 	SAFE_DELETE(temp);
 
@@ -609,21 +608,35 @@ CollisionEvent ActorHandler::CheckCollision(BioActor* bActor, float range)
 		}
 	}
 
+	Vector3 view_Direction = bActor->GetDirection();
+
+	Vector3 distance;
+	Vector3 agressor_Victim_Direction;
+
 	for (auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
 	{
 		if ((*it)->GetID() == bActor->GetID() && agressor_Type == ACTOR_TYPE_PLAYER)
 			continue;
+
 		pOtherObj = (*it)->GetPhysicObject();
 
-		pcd = this->zPhysicsEngine->GetCollisionRayMesh(bActor->GetPosition(), bActor->GetDirection(), pOtherObj);
+		distance = pOtherObj->GetPosition() - pObj->GetPosition();
 
-		if (pcd.collision && pcd.distance <= range)
+		if (distance.GetLength() > range + 0.5f)
+			continue;
+
+		agressor_Victim_Direction = distance;
+		agressor_Victim_Direction.Normalize();
+
+		float angle = agressor_Victim_Direction.GetAngle(view_Direction);
+
+		if (angle <= 45)
 		{
 			cEvent.actor_aggressor_ID = bActor->GetID();
 			cEvent.actor_aggressor_type = agressor_Type;
 
 			cEvent.actor_victim_ID = (*it)->GetID();
-			cEvent.actor_victim_type = ACTOR_TYPE_PLAYER;
+			cEvent.actor_victim_type = ACTOR_TYPE_ANIMAL;
 
 			cEvent.event_type = MELEE_ATTACK;
 
@@ -638,11 +651,17 @@ CollisionEvent ActorHandler::CheckCollision(BioActor* bActor, float range)
 
 		pOtherObj = (*it)->GetPhysicObject();
 
-		Vector3 position = pObj->GetPosition();
-		Vector3 direction = bActor->GetDirection();
-		pcd = this->zPhysicsEngine->GetCollisionRayMesh(position, direction, pOtherObj);
+		distance = pOtherObj->GetPosition() - pObj->GetPosition();
+		
+		if (distance.GetLength() > range + 0.5f)
+			continue;
 
-		if (pcd.collision && pcd.distance <= range)
+		agressor_Victim_Direction = distance;
+		agressor_Victim_Direction.Normalize();
+
+		float angle = view_Direction.GetAngle(agressor_Victim_Direction);
+
+		if (angle <= 45)
 		{
 			cEvent.actor_aggressor_ID = bActor->GetID();
 			cEvent.actor_aggressor_type = agressor_Type;

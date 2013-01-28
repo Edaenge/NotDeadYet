@@ -19,3 +19,13 @@ Item* DeadPlayerObjectActor::GetItemAt( const int Index ) const
 
 	return this->zItems[Index];
 }
+
+DeadPlayerObjectActor::DeadPlayerObjectActor(const bool genID /*= false*/) : Actor()
+{
+	if(genID)
+		this->GenerateID();
+
+	this->zPos = Vector3(0, 0, 0);
+	this->zRot = Vector4(0, 0, 0, 1);
+	this->zScale = Vector3(0.05f, 0.05f, 0.05f);
+}
