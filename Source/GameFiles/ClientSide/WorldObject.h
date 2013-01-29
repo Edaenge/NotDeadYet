@@ -28,7 +28,7 @@ public:
 		this->zMesh->SetQuaternion(rot);
 	}
 	/*! Returns the object ID*/
-	inline unsigned int GetID() const {return this->zID;}
+	inline long GetID() const {return this->zID;}
 	/*! Adds a Pointer to the Player Model Mesh*/
 	void SetStaticMesh(iMesh* mesh) {this->zMesh = mesh;}
 	bool HasMesh() const 

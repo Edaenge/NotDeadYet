@@ -273,7 +273,7 @@ bool ObjectManager::InterpCommand(char* command, char* key, WeaponObject* wp)
 
 		sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
 
-		Vector3 scale(atof(a), atof(b), atof(c));
+		Vector3 scale((float)atof(a), (float)atof(b), (float)atof(c));
 		wp->SetScale(scale);
 	}
 
@@ -329,7 +329,7 @@ bool ObjectManager::InterpCommand(char* command, char* key, FoodObject* fd)
 
 		sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
 
-		Vector3 scale(atof(a), atof(b), atof(c));
+		Vector3 scale((float)atof(a), (float)atof(b), (float)atof(c));
 		fd->SetScale(scale);
 	}
 
@@ -389,7 +389,7 @@ bool ObjectManager::InterpCommand(char* command, char* key, ContainerObject* ct)
 
 		sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
 
-		Vector3 scale(atof(a), atof(b), atof(c));
+		Vector3 scale((float)atof(a), (float)atof(b), (float)atof(c));
 		ct->SetScale(scale);
 	}
 
@@ -449,7 +449,7 @@ bool ObjectManager::InterpCommand(char* command, char* key, MaterialObject* ma)
 
 		sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
 
-		Vector3 scale(atof(a), atof(b), atof(c));
+		Vector3 scale((float)atof(a), (float)atof(b), (float)atof(c));
 		ma->SetScale(scale);
 	}
 
@@ -509,7 +509,7 @@ bool ObjectManager::InterpCommand(char* command, char* key, StaticProjectileObje
 
 		sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
 
-		Vector3 scale(atof(a), atof(b), atof(c));
+		Vector3 scale((float)atof(a), (float)atof(b), (float)atof(c));
 		pt->SetScale(scale);
 	}
 

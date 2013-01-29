@@ -1,10 +1,10 @@
 #include "GameFiles/ClientSide/GuiManager.h"
 
-static const std::string DEATH_GUI_PATH						= "Media/Use_v02.png";
-static const std::string LOOTING_GUI_PATH					= "Media/Use_v02.png";
-static const std::string INVENTORY_GUI_PATH					= "Media/Inventory_v02.png";
-static const std::string IN_GAME_MENU_GUI_PATH				= "Media/Use_v02.png";
-static const std::string INVENTORY_ITEM_SELECTION_GUI_PATH	= "Media/Use_v02.png";
+static const std::string DEATH_GUI_PATH						= "Media/Icons/Use_v02.png";
+static const std::string LOOTING_GUI_PATH					= "Media/Icons/Use_v02.png";
+static const std::string INVENTORY_GUI_PATH					= "Media/Icons/Inventory_v02.png";
+static const std::string IN_GAME_MENU_GUI_PATH				= "Media/Icons/Use_v02.png";
+static const std::string INVENTORY_ITEM_SELECTION_GUI_PATH	= "Media/Icons/Use_v02.png";
 
 static const float GUI_DISPLAY_TIMER					= 2.0f;
 
@@ -269,7 +269,6 @@ Menu_select_data GuiManager::CheckCollisionInv()
 			Menu_select_data msd;
 			msd.zAction = (CIRCMENU)this->zSelectedCircMenu;
 			msd.zID = this->zSelectedItem;
-			Menu_select_data returnVal;
 			return msd;
 		}
 		else if(!zGraphicEngine->GetKeyListener()->IsClicked(2))

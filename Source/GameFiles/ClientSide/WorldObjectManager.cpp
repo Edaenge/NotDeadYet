@@ -99,7 +99,7 @@ bool WorldObjectManager::RemoveObject(const unsigned int Type, const int Index)
 {
 	if (Type == OBJECT_TYPE_PLAYER)
 	{
-		if (Index < this->zPlayerObjects.size())
+		if ((unsigned int)Index < this->zPlayerObjects.size())
 		{
 			PlayerObject* playerObj = this->zPlayerObjects[Index];
 			this->zPlayerObjects.erase(this->zPlayerObjects.begin() + Index);
@@ -113,7 +113,7 @@ bool WorldObjectManager::RemoveObject(const unsigned int Type, const int Index)
 	}
 	if (Type == OBJECT_TYPE_ANIMAL)
 	{
-		if (Index < this->zAnimalObjects.size())
+		if ((unsigned int)Index < this->zAnimalObjects.size())
 		{
 			AnimalObject* animalObj = this->zAnimalObjects[Index];
 			this->zAnimalObjects.erase(this->zAnimalObjects.begin() + Index);
@@ -127,7 +127,7 @@ bool WorldObjectManager::RemoveObject(const unsigned int Type, const int Index)
 	}
 	if (Type == OBJECT_TYPE_STATIC_OBJECT)
 	{
-		if (Index < this->zStaticObjects.size())
+		if ((unsigned int)Index < this->zStaticObjects.size())
 		{
 			StaticObject* staticObj = this->zStaticObjects[Index];
 			this->zStaticObjects.erase(this->zStaticObjects.begin() + Index);
@@ -141,7 +141,7 @@ bool WorldObjectManager::RemoveObject(const unsigned int Type, const int Index)
 	}
 	if (Type == OBJECT_TYPE_DYNAMIC_OBJECT)
 	{
-		if (Index < this->zDynamicObjects.size())
+		if ((unsigned int)Index < this->zDynamicObjects.size())
 		{
 			DynamicObject* dynamicObj = this->zDynamicObjects[Index];
 			this->zDynamicObjects.erase(this->zDynamicObjects.begin() + Index);
@@ -155,7 +155,7 @@ bool WorldObjectManager::RemoveObject(const unsigned int Type, const int Index)
 	}
 	if (Type == OBJECT_TYPE_DYNAMIC_OBJECT)
 	{
-		if (Index < this->zDeadPlayerObjects.size())
+		if ((unsigned int)Index < this->zDeadPlayerObjects.size())
 		{
 			DeadPlayerObject* deadPlayerObj = this->zDeadPlayerObjects[Index];
 			this->zDeadPlayerObjects.erase(this->zDeadPlayerObjects.begin() + Index);
@@ -248,7 +248,7 @@ int WorldObjectManager::SearchForPlayerObject(const int ID)
 	return -1;
 }
 
-int WorldObjectManager::SearchForStaticObject(const int ID)
+int WorldObjectManager::SearchForStaticObject(const long ID)
 {
 	for (unsigned int i = 0; i < this->zStaticObjects.size(); i++)
 	{
@@ -260,7 +260,7 @@ int WorldObjectManager::SearchForStaticObject(const int ID)
 	return -1;
 }
 
-int WorldObjectManager::SearchForDynamicObject(const int ID)
+int WorldObjectManager::SearchForDynamicObject(const long ID)
 {
 	for (unsigned int i = 0; i < this->zDynamicObjects.size(); i++)
 	{
@@ -272,7 +272,7 @@ int WorldObjectManager::SearchForDynamicObject(const int ID)
 	return -1;
 }
 
-int WorldObjectManager::SearchForAnimalObject(const int ID)
+int WorldObjectManager::SearchForAnimalObject(const long ID)
 {
 	for (unsigned int i = 0; i < this->zAnimalObjects.size(); i++)
 	{
@@ -284,7 +284,7 @@ int WorldObjectManager::SearchForAnimalObject(const int ID)
 	return -1;
 }
 
-int WorldObjectManager::SearchForDeadPlayerObject(const int ID)
+int WorldObjectManager::SearchForDeadPlayerObject(const long ID)
 {
 	for (unsigned int i = 0; i < this->zDeadPlayerObjects.size(); i++)
 	{
@@ -353,25 +353,25 @@ PlayerObject* WorldObjectManager::SearchAndGetPlayerObject(const int ID)
 	return this->zPlayerObjects[position];
 }
 
-AnimalObject* WorldObjectManager::SearchAndGetAnimalObject(const int ID)
+AnimalObject* WorldObjectManager::SearchAndGetAnimalObject(const long ID)
 {
 	int position = this->SearchForAnimalObject(ID);
 	return this->zAnimalObjects[position];
 }
 
-StaticObject* WorldObjectManager::SearchAndGetStaticObject(const int ID)
+StaticObject* WorldObjectManager::SearchAndGetStaticObject(const long ID)
 {
 	int position = this->SearchForStaticObject(ID);
 	return this->zStaticObjects[position];
 }
 
-DynamicObject* WorldObjectManager::SearchAndGetDynamicObject(const int ID)
+DynamicObject* WorldObjectManager::SearchAndGetDynamicObject(const long ID)
 {
 	int position = this->SearchForDynamicObject(ID);
 	return this->zDynamicObjects[position];
 }
 
-DeadPlayerObject* WorldObjectManager::SearchAndGetDeadPlayerObject(const int ID)
+DeadPlayerObject* WorldObjectManager::SearchAndGetDeadPlayerObject(const long ID)
 {
 	int position = this->SearchForDeadPlayerObject(ID);
 	return this->zDeadPlayerObjects[position];

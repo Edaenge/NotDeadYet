@@ -575,13 +575,17 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 
 		if (weapon)
 		{
-			if (Messages::FileWrite())
-				Messages::Debug("Weapon UnEquipped " + weapon->GetItemName() + " ID: " + MaloW::convertNrToString((float)weapon->GetID()));
+			if (ItemID == weapon->GetID())
+			{
+				if (Messages::FileWrite())
+					Messages::Debug("Weapon UnEquipped " + weapon->GetItemName() + " ID: " + MaloW::convertNrToString((float)weapon->GetID()));
 
-			delete weapon;
-			weapon = NULL;
+				delete weapon;
+				weapon = NULL;
+
+				eq->UnEquipWeapon();
+			}
 		}
-		eq->UnEquipWeapon();
 
 		return;
 	}
@@ -596,14 +600,17 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 
 		if (projectile)
 		{
-			if (Messages::FileWrite())
-				Messages::Debug("Ammo UnEquipped " + projectile->GetItemName() + " ID: " + MaloW::convertNrToString((float)projectile->GetID()));
+			if (ItemID == projectile->GetID())
+			{
+				if (Messages::FileWrite())
+					Messages::Debug("Ammo UnEquipped " + projectile->GetItemName() + " ID: " + MaloW::convertNrToString((float)projectile->GetID()));
 
-			delete projectile;
-			projectile = NULL;
+				delete projectile;
+				projectile = NULL;
+
+				eq->UnEquipProjectile();
+			}
 		}
-
-		eq->UnEquipProjectile();
 
 		return;
 	}
@@ -922,7 +929,7 @@ void Client::HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, cons
 	{
 		if ((*it)->GetID() == ItemID)
 		{
-			if ((*it)->GetItemType() == type)
+			if ((*it)->GetItemType() == (unsigned int)type)
 			{
 				Item* temp = (*it);
 				items.erase(it);

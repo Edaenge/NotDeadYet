@@ -55,7 +55,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		if (ID == this->zID)
 		{
 			this->zCreated = true;
-			//filename = "Media/Ball.obj";
+			//filename = "Media/Models/Ball.obj";
 			scale = Vector3(0.05f, 0.05f, 0.05f);
 			prevDirection = this->zEng->GetCamera()->GetForward();
 		}
@@ -331,22 +331,6 @@ bool Client::AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, co
 		return false;
 	}
 
-	std::string itemName = "Unknown";
-	std::string itemDescription = "<UNKNOWN DESCRIPTION>";
-	std::string itemIconFilePath = "none";
-	int itemWeight = 0;
-	int itemStackSize = 0;
-	int itemType = -1;
-	float weaponDamage = 0.0f;
-	float weaponRange = 0.0f;
-	float projectileDamage = 0.0f;
-	float projectileVelocity = 0.0f;
-	int craftingType = -1;
-	int stacksRequired = 10000;
-	float hunger = 0.0f;
-	int maxUse = 0;
-	int currUse = 0;
-
 	Vector3 position = Vector3(0, 0, 0);
 	Vector3 scale = Vector3(0.05f, 0.05f, 0.05f);
 	Vector4 rotation = Vector4(0, 0, 0, 0);
@@ -614,11 +598,6 @@ bool Client::AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, co
 			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddDeadPlayerObject");
 		}
 		index++;
-
-		if (index > msgArray.size())
-		{
-			int test = 0;
-		}
 	}
 		
 	if (Messages::FileWrite())
@@ -879,7 +858,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 	}
 
 	if (Messages::FileWrite())
-		Messages::Debug("Dynamic Object Added ID: " + MaloW::convertNrToString((float)ID) + " " + dynamicObject->GetName());
+		Messages::Debug("Dynamic Object Added ID: " + MaloW::convertNrToString((float)ID) + " " + filename);
 
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);

@@ -27,7 +27,7 @@ bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)
 	{
 		GuiElement::AddToRenderer(ge);
 		if(this->zStacks > 0 && !this->zStackText)
-			this->zStackText = ge->CreateText(MaloW::convertNrToString(this->zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/1");
+			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/1");
 		this->ShowGui();
 		return true;
 	}

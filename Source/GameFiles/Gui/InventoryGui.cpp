@@ -54,7 +54,7 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 	float height = (50.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
 	if(gid.zStacks > 0)
 	{
-		for(int i = 0; i < this->zSlotGui.size(); i++)
+		for(unsigned int i = 0; i < this->zSlotGui.size(); i++)
 		{
 			if(this->zSlotGui.at(i)->GetType() == gid.zType)
 			{
