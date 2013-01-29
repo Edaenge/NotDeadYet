@@ -19,22 +19,14 @@ public:
 	virtual ~DynamicProjectileObject();
 
 	float GetSpeed() const {return this->zSpeed;}
-	/*! Returns number of stacks the item has.*/
-	unsigned int GetStackSize() const {return this->zStacks;}
 	/*! Returns The Weapon Damage*/
 	float GetDamage() const {return this->zDamage;}
 
-	void SetMoving(const bool op){this->zMoving = op;}
 	void SetSpeed(const float speed){this->zSpeed = speed;}
-	void ModifyStackSize(const unsigned int size) {this->zStacks += size;}
 	void SetDamage(const float damage) {this->zDamage = damage;}
-	bool IsMoving() const {return this->zMoving;}
 	virtual void Update(float deltaTime);
 
 private:
 	float zSpeed;
-	int zStacks;
 	float zDamage;
-	
-	bool zMoving;
 };

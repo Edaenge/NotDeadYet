@@ -37,6 +37,7 @@ void DynamicObjectActor::InitValues()
 	this->zDescription = "none";
 	this->zIconPath = "none";
 	this->zPhysicObj = NULL;
+	this->zMoving = true;
 }
 
 DynamicObjectActor::~DynamicObjectActor()

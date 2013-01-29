@@ -52,23 +52,29 @@ class ActorHandler
 {
 
 public:
-	ActorHandler();
+	ActorHandler(World* worldPtr);
 	virtual ~ActorHandler();
 
 	void UpdateObjects(float deltaTime);
 	/*! Check collision against PlayerActors and Animal Actors
 		Used When Attacking with melee.
+		Called on player use.
 	*/
-	CollisionEvent CheckCollision(BioActor* pActor, float range);
-	/*! Checks collisions against objects.*/
+	CollisionEvent CheckMeeleCollision(BioActor* pActor, float range);
+	/*! Checks BioActors collisions against other BioActors objects.*/
 	void CheckCollisions();
+	/*! Checks collision on moving objects. If it hits a BioActor, it will take damage.
+		Returns CollisionEvents of dead players.
+		Called on Update.
+	*/
+	std::vector<CollisionEvent> CheckProjectileCollisions();
 	/*! pCollide lists all collisions.
 		Rewinds target BioActor in actors if there was a collision.
 		pTest will not be Rewinded.
 	*/
-	void BioActorVSBioActor(BioActor* pTest, std::vector<AnimalActor*> &actors, std::vector<BioActor*> &pCollide);
-	void BioActorVSBioActor(BioActor* pTest, std::vector<PlayerActor*> &actors, std::vector<BioActor*> &pCollide);
-
+	void BioActorVSBioActors(BioActor* pTest, std::vector<AnimalActor*> &actors, std::vector<BioActor*> &pCollide);
+	void BioActorVSBioActors(BioActor* pTest, std::vector<PlayerActor*> &actors, std::vector<BioActor*> &pCollide);
+	void DynamicActorVsBioActors(DynamicObjectActor* pTest, std::vector<PlayerActor*> &actors, std::vector<BioActor*> &pCollide);
 
 ////////////////////////////////
 //			PLAYERS		     //
@@ -157,6 +163,7 @@ private:
 
 private:
 
+	World* zWorld;
 	ObjectManager* zObjManager;
 	PhysicsEngine* zPhysicsEngine;
 	std::vector<FoodObject*> zFoods;

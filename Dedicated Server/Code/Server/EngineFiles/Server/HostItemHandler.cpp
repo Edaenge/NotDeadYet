@@ -138,7 +138,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 		float damage;
 		mWpn->UseWeapon(range, damage);
 		//Check Collision
-		CollisionEvent cEvent = this->zActorHandler->CheckCollision(pActor, range+100);
+		CollisionEvent cEvent = this->zActorHandler->CheckMeeleCollision(pActor, range);
 
 		BioActor* pVictim = dynamic_cast<BioActor*>(this->zActorHandler->GetActor(cEvent.actor_victim_ID, cEvent.actor_victim_type));
 

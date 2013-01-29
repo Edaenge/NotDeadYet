@@ -16,8 +16,8 @@ public:
 	virtual ~RangedWeapon();
 
 	virtual bool Use();
-	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
 	void UseWeapon(float& range, float& damage);
+
 private:
 
 };

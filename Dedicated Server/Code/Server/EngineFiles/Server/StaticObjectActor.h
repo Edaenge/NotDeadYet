@@ -46,7 +46,9 @@ public:
 	inline const Vector3& GetPosition() const {return zPos;}
 	const Vector3& GetScale() const {return zScale;}
 	inline const Vector4& GetRotation() const {return zRot;}
+	float GetModelLength() {return zModelLength;}
 
+	void SetModelLength(const float length) {zModelLength = length;}
 	void SetIconPath(const std::string& path) {this->zIconPath = path;}
 	void SetDescription(const std::string& description) {this->zDescription = description;}
 	void SetWeight(const int weight) {this->zWeight = weight;}
@@ -61,6 +63,7 @@ protected:
 	int zWeight;
 	int zType;
 	int zStacks;
+	float zModelLength;
 	std::string zDescription;
 	std::string zIconPath;
 

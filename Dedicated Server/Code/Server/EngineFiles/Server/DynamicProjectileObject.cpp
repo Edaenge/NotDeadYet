@@ -4,7 +4,6 @@
 DynamicProjectileObject::DynamicProjectileObject(const bool genID /*= true*/) : DynamicObjectActor(genID)
 {
 	this->zSpeed = 5.0f;
-	this->zStacks = 1;
 	this->zWeight = 1;
 	this->zMoving = true;
 }
@@ -20,7 +19,7 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& 
 	this->zPhysicObj = other.zPhysicObj;
 
 	this->zType = other.zType;
-	this->zStacks = other.zStacks;
+	this->zStackSize = other.zStackSize;
 	this->zDamage = other.zDamage;
 	this->zWeight = other.zWeight;
 	this->zIconPath = other.zIconPath;
@@ -38,7 +37,7 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* 
 		this->SetID(other->GetID());
 
 	this->zSpeed = other->zSpeed;
-	this->zStacks = other->zStacks;
+	this->zStackSize = other->zStackSize;
 	this->zDamage = other->zDamage;
 	this->zWeight = other->zWeight;
 	this->zActorModel = other->zActorModel;
@@ -63,7 +62,7 @@ void DynamicProjectileObject::Update(float deltaTime)
 	
 	this->zPhysicObj->Integrate(deltaTime);
 
-	Vector3 ArrowDirection = Vector3(0,0,-1);
+	Vector3 ArrowDirection = zInitialDirection;
 	Vector3 CameraDirection = zPhysicObj->GetVelocity();
 	ArrowDirection.Normalize();
 	CameraDirection.Normalize();

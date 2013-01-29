@@ -26,7 +26,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Scale.obj";
+	this->zMeshID = "Media/Ball.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
