@@ -196,7 +196,7 @@ private:
 	unsigned int zMaxClients;
 	unsigned int zMinClients;
 	int zPort;
-	
+	bool zGameStarted;
 	INT64 zStartime;
 	float zSecsPerCnt;
 	float zDeltaTime;

@@ -1179,11 +1179,6 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, Food* food)
 	
 	msg += food->ToMessageString(&this->zMessageConverter);
 
-	/*Item* item = food;
-	msg += this->AddItemMessage(item);
-
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_HUNGER, food->GetHunger());
-	*/
 	this->SendToClient(PlayerID, msg);
 }
 
@@ -1206,13 +1201,7 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, Weapon* weapon)
 	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)weapon->GetID());
 	
 	msg += weapon->ToMessageString(&this->zMessageConverter);
-	/*
-	Item* item = weapon;
-	msg += this->AddItemMessage(item);
 
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_DAMAGE, weapon->GetDamage());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_RANGE, weapon->GetRange());
-	*/
 	this->SendToClient(PlayerID, msg);
 }
 
@@ -1237,12 +1226,6 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, Material* material)
 
 	msg += material->ToMessageString(&this->zMessageConverter);
 	
-	/*Item* item = material;
-	msg += this->AddItemMessage(item);
-
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE, (float)material->GetCraftingType());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MATERIAL_STACKS_REQUIRED, (float)material->GetRequiredStackToCraft());
-	*/
 	this->SendToClient(PlayerID, msg);
 }
 
@@ -1262,13 +1245,6 @@ std::string Host::AddItemMessage(Material* material)
 	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)material->GetID());
 
 	msg += material->ToMessageString(&this->zMessageConverter);
-
-	//Item* item = material;
-	//msg += this->AddItemMessage(item);
-
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE, (float)material->GetCraftingType());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MATERIAL_STACKS_REQUIRED, (float)material->GetRequiredStackToCraft());
-
 
 	return msg;
 }

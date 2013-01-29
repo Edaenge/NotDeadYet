@@ -15,7 +15,7 @@ Host::Host()
 
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
-	this->zMinClients = 0;
+	this->zMinClients = 1;
 	this->zClients = std::vector<ClientData*>(); 
 
 	this->zStartime = 0;
@@ -32,7 +32,7 @@ Host::Host()
 	this->pSpawnPosition = 0;
 	this->aSpawnPosition = 0;
 
-	this->zPlayerSpawnPoints.push_back(Vector3(36.0f, 0.0F, 22.0f));
+	this->zPlayerSpawnPoints.push_back(Vector3(36.0f, 0, 22.0f));
 	this->zPlayerSpawnPoints.push_back(Vector3(59.2f, 0, 26.8f));
 	this->zPlayerSpawnPoints.push_back(Vector3(63.77f, 0, 31.0f));
 	this->zPlayerSpawnPoints.push_back(Vector3(73.4f, 0, 44.0f));
@@ -262,9 +262,10 @@ void Host::Life()
 
 	static float waitTimer = 0.0f;
 	
+	this->zGameStarted = false;
 	while(this->stayAlive)
 	{
-		waitTimer += Update();
+		Update();
 
 
 		//Checks if ServerListener is still working
@@ -277,20 +278,30 @@ void Host::Life()
 		HandleNewConnections();
 		ReadMessages();
 		HandleReceivedMessages();
-		PingClients();
-		UpdateObjects();
-		
-		if(waitTimer >= UPDATE_DELAY)
+		if(this->zGameStarted)
 		{
-			waitTimer = 0.0f;
+			waitTimer += this->zDeltaTime;
+			PingClients();
+			UpdateObjects();
 
+			if(waitTimer >= UPDATE_DELAY)
+			{
+				waitTimer = 0.0f;
 
-			SendPlayerActorUpdates();
-			SendAnimalActorUpdates();
-			SendDynamicActorUpdates();
+				SendPlayerActorUpdates();
+				SendAnimalActorUpdates();
+				SendDynamicActorUpdates();
+			}
 		}
-
-
+		else
+		{
+			if (this->zClients.size() >= this->zMinClients)
+			{
+				this->zGameStarted = true;
+				this->SendStartMessage();
+			}
+		}
+	
 		Sleep(5);
 	}
 }
@@ -577,7 +588,9 @@ void Host::SendToClient( ClientData* cd, const std::string& message, bool sendIM
 
 void Host::SendStartMessage()
 {
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_START_GAME);
 
+	this->SendToAllClients(msg, true);
 }
 
 void Host::SendPlayerActorUpdates()
@@ -842,13 +855,26 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 	Weapon* weapon = eq->GetWeapon();
 
 	if (weapon)
-		temp_items.push_back(weapon);
+	{
+		items.push_back(weapon);
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)weapon->GetID());
 
+		msg += weapon->ToMessageString(&this->zMessageConverter);
+
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+	}
 	Projectile* projectile = eq->GetProjectile();
 
 	if (projectile)
-		temp_items.push_back(projectile);
+	{
+		items.push_back(projectile);
 
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)projectile->GetID());
+
+		msg += projectile->ToMessageString(&this->zMessageConverter);
+
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+	}
 	for (auto it = temp_items.begin(); it < temp_items.end(); it++)
 	{
 		if ((*it)->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN || (*it)->GetItemType() == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
@@ -860,13 +886,10 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				continue;
 			}
 
-			Container* cont = new Container(temp);
-			items.push_back(cont);
+			items.push_back(temp);
 
-			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)cont->GetID());
-
-			msg += cont->ToMessageString(&this->zMessageConverter);
-
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)temp->GetID());
+			msg += temp->ToMessageString(&this->zMessageConverter);
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
 		else if ((*it)->GetItemType() == ITEM_TYPE_MATERIAL_SMALL_STICK || (*it)->GetItemType() == ITEM_TYPE_MATERIAL_MEDIUM_STICK ||
@@ -879,12 +902,11 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				continue;
 			}
 
-			Material* mat = new Material(temp);
-			items.push_back(mat);
+			items.push_back(temp);
 
-			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)mat->GetID());
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)temp->GetID());
 
-			msg += mat->ToMessageString(&this->zMessageConverter);
+			msg += temp->ToMessageString(&this->zMessageConverter);
 
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
@@ -897,12 +919,11 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				continue;
 			}
 
-			Food* food = new Food(temp);
-			items.push_back(food);
+			items.push_back(temp);
 
-			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)food->GetID());
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)temp->GetID());
 
-			msg += food->ToMessageString(&this->zMessageConverter);
+			msg += temp->ToMessageString(&this->zMessageConverter);
 
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
@@ -915,12 +936,11 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				continue;
 			}
 
-			Projectile* proj = new Projectile(temp);
-			items.push_back(proj);
+			items.push_back(temp);
 
-			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)proj->GetID());
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)temp->GetID());
 
-			msg += proj->ToMessageString(&this->zMessageConverter);
+			msg += temp->ToMessageString(&this->zMessageConverter);
 
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
@@ -933,12 +953,11 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				continue;
 			}
 
-			RangedWeapon* rWpn = new RangedWeapon(temp);
-			items.push_back(rWpn);
+			items.push_back(temp);
 
-			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)rWpn->GetID());
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)temp->GetID());
 
-			msg += rWpn->ToMessageString(&this->zMessageConverter);
+			msg += temp->ToMessageString(&this->zMessageConverter);
 
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
@@ -951,23 +970,16 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				continue;
 			}
 
-			MeleeWeapon* mWpn = new MeleeWeapon(temp);
-			items.push_back(mWpn);
+			items.push_back(temp);
 
-			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)mWpn->GetID());
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)temp->GetID());
 
-			msg += mWpn->ToMessageString(&this->zMessageConverter);
+			msg += temp->ToMessageString(&this->zMessageConverter);
 
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
 	}
-
-	//Projectile* projectile = eq->GetProjectile();
-	//if (projectile)
-	//{
-	//	items.push_back(projectile);
-	//	msg += this->AddItemMessage(projectile);
-	//}
+	inv->GetItems().clear();
 
 	(*dpoActor)->SetItems(items);
 
@@ -1607,7 +1619,6 @@ void Host::OnPlayerRemove(unsigned int ID)
 
 	std::string msg = this->CreateDeadPlayerObject(pActor, &dpoActor);
 
-
 	this->zActorHandler->AddNewDeadPlayer(dpoActor);
 
 	this->SendToAllClients(msg, true);
@@ -1684,6 +1695,11 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 
 	//Send new player to players
 	SendToAllClients(mess, true);
+	if (this->zGameStarted)
+	{
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_START_GAME);
+		this->SendToClient(pi->GetID(), msg, true);
+	}
 
 }
 

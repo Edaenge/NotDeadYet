@@ -198,8 +198,8 @@ private:
 	WorldRenderer* zWorldRenderer;
 	WorldAnchor* zAnchor;
 	iImage* zCrossHair;
-
-	Vector3 prevDirection;
+	
+	bool zGameStarted;
 protected:
 	virtual void onEvent( Event* e );
 };
