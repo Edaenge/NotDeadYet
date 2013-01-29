@@ -15,7 +15,7 @@ Host::Host()
 
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
-	this->zMinClients = 1;
+	this->zMinClients = 0;
 	this->zClients = std::vector<ClientData*>(); 
 	this->zActorHandler = new ActorHandler();
 
@@ -823,7 +823,7 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 	std::string path = "Media/Models/Scale.obj";	
 
 	Vector3 up = Vector3(0, 1, 0);//pActor->GetUpVector();
-	Vector3 forward = pActor->GetDirection();
+	Vector3 forward = Vector3(0, 0, 1);//pActor->GetDirection();
 	forward.y = 0;
 	Vector3 around = up.GetCrossProduct(forward);
 	around.Normalize();

@@ -202,6 +202,15 @@ void Client::Life()
 				//Print a Timeout Message to Client
 			}
 		}
+
+		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
+		{
+			this->zGuiManager->ToggleIngameMenu();
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID);
+			this->zServerChannel->sendData(msg);
+			this->CloseConnection("Escape was pressed");
+		}
+
 		Sleep(5);
 	}
 	this->zRunning = false;
@@ -569,14 +578,6 @@ void Client::HandleKeyboardInput()
 			}
 		}
 		
-	}
-
-	if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
-	{
-		this->zGuiManager->ToggleIngameMenu();
-		std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID);
-		this->zServerChannel->sendData(msg);
-		this->CloseConnection("Escape was pressed");
 	}
 }
 
