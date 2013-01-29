@@ -1,10 +1,11 @@
 #include "ActorHandler.h"
 
-ActorHandler::ActorHandler()
+ActorHandler::ActorHandler(World* worldPtr)
 {
 	this->zObjManager = new ObjectManager();
 	this->zObjManager->ReadObjects();
 	this->zPhysicsEngine = new PhysicsEngine();
+	this->zWorld = worldPtr;
 }
 
 ActorHandler::~ActorHandler()
@@ -267,7 +268,7 @@ bool ActorHandler::RemoveAnimalActor(const long ID)
 	
 	AnimalActor* temp = this->zAnimals[index];
 	this->zAnimals.erase(this->zAnimals.begin() + index);
-
+	this->zPhysicsEngine->DeletePhysicsObject(temp->GetPhysicObject());
 	SAFE_DELETE(temp);
 
 	return true;
@@ -575,7 +576,7 @@ ObjectManager* ActorHandler::GetObjManager() const
 	return this->zObjManager;
 }
 
-CollisionEvent ActorHandler::CheckCollision(BioActor* bActor, float range)
+CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 {
 	unsigned int agressor_Type = 100;
 	CollisionEvent cEvent = CollisionEvent();
@@ -682,7 +683,44 @@ CollisionEvent ActorHandler::CheckCollision(BioActor* bActor, float range)
 	return cEvent;
 }
 
-/*Not Complete*/
+std::vector<CollisionEvent> ActorHandler::CheckProjectileCollisions()
+{
+	std::vector<CollisionEvent> collisionEvents;
+	std::vector<BioActor*> pCollide;
+	PhysicsObject* mesh;
+	
+	for (auto it = zDynamicProjectiles.begin(); it < zDynamicProjectiles.end(); it++)
+	{
+		DynamicActorVsBioActors((*it), zPlayers, pCollide);
+
+		if(!pCollide.empty())
+		{
+			bool stop = false;
+
+			for (auto it_s = pCollide.begin(); it_s < pCollide.end() && !stop; it_s++)
+			{
+				if((*it_s)->TakeDamage((*it)->GetDamage()))
+				{
+					CollisionEvent ce;
+					ce.actor_aggressor_ID = (*it)->GetObjPlayerOwner();
+					ce.actor_aggressor_type = ACTOR_TYPE_PLAYER;
+					ce.actor_victim_ID = (*it_s)->GetID();
+					ce.actor_victim_type = ACTOR_TYPE_PLAYER;
+
+					collisionEvents.push_back(ce);
+
+					//No need to continue, the player is dead
+					stop = true;
+				}
+
+				(*it)->SetMoving(false);
+			}
+		}	
+	}
+
+	return collisionEvents;
+}
+
 void ActorHandler::CheckCollisions()
 {
 
@@ -696,7 +734,7 @@ void ActorHandler::CheckCollisions()
 		if(!(*it)->HasMoved())
 			continue;
 
-		BioActorVSBioActor(*it, zPlayers, pCol);
+		BioActorVSBioActors(*it, zPlayers, pCol);
 
 		if(pCol.size() > 0)
 			(*it)->RewindPosition();
@@ -710,7 +748,7 @@ void ActorHandler::CheckCollisions()
 		if(!(*it)->HasMoved())
 		continue;
 
-		BioActorVSBioActor(*it, zPlayers, pCol);
+		BioActorVSBioActors(*it, zPlayers, pCol);
 
 		if(pCol.size() > 0)
 			(*it)->RewindPosition();
@@ -718,12 +756,9 @@ void ActorHandler::CheckCollisions()
 		pCol.clear();
 	}
 
-	/**/
-
-
 }
 
-void ActorHandler::BioActorVSBioActor(BioActor* pTest, std::vector<AnimalActor*> &actors, std::vector<BioActor*> &pCollide)
+void ActorHandler::BioActorVSBioActors(BioActor* pTest, std::vector<AnimalActor*> &actors, std::vector<BioActor*> &pCollide)
 {
 	PhysicsObject* pTemp = pTest->GetPhysicObject();
 	Vector3 pPos = pTemp->GetPosition();
@@ -746,7 +781,7 @@ void ActorHandler::BioActorVSBioActor(BioActor* pTest, std::vector<AnimalActor*>
 	}
 }
 
-void ActorHandler::BioActorVSBioActor( BioActor* pTest, std::vector<PlayerActor*> &actors, std::vector<BioActor*> &pCollide )
+void ActorHandler::BioActorVSBioActors( BioActor* pTest, std::vector<PlayerActor*> &actors, std::vector<BioActor*> &pCollide )
 {
 	PhysicsObject* pTemp = pTest->GetPhysicObject();
 	Vector3 pPos = pTemp->GetPosition();
@@ -769,3 +804,33 @@ void ActorHandler::BioActorVSBioActor( BioActor* pTest, std::vector<PlayerActor*
 
 	}
 }
+
+void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vector<PlayerActor*> & actors, std::vector<BioActor*> &pCollide)
+{
+	if(!pTest->IsMoving())
+		return;
+
+	float middle;
+	Vector3 scale;
+	PhysicsObject* mesh;
+
+	scale = pTest->GetScale();
+	middle = (pTest->GetModelLength() * max(max(scale.x, scale.y),scale.z)) / 2;
+	mesh = pTest->GetPhysicObject();
+	PhysicsCollisionData pcd;
+
+	for(auto it = actors.begin(); it < actors.end(); it++)
+	{
+		if((*it)->GetID() == pTest->GetObjPlayerOwner())
+			continue;
+
+		pcd = this->zPhysicsEngine->GetCollisionBoundingOnly(mesh, (*it)->GetPhysicObject());
+
+		if(pcd.BoundingSphereCollision)
+		{
+			if((pcd.distance-middle) < 0.0f)
+				pCollide.push_back(*it);
+		}
+	}
+}
+

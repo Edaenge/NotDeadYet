@@ -17,7 +17,6 @@ Host::Host()
 	this->zMaxClients = 10;
 	this->zMinClients = 0;
 	this->zClients = std::vector<ClientData*>(); 
-	this->zActorHandler = new ActorHandler();
 
 	this->zStartime = 0;
 	this->zSecsPerCnt = 0.0f;
@@ -326,6 +325,7 @@ int Host::InitHost(const int PORT, const unsigned int MAX_CLIENTS)
 	
 	if ( zWorld ) delete zWorld, zWorld=0;
 	this->zWorld = new World(this, "3x3.map");
+	this->zActorHandler = new ActorHandler(this->zWorld);
 
 	return code;
 }
@@ -1527,8 +1527,22 @@ void Host::UpdateObjects()
 {
 	this->zActorHandler->UpdateObjects(zDeltaTime);
 
+	std::vector<CollisionEvent> ce;
 	//CheckCollisions is not complete.
 	this->zActorHandler->CheckCollisions();
+	ce = this->zActorHandler->CheckProjectileCollisions();
+
+	//Iterate through dead players
+	std::string msg = "";
+	for (auto it = ce.begin(); it < ce.end(); it++)
+	{
+		
+		OnPlayerDeath((*it).actor_victim_ID);
+
+		msg = this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER, (*it).actor_victim_ID);
+		SendToAllClients(msg, true);
+	}
+
 	Vector3 position;
 	float y = 0;
 	std::vector<DynamicProjectileObject*> dynamicProjectileObj = this->zActorHandler->GetDynamicProjectiles();
@@ -1608,6 +1622,12 @@ void Host::OnPlayerRemove(unsigned int ID)
 	this->zActorHandler->AddNewDeadPlayer(dpoActor);
 
 	this->SendToAllClients(msg, true);
+}
+
+void Host::OnPlayerDeath( unsigned int ID )
+{
+	OnPlayerRemove(ID);
+	KickClient(ID);
 }
 
 bool Host::IsAlive() const

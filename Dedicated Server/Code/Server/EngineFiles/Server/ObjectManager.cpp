@@ -19,6 +19,7 @@ static const std::string WEIGHT				=	"WEIGHT";
 static const std::string PATH				=	"PATH";
 static const std::string DESCRIPTION		=	"DESCRIPTION";
 static const std::string MODEL				=	"MODEL";
+static const std::string MODEL_LENGTH		=   "MODEL_LENGTH";
 static const std::string NAME				=	"NAME";
 static const std::string IS_RANGED			=	"IS_RANGED";
 static const std::string SCALE				=	"SCALE";
@@ -511,6 +512,13 @@ bool ObjectManager::InterpCommand(char* command, char* key, StaticProjectileObje
 
 		Vector3 scale((float)atof(a), (float)atof(b), (float)atof(c));
 		pt->SetScale(scale);
+	}
+	else if (strcmp(command, MODEL_LENGTH.c_str()) == 0)
+	{
+		char a[10];
+
+		sscanf_s(key, "%s", a, sizeof(a));
+		pt->SetModelLength((float)atof(a));
 	}
 
 	return true;

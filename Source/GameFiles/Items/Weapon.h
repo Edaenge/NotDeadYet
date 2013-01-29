@@ -28,8 +28,16 @@ public:
 	void SetDamage(const float damage) {this->zDamage = damage;}
 	void SetRange(const float range) {this->zRange = range;}
 
+	virtual std::string ToMessageString( NetworkMessageConverter* NMC )
+	{
+		std::string msg = Item::ToMessageString(NMC);
+
+		msg += NMC->Convert(MESSAGE_TYPE_WEAPON_DAMAGE, (float)this->zDamage);
+		msg += NMC->Convert(MESSAGE_TYPE_WEAPON_RANGE, (float)this->zRange);
+
+		return msg;
+	}
 	virtual bool Use() = 0;
-	virtual std::string ToMessageString(NetworkMessageConverter* NMC) = 0;
 	virtual void UseWeapon(float& range, float& damage) = 0;
 protected:
 	float zDamage;

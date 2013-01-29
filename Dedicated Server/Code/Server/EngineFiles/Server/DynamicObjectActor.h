@@ -35,7 +35,9 @@ public:
 	void SetWeight(const int weight) {this->zWeight = weight;}
 	void SetType(const int TYPE) {this->zType = TYPE;}
 	void SetStackSize(const int size) {this->zStackSize = size;}
+	void SetMoving(const bool op){this->zMoving = op;}
 
+	bool IsMoving() const {return this->zMoving;}
 	void ModifyStackSize(const int size) {this->zStackSize += size;}
 
 private:
@@ -46,6 +48,7 @@ protected:
 	int zWeight;
 	int zStackSize;
 	int zObjPlayerOwner;
+	bool zMoving;
 	std::string zDescription;
 	std::string zIconPath;
 	

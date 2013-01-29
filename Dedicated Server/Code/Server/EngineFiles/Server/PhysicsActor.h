@@ -27,10 +27,12 @@ public:
 		Vector3 def;
 		return def;
 	}
-
+	/*! Returns model length in scale 1, 1, 1 .*/
+	float GetModelLength() const {return zModelLength;}
 	/*! Returns the model initial direction, the direction in model space.*/
 	inline Vector3 GetInitialDirection() const {return zInitialDirection;}
 	/*! PhysicsObject needs to be initialized.*/
+
 	const Vector3 GetScale() const 
 	{
 		if(this->zPhysicObj) 
@@ -49,6 +51,7 @@ public:
 		return def;
 	}
 
+	void SetModelLength(const float length) {zModelLength = length;}
 	/*! PhysicsObject needs to be initialized.*/
 	inline void SetPosition(const Vector3& pos) 
 	{
@@ -88,4 +91,5 @@ protected:
 
 private:
 	bool zScaleChanged;
+	bool zModelLength;
 };

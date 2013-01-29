@@ -107,9 +107,7 @@ private:
 	void GetExistingObjects(std::vector<std::string>& static_Objects);
 	/*! Called When player Disconnects or Dies.*/
 	void OnPlayerRemove(unsigned int ID);
-
-	void SendStartMessage();
-	//////////////////////////////////////
+	void OnPlayerDeath(unsigned int ID);	void SendStartMessage();	//////////////////////////////////////
 	//									//
 	//	   Objects/Items Conversions	//
 	//			  						//

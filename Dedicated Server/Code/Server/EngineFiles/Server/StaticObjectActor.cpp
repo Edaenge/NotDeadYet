@@ -13,6 +13,7 @@ StaticObjectActor::StaticObjectActor(bool genID) : Actor()
 	this->zStacks = 1;
 	this->zScale = Vector3(0.5f,0.5f,0.5f);
 	this->zPos = Vector3(0,1,0);
+	this->zModelLength = 0;
 }
 
 StaticObjectActor::StaticObjectActor(const std::string& meshModel, bool genID) : Actor()
@@ -28,6 +29,7 @@ StaticObjectActor::StaticObjectActor(const std::string& meshModel, bool genID) :
 	this->zStacks = 1;
 	this->zScale = Vector3(0.5f,0.5f,0.5f);
 	this->zPos = Vector3(0,1,0);
+	this->zModelLength = 0;
 }
 
 StaticObjectActor::~StaticObjectActor()
