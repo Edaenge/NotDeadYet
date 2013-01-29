@@ -57,7 +57,6 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 			this->zCreated = true;
 			//filename = "Media/Models/Ball.obj";
 			scale = Vector3(0.05f, 0.05f, 0.05f);
-			prevDirection = this->zEng->GetCamera()->GetForward();
 		}
 	}
 	if (Messages::FileWrite())

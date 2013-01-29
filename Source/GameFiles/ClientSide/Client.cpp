@@ -23,10 +23,11 @@ Client::Client()
 	this->zIsHuman = true;
 	this->zRunning = true;
 	this->zCreated = false;
+	this->zGameStarted = false;
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Models/Ball.obj";
+	this->zMeshID = "Media/Models/scale.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -39,7 +40,6 @@ Client::Client()
 	
 	this->zMsgHandler = NetworkMessageConverter();
 
-	//timer = 0;
 	this->zWorld = 0;
 	this->zWorldRenderer = 0;
 	this->zAnchor = 0;
@@ -111,8 +111,8 @@ float Client::Update()
 void Client::InitGraphics()
 {
 	this->zEng->CreateSkyBox("Media/skymap.dds");
-	this->zEng->GetCamera()->SetPosition( Vector3(42, 0, 42) );
-	this->zEng->GetCamera()->LookAt( Vector3(45, 0, 45) );
+	this->zEng->GetCamera()->SetPosition( Vector3(42, 20, 42) );
+	this->zEng->GetCamera()->LookAt( Vector3(50, 0, 50) );
 	
 	LoadEntList("Entities.txt");
 
@@ -165,39 +165,25 @@ void Client::Life()
 	this->zServerChannel->Start();
 
 	this->Init();
-	//static int counter = 0;
+
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->Update();
-		//timer += zDeltaTime;
 
-		this->zSendUpdateDelayTimer += this->zDeltaTime;
-		this->zTimeSinceLastPing += this->zDeltaTime;
-
-		if(this->zCreated)
+		if(this->zCreated && this->zGameStarted)
 		{
+			this->zSendUpdateDelayTimer += this->zDeltaTime;
+			this->zTimeSinceLastPing += this->zDeltaTime;
+
 			this->HandleKeyboardInput();
 
  			if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
  			{
-// 				this->zSendUpdateDelayTimer -= UPDATE_DELAY;
- 				//if (this->zSendUpdateDelayTimer < 0.0f)
-					this->zSendUpdateDelayTimer = 0.0f;
-
-				/*if (Messages::FileWrite())
-					Messages::Debug("zSendUpdateDelayTimer left from last update " + MaloW::convertNrToString(zSendUpdateDelayTimer));*/
-				//counter++;
+				this->zSendUpdateDelayTimer = 0.0f;
 
 				this->SendClientUpdate();
 			}
 
-			//if (timer >= 1.0f)
-			//{
-			//	if (Messages::FileWrite())
-			//		Messages::Debug(MaloW::convertNrToString(counter));
-			//	counter = 0;
-			//	timer -= 1.0f;
-			//}
 			this->UpdateCameraPos();
 
 			this->UpdateWorldObjects();
@@ -285,7 +271,6 @@ void Client::UpdateCameraPos()
 	}
 
 	//Rotate Mesh
-	//Vector3 meshDir = Vector3(0.0f, 0.0f, -1.0f);
 	Vector3 meshDir = Vector3(0.0f, 0.0f, -1.0f);
 	Vector3 camDir = this->zEng->GetCamera()->GetForward();
 	Vector3 around;
@@ -814,6 +799,10 @@ void Client::HandleNetworkMessage(const std::string& msg)
 		else if(strcmp(key, M_SERVER_SHUTDOWN.c_str()) == 0)
 		{
 			this->CloseConnection("Server Shutdown");
+		}
+		else if(strcmp(key, M_START_GAME.c_str()) == 0)
+		{
+			this->zGameStarted = true;
 		}
 		else
 		{

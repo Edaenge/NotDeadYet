@@ -286,6 +286,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	case  MESSAGE_TYPE_SERVER_SHUTDOWN:
 		ss << M_SERVER_SHUTDOWN;
 		break;
+	case MESSAGE_TYPE_START_GAME:
+		ss << M_START_GAME;
+		break;
 	default:
 		return "";
 		break;
