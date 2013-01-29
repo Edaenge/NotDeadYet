@@ -107,6 +107,8 @@ private:
 	void GetExistingObjects(std::vector<std::string>& static_Objects);
 	/*! Called When player Disconnects or Dies.*/
 	void OnPlayerRemove(unsigned int ID);
+
+	void SendStartMessage();
 	//////////////////////////////////////
 	//									//
 	//	   Objects/Items Conversions	//
@@ -194,6 +196,7 @@ private:
 	NetworkMessageConverter zMessageConverter;
 
 	unsigned int zMaxClients;
+	unsigned int zMinClients;
 	int zPort;
 	
 	INT64 zStartime;

@@ -81,7 +81,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_DEAD_PLAYER_REMOVE_ITEM,
 	MESSAGE_TYPE_ADD_DEAD_PLAYER_OBJECT,
 	MESSAGE_TYPE_REMOVE_DEAD_PLAYER_OBJECT,
-	MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED
+	MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED,
+	MESSAGE_TYPE_START_GAME
 };
 //Data Messages
 static const std::string M_POSITION					= "P";
@@ -168,6 +169,8 @@ static const std::string M_UPDATE_DYNAMIC_OBJECT	= "UDO";
 static const std::string M_SELF_ID					= "SELF";
 //Ping Message
 static const std::string M_PING						= "PING";
+
+static const std::string M_START_GAME				= "SG";
 
 /*
 	This class creates string messages used for communication

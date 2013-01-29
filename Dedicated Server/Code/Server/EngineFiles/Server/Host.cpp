@@ -15,6 +15,7 @@ Host::Host()
 
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
+	this->zMinClients = 0;
 	this->zClients = std::vector<ClientData*>(); 
 	this->zActorHandler = new ActorHandler();
 
@@ -572,6 +573,11 @@ void Host::SendToClient( ClientData* cd, const std::string& message, bool sendIM
 	unsigned long m_id = cd->GetNextIPID();
 	std::string im = this->zMessageConverter.Convert(MESSAGE_TYPE_IMPORTANT_MESSAGE, (float)m_id);
 	cd->SendIM((im + message), m_id);
+}
+
+void Host::SendStartMessage()
+{
+
 }
 
 void Host::SendPlayerActorUpdates()
@@ -1524,23 +1530,12 @@ void Host::UpdateObjects()
 			position.y = y;
 			(*it_proj)->SetPosition(position);
 			(*it_proj)->SetMoving(false);
-		}
 
-		if ( !((*it_proj)->IsMoving()) )
-		{
 			HandleConversion((*it_proj));
-			toBeRemoved.push_back((*it_proj));
-		}
-	}
 
-	for (auto it_proj = toBeRemoved.begin(); it_proj < toBeRemoved.end(); it_proj++)
-	{
-		if ( !((*it_proj)->IsMoving()) )
-		{
 			if(!this->zActorHandler->RemoveDynamicProjectileActor((*it_proj)->GetID()))
 				MaloW::Debug("Failed to Remove Object in Host::UpdateObjects");
 		}
-
 	}
 }
 

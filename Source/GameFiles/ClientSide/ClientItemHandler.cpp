@@ -819,6 +819,15 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetIconPath(itemIconFilePath);
 		item->SetItemDescription(itemDescription);
 		break;
+	case ITEM_TYPE_CONTAINER_WATER_BOTTLE:
+		item = new Container(ID, itemType, maxUse, currUse);
+		item->SetStacking(false);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
+		break;
 	case ITEM_TYPE_PROJECTILE_ARROW:
 		item = new Projectile(ID, itemType, projectileVelocity, projectileDamage);
 		item->SetStacking(true);
@@ -896,6 +905,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetItemDescription(itemDescription);
 		break;
 	default:
+		MaloW::Debug("Items wasn't found in the switch case type: " + MaloW::convertNrToString(itemType));
 		break;
 	}
 	if (this->zPlayerInventory->AddItem(item))
@@ -935,18 +945,6 @@ void Client::HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, cons
 				items.erase(it);
 				SAFE_DELETE(temp);
 				dpo->SetItems(items);
-				/*if (this->zPlayerInventory->AddItem((*it)))
-				{
-					int stacks = 0;
-					if ((*it)->GetStacking())
-					{
-					stacks = (*it)->GetStackSize();
-					}
-					Gui_Item_Data gid = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), stacks, (*it)->GetItemName(), 
-					(*it)->GetIconPath(), (*it)->GetItemDescription(), (*it)->GetItemType());
-					this->zGuiManager->AddInventoryItemToGui(gid);
-					return;
-				}*/
 
 				return;
 			}
