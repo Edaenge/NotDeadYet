@@ -663,7 +663,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z) + 0.1f;
+			position.y = zWorld->CalcHeightAtWorldPos(position.GetXZ()) + 0.1f;
 			animalObject->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -730,7 +730,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z) + 0.1f;
+			position.y = zWorld->CalcHeightAtWorldPos(position.GetXZ()) + 0.1f;
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
@@ -987,7 +987,8 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, const
 
 		if (PlayerObjectPointer->HasMesh())
 		{
-			this->zEng->DeleteMesh(PlayerObjectPointer->GetMesh());
+			iMesh* m = PlayerObjectPointer->GetMesh();
+			this->zEng->DeleteMesh(m);
 		}
 		PlayerObjectPointer->SetStaticMesh(mesh);
 	}
@@ -1025,7 +1026,7 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z) + 0.1f;
+			position.y = zWorld->CalcHeightAtWorldPos(Vector2(position.x, position.z)) + 0.1f;
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
@@ -1085,7 +1086,8 @@ bool Client::UpdateStaticObjects(const std::vector<std::string>& msgArray, const
 
 		if (StaticObjectPointer->HasMesh())
 		{
-			this->zEng->DeleteMesh(StaticObjectPointer->GetMesh());
+			iMesh* m = StaticObjectPointer->GetMesh();
+			this->zEng->DeleteMesh(m);
 		}
 		StaticObjectPointer->SetStaticMesh(mesh);
 	}
@@ -1122,7 +1124,7 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			position.y = zWorld->GetHeightAtWorldPos(position.x, position.z) + 0.1f;
+			position.y = zWorld->CalcHeightAtWorldPos(position.GetXZ()) + 0.1f;
 			AnimalObjectPointer->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
@@ -1170,7 +1172,8 @@ bool Client::UpdateAnimalObjects(const std::vector<std::string>& msgArray, const
 
 		if (AnimalObjectPointer->HasMesh())
 		{
-			this->zEng->DeleteMesh(AnimalObjectPointer->GetMesh());
+			iMesh* mesh = AnimalObjectPointer->GetMesh();
+			this->zEng->DeleteMesh(mesh);
 		}
 		AnimalObjectPointer->SetStaticMesh(mesh);
 	}
@@ -1270,7 +1273,8 @@ bool Client::UpdateDynamicObjects(const std::vector<std::string>& msgArray, cons
 
 		if (DynamicObjectPointer->HasMesh())
 		{
-			this->zEng->DeleteMesh(DynamicObjectPointer->GetMesh());
+			iMesh* m = DynamicObjectPointer->GetMesh();
+			this->zEng->DeleteMesh(m);
 		}
 		DynamicObjectPointer->SetStaticMesh(mesh);
 	}

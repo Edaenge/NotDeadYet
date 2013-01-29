@@ -9,11 +9,11 @@
 static const unsigned int SECTOR_WORLD_SIZE = 32;
 static const unsigned int SECTOR_LENGTH = 64;
 static const unsigned int SECTOR_BLEND_SIZE = 64;
-static const unsigned int SECTOR_HEIGHT_SIZE = 128;
+static const unsigned int SECTOR_HEIGHT_SIZE = 64;
 static const unsigned int TEXTURE_NAME_LENGTH = 60;
 
 // AI Grid
-static const unsigned int SECTOR_AI_GRID_SIZE = SECTOR_WORLD_SIZE * 2;
+static const unsigned int SECTOR_AI_GRID_SIZE = 63;
 typedef std::bitset< SECTOR_AI_GRID_SIZE * SECTOR_AI_GRID_SIZE > AIGrid;
 
 
