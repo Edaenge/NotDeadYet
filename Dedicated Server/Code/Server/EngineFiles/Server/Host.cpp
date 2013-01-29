@@ -15,6 +15,7 @@ Host::Host()
 
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
+	this->zMinClients = 0;
 	this->zClients = std::vector<ClientData*>(); 
 
 	this->zStartime = 0;
@@ -574,6 +575,11 @@ void Host::SendToClient( ClientData* cd, const std::string& message, bool sendIM
 	cd->SendIM((im + message), m_id);
 }
 
+void Host::SendStartMessage()
+{
+
+}
+
 void Host::SendPlayerActorUpdates()
 {
 	if(!HasClients())
@@ -801,10 +807,11 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 	Inventory* inv = pActor->GetInventory();
 	Equipment* eq = pActor->GetEquipment();
 
-	std::string path = "Media/Ball.obj";	
+	std::string path = "Media/Models/Scale.obj";	
 
-	Vector3 up = pActor->GetUpVector();
+	Vector3 up = Vector3(0, 1, 0);//pActor->GetUpVector();
 	Vector3 forward = pActor->GetDirection();
+	forward.y = 0;
 	Vector3 around = up.GetCrossProduct(forward);
 	around.Normalize();
 	float angle = 3.14f * 0.5f;
@@ -815,7 +822,7 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 	pObj->RotateAxis(around, angle);
 
 	(*dpoActor)->SetActorModel(path);
-	(*dpoActor)->SetScale(pActor->GetScale() * 10);
+	(*dpoActor)->SetScale(pActor->GetScale());
 	
 	(*dpoActor)->SetRotation(pActor->GetRotation());
 	(*dpoActor)->SetPosition(pActor->GetPosition());
@@ -834,15 +841,14 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 	std::vector<Item*> temp_items = inv->GetItems();
 	Weapon* weapon = eq->GetWeapon();
 
-	if (weapon)	{
+	if (weapon)
 		temp_items.push_back(weapon);
-	}
+
 	Projectile* projectile = eq->GetProjectile();
 
 	if (projectile)
-	{
 		temp_items.push_back(projectile);
-	}
+
 	for (auto it = temp_items.begin(); it < temp_items.end(); it++)
 	{
 		if ((*it)->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN || (*it)->GetItemType() == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
@@ -857,7 +863,9 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 			Container* cont = new Container(temp);
 			items.push_back(cont);
 
-			msg += this->AddItemMessage(temp);
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)cont->GetID());
+
+			msg += cont->ToMessageString(&this->zMessageConverter);
 
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
@@ -874,7 +882,10 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 			Material* mat = new Material(temp);
 			items.push_back(mat);
 
-			msg += this->AddItemMessage(temp);
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)mat->GetID());
+
+			msg += mat->ToMessageString(&this->zMessageConverter);
+
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
 		else if ((*it)->GetItemType() == ITEM_TYPE_FOOD_DEER_MEAT || (*it)->GetItemType() == ITEM_TYPE_FOOD_WOLF_MEAT)
@@ -889,7 +900,10 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 			Food* food = new Food(temp);
 			items.push_back(food);
 
-			msg += this->AddItemMessage(temp);
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)food->GetID());
+
+			msg += food->ToMessageString(&this->zMessageConverter);
+
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
 		else if ((*it)->GetItemType() == ITEM_TYPE_PROJECTILE_ARROW)
@@ -904,7 +918,10 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 			Projectile* proj = new Projectile(temp);
 			items.push_back(proj);
 
-			msg += this->AddItemMessage(temp);
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)proj->GetID());
+
+			msg += proj->ToMessageString(&this->zMessageConverter);
+
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
 		else if ((*it)->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW || (*it)->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
@@ -919,7 +936,10 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 			RangedWeapon* rWpn = new RangedWeapon(temp);
 			items.push_back(rWpn);
 
-			msg += this->AddItemMessage(temp);
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)rWpn->GetID());
+
+			msg += rWpn->ToMessageString(&this->zMessageConverter);
+
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
 		else if ((*it)->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE || (*it)->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
@@ -934,7 +954,10 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 			MeleeWeapon* mWpn = new MeleeWeapon(temp);
 			items.push_back(mWpn);
 
-			msg += this->AddItemMessage(temp);
+			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)mWpn->GetID());
+
+			msg += mWpn->ToMessageString(&this->zMessageConverter);
+
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
 	}
@@ -957,7 +980,7 @@ bool Host::CreateAnimalActor(DeerActor** deerAct, const bool genID)
 		this->aSpawnPosition = 0;
 
 	(*deerAct) = new DeerActor(genID);
-	std::string path = "Media/Tree_02_v02_r.obj";	
+	std::string path = "Media/Models/Tree_02_v02_r.obj";	
 	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(
 		path, zAnimalSpawnPoints[this->aSpawnPosition++]);
 
@@ -975,7 +998,7 @@ bool Host::CreateAnimalActor(WolfActor** wolfAct, const bool genID)
 		this->aSpawnPosition = 0;
 
 	(*wolfAct) = new WolfActor(genID);
-	std::string path = "Media/Tree_02_v02_r.obj";	
+	std::string path = "Media/Models/Tree_02_v02_r.obj";	
 	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(
 		path, zAnimalSpawnPoints[this->aSpawnPosition++]);
 
@@ -1521,29 +1544,17 @@ void Host::UpdateObjects()
 			position.y = y;
 			(*it_proj)->SetPosition(position);
 			(*it_proj)->SetMoving(false);
-		}
 
-		if ( !((*it_proj)->IsMoving()) )
-		{
 			HandleConversion((*it_proj));
-			toBeRemoved.push_back((*it_proj));
-		}
-	}
 
-	for (auto it_proj = toBeRemoved.begin(); it_proj < toBeRemoved.end(); it_proj++)
-	{
-		if ( !((*it_proj)->IsMoving()) )
-		{
 			if(!this->zActorHandler->RemoveDynamicProjectileActor((*it_proj)->GetID()))
 				MaloW::Debug("Failed to Remove Object in Host::UpdateObjects");
 		}
-
 	}
 }
 
 bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 {
-
 	int index = SearchForClient(ID);
 
 	ClientData* temp_c = zClients.at(index);

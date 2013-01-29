@@ -41,7 +41,7 @@ WorldRenderer::~WorldRenderer()
 	zTerrain.clear();
 
 	// Clean Entities
-	for( auto i = zEntities.cbegin(); i != zEntities.cend(); ++i )
+	for( auto i = zEntities.begin(); i != zEntities.end(); ++i )
 	{
 		zGraphics->DeleteMesh( i->second );
 	}
@@ -68,6 +68,12 @@ void WorldRenderer::onEvent( Event* e )
 		{
 			unsigned int tIndex = SUE->sectorY * SUE->world->GetNumSectorsWidth() + SUE->sectorX;
 			zGraphics->DeleteTerrain(zTerrain[tIndex]);
+
+			// Remove AI Grid
+			auto grid = zAIGrids.find(zTerrain[tIndex]);
+			if ( grid != zAIGrids.end() )
+				zAIGrids.erase(grid);
+
 			zTerrain[tIndex] = 0;
 		}
 	}
@@ -100,16 +106,7 @@ void WorldRenderer::onEvent( Event* e )
 	else if ( EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e) )
 	{
 		const std::string& model = GetEntModel(ELE->entity->GetType());
-
-		if ( model.substr(model.size()-4,4) == ".ani" )
-		{
-			zEntities[ELE->entity] = GetGraphics()->CreateAnimatedMesh(model.c_str(), ELE->entity->GetPosition());
-		}
-		else
-		{
-			zEntities[ELE->entity] = GetGraphics()->CreateMesh(model.c_str(), ELE->entity->GetPosition());
-		}
-
+		zEntities[ELE->entity] = zGraphics->CreateMesh(model.c_str(), ELE->entity->GetPosition());
 		zEntities[ELE->entity]->Scale(ELE->entity->GetScale());
 		ELE->entity->AddObserver(this);
 	}
@@ -134,7 +131,7 @@ void WorldRenderer::onEvent( Event* e )
 	{
 		if ( ERE->world == zWorld )
 		{
-			GetGraphics()->DeleteMesh(zEntities[ERE->entity]);
+			zGraphics->DeleteMesh(zEntities[ERE->entity]);
 			zEntities.erase(ERE->entity);
 		}
 	}
@@ -154,6 +151,14 @@ void WorldRenderer::onEvent( Event* e )
 			u = (UPDATEENUM)(u | UPDATE_TEXTURES);
 		}
 	}
+	else if ( SectorAIGridChanged* SBTC = dynamic_cast<SectorAIGridChanged*>(e) )
+	{
+		if ( SBTC->world == zWorld )
+		{
+			UPDATEENUM& u = zUpdatesRequired[ Vector2UINT(SBTC->sectorX, SBTC->sectorY) ];
+			u = (UPDATEENUM)(u | UPDATE_AIGRID);
+		}
+	}
 }
 
 
@@ -162,9 +167,12 @@ float WorldRenderer::GetYPosFromHeightMap( float x, float y )
 	if(zWorld == NULL)
 		return std::numeric_limits<float>::infinity();
 
-	unsigned int tIndex = (unsigned int)(y/SECTOR_WORLD_SIZE) * zWorld->GetNumSectorsWidth() + (unsigned int)(x/SECTOR_WORLD_SIZE);
+	unsigned int tIndex = (unsigned int)(y/(float)SECTOR_WORLD_SIZE) * zWorld->GetNumSectorsWidth() + (unsigned int)(x/(float)SECTOR_WORLD_SIZE);
 	
-	if ( zTerrain[tIndex] )
+	if ( tIndex >= zWorld->GetNumSectorsWidth() * zWorld->GetNumSectorsHeight() )
+		return std::numeric_limits<float>::infinity();
+
+	if ( zTerrain[tIndex])
 	{
 		return zTerrain[tIndex]->GetYPositionAt(fmod(x, (float)SECTOR_WORLD_SIZE), fmod(y, (float)SECTOR_WORLD_SIZE));
 	}
@@ -176,18 +184,17 @@ float WorldRenderer::GetYPosFromHeightMap( float x, float y )
 CollisionData WorldRenderer::Get3DRayCollisionDataWithGround()
 {
 	// Get Applicable Sectors
-	Vector2 camPos( GetGraphics()->GetCamera()->GetPosition().x, GetGraphics()->GetCamera()->GetPosition().z );
 	std::set< Vector2UINT > sectors;
-	zWorld->GetSectorsInCicle( camPos, 100.0f, sectors );
+	zWorld->GetSectorsInCicle( zGraphics->GetCamera()->GetPosition().GetXZ(), 100.0f, sectors );
 
 	// Check For Collision
 	for( auto i = sectors.begin(); i != sectors.end(); ++i )
 	{
 		unsigned int sectorIndex = i->y * zWorld->GetNumSectorsWidth() + i->x;
 
-		CollisionData cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayTerrain(
-			GetGraphics()->GetCamera()->GetPosition(), 
-			GetGraphics()->GetCamera()->Get3DPickingRay(), 
+		CollisionData cd = zGraphics->GetPhysicsEngine()->GetCollisionRayTerrain(
+			zGraphics->GetCamera()->GetPosition(), 
+			zGraphics->GetCamera()->Get3DPickingRay(), 
 			zTerrain[sectorIndex]);
 
 		if(cd.collision)
@@ -203,57 +210,36 @@ CollisionData WorldRenderer::Get3DRayCollisionDataWithGround()
 
 Entity* WorldRenderer::Get3DRayCollisionWithMesh()
 {
-	unsigned int counter = 0;
-	bool found = false;
-
 	Entity* returnPointer = NULL;
 
-	iCamera* cam = GetGraphics()->GetCamera();
+	iCamera* cam = zGraphics->GetCamera();
 	Vector3 camPos = cam->GetPosition();
-	iPhysicsEngine* pe = GetGraphics()->GetPhysicsEngine();
 	
-	std::vector<Entity*> closeEntities;
+	std::set<Entity*> closeEntities;
 	zWorld->GetEntitiesInCircle(Vector2(cam->GetPosition().x, cam->GetPosition().z), 200.0f, closeEntities);
-	if( closeEntities.size() == 0 )
-		return NULL;
 
 	float curDistance = 100000.0f;
-	returnPointer = closeEntities[0];
+	returnPointer = 0;
 
-	CollisionData cd;
-	cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(cam->GetPosition(), cam->Get3DPickingRay(), zEntities[closeEntities[0]]);
-	if(cd.collision)
+	for( auto i = closeEntities.begin(); i != closeEntities.end(); ++i )
 	{
-		found = true;
-		curDistance = (Vector3(cd.posx,cd.posy,cd.posz) - camPos).GetLength();
-	}
-
-	while(counter < zEntities.size())
-	{
-		cd = GetGraphics()->GetPhysicsEngine()->GetCollisionRayMesh(
+		CollisionData cd = zGraphics->GetPhysicsEngine()->GetCollisionRayMesh(
 			cam->GetPosition(), 
 			cam->Get3DPickingRay(), 
-			zEntities[closeEntities[counter]]);
+			zEntities[*i]);
 
 		if(cd.collision)
 		{
-			found = true;
 			float thisDistance = (Vector3(cd.posx,cd.posy,cd.posz) - camPos).GetLength();
 			if(thisDistance < curDistance)
 			{
-				returnPointer = closeEntities[counter];
+				returnPointer = *i;
 				curDistance = thisDistance;
 			}
 		}
-		counter++;
 	}
-	cam = NULL;
-	pe = NULL;
 
-	if(found)
-		return returnPointer;
-	else
-		return NULL;
+	return returnPointer;
 }
 
 
@@ -301,6 +287,9 @@ void WorldRenderer::UpdateSector( unsigned int sectorX, unsigned int sectorY )
 
 		// Update Height Map
 		UpdateSectorHeightMap(sectorX, sectorY);
+
+		// Update AI Grid
+		UpdateSectorAIGrid(sectorX, sectorY);
 	}
 }
 
@@ -339,6 +328,46 @@ void WorldRenderer::update()
 		if ( ( i->second & UPDATE_TEXTURES ) == UPDATE_TEXTURES )
 			UpdateSectorTextures(i->first.x, i->first.y);
 
+		if ( ( i->second & UPDATE_AIGRID ) == UPDATE_AIGRID )
+			UpdateSectorAIGrid(i->first.x, i->first.y);
+
 		zUpdatesRequired.erase(i);
+	}
+}
+
+void WorldRenderer::ToggleAIGrid( bool state )
+{
+	if ( !zTerrain.empty() )
+	{
+		for( unsigned int i=0; i<zWorld->GetNumSectorsWidth()*zWorld->GetNumSectorsHeight(); ++i )
+		{
+			if ( zTerrain[i] )
+			{
+				// TODO Terrain Show Grid
+				zTerrain[i]->UseAIMap(state);
+			}
+		}
+	}
+}
+
+void WorldRenderer::UpdateSectorAIGrid( unsigned int x, unsigned int y )
+{
+	if ( zWorld->IsSectorLoaded(x,y) )
+	{
+		unsigned int tIndex = y * zWorld->GetNumSectorsWidth() + x;
+
+		// Data Access
+		AIGrid& sectorGrid = zWorld->GetSector(x,y)->GetAIGrid();
+		std::vector<unsigned char> &graphicsGrid = zAIGrids[zTerrain[tIndex]];
+		graphicsGrid.resize(SECTOR_AI_GRID_SIZE*SECTOR_AI_GRID_SIZE);
+
+		// Bit To Byte
+		for( unsigned int x=0; x<SECTOR_AI_GRID_SIZE*SECTOR_AI_GRID_SIZE; ++x )
+		{
+			graphicsGrid[x] = sectorGrid[x] * 255;
+		}
+
+		zTerrain[tIndex]->SetAIGrid(SECTOR_AI_GRID_SIZE, &graphicsGrid[0]);
+		zTerrain[tIndex]->SetAIGridThickness();
 	}
 }

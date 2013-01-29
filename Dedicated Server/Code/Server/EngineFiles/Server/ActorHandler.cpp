@@ -821,7 +821,7 @@ void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vect
 
 	for(auto it = actors.begin(); it < actors.end(); it++)
 	{
-		if((*it)->GetID == pTest->GetObjPlayerOwner())
+		if((*it)->GetID() == pTest->GetObjPlayerOwner())
 			continue;
 
 		pcd = this->zPhysicsEngine->GetCollisionBoundingOnly(mesh, (*it)->GetPhysicObject());

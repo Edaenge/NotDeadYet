@@ -30,7 +30,7 @@ public:
 	int GetType(){ return this->zType; }
 	int GetStacks(){ return this->zStacks; }
 
-	void SetStacks(int stacks) { this->zStacks = stacks; if(this->zStackText) this->zStackText->SetText(MaloW::convertNrToString(this->zStacks).c_str()); }
+	void SetStacks(int stacks) { this->zStacks = stacks; if(this->zStackText) this->zStackText->SetText(MaloW::convertNrToString((float)this->zStacks).c_str()); }
 private:
 	iImage* zSlotImage;
 	iText* zStackText;

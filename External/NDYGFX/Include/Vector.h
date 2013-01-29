@@ -187,6 +187,7 @@ public:
 		y += t.y;
 		return *this;
 	}
+
 };
 
 
@@ -291,12 +292,9 @@ public:
         y *= scalar;
         z *= scalar;
     }
-	inline bool operator==(const Vector3& v)
+	inline bool operator==(const Vector3 &v) const
 	{
-		if ((this->x == v.x) && (this->y == v.y) && (this->z == v.z))
-			return true;
-
-		return false;
+		return (x == v.x && y == v.y && z == v.z);
 	}
 
 	inline float GetLengthSquared()

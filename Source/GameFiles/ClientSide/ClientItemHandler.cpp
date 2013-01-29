@@ -575,13 +575,17 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 
 		if (weapon)
 		{
-			if (Messages::FileWrite())
-				Messages::Debug("Weapon UnEquipped " + weapon->GetItemName() + " ID: " + MaloW::convertNrToString((float)weapon->GetID()));
+			if (ItemID == weapon->GetID())
+			{
+				if (Messages::FileWrite())
+					Messages::Debug("Weapon UnEquipped " + weapon->GetItemName() + " ID: " + MaloW::convertNrToString((float)weapon->GetID()));
 
-			delete weapon;
-			weapon = NULL;
+				delete weapon;
+				weapon = NULL;
+
+				eq->UnEquipWeapon();
+			}
 		}
-		eq->UnEquipWeapon();
 
 		return;
 	}
@@ -596,14 +600,17 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 
 		if (projectile)
 		{
-			if (Messages::FileWrite())
-				Messages::Debug("Ammo UnEquipped " + projectile->GetItemName() + " ID: " + MaloW::convertNrToString((float)projectile->GetID()));
+			if (ItemID == projectile->GetID())
+			{
+				if (Messages::FileWrite())
+					Messages::Debug("Ammo UnEquipped " + projectile->GetItemName() + " ID: " + MaloW::convertNrToString((float)projectile->GetID()));
 
-			delete projectile;
-			projectile = NULL;
+				delete projectile;
+				projectile = NULL;
+
+				eq->UnEquipProjectile();
+			}
 		}
-
-		eq->UnEquipProjectile();
 
 		return;
 	}
@@ -812,6 +819,15 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetIconPath(itemIconFilePath);
 		item->SetItemDescription(itemDescription);
 		break;
+	case ITEM_TYPE_CONTAINER_WATER_BOTTLE:
+		item = new Container(ID, itemType, maxUse, currUse);
+		item->SetStacking(false);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
+		break;
 	case ITEM_TYPE_PROJECTILE_ARROW:
 		item = new Projectile(ID, itemType, projectileVelocity, projectileDamage);
 		item->SetStacking(true);
@@ -889,6 +905,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetItemDescription(itemDescription);
 		break;
 	default:
+		MaloW::Debug("Items wasn't found in the switch case type: " + MaloW::convertNrToString(itemType));
 		break;
 	}
 	if (this->zPlayerInventory->AddItem(item))
@@ -922,24 +939,12 @@ void Client::HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, cons
 	{
 		if ((*it)->GetID() == ItemID)
 		{
-			if ((*it)->GetItemType() == type)
+			if ((*it)->GetItemType() == (unsigned int)type)
 			{
 				Item* temp = (*it);
 				items.erase(it);
 				SAFE_DELETE(temp);
 				dpo->SetItems(items);
-				/*if (this->zPlayerInventory->AddItem((*it)))
-				{
-					int stacks = 0;
-					if ((*it)->GetStacking())
-					{
-					stacks = (*it)->GetStackSize();
-					}
-					Gui_Item_Data gid = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), stacks, (*it)->GetItemName(), 
-					(*it)->GetIconPath(), (*it)->GetItemDescription(), (*it)->GetItemType());
-					this->zGuiManager->AddInventoryItemToGui(gid);
-					return;
-				}*/
 
 				return;
 			}

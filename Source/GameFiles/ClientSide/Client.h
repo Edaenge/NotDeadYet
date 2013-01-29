@@ -16,7 +16,7 @@
 
 using namespace MaloW;
 
-static const struct Looting_Data
+struct Looting_Data
 {
 	Looting_Data()
 	{

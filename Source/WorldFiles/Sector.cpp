@@ -31,11 +31,11 @@ void Sector::Reset()
 	SetTextureName(2, "Blue.png");
 	SetTextureName(3, "Red.png");
 
-	zAmbient[0] = 0.0;
-	zAmbient[1] = 0.0;
-	zAmbient[2] = 0.0;
+	zAmbient[0] = 0.0f;
+	zAmbient[1] = 0.0f;
+	zAmbient[2] = 0.0f;
 
-	SetEdited(true);
+	SetEdited(false);
 }
 
 
@@ -48,8 +48,8 @@ float Sector::GetHeightAt( float x, float y ) const throw(...)
 	float snapX = floor(x * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
 	float snapY = floor(y * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
 
-	unsigned int scaledX = (unsigned int)(snapX * (float)(SECTOR_HEIGHT_SIZE));
-	unsigned int scaledY = (unsigned int)(snapY * (float)(SECTOR_HEIGHT_SIZE));
+	unsigned int scaledX = (unsigned int)(snapX * SECTOR_HEIGHT_SIZE);
+	unsigned int scaledY = (unsigned int)(snapY * SECTOR_HEIGHT_SIZE);
 
 	// Set Values
 	return zHeightMap[ scaledY * SECTOR_HEIGHT_SIZE + scaledX ];
@@ -65,8 +65,8 @@ void Sector::SetHeightAt( float x, float y, float val ) throw(...)
 	float snapX = floor(x * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
 	float snapY = floor(y * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
 
-	unsigned int scaledX = (unsigned int)(snapX * (float)(SECTOR_HEIGHT_SIZE));
-	unsigned int scaledY = (unsigned int)(snapY * (float)(SECTOR_HEIGHT_SIZE));
+	unsigned int scaledX = (unsigned int)(snapX * SECTOR_HEIGHT_SIZE);
+	unsigned int scaledY = (unsigned int)(snapY * SECTOR_HEIGHT_SIZE);
 
 	// Set Values
 	zHeightMap[ scaledY * SECTOR_HEIGHT_SIZE + scaledX ] = val;
@@ -87,7 +87,7 @@ void Sector::SetBlendingAt( float x, float y, const Vector4& val )
 	unsigned int scaledX = (unsigned int)((snapX / (float)SECTOR_WORLD_SIZE)*(SECTOR_BLEND_SIZE));
 	unsigned int scaledY = (unsigned int)((snapY / (float)SECTOR_WORLD_SIZE)*(SECTOR_BLEND_SIZE));
 
-	// Normalize Val
+	// Clamp Val
 	Vector4 normalizedVal = val;
 	normalizedVal.Normalize();
 
@@ -139,6 +139,8 @@ void Sector::SetTextureName( unsigned int index, const std::string& name )
 
 	memset( &zTextureNames[index*TEXTURE_NAME_LENGTH], 0, TEXTURE_NAME_LENGTH );
 	memcpy( &zTextureNames[index*TEXTURE_NAME_LENGTH], &name[0], name.length() );
+
+	SetEdited(true);
 }
 
 
@@ -173,7 +175,6 @@ void Sector::SetBlocking( const Vector2& pos, bool flag )
 	// Changed
 	SetEdited(true);
 }
-
 
 bool Sector::GetBlocking( const Vector2& pos ) const
 {

@@ -26,8 +26,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Ball.obj";
-	this->zSendUpdateDelayTimer = 0.0f;
+	this->zMeshID = "Media/Models/Ball.obj";	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
 	this->zGuiManager = NULL;
@@ -131,7 +130,7 @@ void Client::InitGraphics()
 	float x = offSet + (0.5f * dx) - length * 0.5f;
 	float y = (windowHeight / 2.0f) - length * 0.5f;
 
-	this->zCrossHair = this->zEng->CreateImage(Vector2(x, y), Vector2(length, length), "Media/cross.png");
+	this->zCrossHair = this->zEng->CreateImage(Vector2(x, y), Vector2(length, length), "Media/Icons/cross.png");
 
 	//this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 1, 1, 1, 1);
 
@@ -268,7 +267,7 @@ void Client::SendClientUpdate()
 void Client::SendAck(unsigned int IM_ID)
 {
 	std::string msg;
-	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACKNOWLEDGE, IM_ID);
+	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACKNOWLEDGE, (float)IM_ID);
 
 	this->zServerChannel->sendData(msg);
 }
@@ -280,7 +279,7 @@ void Client::UpdateCameraPos()
 	{
 		Vector3 position = this->zObjectManager->GetPlayerObject(index)->GetPosition();
 
-		position.y += 1.7f;
+		position.y += 2.0f;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
 

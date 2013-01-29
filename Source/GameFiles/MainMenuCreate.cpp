@@ -14,16 +14,16 @@ void MainMenu::Init()
 	Element* temp;
 
 	//MAINMENU
-	temp = new SimpleButton(50, 600, 1, "Media/MainMenu.png", 100, 25, new ChangeSetEvent(NOMENU), "Media/Options.png", "Media/Quit.png", 50, 600, 100, 25);
+	temp = new SimpleButton(50, 600, 1, "Media/Icons/MainMenu.png", 100, 25, new ChangeSetEvent(NOMENU), "Media/Icons/Options.png", "Media/Icons/Quit.png", 50, 600, 100, 25);
 	zSets[MAINMENU].AddElement(temp);
 
-	temp = new SimpleButton(50, 635, 1, "Media/Options.png", 100, 25, new ChangeSetEvent(OPTIONS), "Media/FindServer.png", "Media/Quit.png", 50, 635, 100, 25);
+	temp = new SimpleButton(50, 635, 1, "Media/Icons/Options.png", 100, 25, new ChangeSetEvent(OPTIONS), "Media/Icons/FindServer.png", "Media/Icons/Quit.png", 50, 635, 100, 25);
 	zSets[MAINMENU].AddElement(temp);
 
-	temp = new SimpleButton(50, 670, 1, "Media/FindServer.png", 100, 25, new ChangeSetEvent(FIND_SERVER), "Media/Options.png", "Media/Quit.png", 50, 670, 100, 25);
+	temp = new SimpleButton(50, 670, 1, "Media/Icons/FindServer.png", 100, 25, new ChangeSetEvent(FIND_SERVER), "Media/Icons/Options.png", "Media/Icons/Quit.png", 50, 670, 100, 25);
 	zSets[MAINMENU].AddElement(temp);
 
-	temp = new SimpleButton(50, 700, 1, "Media/Quit.png", 100, 25, new ChangeSetEvent(QUIT), "Media/Options.png", "Media/Options.png", 50, 700, 100, 25);
+	temp = new SimpleButton(50, 700, 1, "Media/Icons/Quit.png", 100, 25, new ChangeSetEvent(QUIT), "Media/Icons/Options.png", "Media/Icons/Options.png", 50, 700, 100, 25);
 	zSets[MAINMENU].AddElement(temp);
 
 	//FIND SERVER
@@ -73,13 +73,13 @@ void MainMenu::Init()
 	zSets[FIND_SERVER].AddElement(temp);
 
 	//OPTIONS
-	temp = new GUIPicture(50, 50, 1, "Media/Options.png", windowWidth * (0.66f), windowHeight * (0.66f));
+	temp = new GUIPicture(50, 50, 1, "Media/Icons/Options.png", windowWidth * (0.66f), windowHeight * (0.66f));
 	zSets[OPTIONS].AddElement(temp);
 
-	temp = new TextBox(100, 100, 1, "Media/MainMenu.png", 100, 50, "12", "SoundVolume", 1, 2, TEXTBOX::NR);
+	temp = new TextBox(100, 100, 1, "Media/Icons/MainMenu.png", 100, 50, "12", "SoundVolume", 1, 2, TEXTBOX::NR);
 	zSets[OPTIONS].AddElement(temp);
 
-	temp = new SimpleButton(70, 500, 1, "Media/Options.png", 100, 25, new ChangeSetEvent(MAINMENU), "Media/Quit.png", "Media/FindServer.png", 70, 500, 100, 25);
+	temp = new SimpleButton(70, 500, 1, "Media/Icons/Options.png", 100, 25, new ChangeSetEvent(MAINMENU), "Media/Icons/Quit.png", "Media/Icons/FindServer.png", 70, 500, 100, 25);
 	zSets[OPTIONS].AddElement(temp);
 
 	this->zPrimarySet = MAINMENU;

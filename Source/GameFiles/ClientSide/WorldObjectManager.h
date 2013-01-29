@@ -49,10 +49,10 @@ public:
 	int SearchForObject(const unsigned int type, const int ID);
 
 	PlayerObject* SearchAndGetPlayerObject(const int ID);
-	AnimalObject* SearchAndGetAnimalObject(const int ID);
-	StaticObject* SearchAndGetStaticObject(const int ID);
-	DynamicObject* SearchAndGetDynamicObject(const int ID);
-	DeadPlayerObject* SearchAndGetDeadPlayerObject(const int ID);
+	AnimalObject* SearchAndGetAnimalObject(const long ID);
+	StaticObject* SearchAndGetStaticObject(const long ID);
+	DynamicObject* SearchAndGetDynamicObject(const long ID);
+	DeadPlayerObject* SearchAndGetDeadPlayerObject(const long ID);
 	/*! Interpolates all the Objects towards their final Position*/
 	void UpdateObjects(float deltaTime);
 
@@ -60,13 +60,13 @@ private:
 	/*! Search for the object with the correct ID and returns a Position if found.*/
 	int SearchForPlayerObject(const int ID);
 	/*! Search for the object with the correct ID and returns a Position if found.*/
-	int SearchForAnimalObject(const int ID);
+	int SearchForAnimalObject(const long ID);
 	/*! Search for the object with the correct ID and returns a Position if found.*/
-	int SearchForStaticObject(const int ID);
+	int SearchForStaticObject(const long ID);
 	/*! Search for the object with the correct ID and returns a Position if found.*/
-	int SearchForDynamicObject(const int ID);
+	int SearchForDynamicObject(const long ID);
 	/*! Search for the object with the correct ID and returns a Position if found.*/
-	int SearchForDeadPlayerObject(const int ID);
+	int SearchForDeadPlayerObject(const long ID);
 private:
 	/*! Vectors to keep track of World Objects.*/
 	std::vector<PlayerObject*> zPlayerObjects;
