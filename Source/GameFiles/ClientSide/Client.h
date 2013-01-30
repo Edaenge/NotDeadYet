@@ -87,6 +87,8 @@ private:
 	void CheckMovementKeys();
 	/*! Handle Keyboard Input */
 	void HandleKeyboardInput();
+	/*! Used to Equip weapons with Keyboard*/
+	void HandleWeaponEquips();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
 
@@ -154,6 +156,7 @@ private:
 	void SendLootItemMessage(const long ID, const long ItemID, const int TYPE);
 	void SendPickupItemMessage(const long ID);
 	void SendDropItemMessage(const long ID);
+	void SendUseItemMessage(const long ID);
 	void HandleRemoveInventoryItem(const long ID);
 	void HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned long id);
 	/*! Uses the Selected Item*/
@@ -165,6 +168,10 @@ private:
 	void HandleRemoveEquipment(const long ItemID, const int Slot);
 	void HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, const int type);
 	void HandleWeaponUse(const long ID);
+
+protected:
+	virtual void OnEvent(Event* e);
+
 private:
 	/*! Current Client ID*/
 	long zID;
@@ -201,6 +208,4 @@ private:
 	iImage* zCrossHair;
 	
 	bool zGameStarted;
-protected:
-	virtual void onEvent( Event* e );
 };

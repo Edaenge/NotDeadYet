@@ -364,6 +364,12 @@ void Client::CheckMovementKeys()
 	pressed = this->CheckKey(KEY_DUCK);
 }
 
+void Client::SendUseItemMessage(const long ID)
+{
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+	this->zServerChannel->sendData(msg);
+}
+
 void Client::HandleKeyboardInput()
 {
 	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
@@ -392,8 +398,7 @@ void Client::HandleKeyboardInput()
 
 					if (item)
 					{
-						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, (float)item->GetID());	
-						this->zServerChannel->sendData(msg);
+						SendUseItemMessage(item->GetID());
 					}
 				}
 				else if (msd.zAction == DROP)
@@ -404,25 +409,8 @@ void Client::HandleKeyboardInput()
 		}
 	}
 
-	//Used For Testing ATM
-	//if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_JUMP)))
-	//{
-	//	if (!this->zKeyInfo.GetKeyState(KEY_JUMP))
-	//	{
-	//		if (this->zPlayerInventory->GetItems().size() > 0)
-	//		{
-	//			int id = this->zPlayerInventory->GetItem(0)->GetID();
-	//			this->SendDropItemMessage(id);
-	//		}
-	//	}
-	//	this->zKeyInfo.SetKeyState(KEY_JUMP, true);
-	//}
-	//else
-	//{
-	//	this->zKeyInfo.SetKeyState(KEY_JUMP, false);
-	//}
-	//Used For Testing
-	if (this->zEng->GetKeyListener()->IsPressed('1'))
+	//UnEquip Weapon
+	if (this->zEng->GetKeyListener()->IsPressed('Q'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
@@ -441,7 +429,8 @@ void Client::HandleKeyboardInput()
 			}
 		}
 	}
-	else if (this->zEng->GetKeyListener()->IsPressed('2'))
+	//UnEquip Projectiles
+	else if (this->zEng->GetKeyListener()->IsPressed('E'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
@@ -516,23 +505,6 @@ void Client::HandleKeyboardInput()
 			if (this->zKeyInfo.GetKeyState(KEY_INVENTORY))
 				this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
 		}
-
-		/*if (this->zEng->GetKeyListener()->IsClicked(2))
-		{
-			if (!this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
-			{
-				this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, true);
-				this->zGuiManager->ShowCircularItemGui();
-			}
-		}
-		else
-		{
-			if (this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
-			{
-				this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, false);
-				this->zGuiManager->HideCircularItemGui();
-			}
-		}*/
 		if (!this->zShowCursor)
 		{
 			if (this->zEng->GetKeyListener()->IsClicked(1))
@@ -543,7 +515,6 @@ void Client::HandleKeyboardInput()
 					PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
 
 					Equipment* eq = player->GetEquipmentPtr();
-
 					Weapon* weapon = eq->GetWeapon();
 
 					if (!weapon)
@@ -555,20 +526,6 @@ void Client::HandleKeyboardInput()
 						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
 						this->zServerChannel->sendData(msg);
 					}
-
-					/*for (auto it = this->zObjectManager->GetAnimals().begin(); it < this->zObjectManager->GetAnimals().end(); it++)
-					{
-					iMesh* mesh  = (*it)->GetMesh();
-
-					Vector3 position = player->GetPosition();
-					Vector3 direction = this->zEng->GetCamera()->GetForward();
-					CollisionData cd = this->zEng->GetPhysicsEngine()->GetCollisionRayMesh(position, direction, mesh);
-
-					if (cd.collision && cd.distance <= 5.0f)
-					{
-					cd.distance = cd.distance;
-					}
-					}*/
 				}
 			}
 			else
@@ -577,7 +534,92 @@ void Client::HandleKeyboardInput()
 					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 			}
 		}
-		
+		HandleWeaponEquips();
+	}
+	
+}
+//Future use to equip weapon with keyboard
+void Client::HandleWeaponEquips()
+{
+	if (!this->zPlayerInventory)
+		return;
+
+	//Equip Bow
+	if (this->zEng->GetKeyListener()->IsPressed('1'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_RANGED_BOW);
+			if (item)
+			{
+				SendUseItemMessage(item->GetID());
+			}
+
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+		}
+	}
+	//Equip Arrow
+	else if (this->zEng->GetKeyListener()->IsPressed('2'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_PROJECTILE_ARROW);
+			if (item)
+			{
+				SendUseItemMessage(item->GetID());
+			}
+
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+		}
+	}
+	//Equip Rock
+	else if (this->zEng->GetKeyListener()->IsPressed('3'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_RANGED_ROCK);
+			if (item)
+			{
+				SendUseItemMessage(item->GetID());
+			}
+
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+		}
+	}
+	//Equip Axe
+	else if (this->zEng->GetKeyListener()->IsPressed('4'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE_AXE);
+			if (item)
+			{
+				SendUseItemMessage(item->GetID());
+			}
+
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+		}
+	}
+	//Equip Pocket Knife
+	else if (this->zEng->GetKeyListener()->IsPressed('5'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE);
+			if (item)
+			{
+				SendUseItemMessage(item->GetID());
+			}
+
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			this->zKeyInfo.SetKeyState(KEY_TEST, false);
+		}
 	}
 }
 
@@ -947,7 +989,7 @@ void Client::DisplayMessageToClient(const std::string& msg)
 	MaloW::Debug(msg);
 }
 
-void Client::onEvent(Event* e)
+void Client::OnEvent(Event* e)
 {
 	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
