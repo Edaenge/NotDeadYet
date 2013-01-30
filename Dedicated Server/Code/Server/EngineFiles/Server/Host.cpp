@@ -1552,6 +1552,7 @@ void Host::UpdateObjects()
 
 	//Iterate players and see if they are dead.
 	std::vector<PlayerActor*> pActors = this->zActorHandler->GetPlayers();
+	Vector3 position;
 	for (auto it_player = pActors.begin(); it_player < pActors.end(); it_player++)
 	{
 		if (!(*it_player)->IsAlive())
