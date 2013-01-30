@@ -27,6 +27,7 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& 
 	this->zActorModel = other.zActorModel;
 	this->zDescription = other.zDescription;
 	this->zActorObjectName = other.zActorObjectName;
+	this->zInitialDirection = other.zInitialDirection;
 }
 
 DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* other, bool genID)
@@ -46,6 +47,7 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* 
 	this->zIconPath = other->zIconPath;
 	this->zDescription = other->zDescription;
 	this->zPhysicObj = other->zPhysicObj;
+	this->zInitialDirection = other->zInitialDirection;
 }
 
 DynamicProjectileObject::~DynamicProjectileObject()

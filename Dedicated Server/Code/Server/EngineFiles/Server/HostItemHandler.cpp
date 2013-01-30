@@ -56,6 +56,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 				projectileObj->SetDamage(damage);
 				projectileObj->SetSpeed(velocity);
 				projectileObj->SetUpVector(pActor->GetUpVector());
+				projectileObj->SetObjOwner(pActor->GetID());
 
 			    //Adds The Object To the Array
 				this->zActorHandler->AddNewDynamicProjectileActor(projectileObj, pActor->GetDirection());
