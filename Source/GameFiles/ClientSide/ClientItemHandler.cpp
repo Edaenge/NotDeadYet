@@ -905,7 +905,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetItemDescription(itemDescription);
 		break;
 	default:
-		MaloW::Debug("Items wasn't found in the switch case type: " + MaloW::convertNrToString(itemType));
+		MaloW::Debug("Items wasn't found in the switch case type: " + MaloW::convertNrToString((float)itemType));
 		break;
 	}
 	if (this->zPlayerInventory->AddItem(item))
