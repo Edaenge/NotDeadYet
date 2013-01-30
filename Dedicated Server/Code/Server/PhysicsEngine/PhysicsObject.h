@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../../External/NDYGFX/Include/Matrix.h"
-#include "../../External/NDYGFX/Include/Vector.h"
-#include "../MaloWLib/Array.h"
-#include "../MaloWLib/MaloW.h"
-#include "../MaloWLib/MaloWFileDebug.h"
+#include "Vector.h"
+#include "Array.h"
+#include "Matrix.h"
+#include "MaloW.h"
+#include "MaloWFileDebug.h"
 #include "ObjLoader.h"
 #include "BoundingSphere.h"
 #include <assert.h>

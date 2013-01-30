@@ -35,9 +35,6 @@
     <Filter Include="Game Files\Gui">
       <UniqueIdentifier>{6fc4c0f3-de69-4f6f-af99-2d8abe327f17}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PhysicsEngine">
-      <UniqueIdentifier>{77c34bd0-07a8-4c50-b54d-e15f2bcff13c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GUI">
       <UniqueIdentifier>{e1502db5-db6a-44ef-8c56-2d9b1044d15d}</UniqueIdentifier>
     </Filter>
@@ -129,18 +126,6 @@
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\Gui\InventoryGui.cpp">
       <Filter>Game Files\Gui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\PhysicsEngine\ObjLoader.cpp">
-      <Filter>PhysicsEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\PhysicsEngine\Physics.cpp">
-      <Filter>PhysicsEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\PhysicsEngine\PhysicsEngine.cpp">
-      <Filter>PhysicsEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\PhysicsEngine\PhysicsObject.cpp">
-      <Filter>PhysicsEngine</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\GameFiles\Gui\InventorySlotGui.cpp">
       <Filter>Game Files\Gui</Filter>
@@ -369,18 +354,6 @@
     <ClInclude Include="..\Source\GameFiles\Gui\InventoryGui.h">
       <Filter>Game Files\Gui</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\PhysicsEngine\ObjLoader.h">
-      <Filter>PhysicsEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\PhysicsEngine\Physics.h">
-      <Filter>PhysicsEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\PhysicsEngine\PhysicsEngine.h">
-      <Filter>PhysicsEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\PhysicsEngine\PhysicsObject.h">
-      <Filter>PhysicsEngine</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\GameFiles\Gui\InventorySlotGui.h">
       <Filter>Game Files\Gui</Filter>
     </ClInclude>
@@ -458,9 +431,6 @@
     </ClInclude>
     <ClInclude Include="..\Source\WorldFiles\WorldRenderer.h">
       <Filter>Game Files\WorldFiles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\PhysicsEngine\BoundingSphere.h">
-      <Filter>PhysicsEngine</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ClientSide\AnimalObject.h">
       <Filter>Game Files\ClientSide\Objects</Filter>

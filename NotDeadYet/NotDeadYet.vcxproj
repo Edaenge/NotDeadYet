@@ -65,10 +65,6 @@
     <ClCompile Include="..\Source\MaloWLib\Process.cpp" />
     <ClCompile Include="..\Source\Network\NetworkMessageConverter.cpp" />
     <ClCompile Include="..\Source\Network\ServerChannel.cpp" />
-    <ClCompile Include="..\Source\PhysicsEngine\ObjLoader.cpp" />
-    <ClCompile Include="..\Source\PhysicsEngine\Physics.cpp" />
-    <ClCompile Include="..\Source\PhysicsEngine\PhysicsEngine.cpp" />
-    <ClCompile Include="..\Source\PhysicsEngine\PhysicsObject.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundEffect.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundEngine.cpp" />
     <ClCompile Include="..\Source\SoundEngine\SoundHandler.cpp" />
@@ -147,11 +143,6 @@
     <ClInclude Include="..\Source\Network\NetworkPacket.h" />
     <ClInclude Include="..\Source\Network\ServerChannel.h" />
     <ClInclude Include="..\Source\Network\Winsock.h" />
-    <ClInclude Include="..\Source\PhysicsEngine\BoundingSphere.h" />
-    <ClInclude Include="..\Source\PhysicsEngine\ObjLoader.h" />
-    <ClInclude Include="..\Source\PhysicsEngine\Physics.h" />
-    <ClInclude Include="..\Source\PhysicsEngine\PhysicsEngine.h" />
-    <ClInclude Include="..\Source\PhysicsEngine\PhysicsObject.h" />
     <ClInclude Include="..\Source\SoundEngine\fmod.h" />
     <ClInclude Include="..\Source\SoundEngine\SoundEffect.h" />
     <ClInclude Include="..\Source\SoundEngine\SoundEngine.h" />

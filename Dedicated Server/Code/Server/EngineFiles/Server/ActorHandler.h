@@ -11,8 +11,8 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "ObjectManager.h"
 #include "DeadPlayerObjectActor.h"
 #include "DynamicProjectileObject.h"
-#include "../../../../../Source/MaloWLib/Safe.h"
-#include "../../../../../Source/PhysicsEngine/PhysicsEngine.h"
+#include "Safe.h"
+#include "PhysicsEngine.h"
 
 static const enum ACTOR_TYPE
 {

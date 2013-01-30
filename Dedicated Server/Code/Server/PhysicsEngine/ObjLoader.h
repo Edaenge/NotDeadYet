@@ -4,8 +4,8 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include "../MaloWLib/Array.h"
-#include "../../External/NDYGFX/Include/Vector.h"
+#include "Array.h"
+#include "Vector.h"
 
 struct MaterialData
 {

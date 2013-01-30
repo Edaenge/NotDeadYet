@@ -91,18 +91,6 @@
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Material.cpp">
       <Filter>Items</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\PhysicsEngine\ObjLoader.cpp">
-      <Filter>PhysicsEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\PhysicsEngine\PhysicsEngine.cpp">
-      <Filter>PhysicsEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\PhysicsEngine\Physics.cpp">
-      <Filter>PhysicsEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Source\PhysicsEngine\PhysicsObject.cpp">
-      <Filter>PhysicsEngine</Filter>
-    </ClCompile>
     <ClCompile Include="EngineFiles\Network\ServerListener.cpp">
       <Filter>Network</Filter>
     </ClCompile>
@@ -153,6 +141,18 @@
     </ClCompile>
     <ClCompile Include="EngineFiles\Server\ClientData.cpp">
       <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsEngine\PhysicsEngine.cpp">
+      <Filter>PhysicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsEngine\PhysicsObject.cpp">
+      <Filter>PhysicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsEngine\ObjLoader.cpp">
+      <Filter>PhysicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsEngine\Physics.cpp">
+      <Filter>PhysicsEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -249,18 +249,6 @@
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Material.h">
       <Filter>Items</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Source\PhysicsEngine\ObjLoader.h">
-      <Filter>PhysicsEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\PhysicsEngine\Physics.h">
-      <Filter>PhysicsEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\PhysicsEngine\PhysicsEngine.h">
-      <Filter>PhysicsEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Source\PhysicsEngine\PhysicsObject.h">
-      <Filter>PhysicsEngine</Filter>
-    </ClInclude>
     <ClInclude Include="EngineFiles\WorldFiles\Observer.h">
       <Filter>WorldFiles</Filter>
     </ClInclude>
@@ -350,6 +338,21 @@
     </ClInclude>
     <ClInclude Include="EngineFiles\Server\ClientData.h">
       <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsEngine\Physics.h">
+      <Filter>PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsEngine\PhysicsEngine.h">
+      <Filter>PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsEngine\PhysicsObject.h">
+      <Filter>PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsEngine\BoundingSphere.h">
+      <Filter>PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsEngine\ObjLoader.h">
+      <Filter>PhysicsEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,9 +6,9 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "PhysicsActor.h"
-#include "../../../../../Source/GameFiles/AnimationStates.h"
+#include "AnimationStates.h"
 #include <string>
-#include "../../../../../Source/PhysicsEngine/PhysicsObject.h"
+#include "PhysicsObject.h"
 
 /*This class is Abstract, this class is used to create living creatures such as humans, animals etc. */
 class BioActor : public PhysicsActor

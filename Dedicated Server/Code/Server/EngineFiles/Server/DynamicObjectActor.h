@@ -6,7 +6,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "PhysicsActor.h"
-#include "../../../../../Source/PhysicsEngine/PhysicsObject.h"
+#include "PhysicsObject.h"
 
 class DynamicObjectActor : public PhysicsActor
 {

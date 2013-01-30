@@ -6,8 +6,8 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "Actor.h"
-#include "../../../../../Source/PhysicsEngine/PhysicsObject.h"
-#include "../../../../../Source/Network/NetworkMessageConverter.h"
+#include "PhysicsObject.h"
+#include "NetworkMessageConverter.h"
 
 class PhysicsActor : public Actor
 {
