@@ -228,7 +228,7 @@ void Process::PutEvent(ProcessEvent* ev, bool important)
 
 void Process::WaitUntillDone()
 {
-	while(this->state != FINISHED)
+	while(this->state != FINISHED && this->state != NOT_STARTED)
 		Sleep(1);
 }
 
