@@ -61,6 +61,9 @@ extern "C"
 		virtual iGraphicsEngineParams* GetEngineParameters() const = 0;
 
 		virtual void CreateSkyBox(const char* texture) = 0;
+
+		virtual void UseShadow(bool useShadow) = 0;
+
 		/*! OBS! InnerRadius has to be greater than zero. */
 		virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const = 0;
 
@@ -73,6 +76,7 @@ extern "C"
 		virtual void SetSunLightProperties(Vector3 direction, Vector3 lightColor = Vector3(1.0f, 1.0f, 1.0f), float intensity = 1.0f) = 0;
 		virtual Vector3 GetSunLightDirection() const = 0;
 		virtual Vector3 GetSunLightColor() const = 0;
+		virtual float GetSunLightIntensity() const = 0;
 		virtual void SetSunLightDisabled() = 0;
 
 		virtual iPhysicsEngine* GetPhysicsEngine() const = 0;
