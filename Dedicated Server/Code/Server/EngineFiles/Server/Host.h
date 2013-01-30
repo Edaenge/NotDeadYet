@@ -109,7 +109,7 @@ private:
 	void OnPlayerRemove(unsigned int ID);
 	void OnPlayerDeath(unsigned int ID);	
 	void SendStartMessage();	
-
+	//3x3 center = 54,0,54, Map_xxxx center = 1900, 0, 1900
 	Vector3 CalculateSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center = Vector3(54, 0, 44));
 	/*! Temporary function.*/
 	void RespawnPlayer(PlayerActor* pActor);

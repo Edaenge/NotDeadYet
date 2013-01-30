@@ -206,7 +206,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 				}
 			}
 		}
-		this->zPlayerInventory->EquipItem(rWpn->GetID());
+		this->zPlayerInventory->EraseItem(rWpn->GetID());
 		eq->EquipWeapon(rWpn);
 
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
@@ -271,7 +271,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 				return;
 			}
 		}
-		this->zPlayerInventory->EquipItem(rWpn->GetID());
+		this->zPlayerInventory->EraseItem(rWpn->GetID());
 		eq->EquipWeapon(rWpn);
 
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
@@ -320,7 +320,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 				oldProjectile->SetStackSize(stacks);
 			}
 		}
-		this->zPlayerInventory->EquipItem(projectile->GetID());
+		this->zPlayerInventory->EraseItem(projectile->GetID());
 		eq->EquipProjectile(projectile);
 
 		this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID(), projectile->GetStackSize());
@@ -382,7 +382,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 				return;
 			}
 		}
-		this->zPlayerInventory->EquipItem(mWpn->GetID());
+		this->zPlayerInventory->EraseItem(mWpn->GetID());
 		eq->EquipWeapon(mWpn);
 
 		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID(), mWpn->GetStackSize());

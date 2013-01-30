@@ -413,7 +413,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 		}
 		MaloW::Debug("Weapon Equipped " + rWpn->GetItemName());
 
-		inv->EquipItem(ItemID);
+		inv->EraseItem(ItemID);
 		eq->EquipWeapon(rWpn);
 
 		this->SendEquipMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
@@ -450,7 +450,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 		}
 		MaloW::Debug("Weapon Equipped " + rWpn->GetItemName());
 
-		inv->EquipItem(ItemID);
+		inv->EraseItem(ItemID);
 		eq->EquipWeapon(rWpn);
 
 		this->SendEquipMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
@@ -491,7 +491,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 		}
 		MaloW::Debug("Weapon Equipped " + mWpn->GetItemName());
 
-		inv->EquipItem(ItemID);
+		inv->EraseItem(ItemID);
 		eq->EquipWeapon(mWpn);
 
 		this->SendEquipMessage(pActor->GetID(), mWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
@@ -510,7 +510,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 			return;
 		}
 
-		inv->EquipItem(ItemID);
+		inv->EraseItem(ItemID);
 
 		Weapon* oldWeapon = eq->GetWeapon();
 
@@ -576,7 +576,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 			if (weapon->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
 			{
 				MaloW::Debug("Weapon Equipped " + arrow->GetItemName());
-				inv->EquipItem(ItemID);
+				inv->EraseItem(ItemID);
 				eq->EquipProjectile(arrow);
 
 				this->SendEquipMessage(pActor->GetID(), arrow->GetID(), EQUIPMENT_SLOT_AMMO);

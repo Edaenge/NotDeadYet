@@ -291,7 +291,6 @@ void Host::Life()
 Vector3 Host::CalculateSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center)
 {
 	static const float PI = 3.14159265358979323846f;
-	//1900 center
 
 	float slice  = 2 * PI / maxPoints;
 
@@ -446,7 +445,9 @@ void Host::HandleNewConnections()
 					MaloW::Debug("Failed to cast Material in HandleNewConnection");
 					continue;
 				}
-				message += this->AddItemMessage(container);
+				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)container->GetID());
+
+				message += container->ToMessageString(&this->zMessageConverter);
 
 				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 			}
@@ -460,7 +461,9 @@ void Host::HandleNewConnections()
 					MaloW::Debug("Failed to cast Material in HandleNewConnection");
 					continue;
 				}
-				message += this->AddItemMessage(material);
+				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)material->GetID());
+
+				message += material->ToMessageString(&this->zMessageConverter);
 
 				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 			}
@@ -473,7 +476,9 @@ void Host::HandleNewConnections()
 					MaloW::Debug("Failed to cast Food in HandleNewConnection");
 					continue;
 				}
-				message += this->AddItemMessage(food);
+				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)food->GetID());
+
+				message += food->ToMessageString(&this->zMessageConverter);
 
 				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 			}
@@ -486,7 +491,9 @@ void Host::HandleNewConnections()
 					MaloW::Debug("Failed to cast Projectile in HandleNewConnection");
 					continue;
 				}
-				message += this->AddItemMessage(projectile);
+				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)projectile->GetID());
+
+				message += projectile->ToMessageString(&this->zMessageConverter);
 
 				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 			}
@@ -499,7 +506,9 @@ void Host::HandleNewConnections()
 					MaloW::Debug("Failed to cast Ranged Weapon in HandleNewConnection");
 					continue;
 				}
-				message += this->AddItemMessage(rWpn);
+				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)rWpn->GetID());
+
+				message += rWpn->ToMessageString(&this->zMessageConverter);
 
 				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 			}
@@ -512,7 +521,9 @@ void Host::HandleNewConnections()
 					MaloW::Debug("Failed to cast Melee Weapon in HandleNewConnection");
 					continue;
 				}
-				message += this->AddItemMessage(mWpn);
+				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)mWpn->GetID());
+
+				message += mWpn->ToMessageString(&this->zMessageConverter);
 
 				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 			}
@@ -885,6 +896,8 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				continue;
 			}
 
+			inv->EraseItem(temp->GetID());
+
 			items.push_back(temp);
 
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)temp->GetID());
@@ -900,6 +913,7 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				MaloW::Debug("Failed to cast Material when Creating Dead Player items");
 				continue;
 			}
+			inv->EraseItem(temp->GetID());
 
 			items.push_back(temp);
 
@@ -917,6 +931,7 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				MaloW::Debug("Failed to cast Food when Creating Dead Player items");
 				continue;
 			}
+			inv->EraseItem(temp->GetID());
 
 			items.push_back(temp);
 
@@ -934,6 +949,7 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				MaloW::Debug("Failed to cast Projectile when Creating Dead Player items");
 				continue;
 			}
+			inv->EraseItem(temp->GetID());
 
 			items.push_back(temp);
 
@@ -951,6 +967,7 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				MaloW::Debug("Failed to cast Ranged Weapon when Creating Dead Player items");
 				continue;
 			}
+			inv->EraseItem(temp->GetID());
 
 			items.push_back(temp);
 
@@ -968,6 +985,7 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 				MaloW::Debug("Failed to cast Melee Weapon when Creating Dead Player items");
 				continue;
 			}
+			inv->EraseItem(temp->GetID());
 
 			items.push_back(temp);
 
@@ -978,7 +996,6 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 			msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 		}
 	}
-	inv->GetItems().clear();
 
 	(*dpoActor)->SetItems(items);
 
@@ -1561,11 +1578,11 @@ void Host::UpdateObjects()
 		}
 		else
 		{
-			position = (*it_player)->GetPosition();
-			if (this->zWorld->IsBlockingAt(position.GetXZ()))
-			{
-				(*it_player)->RewindPosition();
-			}
+			//position = (*it_player)->GetPosition();
+			//if (this->zWorld->IsBlockingAt(position.GetXZ()))
+			//{
+			//	(*it_player)->RewindPosition();
+			//}
 		}
 	}
 

@@ -138,7 +138,8 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj)
 
 	this->SendToAllClients(removeMsg);
 
-	this->zActorHandler->RemoveStaticWeaponActor(weaponObj->GetID());
+	if(this->zActorHandler->RemoveStaticWeaponActor(weaponObj->GetID()))
+		MaloW::Debug("Failed to remove static object.");
 
 	return true;
 }
@@ -151,7 +152,8 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerO
 
 	this->SendToAllClients(removeMsg);
 
-	this->zActorHandler->RemoveStaticContainerActor(containerObj->GetID());
+	if(this->zActorHandler->RemoveStaticContainerActor(containerObj->GetID()))
+		MaloW::Debug("Failed to remove static object.");
 
 	return true;
 }
@@ -164,7 +166,8 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, StaticProjectileObject* pro
 
 	this->SendToAllClients(removeMsg);
 
-	this->zActorHandler->RemoveStaticContainerActor(projectileObj->GetID());
+	if(this->zActorHandler->RemoveStaticProjectileActor(projectileObj->GetID()))
+		MaloW::Debug("Failed to remove static object.");
 
 	return true;
 }
@@ -177,7 +180,8 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, MaterialObject* materialObj
 
 	this->SendToAllClients(removeMsg);
 
-	this->zActorHandler->RemoveStaticContainerActor(materialObj->GetID());
+	if(this->zActorHandler->RemoveStaticMaterialActor(materialObj->GetID()))
+		MaloW::Debug("Failed to remove static object.");
 
 	return true;
 }

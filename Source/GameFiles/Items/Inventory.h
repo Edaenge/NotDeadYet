@@ -44,7 +44,7 @@ public:
 	/*! Removes a stack from Item*/
 	bool RemoveItemStack(const long ID, const unsigned int numberOfStacks = 1);
 	Item* SearchAndGetItemFromType(const unsigned int TYPE);
-	Item* EquipItem(const long ID);
+	Item* EraseItem(const long ID);
 private:
 	/*! Array of items*/
 	std::vector<Item*> zItems;
