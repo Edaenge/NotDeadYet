@@ -1563,7 +1563,6 @@ void Host::UpdateObjects()
 		}
 	}
 	std::vector<PlayerActor*> pActors = this->zActorHandler->GetPlayers();
-	Vector3 position;
 	for (auto it_player = pActors.begin(); it_player < pActors.end(); it_player++)
 	{
 		if (!(*it_player)->IsAlive())

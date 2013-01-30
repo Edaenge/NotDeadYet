@@ -631,8 +631,8 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 
 		if (angle <= 45)*/
 		
-		//if (pcd.collision && pcd.distance <= range)
-		//{
+		if (pcd.collision && pcd.distance <= range)
+		{
 			cEvent.actor_aggressor_ID = bActor->GetID();
 			cEvent.actor_aggressor_type = agressor_Type;
 
@@ -642,7 +642,7 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 			cEvent.event_type = MELEE_ATTACK;
 
 			return cEvent;
-		//}
+		}
 	}
 
 	for (auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
