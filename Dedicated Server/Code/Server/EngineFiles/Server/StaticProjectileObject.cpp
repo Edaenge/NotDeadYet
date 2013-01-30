@@ -29,7 +29,6 @@ StaticProjectileObject::StaticProjectileObject(const StaticProjectileObject& oth
 	this->zActorModel = other.zActorModel;
 	this->zDescription = other.zDescription;
 	this->zActorObjectName = other.zActorObjectName;
-	this->zModelLength = other.zModelLength;
 	
 }
 
@@ -53,7 +52,6 @@ StaticProjectileObject::StaticProjectileObject(const DynamicProjectileObject* ot
 	this->zActorModel = other->GetActorModel();
 	this->zDescription = other->GetDescription();
 	this->zActorObjectName = other->GetActorObjectName();
-	this->zModelLength = other->GetModelLength();
 }
 
 StaticProjectileObject::StaticProjectileObject( const StaticProjectileObject* other, bool genID /*= false*/ )
@@ -75,7 +73,6 @@ StaticProjectileObject::StaticProjectileObject( const StaticProjectileObject* ot
 	this->zActorModel = other->zActorModel;
 	this->zDescription = other->zDescription;
 	this->zActorObjectName = other->zActorObjectName;
-	this->zModelLength = other->zModelLength;
 }
 
 StaticProjectileObject::~StaticProjectileObject()

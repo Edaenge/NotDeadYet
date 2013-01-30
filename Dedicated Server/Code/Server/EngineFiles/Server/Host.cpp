@@ -1528,6 +1528,7 @@ float Host::Update()
 
 void Host::UpdateObjects()
 {
+	//Update the objects in the world.
 	this->zActorHandler->UpdateObjects(zDeltaTime);
 
 	std::vector<CollisionEvent> ce;
@@ -1535,33 +1536,21 @@ void Host::UpdateObjects()
 	this->zActorHandler->CheckCollisions();
 	ce = this->zActorHandler->CheckProjectileCollisions();
 
-	//Iterate through dead players
-	std::string msg = "";
-	for (auto it = ce.begin(); it < ce.end(); it++)
-	{
-		OnPlayerDeath((*it).actor_victim_ID);
-	}
-
-	Vector3 position;
-	float y = 0;
+	//Iterate projectiles and converts them to static if they have stopped
 	std::vector<DynamicProjectileObject*> dynamicProjectileObj = this->zActorHandler->GetDynamicProjectiles();
-	std::vector<DynamicProjectileObject*> toBeRemoved;
+
 	for (auto it_proj = dynamicProjectileObj.begin(); it_proj < dynamicProjectileObj.end(); it_proj++)
 	{
-		position = (*it_proj)->GetPosition();
-		y = this->zWorld->CalcHeightAtWorldPos(Vector2(position.x, position.z));
-		if (position.y <= y)
+		if (!(*it_proj)->IsMoving())
 		{
-			position.y = y;
-			(*it_proj)->SetPosition(position);
-			(*it_proj)->SetMoving(false);
-
 			HandleConversion((*it_proj));
 
 			if(!this->zActorHandler->RemoveDynamicProjectileActor((*it_proj)->GetID()))
 				MaloW::Debug("Failed to Remove Object in Host::UpdateObjects");
 		}
 	}
+
+	//Iterate players and see if they are dead.
 	std::vector<PlayerActor*> pActors = this->zActorHandler->GetPlayers();
 
 	for (auto it_player = pActors.begin(); it_player < pActors.end(); it_player++)
@@ -1571,6 +1560,7 @@ void Host::UpdateObjects()
 			OnPlayerDeath((*it_player)->GetID());
 		}
 	}
+
 }
 
 bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
