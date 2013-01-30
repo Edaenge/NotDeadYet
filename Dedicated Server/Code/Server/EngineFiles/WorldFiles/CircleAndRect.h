@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Vector.h>
+#include "../../../../../External/NDYGFX/Include/Vector.h"
 
 // 2D Intersection Checks, By Alexivan
 

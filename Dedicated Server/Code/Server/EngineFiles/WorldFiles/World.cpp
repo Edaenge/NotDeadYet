@@ -1,7 +1,7 @@
 #include "World.h"
 #include "CircleAndRect.h"
 #include <windows.h>
-#include "MaloWFileDebug.h"
+#include "../../../../../Source/MaloWLib/MaloWFileDebug.h"
 #include <sstream>
 
 

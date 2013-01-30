@@ -2,7 +2,7 @@
 
 // Created by Johansson Rikard 21/11/12 for project Not Dead Yet at BTH(Blekinges Tekniska Högskola)
 
-#include "Vector.h"
+#include "../../../../../External/NDYGFX/Include/Vector.h"
 #include <vector>
 #include <bitset>
 #include <array>

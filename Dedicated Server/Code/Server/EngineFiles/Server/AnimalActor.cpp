@@ -34,7 +34,7 @@ AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, bool ge
 	Target vectorFilling; 
 	vectorFilling.health = 0;
 	vectorFilling.movementNoise = 0;
-	vectorFilling.position = 0;
+	vectorFilling.position = Vector3(0,0,0);
 	vectorFilling.valid = false;
 
 	for(int i = 0; i < 32; i++)
@@ -54,9 +54,9 @@ AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, const V
 	this->InitPathfinder();
 
 	Target vectorFilling; 
-	vectorFilling.health = NULL;
-	vectorFilling.movementNoise = NULL;
-	vectorFilling.position = NULL;
+	vectorFilling.health = 0;
+	vectorFilling.movementNoise = 0;
+	vectorFilling.position = Vector3(0,0,0);
 	vectorFilling.valid = false;
 
 	for(int i = 0; i < 32; i++)
