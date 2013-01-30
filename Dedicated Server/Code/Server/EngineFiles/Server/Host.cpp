@@ -1552,6 +1552,8 @@ void Host::UpdateObjects()
 
 	//Iterate players and see if they are dead.
 	std::vector<PlayerActor*> pActors = this->zActorHandler->GetPlayers();
+	Vector3 position;
+
 	for (auto it_player = pActors.begin(); it_player < pActors.end(); it_player++)
 	{
 		if (!(*it_player)->IsAlive())
@@ -1609,7 +1611,7 @@ bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 	
 	
 	//Notify clients
-	this->SendToAllClients(mess);
+	this->SendToAllClients(mess, true);
 
 	return removed;
 }
@@ -1617,6 +1619,7 @@ bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 void Host::OnPlayerRemove(unsigned int ID)
 {
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActorHandler->GetActor(ID, ACTOR_TYPE_PLAYER));
+
 	if (!pActor)
 		return;
 
