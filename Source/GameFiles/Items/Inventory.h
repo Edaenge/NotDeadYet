@@ -30,7 +30,7 @@ public:
 	std::vector<Item*> GetItems() const;
 	/*! Search for the item and returns it if found or NULL if not found*/
 	Item* SearchAndGetItem(const long ID) const;
-	/*! Removes the item*/
+	/*! Deletes the item*/
 	bool RemoveItem(const unsigned int index);
 	bool RemoveItem(Item* item);
 	/*! Returns blocked slots*/
@@ -44,6 +44,9 @@ public:
 	/*! Removes a stack from Item*/
 	bool RemoveItemStack(const long ID, const unsigned int numberOfStacks = 1);
 	Item* SearchAndGetItemFromType(const unsigned int TYPE);
+	/*! Returns Item and removes it from inventory
+		Doesn't delete the Item.
+	*/
 	Item* EraseItem(const long ID);
 private:
 	/*! Array of items*/

@@ -578,7 +578,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 			}
 			else
 			{
-				MaloW::Debug("Failed to Add Weapon to inventory when Equipping Axe");
+				MaloW::Debug("Failed to Add Weapon to inventory when Equipping Pocket Knife");
 				this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip weapons");
 				return;
 			}
@@ -629,7 +629,10 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 					else
 					{
 						int stacks = oldProjectile->GetStackSize() + arrow->GetStackSize();
-						oldProjectile->SetStackSize(stacks);
+						arrow->SetStackSize(stacks);
+
+						this->SendEquipMessage(pActor->GetID(), arrow->GetID(), EQUIPMENT_SLOT_AMMO);
+						return;
 					}
 
 				}

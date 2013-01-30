@@ -185,7 +185,6 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 
 			if (projectile)
 			{
-				
 				if (projectile->GetItemType() != ITEM_TYPE_PROJECTILE_ARROW)
 				{
 					//HandleUnEquipItem(projectile->GetID(), EQUIPMENT_SLOT_AMMO);
@@ -200,7 +199,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 					}
 					else
 					{
-						MaloW::Debug("Failed to add Equipped project to inventory");
+						MaloW::Debug("Failed to add Equipped projectile to inventory");
 						return;
 					}
 				}
@@ -317,7 +316,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			else
 			{
 				int stacks = oldProjectile->GetStackSize() + projectile->GetStackSize();
-				oldProjectile->SetStackSize(stacks);
+				projectile->SetStackSize(stacks);
 			}
 		}
 		this->zPlayerInventory->EraseItem(projectile->GetID());
