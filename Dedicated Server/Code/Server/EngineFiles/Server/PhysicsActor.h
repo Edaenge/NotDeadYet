@@ -91,5 +91,5 @@ protected:
 
 private:
 	bool zScaleChanged;
-	bool zModelLength;
+	float zModelLength;
 };

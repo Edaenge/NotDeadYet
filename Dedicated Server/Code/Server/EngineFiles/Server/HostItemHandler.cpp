@@ -52,12 +52,13 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 				velocity = projectile->GetVelocity();
 
 				Vector3 position = pActor->GetPosition();
+
 				projectileObj->SetPosition(position);
 				projectileObj->SetDamage(damage);
 				projectileObj->SetSpeed(velocity);
 				projectileObj->SetUpVector(pActor->GetUpVector());
 				projectileObj->SetObjOwner(pActor->GetID());
-
+				projectileObj->SetModelLength(0.85f);
 			    //Adds The Object To the Array
 				this->zActorHandler->AddNewDynamicProjectileActor(projectileObj, pActor->GetDirection());
 
@@ -103,10 +104,11 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 			rWpn->UseWeapon(range, damage);
 
 			Vector3 position = pActor->GetPosition();
-			projectileObj->SetPosition(position);
 
+			projectileObj->SetPosition(position);
 			projectileObj->SetDamage(damage);
 			projectileObj->SetSpeed(velocity);
+			projectileObj->SetModelLength(0.85f);
 			//Adds The Object To the Array
 			this->zActorHandler->AddNewDynamicProjectileActor(projectileObj, pActor->GetDirection());
 

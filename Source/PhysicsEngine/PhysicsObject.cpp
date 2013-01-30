@@ -22,12 +22,12 @@ PhysicsObject::PhysicsObject(Vector3 position)
 {
 	this->pos = position;
 	this->forceAccum = Vector3(0,0,0);
-	this->scale = Vector3(1, 1, 1);
 	this->damping = 0.0f;
 	this->indicies = NULL;
 	this->mesh = NULL;
 	this->nrOfIndicies = 0;
 	this->nrOfVerts = 0;
+	this->scale = Vector3(1, 1, 1);
 }
 
 PhysicsObject::~PhysicsObject()
@@ -115,7 +115,6 @@ void PhysicsObject::RecreateWorldMatrix()
 	scaling.value[1][1] = this->scale.y;
 	scaling.value[2][2] = this->scale.z;
 
-
 	Matrix4 QuatMat;
 	QuatMat.value[0][0] = 1 - 2 * pow(this->rotQuat.y, 2) - 2 * pow(this->rotQuat.z, 2);
 	QuatMat.value[0][1] = 2 * this->rotQuat.x * this->rotQuat.y + 2 * this->rotQuat.w * this->rotQuat.z;
@@ -129,7 +128,7 @@ void PhysicsObject::RecreateWorldMatrix()
 	QuatMat.value[2][1] = 2 * this->rotQuat.y * this->rotQuat.z - 2 * this->rotQuat.w * this->rotQuat.x;
 	QuatMat.value[2][2] = 1 - 2 * pow(this->rotQuat.x, 2) - 2 * pow(this->rotQuat.y, 2);
 
-	Matrix4 world = scaling*QuatMat*translate;
+	Matrix4 world = translate*QuatMat*scaling;
 
 	this->worldMatrix = world;
 }
