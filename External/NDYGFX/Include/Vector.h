@@ -14,6 +14,8 @@
 // EDIT 2013-01-09 by Alexivan - GetXY, GetXZ, GetZY for Vector3
 // EDIT 2013-01-11 by Tillman - Added the class Vector2UINT.
 // EDIT 2013-01-22 by Alexivan - Vector2 Multiply.
+// EDIT 2013-01-30 by Alexivan - Explicit Constructors, scalar addition and substraction
+// EDIT 2013-01-30 by Crant	- Added Vector3 == Operator
 
 #pragma warning ( push ) 
 #pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -34,7 +36,7 @@ public:
 	};
 	
 
-	Vector2UINT(unsigned int x, unsigned int y) : x(x), y(y)
+	explicit Vector2UINT(unsigned int x=0, unsigned int y=0) : x(x), y(y)
 	{
 
 	}
@@ -59,9 +61,19 @@ public:
 		return Vector2UINT( x + v.x, y + v.y );
 	}
 
+	inline Vector2UINT operator+( const unsigned int& scalar ) const
+	{
+		return Vector2UINT( x + scalar, y + scalar );
+	}
+
 	inline Vector2UINT operator-( const Vector2UINT& v ) const
 	{
 		return Vector2UINT( x - v.x, y - v.y );
+	}
+
+	inline Vector2UINT operator-( const unsigned int& scalar ) const
+	{
+		return Vector2UINT( x - scalar, y - scalar );
 	}
 
 	inline Vector2UINT operator*( const Vector2UINT& v ) const
@@ -108,7 +120,7 @@ public:
 		};
 	};
 
-	Vector2(float _x = 0.0f, float _y = 0.0f) : x(_x), y(_y)
+	explicit Vector2(float _x = 0.0f, float _y = 0.0f) : x(_x), y(_y)
 	{
 		
 	}
@@ -139,9 +151,19 @@ public:
 		return Vector2( x - v.x, y - v.y );
 	}
 
+	inline Vector2 operator-( const float& scalar ) const
+	{
+		return Vector2( x - scalar, y - scalar );
+	}
+
 	inline Vector2 operator+( const Vector2& v ) const
 	{
 		return Vector2( x + v.x, y + v.y );
+	}
+
+	inline Vector2 operator+( const float& scalar ) const
+	{
+		return Vector2( x + scalar, y + scalar );
 	}
 
 	inline float& operator[]( unsigned int i ) throw(...)
@@ -187,7 +209,6 @@ public:
 		y += t.y;
 		return *this;
 	}
-
 };
 
 
@@ -206,7 +227,7 @@ public:
 		};
 	};
 
-	Vector3(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f) : x(_x), y(_y), z(_z)
+	explicit Vector3(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f) : x(_x), y(_y), z(_z)
 	{
 
 	}
@@ -257,9 +278,19 @@ public:
         return Vector3(this->x+v.x, this->y+v.y, this->z+v.z);
     }
 
+	inline Vector3 operator+(const float& scalar) const
+	{
+		return Vector3(this->x+scalar, this->y+scalar, this->z+scalar);
+	}
+
 	inline Vector3 operator-(const Vector3& v) const
 	{
 		return Vector3(this->x-v.x, this->y-v.y, this->z-v.z);
+	}
+
+	inline Vector3 operator-( const float& scalar ) const
+	{
+		return Vector3( x - scalar, y - scalar, z - scalar );
 	}
 
 	inline Vector3 operator*(const float& scalar) const
@@ -292,7 +323,7 @@ public:
         y *= scalar;
         z *= scalar;
     }
-	inline bool operator==(const Vector3 &v) const
+	inline bool operator==(const Vector3& v)
 	{
 		return (x == v.x && y == v.y && z == v.z);
 	}
@@ -393,7 +424,7 @@ public:
 		};
 	};
 
-	Vector4(float _x=0.0f, float _y=0.0f, float _z=0.0f, float _w=0.0f) : x(_x), y(_y), z(_z), w(_w)
+	explicit Vector4(float _x=0.0f, float _y=0.0f, float _z=0.0f, float _w=0.0f) : x(_x), y(_y), z(_z), w(_w)
 	{
 
 	}
@@ -452,9 +483,19 @@ public:
 		return Vector4(this->x+v.x, this->y+v.y, this->z+v.z, this->w+v.w);
 	}
 
+	inline Vector4 operator+( const float& scalar ) const
+	{
+		return Vector4( x + scalar, y + scalar, z + scalar, w + scalar );
+	}
+
 	inline Vector4 operator-(const Vector4& v) const
 	{
 		return Vector4(this->x-v.x, this->y-v.y, this->z-v.z, w-v.w);
+	}
+
+	inline Vector4 operator-( const float& scalar ) const
+	{
+		return Vector4( x - scalar, y - scalar, z - scalar, w - scalar );
 	}
 
 	inline Vector4 operator*(const float& scalar) const

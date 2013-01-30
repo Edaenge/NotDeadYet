@@ -1921,7 +1921,7 @@ void Host::onEvent( Event* e )
 			Vector3 oldPos = PUE->prevPos; 
 			float yPos = this->zWorld->CalcHeightAtWorldPos(Vector2(playerTempPos.x, playerTempPos.z));
 			Vector3 dir = playerTempPos - oldPos;
-			Vector3 groundNormal = this->zWorld->CalcHeightAtWorldPos(Vector2(playerTempPos.x, playerTempPos.z));
+			Vector3 groundNormal = this->zWorld->CalcNormalAt(Vector2(playerTempPos.x, playerTempPos.z));
 
 			playerTempPos.y -= (9.82f * this->zDeltaTime);			
 			if(playerTempPos.y < yPos)
