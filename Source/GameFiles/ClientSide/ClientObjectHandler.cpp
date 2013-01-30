@@ -56,7 +56,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		{
 			this->zCreated = true;
 			//filename = "Media/Models/Ball.obj";
-			scale = Vector3(0.05f, 0.05f, 0.05f);
+			//scale = Vector3(0.05f, 0.05f, 0.05f);
 		}
 	}
 	if (Messages::FileWrite())
@@ -1393,4 +1393,6 @@ void Client::HandleDeadPlayerMessage(const int ID)
 	{
 		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString((float)ID));
 	}
+	if(Messages::FileWrite())
+		Messages::Debug("Player Died and was removed");
 }

@@ -1563,12 +1563,20 @@ void Host::UpdateObjects()
 		}
 	}
 	std::vector<PlayerActor*> pActors = this->zActorHandler->GetPlayers();
-
+	Vector3 position;
 	for (auto it_player = pActors.begin(); it_player < pActors.end(); it_player++)
 	{
 		if (!(*it_player)->IsAlive())
 		{
 			OnPlayerDeath((*it_player)->GetID());
+		}
+		else
+		{
+			position = (*it_player)->GetPosition();
+			if (this->zWorld->IsBlockingAt(position.GetXZ()))
+			{
+				(*it_player)->RewindPosition();
+			}
 		}
 	}
 }
@@ -1726,12 +1734,14 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 
 void Host::RespawnPlayer(PlayerActor* pActor)
 {
+	std::string model = pActor->GetActorModel();
 	PlayerActor* new_Player = new PlayerActor(pActor->GetID());
 
 	int currentPoint = this->zActorHandler->GetPlayers().size() % this->zMaxClients;
 	Vector3 position = CalculateSpawnPoint(currentPoint, this->zMaxClients, 20);
-	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(pActor->GetActorModel(), position);
+	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(model, position);
 	new_Player->SetPhysicObject(pObj);
+	new_Player->SetActorModel(model);
 	new_Player->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 
 	if(!pObj)

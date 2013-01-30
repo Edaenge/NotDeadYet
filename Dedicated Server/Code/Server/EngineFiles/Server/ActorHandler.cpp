@@ -612,6 +612,7 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 		pOtherObj = (*it)->GetPhysicObject();
 
 		Vector3 position = bActor->GetPosition();
+		position.y += 2.0f;
 		Vector3 direction = bActor->GetDirection();
 
 		Vector3 distance = pOtherObj->GetPosition() - position;
@@ -630,7 +631,6 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 
 		if (angle <= 45)*/
 		
-
 		//if (pcd.collision && pcd.distance <= range)
 		//{
 			cEvent.actor_aggressor_ID = bActor->GetID();
@@ -653,6 +653,7 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 		pOtherObj = (*it)->GetPhysicObject();
 
 		Vector3 position = bActor->GetPosition();
+		position.y += 2.0f;
 		Vector3 direction = bActor->GetDirection();
 
 		pcd = this->zPhysicsEngine->GetCollisionRayMesh(position, direction, pOtherObj);
@@ -831,9 +832,8 @@ void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vect
 
 		if(pcd.BoundingSphereCollision)
 		{
-			if((pcd.distance-middle) < 0.0f)
+			if((pcd.distance - (middle * 1.1f)) < 0.5f)
 				pCollide.push_back(*it);
 		}
 	}
 }
-
