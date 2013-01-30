@@ -30,7 +30,7 @@ void Game::Run()
 			eng->GetKeyListener()->SetCursorVisibility(bCurrentCursorVisible);
 		}
 		
-		Sleep(5);
+		Sleep(50);
 	}
 
 }

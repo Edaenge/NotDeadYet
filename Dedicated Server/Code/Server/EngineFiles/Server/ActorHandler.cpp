@@ -203,8 +203,22 @@ bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Pr
 	pos += direction * 2;
 	pos.y += 1.75f;
 
-	//CALC ROT
+	//Rotate mesh
+	Vector3 ArrowDirection = new_Projectile->GetInitialDirection();
+	Vector3 CameraDirection = pObj->GetVelocity();
+	Vector3 around;
+	float angle;
 
+	ArrowDirection.Normalize();
+	CameraDirection.Normalize();
+
+	around = ArrowDirection.GetCrossProduct(CameraDirection);
+	angle = acos(ArrowDirection.GetDotProduct(CameraDirection));// / (ArrowDirection.GetLength() * CameraDirection.GetLength()));
+
+	pObj->SetQuaternion(Vector4(0,0,0,1));
+	pObj->RotateAxis(around, angle);
+
+	//Set Physic values
 	pObj->SetMass(1.0f);
 	pObj->SetVelocity(direction * new_Projectile->GetSpeed());
 	pObj->SetAcceleration(Vector3(.0f, -9.82f, 0.0f));
@@ -213,7 +227,6 @@ bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Pr
 
 	//Set new data
 	new_Projectile->SetPosition(pos);
-	//new_Projectile->SetRotation(Vector4(around.x, around.y, around.z, angle));
 
 	this->zDynamicProjectiles.push_back(new_Projectile);
 
@@ -696,9 +709,24 @@ std::vector<CollisionEvent> ActorHandler::CheckProjectileCollisions()
 	std::vector<CollisionEvent> collisionEvents;
 	std::vector<BioActor*> pCollide;
 	PhysicsObject* mesh;
-	
+	Vector3 position;
+	float yValue;
+
 	for (auto it = zDynamicProjectiles.begin(); it < zDynamicProjectiles.end(); it++)
 	{
+		position = (*it)->GetPosition();
+		yValue = this->zWorld->CalcHeightAtWorldPos(Vector2(position.x, position.z));
+		
+		if (position.y <= yValue)
+		{
+			position.y = yValue;
+			(*it)->SetPosition(position);
+			(*it)->SetMoving(false);
+
+			//No need to check this projectile
+			continue;
+		}
+
 		DynamicActorVsBioActors((*it), zPlayers, pCollide);
 
 		if(!pCollide.empty())
