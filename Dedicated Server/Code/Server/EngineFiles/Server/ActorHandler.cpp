@@ -848,11 +848,17 @@ void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vect
 
 	float middle;
 	Vector3 scale;
+	Vector3 pos;
+	Vector3 direction;
 	PhysicsObject* mesh;
 
 	scale = pTest->GetScale();
 	middle = (pTest->GetModelLength() * max(max(scale.x, scale.y),scale.z)) / 2;
 	mesh = pTest->GetPhysicObject();
+	pos = mesh->GetPosition();
+	direction = mesh->GetVelocity();
+	direction.Normalize();
+
 	PhysicsCollisionData pcd;
 
 	for(auto it = actors.begin(); it < actors.end(); it++)
@@ -860,7 +866,7 @@ void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vect
 		if((*it)->GetID() == pTest->GetObjPlayerOwner())
 			continue;
 
-		pcd = this->zPhysicsEngine->GetCollisionBoundingOnly(mesh, (*it)->GetPhysicObject());
+		pcd = this->zPhysicsEngine->GetCollisionBoundingOnly(pos, direction, (*it)->GetPhysicObject());
 
 		if(pcd.BoundingSphereCollision)
 		{
