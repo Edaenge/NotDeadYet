@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../../../External/NDYGFX/Include/Vector.h"
+#include "Vector.h"
 #include "Observer.h"
 #include "World.h"
 

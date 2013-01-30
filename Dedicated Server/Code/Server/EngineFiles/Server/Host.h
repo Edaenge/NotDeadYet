@@ -182,13 +182,6 @@ private:
 	void SendEquipMessage(const int PlayerID, const long ID, const int Slot);
 	void SendUseItem(const int PlayerID, const long ID);
 
-	std::string AddItemMessage(Item* item);
-	std::string AddItemMessage(Food* food);
-	std::string AddItemMessage(Material* material);
-	std::string AddItemMessage(Container* container);
-	std::string AddItemMessage(Projectile* projectile);
-	std::string AddItemMessage(MeleeWeapon* meleeWeapon);
-	std::string AddItemMessage(RangedWeapon* rangedWeapon);
 	std::string AddItemMessage(StaticObjectActor* object);
 
 private:

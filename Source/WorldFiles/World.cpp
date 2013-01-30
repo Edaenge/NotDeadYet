@@ -16,7 +16,6 @@ World::World( Observer* observer, const std::string& fileName) throw(...) :
 	zFile->ReadHeader();
 }
 
-
 World::World( Observer* observer, unsigned int nrOfSectorWidth, unsigned int nrOfSectorHeight ) :
 	Observed(observer),
 	zNrOfSectorsWidth(nrOfSectorWidth),
@@ -51,7 +50,6 @@ World::World( Observer* observer, unsigned int nrOfSectorWidth, unsigned int nrO
 
 	NotifyObservers( &WorldLoadedEvent(this) );
 }
-
 
 World::~World()
 {
@@ -92,16 +90,6 @@ World::~World()
 	}
 }
 
-
-void World::ModifyHeightAt( float x, float y, float val )
-{
-	if ( val != 0.0f )
-	{
-		SetHeightAt(x, y, GetHeightAt(x, y) + val);
-	}
-}
-
-
 Entity* World::CreateEntity( unsigned int entityType )
 {
 	Entity* temp = new Entity(entityType);
@@ -111,6 +99,10 @@ Entity* World::CreateEntity( unsigned int entityType )
 	return temp;
 }
 
+void World::ModifyHeightAt( float x, float y, float delta )
+{
+	SetHeightAt( x, y, GetHeightAt( Vector2(x, y) ) + delta );
+}
 
 void World::SetHeightAt( float x, float y, float val )
 {
@@ -154,14 +146,13 @@ void World::SetHeightAt( float x, float y, float val )
 	}
 }
 
-
-float World::GetHeightAt( float x, float y )
+float World::GetHeightAt( const Vector2& worldPos )
 {
-	unsigned int sectorX = (unsigned int)x / SECTOR_WORLD_SIZE;
-	unsigned int sectorY = (unsigned int)y / SECTOR_WORLD_SIZE;
+	unsigned int sectorX = (unsigned int)worldPos.x / SECTOR_WORLD_SIZE;
+	unsigned int sectorY = (unsigned int)worldPos.y / SECTOR_WORLD_SIZE;
 
-	float localX = fmod(x, (float)SECTOR_WORLD_SIZE) / SECTOR_WORLD_SIZE;
-	float localY = fmod(y, (float)SECTOR_WORLD_SIZE) / SECTOR_WORLD_SIZE;
+	float localX = fmod(worldPos.x, (float)SECTOR_WORLD_SIZE) / SECTOR_WORLD_SIZE;
+	float localY = fmod(worldPos.y, (float)SECTOR_WORLD_SIZE) / SECTOR_WORLD_SIZE;
 
 	// Snap Local Coordinates
 	float snapX = floor(localX * (SECTOR_HEIGHT_SIZE-1)) / (SECTOR_HEIGHT_SIZE-1);
@@ -169,7 +160,6 @@ float World::GetHeightAt( float x, float y )
 
 	return GetSector(sectorX, sectorY)->GetHeightAt(snapX, snapY);
 }
-
 
 void World::SaveFile()
 {
@@ -197,6 +187,8 @@ void World::SaveFile()
 							zFile->WriteBlendMap(zSectors[x][y]->GetBlendMap(), sectorIndex);
 							zFile->WriteTextureNames(zSectors[x][y]->GetTextureNames(), sectorIndex);
 							zFile->WriteAIGrid(zSectors[x][y]->GetAIGrid(), sectorIndex);
+							zFile->WriteBlendMap2(zSectors[x][y]->GetBlendMap2(), sectorIndex);
+							zFile->WriteTextureNames2(zSectors[x][y]->GetTextureNames2(), sectorIndex);
 
 							// Write Sector Header
 							WorldFileSectorHeader header;
@@ -273,7 +265,6 @@ void World::SaveFile()
 	}
 }
 
-
 void World::SaveFileAs( const std::string& fileName )
 {
 	if ( fileName.empty() )
@@ -310,19 +301,16 @@ void World::SaveFileAs( const std::string& fileName )
 	}
 }
 
-
 Sector* World::GetSectorAtWorldPos( const Vector2& pos )
 {
 	Vector2UINT sectorPos = WorldPosToSector(pos);
 	return GetSector( sectorPos.x, sectorPos.y );
 }
 
-
 Vector2UINT World::WorldPosToSector( const Vector2& pos ) const
 {
 	return Vector2UINT((unsigned int)pos.x / SECTOR_WORLD_SIZE, (unsigned int)pos.y / SECTOR_WORLD_SIZE);
 }
-
 
 Sector* World::GetSector( unsigned int x, unsigned int y ) throw(...)
 {
@@ -352,23 +340,47 @@ Sector* World::GetSector( unsigned int x, unsigned int y ) throw(...)
 					ss << "Failed Loading AI For Sector: (" << x << ", " << y << ")";
 					MaloW::Debug( ss.str() );
 				}
-				else if ( !zFile->ReadBlendMap(s->GetBlendMap(), y * GetNumSectorsWidth() + x) )
+
+				if ( !zFile->ReadBlendMap(s->GetBlendMap(), y * GetNumSectorsWidth() + x) )
 				{
 					std::stringstream ss;
 					ss << "Failed Loading AI For Sector: (" << x << ", " << y << ")";
 					MaloW::Debug( ss.str() );
 				}
-				else if ( !zFile->ReadTextureNames(s->GetTextureNames(), y * GetNumSectorsWidth() + x) )
+
+				if ( !zFile->ReadTextureNames(s->GetTextureNames(), y * GetNumSectorsWidth() + x) )
 				{
 					std::stringstream ss;
 					ss << "Failed Loading AI For Sector: (" << x << ", " << y << ")";
 					MaloW::Debug( ss.str() );
 				}
-				else if ( !zFile->ReadAIGrid(s->GetAIGrid(), y * GetNumSectorsWidth() + x) )
+				
+				if ( !zFile->ReadAIGrid(s->GetAIGrid(), y * GetNumSectorsWidth() + x) )
 				{
 					std::stringstream ss;
 					ss << "Failed Loading AI For Sector: (" << x << ", " << y << ")";
 					MaloW::Debug( ss.str() );
+				}
+
+				if ( !zFile->ReadBlendMap2(s->GetBlendMap2(), y * GetNumSectorsWidth() + x) )
+				{
+					std::stringstream ss;
+					ss << "Failed Reading Second Blendmap For Sector: (" << x << ", " << y << ")";
+					MaloW::Debug( ss.str() );
+
+					s->ResetBlendMap2();
+				}
+
+				if ( !zFile->ReadTextureNames2(s->GetTextureNames2(), y * GetNumSectorsWidth() + x) )
+				{
+					std::stringstream ss;
+					ss << "Failed Reading Second Blendmap Textures For Sector: (" << x << ", " << y << ")";
+					MaloW::Debug( ss.str() );
+
+					s->SetTextureName(4, s->GetTextureName(0));
+					s->SetTextureName(5, s->GetTextureName(1));
+					s->SetTextureName(6, s->GetTextureName(2));
+					s->SetTextureName(7, s->GetTextureName(3));
 				}
 			}
 			else
@@ -571,28 +583,28 @@ unsigned int World::GetTextureNodesInCircle( const Vector2& center, float radius
 {
 	unsigned int counter=0;
 
-	// Calculate Height Node Density
-	float density = ( (float)SECTOR_WORLD_SIZE / (float)SECTOR_BLEND_SIZE );
+	// Calculate AI Node Density
+	float density = ( (float)SECTOR_WORLD_SIZE / (float)(SECTOR_BLEND_SIZE-1) );
 
-	// Snap Center To Closest Position
-	float centerSnapX = floor( center.x / density ) * density;
-	float centerSnapY = floor( center.y / density ) * density;
-
-	for( float x = centerSnapX - radius; x < centerSnapX + radius; x+=density )
+	for( float x = center.x-radius-density; x <= center.x+radius+density; x+=density )
 	{
 		// Outside World
-		if ( x < 0.0f || x > GetNumSectorsWidth() * SECTOR_WORLD_SIZE )
+		if ( x < 0.0f || x >= GetWorldSize().x )
 			continue;
 
-		for( float y = centerSnapY - radius; y < centerSnapY + radius; y+=density )
+		for( float y = center.y-radius-density; y <= center.y+radius+density; y+=density )
 		{
 			// Outside World
-			if ( y < 0.0f || y > GetNumSectorsHeight() * SECTOR_WORLD_SIZE )
+			if ( y < 0.0f || y >= GetWorldSize().y )
 				continue;
 
-			if ( Circle(Vector2(centerSnapX,centerSnapY),radius).IsInside(Vector2(x,y) ) )
+			Vector2 snap;
+			snap.x = floor(x / density) * density;
+			snap.y = floor(y / density) * density;
+
+			if (Circle(center,radius).IsInside(snap))
 			{
-				out.insert( Vector2(x,y) );
+				out.insert( Vector2(snap.x, snap.y) );
 				counter++;
 			}
 		}
@@ -601,31 +613,74 @@ unsigned int World::GetTextureNodesInCircle( const Vector2& center, float radius
 	return counter;
 }
 
-Vector4 World::GetBlendingAt( float x, float y )
+BlendValues World::GetBlendingAt( const Vector2& worldPos )
 {
-	float fSize = (float)SECTOR_WORLD_SIZE;
-	Sector* sector = GetSector(x/fSize,y/fSize);
-	return sector->GetBlendingAt(fmod(x,fSize),fmod(y,fSize));
+	// Sector Coordinates
+	unsigned int sectorX = (unsigned int)worldPos.x / SECTOR_WORLD_SIZE;
+	unsigned int sectorY = (unsigned int)worldPos.y / SECTOR_WORLD_SIZE;
+
+	// Local Coordinates
+	Vector2 localPos;
+	localPos.x = fmod(worldPos.x, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
+	localPos.y = fmod(worldPos.y, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
+
+	// Snap Local Coordinates
+	Vector2 snapPos;
+	snapPos.x = floor(localPos.x * (SECTOR_BLEND_SIZE-1)) / (SECTOR_BLEND_SIZE-1);
+	snapPos.y = floor(localPos.y * (SECTOR_BLEND_SIZE-1)) / (SECTOR_BLEND_SIZE-1);
+
+	return GetSector(sectorX, sectorY)->GetBlendingAt( snapPos );
 }
 
-void World::ModifyBlendingAt( float x, float y, const Vector4& val )
+void World::ModifyBlendingAt( const Vector2& worldPos, const BlendValues& val )
 {
-	if ( val.GetLength() > 0.0f )
+	SetBlendingAt( worldPos, GetBlendingAt(worldPos) + val );
+}
+
+void World::SetBlendingAt( const Vector2& worldPos, const BlendValues& val )
+{
+	unsigned int sectorX = (unsigned int)worldPos.x / SECTOR_WORLD_SIZE;
+	unsigned int sectorY = (unsigned int)worldPos.y / SECTOR_WORLD_SIZE;
+	Vector2 localPos;
+	localPos.x = fmod(worldPos.x, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
+	localPos.y = fmod(worldPos.y, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
+
+	// Snap Local Coordinates
+	Vector2 snapPos;
+	snapPos.x = floor(localPos.x * (SECTOR_BLEND_SIZE-1)) / (SECTOR_BLEND_SIZE-1);
+	snapPos.y = floor(localPos.y * (SECTOR_BLEND_SIZE-1)) / (SECTOR_BLEND_SIZE-1);
+
+	GetSector(sectorX, sectorY)->SetBlendingAt(snapPos, val);
+
+	NotifyObservers(&SectorBlendMapChanged(this, 
+		worldPos.x/SECTOR_WORLD_SIZE,
+		worldPos.y/SECTOR_WORLD_SIZE,
+		localPos.x,
+		localPos.y ));
+	
+	// Overlap Left
+	if ( sectorX > 0 && snapPos.x == 0.0f )
 	{
-		SetBlendingAt( x,y, GetBlendingAt(x,y) + val );
+		float border = (float)(SECTOR_BLEND_SIZE-1)/(float)SECTOR_BLEND_SIZE;
+		GetSector(sectorX-1, sectorY)->SetBlendingAt(Vector2(border, snapPos.y), val);
+		NotifyObservers( &SectorBlendMapChanged(this, sectorX-1, sectorY, border, snapPos.y) );
 	}
-}
 
-void World::SetBlendingAt( float x, float y, const Vector4& val )
-{
-	Sector* sector = GetSector(x/SECTOR_WORLD_SIZE,y/SECTOR_WORLD_SIZE);
-	sector->SetBlendingAt(fmod(x,SECTOR_WORLD_SIZE),fmod(y,SECTOR_WORLD_SIZE),val);
-
-	NotifyObservers( &SectorBlendMapChanged(this, 
-		x/SECTOR_WORLD_SIZE,
-		y/SECTOR_WORLD_SIZE,
-		fmod(x,SECTOR_WORLD_SIZE),
-		fmod(y,SECTOR_WORLD_SIZE)) );
+	// Overlap Up
+	if ( sectorY > 0 && snapPos.y == 0.0f )
+	{
+		float border = (float)(SECTOR_HEIGHT_SIZE-1)/(float)SECTOR_HEIGHT_SIZE;
+		GetSector(sectorX, sectorY-1)->SetBlendingAt(Vector2(snapPos.x, border), val);
+		NotifyObservers( &SectorBlendMapChanged(this, sectorX, sectorY-1, snapPos.x, border) );
+	}
+	
+	// Overlap Left Up Corner
+	if ( sectorY > 0 && snapPos.y == 0.0f && sectorX > 0 && snapPos.x == 0.0f )
+	{
+		float border = (float)(SECTOR_HEIGHT_SIZE-1)/(float)SECTOR_HEIGHT_SIZE;
+		GetSector(sectorX-1, sectorY-1)->SetBlendingAt(Vector2(border, border), val);
+		NotifyObservers( &SectorBlendMapChanged(this, sectorX-1, sectorY-1, border, border) );
+	}
 }
 
 WorldAnchor* World::CreateAnchor()
@@ -748,42 +803,32 @@ float World::CalcHeightAtWorldPos( const Vector2& worldPos ) throw(...)
 	// Outside world
 	if ( worldPos.x >= GetWorldSize().x ||
 		worldPos.y >= GetWorldSize().y ||
-		worldPos.x < 0 ||
-		worldPos.y < 0 ) throw("Out Of Bounds!");
+		worldPos.x < 0.0f ||
+		worldPos.y < 0.0f ) throw("Out Of Bounds!");
 
 	// Height Nodes Density
 	float density = (float)SECTOR_WORLD_SIZE / (float)(SECTOR_HEIGHT_SIZE-1);
 
 	// Snap To Lower
-	float minX = floor(worldPos.x * density) / density;
-	float minY = floor(worldPos.y * density) / density;
+	float minX = floor(worldPos.x / density) * density;
+	float minY = floor(worldPos.y / density) * density;
 
 	// Snap To Lower
 	float maxX = minX + density;
 	float maxY = minY + density;
 
-	Vector3 a(minX, GetHeightAt(minX, minY), minY);
-	Vector3 b(minX, GetHeightAt(minX, maxY), maxY);
-	Vector3 c(maxX, GetHeightAt(maxX, minY), minY);
-	Vector3 d(maxX, GetHeightAt(maxX, maxY), maxY);
+	Vector3 a(minX, GetHeightAt(Vector2(minX, minY)), minY);
+	Vector3 b(maxX, GetHeightAt(Vector2(maxX, minY)), minY);
+	Vector3 c(minX, GetHeightAt(Vector2(minX, maxY)), maxY);
+	Vector3 d(maxX, GetHeightAt(Vector2(maxX, maxY)), maxY);
 
-	Vector4 proportions;
-	proportions.x = (worldPos - Vector2(a.x, a.y)).GetLength();
-	proportions.y = (worldPos - Vector2(b.x, b.y)).GetLength();
-	proportions.z = (worldPos - Vector2(c.x, c.y)).GetLength();
-	proportions.w = (worldPos - Vector2(d.x, d.y)).GetLength();
-	
-	float total = proportions[0] + proportions[1] + proportions[2] + proportions[3];
-	for( unsigned int x=0; x<4; ++x )
-	{
-		proportions[x] /= total;
-	}
+	float s = (worldPos.x-a.x) / (b.x-a.x);
+	float t = (worldPos.y-a.z) / (c.z-a.z);
 
-	return ( 
-		a.y * proportions.x +
-		b.y * proportions.y +
-		c.y * proportions.z +
-		d.y * proportions.w );
+	float y1 = a.y + s*(b.y-a.y);
+	float y2 = c.y + s*(d.y-c.y);
+
+	return y1 + t*(y2-y1);
 }
 
 const Vector3& World::GetStartCamPos() const
@@ -866,10 +911,10 @@ Vector3 World::CalcNormalAt( const Vector2& worldPos ) throw(...)
 	// Density
 	float density = (float)SECTOR_WORLD_SIZE / (float)(SECTOR_HEIGHT_SIZE-1);
 
-	Vector3 a(worldPos.x, GetHeightAt(worldPos.x, worldPos.y), worldPos.y);
-	Vector3 b(worldPos.x+density, GetHeightAt(worldPos.x+density, worldPos.y), worldPos.y);
-	Vector3 c(worldPos.x, GetHeightAt(worldPos.x, worldPos.y+density), worldPos.y+density);
-	Vector3 d(worldPos.x+density, GetHeightAt(worldPos.x+density, worldPos.y+density), worldPos.y+density);
+	Vector3 a(worldPos.x, GetHeightAt(worldPos), worldPos.y);
+	Vector3 b(worldPos.x+density, GetHeightAt(worldPos+Vector2(density, 0.0f)), worldPos.y);
+	Vector3 c(worldPos.x, GetHeightAt(worldPos+Vector2(0.0f, density)), worldPos.y+density);
+	Vector3 d(worldPos.x+density, GetHeightAt(worldPos+density), worldPos.y+density);
 
 	Vector3 normal = (c-b).GetCrossProduct(d-a);
 	normal.Normalize();
@@ -880,28 +925,28 @@ unsigned int World::GetAINodesInCircle( const Vector2& center, float radius, std
 {
 	unsigned int counter=0;
 
-	// Calculate Height Node Density
+	// Calculate AI Node Density
 	float density = ( (float)SECTOR_WORLD_SIZE / (float)SECTOR_AI_GRID_SIZE );
 
 	for( float x = center.x-radius-density; x <= center.x+radius+density; x+=density )
 	{
 		// Outside World
-		if ( x < 0.0f || x > GetWorldSize().x )
+		if ( x < 0.0f || x >= GetWorldSize().x )
 			continue;
 
 		for( float y = center.y-radius-density; y <= center.y+radius+density; y+=density )
 		{
 			// Outside World
-			if ( y < 0.0f || y > GetWorldSize().y )
+			if ( y < 0.0f || y >= GetWorldSize().y )
 				continue;
 
 			Vector2 snap;
 			snap.x = floor(x / density) * density;
 			snap.y = floor(y / density) * density;
 
-			Rect r(snap, Vector2(density,density));
+			Rect r(snap, Vector2(density, density));
 
-			if (DoesIntersect(r, Circle(center,radius)))
+			if (DoesIntersect(r, Circle(center, radius)))
 			{
 				out.insert( Vector2(snap.x, snap.y) );
 				counter++;
