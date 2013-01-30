@@ -144,7 +144,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 
 		if (pVictim)
 		{
-			pVictim->TakeDamage(damage);
+			pVictim->TakeDamage(damage + 100);
 		}
 
 		return;
@@ -1382,12 +1382,9 @@ Item* Host::CreateItemFromDefault(const int ItemType)
 		bow->SetItemName(new_Bow->GetActorObjectName());
 		bow->SetItemDescription(new_Bow->GetDescription());
 
-		
 		SAFE_DELETE(new_Bow);
 
 		return bow;
 	}
-
-
 	return NULL;
 }

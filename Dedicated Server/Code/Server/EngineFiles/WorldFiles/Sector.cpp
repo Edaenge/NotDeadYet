@@ -31,25 +31,25 @@ void Sector::Reset()
 	SetTextureName(2, "Blue.png");
 	SetTextureName(3, "Red.png");
 
-	zAmbient[0] = 0.0;
-	zAmbient[1] = 0.0;
-	zAmbient[2] = 0.0;
+	zAmbient[0] = 0.0f;
+	zAmbient[1] = 0.0f;
+	zAmbient[2] = 0.0f;
 
-	SetEdited(true);
+	SetEdited(false);
 }
 
 
 float Sector::GetHeightAt( float x, float y ) const throw(...)
 {
 	if ( x < 0.0f || x >= 1.0f || y < 0.0f || y >= 1.0f )
-		return 0.0f;
+		throw("Out Of Bounds!");
 
 	// Find pixel
 	float snapX = floor(x * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
 	float snapY = floor(y * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
 
-	unsigned int scaledX = (unsigned int)(snapX * (float)(SECTOR_HEIGHT_SIZE));
-	unsigned int scaledY = (unsigned int)(snapY * (float)(SECTOR_HEIGHT_SIZE));
+	unsigned int scaledX = (unsigned int)(snapX * SECTOR_HEIGHT_SIZE);
+	unsigned int scaledY = (unsigned int)(snapY * SECTOR_HEIGHT_SIZE);
 
 	// Set Values
 	return zHeightMap[ scaledY * SECTOR_HEIGHT_SIZE + scaledX ];
@@ -65,8 +65,8 @@ void Sector::SetHeightAt( float x, float y, float val ) throw(...)
 	float snapX = floor(x * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
 	float snapY = floor(y * SECTOR_HEIGHT_SIZE) / SECTOR_HEIGHT_SIZE;
 
-	unsigned int scaledX = (unsigned int)(snapX * (float)(SECTOR_HEIGHT_SIZE));
-	unsigned int scaledY = (unsigned int)(snapY * (float)(SECTOR_HEIGHT_SIZE));
+	unsigned int scaledX = (unsigned int)(snapX * SECTOR_HEIGHT_SIZE);
+	unsigned int scaledY = (unsigned int)(snapY * SECTOR_HEIGHT_SIZE);
 
 	// Set Values
 	zHeightMap[ scaledY * SECTOR_HEIGHT_SIZE + scaledX ] = val;
@@ -87,7 +87,7 @@ void Sector::SetBlendingAt( float x, float y, const Vector4& val )
 	unsigned int scaledX = (unsigned int)((snapX / (float)SECTOR_WORLD_SIZE)*(SECTOR_BLEND_SIZE));
 	unsigned int scaledY = (unsigned int)((snapY / (float)SECTOR_WORLD_SIZE)*(SECTOR_BLEND_SIZE));
 
-	// Normalize Val
+	// Clamp Val
 	Vector4 normalizedVal = val;
 	normalizedVal.Normalize();
 
@@ -139,6 +139,8 @@ void Sector::SetTextureName( unsigned int index, const std::string& name )
 
 	memset( &zTextureNames[index*TEXTURE_NAME_LENGTH], 0, TEXTURE_NAME_LENGTH );
 	memcpy( &zTextureNames[index*TEXTURE_NAME_LENGTH], &name[0], name.length() );
+
+	SetEdited(true);
 }
 
 
@@ -174,7 +176,6 @@ void Sector::SetBlocking( const Vector2& pos, bool flag )
 	SetEdited(true);
 }
 
-
 bool Sector::GetBlocking( const Vector2& pos ) const
 {
 	if ( pos.x < 0.0f || pos.x >= 1.0f || pos.y < 0.0f || pos.y >= 1.0f )
@@ -190,23 +191,3 @@ bool Sector::GetBlocking( const Vector2& pos ) const
 	// Set Values
 	return zAiGrid[ scaledY * SECTOR_AI_GRID_SIZE + scaledX ];
 }
-
-/*Vector3 Sector::GetNormalAt( float x, float z )
-{
-	if(x >= 0.9f || z >= 0.9f )
-	{
-		return Vector3(0, 1, 0);
-	}
-	int x2 = x * SECTOR_WORLD_SIZE;
-	int z2 =  z * SECTOR_WORLD_SIZE;
-
-	float d = 1.0f / (float)SECTOR_WORLD_SIZE;
-	Vector3 v1 = Vector3(x2, this->GetHeightAt(x,z), z2);
-	Vector3 v2 = Vector3(x2 + 1, this->GetHeightAt(x + d,z), z2);
-	Vector3 v3 = Vector3(x2, this->GetHeightAt(x,z + d), z2 + 1);
-	Vector3 v4 = Vector3(x2 + 1, this->GetHeightAt(x + d,z + d), z2 + 1);
-	
-	Vector3 returnVector = ((v1 - v4)).GetCrossProduct( (v3 - v2));
-	returnVector.Normalize();
-	return returnVector;
-}*/

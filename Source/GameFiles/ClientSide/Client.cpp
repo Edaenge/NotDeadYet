@@ -769,6 +769,12 @@ void Client::HandleNetworkMessage(const std::string& msg)
 				MaloW::Debug("Msg array size is to short size: " + MaloW::convertNrToString((float)msgArray.size()) + " Expected size 3");
 			}
 		}
+		else if(strcmp(key, M_DEAD_PLAYER.c_str()) == 0)
+		{
+			int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_PLAYER, msgArray[0]);
+
+			this->HandleDeadPlayerMessage(id);
+		}
 		else if(strcmp(key, M_SELF_ID.c_str()) == 0)
 		{
 			this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);

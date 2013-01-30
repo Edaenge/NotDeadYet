@@ -22,6 +22,7 @@ PhysicsObject::PhysicsObject(Vector3 position)
 {
 	this->pos = position;
 	this->forceAccum = Vector3(0,0,0);
+	this->scale = Vector3(1, 1, 1);
 	this->damping = 0.0f;
 	this->indicies = NULL;
 	this->mesh = NULL;

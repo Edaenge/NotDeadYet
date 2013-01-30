@@ -143,6 +143,7 @@ private:
 	/*! Adds A Dynamic Object.*/
 	bool AddNewDynamicObject(const std::vector<std::string>& msgArray, const long ID);
 
+	void HandleDeadPlayerMessage(const int ID);
 	//////////////////////
 	//					//
 	//		Items		//

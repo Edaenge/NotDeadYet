@@ -107,7 +107,15 @@ private:
 	void GetExistingObjects(std::vector<std::string>& static_Objects);
 	/*! Called When player Disconnects or Dies.*/
 	void OnPlayerRemove(unsigned int ID);
-	void OnPlayerDeath(unsigned int ID);	void SendStartMessage();	//////////////////////////////////////
+	void OnPlayerDeath(unsigned int ID);	
+	void SendStartMessage();	
+
+	Vector3 CalculateSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center = Vector3(54, 0, 44));
+	/*! Temporary function.*/
+	void RespawnPlayer(PlayerActor* pActor);
+
+	void RemovePlayer(unsigned int ID);
+	//////////////////////////////////////
 	//									//
 	//	   Objects/Items Conversions	//
 	//			  						//
@@ -203,12 +211,6 @@ private:
 	float zTimeOut;
 	float zPingMessageInterval;
 
-	//Temporary
-	int pSpawnPosition;
-	int aSpawnPosition;
-	std::vector<Vector3> zPlayerSpawnPoints;
-	std::vector<Vector3> zAnimalSpawnPoints;
-	//float timer;
 	World* zWorld;
 	std::map<PlayerActor*, WorldAnchor*> zAnchorPlayerMap;
 protected:

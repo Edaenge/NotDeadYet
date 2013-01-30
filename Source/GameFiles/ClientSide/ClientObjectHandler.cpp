@@ -1366,3 +1366,31 @@ bool Client::RemoveDynamicObject(const long ID)
 
 	return true;
 }
+
+void Client::HandleDeadPlayerMessage(const int ID)
+{
+	if (ID == -1)
+		return;
+
+	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, ID);
+
+	//Check if object was found in the array
+	if(index == -1)
+		return;
+
+	if(this->zID == ID)
+	{
+		this->zCreated = false;
+	}
+
+	iMesh* mesh = this->zObjectManager->GetPlayerObject(index)->GetMesh();
+
+	if(mesh)
+	{
+		this->zEng->DeleteMesh(mesh);
+	}
+	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_PLAYER, index))
+	{
+		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString((float)ID));
+	}
+}

@@ -614,6 +614,9 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 		Vector3 position = bActor->GetPosition();
 		Vector3 direction = bActor->GetDirection();
 
+		Vector3 distance = pOtherObj->GetPosition() - position;
+		distance.Normalize();
+
 		pcd = this->zPhysicsEngine->GetCollisionRayMesh(position, direction, pOtherObj);
 		/*distance = pOtherObj->GetPosition() - pObj->GetPosition();
 
@@ -628,18 +631,18 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 		if (angle <= 45)*/
 		
 
-		if (pcd.collision && pcd.distance <= range)
-		{
+		//if (pcd.collision && pcd.distance <= range)
+		//{
 			cEvent.actor_aggressor_ID = bActor->GetID();
 			cEvent.actor_aggressor_type = agressor_Type;
 
 			cEvent.actor_victim_ID = (*it)->GetID();
-			cEvent.actor_victim_type = ACTOR_TYPE_ANIMAL;
+			cEvent.actor_victim_type = ACTOR_TYPE_PLAYER;
 
 			cEvent.event_type = MELEE_ATTACK;
 
 			return cEvent;
-		}
+		//}
 	}
 
 	for (auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)

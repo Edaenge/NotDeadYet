@@ -42,8 +42,7 @@ void WorldFile::Open()
 	if ( zFile ) return;
 
 	auto format = std::ios::in | std::ios::binary;
-	if ( zMode == OPEN_EDIT ) format = format | std::ios::out | std::ios::ate;
-	if ( zMode == OPEN_SAVE ) format = format | std::ios::out | std::ios::trunc;
+	if ( zMode == OPEN_EDIT || zMode == OPEN_SAVE ) format = format | std::ios::out | std::ios::ate;
 
 	// Open File
 	zFile = new std::fstream(zFileName, format);
@@ -72,14 +71,21 @@ void WorldFile::Open()
 		zNumSectors = zHeader.width * zHeader.height;
 
 		// Expand File
-		zFile->seekp(0, std::ios::end);
-		unsigned int fileSize = (unsigned int)zFile->tellp();
+		std::streampos end = zFile->tellp();
+		zFile->seekp(0, std::ios::beg);
+		unsigned int fileSize = (unsigned int)(end - zFile->tellp());
+
 		if ( fileSize < GetEnding() )
 		{
-			unsigned int missingSpace = GetEnding() - fileSize;
 			std::vector<unsigned char> v;
-			v.resize(missingSpace);
-			zFile->write(reinterpret_cast<char*>(&v[0]), missingSpace);
+			v.resize(10*1024*1024);
+			while( fileSize < GetEnding() )
+			{
+				unsigned int missing = GetEnding() - fileSize;
+				unsigned int thisTurn = ( missing > sizeof(v)? sizeof(v) : missing );
+				zFile->write(reinterpret_cast<char*>(&v[0]), thisTurn);
+				fileSize += thisTurn;
+			}
 		}
 
 		// Save header
@@ -288,8 +294,8 @@ bool WorldFile::ReadAIGrid( AIGrid& grid, unsigned int sectorIndex )
 	if ( !zFile ) Open();
 	if ( sectorIndex >= zNumSectors ) throw("Sector Index out of range!");
 	zFile->seekg( GetAIGridBegin() + sectorIndex * sizeof(AIGrid), std::ios::beg );
-	if ( zFile->eof() ) return false;
-	if ( !zFile->read(reinterpret_cast<char*>(&grid), sizeof(AIGrid)) ) return false;
+	if ( zFile->eof() ) { zFile->clear(); return false; }
+	if ( !zFile->read(reinterpret_cast<char*>(&grid), sizeof(AIGrid)) ) { zFile->clear(); return false; }
 	return true;
 }
 
