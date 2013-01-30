@@ -46,7 +46,6 @@
 /Dedicated Server/Bin/x86/C++CLI.dll
 /WorkingDir/Config.cfg
 /WorkingDir/*.pdb
-/WorkingDir/Media/Cache
 /Dedicated Server/Bin/x86/ServerClientMessages.txt
 /WorkingDir/ServerClientMessages.txt
 /Dedicated Server/Bin/x64/*.dll
@@ -60,3 +59,9 @@
 /Dedicated Server/Bin/x64/MaloWDebug.txt
 /Dedicated Server/Bin/x64/ServerClientMessages.txt
 /Dedicated Server/Code/C++CLI/ARM/Debug
+/WorkingDir/Media/Cache
+/WorkingDir/Media/Models/Cache
+/WorkingDir/Media/Models/Flag/Cache
+/Dedicated Server/Bin/x86/Media/Cache
+/Dedicated Server/Bin/x86/Media/Models/Cache
+/Dedicated Server/Bin/x86/Media/Models/Flag/Cache

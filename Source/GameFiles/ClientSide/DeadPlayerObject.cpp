@@ -2,7 +2,7 @@
 
 Item* DeadPlayerObject::GetItemAt(int Index) const
 {
-	if (Index >= this->zItems.size())
+	if ((unsigned int)Index >= this->zItems.size())
 		return NULL;
 
 	return this->zItems[Index];

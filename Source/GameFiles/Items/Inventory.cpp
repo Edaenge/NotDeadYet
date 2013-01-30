@@ -218,7 +218,7 @@ Item* Inventory::SearchAndGetItemFromType( const unsigned int TYPE )
 	return NULL;
 }
 
-Item* Inventory::EquipItem(const long ID)
+Item* Inventory::EraseItem(const long ID)
 {
 	int index = this->Search(ID);
 
@@ -235,7 +235,6 @@ Item* Inventory::EquipItem(const long ID)
 		{
 			this->zInventorySlotBlocked[zSlotsAvailable++] = false;
 		}*/
-		item = this->zItems.at(index);
 		this->zItems.erase(this->zItems.begin() + index);
 
 		return item;

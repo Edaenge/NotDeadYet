@@ -1,3 +1,4 @@
+
 #include "ActorHandler.h"
 
 ActorHandler::ActorHandler(World* worldPtr)
@@ -219,8 +220,9 @@ bool ActorHandler::AddNewDynamicProjectileActor( DynamicProjectileObject* new_Pr
 	pObj->RotateAxis(around, angle);
 
 	//Set Physic values
+	Vector3 velocity = direction * new_Projectile->GetSpeed();
 	pObj->SetMass(1.0f);
-	pObj->SetVelocity(direction * new_Projectile->GetSpeed());
+	pObj->SetVelocity(velocity);
 	pObj->SetAcceleration(Vector3(.0f, -9.82f, 0.0f));
 	pObj->SetDamping(0.99f);
 	pObj->ClearAccumulator();
@@ -708,7 +710,6 @@ std::vector<CollisionEvent> ActorHandler::CheckProjectileCollisions()
 {
 	std::vector<CollisionEvent> collisionEvents;
 	std::vector<BioActor*> pCollide;
-	PhysicsObject* mesh;
 	Vector3 position;
 	float yValue;
 

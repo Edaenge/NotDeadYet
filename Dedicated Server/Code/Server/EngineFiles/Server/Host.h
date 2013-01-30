@@ -109,7 +109,7 @@ private:
 	void OnPlayerRemove(unsigned int ID);
 	void OnPlayerDeath(unsigned int ID);	
 	void SendStartMessage();	
-
+	//3x3 center = 54,0,54, Map_xxxx center = 1900, 0, 1900
 	Vector3 CalculateSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center = Vector3(54, 0, 44));
 	/*! Temporary function.*/
 	void RespawnPlayer(PlayerActor* pActor);
@@ -182,13 +182,6 @@ private:
 	void SendEquipMessage(const int PlayerID, const long ID, const int Slot);
 	void SendUseItem(const int PlayerID, const long ID);
 
-	std::string AddItemMessage(Item* item);
-	std::string AddItemMessage(Food* food);
-	std::string AddItemMessage(Material* material);
-	std::string AddItemMessage(Container* container);
-	std::string AddItemMessage(Projectile* projectile);
-	std::string AddItemMessage(MeleeWeapon* meleeWeapon);
-	std::string AddItemMessage(RangedWeapon* rangedWeapon);
 	std::string AddItemMessage(StaticObjectActor* object);
 
 private:
