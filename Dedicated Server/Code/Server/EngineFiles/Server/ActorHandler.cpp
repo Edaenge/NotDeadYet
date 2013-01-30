@@ -608,6 +608,8 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 	{
 		if ((*it)->GetID() == bActor->GetID() && agressor_Type == ACTOR_TYPE_PLAYER)
 			continue;
+		if (!(*it)->IsAlive())
+			continue;
 
 		pOtherObj = (*it)->GetPhysicObject();
 
@@ -648,6 +650,8 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 	for (auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
 	{
 		if ((*it)->GetID() == bActor->GetID() && agressor_Type == ACTOR_TYPE_ANIMAL)
+			continue;
+		if (!(*it)->IsAlive())
 			continue;
 
 		pOtherObj = (*it)->GetPhysicObject();

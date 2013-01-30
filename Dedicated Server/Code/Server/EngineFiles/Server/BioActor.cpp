@@ -44,9 +44,11 @@ bool BioActor::TakeDamage(const float dmg)
 {
 	this->zHealth -= dmg; 
 	
-	if(zHealth <= 0.0f)
+	if(this->zHealth <= 0.0f)
+	{
+		this->zHealth = 0.0f;
 		this->zAlive = false;
-
+	}
 	this->zHealthChanged = true;
 
 	return this->zAlive;
