@@ -66,7 +66,7 @@ public:
 	int CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 	bool AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	bool RemoveItemFromGui(const int ID, int stacks);
-	void EquipItem(int type, const Gui_Item_Data gid);
+	void EquipItem(int type, const Gui_Item_Data gid, bool guiOpen);
 	void UnEquipItem(const int ID, int stacks);
 
 	void FadeOut(float value);

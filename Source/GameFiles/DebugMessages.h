@@ -4,7 +4,7 @@
 #include <fstream>
 #include "../MaloWLib/Malow.h"
 
-static bool eraseFile = false;
+//static bool eraseFile = false;
 
 namespace DebugMsg
 {
