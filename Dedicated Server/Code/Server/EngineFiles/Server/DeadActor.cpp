@@ -12,7 +12,10 @@ DeadActor::DeadActor( const bool genID /*= false*/ ) : Actor()
 
 DeadActor::~DeadActor()
 {
-
+	for (auto it = this->zItems.begin(); it < this->zItems.end(); it++)
+	{
+		SAFE_DELETE(*it);
+	}
 }
 
 Item* DeadActor::GetItemAt( const int Index ) const

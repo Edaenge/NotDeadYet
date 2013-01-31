@@ -139,6 +139,16 @@ bool ActorHandler::AddNewAnimalActor(AnimalActor* new_animal)
 	return true;
 }
 
+bool ActorHandler::AddNewDeadAnimal( DeadAnimalObjectActor* new_DeadAnimal )
+{
+	if (!new_DeadAnimal)
+		return false;
+
+	this->zDeadAnimals.push_back(new_DeadAnimal);
+
+	return true;
+}
+
 bool ActorHandler::AddNewStaticFoodActor(FoodObject* new_Food)
 {
 	if(!new_Food)
@@ -289,6 +299,22 @@ bool ActorHandler::RemoveAnimalActor(const long ID)
 	return true;
 }
 
+bool ActorHandler::RemoveDeadAnimalObject( const long ID )
+{
+	int index = this->SearchForActor(ID, ACTOR_TYPE_DEAD_ANIMAL);
+
+	if(index == -1 || (unsigned int)index >= this->zDeadPlayers.size())
+		return false;
+
+	DeadAnimalObjectActor* temp = this->zDeadAnimals[index];
+
+	this->zDeadAnimals.erase(this->zDeadAnimals.begin() + index);
+
+	SAFE_DELETE(temp);
+
+	return true;
+}
+
 bool ActorHandler::RemoveStaticFoodActor(const long ID)
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_FOOD);
@@ -414,6 +440,15 @@ const int ActorHandler::SearchForActor(const long ID, int TYPE) const
 
 	}
 
+	else if(TYPE == ACTOR_TYPE_DEAD_ANIMAL)
+	{
+		for (unsigned int it = 0; it < this->zDeadAnimals.size(); it++)
+		{
+			if(this->zDeadAnimals[it]->GetID() == ID)
+				return it;
+		}
+	}
+
 	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_FOOD)
 	{
 		for (unsigned int it = 0; it < this->zFoods.size(); it++)
@@ -505,6 +540,18 @@ const int ActorHandler::SearchForActor(const long ID, int TYPE, Actor** aOut) co
 			if(this->zAnimals[it]->GetID() == ID)
 			{
 				*aOut = this->zAnimals[it];
+				return it;
+			}
+		}
+	}
+
+	else if(TYPE == ACTOR_TYPE_DEAD_ANIMAL)
+	{
+		for (unsigned int it = 0; it < this->zDeadAnimals.size(); it++)
+		{
+			if(this->zDeadAnimals[it]->GetID() == ID)
+			{
+				*aOut = this->zDeadAnimals[it];
 				return it;
 			}
 		}

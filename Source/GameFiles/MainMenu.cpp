@@ -19,6 +19,7 @@ MainMenu::~MainMenu()
 	zSets = NULL;
 	SAFE_DELETE(this->zGame);
 }
+
 void MainMenu::StartTestRun()
 {
 	int clientErrorCode;

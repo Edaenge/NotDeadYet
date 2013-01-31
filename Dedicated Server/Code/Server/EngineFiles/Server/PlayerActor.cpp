@@ -336,7 +336,7 @@ std::string PlayerActor::ToMessageString( NetworkMessageConverter* NMC )
 	string msg = "";
 	msg = BioActor::ToMessageString(NMC);
 
-	msg += NMC->Convert(MESSAGE_TYPE_STATE, this->zState);
+	msg += NMC->Convert(MESSAGE_TYPE_STATE, (float)this->zState);
 	//msg += NMC->Convert(MESSAGE_TYPE_FRAME_TIME, this->zFrameTime);
 
 	if(zHungerChanged)

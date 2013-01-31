@@ -11,7 +11,10 @@ DeadAnimalObjectActor::DeadAnimalObjectActor( const bool genID /*= false*/ ) : D
 
 DeadAnimalObjectActor::~DeadAnimalObjectActor()
 {
-
+	for (auto it = this->zItems.begin(); it < this->zItems.end(); it++)
+	{
+		SAFE_DELETE(*it);
+	}
 }
 
 bool DeadAnimalObjectActor::GenerateDrop(Item* food)
@@ -24,13 +27,15 @@ bool DeadAnimalObjectActor::GenerateDrop(Item* food)
 	if(!fo)
 		return false;
 
-	int nrOfItem = (rand() % 1 + MAX_DROP) + 1;
+	int nrOfItems = (rand() % 1 + MAX_DROP) + 1;
 
-	for (int i = 0; i < nrOfItem; i++)
+	for (int i = 0; i < nrOfItems; i++)
 	{
-		
+		Food* new_food = new Food(fo);
+		new_food->SetItemID(GenerateID());
+
+		this->zItems.push_back(new_food);
 	}
 
 	return true;
 }
-

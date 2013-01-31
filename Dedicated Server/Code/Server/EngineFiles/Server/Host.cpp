@@ -520,6 +520,29 @@ void Host::HandleNewConnections()
 
 	}
 
+	//Dead animals
+	std::vector<DeadAnimalObjectActor*> deadAnimals = this->zActorHandler->GetDeadAnimals();
+	for (auto it = deadAnimals.begin(); it < deadAnimals.end(); it++)
+	{
+		message = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_DEAD_ANIMAL_OBJECT, (float)(*it)->GetID());
+		message += (*it)->ToMessageString(&this->zMessageConverter);
+		message += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
+		
+		std::vector<Item*> dead_animal_drop = (*it)->GetItems();
+		Food* food;
+		for (auto it_items = dead_animal_drop.begin(); it_items < dead_animal_drop.end(); it_items++)
+		{
+			food = dynamic_cast<Food*>((*it_items));
+			
+			message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_ANIMAL_ADD_ITEM, (float)food->GetID());
+			
+			message += food->ToMessageString(&this->zMessageConverter);
+
+			message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_ANIMAL_ITEM_FINISHED);
+		}
+		temp.push_back(message);
+	}
+
 	//Sends All Actors to the player
 	for (auto it = temp.begin(); it < temp.end(); it++)
 	{
@@ -827,7 +850,6 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 	(*dpoActor)->SetPosition(pActor->GetPosition());
 	
 	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_DEAD_PLAYER_OBJECT, (float)(*dpoActor)->GetID());
-	
 	msg += (*dpoActor)->ToMessageString(&this->zMessageConverter);
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*dpoActor)->GetActorModel());
 
@@ -979,6 +1001,65 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 	}
 
 	(*dpoActor)->SetItems(items);
+
+	return msg;
+}
+
+std::string Host::CreateDeadAnimalObject( AnimalActor* aAnimal, DeadAnimalObjectActor** daoActor )
+{
+	(*daoActor) = new DeadAnimalObjectActor(true);
+
+	std::string path = aAnimal->GetActorModel();	
+
+	//Rotate the object
+	Vector3 up = Vector3(0, 1, 0);
+	Vector3 forward = Vector3(0, 0, 1);
+	forward.y = 0;
+	Vector3 around = up.GetCrossProduct(forward);
+	around.Normalize();
+	float angle = 3.14f * 0.5f;
+
+	PhysicsObject* aObj = aAnimal->GetPhysicObject();
+
+	aObj->SetQuaternion(Vector4(0, 0, 0, 1));
+	aObj->RotateAxis(around, angle);
+
+	//Set information
+	(*daoActor)->SetPosition(aAnimal->GetPosition());
+	(*daoActor)->SetRotation(aAnimal->GetRotation());
+	(*daoActor)->SetScale(aAnimal->GetScale());
+	(*daoActor)->SetActorModel(path);
+
+	//Creates a default item.
+	Item* food = CreateItemFromDefault(OBJECT_TYPE_FOOD_DEER_MEAT);
+
+	//Generates food drops for the dead animal.
+	if (!(*daoActor)->GenerateDrop(food))
+	{
+		MaloW::Debug("GenerateDrop returned false in CreateDeadAnimalObject.");
+		SAFE_DELETE(food);
+
+		return "";
+	}
+
+	//Creates a message to notify clients about the dead animal.
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_DEAD_ANIMAL_OBJECT, (float)(*daoActor)->GetID());
+	msg += (*daoActor)->ToMessageString(&this->zMessageConverter);
+	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*daoActor)->GetActorModel());
+
+	//Gather food information from the copy.
+	std::string temp_msg = food->ToMessageString(&this->zMessageConverter);
+	std::string temp_msg_finished = this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+
+	unsigned int size = (*daoActor)->GetItems().size();
+
+	for (unsigned int i = 0; i < size-1; i++)
+	{
+		msg += temp_msg;
+		msg += temp_msg_finished;
+	}
+
+	SAFE_DELETE(food);
 
 	return msg;
 }
@@ -1639,6 +1720,7 @@ void Host::OnBioActorRemove( BioActor* actor )
 	PlayerActor* pActor = NULL;
 	AnimalActor* aActor = NULL;
 	DeadPlayerObjectActor* dpoActor = NULL;
+	DeadAnimalObjectActor* daoActor = NULL;
 	std::string msg = "";
 
 	if(type == ACTOR_TYPE_PLAYER)
@@ -1649,7 +1731,7 @@ void Host::OnBioActorRemove( BioActor* actor )
 	else if(type == ACTOR_TYPE_ANIMAL)
 	{
 		aActor = dynamic_cast<AnimalActor*>(actor);
-		//DEAD_ANIMAL
+		msg = this->CreateDeadAnimalObject(aActor, &daoActor);
 	}
 	else
 		return;
@@ -1682,6 +1764,7 @@ void Host::OnBioActorDeath( BioActor* actor )
 	else if(type == ACTOR_TYPE_ANIMAL)
 	{
 		messageType = MESSAGE_TYPE_DEAD_ANIMAL;
+		this->zActorHandler->RemoveAnimalActor(actor->GetID());
 	}
 	else
 	{

@@ -10,6 +10,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "PlayerActor.h"
 #include "ObjectManager.h"
 #include "DeadPlayerObjectActor.h"
+#include "DeadAnimalObjectActor.h"
 #include "DynamicProjectileObject.h"
 #include "Safe.h"
 #include "PhysicsEngine.h"
@@ -78,10 +79,7 @@ public:
 	bool RemovePlayerActor(const long ID);
 	/*! Returns Player Objects.*/
 	inline const std::vector<PlayerActor*>& GetPlayers() const {return this->zPlayers;}
-	/*! Adds new actor.
-		NOTE: Physic mesh will not be created in this function.
-		You have to do it manually.
-	*/
+	/*! Adds new dead actor.*/
 	bool AddNewDeadPlayer(DeadPlayerObjectActor* new_DeadPlayer);
 	/*! Removes the Dead Player Object*/
 	bool RemovedDeadPlayerObject(const long ID);
@@ -95,10 +93,16 @@ public:
 		NOTE: Physic mesh will not be created in this function.
 		You have to do it manually.
 	*/
-	bool AddNewAnimalActor(AnimalActor* new_player);	/*! Removes the Animal Object.*/
+	bool AddNewAnimalActor(AnimalActor* new_player);	
+	/*! Removes the Animal Object.*/
 	bool RemoveAnimalActor(const long ID);
 	/*! Returns Animals.*/
 	inline const std::vector<AnimalActor*>& GetAnimals() const {return this->zAnimals;}
+	/*! Adds new dead animal*/
+	bool AddNewDeadAnimal(DeadAnimalObjectActor* new_DeadAnimal);
+	/*! Removes a dead animal.*/
+	bool RemoveDeadAnimalObject(const long ID);
+	inline const std::vector<DeadAnimalObjectActor*>& GetDeadAnimals() const {return this->zDeadAnimals;}
 
 ////////////////////////////////
 //			Objects		     //
@@ -162,6 +166,7 @@ private:
 	std::vector<MaterialObject*> zMaterials;
 	std::vector<ContainerObject*> zContainers;
 	std::vector<DeadPlayerObjectActor*> zDeadPlayers;
+	std::vector<DeadAnimalObjectActor*> zDeadAnimals;
 	std::vector<StaticProjectileObject*> zStaticProjectiles;
 	std::vector<DynamicProjectileObject*> zDynamicProjectiles;
 };

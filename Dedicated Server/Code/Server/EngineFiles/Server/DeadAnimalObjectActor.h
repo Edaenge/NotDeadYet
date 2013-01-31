@@ -15,6 +15,10 @@ public:
 	DeadAnimalObjectActor(const bool genID = false);
 	virtual ~DeadAnimalObjectActor();
 
+	/*! Generates food drops.
+		It copies food and create n new foods.
+		food will not be de-allocated inside the function.
+	*/
 	bool GenerateDrop(Item* food);
 
 private:

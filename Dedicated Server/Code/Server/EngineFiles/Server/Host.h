@@ -7,7 +7,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "Process.h"
 #include "ServerListener.h"
-#include "PlayerActor.h"
 #include "ActorHandler.h"
 #include "ClientData.h"
 #include "World.h"
@@ -145,6 +144,8 @@ private:
 	bool CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID = false);
 	/*! Creates a Dead Player*/
 	std::string CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectActor** dpoActor);
+	/*! Creates a Dead Animal*/
+	std::string CreateDeadAnimalObject(AnimalActor* aAnimal, DeadAnimalObjectActor** daoActor);
 
 	void HandleConversion(DynamicProjectileObject* dynamicProjObj);
 	
