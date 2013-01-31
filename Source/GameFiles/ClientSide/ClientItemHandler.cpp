@@ -217,6 +217,10 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		*/
 		eq->EquipRangedWeapon(rWpn);
 
+		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetStackSize(), 
+			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType());
+
+		this->zGuiManager->EquipItem(RANGED, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
 
 		return;
@@ -282,6 +286,10 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		this->zPlayerInventory->EraseItem(rWpn->GetID());
 		eq->EquipRangedWeapon(rWpn);
 
+		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetStackSize(), 
+			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType());
+
+		this->zGuiManager->EquipItem(RANGED, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
 
 		return;
@@ -331,6 +339,10 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		this->zPlayerInventory->EraseItem(projectile->GetID());
 		eq->EquipProjectile(projectile);
 
+		Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
+			projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType());
+
+		this->zGuiManager->EquipItem(PROJECTILE, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID(), projectile->GetStackSize());
 
 		return;
@@ -357,6 +369,10 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		this->zPlayerInventory->EraseItem(mWpn->GetID());
 		eq->EquipMeleeWeapon(mWpn);
 
+		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), mWpn->GetStackSize(), 
+			mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType());
+
+		this->zGuiManager->EquipItem(MELEE, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID(), mWpn->GetStackSize());
 
 		return;
@@ -389,6 +405,7 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 						projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType());
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
+					this->zGuiManager->UnEquipItem(projectile->GetID(), projectile->GetStackSize());
 
 					eq->UnEquipProjectile();
 					return true;
@@ -420,6 +437,7 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 						wpn->GetItemName(), wpn->GetIconPath(), wpn->GetItemDescription(), wpn->GetItemType());
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
+					this->zGuiManager->UnEquipItem(wpn->GetID(), 0);
 
 					eq->UnEquipRangedWeapon();
 					return false;
@@ -447,6 +465,7 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 						wpn->GetItemName(), wpn->GetIconPath(), wpn->GetItemDescription(), wpn->GetItemType());
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
+					this->zGuiManager->UnEquipItem(wpn->GetID(), 0);
 
 					eq->UnEquipMeleeWeapon();
 					return false;
