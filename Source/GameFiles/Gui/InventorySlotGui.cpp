@@ -108,3 +108,8 @@ void InventorySlotGui::SetPosition( Vector2 pos )
 		this->zStackText->SetPosition(pos);
 	GuiElement::SetPosition(pos);
 }
+
+void InventorySlotGui::SetDimension( Vector2 dim )
+{
+	GuiElement::SetDimension(dim);
+}

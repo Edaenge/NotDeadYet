@@ -1,6 +1,14 @@
 #include "GameFiles/Gui/InventoryGui.h"
 #include "../../MaloWLib/Safe.h"
 
+
+static const float SLOTIMAGEWIDTH = 50.0f;
+static const float SLOTIMAGEHEIGHT = 50.0f;
+static const float PADDING = 12.0f;
+static const float XOFFSETINV = 32.0f;
+static const float YOFFSETINV = 206.0f;
+static const float YOFFSETEQ = 62.0f;
+
 InventoryGui::InventoryGui()
 {
 	zPressed = false;
@@ -13,12 +21,12 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 	float windowHeight = (float)(GetGraphics()->GetEngineParameters()->windowHeight);
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 
-	float startOffsetX = (32.0f / 1024.0f) * dx;
-	float startOffsetY = (206.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
-	this->zSlotImageWidth = (50.0f / 1024.0f) * dx;
-	this->zSlotImageHeight = (50.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
-	float paddingX = (12.0f / 1024.0f) * dx;
-	float paddingY = (12.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	float startOffsetX = (XOFFSETINV / 1024.0f) * dx;
+	float startOffsetY = (YOFFSETINV / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	this->zSlotImageWidth = (SLOTIMAGEWIDTH / 1024.0f) * dx;
+	this->zSlotImageHeight = (SLOTIMAGEHEIGHT / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	float paddingX = (PADDING / 1024.0f) * dx;
+	float paddingY = (PADDING / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
 	float xTemp = this->zX + startOffsetX;
 	float yTemp = this->zY + startOffsetY;
 	zSlotPositions[0] = Vector2(xTemp, yTemp);
@@ -35,10 +43,10 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 			row++;
 			col = 0;
 		}
-		
+
 		zSlotPositions[i] = Vector2(xTemp, yTemp);
 	}
-	startOffsetY = (62.0f / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	startOffsetY = (YOFFSETEQ / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
 	xTemp = this->zX + (94.0f / 1024.0f) * dx;
 	zWeaponSlots[0] = Vector2(xTemp, startOffsetY);
 
@@ -259,4 +267,82 @@ void InventoryGui::UnEquipItem( const int ID, int stacks )
 			InvGui = NULL;
 		}
 	}
+}
+
+void InventoryGui::Resize(float windowWidth, float windowHeight, float dx)
+{
+	// Calcs that is needed for resize
+	float startOffsetX = (XOFFSETINV / 1024.0f) * dx;
+	float startOffsetY = (YOFFSETINV / 768.0f) * windowHeight;
+	this->zSlotImageWidth = (SLOTIMAGEWIDTH / 1024.0f) * dx;
+	this->zSlotImageHeight = (SLOTIMAGEHEIGHT / 768.0f) * windowHeight;
+	float paddingX = (PADDING / 1024.0f) * dx;
+	float paddingY = (PADDING / 768.0f) * windowHeight;
+	float xTemp = this->zX + startOffsetX;
+	float yTemp = this->zY + startOffsetY;
+	Vector2 newSlotPositions[SLOTS];
+	newSlotPositions[0] = Vector2(xTemp, yTemp);
+	int row = 0;
+	int col = 1;
+
+	
+	// Adding slot positions to lookup table
+	for(int i = 1; i < SLOTS; i++)
+	{
+		xTemp = this->zX + startOffsetX + (zSlotImageWidth + paddingX) * col;
+		col++;
+		yTemp = this->zY + startOffsetY + (zSlotImageHeight + paddingY) * row;
+
+		if(col >= COL)
+		{
+			row++;
+			col = 0;
+		}
+
+		newSlotPositions[i] = Vector2(xTemp, yTemp);
+	}
+	// Moving and resizeing
+	InventorySlotGui* isg;
+	for(int i = 0; i < this->zSlotGui.size(); i++)
+	{
+		isg = zSlotGui.at(i);
+		for(int k = 0; k < SLOTS; k++)
+		{
+			if(isg->GetPosition() == zSlotPositions[k])
+			{
+				isg->SetPosition(newSlotPositions[k]);
+				isg->SetDimension(Vector2(zSlotImageWidth, zSlotImageHeight));
+			}
+		}
+	}
+	for(int i = 0; i < SLOTS; i++)
+		zSlotPositions[i] = newSlotPositions[i];
+
+	Vector2 newWeaponSlots[WEAPONSLOTS];
+
+	startOffsetY = (YOFFSETEQ / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	xTemp = this->zX + (94.0f / 1024.0f) * dx;
+	newWeaponSlots[0] = Vector2(xTemp, startOffsetY);
+
+	xTemp = this->zX + (208.0f / 1024.0f) * dx;
+	newWeaponSlots[1] = Vector2(xTemp, startOffsetY);
+
+	xTemp = this->zX + (342.0f / 1024.0f) * dx;
+	newWeaponSlots[2] = Vector2(xTemp, startOffsetY);
+	for(int i = 0; i < this->zWeaponSlotGui.size(); i++)
+	{
+		for(int k = 0; k < WEAPONSLOTS; k++)
+		{
+			isg = this->zWeaponSlotGui.at(i);
+			if(isg->GetPosition() == zWeaponSlots[k])
+			{
+				isg->SetPosition(newWeaponSlots[k]);
+				isg->SetDimension(Vector2(zSlotImageWidth, zSlotImageHeight));
+			}
+		}
+	}
+	for(int k = 0; k < WEAPONSLOTS; k++)
+		zWeaponSlots[k] = newWeaponSlots[k];
+
+	int i = 0;
 }

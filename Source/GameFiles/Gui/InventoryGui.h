@@ -9,6 +9,11 @@
 #include "GameFiles/Gui/InventorySlotGui.h"
 #include <vector>
 
+static const int ROWS = 7;
+static const int COL = 7;
+static const int WEAPONSLOTS = 3;
+static const int SLOTS = ROWS * COL;
+
 struct Gui_Item_Data
 {
 	Gui_Item_Data()
@@ -43,11 +48,6 @@ struct Gui_Item_Data
 	bool zPressed;
 };
 
-const int ROWS = 7;
-const int COL = 7;
-const int WEAPONSLOTS = 3;
-const int SLOTS = ROWS * COL;
-
 enum EQUIPITEMTYPE{
 	MELEE,
 	RANGED,
@@ -73,6 +73,8 @@ public:
 	void ShowGui();
 	void HideGui();
 	std::string GetImageName(unsigned int position);
+
+	void Resize(float windowWidth, float windowHeight, float dx);
 private:
 	std::vector<InventorySlotGui*> zSlotGui;
 	std::vector<InventorySlotGui*> zWeaponSlotGui;
