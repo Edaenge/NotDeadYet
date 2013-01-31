@@ -163,7 +163,7 @@ private:
 	void HandleUseItem(const long ID);
 	void DisplayMessageToClient(const std::string& msg);
 	void HandleEquipItem(const long ItemID, const int Slot);
-	void HandleUnEquipItem(const long ItemID, const int Slot);
+	bool HandleUnEquipItem(const long ItemID, const int Slot);
 	void SendUnEquipItem(const long ID, const int Slot);
 	void HandleRemoveEquipment(const long ItemID, const int Slot);
 	void HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, const int type);

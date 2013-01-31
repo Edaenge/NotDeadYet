@@ -16,13 +16,13 @@ MainMenu::MainMenu()
 MainMenu::~MainMenu()
 {
 	delete [] zSets;
-
+	zSets = NULL;
 	SAFE_DELETE(this->zGame);
 }
 
 void MainMenu::Run()
 {
-	bool proModeOrNot = true; // CHANGE HERE!!!!!!!
+	bool proModeOrNot = false; // CHANGE HERE!!!!!!!
 	if(!proModeOrNot)
 	{
 		this->StartTestRun();

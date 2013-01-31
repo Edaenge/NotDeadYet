@@ -13,7 +13,7 @@ void Client::HandleWeaponUse(const long ID)
 	}
 	Equipment* eq = player->GetEquipmentPtr();
 
-	Weapon* weapon = eq->GetWeapon();
+	Weapon* weapon = eq->GetRangedWeapon();
 	if (!weapon)
 	{
 		MaloW::Debug("No Weapon Is Equipped");
@@ -144,9 +144,9 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
 	{
-		if (Slot != EQUIPMENT_SLOT_WEAPON)
+		if (Slot != EQUIPMENT_SLOT_RANGED_WEAPON)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + "!= Slot: " + MaloW::convertNrToString((float)Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon ID: " + MaloW::convertNrToString(EQUIPMENT_SLOT_RANGED_WEAPON) + "!= Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 		RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item);
@@ -158,12 +158,18 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 		Equipment* eq = player->GetEquipmentPtr();
 
-		Weapon* oldWeapon = eq->GetWeapon();
+		this->zPlayerInventory->EraseItem(rWpn->GetID());
+
+		/*Weapon* oldWeapon = eq->GetWeapon();
 
 		if (oldWeapon)
 		{
-			//HandleUnEquipItem(oldWeapon->GetID(), EQUIPMENT_SLOT_WEAPON);
-			if(this->zPlayerInventory->AddItem(oldWeapon))
+			if(!HandleUnEquipItem(oldWeapon->GetID(), EQUIPMENT_SLOT_WEAPON))
+			{
+				this->zPlayerInventory->AddItem(rWpn);
+				return;
+			}
+			/*if(this->zPlayerInventory->AddItem(oldWeapon))
 			{
 				int stack = 0;
 				if (oldWeapon->GetStacking())
@@ -181,42 +187,49 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 				MaloW::Debug("Failed to add Equipped weapon to inventory");
 				return;
 			}
-			Projectile* projectile = eq->GetProjectile();
+		}
+		Projectile* projectile = eq->GetProjectile();
 
-			if (projectile)
+		if (projectile)
+		{
+			if (projectile->GetItemType() != ITEM_TYPE_PROJECTILE_ARROW)
 			{
-				if (projectile->GetItemType() != ITEM_TYPE_PROJECTILE_ARROW)
+				if(!HandleUnEquipItem(projectile->GetID(), EQUIPMENT_SLOT_AMMO))
 				{
-					//HandleUnEquipItem(projectile->GetID(), EQUIPMENT_SLOT_AMMO);
-					if(this->zPlayerInventory->AddItem(projectile))
-					{
-						Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(),
-							projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType());
+					return;
+				}
+				/*if(this->zPlayerInventory->AddItem(projectile))
+				{
+					Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(),
+						projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType());
 
-						this->zGuiManager->AddInventoryItemToGui(gid);
-						
-						eq->UnEquipProjectile();
-					}
-					else
-					{
-						MaloW::Debug("Failed to add Equipped projectile to inventory");
-						return;
-					}
+					this->zGuiManager->AddInventoryItemToGui(gid);
+
+					eq->UnEquipProjectile();
+				}
+				else
+				{
+					MaloW::Debug("Failed to add Equipped projectile to inventory");
+					return;
 				}
 			}
 		}
-		this->zPlayerInventory->EraseItem(rWpn->GetID());
-		eq->EquipWeapon(rWpn);
+		*/
+		eq->EquipRangedWeapon(rWpn);
 
+		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetStackSize(), 
+			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType());
+
+		this->zGuiManager->EquipItem(RANGED, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
 
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
 	{
-		if (Slot != EQUIPMENT_SLOT_WEAPON)
+		if (Slot != EQUIPMENT_SLOT_RANGED_WEAPON)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + " != Slot: " + MaloW::convertNrToString((float)Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon: " + MaloW::convertNrToString(EQUIPMENT_SLOT_RANGED_WEAPON) + " != Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 
@@ -229,7 +242,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 		Equipment* eq = player->GetEquipmentPtr();
 
-		Weapon* oldWeapon = eq->GetWeapon();
+		/*Weapon* oldWeapon = eq->GetWeapon();
 
 		if (oldWeapon)
 		{
@@ -269,10 +282,14 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 				MaloW::Debug("Failed to add Equipped projectile to inventory");
 				return;
 			}
-		}
+		}*/
 		this->zPlayerInventory->EraseItem(rWpn->GetID());
-		eq->EquipWeapon(rWpn);
+		eq->EquipRangedWeapon(rWpn);
 
+		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetStackSize(), 
+			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType());
+
+		this->zGuiManager->EquipItem(RANGED, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
 
 		return;
@@ -322,15 +339,19 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		this->zPlayerInventory->EraseItem(projectile->GetID());
 		eq->EquipProjectile(projectile);
 
+		Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
+			projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType());
+
+		this->zGuiManager->EquipItem(PROJECTILE, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID(), projectile->GetStackSize());
 
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE || item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE)
 	{
-		if (Slot != EQUIPMENT_SLOT_WEAPON)
+		if (Slot != EQUIPMENT_SLOT_MELEE_WEAPON)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon: " + MaloW::convertNrToString(EQUIPMENT_SLOT_WEAPON) + " != Slot: " + MaloW::convertNrToString((float)Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon: " + MaloW::convertNrToString(EQUIPMENT_SLOT_RANGED_WEAPON) + " != Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 
@@ -344,60 +365,28 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 		Equipment* eq = player->GetEquipmentPtr();
 
-		Weapon* oldWeapon = eq->GetWeapon();
 
-		if (oldWeapon)
-		{
-			if(this->zPlayerInventory->AddItem(oldWeapon))
-			{
-				Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), 0, mWpn->GetItemName(), 
-					mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType());
-
-				this->zGuiManager->AddInventoryItemToGui(gid);
-
-				eq->UnEquipWeapon();	
-			}
-			else
-			{
-				MaloW::Debug("Failed to add Equipped weapon to inventory");
-				return;
-			}
-		}
-		Projectile* oldProjectile = eq->GetProjectile();
-		if (oldProjectile)
-		{
-			if(this->zPlayerInventory->AddItem(oldProjectile))
-			{
-				Gui_Item_Data gid = Gui_Item_Data(oldProjectile->GetID(), oldProjectile->GetWeight(), oldProjectile->GetStackSize(),
-					oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType());
-
-				this->zGuiManager->AddInventoryItemToGui(gid);
-
-				eq->UnEquipProjectile();
-			}
-			else
-			{
-				MaloW::Debug("Failed to add Equipped projectile to inventory");
-				return;
-			}
-		}
 		this->zPlayerInventory->EraseItem(mWpn->GetID());
-		eq->EquipWeapon(mWpn);
+		eq->EquipMeleeWeapon(mWpn);
 
+		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), mWpn->GetStackSize(), 
+			mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType());
+
+		this->zGuiManager->EquipItem(MELEE, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID(), mWpn->GetStackSize());
 
 		return;
 	}
 }
 
-void Client::HandleUnEquipItem(const long ItemID, const int Slot)
+bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 {
 	PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 
 	if (!pObject)
 	{
 		MaloW::Debug("Client: this Player cant be found");
-		return;
+		return false;
 	}
 
 	Equipment* eq = pObject->GetEquipmentPtr();
@@ -416,20 +405,23 @@ void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 						projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType());
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
+					this->zGuiManager->UnEquipItem(projectile->GetID(), projectile->GetStackSize());
 
 					eq->UnEquipProjectile();
-					return;
+					return true;
 				}
-				return;
+				return false;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString((float)ItemID));
+			return false;
 		}
 		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
+		return false;
 	}
 
-	if (Slot == EQUIPMENT_SLOT_WEAPON)
+	if (Slot == EQUIPMENT_SLOT_RANGED_WEAPON)
 	{
-		Weapon* wpn = eq->GetWeapon();
+		Weapon* wpn = eq->GetRangedWeapon();
 
 		if (wpn)
 		{
@@ -439,22 +431,52 @@ void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 				{
 					int stacks = 0;
 					if (wpn->GetStacking())
-					{
 						stacks = wpn->GetStackSize();
-					}
+					
 					Gui_Item_Data gid = Gui_Item_Data(wpn->GetID(), wpn->GetWeight(), stacks, 
 						wpn->GetItemName(), wpn->GetIconPath(), wpn->GetItemDescription(), wpn->GetItemType());
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
+					this->zGuiManager->UnEquipItem(wpn->GetID(), 0);
 
-					eq->UnEquipWeapon();
-					return;
+					eq->UnEquipRangedWeapon();
+					return false;
 				}
-				return;
+				return true;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString((float)ItemID));
+			return false;
 		}
 		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
+		return false;
+	}
+
+	if (Slot == EQUIPMENT_SLOT_MELEE_WEAPON)
+	{
+		Weapon* wpn = eq->GetMeleeWeapon();
+
+		if (wpn)
+		{
+			if (wpn->GetID() == ItemID)
+			{
+				if(this->zPlayerInventory->AddItem(wpn))
+				{
+					Gui_Item_Data gid = Gui_Item_Data(wpn->GetID(), wpn->GetWeight(), 0, 
+						wpn->GetItemName(), wpn->GetIconPath(), wpn->GetItemDescription(), wpn->GetItemType());
+
+					this->zGuiManager->AddInventoryItemToGui(gid);
+					this->zGuiManager->UnEquipItem(wpn->GetID(), 0);
+
+					eq->UnEquipMeleeWeapon();
+					return false;
+				}
+				return true;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString((float)ItemID));
+			return false;
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
+		return false;
 	}
 
 	if (Slot == EQUIPMENT_SLOT_HEAD)
@@ -474,13 +496,14 @@ void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
 
-					return;
+					return true;
 				}
-				return;
+				return false;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Head Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
 		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
+		return false;
 	}
 
 	if (Slot == EQUIPMENT_SLOT_CHEST)
@@ -500,13 +523,14 @@ void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
 
-					return;
+					return true;
 				}
-				return;
+				return false;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Chest Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
 		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
+		return false;
 	}
 
 	if (Slot == EQUIPMENT_SLOT_LEGS)
@@ -526,13 +550,14 @@ void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
 
-					return;
+					return true;
 				}
-				return;
+				return false;;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Legs Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
 		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
+		return false;
 	}
 
 	if (Slot == EQUIPMENT_SLOT_BOOTS)
@@ -552,25 +577,26 @@ void Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
 
-					return;
+					return true;
 				}
-				return;
+				return false;;
 			}
 			MaloW::Debug("Item With ID doesn't exist in Boots Slot ID: " + MaloW::convertNrToString((float)ItemID));
 		}
 		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
+		return false;
 	}
 }
 
 void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 {
-	if (Slot == EQUIPMENT_SLOT_WEAPON)
+	if (Slot == EQUIPMENT_SLOT_RANGED_WEAPON)
 	{
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 
 		Equipment* eq = player->GetEquipmentPtr();
 
-		Weapon* weapon = eq->GetWeapon();
+		Weapon* weapon = eq->GetRangedWeapon();
 
 		if (weapon)
 		{
@@ -582,10 +608,33 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 				delete weapon;
 				weapon = NULL;
 
-				eq->UnEquipWeapon();
+				eq->UnEquipRangedWeapon();
 			}
 		}
+		return;
+	}
 
+	if (Slot == EQUIPMENT_SLOT_MELEE_WEAPON)
+	{
+		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
+
+		Equipment* eq = player->GetEquipmentPtr();
+
+		Weapon* weapon = eq->GetMeleeWeapon();
+
+		if (weapon)
+		{
+			if (ItemID == weapon->GetID())
+			{
+				if (Messages::FileWrite())
+					Messages::Debug("Weapon UnEquipped " + weapon->GetItemName() + " ID: " + MaloW::convertNrToString((float)weapon->GetID()));
+
+				delete weapon;
+				weapon = NULL;
+
+				eq->UnEquipRangedWeapon();
+			}
+		}
 		return;
 	}
 

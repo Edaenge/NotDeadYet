@@ -45,8 +45,14 @@ struct Gui_Item_Data
 
 const int ROWS = 7;
 const int COL = 7;
+const int WEAPONSLOTS = 3;
 const int SLOTS = ROWS * COL;
 
+enum EQUIPITEMTYPE{
+	MELEE,
+	RANGED,
+	PROJECTILE
+};
 class InventoryGui : public GuiElement
 {
 public:
@@ -60,6 +66,8 @@ public:
 	int CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 	bool AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	bool RemoveItemFromGui(const int ID, int stacks);
+	void EquipItem(int type, const Gui_Item_Data gid);
+	void UnEquipItem(const int ID, int stacks);
 
 	void FadeOut(float value);
 	void ShowGui();
@@ -67,5 +75,9 @@ public:
 	std::string GetImageName(unsigned int position);
 private:
 	std::vector<InventorySlotGui*> zSlotGui;
+	std::vector<InventorySlotGui*> zWeaponSlotGui;
 	Vector2 zSlotPositions[SLOTS];
+	Vector2 zWeaponSlots[WEAPONSLOTS];
+	float zSlotImageWidth;
+	float zSlotImageHeight;
 };

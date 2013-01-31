@@ -36,7 +36,6 @@ public:
 		This function DO NOT deallocates the Actor object.
 	*/
 	bool PickUpObject(StaticObjectActor* object);
-	bool PickUpObject(DynamicObjectActor* object);
 	/*! */
 	bool DropObject(const long ID);
 	/*! Adds a message string with health,stamina,hunger, hydration to mess.

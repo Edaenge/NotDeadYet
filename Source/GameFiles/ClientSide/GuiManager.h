@@ -25,6 +25,8 @@ public:
 	void HideInventoryGui();
 	void AddInventoryItemToGui(const Gui_Item_Data gid);
 	void RemoveInventoryItemFromGui(const int ID, int stacks);
+	void EquipItem(int type, const Gui_Item_Data gid);
+	void UnEquipItem(const int ID, int stacks);
 	void ShowCircularItemGui();
 	void HideCircularItemGui();
 	void ShowLootingGui(std::vector<Gui_Item_Data> gui_Item_Data);
@@ -52,5 +54,5 @@ private:
 	InventoryGui* zInvGui;
 	CircularListGui* zInvCircGui;
 	//CircularListGui* zLootingGui;
-	GraphicsEngine* zGraphicEngine;
+	GraphicsEngine* zEng;
 };
