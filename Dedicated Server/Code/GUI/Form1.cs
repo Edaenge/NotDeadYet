@@ -43,7 +43,7 @@ namespace GUI
                 Run();
                 Application.DoEvents();
 
-                Thread.Sleep(1);
+                Thread.Sleep(100);
 
             }
         }

@@ -80,9 +80,9 @@ public:
 	/*! */
 	PhysicsObject* GetPhysicObject() const {return this->zPhysicObj;}
 
-	void AddChangedData(string& mess, NetworkMessageConverter* nmc);
-
 	virtual void Update(float deltaTime) = 0;
+	/*! Converts Pos, Rot, Scale to network message string.*/
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
 
 protected:
 	PhysicsObject* zPhysicObj;

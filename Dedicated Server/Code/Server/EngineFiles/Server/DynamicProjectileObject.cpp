@@ -6,6 +6,7 @@ DynamicProjectileObject::DynamicProjectileObject(const bool genID /*= true*/) : 
 	this->zSpeed = 5.0f;
 	this->zWeight = 1;
 	this->zMoving = true;
+	this->zActorType = ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE;
 }
 
 DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& other, bool genID)

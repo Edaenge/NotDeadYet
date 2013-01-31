@@ -8,11 +8,11 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "BioActor.h"
 #include "ObjectManager.h"
 #include "DynamicObjectActor.h"
-#include "../../../../../Source/GameFiles/KeyUtil/KeyValues.h"
-#include "../../../../../Source/GameFiles/KeyUtil/KeyStates.h"
-#include "../../../../../Source/GameFiles/Items/Inventory.h"
-#include "../../../../../Source/GameFiles/Items/Equipment.h"
-#include "../WorldFiles/WorldEvents.h"
+#include "KeyValues.h"
+#include "KeyStates.h"
+#include "Inventory.h"
+#include "Equipment.h"
+#include "WorldEvents.h"
 
 /*This class is used to save player information such as position and states.
   This information is sent to clients.
@@ -44,7 +44,6 @@ public:
 		If it has changed, we need to send it to the client.
 		The parameter string is a network message string.
 	*/
-	void AddChangedHData(string& mess, NetworkMessageConverter* nmc);
 
 	Item* GetItem(const long ID){return this->zInventory->SearchAndGetItem(ID);}
 	float GetLatency() const {return this->zLatency;}
@@ -74,6 +73,8 @@ public:
 	void SetEquipment(Equipment* eq) {this->zEquipment = eq;}
 	void EatFood(float hunger);
 	void Drink(float hydration);
+	/*! Returns Pos, Rot, Scale, Stamina, Health, State, Hunger, Hydration.*/
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
 private:
 	void InitValues();
 

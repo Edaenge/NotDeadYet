@@ -1,5 +1,5 @@
 #include "Host.h"
-#include "../../../../../Source/GameFiles/ClientServerMessages.h"
+#include "ClientServerMessages.h"
 // 50 updates per sec
 static const float UPDATE_DELAY = 0.020f;
 
@@ -381,16 +381,9 @@ void Host::HandleNewConnections()
 	//Gets Players Information
 	for(auto it = players.begin(); it < players.end(); it++)
 	{
-		Vector3 pos = (*it)->GetPosition();
-		Vector3 scale = (*it)->GetScale();
-		Vector4 rot = (*it)->GetRotation();
-
 		message =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, (float)(*it)->GetID());
-		message += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		message += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-		message += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		message += (*it)->ToMessageString(&this->zMessageConverter);
 		message += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
-		message += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)(*it)->GetState());
 
 		temp.push_back(message);
 	}
@@ -400,19 +393,12 @@ void Host::HandleNewConnections()
 	//Gets AnimalInformation
 	for(auto it = animals.begin(); it < animals.end(); it++)
 	{
-		Vector3 pos = (*it)->GetPosition();
-		Vector3 scale = (*it)->GetScale();
-		Vector4 rot = (*it)->GetRotation();
-
 		message =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_ANIMAL, (float)(*it)->GetID());
-		message += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		message += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-		message += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		message += (*it)->ToMessageString(&this->zMessageConverter);
 		message += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
-		message += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)(*it)->GetState());
+
 		temp.push_back(message);
 	}
-
 
 	this->GetExistingObjects(temp);
 
@@ -422,14 +408,7 @@ void Host::HandleNewConnections()
 	for (auto it = deadPlayers.begin(); it < deadPlayers.end(); it++)
 	{
 		message = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_DEAD_PLAYER_OBJECT, (float)(*it)->GetID());
-
-		Vector3 pos = (*it)->GetPosition();
-		Vector4 rot = (*it)->GetRotation();
-		Vector3 scale = (*it)->GetScale();
-
-		message += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		message += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-		message += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		message += (*it)->ToMessageString(&this->zMessageConverter);
 		message += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
 
 		items = (*it)->GetItems();
@@ -614,15 +593,8 @@ void Host::SendPlayerActorUpdates()
 	std::vector<PlayerActor*> pl = this->zActorHandler->GetPlayers();
 	for (auto it_Player = pl.begin(); it_Player < pl.end(); it_Player++)
 	{
-		Vector3 pos = (*it_Player)->GetPosition();
-		Vector4 rot = (*it_Player)->GetRotation();
-
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_PLAYER, (float)(*it_Player)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_FRAME_TIME, (*it_Player)->GetFrameTime());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)(*it_Player)->GetState());
-		(*it_Player)->AddChangedHData(mess, &this->zMessageConverter);
+		mess += (*it_Player)->ToMessageString(&this->zMessageConverter);
 
 		playerData.push_back(mess);
 	}
@@ -649,13 +621,8 @@ void Host::SendAnimalActorUpdates()
 	std::vector<AnimalActor*> al = this->zActorHandler->GetAnimals();
 	for (auto it_Animal = al.begin(); it_Animal < al.end(); it_Animal++)
 	{
-		Vector3 pos = (*it_Animal)->GetPosition();
-		Vector4 rot = (*it_Animal)->GetRotation();
-
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_ANIMAL, (float)(*it_Animal)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)(*it_Animal)->GetState());
+		mess += (*it_Animal)->ToMessageString(&this->zMessageConverter);
 
 		animalData.push_back(mess);
 	}
@@ -851,13 +818,7 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 	
 	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_DEAD_PLAYER_OBJECT, (float)(*dpoActor)->GetID());
 	
-	Vector3 pos = (*dpoActor)->GetPosition();
-	Vector4 rot = (*dpoActor)->GetRotation();
-	Vector3 scale = (*dpoActor)->GetScale();
-
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	msg += (*dpoActor)->ToMessageString(&this->zMessageConverter);
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*dpoActor)->GetActorModel());
 
 	std::vector<Item*> temp_items = inv->GetItems();
@@ -1191,10 +1152,8 @@ void Host::SendNewObjectMessage(AnimalActor* animalObj)
 	Vector3 scale = animalObj->GetScale();
 	Vector4 rot = animalObj->GetRotation();
 
-	msg  = this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-	msg +=  this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-	msg +=  this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-	msg +=  this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)animalObj->GetState());
+	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_ANIMAL, (float)animalObj->GetID());
+	msg += animalObj->ToMessageString(&this->zMessageConverter);
 	msg +=  this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, animalObj->GetActorModel());
 
 	this->SendToAllClients(msg, true);
@@ -1568,11 +1527,11 @@ void Host::UpdateObjects()
 
 	//Iterate players and see if they are dead.
 	std::vector<PlayerActor*> pActors = this->zActorHandler->GetPlayers();
-	Vector3 position;	for (auto it_player = pActors.begin(); it_player < pActors.end(); it_player++)
+	for (auto it_player = pActors.begin(); it_player < pActors.end(); it_player++)
 	{
 		if (!(*it_player)->IsAlive())
 		{
-			OnPlayerDeath((*it_player)->GetID());
+			OnBioActorDeath(*it_player);
 		}
 		else
 		{
@@ -1584,6 +1543,25 @@ void Host::UpdateObjects()
 		}
 	}
 
+	/*
+	//Iterate animals and see if they are dead.
+	std::vector<AnimalActor*> pActors = this->zActorHandler->GetAnimals();
+	for (auto it_animals = pActors.begin(); it_animals < pActors.end(); it_animals++)
+	{
+		if (!(*it_animals)->IsAlive())
+		{
+			OnPlayerDeath((*it_animals)->GetID());
+		}
+		else
+		{
+			//position = (*it_player)->GetPosition();
+			//if (this->zWorld->IsBlockingAt(position.GetXZ()))
+			//{
+			//	(*it_player)->RewindPosition();
+			//}
+		}
+	}
+	*/
 }
 
 bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
@@ -1607,8 +1585,8 @@ bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 		temp_c->SendM(mess);
 	}
 	//Create Dead Player Object
-	
-	OnPlayerRemove(ID);
+	BioActor* bActor = dynamic_cast<BioActor*>(this->zActorHandler->GetActor(ID, ACTOR_TYPE_PLAYER));
+	OnBioActorRemove(bActor);
 
 	//Create a remove player message.
 	mess = this->zMessageConverter.Convert(MESSAGE_TYPE_REMOVE_PLAYER, (float)ID);
@@ -1630,40 +1608,69 @@ bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 	return removed;
 }
 
-void Host::OnPlayerRemove(unsigned int ID)
+void Host::OnBioActorRemove( BioActor* actor )
 {
-	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActorHandler->GetActor(ID, ACTOR_TYPE_PLAYER));
-
-	if (!pActor)
+	if (!actor)
 		return;
 
+	int type = actor->GetActorType();
+	
+	PlayerActor* pActor = NULL;
+	AnimalActor* aActor = NULL;
 	DeadPlayerObjectActor* dpoActor = NULL;
+	std::string msg = "";
 
-	std::string msg = this->CreateDeadPlayerObject(pActor, &dpoActor);
+	if(type == ACTOR_TYPE_PLAYER)
+	{
+		pActor = dynamic_cast<PlayerActor*>(actor);
+		msg = this->CreateDeadPlayerObject(pActor, &dpoActor);
+	}
+	else if(type == ACTOR_TYPE_ANIMAL)
+	{
+		aActor = dynamic_cast<AnimalActor*>(actor);
+		//DEAD_ANIMAL
+	}
+	else
+		return;
 
 	this->zActorHandler->AddNewDeadPlayer(dpoActor);
 
 	this->SendToAllClients(msg, true);
 }
 
-void Host::OnPlayerDeath(unsigned int ID)
+void Host::OnBioActorDeath( BioActor* actor )
 {
-	OnPlayerRemove(ID);
+	if(!actor)
+		return;
 
-	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActorHandler->GetActor(ID, ACTOR_TYPE_PLAYER));
-	if (pActor)
+	OnBioActorRemove(actor);
+
+	int type = actor->GetActorType();
+	int messageType = 0;
+	std::string msg = "";
+
+	if (type == ACTOR_TYPE_PLAYER)
 	{
-		std::string	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER, ID);
-		SendToAllClients(msg, true);
+		PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+		messageType = MESSAGE_TYPE_DEAD_PLAYER;
 
 		RespawnPlayer(pActor);
 
 		this->zActorHandler->RemovePlayerActor(pActor->GetID());
 	}
+	else if(type == ACTOR_TYPE_ANIMAL)
+	{
+		messageType = MESSAGE_TYPE_DEAD_ANIMAL;
+	}
 	else
-		MaloW::Debug("Cant find Player in Host::OnPlayerDeath");
+	{
+		MaloW::Debug("Cant find Actor in Host::OnPlayerDeath");
+		return;
+	}
 
-	//KickClient(ID);
+	msg = this->zMessageConverter.Convert(messageType, (float)actor->GetID());
+	SendToAllClients(msg, true);
+	
 }
 
 bool Host::IsAlive() const
@@ -1717,16 +1724,9 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	zAnchorPlayerMap[pi] = this->zWorld->CreateAnchor();
 
 	//Gather New player information
-	Vector3 pos = pi->GetPosition();
-	Vector3 scale = pi->GetScale();
-	Vector4 rot = pi->GetRotation();
-
 	mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, (float)pi->GetID());
-	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	mess += pi->ToMessageString(&this->zMessageConverter);
 	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, pi->GetActorModel());
-	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)pi->GetState());
 
 	//Send new player to players
 	SendToAllClients(mess, true);
@@ -1767,11 +1767,9 @@ void Host::RespawnPlayer(PlayerActor* pActor)
 	std::string mess;
 
 	mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, (float)new_Player->GetID());
-	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	mess += new_Player->ToMessageString(&this->zMessageConverter);
 	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, new_Player->GetActorModel());
-	mess += this->zMessageConverter.Convert(MESSAGE_TYPE_STATE, (float)new_Player->GetState());
+
 
 	//Send new player to players
 	SendToAllClients(mess, true);

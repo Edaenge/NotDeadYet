@@ -597,22 +597,9 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 	CollisionEvent cEvent = CollisionEvent();
 	PhysicsCollisionData pcd;
 
-	PhysicsObject* pObj = bActor->GetPhysicObject();
 	PhysicsObject* pOtherObj = NULL;
 
-	PlayerActor* pTemp = dynamic_cast<PlayerActor*>(bActor);
-	if (pTemp)
-	{
-		agressor_Type = ACTOR_TYPE_PLAYER;
-	}
-	else
-	{
-		AnimalActor* aTemp = dynamic_cast<AnimalActor*>(bActor);
-		if (aTemp)
-		{
-			agressor_Type = ACTOR_TYPE_ANIMAL;
-		}
-	}
+	agressor_Type = bActor->GetActorType();
 
 	Vector3 view_Direction = bActor->GetDirection();
 
@@ -621,7 +608,7 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 
 	for (auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
 	{
-		if ((*it)->GetID() == bActor->GetID() && agressor_Type == ACTOR_TYPE_PLAYER)
+		if ((*it)->GetID() == bActor->GetID())
 			continue;
 		if (!(*it)->IsAlive())
 			continue;
@@ -636,17 +623,6 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 		distance.Normalize();
 
 		pcd = this->zPhysicsEngine->GetCollisionRayMesh(position, direction, pOtherObj);
-		/*distance = pOtherObj->GetPosition() - pObj->GetPosition();
-
-		if (distance.GetLength() > range + 0.5f)
-			continue;
-
-		agressor_Victim_Direction = distance;
-		agressor_Victim_Direction.Normalize();
-
-		float angle = agressor_Victim_Direction.GetAngle(view_Direction);
-
-		if (angle <= 45)*/
 		
 		if (pcd.collision && pcd.distance <= range)
 		{
@@ -664,7 +640,7 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 
 	for (auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
 	{
-		if ((*it)->GetID() == bActor->GetID() && agressor_Type == ACTOR_TYPE_ANIMAL)
+		if ((*it)->GetID() == bActor->GetID())
 			continue;
 		if (!(*it)->IsAlive())
 			continue;
@@ -677,19 +653,6 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 
 		pcd = this->zPhysicsEngine->GetCollisionRayMesh(position, direction, pOtherObj);
 
-		/*pOtherObj = (*it)->GetPhysicObject();
-
-		distance = pOtherObj->GetPosition() - pObj->GetPosition();
-		
-		if (distance.GetLength() > range + 0.5f)
-			continue;
-
-		agressor_Victim_Direction = distance;
-		agressor_Victim_Direction.Normalize();
-
-		float angle = view_Direction.GetAngle(agressor_Victim_Direction);
-
-		if (angle <= 45)*/
 		if (pcd.collision && pcd.distance <= range)
 		{
 			cEvent.actor_aggressor_ID = bActor->GetID();
@@ -743,12 +706,8 @@ std::vector<CollisionEvent> ActorHandler::CheckProjectileCollisions()
 					ce.actor_aggressor_ID = (*it)->GetObjPlayerOwner();
 					ce.actor_aggressor_type = ACTOR_TYPE_PLAYER;
 					ce.actor_victim_ID = (*it_s)->GetID();
-
-					if(dynamic_cast<PlayerActor*>(*it_s))
-						ce.actor_victim_type = ACTOR_TYPE_PLAYER;
-					else
-						ce.actor_victim_type = ACTOR_TYPE_ANIMAL;
-
+					ce.actor_victim_type = (*it_s)->GetActorType();
+					ce.event_type = BOW_ATTACK;
 					collisionEvents.push_back(ce);
 
 					//No need to continue, the player is dead

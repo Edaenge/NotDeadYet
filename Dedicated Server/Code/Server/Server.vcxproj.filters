@@ -154,6 +154,12 @@
     <ClCompile Include="PhysicsEngine\Physics.cpp">
       <Filter>PhysicsEngine</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Server\DeadActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\DeadAnimalObjectActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineFiles\Server\Actor.h">
@@ -353,6 +359,12 @@
     </ClInclude>
     <ClInclude Include="PhysicsEngine\ObjLoader.h">
       <Filter>PhysicsEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\DeadActor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\DeadAnimalObjectActor.h">
+      <Filter>Server\Actors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

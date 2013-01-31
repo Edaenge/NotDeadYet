@@ -5,6 +5,7 @@ ContainerObject::ContainerObject(const bool genID) : StaticObjectActor(genID)
 {
 	this->zMaxUse = 0;
 	this->zUsesLeft = 0;
+	this->zActorType = ACTOR_TYPE_STATIC_OBJECT_CONTAINER;
 }
 
 

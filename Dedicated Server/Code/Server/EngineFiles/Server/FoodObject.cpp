@@ -5,6 +5,7 @@ FoodObject::FoodObject( const bool genID /*= false*/ ) : StaticObjectActor(genID
 {
 	this->zHunger = 1.0f;
 	this->zWeight = 1;
+	this->zActorType = ACTOR_TYPE_STATIC_OBJECT_FOOD;
 }
 
 

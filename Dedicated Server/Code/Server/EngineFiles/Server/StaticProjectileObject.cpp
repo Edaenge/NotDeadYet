@@ -6,6 +6,7 @@ StaticProjectileObject::StaticProjectileObject( const bool genID /*= true*/ ) : 
 	this->zSpeed = 1.0f;
 	this->zStacks = 1;
 	this->zWeight = 1;
+	this->zActorType = ACTOR_TYPE_STATIC_OBJECT_PROJECTILE;
 }
 
 

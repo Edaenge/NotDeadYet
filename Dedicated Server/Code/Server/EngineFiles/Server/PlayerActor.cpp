@@ -30,6 +30,7 @@ void PlayerActor::InitValues()
 	this->zInitialDirection = Vector3(0,0,-1);
 	this->zInventory = new Inventory();
 	this->zEquipment = new Equipment();
+	this->zActorType = ACTOR_TYPE_PLAYER;
 
 	this->zHealthChanged = false;
 	this->zStaminaChanged = false;
@@ -321,20 +322,24 @@ void PlayerActor::EatFood(float hunger)
 	this->zHungerChanged = true;
 }
 
-void PlayerActor::AddChangedHData(string& mess, NetworkMessageConverter* nmc)
+std::string PlayerActor::ToMessageString( NetworkMessageConverter* NMC )
 {
-	BioActor::AddChangedHData(mess, nmc);
+	string msg = "";
+	msg = BioActor::ToMessageString(NMC);
+
+	msg += NMC->Convert(MESSAGE_TYPE_STATE, this->zState);
+	msg += NMC->Convert(MESSAGE_TYPE_FRAME_TIME, this->zFrameTime);
 
 	if(zHungerChanged)
 	{
-		mess += nmc->Convert(MESSAGE_TYPE_HUNGER, this->zHunger);
+		msg += NMC->Convert(MESSAGE_TYPE_HUNGER, this->zHunger);
 		this->zHungerChanged = false;
 	}
 	if(zHydrationChanged)
 	{
-		mess += nmc->Convert(MESSAGE_TYPE_HYDRATION, this->zHydration);
+		msg += NMC->Convert(MESSAGE_TYPE_HYDRATION, this->zHydration);
 		this->zHydrationChanged = false;
 	}
 
-	this->AddChangedData(mess, nmc);
+	return msg;
 }
