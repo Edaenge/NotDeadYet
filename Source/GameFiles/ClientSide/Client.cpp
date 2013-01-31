@@ -4,6 +4,7 @@
 #include "../ClientServerMessages.h"
 #include "ClientServerMessages.h"
 #include "../WorldFiles/EntityList.h"
+#include "../DebugMessages.h"
 
 using namespace MaloW;
 
@@ -534,9 +535,9 @@ void Client::HandleKeyboardInput()
 					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 			}
 		}
-		HandleWeaponEquips();
+		this->HandleWeaponEquips();
 	}
-	
+	this->HandleDebugInfo();
 }
 //use to equip weapon with keyboard
 void Client::HandleWeaponEquips()
@@ -648,7 +649,7 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
-			
+			DebugMsg::Debug("Camera");
 			//position + direction
 			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}

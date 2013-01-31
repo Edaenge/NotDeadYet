@@ -6,7 +6,7 @@
 
 static bool eraseFile = false;
 
-namespace Messages
+namespace DebugMsg
 {
 	inline void Debug(std::string msg)
 	{

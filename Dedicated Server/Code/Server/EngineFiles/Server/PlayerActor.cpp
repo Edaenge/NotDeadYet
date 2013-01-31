@@ -137,7 +137,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 	MaterialObject*	mo			= NULL;
 	Item* item					= NULL; 
 
-	int itemType = object->GetType(); 
+	int itemType = object->GetActorType(); 
 	if (itemType == ACTOR_TYPE_STATIC_OBJECT_FOOD)
 	{
 		fo = dynamic_cast<FoodObject*>(object);
