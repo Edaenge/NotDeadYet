@@ -16,7 +16,7 @@ MainMenu::MainMenu()
 MainMenu::~MainMenu()
 {
 	delete [] zSets;
-
+	zSets = NULL;
 	SAFE_DELETE(this->zGame);
 }
 

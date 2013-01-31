@@ -70,8 +70,8 @@ Client::~Client()
 	SAFE_DELETE(this->zServerChannel);
 	SAFE_DELETE(this->zPlayerInventory);
 
-	SAFE_DELETE(this->zWorld);
 	SAFE_DELETE(this->zWorldRenderer);
+	SAFE_DELETE(this->zWorld);
 	SAFE_DELETE(this->zCrossHair);
 }
 
@@ -418,12 +418,12 @@ void Client::HandleKeyboardInput()
 			PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 			Equipment* eq = pObject->GetEquipmentPtr();
 
-			Item* item = eq->GetWeapon();
+			Item* item = eq->GetRangedWeapon();
 			if (item)
 			{
 				MaloW::Debug("Item UnEquipped " + item->GetItemName());
 				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
-				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_RANGED_WEAPON);
 
 				this->zServerChannel->sendData(msg);
 			}
@@ -515,7 +515,7 @@ void Client::HandleKeyboardInput()
 					PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
 
 					Equipment* eq = player->GetEquipmentPtr();
-					Weapon* weapon = eq->GetWeapon();
+					Weapon* weapon = eq->GetRangedWeapon();
 
 					if (!weapon)
 					{
@@ -538,7 +538,7 @@ void Client::HandleKeyboardInput()
 	}
 	
 }
-//Future use to equip weapon with keyboard
+//use to equip weapon with keyboard
 void Client::HandleWeaponEquips()
 {
 	if (!this->zPlayerInventory)
@@ -547,7 +547,7 @@ void Client::HandleWeaponEquips()
 	//Equip Bow
 	if (this->zEng->GetKeyListener()->IsPressed('1'))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_RANGED_BOW);
 			if (item)
@@ -555,13 +555,13 @@ void Client::HandleWeaponEquips()
 				SendUseItemMessage(item->GetID());
 			}
 
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}
 	}
 	//Equip Arrow
 	else if (this->zEng->GetKeyListener()->IsPressed('2'))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_PROJECTILE_ARROW);
 			if (item)
@@ -569,13 +569,13 @@ void Client::HandleWeaponEquips()
 				SendUseItemMessage(item->GetID());
 			}
 
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}
 	}
 	//Equip Rock
 	else if (this->zEng->GetKeyListener()->IsPressed('3'))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_RANGED_ROCK);
 			if (item)
@@ -583,13 +583,13 @@ void Client::HandleWeaponEquips()
 				SendUseItemMessage(item->GetID());
 			}
 
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}
 	}
 	//Equip Axe
 	else if (this->zEng->GetKeyListener()->IsPressed('4'))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE_AXE);
 			if (item)
@@ -597,13 +597,13 @@ void Client::HandleWeaponEquips()
 				SendUseItemMessage(item->GetID());
 			}
 
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}
 	}
 	//Equip Pocket Knife
 	else if (this->zEng->GetKeyListener()->IsPressed('5'))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE);
 			if (item)
@@ -611,7 +611,7 @@ void Client::HandleWeaponEquips()
 				SendUseItemMessage(item->GetID());
 			}
 
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}
 	}
 	else if(this->zEng->GetKeyListener()->IsPressed('T'))
@@ -634,9 +634,9 @@ void Client::HandleWeaponEquips()
 	}
 	else
 	{
-		if (this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, false);
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, false);
 		}
 	}
 }

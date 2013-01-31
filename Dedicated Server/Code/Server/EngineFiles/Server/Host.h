@@ -6,12 +6,11 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "Process.h"
-#include "../Network/ServerListener.h"
-#include "../../../../../Source/Network/NetworkMessageConverter.h"
+#include "ServerListener.h"
 #include "PlayerActor.h"
 #include "ActorHandler.h"
 #include "ClientData.h"
-#include "../WorldFiles/World.h"
+#include "World.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 //#include <vld.h>
@@ -106,8 +105,8 @@ private:
 	/*! Returns an Array Containing Existing Static Objects Messages.*/
 	void GetExistingObjects(std::vector<std::string>& static_Objects);
 	/*! Called When player Disconnects or Dies.*/
-	void OnPlayerRemove(unsigned int ID);
-	void OnPlayerDeath(unsigned int ID);	
+	void OnBioActorRemove(BioActor* actor );
+	void OnBioActorDeath(BioActor* actor);	
 	void SendStartMessage();	
 	//3x3 center = 54,0,54, Map_xxxx center = 1900, 0, 1900
 	Vector3 CalculateSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center = Vector3(54, 0, 44));
@@ -168,9 +167,11 @@ private:
 	bool HandlePickupItem(PlayerActor* pActor, const long ObjectId);
 	void HandleDropItem(PlayerActor* pActor, const long ItemID);
 	void HandleItemUse(PlayerActor* pActor, const long ItemID);
+	bool UnEquipEquipment(PlayerActor* pActor, Equipment* eq, Inventory* inv, const int itemType);
 	void HandleWeaponUse(PlayerActor* pActor, const long ItemID);
 	void HandleUnEquipItem(PlayerActor* pActor, const long ItemID, const int Slot);
 	bool HandleLootItem(PlayerActor* pActor, const int deadPlayerID, const long id, const int type);
+
 	Item* CreateItemFromDefault(const int ItemType);
 
 	/*! Sends UnEquip Message To Client*/

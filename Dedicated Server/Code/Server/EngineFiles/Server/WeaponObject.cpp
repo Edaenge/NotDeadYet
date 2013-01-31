@@ -7,6 +7,7 @@ WeaponObject::WeaponObject(const bool genID /* = false */) : StaticObjectActor(g
 	this->zWeight = 1;
 	this->zRange = 1.0f;
 	this->zDamage = 0.0f;
+	this->zActorType = ACTOR_TYPE_STATIC_OBJECT_WEAPON;
 }
 
 WeaponObject::WeaponObject( const WeaponObject& other, const bool genID /*= false*/)

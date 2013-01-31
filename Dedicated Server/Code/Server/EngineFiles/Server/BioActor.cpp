@@ -87,16 +87,23 @@ bool BioActor::HasMoved()
 	return true;
 }
 
-void BioActor::AddChangedHData(string& mess, NetworkMessageConverter* nmc)
+std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 {
+	string msg = "";
+	msg = PhysicsActor::ToMessageString(NMC);
+
+	msg += NMC->Convert(MESSAGE_TYPE_STATE, this->zState);
+
 	if(zHealthChanged)
 	{
-		mess += nmc->Convert(MESSAGE_TYPE_HEALTH, this->zHealth);
+		msg += NMC->Convert(MESSAGE_TYPE_HEALTH, this->zHealth);
 		this->zHealthChanged = false;
 	}
 	if(zStaminaChanged)
 	{
-		mess += nmc->Convert(MESSAGE_TYPE_STAMINA, this->zStamina);
+		msg += NMC->Convert(MESSAGE_TYPE_STAMINA, this->zStamina);
 		this->zStaminaChanged = false;
 	}
+
+	return msg;
 }

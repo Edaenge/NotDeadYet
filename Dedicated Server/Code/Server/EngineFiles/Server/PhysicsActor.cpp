@@ -33,12 +33,24 @@ PhysicsActor::~PhysicsActor()
 
 }
 
-void PhysicsActor::AddChangedData(string& mess, NetworkMessageConverter* nmc)
+std::string PhysicsActor::ToMessageString( NetworkMessageConverter* NMC )
 {
+	if(!this->zPhysicObj)
+		return "";
+
+	std::string msg;
+	Vector3 pos = this->zPhysicObj->GetPosition();
+	Vector4 rot = this->zPhysicObj->GetRotationQuaternion();
+
+	msg = NMC->Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+	msg += NMC->Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+
 	if (this->zScaleChanged)
 	{
 		float scale = this->GetScale().x;
-		mess += nmc->Convert(MESSAGE_TYPE_SCALE, scale);
+		msg += NMC->Convert(MESSAGE_TYPE_SCALE, scale);
 		this->zScaleChanged = false;
 	}
+	
+	return msg;
 }

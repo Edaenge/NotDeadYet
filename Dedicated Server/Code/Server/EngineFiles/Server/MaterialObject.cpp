@@ -4,6 +4,7 @@ MaterialObject::MaterialObject(const bool genID /*= false*/ ) : StaticObjectActo
 {
 	this->zCraftingType = -1;
 	this->zRequiredStackToCraft = -1;
+	this->zActorType = ACTOR_TYPE_STATIC_OBJECT_MATERIAL;
 }
 
 MaterialObject::MaterialObject(const MaterialObject& other, bool genID /*= false*/)

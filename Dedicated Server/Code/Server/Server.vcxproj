@@ -82,7 +82,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\External\NDYGFX\Include;$(SolutionDir)\..\..\Source\MaloWLib;$(SolutionDir)\Server\PhysicsEngine;$(SolutionDir)\Server\Wrapper;$(SolutionDir)\Server\EngineFiles\Network;$(SolutionDir)\..\..\Source\Network;$(SolutionDir)\..\..\Source\GameFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\External\NDYGFX\Include;$(SolutionDir)\..\..\Source\MaloWLib;$(SolutionDir)\Server\PhysicsEngine;$(SolutionDir)\Server\Wrapper;$(SolutionDir)\Server\EngineFiles\Network;$(SolutionDir)\..\..\Source\Network;$(SolutionDir)\..\..\Source\GameFiles;$(SolutionDir)\Server\EngineFiles\WorldFiles;$(SolutionDir)\..\..\Source\GameFiles\Items;$(SolutionDir)\..\..\Source\GameFiles\KeyUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -167,6 +167,8 @@
     <ClInclude Include="EngineFiles\Server\BioActor.h" />
     <ClInclude Include="EngineFiles\Server\ClientData.h" />
     <ClInclude Include="EngineFiles\Server\ContainerObject.h" />
+    <ClInclude Include="EngineFiles\Server\DeadActor.h" />
+    <ClInclude Include="EngineFiles\Server\DeadAnimalObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\DeadPlayerObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\DeerActor.h" />
     <ClInclude Include="EngineFiles\Server\DynamicObjectActor.h" />
@@ -222,6 +224,8 @@
     <ClCompile Include="EngineFiles\Server\BioActor.cpp" />
     <ClCompile Include="EngineFiles\Server\ClientData.cpp" />
     <ClCompile Include="EngineFiles\Server\ContainerObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeadActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeadAnimalObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DeadPlayerObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />

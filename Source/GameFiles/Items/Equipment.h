@@ -14,7 +14,8 @@
 enum EQUIPMENT_SLOT
 {
 	EQUIPMENT_SLOT_AMMO,
-	EQUIPMENT_SLOT_WEAPON,
+	EQUIPMENT_SLOT_RANGED_WEAPON,
+	EQUIPMENT_SLOT_MELEE_WEAPON,
 	EQUIPMENT_SLOT_HEAD,
 	EQUIPMENT_SLOT_CHEST,
 	EQUIPMENT_SLOT_LEGS,
@@ -27,17 +28,25 @@ public:
 	Equipment();
 	virtual ~Equipment();
 	/*! Equips Weapon*/
-	void EquipWeapon(Weapon* weapon);
+	void EquipRangedWeapon(RangedWeapon* weapon);
+	void EquipMeleeWeapon(MeleeWeapon* weapon);
+
 	void EquipProjectile(Projectile* projectile);
 	void UnEquipProjectile();
 	Projectile* GetProjectile();
-	Weapon* GetWeapon();
-	void UnEquipWeapon();
+
+	RangedWeapon* GetRangedWeapon();
+	MeleeWeapon* GetMeleeWeapon();
+
+	void UnEquipRangedWeapon();
+	void UnEquipMeleeWeapon();
+
 	bool EquipGear(const unsigned int type, Gear* item);
 	Gear* GetGear(const unsigned int type);
 	void UnEquipGear(const unsigned int type);
 private:
 	Projectile* zProjectile;
-	Weapon* zWeapon;
+	RangedWeapon* zRangedWeapon;
+	MeleeWeapon* zMeleeWeapon;
 	std::vector<Gear*> zGear;
 };
