@@ -15,7 +15,7 @@ FoodObject::FoodObject( const FoodObject& other, const bool genID /*genID = fals
 	if(genID)
 		GenerateID();
 	else
-		this->SetID(other.GetID());
+		this->zID = other.GetID();
 
 	
 	this->zRot = other.zRot;
@@ -35,9 +35,9 @@ FoodObject::FoodObject( const FoodObject& other, const bool genID /*genID = fals
 FoodObject::FoodObject( const FoodObject* other, const bool genID /*genID = false*/ )
 {
 	if(genID)
-		GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other->GetID());
+		this->zID = other->GetID();
 
 	this->zRot = other->zRot;
 	this->zPos = other->zPos;

@@ -4,7 +4,7 @@
 PhysicsActor::PhysicsActor() : Actor()
 {
 	this->zPhysicObj = NULL;
-	this->zScaleChanged = false;
+	this->zScaleChanged = true;
 	this->zInitialDirection = Vector3(0,0,-1);
 	this->zModelLength = 0.1f;
 }
@@ -12,7 +12,7 @@ PhysicsActor::PhysicsActor() : Actor()
 PhysicsActor::PhysicsActor(const Vector3& startpos, PhysicsObject* pObj, const Vector4& rot) : Actor()
 {
 	this->zPhysicObj = pObj;
-	this->zScaleChanged = false;
+	this->zScaleChanged = true;
 	this->zPhysicObj->SetPosition(startpos);
 	this->zPhysicObj->SetQuaternion(rot);
 	this->zInitialDirection = Vector3(0,0,-1);
@@ -22,7 +22,7 @@ PhysicsActor::PhysicsActor(const Vector3& startpos, PhysicsObject* pObj, const V
 PhysicsActor::PhysicsActor(const Vector3& startpos, PhysicsObject* pObj) : Actor()
 {
 	this->zPhysicObj = pObj;
-	this->zScaleChanged = false;
+	this->zScaleChanged = true;
 	this->zPhysicObj->SetPosition(startpos);
 	this->zInitialDirection = Vector3(0,0,-1);
 	this->zModelLength = 0.1f;

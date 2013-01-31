@@ -3,7 +3,7 @@
 DynamicObjectActor::DynamicObjectActor(bool genID) : PhysicsActor()
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 
 	this->zObjPlayerOwner = -1;
 	InitValues();
@@ -12,7 +12,7 @@ DynamicObjectActor::DynamicObjectActor(bool genID) : PhysicsActor()
 DynamicObjectActor::DynamicObjectActor(const std::string& meshModel, bool genID) : PhysicsActor()
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 
 	this->SetActorModel(meshModel);
 	this->zObjPlayerOwner = -1;
@@ -22,7 +22,7 @@ DynamicObjectActor::DynamicObjectActor(const std::string& meshModel, bool genID)
 DynamicObjectActor::DynamicObjectActor( const std::string& meshModel, int objOwner, bool genID /*= false*/ ) : PhysicsActor()
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 
 	this->SetActorModel(meshModel);
 	this->zObjPlayerOwner = objOwner;

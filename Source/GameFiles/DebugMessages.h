@@ -4,13 +4,13 @@
 #include <fstream>
 #include "../MaloWLib/Malow.h"
 
-static bool eraseFile = false;
+static bool eraseDebugFile = false;
 
 namespace DebugMsg
 {
 	inline void Debug(std::string msg)
 	{
-		if(eraseFile)
+		if(eraseDebugFile)
 		{
 			std::ofstream writeFile;
 			writeFile.open ("MapDebugData.txt", std::ios::out | std::ios::trunc);
@@ -18,7 +18,7 @@ namespace DebugMsg
 			writeFile << "";
 
 			writeFile.close();
-			eraseFile = false;
+			eraseDebugFile = false;
 		}
 
 
@@ -32,7 +32,7 @@ namespace DebugMsg
 
 	inline void Debug(float nr)
 	{
-		if(eraseFile)
+		if(eraseDebugFile)
 		{
 			std::ofstream writeFile;
 			writeFile.open ("MapDebugData.txt", std::ios::out | std::ios::trunc);
@@ -40,7 +40,7 @@ namespace DebugMsg
 			writeFile << "";
 
 			writeFile.close();
-			eraseFile = false;
+			eraseDebugFile = false;
 		}
 
 
@@ -62,7 +62,7 @@ namespace DebugMsg
 		writeFile << "";
 
 		writeFile.close();
-		eraseFile = false;
+		eraseDebugFile = false;
 		//}
 	}
 }

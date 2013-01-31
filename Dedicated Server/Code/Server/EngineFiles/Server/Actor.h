@@ -23,7 +23,7 @@ static const enum ACTOR_TYPE
 	ACTOR_TYPE_DEAD_ANIMAL
 };
 
-/* This is an abstract base class for objects in the game.
+/* 
    Every time an actor is created, an ID will be generated in this class. This id should be used for this actor.
    An exception is Players. They have the same ID as the ClientChannel.
 */
@@ -39,7 +39,7 @@ public:
 		this->zActorType = ACTOR_TYPE_NONE;
 	}
 
-	virtual ~Actor(){}
+	virtual ~Actor() {};
 	
 	inline long GetID() const {return this->zID;}
 	std::string GetActorModel() const {return zActorModel;}
@@ -52,21 +52,18 @@ public:
 	virtual void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
 	virtual void SetUpVector(const Vector3& up){this->zUp = up;}
 
-	virtual void Update(float deltaTime) = 0;
-
-protected:
-	void GenerateID()
+	long GenerateID()
 	{
-		this->zID = this->zNextAID; 
-		this->zNextAID++;
+		return this->zNextAID++;
 	}
+
 protected:
 	Vector3 zUp;
 	std::string zActorModel;
 	std::string zActorObjectName;
 	unsigned int zActorType;
+	long zID;
 private:
 	static long zNextAID;
-	long zID;
 
 };

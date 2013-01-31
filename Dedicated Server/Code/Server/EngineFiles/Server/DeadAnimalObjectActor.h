@@ -15,7 +15,7 @@ public:
 	DeadAnimalObjectActor(const bool genID = false);
 	virtual ~DeadAnimalObjectActor();
 
-	void GenerateDrop();
+	bool GenerateDrop(Item* food);
 
 private:
 

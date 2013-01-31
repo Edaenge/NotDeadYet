@@ -11,7 +11,6 @@
 
 /*
 This class is used to create dead BioActors in the world.
-This class is abstract.
 */
 class DeadActor : public Actor
 {
@@ -30,8 +29,6 @@ public:
 	inline const Vector3& GetPosition() const {return zPos;}
 	const Vector3& GetScale() const {return zScale;}
 	inline const Vector4& GetRotation() const {return zRot;}
-
-	virtual void Update(float deltaTime) = 0;
 
 	/*! Returns Pos, Rot, Scale.*/
 	virtual std::string ToMessageString(NetworkMessageConverter* NMC);

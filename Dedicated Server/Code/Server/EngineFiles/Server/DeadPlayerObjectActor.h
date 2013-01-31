@@ -18,10 +18,8 @@ class DeadPlayerObjectActor : public DeadActor
 {
 public:
 	DeadPlayerObjectActor(const bool genID = false);
-	virtual ~DeadPlayerObjectActor() {};
 
 	void SetItems(std::vector<Item*> items) { this->zItems = items;}
-	void Update(float deltaTime) {}
 
 private:
 

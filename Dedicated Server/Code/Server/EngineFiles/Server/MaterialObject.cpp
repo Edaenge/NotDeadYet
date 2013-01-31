@@ -10,9 +10,9 @@ MaterialObject::MaterialObject(const bool genID /*= false*/ ) : StaticObjectActo
 MaterialObject::MaterialObject(const MaterialObject& other, bool genID /*= false*/)
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other.GetID());
+		this->zID = other.GetID();
 
 	this->zRot = other.zRot;
 	this->zPos = other.zPos;
@@ -32,9 +32,9 @@ MaterialObject::MaterialObject(const MaterialObject& other, bool genID /*= false
 MaterialObject::MaterialObject(const MaterialObject* other, bool genID /*= false*/)
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other->GetID());
+		this->zID = other->GetID();
 
 	this->zRot = other->zRot;
 	this->zPos = other->zPos;

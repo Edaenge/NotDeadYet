@@ -14,9 +14,9 @@ WeaponObject::WeaponObject( const WeaponObject& other, const bool genID /*= fals
 {
 
 	if(genID)
-		GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other.GetID());
+		this->zID = other.GetID();
 
 	this->zRot = other.zRot;
 	this->zPos = other.zPos;
@@ -36,9 +36,9 @@ WeaponObject::WeaponObject( const WeaponObject& other, const bool genID /*= fals
 WeaponObject::WeaponObject( const WeaponObject* other, const bool genID /*= false*/ )
 {
 	if(genID)
-		GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other->GetID());
+		this->zID = other->GetID();
 
 	this->zRot = other->zRot;
 	this->zPos = other->zPos;

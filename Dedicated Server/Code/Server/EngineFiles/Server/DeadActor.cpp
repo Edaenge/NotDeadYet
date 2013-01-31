@@ -3,7 +3,7 @@
 DeadActor::DeadActor( const bool genID /*= false*/ ) : Actor()
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 
 	this->zPos = Vector3(0, 0, 0);
 	this->zRot = Vector4(0, 0, 0, 1);

@@ -4,7 +4,7 @@
 AnimalActor::AnimalActor( bool genID /*= true*/ ) : BioActor()
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	this->InitPathfinder();
 	
 	Target vectorFilling; 
@@ -25,7 +25,7 @@ AnimalActor::AnimalActor( bool genID /*= true*/ ) : BioActor()
 AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, bool genID /*= true*/ ) : BioActor(startPos, pObj)
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	this->InitPathfinder();
 
 	Target vectorFilling; 
@@ -48,7 +48,7 @@ AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, bool ge
 AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, const Vector4& rot, bool genID /*= true*/ ) : BioActor(startPos, pObj, rot)
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	this->InitPathfinder();
 
 	Target vectorFilling; 

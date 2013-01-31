@@ -14,13 +14,23 @@ DeadAnimalObjectActor::~DeadAnimalObjectActor()
 
 }
 
-void DeadAnimalObjectActor::GenerateDrop()
+bool DeadAnimalObjectActor::GenerateDrop(Item* food)
 {
+	if(!food)
+		return false;
+
+	Food* fo = dynamic_cast<Food*>(food);
+
+	if(!fo)
+		return false;
+
 	int nrOfItem = (rand() % 1 + MAX_DROP) + 1;
 
 	for (int i = 0; i < nrOfItem; i++)
 	{
 		
 	}
+
+	return true;
 }
 

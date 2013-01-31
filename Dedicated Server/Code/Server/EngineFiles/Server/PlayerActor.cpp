@@ -4,19 +4,19 @@
 PlayerActor::PlayerActor(const long ID) : BioActor()
 {
 	InitValues();
-	this->SetID(ID);
+	this->zID = ID;
 }
 
 PlayerActor::PlayerActor(const long ID, const Vector3& startPos, PhysicsObject* pObj) : BioActor(startPos, pObj)
 {
 	InitValues();
-	this->SetID(ID);
+	this->zID = ID;
 }
 
 PlayerActor::PlayerActor(const long ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj) : BioActor(startPos, pObj, startRot)
 {
 	InitValues();
-	this->SetID(ID);
+	this->zID = ID;
 }
 
 void PlayerActor::InitValues()
@@ -33,10 +33,8 @@ void PlayerActor::InitValues()
 	this->zEquipment = new Equipment();
 	this->zActorType = ACTOR_TYPE_PLAYER;
 
-	this->zHealthChanged = false;
-	this->zStaminaChanged = false;
-	this->zHunger = false;
-	this->zHydration = false;
+	this->zHungerChanged = true;
+	this->zHydrationChanged = true;
 }
 
 PlayerActor::~PlayerActor()
@@ -339,7 +337,7 @@ std::string PlayerActor::ToMessageString( NetworkMessageConverter* NMC )
 	msg = BioActor::ToMessageString(NMC);
 
 	msg += NMC->Convert(MESSAGE_TYPE_STATE, this->zState);
-	msg += NMC->Convert(MESSAGE_TYPE_FRAME_TIME, this->zFrameTime);
+	//msg += NMC->Convert(MESSAGE_TYPE_FRAME_TIME, this->zFrameTime);
 
 	if(zHungerChanged)
 	{

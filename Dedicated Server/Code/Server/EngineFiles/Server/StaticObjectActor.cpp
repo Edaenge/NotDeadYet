@@ -4,7 +4,7 @@
 StaticObjectActor::StaticObjectActor(bool genID) : Actor()
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 
 	this->zType = 0;
 	this->zWeight = 1;
@@ -18,7 +18,7 @@ StaticObjectActor::StaticObjectActor(bool genID) : Actor()
 StaticObjectActor::StaticObjectActor(const std::string& meshModel, bool genID) : Actor()
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 
 	this->zType = 0;
 	this->zWeight = 1;

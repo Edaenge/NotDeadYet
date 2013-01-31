@@ -13,9 +13,9 @@ StaticProjectileObject::StaticProjectileObject( const bool genID /*= true*/ ) : 
 StaticProjectileObject::StaticProjectileObject(const StaticProjectileObject& other, bool genID)
 {
 	if (genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other.GetID());
+		this->zID = other.GetID();
 
 	this->zRot = other.zRot;
 	this->zPos = other.zPos;
@@ -37,9 +37,9 @@ StaticProjectileObject::StaticProjectileObject(const DynamicProjectileObject* ot
 {
 
 	if (genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other->GetID());
+		this->zID = other->GetID();
 
 	this->zType = other->GetType();
 	this->zSpeed = other->GetSpeed();
@@ -53,14 +53,15 @@ StaticProjectileObject::StaticProjectileObject(const DynamicProjectileObject* ot
 	this->zActorModel = other->GetActorModel();
 	this->zDescription = other->GetDescription();
 	this->zActorObjectName = other->GetActorObjectName();
+	this->zActorType = ACTOR_TYPE_STATIC_OBJECT_PROJECTILE;
 }
 
 StaticProjectileObject::StaticProjectileObject( const StaticProjectileObject* other, bool genID /*= false*/ )
 {
 	if (genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other->GetID());
+		this->zID = other->GetID();
 
 	this->zRot = other->zRot;
 	this->zPos = other->zPos;
