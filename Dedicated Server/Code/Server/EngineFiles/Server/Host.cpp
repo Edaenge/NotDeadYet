@@ -436,7 +436,8 @@ void Host::HandleNewConnections()
 		items = (*it)->GetItems();
 		for (auto x = items.begin(); x < items.end(); x++)
 		{
-			if ((*x)->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN || (*x)->GetItemType() == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
+			int item_type = (*x)->GetItemType();
+			if (item_type == ITEM_TYPE_CONTAINER_CANTEEN || item_type == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
 			{
 				Container* container = dynamic_cast<Container*>((*x));
 
@@ -451,8 +452,8 @@ void Host::HandleNewConnections()
 
 				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 			}
-			else if ((*x)->GetItemType() == ITEM_TYPE_MATERIAL_SMALL_STICK || (*x)->GetItemType() == ITEM_TYPE_MATERIAL_MEDIUM_STICK ||
-				(*x)->GetItemType() == ITEM_TYPE_MATERIAL_LARGE_STICK || (*x)->GetItemType() == ITEM_TYPE_MATERIAL_THREAD)
+			else if (item_type == ITEM_TYPE_MATERIAL_SMALL_STICK || item_type == ITEM_TYPE_MATERIAL_MEDIUM_STICK ||
+				item_type == ITEM_TYPE_MATERIAL_LARGE_STICK || item_type == ITEM_TYPE_MATERIAL_THREAD)
 			{
 				Material* material = dynamic_cast<Material*>((*x));
 
@@ -467,7 +468,7 @@ void Host::HandleNewConnections()
 
 				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 			}
-			else if ((*x)->GetItemType() == ITEM_TYPE_FOOD_DEER_MEAT || (*x)->GetItemType() == ITEM_TYPE_FOOD_WOLF_MEAT)
+			else if (item_type == ITEM_TYPE_FOOD_DEER_MEAT || item_type == ITEM_TYPE_FOOD_WOLF_MEAT)
 			{
 				Food* food = dynamic_cast<Food*>((*x));
 
@@ -482,7 +483,7 @@ void Host::HandleNewConnections()
 
 				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 			}
-			else if ((*x)->GetItemType() == ITEM_TYPE_PROJECTILE_ARROW)
+			else if (item_type == ITEM_TYPE_PROJECTILE_ARROW)
 			{
 				Projectile* projectile = dynamic_cast<Projectile*>((*x));
 
@@ -497,7 +498,7 @@ void Host::HandleNewConnections()
 
 				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 			}
-			else if ((*x)->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW || (*x)->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
+			else if (item_type == ITEM_TYPE_WEAPON_RANGED_BOW || item_type == ITEM_TYPE_WEAPON_RANGED_ROCK)
 			{
 				RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>((*x));
 
@@ -512,7 +513,7 @@ void Host::HandleNewConnections()
 
 				message += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 			}
-			else if ((*x)->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE || (*x)->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
+			else if (item_type == ITEM_TYPE_WEAPON_MELEE_AXE || item_type == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
 			{
 				MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>((*x));
 
@@ -862,14 +863,25 @@ std::string Host::CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectAc
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*dpoActor)->GetActorModel());
 
 	std::vector<Item*> temp_items = inv->GetItems();
-	Weapon* weapon = eq->GetWeapon();
+	RangedWeapon* rWeapon = eq->GetRangedWeapon();
 
-	if (weapon)
+	if (rWeapon)
 	{
-		items.push_back(weapon);
-		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)weapon->GetID());
+		items.push_back(rWeapon);
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)rWeapon->GetID());
 
-		msg += weapon->ToMessageString(&this->zMessageConverter);
+		msg += rWeapon->ToMessageString(&this->zMessageConverter);
+
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
+	}
+	MeleeWeapon* mWeapon = eq->GetMeleeWeapon();
+
+	if (mWeapon)
+	{
+		items.push_back(mWeapon);
+		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM, (float)mWeapon->GetID());
+
+		msg += mWeapon->ToMessageString(&this->zMessageConverter);
 
 		msg += this->zMessageConverter.Convert(MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED);
 	}

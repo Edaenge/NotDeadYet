@@ -6,17 +6,19 @@ const unsigned int GEAR_SLOTS = 4;
 
 Equipment::Equipment()
 {
-	this->zWeapon = 0;
+	this->zRangedWeapon = NULL;
+	this->zMeleeWeapon = NULL;
+	this->zProjectile = NULL;
 	for (unsigned int i = 0; i < GEAR_SLOTS; i++)
 	{
 		this->zGear.push_back(NULL);
 	}
-	this->zProjectile = NULL;
 }
 
 Equipment::~Equipment()
 {
-	SAFE_DELETE(this->zWeapon);
+	SAFE_DELETE(this->zRangedWeapon);
+	SAFE_DELETE(this->zMeleeWeapon);
 	SAFE_DELETE(this->zProjectile);
 
 	for (auto x = this->zGear.begin(); x < this->zGear.end(); x++)
@@ -25,9 +27,14 @@ Equipment::~Equipment()
 	}
 }
 
-void Equipment::EquipWeapon(Weapon* weapon)
+void Equipment::EquipRangedWeapon(RangedWeapon* weapon)
 {
-	this->zWeapon = weapon;
+	this->zRangedWeapon = weapon;
+}
+
+void Equipment::EquipMeleeWeapon(MeleeWeapon* weapon)
+{
+	this->zMeleeWeapon = weapon;
 }
 
 bool Equipment::EquipGear(const unsigned int type, Gear* item)
@@ -57,17 +64,30 @@ void Equipment::UnEquipGear(const unsigned int type)
 	}
 }
 
-Weapon* Equipment::GetWeapon()
+MeleeWeapon* Equipment::GetMeleeWeapon()
 {
-	return this->zWeapon;
+	return this->zMeleeWeapon;
 }
 
-void Equipment::UnEquipWeapon()
+RangedWeapon* Equipment::GetRangedWeapon()
+{
+	return this->zRangedWeapon;
+}
+
+void Equipment::UnEquipRangedWeapon()
 {
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Weapon");
 
-	this->zWeapon = NULL;
+	this->zRangedWeapon = NULL;
+}
+
+void Equipment::UnEquipMeleeWeapon()
+{
+	if (Messages::FileWrite())
+		Messages::Debug("UnEquipped Weapon");
+
+	this->zMeleeWeapon = NULL;
 }
 
 void Equipment::EquipProjectile(Projectile* projectile)

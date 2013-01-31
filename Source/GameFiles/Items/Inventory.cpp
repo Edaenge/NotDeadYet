@@ -57,13 +57,7 @@ bool Inventory::AddItem(Item* item)
 	if(this->zWeightTotal + weight <= this->zInventoryCap)
 	{
 		this->zWeightTotal += weight;
-		//for (unsigned int i = 0; i < weight - 1; i++)
-		//{
-			//zInventorySlotBlocked[this->zSlotsAvailable-1] = true;
 
-			//Decrease slot size to mark blocked
-			//this->zSlotsAvailable--;
-		//}
 		if (item->GetStacking())
 		{
 			Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType());
@@ -132,10 +126,6 @@ bool Inventory::RemoveItemStack(const long ID, const unsigned int numberOfStacks
 		int weight = GetItem(index)->GetWeight() * numberOfStacks;
 		this->zWeightTotal -= weight;
 
-		/*for (int i = 0; i < weight - 1; i++)
-		{
-			this->zInventorySlotBlocked[zSlotsAvailable++] = false;
-		}*/
 		if (Messages::FileWrite())
 		{
 			Messages::Debug("Removed Stacks: " + MaloW::convertNrToString((float)numberOfStacks) + " TotalWeight: " + MaloW::convertNrToString((float)zWeightTotal));
@@ -152,14 +142,10 @@ bool Inventory::RemoveItem(const unsigned int index)
 		int weight = GetItem(index)->GetWeight();
 		this->zWeightTotal -= weight;
 
-		/*for (int i = 0; i < weight - 1; i++)
-		{
-			this->zInventorySlotBlocked[zSlotsAvailable++] = false;
-		}*/
 		Item* item = this->zItems.at(index);
 		this->zItems.erase(this->zItems.begin() + index);
 
-		SAFE_DELETE((item));
+		SAFE_DELETE(item);
 
 		return true;
 	}

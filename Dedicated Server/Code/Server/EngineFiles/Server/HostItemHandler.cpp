@@ -4,7 +4,7 @@
 void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 {
 	Equipment* eq = pActor->GetEquipment();
-	Weapon* weapon = eq->GetWeapon();
+	Weapon* weapon = eq->GetRangedWeapon();
 
 	if (!weapon)
 	{
@@ -118,14 +118,14 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 
 			if (rWpn->GetStackSize() <= 0)
 			{
-				this->SendRemoveItemMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
+				this->SendRemoveItemMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_RANGED_WEAPON);
 
 				if (rWpn)
 				{
 					delete rWpn;
 					rWpn = NULL;
 				}
-				eq->UnEquipWeapon();
+				eq->UnEquipRangedWeapon();
 			}
 			return;
 		}
@@ -168,7 +168,10 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 		this->SendErrorMessage(pActor->GetID(), "Item_Doesn't_Exist");
 		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_FOOD_DEER_MEAT || item->GetItemType() == ITEM_TYPE_FOOD_WOLF_MEAT)
+
+	int item_Type = item->GetItemType();
+
+	if (item_Type == ITEM_TYPE_FOOD_DEER_MEAT || item_Type == ITEM_TYPE_FOOD_WOLF_MEAT)
 	{
 		Food* food = dynamic_cast<Food*>(item);
 
@@ -195,7 +198,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 
 		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_CONTAINER_CANTEEN || item->GetItemType() == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
+	if (item_Type == ITEM_TYPE_CONTAINER_CANTEEN || item_Type == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
 	{
 		Container* container = dynamic_cast<Container*>(item);
 
@@ -217,7 +220,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 
 		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_MATERIAL_SMALL_STICK)
+	if (item_Type == ITEM_TYPE_MATERIAL_SMALL_STICK)
 	{
 		Material* crafting_Material = dynamic_cast<Material*>(item);
 		if (!crafting_Material)
@@ -255,7 +258,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 		
 		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_MATERIAL_MEDIUM_STICK)
+	if (item_Type == ITEM_TYPE_MATERIAL_MEDIUM_STICK)
 	{
 		Material* material_Medium_Stick = dynamic_cast<Material*>(item);
 		if (!material_Medium_Stick)
@@ -315,11 +318,11 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 
 		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_MATERIAL_LARGE_STICK)
+	if (item_Type == ITEM_TYPE_MATERIAL_LARGE_STICK)
 	{
 		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_MATERIAL_THREAD)
+	if (item_Type == ITEM_TYPE_MATERIAL_THREAD)
 	{
 		Material* material_Thread = dynamic_cast<Material*>(item);
 		if (!material_Thread)
@@ -374,7 +377,7 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 			this->SendAddInventoryItemMessage(pActor->GetID(), new_Bow);
 		}
 	}
-	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
+	if (item_Type == ITEM_TYPE_WEAPON_RANGED_BOW)
 	{
 		Equipment* eq = pActor->GetEquipment();
 
@@ -387,50 +390,59 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 		}
 		inv->EraseItem(ItemID);
 
-		Weapon* oldWeapon = eq->GetWeapon();
-	
-
+		RangedWeapon* oldWeapon = eq->GetRangedWeapon();
+		bool bWeaponRemoved = false;
+		bool bProjectileRemoved = false;
 		if (oldWeapon)
 		{
-			if(inv->AddItem(oldWeapon))
+			if(!inv->AddItem(oldWeapon))
 			{
-				Projectile* oldProjectile = eq->GetProjectile();
-				if (oldProjectile)
-				{
-					if (oldProjectile->GetItemType() != ITEM_TYPE_PROJECTILE_ARROW)
-					{
-						if(!inv->AddItem(oldProjectile))
-						{
-							inv->EraseItem(oldWeapon->GetID());
-							eq->EquipWeapon(oldWeapon);
-							inv->AddItem(rWpn);
-							MaloW::Debug("Failed to Add Projectile to inventory when Equipping Axe");
-
-							this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip weapons");
-							return;
-						}
-						else
-						{
-							eq->UnEquipProjectile();
-						}
-					}
-				}
-			}
-			else
-			{
-				this->SendErrorMessage(pActor->GetID(), "Failed_to_add_UnEquipped_weapon");
+				inv->AddItem(rWpn);
+				MaloW::Debug("Failed to Add Weapon to inventory when Equipping Bow");
+				this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip_weapon");
 				return;
+			}
+			bWeaponRemoved = true;
+		}
+		Projectile* oldProjectile = eq->GetProjectile();
+		if (oldProjectile)
+		{
+			if (oldProjectile->GetItemType() != ITEM_TYPE_PROJECTILE_ARROW)
+			{
+				if(!inv->AddItem(oldProjectile))
+				{
+					if (oldWeapon)
+					{
+						inv->EraseItem(oldWeapon->GetID());
+						eq->EquipRangedWeapon(oldWeapon);
+					}
+					inv->AddItem(rWpn);
+
+					MaloW::Debug("Failed to Add Projectile to inventory when Equipping Axe");
+					this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip_Projectiles");
+					return;
+				}
+				else
+				{
+					bProjectileRemoved = true;
+					eq->UnEquipProjectile();
+				}
 			}
 		}
 		MaloW::Debug("Weapon Equipped " + rWpn->GetItemName());
+		if (bWeaponRemoved)
+			this->SendUnEquipMessage(pActor->GetID(), oldWeapon->GetID(), EQUIPMENT_SLOT_RANGED_WEAPON);
+		if(bProjectileRemoved)
+			this->SendUnEquipMessage(pActor->GetID(), oldProjectile->GetID(), EQUIPMENT_SLOT_AMMO);
 
-		eq->EquipWeapon(rWpn);
 
-		this->SendEquipMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
+		eq->EquipRangedWeapon(rWpn);
+
+		this->SendEquipMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_RANGED_WEAPON);
 
 		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
+	if (item_Type == ITEM_TYPE_WEAPON_RANGED_ROCK)
 	{
 		Equipment* eq = pActor->GetEquipment();
 
@@ -441,49 +453,22 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 			MaloW::Debug("dynamic cast Failed in Host::UseItem (Rock)");
 			return;
 		}
+		
 		inv->EraseItem(ItemID);
-
-		Weapon* oldWeapon = eq->GetWeapon();
-
-		if (oldWeapon)
+		if(!this->UnEquipEquipment(pActor, eq, inv, EQUIPMENT_SLOT_RANGED_WEAPON))
 		{
-			if(inv->AddItem(oldWeapon))
-			{
-				Projectile* oldProjectile = eq->GetProjectile();
-				if (oldProjectile)
-				{
-					if(!inv->AddItem(oldProjectile))
-					{
-						inv->EraseItem(oldWeapon->GetID());
-						eq->EquipWeapon(oldWeapon);
-						inv->AddItem(rWpn);
-						MaloW::Debug("Failed to Add Projectile to inventory when Equipping Rock");
-
-						this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip_weapons");
-						return;
-					}
-					else
-					{
-						eq->UnEquipProjectile();
-					}
-				}
-			}
-			else
-			{
-				MaloW::Debug("Failed to Add Weapon to inventory when Equipping Axe");
-				this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip weapons");
-				return;
-			}
+			inv->AddItem(rWpn);
+			return;
 		}
+
 		MaloW::Debug("Weapon Equipped " + rWpn->GetItemName());
+		eq->EquipRangedWeapon(rWpn);
 
-		eq->EquipWeapon(rWpn);
-
-		this->SendEquipMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
+		this->SendEquipMessage(pActor->GetID(), rWpn->GetID(), EQUIPMENT_SLOT_RANGED_WEAPON);
 
 		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE)
+	if (item_Type == ITEM_TYPE_WEAPON_MELEE_AXE)
 	{
 		Equipment* eq = pActor->GetEquipment();
 
@@ -496,48 +481,20 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 		}
 		inv->EraseItem(ItemID);
 
-		Weapon* oldWeapon = eq->GetWeapon();
-
-		if (oldWeapon)
+		if(!this->UnEquipEquipment(pActor, eq, inv, EQUIPMENT_SLOT_MELEE_WEAPON))
 		{
-			if(inv->AddItem(oldWeapon))
-			{
-				Projectile* oldProjectile = eq->GetProjectile();
-				if (oldProjectile)
-				{
-					if(!inv->AddItem(oldProjectile))
-					{
-						inv->EraseItem(oldWeapon->GetID());
-						eq->EquipWeapon(oldWeapon);
-						inv->AddItem(mWpn);
-
-						MaloW::Debug("Failed to Add Projectile to inventory when Equipping Axe");
-						this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip weapons");
-						return;
-					}
-					else
-					{
-						eq->UnEquipProjectile();
-					}
-				}
-			}
-			else
-			{
-				MaloW::Debug("Failed to Add Weapon to inventory when Equipping Axe");
-				this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip weapons");
-				return;
-			}
+			inv->AddItem(mWpn);
+			return;
 		}
+
 		MaloW::Debug("Weapon Equipped " + mWpn->GetItemName());
+		eq->EquipMeleeWeapon(mWpn);
 
-		
-		eq->EquipWeapon(mWpn);
-
-		this->SendEquipMessage(pActor->GetID(), mWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
+		this->SendEquipMessage(pActor->GetID(), mWpn->GetID(), EQUIPMENT_SLOT_MELEE_WEAPON);
 
 		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
+	if (item_Type == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE)
 	{
 		Equipment* eq = pActor->GetEquipment();
 
@@ -549,48 +506,20 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 			return;
 		}
 
-		inv->EraseItem(ItemID);
-
-		Weapon* oldWeapon = eq->GetWeapon();
-
-		if (oldWeapon)
+		if(!this->UnEquipEquipment(pActor, eq, inv, EQUIPMENT_SLOT_MELEE_WEAPON))
 		{
-			if(inv->AddItem(oldWeapon))
-			{
-				Projectile* oldProjectile = eq->GetProjectile();
-				if (oldProjectile)
-				{
-					if(!inv->AddItem(oldProjectile))
-					{
-						inv->EraseItem(oldWeapon->GetID());
-						eq->EquipWeapon(oldWeapon);
-						inv->AddItem(mWpn);
-						MaloW::Debug("Failed to Add Projectile to inventory when Equipping Pocket Knife");
-
-						this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip_weapons");
-						return;
-					}
-					else
-					{
-						eq->UnEquipProjectile();
-					}
-				}
-			}
-			else
-			{
-				MaloW::Debug("Failed to Add Weapon to inventory when Equipping Pocket Knife");
-				this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip weapons");
-				return;
-			}
+			inv->AddItem(mWpn);
+			return;
 		}
-		MaloW::Debug("Weapon Equipped " + mWpn->GetItemName());
-		eq->EquipWeapon(mWpn);
 
-		this->SendEquipMessage(pActor->GetID(), mWpn->GetID(), EQUIPMENT_SLOT_WEAPON);
+		MaloW::Debug("Weapon Equipped " + mWpn->GetItemName());
+		eq->EquipMeleeWeapon(mWpn);
+
+		this->SendEquipMessage(pActor->GetID(), mWpn->GetID(), EQUIPMENT_SLOT_MELEE_WEAPON);
 
 		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_PROJECTILE_ARROW)
+	if (item_Type == ITEM_TYPE_PROJECTILE_ARROW)
 	{
 		Equipment* eq = pActor->GetEquipment();
 
@@ -601,54 +530,121 @@ void Host::HandleItemUse(PlayerActor* pActor, const long ItemID)
 			MaloW::Debug("dynamic cast Failed in Host::UseItem (Arrow)");
 			return;
 		}
+		inv->EraseItem(ItemID);
 
-		Weapon* weapon = eq->GetWeapon();
+		RangedWeapon* weapon = eq->GetRangedWeapon();
 		if (weapon)
 		{
-			if (weapon->GetItemType() == ITEM_TYPE_WEAPON_RANGED_BOW)
+			if (weapon->GetItemType() != ITEM_TYPE_WEAPON_RANGED_BOW)
 			{
-				inv->EraseItem(ItemID);
+				MaloW::Debug("Can't equip arrow since no bow is Equipped");
+				inv->AddItem(arrow);
+				return;
+			}
+			
+			Projectile* oldProjectile = eq->GetProjectile();
 
-				Projectile* oldProjectile = eq->GetProjectile();
-
-				if (oldProjectile)
+			if (oldProjectile)
+			{
+				if (oldProjectile->GetItemType() != arrow->GetItemType())
 				{
-					if (oldProjectile->GetItemType() != arrow->GetItemType())
+					if(!inv->AddItem(oldProjectile))
 					{
-						if(!inv->AddItem(oldProjectile))
-						{
-							inv->AddItem(arrow);
-							MaloW::Debug("Failed to Add Projectile to inventory when Equipping Arrow");
-							return;
-						}
-						else
-						{
-							eq->UnEquipProjectile();
-						}
+						inv->AddItem(arrow);
+						MaloW::Debug("Failed to Add Projectile to inventory when Equipping Arrow");
+						return;
 					}
 					else
 					{
-						int stacks = oldProjectile->GetStackSize() + arrow->GetStackSize();
-						arrow->SetStackSize(stacks);
-
-						this->SendEquipMessage(pActor->GetID(), arrow->GetID(), EQUIPMENT_SLOT_AMMO);
-						return;
+						eq->UnEquipProjectile();
 					}
-
 				}
-				MaloW::Debug("Weapon Equipped " + arrow->GetItemName());
+				else
+				{
+					int stacks = oldProjectile->GetStackSize() + arrow->GetStackSize();
+					oldProjectile->SetStackSize(stacks);
 
-				eq->EquipProjectile(arrow);
+					this->SendEquipMessage(pActor->GetID(), arrow->GetID(), EQUIPMENT_SLOT_AMMO);
+					return;
+				}
 
-				this->SendEquipMessage(pActor->GetID(), arrow->GetID(), EQUIPMENT_SLOT_AMMO);
-				return;
 			}
+			MaloW::Debug("Weapon Equipped " + arrow->GetItemName());
+
+			eq->EquipProjectile(arrow);
+
+			this->SendEquipMessage(pActor->GetID(), arrow->GetID(), EQUIPMENT_SLOT_AMMO);
+			return;
 		}
-
-
 		this->SendErrorMessage(pActor->GetID(), "Failed_to_Equip_Arrow_because_No_Weapon_is_Equipped");
 		return;
 	}
+}
+
+bool Host::UnEquipEquipment(PlayerActor* pActor, Equipment* eq, Inventory* inv, const int WeaponType)
+{
+	bool bWeaponRemoved = false;
+
+	if (WeaponType == ITEM_TYPE_WEAPON_RANGED_BOW || WeaponType == ITEM_TYPE_WEAPON_RANGED_ROCK)
+	{
+		bool bProjectileRemoved = false;
+		RangedWeapon* oldRangedWeapon = eq->GetRangedWeapon();
+		if (oldRangedWeapon)
+		{
+			if(!inv->AddItem(oldRangedWeapon))
+			{
+				MaloW::Debug("Failed to Add Ranged Weapon to inventory when Equipping Weapon");
+				this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip_weapon");
+				return false;
+			}
+			bWeaponRemoved = true;
+		}
+
+		Projectile* oldProjectile = eq->GetProjectile();
+		if (oldProjectile)
+		{
+			if(!inv->AddItem(oldProjectile))
+			{
+				inv->EraseItem(oldRangedWeapon->GetID());
+				eq->EquipRangedWeapon(oldRangedWeapon);
+
+				MaloW::Debug("Failed to Add Projectile to inventory when Equipping Weapon");
+				this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip weapons");
+				return false;
+			}
+			else
+			{
+				bProjectileRemoved = true;
+				eq->UnEquipProjectile();
+			}
+		}
+
+		if(bProjectileRemoved)
+			this->SendUnEquipMessage(pActor->GetID(), oldProjectile->GetID(), EQUIPMENT_SLOT_AMMO);
+		if(bWeaponRemoved)
+			this->SendUnEquipMessage(pActor->GetID(), oldRangedWeapon->GetID(), EQUIPMENT_SLOT_RANGED_WEAPON);
+
+		return true;
+	}
+	else if(WeaponType == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE || WeaponType == ITEM_TYPE_WEAPON_MELEE_AXE)
+	{
+		MeleeWeapon* oldMeleeWeapon = eq->GetMeleeWeapon();
+		if (oldMeleeWeapon)
+		{
+			if(!inv->AddItem(oldMeleeWeapon))
+			{
+				MaloW::Debug("Failed to Add Melee Weapon to inventory when Equipping Weapon");
+				this->SendErrorMessage(pActor->GetID(), "No_room_in_inventory_to_unequip_weapon");
+				return false;
+			}
+			bWeaponRemoved = true;
+		}
+		if(bWeaponRemoved)
+			this->SendUnEquipMessage(pActor->GetID(), oldMeleeWeapon->GetID(), EQUIPMENT_SLOT_MELEE_WEAPON);
+
+		return true;
+	}
+	return false;
 }
 
 void Host::HandleDropItem(PlayerActor* pActor, const long ItemID)
@@ -672,8 +668,8 @@ void Host::HandleDropItem(PlayerActor* pActor, const long ItemID)
 			return;
 		}
 
-		this->CreateObjectFromItem(pActor, item_Food);
-		pActor->DropObject(ItemID);
+		if(this->CreateObjectFromItem(pActor, item_Food))
+			pActor->DropObject(ItemID);
 		return;
 	}
 	if (item_type == ITEM_TYPE_WEAPON_RANGED_BOW || item_type == ITEM_TYPE_WEAPON_RANGED_ROCK || 
@@ -685,8 +681,8 @@ void Host::HandleDropItem(PlayerActor* pActor, const long ItemID)
 			MaloW::Debug("Wrong Item Type Set");
 			return;
 		}
-		this->CreateObjectFromItem(pActor, item_Weapon);
-		pActor->DropObject(ItemID);
+		if(this->CreateObjectFromItem(pActor, item_Weapon))
+			pActor->DropObject(ItemID);
 		return;
 	}
 	if (item_type == ITEM_TYPE_PROJECTILE_ARROW)
@@ -698,8 +694,8 @@ void Host::HandleDropItem(PlayerActor* pActor, const long ItemID)
 			return;
 		}
 
-		this->CreateObjectFromItem(pActor, item_Weapon);
-		pActor->DropObject(ItemID);
+		if(this->CreateObjectFromItem(pActor, item_Weapon))
+			pActor->DropObject(ItemID);
 		return;
 	}
 	if (item_type == ITEM_TYPE_MATERIAL_SMALL_STICK || item_type == ITEM_TYPE_MATERIAL_MEDIUM_STICK || 
@@ -711,8 +707,8 @@ void Host::HandleDropItem(PlayerActor* pActor, const long ItemID)
 			MaloW::Debug("Wrong Item Type Set");
 			return;
 		}
-		this->CreateObjectFromItem(pActor, item_Material);
-		pActor->DropObject(ItemID);
+		if(this->CreateObjectFromItem(pActor, item_Material))
+			pActor->DropObject(ItemID);
 		return;
 	}
 	if (item_type == ITEM_TYPE_CONTAINER_CANTEEN || item_type == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
@@ -723,9 +719,8 @@ void Host::HandleDropItem(PlayerActor* pActor, const long ItemID)
 			MaloW::Debug("Wrong Item Type Set");
 			return;
 		}
-
-		this->CreateObjectFromItem(pActor, item_Container);
-		pActor->DropObject(ItemID);
+		if(this->CreateObjectFromItem(pActor, item_Container))
+			pActor->DropObject(ItemID);
 		return;
 	}
 }
@@ -742,7 +737,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const long ObjectID)
 	{
 		if (!pActor->PickUpObject(food))
 		{
-			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Food " + food->GetActorObjectName());
+			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Food_" + food->GetActorObjectName());
 			return false;
 		}
 		this->CreateItemFromObject(pActor, food);
@@ -757,7 +752,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const long ObjectID)
 	{
 		if (!pActor->PickUpObject(weapon))
 		{
-			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Weapon " + weapon->GetActorObjectName());
+			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Weapon_" + weapon->GetActorObjectName());
 			return false;
 		}
 
@@ -773,7 +768,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const long ObjectID)
 	{
 		if (!pActor->PickUpObject(container))
 		{
-			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Container " + container->GetActorObjectName());
+			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Container_" + container->GetActorObjectName());
 			return false;
 		}
 
@@ -789,7 +784,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const long ObjectID)
 	{
 		if (!pActor->PickUpObject(projectile))
 		{
-			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Projectile" + projectile->GetActorObjectName());
+			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_Projectile_" + projectile->GetActorObjectName());
 			return false;
 		}
 
@@ -805,7 +800,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const long ObjectID)
 	{
 		if (!pActor->PickUpObject(material))
 		{
-			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_material" + material->GetActorObjectName());
+			this->SendErrorMessage(pActor->GetID(), "Failed_To_Pickup_material_" + material->GetActorObjectName());
 			return false;
 		}
 
@@ -976,25 +971,23 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const long ItemID, const int S
 		{
 			if (projectile->GetID() == ItemID)
 			{
-				if (projectile->GetID() == ItemID)
+				if(inv->AddItem(projectile))
 				{
-					if(inv->AddItem(projectile))
-					{
-						eq->UnEquipProjectile();
-						this->SendUnEquipMessage(pActor->GetID(), ItemID, EQUIPMENT_SLOT_AMMO);
-					}
-					return;
+					eq->UnEquipProjectile();
+					this->SendUnEquipMessage(pActor->GetID(), ItemID, EQUIPMENT_SLOT_AMMO);
 				}
 				return;
 			}
+			return;
 			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString((float)ItemID));
 		}
 		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
+		return;
 	}
 
-	if (Slot == EQUIPMENT_SLOT_WEAPON)
+	if (Slot == EQUIPMENT_SLOT_RANGED_WEAPON)
 	{
-		Weapon* wpn = eq->GetWeapon();
+		Weapon* wpn = eq->GetRangedWeapon();
 
 		if (wpn)
 		{
@@ -1002,8 +995,8 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const long ItemID, const int S
 			{
 				if(inv->AddItem(wpn))
 				{
-					eq->UnEquipWeapon();
-					this->SendUnEquipMessage(pActor->GetID(), ItemID, EQUIPMENT_SLOT_WEAPON);
+					eq->UnEquipRangedWeapon();
+					this->SendUnEquipMessage(pActor->GetID(), ItemID, EQUIPMENT_SLOT_RANGED_WEAPON);
 				}
 				Projectile* projectile = eq->GetProjectile();
 
@@ -1023,6 +1016,36 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const long ItemID, const int S
 		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 	}
 
+	if (Slot == EQUIPMENT_SLOT_MELEE_WEAPON)
+	{
+		Weapon* wpn = eq->GetMeleeWeapon();
+
+		if (wpn)
+		{
+			if (wpn->GetID() == ItemID)
+			{
+				if(inv->AddItem(wpn))
+				{
+					eq->UnEquipMeleeWeapon();
+					this->SendUnEquipMessage(pActor->GetID(), ItemID, EQUIPMENT_SLOT_MELEE_WEAPON);
+				}
+				Projectile* projectile = eq->GetProjectile();
+
+				if (projectile)
+				{
+					if(inv->AddItem(projectile))
+					{
+						eq->UnEquipProjectile();
+						this->SendUnEquipMessage(pActor->GetID(), projectile->GetID(), EQUIPMENT_SLOT_AMMO);
+					}
+					return;
+				}
+				return;
+			}
+			MaloW::Debug("Item With ID doesn't exist in Weapon ID: " + MaloW::convertNrToString((float)ItemID));
+		}
+		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
+	}
 	if (Slot == EQUIPMENT_SLOT_HEAD)
 	{
 		Gear* head = eq->GetGear(EQUIPMENT_SLOT_HEAD);

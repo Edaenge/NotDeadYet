@@ -168,9 +168,11 @@ private:
 	bool HandlePickupItem(PlayerActor* pActor, const long ObjectId);
 	void HandleDropItem(PlayerActor* pActor, const long ItemID);
 	void HandleItemUse(PlayerActor* pActor, const long ItemID);
+	bool UnEquipEquipment(PlayerActor* pActor, Equipment* eq, Inventory* inv, const int itemType);
 	void HandleWeaponUse(PlayerActor* pActor, const long ItemID);
 	void HandleUnEquipItem(PlayerActor* pActor, const long ItemID, const int Slot);
 	bool HandleLootItem(PlayerActor* pActor, const int deadPlayerID, const long id, const int type);
+
 	Item* CreateItemFromDefault(const int ItemType);
 
 	/*! Sends UnEquip Message To Client*/
