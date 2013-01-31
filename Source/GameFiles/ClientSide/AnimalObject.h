@@ -12,6 +12,7 @@ class AnimalObject : public OrganicObject
 public:
 	AnimalObject(const long id) : OrganicObject(id){};
 	virtual ~AnimalObject(){}
+
 	/*! Updates the Animal*/
 	virtual void Update(float deltaTime);
 };

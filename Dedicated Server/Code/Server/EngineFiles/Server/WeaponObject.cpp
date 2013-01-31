@@ -1,7 +1,5 @@
 #include "WeaponObject.h"
 
-
-
 WeaponObject::WeaponObject(const bool genID /* = false */) : StaticObjectActor(genID)
 {
 	this->zWeight = 1;

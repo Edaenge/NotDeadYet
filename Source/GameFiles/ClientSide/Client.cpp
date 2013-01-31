@@ -410,8 +410,28 @@ void Client::HandleKeyboardInput()
 		}
 	}
 
-	//UnEquip Weapon
+	//UnEquip Ranged Weapon
 	if (this->zEng->GetKeyListener()->IsPressed('Q'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
+			Equipment* eq = pObject->GetEquipmentPtr();
+
+			Item* item = eq->GetMeleeWeapon();
+			if (item)
+			{
+				MaloW::Debug("Item UnEquipped " + item->GetItemName());
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
+				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_MELEE_WEAPON);
+
+				this->zServerChannel->sendData(msg);
+			}
+		}
+	}
+	//UnEquip Ranged Weapon
+	if (this->zEng->GetKeyListener()->IsPressed('R'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
@@ -649,9 +669,16 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
-			DebugMsg::Debug("Camera");
-			//position + direction
-			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Terrain problem at ";
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") ";
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") ";
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
 	//Object debug
@@ -659,13 +686,32 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_PROJECTILE_ARROW);
-			if (item)
-			{
-				SendUseItemMessage(item->GetID());
-			}
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Object problem at ";
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") ";
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") ";
+
+			DebugMsg::Debug(ss.str());
 
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_DELETE))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			DebugMsg::ClearDebug();
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, false);
 		}
 	}
 }
