@@ -75,6 +75,7 @@ public:
 	void BioActorVSBioActors(BioActor* pTest, std::vector<AnimalActor*> &actors, std::vector<BioActor*> &pCollide);
 	void BioActorVSBioActors(BioActor* pTest, std::vector<PlayerActor*> &actors, std::vector<BioActor*> &pCollide);
 	void DynamicActorVsBioActors(DynamicObjectActor* pTest, std::vector<PlayerActor*> &actors, std::vector<BioActor*> &pCollide);
+	void DynamicActorVsBioActors(DynamicObjectActor* pTest, std::vector<AnimalActor*> &actors, std::vector<BioActor*> &pCollide);
 
 ////////////////////////////////
 //			PLAYERS		     //
