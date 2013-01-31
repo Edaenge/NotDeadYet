@@ -305,7 +305,7 @@ Menu_select_data GuiManager::CheckCollisionInv()
 
 void GuiManager::EquipItem( int type, const Gui_Item_Data gid )
 {
-	this->zInvGui->EquipItem(type, gid);
+	this->zInvGui->EquipItem(type, gid, this->zInventoryOpen);
 }
 
 void GuiManager::UnEquipItem( const int ID, int stacks )

@@ -45,7 +45,7 @@ namespace DebugMsg
 
 
 		std::fstream writeFile;
-		writeFile.open ("ServerClientMessages.txt", std::fstream::in | std::fstream::out | std::fstream::app);
+		writeFile.open ("MapDebugData.txt", std::fstream::in | std::fstream::out | std::fstream::app);
 
 		writeFile << MaloW::convertNrToString(nr) << std::endl;
 
@@ -54,10 +54,10 @@ namespace DebugMsg
 
 	inline void ClearDebug()
 	{
-		//if(eraseFile)
+		//if(eraseDebugFile)
 		//{
 		std::ofstream writeFile;
-		writeFile.open ("ServerClientMessages.txt", std::ios::out | std::ios::trunc);
+		writeFile.open ("MapDebugData.txt", std::ios::out | std::ios::trunc);
 
 		writeFile << "";
 
