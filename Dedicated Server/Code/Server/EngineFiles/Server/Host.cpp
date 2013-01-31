@@ -24,7 +24,6 @@ Host::Host()
 	this->zTimeOut = 15.0f;
 	this->zPingMessageInterval = 5.0f;
 
-	//timer = 0;
 	this->zWorld = 0;
 	zAnchorPlayerMap.clear();
 }

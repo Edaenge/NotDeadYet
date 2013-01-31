@@ -729,6 +729,7 @@ std::vector<CollisionEvent> ActorHandler::CheckProjectileCollisions()
 		}
 
 		DynamicActorVsBioActors((*it), zPlayers, pCollide);
+		DynamicActorVsBioActors((*it), zAnimals, pCollide);
 
 		if(!pCollide.empty())
 		{
@@ -742,7 +743,11 @@ std::vector<CollisionEvent> ActorHandler::CheckProjectileCollisions()
 					ce.actor_aggressor_ID = (*it)->GetObjPlayerOwner();
 					ce.actor_aggressor_type = ACTOR_TYPE_PLAYER;
 					ce.actor_victim_ID = (*it_s)->GetID();
-					ce.actor_victim_type = ACTOR_TYPE_PLAYER;
+
+					if(dynamic_cast<PlayerActor*>(*it_s))
+						ce.actor_victim_type = ACTOR_TYPE_PLAYER;
+					else
+						ce.actor_victim_type = ACTOR_TYPE_ANIMAL;
 
 					collisionEvents.push_back(ce);
 
@@ -842,7 +847,7 @@ void ActorHandler::BioActorVSBioActors( BioActor* pTest, std::vector<PlayerActor
 	}
 }
 
-void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vector<PlayerActor*> & actors, std::vector<BioActor*> &pCollide)
+void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vector<PlayerActor*> &actors, std::vector<BioActor*> &pCollide)
 {
 	if(!pTest->IsMoving())
 		return;
@@ -875,4 +880,40 @@ void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vect
 				pCollide.push_back(*it);
 		}
 	}
+}
+
+void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vector<AnimalActor*> &actors, std::vector<BioActor*> &pCollide )
+{
+	if(!pTest->IsMoving())
+		return;
+
+	float middle;
+	Vector3 scale;
+	Vector3 pos;
+	Vector3 direction;
+	PhysicsObject* mesh;
+
+	scale = pTest->GetScale();
+	middle = (pTest->GetModelLength() * max(max(scale.x, scale.y),scale.z)) / 2;
+	mesh = pTest->GetPhysicObject();
+	pos = mesh->GetPosition();
+	direction = mesh->GetVelocity();
+	direction.Normalize();
+
+	PhysicsCollisionData pcd;
+
+	for(auto it = actors.begin(); it < actors.end(); it++)
+	{
+		if((*it)->GetID() == pTest->GetObjPlayerOwner())
+			continue;
+
+		pcd = this->zPhysicsEngine->GetCollisionBoundingOnly(pos, direction, (*it)->GetPhysicObject());
+
+		if(pcd.BoundingSphereCollision)
+		{
+			if((pcd.distance - (middle * 1.1f)) < 0.5f)
+				pCollide.push_back(*it);
+		}
+	}
+
 }
