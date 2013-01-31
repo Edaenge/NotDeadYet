@@ -4,9 +4,14 @@ static const std::string DEATH_GUI_PATH						= "Media/Icons/Use_v02.png";
 static const std::string LOOTING_GUI_PATH					= "Media/Icons/Use_v02.png";
 static const std::string INVENTORY_GUI_PATH					= "Media/Icons/Inventory_Full.png";
 static const std::string IN_GAME_MENU_GUI_PATH				= "Media/Icons/Use_v02.png";
-static const std::string INVENTORY_ITEM_SELECTION_GUI_PATH	= "Media/Icons/Use_v02.png";
+static const std::string INVENTORY_ITEM_SELECTION_GUI_PATH	= "Media/Icons/Menu_Circle.png";
 
 static const float GUI_DISPLAY_TIMER					= 2.0f;
+
+static const float InvXPos = 538.0f;
+static const float InvYPos = 108.0f;
+static const float InvWidth = 486.0f;
+static const float InvHeight = 660.0f;
 
 GuiManager::GuiManager()
 {
@@ -48,10 +53,10 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
-	float x = offSet + (538.0f / 1024.0f) * dx;
-	float y = (108.0f / 768.0f) * windowHeight;
-	float width = (486.0f / 1024.0f) * dx;
-	float height = (660.0f / 768.0f) * windowHeight;
+	float x = offSet + (InvXPos / 1024.0f) * dx;
+	float y = (InvYPos / 768.0f) * windowHeight;
+	float width = (InvWidth / 1024.0f) * dx;
+	float height = (InvHeight / 768.0f) * windowHeight;
 	
 	this->zInvGui = new InventoryGui(windowWidth - width, windowHeight - height, width, height, INVENTORY_GUI_PATH);
 
@@ -59,8 +64,8 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 
 	x = mousePosition.x;
 	y = mousePosition.y;
-	width = (200.0f / 1024.0f) * windowWidth;
-	height = (200.0f / 768.0f) * windowHeight;
+	width = (CIRCLISTRADIUS / 1024.0f) * dx;
+	height = (CIRCLISTRADIUS / 768.0f) * windowHeight;
 	this->zInvCircGui = new CircularListGui(x, y, width, height, INVENTORY_ITEM_SELECTION_GUI_PATH);
 
 	//this->zLootingGui = new CircularListGui(x, y, width, height, LOOTING_GUI_PATH);
@@ -306,4 +311,19 @@ void GuiManager::EquipItem( int type, const Gui_Item_Data gid )
 void GuiManager::UnEquipItem( const int ID, int stacks )
 {
 	this->zInvGui->UnEquipItem(ID, stacks);
+}
+
+void GuiManager::Resize( int width, int height )
+{
+	float dx = ((float)height * 4.0f) / 3.0f;
+	float offSet = (float)(width - dx) / 2.0f;
+
+	float guiWidth = (InvWidth / 1024.0f) * dx;
+	float guiHeight = (InvHeight / 768.0f) * height;
+
+	this->zInvGui->SetPosition(width - guiWidth, height - guiHeight);
+	this->zInvGui->SetDimension(Vector2(guiWidth, guiHeight));
+
+	this->zInvGui->Resize(width, height, dx);
+	this->zInvCircGui->Resize(width, height, dx);
 }

@@ -15,6 +15,8 @@ enum CIRCMENU
 	NOTHING
 };
 
+static const float CIRCLISTRADIUS = 200.0f;
+
 class CircularListGui : public GuiElement
 {
 public:
@@ -30,6 +32,8 @@ public:
 	void FadeOut(float value);
 	void ShowGui();
 	void HideGui();
+
+	void Resize(int width, int height, int dx);
 private:
 	std::string zItemImageName;
 	float zItemX;

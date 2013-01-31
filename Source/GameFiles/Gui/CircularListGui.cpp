@@ -115,3 +115,11 @@ void CircularListGui::FadeOut(float value)
 	}
 	GuiElement::FadeOut(value);
 }
+
+void CircularListGui::Resize( int width, int height, int dx )
+{
+	float tempWidth = (CIRCLISTRADIUS / 1024.0f) * dx;
+	float tempHeight = (CIRCLISTRADIUS / 768.0f) * height;
+
+	this->SetDimension(Vector2(tempWidth, tempHeight));
+}

@@ -614,6 +614,24 @@ void Client::HandleWeaponEquips()
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
 		}
 	}
+	else if(this->zEng->GetKeyListener()->IsPressed('T'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			if(zEng->GetEngineParameters()->windowWidth != 1024)
+			{
+				zEng->ResizeGraphicsEngine(1024, 768);
+				this->zGuiManager->Resize(1024, 768);
+			}
+			else
+			{
+				zEng->ResizeGraphicsEngine(1800, 1000);
+				this->zGuiManager->Resize(1800, 1000);
+			}
+
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+		}
+	}
 	else
 	{
 		if (this->zKeyInfo.GetKeyState(KEY_TEST))

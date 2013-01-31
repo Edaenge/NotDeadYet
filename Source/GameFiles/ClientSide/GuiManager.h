@@ -14,7 +14,6 @@ struct Menu_select_data
 	int zID;
 
 };
-
 class GuiManager
 {
 public:
@@ -37,6 +36,8 @@ public:
 	bool IsGuiOpen();
 	void Update(float deltaTime);
 	Menu_select_data CheckCollisionInv();
+
+	void Resize(int width, int height);
 private:
 	bool zLooting;
 	bool zDeathGuiOpen;
