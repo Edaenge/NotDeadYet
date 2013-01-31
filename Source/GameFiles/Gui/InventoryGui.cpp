@@ -8,6 +8,7 @@ static const float PADDING = 12.0f;
 static const float XOFFSETINV = 32.0f;
 static const float YOFFSETINV = 206.0f;
 static const float YOFFSETEQ = 62.0f;
+static const float EQXPOS[] = {94, 280, 342};
 
 InventoryGui::InventoryGui()
 {
@@ -47,14 +48,14 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 		zSlotPositions[i] = Vector2(xTemp, yTemp);
 	}
 	startOffsetY = (YOFFSETEQ / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
-	xTemp = this->zX + (94.0f / 1024.0f) * dx;
-	zWeaponSlots[0] = Vector2(xTemp, startOffsetY);
+	xTemp = this->zX + (EQXPOS[0] / 1024.0f) * dx;
+	zWeaponSlots[0] = Vector2(xTemp, this->zY + startOffsetY);
 
-	xTemp = this->zX + (208.0f / 1024.0f) * dx;
-	zWeaponSlots[1] = Vector2(xTemp, startOffsetY);
+	xTemp = this->zX + (EQXPOS[1] / 1024.0f) * dx;
+	zWeaponSlots[1] = Vector2(xTemp, this->zY + startOffsetY);
 
-	xTemp = this->zX + (342.0f / 1024.0f) * dx;
-	zWeaponSlots[2] = Vector2(xTemp, startOffsetY);
+	xTemp = this->zX + (EQXPOS[2] / 1024.0f) * dx;
+	zWeaponSlots[2] = Vector2(xTemp, this->zY + startOffsetY);
 }
 
 InventoryGui::~InventoryGui()
@@ -125,6 +126,22 @@ bool InventoryGui::RemoveItemFromGui(const int ID, int stacks)
 			}
 			(*it)->RemoveFromRenderer(GetGraphics());
 			this->zSlotGui.erase(it);
+
+			return true;
+		}
+	}
+	for (auto it = this->zWeaponSlotGui.begin(); it < this->zWeaponSlotGui.end(); it++)
+	{
+		if ((*it)->GetID() == ID)
+		{
+			if((*it)->GetStacks() > 0)
+			{
+				(*it)->SetStacks((*it)->GetStacks() - stacks);
+				if((*it)->GetStacks() > 0)
+					return true;
+			}
+			(*it)->RemoveFromRenderer(GetGraphics());
+			this->zWeaponSlotGui.erase(it);
 
 			return true;
 		}
@@ -237,7 +254,7 @@ std::string InventoryGui::GetImageName( unsigned int position )
 	return ret;
 }
 
-void InventoryGui::EquipItem( int type, const Gui_Item_Data gid )
+void InventoryGui::EquipItem( int type, const Gui_Item_Data gid, bool guiOpen )
 {
 	int size = zWeaponSlotGui.size();
 	for(int i = 0; i < size; i++)
@@ -247,8 +264,11 @@ void InventoryGui::EquipItem( int type, const Gui_Item_Data gid )
 			return;
 		}
 	}
-	InventorySlotGui* gui = new InventorySlotGui(zWeaponSlots[size].x, zWeaponSlots[size].y, zSlotImageWidth
+	InventorySlotGui* gui = new InventorySlotGui(zWeaponSlots[type].x, zWeaponSlots[type].y, zSlotImageWidth
 		, zSlotImageHeight, gid.zFilePath, gid.zID, gid.zType, gid.zStacks);
+
+	if(guiOpen)
+		gui->AddToRenderer(GetGraphics());
 
 	zWeaponSlotGui.push_back(gui);
 	
@@ -262,9 +282,11 @@ void InventoryGui::UnEquipItem( const int ID, int stacks )
 		if(zWeaponSlotGui.at(i)->GetID() == ID)
 		{
 			InventorySlotGui* InvGui = this->zWeaponSlotGui.at(i);
+			InvGui->RemoveFromRenderer(GetGraphics());
 			this->zWeaponSlotGui.erase(zWeaponSlotGui.begin() + i);
 			delete InvGui;
 			InvGui = NULL;
+			return;
 		}
 	}
 }
@@ -320,15 +342,16 @@ void InventoryGui::Resize(float windowWidth, float windowHeight, float dx)
 
 	Vector2 newWeaponSlots[WEAPONSLOTS];
 
-	startOffsetY = (YOFFSETEQ / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
-	xTemp = this->zX + (94.0f / 1024.0f) * dx;
-	newWeaponSlots[0] = Vector2(xTemp, startOffsetY);
+	startOffsetY = (YOFFSETEQ / 768.0f) * windowHeight;
+	xTemp = this->zX + (EQXPOS[0] / 1024.0f) * dx;
+	newWeaponSlots[0] = Vector2(xTemp, this->zY + startOffsetY);
 
-	xTemp = this->zX + (208.0f / 1024.0f) * dx;
-	newWeaponSlots[1] = Vector2(xTemp, startOffsetY);
+	xTemp = this->zX + (EQXPOS[1] / 1024.0f) * dx;
+	newWeaponSlots[1] = Vector2(xTemp, this->zY + startOffsetY);
 
-	xTemp = this->zX + (342.0f / 1024.0f) * dx;
-	newWeaponSlots[2] = Vector2(xTemp, startOffsetY);
+	xTemp = this->zX + (EQXPOS[2] / 1024.0f) * dx;
+	newWeaponSlots[2] = Vector2(xTemp, this->zY + startOffsetY);
+
 	for(int i = 0; i < this->zWeaponSlotGui.size(); i++)
 	{
 		for(int k = 0; k < WEAPONSLOTS; k++)
