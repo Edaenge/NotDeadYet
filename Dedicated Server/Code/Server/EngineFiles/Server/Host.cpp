@@ -51,169 +51,178 @@ Host::~Host()
 void Host::Init()
 {
 	Vector3 position;
-	float radius = 5.0f;
+	float radius = 3.5f;
 	int maxObjects = 12;
 	int counter = 0;
-	//Creates A New FoodObject With an Id And Default Values 
-	FoodObject* foodObj = NULL; //new FoodObject(true);
-	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, &foodObj, true))
+	int total = 0;
+	Vector3 center;
+	for (int i = 0; i < this->zMaxClients; i++)
 	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		foodObj->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticFoodActor(foodObj);
-		
-		if (Messages::FileWrite())
-			Messages::Debug("Created Deer Meat Object ID: " + MaloW::convertNrToString((float)foodObj->GetID()));
+		int currentPoint = i % this->zMaxClients;
+		center = CalculateSpawnPoint(currentPoint, this->zMaxClients, 20);
+		//Creates A New FoodObject With an Id And Default Values 
+		FoodObject* foodObj = NULL;
+		if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_DEER_MEAT, &foodObj, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			foodObj->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticFoodActor(foodObj);
 
-		counter++;
-	}
-	foodObj = NULL; //new FoodObject(true);
-	if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_WOLF_MEAT, &foodObj, true))
-	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		foodObj->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticFoodActor(foodObj);
+			if (Messages::FileWrite())
+				Messages::Debug("Created Deer Meat Object ID: " + MaloW::convertNrToString((float)foodObj->GetID()));
 
-		if (Messages::FileWrite())
-			Messages::Debug("Created Wolf Meat Object ID: " + MaloW::convertNrToString((float)foodObj->GetID()));
+			counter++;
+		}
+		foodObj = NULL;
+		if(this->CreateStaticObjectActor(OBJECT_TYPE_FOOD_WOLF_MEAT, &foodObj, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			foodObj->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticFoodActor(foodObj);
 
-		counter++;
-	}
-	//Creates A New WeaponObject With an Id And Default Values 
-	WeaponObject* weaponObj = NULL;//new WeaponObject(true);
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, &weaponObj, true))
-	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		weaponObj->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+			if (Messages::FileWrite())
+				Messages::Debug("Created Wolf Meat Object ID: " + MaloW::convertNrToString((float)foodObj->GetID()));
 
-
-		if (Messages::FileWrite())
-			Messages::Debug("Created Bow Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
-
-		counter++;
-	}
-	weaponObj = NULL;//new WeaponObject(true);
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_ROCK, &weaponObj, true))
-	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		weaponObj->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+			counter++;
+		}
+		//Creates A New WeaponObject With an Id And Default Values 
+		WeaponObject* weaponObj = NULL;
+		if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_BOW, &weaponObj, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			weaponObj->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
 
-		if (Messages::FileWrite())
-			Messages::Debug("Created Rock Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
+			if (Messages::FileWrite())
+				Messages::Debug("Created Bow Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
 
-		counter++;
-	}
-	weaponObj = NULL; //new WeaponObject(true);
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, &weaponObj, true))
-	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		weaponObj->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
-		
-		if (Messages::FileWrite())
-			Messages::Debug("Created Axe Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
+			counter++;
+		}
+		weaponObj = NULL;
+		if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_RANGED_ROCK, &weaponObj, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			weaponObj->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
-		counter++;
-	}
-	weaponObj = NULL; //new WeaponObject(true);
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_POCKET_KNIFE, &weaponObj, true))
-	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		weaponObj->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
-		if (Messages::FileWrite())
-			Messages::Debug("Created Pocket Knife Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
+			if (Messages::FileWrite())
+				Messages::Debug("Created Rock Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
 
-		counter++;
-	}
+			counter++;
+		}
+		weaponObj = NULL;
+		if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_AXE, &weaponObj, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			weaponObj->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
-	ContainerObject* containerObj = NULL; //new ContainerObject(true);
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, &containerObj, true))
-	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		containerObj->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticContainerActor(containerObj);
-		
-		if (Messages::FileWrite())
-			Messages::Debug("Created Canteen Object ID: " + MaloW::convertNrToString((float)containerObj->GetID()));
+			if (Messages::FileWrite())
+				Messages::Debug("Created Axe Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
 
-		counter++;
-	}
-	containerObj = NULL; //new ContainerObject(true);
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_WATER_BOTTLE, &containerObj, true))
-	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		containerObj->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticContainerActor(containerObj);
+			counter++;
+		}
+		weaponObj = NULL;
+		if (this->CreateStaticObjectActor(OBJECT_TYPE_WEAPON_MELEE_POCKET_KNIFE, &weaponObj, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			weaponObj->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
 
-		if (Messages::FileWrite())
-			Messages::Debug("Created Water Bottle Object ID: " + MaloW::convertNrToString((float)containerObj->GetID()));
+			if (Messages::FileWrite())
+				Messages::Debug("Created Pocket Knife Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
 
-		counter++;
-	}
-	StaticProjectileObject* projectileObj = NULL; //new ContainerObject(true);
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_PROJECTILE_ARROW, &projectileObj, true))
-	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		projectileObj->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticProjectileActor(projectileObj);
+			counter++;
+		}
 
-		if (Messages::FileWrite())
-			Messages::Debug("Created Arrow Object ID: " + MaloW::convertNrToString((float)projectileObj->GetID()));
+		ContainerObject* containerObj = NULL;
+		if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_CANTEEN, &containerObj, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			containerObj->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticContainerActor(containerObj);
 
-		counter++;
-	}
-	MaterialObject* material = NULL;
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_SMALL_STICK, &material, true))
-	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		material->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticMaterialObject(material);
+			if (Messages::FileWrite())
+				Messages::Debug("Created Canteen Object ID: " + MaloW::convertNrToString((float)containerObj->GetID()));
 
-		if (Messages::FileWrite())
-			Messages::Debug("Created Small Stick Object ID: " + MaloW::convertNrToString((float)material->GetID()));
+			counter++;
+		}
+		containerObj = NULL;
+		if (this->CreateStaticObjectActor(OBJECT_TYPE_CONTAINER_WATER_BOTTLE, &containerObj, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			containerObj->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticContainerActor(containerObj);
 
-		counter++;
-	}
-	material = NULL;
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_MEDIUM_STICK, &material, true))
-	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		material->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticMaterialObject(material);
+			if (Messages::FileWrite())
+				Messages::Debug("Created Water Bottle Object ID: " + MaloW::convertNrToString((float)containerObj->GetID()));
 
-		if (Messages::FileWrite())
-			Messages::Debug("Created Medium Stick Object ID: " + MaloW::convertNrToString((float)material->GetID()));
+			counter++;
+		}
+		StaticProjectileObject* projectileObj = NULL;
+		if (this->CreateStaticObjectActor(OBJECT_TYPE_PROJECTILE_ARROW, &projectileObj, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			projectileObj->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticProjectileActor(projectileObj);
 
-		counter++;
-	}
-	material = NULL;
-	if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_THREAD, &material, true))
-	{
-		position = CalculateSpawnPoint(counter, maxObjects, radius);
-		material->SetPosition(position);
-		//Adds The Object To the Array
-		this->zActorHandler->AddNewStaticMaterialObject(material);
+			if (Messages::FileWrite())
+				Messages::Debug("Created Arrow Object ID: " + MaloW::convertNrToString((float)projectileObj->GetID()));
 
-		if (Messages::FileWrite())
-			Messages::Debug("Created Thread Object ID: " + MaloW::convertNrToString((float)material->GetID()));
+			counter++;
+		}
+		MaterialObject* material = NULL;
+		if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_SMALL_STICK, &material, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			material->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticMaterialObject(material);
 
-		counter++;
+			if (Messages::FileWrite())
+				Messages::Debug("Created Small Stick Object ID: " + MaloW::convertNrToString((float)material->GetID()));
+
+			counter++;
+		}
+		material = NULL;
+		if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_MEDIUM_STICK, &material, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			material->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticMaterialObject(material);
+
+			if (Messages::FileWrite())
+				Messages::Debug("Created Medium Stick Object ID: " + MaloW::convertNrToString((float)material->GetID()));
+
+			counter++;
+		}
+		material = NULL;
+		if (this->CreateStaticObjectActor(OBJECT_TYPE_MATERIAL_THREAD, &material, true))
+		{
+			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
+			material->SetPosition(position);
+			//Adds The Object To the Array
+			this->zActorHandler->AddNewStaticMaterialObject(material);
+
+			if (Messages::FileWrite())
+				Messages::Debug("Created Thread Object ID: " + MaloW::convertNrToString((float)material->GetID()));
+
+			counter++;
+		}
+		total += counter;
+		counter = 0;
 	}
 
 	DeerActor* testDeer = NULL;
@@ -223,7 +232,7 @@ void Host::Init()
 	}
 
 	if (Messages::FileWrite())
-		Messages::Debug("Created " + MaloW::convertNrToString((float)counter) + " Objects");
+		Messages::Debug("Created " + MaloW::convertNrToString((float)total) + " Objects");
 }
 
 void Host::Life()

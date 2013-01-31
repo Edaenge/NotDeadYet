@@ -623,6 +623,34 @@ void Client::HandleWeaponEquips()
 	}
 }
 
+void Client::HandleDebugInfo()
+{
+	//Terrain debug
+	if (this->zEng->GetKeyListener()->IsPressed(VK_F1))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			
+			//position + direction
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
+		}
+	}
+	//Object debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F2))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_PROJECTILE_ARROW);
+			if (item)
+			{
+				SendUseItemMessage(item->GetID());
+			}
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+}
+
 void Client::Ping()
 {
 	this->zTimeSinceLastPing = 0.0f;

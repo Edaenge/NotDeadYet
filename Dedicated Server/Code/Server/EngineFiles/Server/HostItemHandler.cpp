@@ -978,8 +978,8 @@ void Host::HandleUnEquipItem(PlayerActor* pActor, const long ItemID, const int S
 				}
 				return;
 			}
-			return;
 			MaloW::Debug("Item With ID doesn't exist in Ammo ID: " + MaloW::convertNrToString((float)ItemID));
+			return;
 		}
 		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 		return;

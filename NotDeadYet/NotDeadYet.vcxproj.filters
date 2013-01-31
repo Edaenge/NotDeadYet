@@ -456,6 +456,9 @@
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObject.h">
       <Filter>Game Files\ClientSide\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\DebugMessages.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GameIcon.ico" />

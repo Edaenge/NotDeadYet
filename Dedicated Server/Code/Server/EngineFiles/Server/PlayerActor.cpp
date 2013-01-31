@@ -137,7 +137,8 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 	MaterialObject*	mo			= NULL;
 	Item* item					= NULL; 
 
-	if (object->GetType() == ACTOR_TYPE_STATIC_OBJECT_FOOD)
+	int itemType = object->GetType(); 
+	if (itemType == ACTOR_TYPE_STATIC_OBJECT_FOOD)
 	{
 		fo = dynamic_cast<FoodObject*>(object);
 		if(fo)
@@ -160,7 +161,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 		}
 	}
 
-	if (object->GetActorType() == ACTOR_TYPE_STATIC_OBJECT_WEAPON)
+	if (itemType == ACTOR_TYPE_STATIC_OBJECT_WEAPON)
 	{
 		wo = dynamic_cast<WeaponObject*>(object);
 		if(wo)
@@ -223,7 +224,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 		}
 	}
 	
-	if (object->GetActorType() == ACTOR_TYPE_STATIC_OBJECT_CONTAINER)
+	if (itemType == ACTOR_TYPE_STATIC_OBJECT_CONTAINER)
 	{
 		co = dynamic_cast<ContainerObject*>(object);
 		if(co)
@@ -247,7 +248,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 		}
 	}
 	
-	if (object->GetActorType() == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
+	if (itemType == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
 	{
 		spo = dynamic_cast<StaticProjectileObject*>(object);
 		if(spo)
@@ -271,7 +272,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 		}
 	}
 	
-	if (object->GetActorType() == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
+	if (itemType == ACTOR_TYPE_STATIC_OBJECT_MATERIAL)
 	{
 		mo = dynamic_cast<MaterialObject*>(object);
 		if(mo)

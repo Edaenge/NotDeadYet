@@ -91,7 +91,7 @@ private:
 	void HandleWeaponEquips();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
-
+	void HandleDebugInfo();
 	//////////////////////
 	//					//
 	//	   Updates		//
@@ -171,7 +171,7 @@ private:
 
 protected:
 	virtual void OnEvent(Event* e);
-
+	
 private:
 	/*! Current Client ID*/
 	long zID;
