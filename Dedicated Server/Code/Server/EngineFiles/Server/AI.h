@@ -19,7 +19,7 @@ struct Node
 	int gCost;
 	Node* parent;
 	Node(){this->x = -1; this->y = -1; this->parent = NULL; fCost = 99999;};
-	Node(int x, int y){this->x = x; this->y = y; this->parent = NULL; fCost = 99999;};
+	Node(float x, float y){this->x = x; this->y = y; this->parent = NULL; fCost = 99999;};
 };
 
 const int GRIDSIZE = 80;

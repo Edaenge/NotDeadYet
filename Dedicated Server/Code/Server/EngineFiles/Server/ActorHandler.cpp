@@ -762,6 +762,8 @@ std::vector<CollisionEvent> ActorHandler::CheckProjectileCollisions()
 				}
 
 				(*it)->SetMoving(false);
+				position.y = yValue;
+				(*it)->SetPosition(position);
 			}
 		}	
 	}
@@ -859,6 +861,7 @@ void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vect
 		return;
 
 	float middle;
+	float distanceBetweenTarget = 0.0f;
 	Vector3 scale;
 	Vector3 pos;
 	Vector3 direction;
@@ -870,19 +873,25 @@ void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vect
 	pos = mesh->GetPosition();
 	direction = mesh->GetVelocity();
 	direction.Normalize();
-
+	
 	PhysicsCollisionData pcd;
 
 	for(auto it = actors.begin(); it < actors.end(); it++)
 	{
+
 		if((*it)->GetID() == pTest->GetObjPlayerOwner())
+			continue;
+
+		distanceBetweenTarget = (pos-(*it)->GetPosition()).GetLength();
+
+		if(distanceBetweenTarget > 3.0f) //Hard Coded value
 			continue;
 
 		pcd = this->zPhysicsEngine->GetCollisionBoundingOnly(pos, direction, (*it)->GetPhysicObject());
 
 		if(pcd.BoundingSphereCollision)
 		{
-			if((pcd.distance - (middle * 1.1f)) < 0.5f)
+			if((pcd.distance - (middle * 1.0f)) < 0.5f)
 				pCollide.push_back(*it);
 		}
 	}
@@ -894,6 +903,7 @@ void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vect
 		return;
 
 	float middle;
+	float distanceBetweenTarget;
 	Vector3 scale;
 	Vector3 pos;
 	Vector3 direction;
@@ -910,14 +920,16 @@ void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vect
 
 	for(auto it = actors.begin(); it < actors.end(); it++)
 	{
-		if((*it)->GetID() == pTest->GetObjPlayerOwner())
+		distanceBetweenTarget = (pos-(*it)->GetPosition()).GetLength();
+
+		if(distanceBetweenTarget > 3.0f) //Hard Coded value
 			continue;
 
 		pcd = this->zPhysicsEngine->GetCollisionBoundingOnly(pos, direction, (*it)->GetPhysicObject());
 
 		if(pcd.BoundingSphereCollision)
 		{
-			if((pcd.distance - (middle * 1.1f)) < 0.5f)
+			if((pcd.distance - (middle * 1.0f)) < 0.5f)
 				pCollide.push_back(*it);
 		}
 	}
