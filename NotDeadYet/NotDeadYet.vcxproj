@@ -166,7 +166,6 @@
     <ClInclude Include="..\Source\WorldFiles\WorldRenderer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
     <None Include="GameIcon.ico" />
   </ItemGroup>
   <ItemGroup>

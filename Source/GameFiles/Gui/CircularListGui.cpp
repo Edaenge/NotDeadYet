@@ -10,6 +10,11 @@ CircularListGui::CircularListGui()
 	this->zPressed = false;
 	this->zHovered = false;
 	std::fill_n(this->zOptions, 4, NOTHING);
+	for(int i = 0; i < 4; i++)
+		this->zTextImages[i] = NULL;
+
+	for(int i = 0; i < 4; i++)
+		zTextImagePos[i] = Vector2(0, 0);
 }
 
 CircularListGui::CircularListGui(float x, float y, float width, float height, std::string textureName, int options[]) 
@@ -26,6 +31,9 @@ CircularListGui::CircularListGui(float x, float y, float width, float height, st
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
+	for(int i = 0; i < 4; i++)
+		this->zTextImages[i] = NULL;
+
 	zTextImagePos[0] = Vector2(x + (60.0f / 1024.0f) * dx, x + (60.0f / 768.0f) * windowHeight);
 	zTextImagePos[1] = Vector2(x + (140.0f / 1024.0f) * dx, x + (60.0f / 768.0f) * windowHeight);
 	zTextImagePos[2] = Vector2(x + (60.0f / 1024.0f) * dx, x + (140.0f / 768.0f) * windowHeight);
@@ -35,7 +43,8 @@ CircularListGui::CircularListGui(float x, float y, float width, float height, st
 CircularListGui::~CircularListGui()
 {
 	for(int i = 0; i < 4; i++)
-		SAFE_DELETE(this->zTextImages[i]);
+		if(this->zTextImages[i])
+			SAFE_DELETE(this->zTextImages[i]);
 }
 
 bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
@@ -64,6 +73,7 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 				break;
 			case CRAFT:
 				texName = "Media/Icons/Craft.png";
+				this->zOptions[i] = USE;
 				break;
 			case DROP:
 				texName = "Media/Icons/Drop.png";
@@ -73,6 +83,7 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 				break;
 			case EQUIP:
 				texName = "Media/Icons/Equip.png";
+				this->zOptions[i] = USE;
 				break;
 			case NOTHING:
 				texName = "Media/Icons/Cancel.png";

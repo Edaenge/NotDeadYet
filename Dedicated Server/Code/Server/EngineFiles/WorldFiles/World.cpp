@@ -428,7 +428,7 @@ Sector* World::GetSector( unsigned int x, unsigned int y ) throw(...)
 	return s;
 }
 
-void World::onEvent( Event* e )
+void World::OnEvent( Event* e )
 {
 	if ( WorldHeaderLoadedEvent* WHL = dynamic_cast<WorldHeaderLoadedEvent*>(e) )
 	{
@@ -804,7 +804,7 @@ float World::CalcHeightAtWorldPos( const Vector2& worldPos ) throw(...)
 	if ( worldPos.x >= GetWorldSize().x ||
 		worldPos.y >= GetWorldSize().y ||
 		worldPos.x < 0.0f ||
-		worldPos.y < 0.0f ) throw("Out Of Bounds!");
+		worldPos.y < 0.0f ) return 0;
 
 	// Height Nodes Density
 	float density = (float)SECTOR_WORLD_SIZE / (float)(SECTOR_HEIGHT_SIZE-1);
