@@ -15,26 +15,15 @@ MainMenu::MainMenu()
 
 MainMenu::~MainMenu()
 {
-	delete [] zSets;	SAFE_DELETE(this->zGame);
 	delete [] zSets;
 	zSets = 0;
+	SAFE_DELETE(this->zGame);
 }
 
 void MainMenu::StartTestRun()
 {
-	int clientErrorCode;
-	// Initializes the Client and returns a code that explains what happend
-	//clientErrorCode  = this->zGame->InitGameClient("127.0.0.1", 11521);	
-	clientErrorCode  = this->zGame->InitGameClient("194.47.150.16", 11521);
-	if(clientErrorCode == 0)
-	{
-		MaloW::Debug("Game Running");
-		this->zGame->Run();
-	}
-	else
-	{
-		PrintClientError(clientErrorCode);
-	}
+	zGame->InitGameClient("127.0.0.1", 11521);	
+	zGame->Run();
 }
 
 void MainMenu::Run()
@@ -139,12 +128,7 @@ void MainMenu::Run()
 
 }
 
-void MainMenu::StartTestRun()
-{
-	// Initializes the Client and returns a code that explains what happened
-	this->zGame->InitGameClient("127.0.0.1", 11521);
-	this->zGame->Run();
-}void MainMenu::PrintClientError(const int code)
+void MainMenu::PrintClientError(const int code)
 {
 	std::string errorMessage = "";
 	switch (code)

@@ -196,9 +196,6 @@ void Client::Life()
 		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 		{
 			this->zGuiManager->ToggleIngameMenu();
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID);
-			this->zServerChannel->TrySend(msg);
-			this->CloseConnection("Escape was pressed");
 		}
 
 		Sleep(5);
@@ -252,7 +249,7 @@ void Client::SendClientUpdate()
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, up.x, up.y, up.z);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
 	
-	this->zServerChannel->Send(msg);
+	this->zServerChannel->TrySend(msg);
 }
 
 void Client::SendAck(unsigned int IM_ID)
@@ -440,7 +437,7 @@ void Client::HandleKeyboardInput()
 				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
 				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_RANGED_WEAPON);
 
-				this->zServerChannel->sendData(msg);
+				this->zServerChannel->Send(msg);
 			}
 		}
 	}

@@ -11,16 +11,12 @@ ServerListener::ServerListener( MaloW::Process *observer, const unsigned int &po
 	WSADATA wsaData;
 	if ( WSAStartup(MAKEWORD(2,2), &wsaData) )
 	{
-		std::stringstream ss;
-		ss << "Failed WSA Startup! ErrCode: " << WSAGetLastError();
-		throw(ss.str().c_str());
+		throw("Failed WSA Startup!");
 	}
 
 	if ((zListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP)) == INVALID_SOCKET) 
 	{
-		std::stringstream ss;
-		ss << "Failed Creating Listen Socket! ErrCode: " << WSAGetLastError();
-		throw(ss.str().c_str());
+		throw("Failed Creating Listen Socket!");
 	}
 
 	sockaddr_in saListen;
@@ -29,16 +25,12 @@ ServerListener::ServerListener( MaloW::Process *observer, const unsigned int &po
 	saListen.sin_family = AF_INET;
 	if ( bind(zListenSocket, (sockaddr*)&saListen, sizeof(sockaddr)) == SOCKET_ERROR  )
 	{
-		std::stringstream ss;
-		ss << "Failed Binding Listen Socket! ErrCode: " << WSAGetLastError();
-		throw(ss.str().c_str());
+		throw("Failed Binding Listen Socket!");
 	}
 
 	if ( listen(zListenSocket, SOMAXCONN) == SOCKET_ERROR )
 	{
-		std::stringstream ss;
-		ss << "Failed Initializing Listen Socket! ErrCode: " << WSAGetLastError();
-		throw(ss.str().c_str());
+		throw("Failed Initializing Listen Socket!");
 	}
 }
 
@@ -59,9 +51,7 @@ bool ServerListener::Accept( SOCKET &newConnection )
 	{
 		if ( newConnection < 0 )
 		{
-			std::stringstream ss;
-			ss << "Failed Accepting On Listen Socket! ErrCode: " << WSAGetLastError();
-			throw(ss.str().c_str());
+			throw("Failed Accepting On Listen Socket!");
 		}
 		else
 		{

@@ -259,6 +259,8 @@ void Host::Life()
 	this->zGameStarted = false;
 	while(this->stayAlive)
 	{
+		if (zWorld) zWorld->Update();
+
 		Update();
 
 		//HandleClientNackIM();
@@ -303,8 +305,12 @@ Vector3 Host::CalculateSpawnPoint(int currentPoint, int maxPoints, float radius,
 
 	float x = center.x + radius * cos(angle);
 	float z = center.z + radius * sin(angle);
+	float y = 0.0f;
 
-	float y = this->zWorld->CalcHeightAtWorldPos(Vector2(x, z));
+	if ( x >= 0.0f && y >= 0.0f && x<zWorld->GetWorldSize().x && y<zWorld->GetWorldSize().y )
+	{
+		y = this->zWorld->CalcHeightAtWorldPos(Vector2(x, z));
+	}
 
 	return Vector3(x, y, z);
 }
@@ -313,23 +319,21 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 {
 	if ( zWorld ) delete zWorld, zWorld=0;
 	this->zWorld = new World(this, "3x3.map");
-	this->zActorHandler = new ActorHandler(this->zWorld);
 
+	this->zActorHandler = new ActorHandler(this->zWorld);
+	
 	try
 	{
 		if ( zServerListener ) delete zServerListener;
 		zServerListener = new ServerListener(this, port);
 		zServerListener->Start();
 	}
-	catch(const std::string &str)
-	{
-		return str.c_str();
-	}
 	catch(const char *str)
 	{
 		return str;
 	}
 
+	return 0;
 }
 
 void Host::HandleNewConnection( MaloW::ClientChannel* CC )
@@ -1823,6 +1827,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 
 	pi->AddObserver(this);
 	zAnchorPlayerMap[pi] = this->zWorld->CreateAnchor();
+	zAnchorPlayerMap[pi]->radius = 200.0f;
 
 	//Gather New player information
 	mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, (float)pi->GetID());
@@ -1859,6 +1864,7 @@ void Host::RespawnPlayer(PlayerActor* pActor)
 
 	new_Player->AddObserver(this);
 	zAnchorPlayerMap[new_Player] = this->zWorld->CreateAnchor();
+	zAnchorPlayerMap[new_Player]->radius = 200.0f;
 
 	//Gather New player information
 	Vector3 pos = new_Player->GetPosition();
@@ -2024,7 +2030,7 @@ void Host::OnEvent(Event* e)
 	{
 		Vector3 playerTempPos = PUE->playerActor->GetPosition();
 		
-		if(playerTempPos.x >= 0 && playerTempPos.z >= 0)
+		if(playerTempPos.x >= 0 && playerTempPos.z >= 0 && playerTempPos.x < zWorld->GetWorldSize().x && playerTempPos.z < zWorld->GetWorldSize().y )
 		{
 			Vector3 oldPos = PUE->prevPos; 
 			float yPos = this->zWorld->CalcHeightAtWorldPos(Vector2(playerTempPos.x, playerTempPos.z));

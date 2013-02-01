@@ -61,9 +61,7 @@ bool ServerChannel::Receive( std::string& msg )
 	{
 		if ( errCode < 0 )
 		{
-			std::stringstream ss;
-			ss << "Failed Receiving Packet Size! ErrCode:" << WSAGetLastError();
-			throw(ss.str());
+			throw("Failed Receiving Packet Size!");
 		}
 		else
 		{
@@ -78,9 +76,7 @@ bool ServerChannel::Receive( std::string& msg )
 	{
 		if ( errCode < 0 )
 		{
-			std::stringstream ss;
-			ss << "Failed Receiving Packet Size! ErrCode:" << WSAGetLastError();
-			throw(ss.str());
+			throw("Failed Receiving Packet Size!");
 		}
 		else
 		{
@@ -103,9 +99,7 @@ bool ServerChannel::Send(const std::string& msg)
 	{
 		if ( errCode < 0 )
 		{
-			std::stringstream ss;
-			ss << "Failed Sending Packet Size! ErrCode:" << WSAGetLastError();
-			throw(ss.str());
+			throw("Failed Sending Packet Size!");
 		}
 		else
 		{
@@ -118,9 +112,7 @@ bool ServerChannel::Send(const std::string& msg)
 	{
 		if ( errCode < 0 )
 		{
-			std::stringstream ss;
-			ss << "Failed Sending Packet Data! ErrCode:" << WSAGetLastError();
-			throw(ss.str());
+			throw("Failed Sending Packet Data!");
 		}
 		else
 		{
@@ -159,9 +151,7 @@ void ServerChannel::CloseSpecific()
 	{
 		if( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
 		{
-			std::stringstream ss;
-			ss << "Failed Shutting Down Socket! ErrCode:" << WSAGetLastError();
-			throw(ss.str());
+			throw("Failed Shutting Down Socket!");
 		}
 	}
 }
