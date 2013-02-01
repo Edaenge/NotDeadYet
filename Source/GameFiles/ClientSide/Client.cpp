@@ -101,7 +101,7 @@ float Client::Update()
 		this->zAnchor->position = cameraPos;
 		this->zEng->SetSceneAmbientLight(this->zWorld->GetAmbientAtWorldPos(cameraPos));
 
-		this->zAnchor->radius = this->zEng->GetEngineParameters()->FarClip;
+		this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
 	}
 	if(zWorld)
 		this->zWorld->Update();
@@ -123,9 +123,8 @@ void Client::InitGraphics()
 
 	this->zAnchor = this->zWorld->CreateAnchor();
 
-	iGraphicsEngineParams* GEP = GetGraphics()->GetEngineParameters();
-	int windowWidth = GEP->windowWidth;
-	int windowHeight = GEP->windowHeight;
+	int windowWidth = GetGraphics()->GetEngineParameters().WindowWidth;
+	int windowHeight = GetGraphics()->GetEngineParameters().WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 	float length = ((25.0f / 1024.0f) * dx);
@@ -134,6 +133,27 @@ void Client::InitGraphics()
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(x, y), Vector2(length, length), "Media/Icons/cross.png");
 
+	std::string path = "Media/Models/";
+	const char* object[]  = {(path + "ArmyRation_v01.obj").c_str(), 
+		(path + "Arrow_v01.obj").c_str(),
+		(path + "Bigleaf_01.ani").c_str(), 
+		(path + "Bow_v01.obj").c_str(),
+		(path + "BranchesItem_01_v01.obj").c_str(), 
+		(path + "Bush_01.ani").c_str(),
+		(path + "Campfire_01_v01.obj").c_str(),
+		(path + "Fern_02.ani").c_str(),
+		(path + "GrassPlant_01.ani").c_str(),
+		(path + "Machete_v01.obj").c_str(), 
+		(path + "Pocketknife_v02.obj").c_str(), 
+		(path + "Stone_02_v01.obj").c_str(),
+		(path + "Stone_01_v02.obj").c_str(),
+		(path + "StoneItem_01_v01.obj").c_str(),
+		(path + "Tree_01.ani").c_str(),
+		(path + "WaterGrass_02.ani").c_str(),
+		(path + "Veins_01_v03_r.obj").c_str()};
+
+
+	//this->zEng->PreLoadResources(17, object);
 	//this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 1, 1, 1, 1);
 
 	//this->zEng->StartRendering();
@@ -410,7 +430,7 @@ void Client::HandleKeyboardInput()
 		}
 	}
 
-	//UnEquip Ranged Weapon
+	//UnEquip Melee Weapon
 	if (this->zEng->GetKeyListener()->IsPressed('Q'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
@@ -639,7 +659,7 @@ void Client::HandleWeaponEquips()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
-			if(zEng->GetEngineParameters()->windowWidth != 1024)
+			if(zEng->GetEngineParameters().WindowWidth != 1024)
 			{
 				zEng->ResizeGraphicsEngine(1024, 768);
 				this->zGuiManager->Resize(1024, 768);
@@ -664,7 +684,7 @@ void Client::HandleWeaponEquips()
 
 void Client::HandleDebugInfo()
 {
-	//Terrain debug
+	//Terrain Height debug
 	if (this->zEng->GetKeyListener()->IsPressed(VK_F1))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -672,16 +692,17 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Terrain problem at ";
-			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") ";
-			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") ";
+			ss << "Terrain problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
 
 			DebugMsg::Debug(ss.str());
 
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
-	//Object debug
+	//Terrain Texture debug
 	else if (this->zEng->GetKeyListener()->IsPressed(VK_F2))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -689,9 +710,46 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Object problem at ";
-			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") ";
-			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") ";
+			ss << "Terrain Texture problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+	//Terrain AI Grid debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F3))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Terrain AI grid problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+	//Object debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F4))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Object problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
 
 			DebugMsg::Debug(ss.str());
 

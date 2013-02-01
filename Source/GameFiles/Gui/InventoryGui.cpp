@@ -18,16 +18,16 @@ InventoryGui::InventoryGui()
 InventoryGui::InventoryGui(float x, float y, float width, float height, std::string textureName) 
 	: GuiElement(x, y, width, height, textureName)
 {
-	float windowWidth = (float)(GetGraphics()->GetEngineParameters()->windowWidth);
-	float windowHeight = (float)(GetGraphics()->GetEngineParameters()->windowHeight);
+	float windowWidth = (float)(GetGraphics()->GetEngineParameters().WindowWidth);
+	float windowHeight = (float)(GetGraphics()->GetEngineParameters().WindowHeight);
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 
 	float startOffsetX = (XOFFSETINV / 1024.0f) * dx;
-	float startOffsetY = (YOFFSETINV / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	float startOffsetY = (YOFFSETINV / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight;
 	this->zSlotImageWidth = (SLOTIMAGEWIDTH / 1024.0f) * dx;
-	this->zSlotImageHeight = (SLOTIMAGEHEIGHT / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	this->zSlotImageHeight = (SLOTIMAGEHEIGHT / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight;
 	float paddingX = (PADDING / 1024.0f) * dx;
-	float paddingY = (PADDING / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	float paddingY = (PADDING / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight;
 	float xTemp = this->zX + startOffsetX;
 	float yTemp = this->zY + startOffsetY;
 	zSlotPositions[0] = Vector2(xTemp, yTemp);
@@ -47,7 +47,7 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 
 		zSlotPositions[i] = Vector2(xTemp, yTemp);
 	}
-	startOffsetY = (YOFFSETEQ / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
+	startOffsetY = (YOFFSETEQ / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight;
 	xTemp = this->zX + (EQXPOS[0] / 1024.0f) * dx;
 	zWeaponSlots[0] = Vector2(xTemp, this->zY + startOffsetY);
 
@@ -186,10 +186,9 @@ bool InventoryGui::RemoveFromRenderer(GraphicsEngine* ge)
 	return true;
 }
 
-int InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
+Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
 {
 	Vector2 dimension = this->GetDimension();
-	int counter = 0;
 	bool bCollision = false;
 
 	if (!((mouseX < this->zX || mouseX > (this->zX + dimension.x)) || (mouseY < this->zY || mouseY > (this->zY + dimension.y))))
@@ -202,13 +201,40 @@ int InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, 
 				if (bCollision)
 				{
 					if(mousePressed)
-						return (*x)->GetID();
+					{
+						Selected_Item_ReturnData sir;
+						sir.ID = (*x)->GetID();
+						sir.type = (*x)->GetType();
+						sir.inventory = 0;
+						return sir;
+					}
 				}
 			}
-			counter++;
+		}
+		for (auto x = this->zWeaponSlotGui.begin(); x < this->zWeaponSlotGui.end() && !bCollision; x++)
+		{
+			if ((*x))
+			{
+				bCollision = (*x)->CheckCollision(mouseX, mouseY, mousePressed, ge);
+				if (bCollision)
+				{
+					if(mousePressed)
+					{
+						Selected_Item_ReturnData sir;
+						sir.ID = (*x)->GetID();
+						sir.type = (*x)->GetType();
+						sir.inventory = 1;
+						return sir;
+					}
+				}
+			}
 		}
 	}
-	return -1;
+	Selected_Item_ReturnData sir;
+	sir.ID = -1;
+	sir.type = -1;
+	sir.inventory = -1;
+	return sir;
 }
 
 void InventoryGui::HideGui()

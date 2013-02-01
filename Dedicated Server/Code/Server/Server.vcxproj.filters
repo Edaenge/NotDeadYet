@@ -163,6 +163,9 @@
     <ClCompile Include="..\..\..\Source\GameFiles\FileReader.cpp">
       <Filter>Server</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Server\GhostActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineFiles\Server\Actor.h">
@@ -371,6 +374,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Source\GameFiles\FileReader.h">
       <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\GhostActor.h">
+      <Filter>Server\Actors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

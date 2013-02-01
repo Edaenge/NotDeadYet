@@ -87,7 +87,10 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_REMOVE_DEAD_ANIMAL_OBJECT,
 	MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED,
 	MESSAGE_TYPE_DEAD_ANIMAL_ITEM_FINISHED,
-	MESSAGE_TYPE_START_GAME
+	MESSAGE_TYPE_START_GAME,
+	MESSAGE_TYPE_NEW_GHOST_ACTOR,
+	MESSAGE_TYPE_REMOVE_GHOST_ACTOR,
+	MESSAGE_TYPE_UPDATE_GHOST_ACTOR
 };
 //Data Messages
 static const std::string M_POSITION					= "P";
@@ -167,6 +170,9 @@ static const std::string M_DEAD_PLAYER_REMOVE_ITEM	= "DPRI";
 static const std::string M_ADD_DEAD_PLAYER_OBJECT	= "ADPO";
 static const std::string M_REMOVE_DEAD_PLAYER_OBJECT= "RDPO";
 static const std::string M_DEAD_PLAYER_ITEM_FINISHED= "DPIF";
+static const std::string M_NEW_GHOST_ACTOR			= "NGA";
+static const std::string M_REMOVE_GHOST_ACTOR		= "RGA";
+static const std::string M_UPDATE_GHOST_ACTOR		= "UGA";
 //Static Object Messages
 static const std::string M_NEW_STATIC_OBJECT		= "NSO";
 static const std::string M_REMOVE_STATIC_OBJECT		= "RSO";

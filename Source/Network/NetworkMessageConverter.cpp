@@ -253,6 +253,12 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_REMOVE_DEAD_PLAYER_OBJECT:
 		ss << M_REMOVE_DEAD_PLAYER_OBJECT;
 		break;
+	case MESSAGE_TYPE_NEW_GHOST_ACTOR:
+		ss << M_NEW_GHOST_ACTOR;
+		break;
+	case MESSAGE_TYPE_REMOVE_GHOST_ACTOR:
+		ss << M_REMOVE_GHOST_ACTOR;
+		break;
 	case MESSAGE_TYPE_CONNECTION_CLOSED:
 		ss << M_CONNECTION_CLOSED;
 		break;

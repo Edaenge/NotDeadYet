@@ -332,7 +332,7 @@ int Host::InitHost(const int PORT, const unsigned int MAX_CLIENTS)
 	if ( zWorld ) delete zWorld, zWorld=0;
 	this->zWorld = new World(this, "3x3.map");
 	this->zActorHandler = new ActorHandler(this->zWorld);
-
+	
 	return code;
 }
 
@@ -1751,13 +1751,15 @@ void Host::OnBioActorDeath( BioActor* actor )
 	int type = actor->GetActorType();
 	int messageType = 0;
 	std::string msg = "";
-
+	
 	if (type == ACTOR_TYPE_PLAYER)
 	{
 		PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
 		messageType = MESSAGE_TYPE_DEAD_PLAYER;
 
 		RespawnPlayer(pActor);
+		
+		//
 
 		this->zActorHandler->RemovePlayerActor(pActor->GetID());
 	}
@@ -1884,6 +1886,16 @@ void Host::RespawnPlayer(PlayerActor* pActor)
 	}
 }
 
+void Host::CreateNewGhostActor(PlayerActor* pActor)
+{
+	GhostActor* gActor = new GhostActor(pActor->GetID(), pActor->GetPosition());
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_GHOST_ACTOR, pActor->GetID());
+
+	msg += gActor->ToMessageString(&this->zMessageConverter);
+
+	this->SendToAllClients(msg, true);
+}
+
 void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 {
 	std::string mess;
@@ -2003,7 +2015,7 @@ int Host::GetNrOfPlayers() const
 	return this->zClients.size();
 }
 
-void Host::onEvent( Event* e )
+void Host::OnEvent(Event* e)
 {
 	if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )
 	{

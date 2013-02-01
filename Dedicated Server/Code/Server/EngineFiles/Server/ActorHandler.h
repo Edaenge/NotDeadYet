@@ -5,15 +5,18 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #pragma once
 
+#include "Safe.h"
+
 #include "DeerActor.h"
 #include "WolfActor.h"
+#include "GhostActor.h"
 #include "PlayerActor.h"
 #include "ObjectManager.h"
+#include "PhysicsEngine.h"
 #include "DeadPlayerObjectActor.h"
 #include "DeadAnimalObjectActor.h"
 #include "DynamicProjectileObject.h"
-#include "Safe.h"
-#include "PhysicsEngine.h"
+
 
 static const enum COLLISION_EVENT_TYPE
 {

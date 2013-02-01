@@ -146,7 +146,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 
 		if (pVictim)
 		{
-			pVictim->TakeDamage(damage + 100);
+			pVictim->TakeDamage(damage);
 		}
 
 		return;

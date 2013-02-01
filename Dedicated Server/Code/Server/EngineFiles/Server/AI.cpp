@@ -196,7 +196,7 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 			valid = false;
 			add = false;
 
-			unsigned int nextNode = -1;
+			int nextNode = -1;
 			int nextX = x;
 			int nextY = y;
 

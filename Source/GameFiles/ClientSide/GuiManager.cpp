@@ -47,8 +47,8 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 	this->zLootingGuiShowTimer = 0.0f;
 	this->zInventoryGuiShowTimer = 0.0f;
 
-	float windowWidth = (float)(ge->GetEngineParameters()->windowWidth);
-	float windowHeight = (float)(ge->GetEngineParameters()->windowHeight);
+	float windowWidth = (float)(ge->GetEngineParameters().WindowWidth);
+	float windowHeight = (float)(ge->GetEngineParameters().WindowHeight);
 
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
@@ -66,7 +66,8 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 	y = mousePosition.y;
 	width = (CIRCLISTRADIUS / 1024.0f) * dx;
 	height = (CIRCLISTRADIUS / 768.0f) * windowHeight;
-	this->zInvCircGui = new CircularListGui(x, y, width, height, INVENTORY_ITEM_SELECTION_GUI_PATH);
+	int options[4] = {UNEQUIP, NOTHING, NOTHING, USE};
+	this->zInvCircGui = new CircularListGui(x, y, width, height, INVENTORY_ITEM_SELECTION_GUI_PATH, options);
 
 	//this->zLootingGui = new CircularListGui(x, y, width, height, LOOTING_GUI_PATH);
 	zSelectedItem = 0;
@@ -150,7 +151,7 @@ void GuiManager::ShowCircularItemGui()
 
 			float x = mousePosition.x - dimension.x * 0.5f;
 			float y = mousePosition.y - dimension.y * 0.5f;
-			this->zInvCircGui->SetPosition(x, y);
+			this->zInvCircGui->SetPosition(Vector2(x, y));
 
 			//Show Gui
 			this->zCircularInventorySelectionOpen = true;
@@ -271,7 +272,7 @@ Menu_select_data GuiManager::CheckCollisionInv()
 		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
 		this->zSelectedCircMenu = this->zInvCircGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(1), zEng);
 
-		if(this->zSelectedCircMenu >= 0 && this->zSelectedCircMenu < 4)
+		if(this->zSelectedCircMenu != -1)
 		{
 			this->HideCircularItemGui();
 			Menu_select_data msd;
@@ -289,7 +290,10 @@ Menu_select_data GuiManager::CheckCollisionInv()
 	else if( this->zInventoryOpen )
 	{
 		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
-		this->zSelectedItem = this->zInvGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(2), zEng);
+		Selected_Item_ReturnData sir;
+		sir = this->zInvGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(2), zEng);
+		zSelectedItem = sir.ID;
+		this->zInvCircGui->Adjust(sir.type, sir.inventory);
 		if(zSelectedItem != -1 && !this->zCircularInventorySelectionOpen && !zMinorFix)
 		{
 			zMinorFix = true;
