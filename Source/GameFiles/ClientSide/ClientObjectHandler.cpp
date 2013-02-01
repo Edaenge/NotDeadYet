@@ -74,6 +74,10 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	{
 		if (ID == this->zID)
 		{
+			if (this->zGuiManager)
+				SAFE_DELETE(this->zGuiManager);
+
+			this->zGuiManager = new GuiManager(this->zEng);
 			this->zCreated = true;
 			//filename = "Media/Models/Ball.obj";
 			//scale = Vector3(0.05f, 0.05f, 0.05f);
