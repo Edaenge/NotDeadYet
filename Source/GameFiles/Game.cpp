@@ -1,6 +1,9 @@
 #include "Game.h"
 #include "Safe.h"
 #include "Graphics.h"
+#include "Sounds.h"
+#include <fstream>
+#include "SoundReader.h"
 
 Game::Game()
 {
@@ -56,4 +59,12 @@ int Game::InitGameClient(std::string ip, int port)
 		
 
 	return code;
+}
+
+bool Game::InitSounds(SoundHandler* engine)
+{
+	SoundReader soundReader(engine);
+	bool result = soundReader.ReadFromFile();
+
+	return result;
 }

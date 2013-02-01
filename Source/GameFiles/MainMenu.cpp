@@ -1,5 +1,6 @@
 #include "MainMenu.h"
 #include "Safe.h"
+#include "Sounds.h"
 
 MainMenu::MainMenu()
 {
@@ -8,7 +9,6 @@ MainMenu::MainMenu()
 	zClientConnected	= false;
 	zHostCreated		= false;
 	this->zGame			= new Game();
-
 	this->zPrimarySet	= MAINMENU;
 	this->zSecondarySet = NOMENU;
 }

@@ -214,6 +214,15 @@
     <ClCompile Include="..\Source\GameFiles\ClientSide\StaticObject.cpp">
       <Filter>Game Files\ClientSide\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Sounds.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\FileReader.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\SoundReader.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -457,6 +466,15 @@
       <Filter>Game Files\ClientSide\Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\DebugMessages.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Sounds.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\FileReader.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\SoundReader.h">
       <Filter>Game Files</Filter>
     </ClInclude>
   </ItemGroup>

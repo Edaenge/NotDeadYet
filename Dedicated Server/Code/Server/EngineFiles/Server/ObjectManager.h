@@ -5,8 +5,9 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #pragma once
 
+#include "FileReader.h"
 #include <vector>
-#include "../../../../../Source/GameFiles/Items/Item.h"
+#include "Item.h"
 #include "WeaponObject.h"
 #include "FoodObject.h"
 #include "ContainerObject.h"
@@ -16,13 +17,13 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 /*This class reads and stores WordObjects.
   The objects can be fetched by using enums from Item.h.
 */
-class ObjectManager
+class ObjectManager : public FileReader
 {
 public:
 	ObjectManager();
 	virtual ~ObjectManager();
 
-	bool ReadObjects();
+	bool ReadFromFile();
 	/*! Returns a Weapon object from given type.
 		Returns null if it cannot be found.
 	*/
@@ -44,7 +45,6 @@ public:
 	*/
 	const StaticProjectileObject* GetStaticProjectileObject(const int type);
 private:
-	void TrimAndSet(char* ret);
 	bool InterpCommand(char* command, char* key, WeaponObject* wp);
 	bool InterpCommand(char* command, char* key, FoodObject* fd);
 	bool InterpCommand(char* command, char* key, ContainerObject* fd);
@@ -57,7 +57,6 @@ private:
 	const ContainerObject* SearchType(std::vector<ContainerObject*>& containers, const int type) const;
 	const StaticProjectileObject* SearchType(std::vector<StaticProjectileObject*>& projectiles, const int type) const;
 
-	bool Replace(char* key);
 private:
 	std::vector<FoodObject*> zFood;
 	std::vector<WeaponObject*> zWeapons;

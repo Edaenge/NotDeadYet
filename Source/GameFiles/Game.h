@@ -4,6 +4,7 @@
 #pragma once
 
 #include "ClientSide\Client.h"
+#include "SoundHandler.h"
 
 
 enum NETWORK_ERROR_CODE
@@ -18,9 +19,14 @@ class Game
 {
 	public:
 		Game();
-		/*! Creates a Client that connects to the Ip and Port in the Parameters.
+		/*! Creates a Client that connects to the IP and Port in the Parameters.
 			The function will start the thread if succeeded.*/
 		int InitGameClient(std::string ip, int port);
+		/*! Initialize the sounds.
+			It will read and load all sounds.
+		*/
+		bool InitSounds(SoundHandler* engine);
+
 		virtual ~Game();
 
 		void Run();

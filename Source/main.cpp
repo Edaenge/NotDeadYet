@@ -1,11 +1,11 @@
 #include "Graphics.h"
-#include "SoundEngine.h"
+#include "Sounds.h"
 #include "MainMenu.h"
+
 #if defined(DEBUG) || defined(_DEBUG)
 	#include <vld.h>
 	#define INCLUDE_MODEL_VIEWER
 #endif
-
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) 
 {
@@ -21,6 +21,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 		MaloW::Debug("Failed Initializing Graphics!");
 		return 1;
 	}
+	if ( SoundsInit() != 0 )
+	{
+		MaloW::Debug("Failed Initializing Sounds!");
+		return 1;
+	}
+
 	/*int** memLeakTest = new int*[100];
 	for(int i = 0; i < 100; i++)
 	{
@@ -38,6 +44,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 
 	// Free Graphics
 	FreeGraphics();
+	// Free Sounds
+	FreeSounds();
 	
 	return 0;
 }

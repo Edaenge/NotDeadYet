@@ -538,6 +538,7 @@ void SoundHandler::PlayMusic(char* filename)
 		}
 	}*/
 }
+
 void SoundHandler::StopMusic()
 {
 	FMOD_RESULT result;

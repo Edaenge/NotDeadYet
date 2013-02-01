@@ -34,7 +34,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		}
 		else if(strcmp(key, M_STATE.c_str()) == 0)
 		{
-			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
+			int state = this->zMsgHandler.ConvertStringToFloat(M_STATE, (*it));
 			playerObject->SetState(state);
 		}
 		else if(strcmp(key, M_SCALE.c_str()) == 0)
@@ -43,22 +43,22 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		}
 		else if(strcmp(key, M_HEALTH.c_str()) == 0)
 		{
-			float health = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
+			float health = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, (*it));
 			playerObject->SetHealth(health);
 		}
 		else if(strcmp(key, M_HYDRATION.c_str()) == 0)
 		{
-			float hydration = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
+			float hydration = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, (*it));
 			playerObject->SetHydration(hydration);
 		}
 		else if(strcmp(key, M_STAMINA.c_str()) == 0)
 		{
-			float stamina = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
+			float stamina = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, (*it));
 			playerObject->SetStamina(stamina);
 		}
 		else if(strcmp(key, M_HUNGER.c_str()) == 0)
 		{
-			float hunger = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
+			float hunger = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, (*it));
 			playerObject->SetHunger(hunger);
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)

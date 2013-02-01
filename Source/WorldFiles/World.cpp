@@ -804,7 +804,7 @@ float World::CalcHeightAtWorldPos( const Vector2& worldPos ) throw(...)
 	if ( worldPos.x >= GetWorldSize().x ||
 		worldPos.y >= GetWorldSize().y ||
 		worldPos.x < 0.0f ||
-		worldPos.y < 0.0f ) throw("Out Of Bounds!");
+		worldPos.y < 0.0f ) return 0.0f;//throw("Out Of Bounds!");
 
 	// Height Nodes Density
 	float density = (float)SECTOR_WORLD_SIZE / (float)(SECTOR_HEIGHT_SIZE-1);

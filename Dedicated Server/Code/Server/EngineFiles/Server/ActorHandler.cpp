@@ -4,7 +4,7 @@
 ActorHandler::ActorHandler(World* worldPtr)
 {
 	this->zObjManager = new ObjectManager();
-	this->zObjManager->ReadObjects();
+	this->zObjManager->ReadFromFile();
 	this->zPhysicsEngine = new PhysicsEngine();
 	this->zWorld = worldPtr;
 }
