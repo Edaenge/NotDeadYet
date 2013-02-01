@@ -147,6 +147,8 @@ private:
 	/*! Creates a Dead Animal*/
 	std::string CreateDeadAnimalObject(AnimalActor* aAnimal, DeadAnimalObjectActor** daoActor);
 
+	void CreateNewGhostActor(PlayerActor* pActor);
+
 	void HandleConversion(DynamicProjectileObject* dynamicProjObj);
 	
 	//////////////////////
@@ -185,6 +187,8 @@ private:
 	void SendUseItem(const int PlayerID, const long ID);
 
 	std::string AddItemMessage(StaticObjectActor* object);
+protected:
+	virtual void OnEvent(Event* e);
 
 private:
 	ServerListener* zServerListener;
@@ -208,6 +212,4 @@ private:
 
 	World* zWorld;
 	std::map<PlayerActor*, WorldAnchor*> zAnchorPlayerMap;
-protected:
-	virtual void onEvent(Event* e);
 };

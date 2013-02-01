@@ -410,7 +410,7 @@ void Client::HandleKeyboardInput()
 		}
 	}
 
-	//UnEquip Ranged Weapon
+	//UnEquip Melee Weapon
 	if (this->zEng->GetKeyListener()->IsPressed('Q'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
@@ -664,7 +664,7 @@ void Client::HandleWeaponEquips()
 
 void Client::HandleDebugInfo()
 {
-	//Terrain debug
+	//Terrain Height debug
 	if (this->zEng->GetKeyListener()->IsPressed(VK_F1))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -672,16 +672,17 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Terrain problem at ";
-			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") ";
-			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") ";
+			ss << "Terrain problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
 
 			DebugMsg::Debug(ss.str());
 
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
-	//Object debug
+	//Terrain Texture debug
 	else if (this->zEng->GetKeyListener()->IsPressed(VK_F2))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -689,9 +690,46 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Object problem at ";
-			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") ";
-			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") ";
+			ss << "Terrain Texture problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+	//Terrain AI Grid debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F3))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Terrain AI grid problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+	//Object debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F4))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Object problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
 
 			DebugMsg::Debug(ss.str());
 

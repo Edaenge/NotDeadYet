@@ -33,13 +33,15 @@ void Client::HandleWeaponUse(const long ID)
 			}
 
 			arrow->Use();
-
+			this->zGuiManager->RemoveInventoryItemFromGui(arrow->GetID(), 1);
 			return;
 		}
 		if (weapon->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
 		{
 			int newSize = weapon->GetStackSize() - 1;
 			weapon->SetStackSize(newSize);
+
+			this->zGuiManager->RemoveInventoryItemFromGui(weapon->GetID(), 1);
 		}
 	}
 }
@@ -220,9 +222,9 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetStackSize(), 
 			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType());
 
-		this->zGuiManager->EquipItem(RANGED, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
-
+		this->zGuiManager->EquipItem(RANGED, gid);
+		
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED_ROCK)
@@ -289,9 +291,9 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetStackSize(), 
 			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType());
 
-		this->zGuiManager->EquipItem(RANGED, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
-
+		this->zGuiManager->EquipItem(RANGED, gid);
+		
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_PROJECTILE_ARROW)
@@ -342,9 +344,9 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
 			projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType());
 
-		this->zGuiManager->EquipItem(PROJECTILE, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID(), projectile->GetStackSize());
-
+		this->zGuiManager->EquipItem(PROJECTILE, gid);
+		
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE || item->GetItemType() == ITEM_TYPE_WEAPON_MELEE_AXE)
@@ -372,8 +374,9 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), mWpn->GetStackSize(), 
 			mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType());
 
-		this->zGuiManager->EquipItem(MELEE, gid);
 		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID(), mWpn->GetStackSize());
+		this->zGuiManager->EquipItem(MELEE, gid);
+		
 
 		return;
 	}
@@ -605,10 +608,15 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 				if (Messages::FileWrite())
 					Messages::Debug("Weapon UnEquipped " + weapon->GetItemName() + " ID: " + MaloW::convertNrToString((float)weapon->GetID()));
 
-				delete weapon;
-				weapon = NULL;
+				Gui_Item_Data gid = Gui_Item_Data(weapon->GetID(), weapon->GetWeight(), weapon->GetStackSize(), 
+					weapon->GetItemName(), weapon->GetIconPath(), weapon->GetItemDescription(), weapon->GetItemType());
+
+				this->zGuiManager->UnEquipItem(weapon->GetID(), 1);
+
+				SAFE_DELETE(weapon);
 
 				eq->UnEquipRangedWeapon();
+
 			}
 		}
 		return;
@@ -629,10 +637,14 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 				if (Messages::FileWrite())
 					Messages::Debug("Weapon UnEquipped " + weapon->GetItemName() + " ID: " + MaloW::convertNrToString((float)weapon->GetID()));
 
-				delete weapon;
-				weapon = NULL;
+				Gui_Item_Data gid = Gui_Item_Data(weapon->GetID(), weapon->GetWeight(), weapon->GetStackSize(), 
+					weapon->GetItemName(), weapon->GetIconPath(), weapon->GetItemDescription(), weapon->GetItemType());
 
-				eq->UnEquipRangedWeapon();
+				this->zGuiManager->UnEquipItem(weapon->GetID(), 1);
+
+				SAFE_DELETE(weapon);
+
+				eq->UnEquipMeleeWeapon();
 			}
 		}
 		return;

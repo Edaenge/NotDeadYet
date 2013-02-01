@@ -128,17 +128,12 @@ void PlayerActor::Update(float deltaTime)
 
 bool PlayerActor::PickUpObject(StaticObjectActor* object)
 {
-	FoodObject* fo				= NULL;
-	WeaponObject* wo			= NULL;
-	ContainerObject* co			= NULL;
-	StaticProjectileObject* spo = NULL;
-	MaterialObject*	mo			= NULL;
 	Item* item					= NULL; 
 
 	int itemType = object->GetActorType(); 
 	if (itemType == ACTOR_TYPE_STATIC_OBJECT_FOOD)
 	{
-		fo = dynamic_cast<FoodObject*>(object);
+		FoodObject* fo = dynamic_cast<FoodObject*>(object);
 		if(fo)
 		{
 			item = new Food(fo->GetID(), fo->GetType(), fo->GetHunger());
@@ -157,11 +152,12 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 			}
 			return true;
 		}
+		return false;
 	}
 
 	if (itemType == ACTOR_TYPE_STATIC_OBJECT_WEAPON)
 	{
-		wo = dynamic_cast<WeaponObject*>(object);
+		WeaponObject* wo = dynamic_cast<WeaponObject*>(object);
 		if(wo)
 		{
 
@@ -220,11 +216,12 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 			}
 			return true;
 		}
+		return false;
 	}
 	
 	if (itemType == ACTOR_TYPE_STATIC_OBJECT_CONTAINER)
 	{
-		co = dynamic_cast<ContainerObject*>(object);
+		ContainerObject* co = dynamic_cast<ContainerObject*>(object);
 		if(co)
 		{
 			item = new Container(co->GetID(), co->GetType(), co->GetMaxUses(), co->GetCurrentUses());
@@ -248,7 +245,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 	
 	if (itemType == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
 	{
-		spo = dynamic_cast<StaticProjectileObject*>(object);
+		StaticProjectileObject* spo = dynamic_cast<StaticProjectileObject*>(object);
 		if(spo)
 		{
 			item = new Projectile(spo->GetID(), spo->GetType(), spo->GetSpeed(), spo->GetDamage());
@@ -265,14 +262,14 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 				SAFE_DELETE(item);
 				return false;
 			}
-
 			return true;
 		}
+		return false;
 	}
 	
 	if (itemType == ACTOR_TYPE_STATIC_OBJECT_MATERIAL)
 	{
-		mo = dynamic_cast<MaterialObject*>(object);
+		MaterialObject*	mo = dynamic_cast<MaterialObject*>(object);
 		if(mo)
 		{
 			item = new Material(mo->GetID(), mo->GetType(), mo->GetCraftingType(), mo->GetRequiredStackToCraft());
@@ -289,11 +286,10 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 				SAFE_DELETE(item);
 				return false;
 			}
-
 			return true;
 		}
+		return false;
 	}
-
 	return false;
 }
 

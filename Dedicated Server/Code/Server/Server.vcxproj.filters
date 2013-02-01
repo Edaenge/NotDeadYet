@@ -160,6 +160,9 @@
     <ClCompile Include="EngineFiles\Server\DeadAnimalObjectActor.cpp">
       <Filter>Server\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Server\GhostActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineFiles\Server\Actor.h">
@@ -364,6 +367,9 @@
       <Filter>Server\Actors</Filter>
     </ClInclude>
     <ClInclude Include="EngineFiles\Server\DeadAnimalObjectActor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\GhostActor.h">
       <Filter>Server\Actors</Filter>
     </ClInclude>
   </ItemGroup>
