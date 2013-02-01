@@ -47,7 +47,12 @@ struct Gui_Item_Data
 
 	bool zPressed;
 };
-
+struct Selected_Item_ReturnData
+{
+	int ID;
+	int type;
+	int inventory;
+};
 enum EQUIPITEMTYPE{
 	MELEE,
 	RANGED,
@@ -63,7 +68,7 @@ public:
 	virtual bool AddToRenderer(GraphicsEngine* ge);
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
-	int CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
+	Selected_Item_ReturnData CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 	bool AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	bool RemoveItemFromGui(const int ID, int stacks);
 	void EquipItem(int type, const Gui_Item_Data gid, bool guiOpen);
