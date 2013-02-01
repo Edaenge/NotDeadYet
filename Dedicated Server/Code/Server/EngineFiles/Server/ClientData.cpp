@@ -49,6 +49,8 @@ bool ClientData::SendIM(const std::string& message,
 						const unsigned long uniqe_ID, const float timeToResend /*= DEFAULT_MAX_TIME_RESEND*/, 
 						const int nrToResend /*= DEFAULT_MAX_NR_RESEND*/ )
 {
+	SendM(message);
+	return true;
 	if(uniqe_ID >= this->zUniqeIPID)
 		return false;
 

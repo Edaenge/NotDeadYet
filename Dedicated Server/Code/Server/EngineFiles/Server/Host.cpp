@@ -271,7 +271,7 @@ void Host::Life()
 		if(this->zGameStarted)
 		{
 			waitTimer += this->zDeltaTime;
-			PingClients();
+			//PingClients();
 			UpdateObjects();
 
 			if(waitTimer >= UPDATE_DELAY)
@@ -1075,6 +1075,8 @@ bool Host::CreateAnimalActor(DeerActor** deerAct, const bool genID)
 	std::string path = "Media/Models/Tree_02_v02_r.obj";	
 	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(
 		path, position);
+	
+	zAnchorPlayerMap[(*deerAct)] = this->zWorld->CreateAnchor();
 
 	(*deerAct)->SetActorModel(path);
 	(*deerAct)->SetPhysicObject(pObj);
@@ -1096,6 +1098,7 @@ bool Host::CreateAnimalActor(WolfActor** wolfAct, const bool genID)
 	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(
 		path, position);
 
+	zAnchorPlayerMap[(*wolfAct)] = this->zWorld->CreateAnchor();
 	(*wolfAct)->SetActorModel(path);
 	(*wolfAct)->SetPhysicObject(pObj);
 	(*wolfAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));

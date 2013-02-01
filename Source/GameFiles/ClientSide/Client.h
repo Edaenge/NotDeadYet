@@ -170,7 +170,7 @@ private:
 	void HandleWeaponUse(const long ID);
 
 protected:
-	virtual void OnEvent(Event* e);
+	virtual void onEvent(Event* e);
 	
 private:
 	/*! Current Client ID*/

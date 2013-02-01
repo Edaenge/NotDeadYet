@@ -112,7 +112,7 @@ float Client::Update()
 void Client::InitGraphics()
 {
 	this->zEng->CreateSkyBox("Media/skymap.dds");
-	this->zEng->GetCamera()->SetPosition( Vector3(42, 20, 42) );
+	this->zEng->GetCamera()->SetPosition( Vector3(54, 20, 44) );
 	this->zEng->GetCamera()->LookAt( Vector3(50, 0, 50) );
 	
 	LoadEntList("Entities.txt");
@@ -122,6 +122,10 @@ void Client::InitGraphics()
 	this->zWorldRenderer = new WorldRenderer(zWorld, GetGraphics());
 
 	this->zAnchor = this->zWorld->CreateAnchor();
+	this->zAnchor->position = Vector2(54, 44);
+	this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
+
+	this->zWorld->Update();
 
 	int windowWidth = GetGraphics()->GetEngineParameters().WindowWidth;
 	int windowHeight = GetGraphics()->GetEngineParameters().WindowHeight;
@@ -134,27 +138,27 @@ void Client::InitGraphics()
 	this->zCrossHair = this->zEng->CreateImage(Vector2(x, y), Vector2(length, length), "Media/Icons/cross.png");
 
 	std::string path = "Media/Models/";
-	const char* object[]  = {(path + "ArmyRation_v01.obj").c_str(), 
-		(path + "Arrow_v01.obj").c_str(),
-		(path + "Bigleaf_01.ani").c_str(), 
-		(path + "Bow_v01.obj").c_str(),
-		(path + "BranchesItem_01_v01.obj").c_str(), 
-		(path + "Bush_01.ani").c_str(),
-		(path + "Campfire_01_v01.obj").c_str(),
-		(path + "Fern_02.ani").c_str(),
-		(path + "GrassPlant_01.ani").c_str(),
-		(path + "Machete_v01.obj").c_str(), 
-		(path + "Pocketknife_v02.obj").c_str(), 
-		(path + "Stone_02_v01.obj").c_str(),
-		(path + "Stone_01_v02.obj").c_str(),
-		(path + "StoneItem_01_v01.obj").c_str(),
-		(path + "Tree_01.ani").c_str(),
-		(path + "WaterGrass_02.ani").c_str(),
-		(path + "Veins_01_v03_r.obj").c_str()};
+	const char* object[] = {
+		"Media/Models/ArmyRation_v01.obj", 
+		"Media/Models/Arrow_v01.obj",
+		"Media/Models/Bigleaf_01.ani", 
+		"Media/Models/Bow_v01.obj",
+		"Media/Models/BranchesItem_01_v01.obj", 
+		"Media/Models/Bush_01.ani",
+		"Media/Models/Campfire_01_v01.obj",
+		"Media/Models/Fern_02.ani",
+		"Media/Models/GrassPlant_01.ani",
+		"Media/Models/Machete_v01.obj", 
+		"Media/Models/Pocketknife_v02.obj", 
+		"Media/Models/Stone_02_v01.obj",
+		"Media/Models/Stone_01_v02.obj",
+		"Media/Models/StoneItem_01_v01.obj",
+		"Media/Models/Tree_01.ani",
+		"Media/Models/WaterGrass_02.ani",
+		"Media/Models/Veins_01_v03_r.obj"};
 
-
-	//this->zEng->PreLoadResources(17, object);
-	//this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 1, 1, 1, 1);
+	this->zEng->PreLoadResources(17, object);
+	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");
 
 	//this->zEng->StartRendering();
 }
@@ -213,7 +217,7 @@ void Client::Life()
 		{
 			this->ReadMessage();
 
-			if (this->zTimeSinceLastPing > TIMEOUT_VALUE * 2.0f)
+			/*if (this->zTimeSinceLastPing > TIMEOUT_VALUE * 2.0f)
 			{
 				this->CloseConnection("Timeout");
 			}
@@ -221,7 +225,7 @@ void Client::Life()
 			{
 				MaloW::Debug("Timeout From Server!");
 				//Print a Timeout Message to Client
-			}
+			}*/
 		}
 
 		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
@@ -425,6 +429,10 @@ void Client::HandleKeyboardInput()
 				else if (msd.zAction == DROP)
 				{
 					this->SendDropItemMessage(msd.zID);
+				}
+				else if (msd.zAction == UNEQUIP)
+				{
+					this->SendUnEquipItem(msd.zID, EQUIPMENT_SLOT_MELEE_WEAPON);
 				}
 			}
 		}
@@ -1140,7 +1148,7 @@ void Client::DisplayMessageToClient(const std::string& msg)
 	MaloW::Debug(msg);
 }
 
-void Client::OnEvent(Event* e)
+void Client::onEvent(Event* e)
 {
 	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
