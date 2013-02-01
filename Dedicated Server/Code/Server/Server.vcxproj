@@ -82,7 +82,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\External\NDYGFX\Include;$(SolutionDir)\..\..\Source\MaloWLib;$(SolutionDir)\Server\PhysicsEngine;$(SolutionDir)\Server\Wrapper;$(SolutionDir)\Server\EngineFiles\Network;$(SolutionDir)\..\..\Source\Network;$(SolutionDir)\..\..\Source\GameFiles;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\External\NDYGFX\Include;$(SolutionDir)\..\..\Source\MaloWLib;$(SolutionDir)\Server\PhysicsEngine;$(SolutionDir)\Server\Wrapper;$(SolutionDir)\Server\EngineFiles\Network;$(SolutionDir)\..\..\Source\Network;$(SolutionDir)\..\..\Source\GameFiles;$(SolutionDir)\Server\EngineFiles\WorldFiles;$(SolutionDir)\..\..\Source\GameFiles\Items;$(SolutionDir)\..\..\Source\GameFiles\KeyUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -167,11 +167,14 @@
     <ClInclude Include="EngineFiles\Server\BioActor.h" />
     <ClInclude Include="EngineFiles\Server\ClientData.h" />
     <ClInclude Include="EngineFiles\Server\ContainerObject.h" />
+    <ClInclude Include="EngineFiles\Server\DeadActor.h" />
+    <ClInclude Include="EngineFiles\Server\DeadAnimalObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\DeadPlayerObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\DeerActor.h" />
     <ClInclude Include="EngineFiles\Server\DynamicObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\DynamicProjectileObject.h" />
     <ClInclude Include="EngineFiles\Server\FoodObject.h" />
+    <ClInclude Include="EngineFiles\Server\GhostActor.h" />
     <ClInclude Include="EngineFiles\Server\Host.h" />
     <ClInclude Include="EngineFiles\Server\MaterialObject.h" />
     <ClInclude Include="EngineFiles\Server\ObjectManager.h" />
@@ -220,11 +223,14 @@
     <ClCompile Include="EngineFiles\Server\BioActor.cpp" />
     <ClCompile Include="EngineFiles\Server\ClientData.cpp" />
     <ClCompile Include="EngineFiles\Server\ContainerObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeadActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeadAnimalObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DeadPlayerObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp" />
     <ClCompile Include="EngineFiles\Server\FoodObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\GhostActor.cpp" />
     <ClCompile Include="EngineFiles\Server\Host.cpp" />
     <ClCompile Include="EngineFiles\Server\HostConversions.cpp" />
     <ClCompile Include="EngineFiles\Server\HostItemHandler.cpp" />

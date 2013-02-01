@@ -1,5 +1,5 @@
 #include "GUISet.h"
-
+#include "Safe.h"
 
 GUISet::GUISet()
 {
@@ -16,9 +16,13 @@ GUISet::~GUISet()
 		for(int i = 0; i < this->mNrOfElements; i++)
 		{
 			if(this->mElements[i])
-				delete this->mElements[i];
+			{
+				SAFE_DELETE(this->mElements[i]);
+				//delete this->mElements[i];
+			}
 		}
 		delete [] this->mElements;
+		this->mElements = NULL;
 	}
 }
 bool GUISet::AddElement(Element* element)

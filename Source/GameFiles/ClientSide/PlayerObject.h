@@ -15,13 +15,10 @@ public:
 	virtual ~PlayerObject(){if(this->zEquipment) delete this->zEquipment; this->zEquipment = 0;}
 	
 	inline float GetHunger() const {return this->zHunger;}
-	inline float GetStamina() const {return this->zStamina;}
 	inline float GetHydration() const {return this->zHydration;}
 
-	void SetStamina(const float stamina) {this->zStamina = stamina;}
 	void SetHunger(const float hunger) {this->zHunger = hunger;}
 	void SetHydration(const float hydration) {this->zHydration = hydration;}
-
 	/*! Updates the Player*/
 	virtual void Update(float deltaTime);
 	/*! Returns a Pointer to the players Equipment*/
@@ -29,7 +26,6 @@ public:
 	void SetEquipment(Equipment* eq) {this->zEquipment = eq;}
 private:
 	float zHunger;
-	float zStamina;
 	float zHydration;
 	Equipment* zEquipment;
 };

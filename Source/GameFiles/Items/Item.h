@@ -6,7 +6,7 @@
 #pragma once
 
 #include <string>
-#include "../../Network/NetworkMessageConverter.h"
+#include "NetworkMessageConverter.h"
 
 static const enum M_ITEM_TYPE
 {

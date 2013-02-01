@@ -4,7 +4,7 @@
 AnimalActor::AnimalActor( bool genID /*= true*/ ) : BioActor()
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	this->InitPathfinder();
 	
 	Target vectorFilling; 
@@ -12,6 +12,7 @@ AnimalActor::AnimalActor( bool genID /*= true*/ ) : BioActor()
 	vectorFilling.movementNoise = 0;
 	vectorFilling.position = Vector3(0,0,0);
 	vectorFilling.valid = false;
+	zActorType = ACTOR_TYPE_ANIMAL;
 
 	for(int i = 0; i < 32; i++)
 	{
@@ -19,16 +20,12 @@ AnimalActor::AnimalActor( bool genID /*= true*/ ) : BioActor()
 	}
 
 	this->zIntervalCounter = 0;
-
-	
-
-
 }
 
 AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, bool genID /*= true*/ ) : BioActor(startPos, pObj)
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	this->InitPathfinder();
 
 	Target vectorFilling; 
@@ -36,6 +33,7 @@ AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, bool ge
 	vectorFilling.movementNoise = 0;
 	vectorFilling.position = Vector3(0,0,0);
 	vectorFilling.valid = false;
+	zActorType = ACTOR_TYPE_ANIMAL;
 
 	for(int i = 0; i < 32; i++)
 	{
@@ -50,7 +48,7 @@ AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, bool ge
 AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, const Vector4& rot, bool genID /*= true*/ ) : BioActor(startPos, pObj, rot)
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	this->InitPathfinder();
 
 	Target vectorFilling; 
@@ -243,4 +241,12 @@ void AnimalActor::SetWorldPointer(World* theWorld)
 	this->zWorld = theWorld;
 	this->zPathfinder.SetWorldPointer(this->zWorld);
 	
+}
+
+std::string AnimalActor::ToMessageString( NetworkMessageConverter* NMC )
+{
+	std::string msg;
+	msg = BioActor::ToMessageString(NMC);
+
+	return msg;
 }

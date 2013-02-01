@@ -52,6 +52,9 @@
     <ClCompile Include="EngineFiles\Network\ClientChannel.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Network\ClientConnectedEvent.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
     <ClCompile Include="EngineFiles\WorldFiles\Entity.cpp">
       <Filter>WorldFiles</Filter>
     </ClCompile>
@@ -115,6 +118,9 @@
     <ClCompile Include="EngineFiles\ServerEngine.cpp">
       <Filter>Server</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Network\NetworkServer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\Source\Network\NetworkMessageConverter.cpp">
       <Filter>Network</Filter>
     </ClCompile>
@@ -147,6 +153,15 @@
     </ClCompile>
     <ClCompile Include="PhysicsEngine\Physics.cpp">
       <Filter>PhysicsEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\DeadActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\DeadAnimalObjectActor.cpp">
+      <Filter>Server\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineFiles\Server\GhostActor.cpp">
+      <Filter>Server\Actors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -300,6 +315,9 @@
     <ClInclude Include="EngineFiles\ServerEngine.h">
       <Filter>Server</Filter>
     </ClInclude>
+    <ClInclude Include="EngineFiles\Network\NetworkServer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
     <ClInclude Include="EngineFiles\Network\NetworkPacket.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -345,8 +363,14 @@
     <ClInclude Include="PhysicsEngine\ObjLoader.h">
       <Filter>PhysicsEngine</Filter>
     </ClInclude>
-    <ClInclude Include="EngineFiles\Network\ClientDisconnectedEvent.h">
-      <Filter>Network</Filter>
+    <ClInclude Include="EngineFiles\Server\DeadActor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\DeadAnimalObjectActor.h">
+      <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\GhostActor.h">
+      <Filter>Server\Actors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

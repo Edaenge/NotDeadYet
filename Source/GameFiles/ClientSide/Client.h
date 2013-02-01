@@ -91,7 +91,7 @@ private:
 	void HandleWeaponEquips();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
-
+	void HandleDebugInfo();
 	//////////////////////
 	//					//
 	//	   Updates		//
@@ -163,7 +163,7 @@ private:
 	void HandleUseItem(const long ID);
 	void DisplayMessageToClient(const std::string& msg);
 	void HandleEquipItem(const long ItemID, const int Slot);
-	void HandleUnEquipItem(const long ItemID, const int Slot);
+	bool HandleUnEquipItem(const long ItemID, const int Slot);
 	void SendUnEquipItem(const long ID, const int Slot);
 	void HandleRemoveEquipment(const long ItemID, const int Slot);
 	void HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, const int type);
@@ -171,7 +171,7 @@ private:
 
 protected:
 	virtual void OnEvent(Event* e);
-
+	
 private:
 	/*! Current Client ID*/
 	long zID;

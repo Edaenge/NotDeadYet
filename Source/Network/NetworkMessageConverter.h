@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../../External/NDYGFX/Include/Vector.h"
+#include "Vector.h"
 #include <vector>
 #include <string>
 
@@ -78,11 +78,19 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_MATERIAL_STACKS_REQUIRED,
 	MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE,
 	MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM,
+	MESSAGE_TYPE_DEAD_ANIMAL_ADD_ITEM,
 	MESSAGE_TYPE_DEAD_PLAYER_REMOVE_ITEM,
+	MESSAGE_TYPE_DEAD_ANIMAL_REMOVE_ITEM,
 	MESSAGE_TYPE_ADD_DEAD_PLAYER_OBJECT,
+	MESSAGE_TYPE_ADD_DEAD_ANIMAL_OBJECT,
 	MESSAGE_TYPE_REMOVE_DEAD_PLAYER_OBJECT,
+	MESSAGE_TYPE_REMOVE_DEAD_ANIMAL_OBJECT,
 	MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED,
-	MESSAGE_TYPE_START_GAME
+	MESSAGE_TYPE_DEAD_ANIMAL_ITEM_FINISHED,
+	MESSAGE_TYPE_START_GAME,
+	MESSAGE_TYPE_NEW_GHOST_ACTOR,
+	MESSAGE_TYPE_REMOVE_GHOST_ACTOR,
+	MESSAGE_TYPE_UPDATE_GHOST_ACTOR
 };
 //Data Messages
 static const std::string M_POSITION					= "P";
@@ -131,6 +139,12 @@ static const std::string M_NEW_ANIMAL				= "NA";
 static const std::string M_REMOVE_ANIMAL			= "RA";
 static const std::string M_UPDATE_ANIMAL			= "UA";
 static const std::string M_DEAD_ANIMAL				= "DA";
+static const std::string M_ADD_DEAD_ANIMAL_OBJECT	= "ADAO";
+static const std::string M_ADD_DEAD_ANIMAL_ITEM		= "ADAI";
+static const std::string M_DEAD_ANIMAL_REMOVE_ITEM	= "DARI";
+static const std::string M_REMOVE_DEAD_ANIMAL_OBJECT= "RDAO";
+static const std::string M_DEAD_ANIMAL_ITEM_FINISHED= "DAIF";
+
 //Key Messages
 static const std::string M_KEY_DOWN					= "KD";
 static const std::string M_KEY_UP					= "KU";
@@ -151,12 +165,14 @@ static const std::string M_NEW_PLAYER				= "NP";
 static const std::string M_UPDATE_PLAYER			= "UP";
 static const std::string M_REMOVE_PLAYER			= "RP";
 static const std::string M_DEAD_PLAYER				= "DP";
-static const std::string M_ADD_DEAD_PLAYER_ITEM		= "ADI";
 static const std::string M_DEAD_PLAYER_ADD_ITEM		= "DPAI";
 static const std::string M_DEAD_PLAYER_REMOVE_ITEM	= "DPRI";
 static const std::string M_ADD_DEAD_PLAYER_OBJECT	= "ADPO";
 static const std::string M_REMOVE_DEAD_PLAYER_OBJECT= "RDPO";
 static const std::string M_DEAD_PLAYER_ITEM_FINISHED= "DPIF";
+static const std::string M_NEW_GHOST_ACTOR			= "NGA";
+static const std::string M_REMOVE_GHOST_ACTOR		= "RGA";
+static const std::string M_UPDATE_GHOST_ACTOR		= "UGA";
 //Static Object Messages
 static const std::string M_NEW_STATIC_OBJECT		= "NSO";
 static const std::string M_REMOVE_STATIC_OBJECT		= "RSO";

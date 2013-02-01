@@ -137,6 +137,11 @@ public:
 		this->y /= length;
 	}
 
+	inline bool operator==( const Vector2 &v ) const
+	{
+		return ( x == v.x && y == v.y );
+	}
+
 	inline bool operator<( const Vector2& v ) const
 	{
 		if ( x < v.x ) return true;

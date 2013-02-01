@@ -139,6 +139,16 @@ bool ActorHandler::AddNewAnimalActor(AnimalActor* new_animal)
 	return true;
 }
 
+bool ActorHandler::AddNewDeadAnimal( DeadAnimalObjectActor* new_DeadAnimal )
+{
+	if (!new_DeadAnimal)
+		return false;
+
+	this->zDeadAnimals.push_back(new_DeadAnimal);
+
+	return true;
+}
+
 bool ActorHandler::AddNewStaticFoodActor(FoodObject* new_Food)
 {
 	if(!new_Food)
@@ -289,6 +299,22 @@ bool ActorHandler::RemoveAnimalActor(const long ID)
 	return true;
 }
 
+bool ActorHandler::RemoveDeadAnimalObject( const long ID )
+{
+	int index = this->SearchForActor(ID, ACTOR_TYPE_DEAD_ANIMAL);
+
+	if(index == -1 || (unsigned int)index >= this->zDeadPlayers.size())
+		return false;
+
+	DeadAnimalObjectActor* temp = this->zDeadAnimals[index];
+
+	this->zDeadAnimals.erase(this->zDeadAnimals.begin() + index);
+
+	SAFE_DELETE(temp);
+
+	return true;
+}
+
 bool ActorHandler::RemoveStaticFoodActor(const long ID)
 {
 	int index = this->SearchForActor(ID, ACTOR_TYPE_STATIC_OBJECT_FOOD);
@@ -414,6 +440,15 @@ const int ActorHandler::SearchForActor(const long ID, int TYPE) const
 
 	}
 
+	else if(TYPE == ACTOR_TYPE_DEAD_ANIMAL)
+	{
+		for (unsigned int it = 0; it < this->zDeadAnimals.size(); it++)
+		{
+			if(this->zDeadAnimals[it]->GetID() == ID)
+				return it;
+		}
+	}
+
 	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_FOOD)
 	{
 		for (unsigned int it = 0; it < this->zFoods.size(); it++)
@@ -510,6 +545,18 @@ const int ActorHandler::SearchForActor(const long ID, int TYPE, Actor** aOut) co
 		}
 	}
 
+	else if(TYPE == ACTOR_TYPE_DEAD_ANIMAL)
+	{
+		for (unsigned int it = 0; it < this->zDeadAnimals.size(); it++)
+		{
+			if(this->zDeadAnimals[it]->GetID() == ID)
+			{
+				*aOut = this->zDeadAnimals[it];
+				return it;
+			}
+		}
+	}
+
 	else if(TYPE == ACTOR_TYPE_STATIC_OBJECT_FOOD)
 	{
 		for (unsigned int it = 0; it < this->zFoods.size(); it++)
@@ -597,22 +644,9 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 	CollisionEvent cEvent = CollisionEvent();
 	PhysicsCollisionData pcd;
 
-	PhysicsObject* pObj = bActor->GetPhysicObject();
 	PhysicsObject* pOtherObj = NULL;
 
-	PlayerActor* pTemp = dynamic_cast<PlayerActor*>(bActor);
-	if (pTemp)
-	{
-		agressor_Type = ACTOR_TYPE_PLAYER;
-	}
-	else
-	{
-		AnimalActor* aTemp = dynamic_cast<AnimalActor*>(bActor);
-		if (aTemp)
-		{
-			agressor_Type = ACTOR_TYPE_ANIMAL;
-		}
-	}
+	agressor_Type = bActor->GetActorType();
 
 	Vector3 view_Direction = bActor->GetDirection();
 
@@ -621,7 +655,7 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 
 	for (auto it = this->zPlayers.begin(); it < this->zPlayers.end(); it++)
 	{
-		if ((*it)->GetID() == bActor->GetID() && agressor_Type == ACTOR_TYPE_PLAYER)
+		if ((*it)->GetID() == bActor->GetID())
 			continue;
 		if (!(*it)->IsAlive())
 			continue;
@@ -636,17 +670,6 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 		distance.Normalize();
 
 		pcd = this->zPhysicsEngine->GetCollisionRayMesh(position, direction, pOtherObj);
-		/*distance = pOtherObj->GetPosition() - pObj->GetPosition();
-
-		if (distance.GetLength() > range + 0.5f)
-			continue;
-
-		agressor_Victim_Direction = distance;
-		agressor_Victim_Direction.Normalize();
-
-		float angle = agressor_Victim_Direction.GetAngle(view_Direction);
-
-		if (angle <= 45)*/
 		
 		if (pcd.collision && pcd.distance <= range)
 		{
@@ -664,7 +687,7 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 
 	for (auto it = this->zAnimals.begin(); it < this->zAnimals.end(); it++)
 	{
-		if ((*it)->GetID() == bActor->GetID() && agressor_Type == ACTOR_TYPE_ANIMAL)
+		if ((*it)->GetID() == bActor->GetID())
 			continue;
 		if (!(*it)->IsAlive())
 			continue;
@@ -677,19 +700,6 @@ CollisionEvent ActorHandler::CheckMeeleCollision(BioActor* bActor, float range)
 
 		pcd = this->zPhysicsEngine->GetCollisionRayMesh(position, direction, pOtherObj);
 
-		/*pOtherObj = (*it)->GetPhysicObject();
-
-		distance = pOtherObj->GetPosition() - pObj->GetPosition();
-		
-		if (distance.GetLength() > range + 0.5f)
-			continue;
-
-		agressor_Victim_Direction = distance;
-		agressor_Victim_Direction.Normalize();
-
-		float angle = view_Direction.GetAngle(agressor_Victim_Direction);
-
-		if (angle <= 45)*/
 		if (pcd.collision && pcd.distance <= range)
 		{
 			cEvent.actor_aggressor_ID = bActor->GetID();
@@ -743,12 +753,8 @@ std::vector<CollisionEvent> ActorHandler::CheckProjectileCollisions()
 					ce.actor_aggressor_ID = (*it)->GetObjPlayerOwner();
 					ce.actor_aggressor_type = ACTOR_TYPE_PLAYER;
 					ce.actor_victim_ID = (*it_s)->GetID();
-
-					if(dynamic_cast<PlayerActor*>(*it_s))
-						ce.actor_victim_type = ACTOR_TYPE_PLAYER;
-					else
-						ce.actor_victim_type = ACTOR_TYPE_ANIMAL;
-
+					ce.actor_victim_type = (*it_s)->GetActorType();
+					ce.event_type = BOW_ATTACK;
 					collisionEvents.push_back(ce);
 
 					//No need to continue, the player is dead

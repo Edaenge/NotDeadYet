@@ -41,6 +41,26 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 		{
 			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
 		}
+		else if(strcmp(key, M_HEALTH.c_str()) == 0)
+		{
+			float health = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
+			playerObject->SetHealth(health);
+		}
+		else if(strcmp(key, M_HYDRATION.c_str()) == 0)
+		{
+			float hydration = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
+			playerObject->SetHydration(hydration);
+		}
+		else if(strcmp(key, M_STAMINA.c_str()) == 0)
+		{
+			float stamina = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
+			playerObject->SetStamina(stamina);
+		}
+		else if(strcmp(key, M_HUNGER.c_str()) == 0)
+		{
+			float hunger = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
+			playerObject->SetHunger(hunger);
+		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
 			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
@@ -663,6 +683,16 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 		else if(strcmp(key, M_SCALE.c_str()) == 0)
 		{
 			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
+		}
+		else if(strcmp(key, M_HEALTH.c_str()) == 0)
+		{
+			float health = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
+			animalObject->SetHealth(health);
+		}
+		else if(strcmp(key, M_STAMINA.c_str()) == 0)
+		{
+			float stamina = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
+			animalObject->SetStamina(stamina);
 		}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{

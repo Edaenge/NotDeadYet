@@ -35,8 +35,6 @@ public:
 	StaticObjectActor(const std::string& meshModel, bool genID = false);
 	virtual ~StaticObjectActor();
 	
-	virtual void Update(float deltaTime){};
-
 	int GetWeight() const {return this->zWeight;}
 	int GetType() const {return this->zType;}
 	std::string GetDescription() const {return this->zDescription;}

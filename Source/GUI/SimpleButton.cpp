@@ -1,4 +1,5 @@
 #include "SimpleButton.h"
+#include "Safe.h"
 
 SimpleButton::SimpleButton() : Element()
 {
@@ -21,7 +22,7 @@ SimpleButton::SimpleButton() : Element()
 }
 SimpleButton::~SimpleButton()
 {
-	delete this->mEvent;
+	SAFE_DELETE(this->mEvent);
 }
 SimpleButton::SimpleButton(float x, float y, float z, string textureName, float width, float height, GUIEvent* tempEvent,
 		string mTextureNamePressed, string mTextureNameHovered, float activeX, float activeY, float activeWidth, float activeHeight) 

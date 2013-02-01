@@ -4,9 +4,14 @@ static const std::string DEATH_GUI_PATH						= "Media/Icons/Use_v02.png";
 static const std::string LOOTING_GUI_PATH					= "Media/Icons/Use_v02.png";
 static const std::string INVENTORY_GUI_PATH					= "Media/Icons/Inventory_Full.png";
 static const std::string IN_GAME_MENU_GUI_PATH				= "Media/Icons/Use_v02.png";
-static const std::string INVENTORY_ITEM_SELECTION_GUI_PATH	= "Media/Icons/Use_v02.png";
+static const std::string INVENTORY_ITEM_SELECTION_GUI_PATH	= "Media/Icons/Menu_Circle.png";
 
 static const float GUI_DISPLAY_TIMER					= 2.0f;
+
+static const float InvXPos = 538.0f;
+static const float InvYPos = 108.0f;
+static const float InvWidth = 486.0f;
+static const float InvHeight = 660.0f;
 
 GuiManager::GuiManager()
 {
@@ -48,10 +53,10 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
-	float x = offSet + (538.0f / 1024.0f) * dx;
-	float y = (108.0f / 768.0f) * windowHeight;
-	float width = (486.0f / 1024.0f) * dx;
-	float height = (660.0f / 768.0f) * windowHeight;
+	float x = offSet + (InvXPos / 1024.0f) * dx;
+	float y = (InvYPos / 768.0f) * windowHeight;
+	float width = (InvWidth / 1024.0f) * dx;
+	float height = (InvHeight / 768.0f) * windowHeight;
 	
 	this->zInvGui = new InventoryGui(windowWidth - width, windowHeight - height, width, height, INVENTORY_GUI_PATH);
 
@@ -59,9 +64,10 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 
 	x = mousePosition.x;
 	y = mousePosition.y;
-	width = (200.0f / 1024.0f) * windowWidth;
-	height = (200.0f / 768.0f) * windowHeight;
-	this->zInvCircGui = new CircularListGui(x, y, width, height, INVENTORY_ITEM_SELECTION_GUI_PATH);
+	width = (CIRCLISTRADIUS / 1024.0f) * dx;
+	height = (CIRCLISTRADIUS / 768.0f) * windowHeight;
+	int options[4] = {UNEQUIP, NOTHING, NOTHING, USE};
+	this->zInvCircGui = new CircularListGui(x, y, width, height, INVENTORY_ITEM_SELECTION_GUI_PATH, options);
 
 	//this->zLootingGui = new CircularListGui(x, y, width, height, LOOTING_GUI_PATH);
 	zSelectedItem = 0;
@@ -145,7 +151,7 @@ void GuiManager::ShowCircularItemGui()
 
 			float x = mousePosition.x - dimension.x * 0.5f;
 			float y = mousePosition.y - dimension.y * 0.5f;
-			this->zInvCircGui->SetPosition(x, y);
+			this->zInvCircGui->SetPosition(Vector2(x, y));
 
 			//Show Gui
 			this->zCircularInventorySelectionOpen = true;
@@ -266,7 +272,7 @@ Menu_select_data GuiManager::CheckCollisionInv()
 		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
 		this->zSelectedCircMenu = this->zInvCircGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(1), zEng);
 
-		if(this->zSelectedCircMenu >= 0 && this->zSelectedCircMenu < 4)
+		if(this->zSelectedCircMenu != -1)
 		{
 			this->HideCircularItemGui();
 			Menu_select_data msd;
@@ -284,7 +290,10 @@ Menu_select_data GuiManager::CheckCollisionInv()
 	else if( this->zInventoryOpen )
 	{
 		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
-		this->zSelectedItem = this->zInvGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(2), zEng);
+		Selected_Item_ReturnData sir;
+		sir = this->zInvGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(2), zEng);
+		zSelectedItem = sir.ID;
+		this->zInvCircGui->Adjust(sir.type, sir.inventory);
 		if(zSelectedItem != -1 && !this->zCircularInventorySelectionOpen && !zMinorFix)
 		{
 			zMinorFix = true;
@@ -300,10 +309,25 @@ Menu_select_data GuiManager::CheckCollisionInv()
 
 void GuiManager::EquipItem( int type, const Gui_Item_Data gid )
 {
-	this->zInvGui->EquipItem(type, gid);
+	this->zInvGui->EquipItem(type, gid, this->zInventoryOpen);
 }
 
 void GuiManager::UnEquipItem( const int ID, int stacks )
 {
 	this->zInvGui->UnEquipItem(ID, stacks);
+}
+
+void GuiManager::Resize( int width, int height )
+{
+	float dx = ((float)height * 4.0f) / 3.0f;
+	float offSet = (float)(width - dx) / 2.0f;
+
+	float guiWidth = (InvWidth / 1024.0f) * dx;
+	float guiHeight = (InvHeight / 768.0f) * height;
+
+	this->zInvGui->SetPosition(width - guiWidth, height - guiHeight);
+	this->zInvGui->SetDimension(Vector2(guiWidth, guiHeight));
+
+	this->zInvGui->Resize(width, height, dx);
+	this->zInvCircGui->Resize(width, height, dx);
 }

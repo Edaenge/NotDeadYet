@@ -90,6 +90,7 @@
     <ClInclude Include="..\Source\GameFiles\ClientSide\StaticObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObject.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObjectManager.h" />
+    <ClInclude Include="..\Source\GameFiles\DebugMessages.h" />
     <ClInclude Include="..\Source\GameFiles\Game.h" />
     <ClInclude Include="..\Source\GameFiles\Graphics.h" />
     <ClInclude Include="..\Source\GameFiles\Gui\CircularListGui.h" />

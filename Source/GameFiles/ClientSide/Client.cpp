@@ -4,8 +4,8 @@
 #include "../ClientServerMessages.h"
 #include "ClientServerMessages.h"
 #include "../WorldFiles/EntityList.h"
+#include "../DebugMessages.h"
 #include "DisconnectedEvent.h"
-
 using namespace MaloW;
 
 // Timeout_value = 10 sek
@@ -115,7 +115,6 @@ void Client::InitGraphics()
 	this->zWorld = new World(this, "3x3.map");
 	this->zWorldRenderer = new WorldRenderer(zWorld, GetGraphics());
 	this->zAnchor = zWorld->CreateAnchor();
-
 	iGraphicsEngineParams* GEP = GetGraphics()->GetEngineParameters();
 	int windowWidth = GEP->windowWidth;
 	int windowHeight = GEP->windowHeight;
@@ -405,7 +404,7 @@ void Client::HandleKeyboardInput()
 		}
 	}
 
-	//UnEquip Weapon
+	//UnEquip Melee Weapon
 	if (this->zEng->GetKeyListener()->IsPressed('Q'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
@@ -414,14 +413,34 @@ void Client::HandleKeyboardInput()
 			PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 			Equipment* eq = pObject->GetEquipmentPtr();
 
-			Item* item = eq->GetWeapon();
+			Item* item = eq->GetMeleeWeapon();
 			if (item)
 			{
 				MaloW::Debug("Item UnEquipped " + item->GetItemName());
 				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
-				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
+				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_MELEE_WEAPON);
 
 				this->zServerChannel->Send(msg);
+			}
+		}
+	}
+	//UnEquip Ranged Weapon
+	if (this->zEng->GetKeyListener()->IsPressed('R'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
+			Equipment* eq = pObject->GetEquipmentPtr();
+
+			Item* item = eq->GetRangedWeapon();
+			if (item)
+			{
+				MaloW::Debug("Item UnEquipped " + item->GetItemName());
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
+				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_RANGED_WEAPON);
+
+				this->zServerChannel->sendData(msg);
 			}
 		}
 	}
@@ -511,7 +530,7 @@ void Client::HandleKeyboardInput()
 					PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
 
 					Equipment* eq = player->GetEquipmentPtr();
-					Weapon* weapon = eq->GetWeapon();
+					Weapon* weapon = eq->GetRangedWeapon();
 
 					if (!weapon)
 					{
@@ -530,11 +549,11 @@ void Client::HandleKeyboardInput()
 					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 			}
 		}
-		HandleWeaponEquips();
+		this->HandleWeaponEquips();
 	}
-	
+	this->HandleDebugInfo();
 }
-//Future use to equip weapon with keyboard
+//use to equip weapon with keyboard
 void Client::HandleWeaponEquips()
 {
 	if (!this->zPlayerInventory)
@@ -543,7 +562,7 @@ void Client::HandleWeaponEquips()
 	//Equip Bow
 	if (this->zEng->GetKeyListener()->IsPressed('1'))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_RANGED_BOW);
 			if (item)
@@ -551,13 +570,13 @@ void Client::HandleWeaponEquips()
 				SendUseItemMessage(item->GetID());
 			}
 
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}
 	}
 	//Equip Arrow
 	else if (this->zEng->GetKeyListener()->IsPressed('2'))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_PROJECTILE_ARROW);
 			if (item)
@@ -565,13 +584,13 @@ void Client::HandleWeaponEquips()
 				SendUseItemMessage(item->GetID());
 			}
 
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}
 	}
 	//Equip Rock
 	else if (this->zEng->GetKeyListener()->IsPressed('3'))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_RANGED_ROCK);
 			if (item)
@@ -579,13 +598,13 @@ void Client::HandleWeaponEquips()
 				SendUseItemMessage(item->GetID());
 			}
 
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}
 	}
 	//Equip Axe
 	else if (this->zEng->GetKeyListener()->IsPressed('4'))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE_AXE);
 			if (item)
@@ -593,13 +612,13 @@ void Client::HandleWeaponEquips()
 				SendUseItemMessage(item->GetID());
 			}
 
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}
 	}
 	//Equip Pocket Knife
 	else if (this->zEng->GetKeyListener()->IsPressed('5'))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE);
 			if (item)
@@ -607,14 +626,124 @@ void Client::HandleWeaponEquips()
 				SendUseItemMessage(item->GetID());
 			}
 
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
+		}
+	}
+	else if(this->zEng->GetKeyListener()->IsPressed('T'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			if(zEng->GetEngineParameters()->windowWidth != 1024)
+			{
+				zEng->ResizeGraphicsEngine(1024, 768);
+				this->zGuiManager->Resize(1024, 768);
+			}
+			else
+			{
+				zEng->ResizeGraphicsEngine(1800, 1000);
+				this->zGuiManager->Resize(1800, 1000);
+			}
+
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
 		}
 	}
 	else
 	{
-		if (this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, false);
+			this->zKeyInfo.SetKeyState(KEY_EQUIP, false);
+		}
+	}
+}
+
+void Client::HandleDebugInfo()
+{
+	//Terrain Height debug
+	if (this->zEng->GetKeyListener()->IsPressed(VK_F1))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Terrain problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+	//Terrain Texture debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F2))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Terrain Texture problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+	//Terrain AI Grid debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F3))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Terrain AI grid problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+	//Object debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F4))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Object problem at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_DELETE))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			DebugMsg::ClearDebug();
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, false);
 		}
 	}
 }

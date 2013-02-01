@@ -6,14 +6,15 @@ DynamicProjectileObject::DynamicProjectileObject(const bool genID /*= true*/) : 
 	this->zSpeed = 5.0f;
 	this->zWeight = 1;
 	this->zMoving = true;
+	this->zActorType = ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE;
 }
 
 DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& other, bool genID)
 {
 	if (genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other.GetID());
+		this->zID = other.GetID();
 
 
 	this->zPhysicObj = other.zPhysicObj;
@@ -28,14 +29,15 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& 
 	this->zDescription = other.zDescription;
 	this->zActorObjectName = other.zActorObjectName;
 	this->zInitialDirection = other.zInitialDirection;
+	this->zActorType = other.zActorType;
 }
 
 DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* other, bool genID)
 {
 	if (genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other->GetID());
+		this->zID = other->GetID();
 
 	this->zSpeed = other->zSpeed;
 	this->zStackSize = other->zStackSize;
@@ -48,6 +50,7 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* 
 	this->zDescription = other->zDescription;
 	this->zPhysicObj = other->zPhysicObj;
 	this->zInitialDirection = other->zInitialDirection;
+	this->zActorType = other->zActorType;
 }
 
 DynamicProjectileObject::~DynamicProjectileObject()

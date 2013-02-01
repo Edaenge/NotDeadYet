@@ -1,21 +1,20 @@
 #include "WeaponObject.h"
 
-
-
 WeaponObject::WeaponObject(const bool genID /* = false */) : StaticObjectActor(genID)
 {
 	this->zWeight = 1;
 	this->zRange = 1.0f;
 	this->zDamage = 0.0f;
+	this->zActorType = ACTOR_TYPE_STATIC_OBJECT_WEAPON;
 }
 
 WeaponObject::WeaponObject( const WeaponObject& other, const bool genID /*= false*/)
 {
 
 	if(genID)
-		GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other.GetID());
+		this->zID = other.GetID();
 
 	this->zRot = other.zRot;
 	this->zPos = other.zPos;
@@ -26,6 +25,7 @@ WeaponObject::WeaponObject( const WeaponObject& other, const bool genID /*= fals
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
 	this->zIconPath = other.zIconPath;
+	this->zActorType = other.zActorType;
 	this->zActorModel = other.zActorModel;
 	this->zDescription = other.zDescription;
 	this->zActorObjectName = other.zActorObjectName;
@@ -34,9 +34,9 @@ WeaponObject::WeaponObject( const WeaponObject& other, const bool genID /*= fals
 WeaponObject::WeaponObject( const WeaponObject* other, const bool genID /*= false*/ )
 {
 	if(genID)
-		GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other->GetID());
+		this->zID = other->GetID();
 
 	this->zRot = other->zRot;
 	this->zPos = other->zPos;
@@ -47,6 +47,7 @@ WeaponObject::WeaponObject( const WeaponObject* other, const bool genID /*= fals
 	this->zDamage = other->zDamage;
 	this->zStacks = other->zStacks;
 	this->zIconPath = other->zIconPath;
+	this->zActorType = other->zActorType;
 	this->zActorModel = other->zActorModel;
 	this->zDescription = other->zDescription;
 	this->zActorObjectName = other->zActorObjectName;

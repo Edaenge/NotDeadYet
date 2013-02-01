@@ -4,14 +4,15 @@ MaterialObject::MaterialObject(const bool genID /*= false*/ ) : StaticObjectActo
 {
 	this->zCraftingType = -1;
 	this->zRequiredStackToCraft = -1;
+	this->zActorType = ACTOR_TYPE_STATIC_OBJECT_MATERIAL;
 }
 
 MaterialObject::MaterialObject(const MaterialObject& other, bool genID /*= false*/)
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other.GetID());
+		this->zID = other.GetID();
 
 	this->zRot = other.zRot;
 	this->zPos = other.zPos;
@@ -20,6 +21,7 @@ MaterialObject::MaterialObject(const MaterialObject& other, bool genID /*= false
 	this->zWeight = other.zWeight;
 	this->zStacks = other.zStacks;
 	this->zIconPath = other.zIconPath;
+	this->zActorType = other.zActorType;
 	this->zActorModel = other.zActorModel;
 	this->zDescription = other.zDescription;
 	this->zCraftingType = other.zCraftingType;
@@ -30,9 +32,9 @@ MaterialObject::MaterialObject(const MaterialObject& other, bool genID /*= false
 MaterialObject::MaterialObject(const MaterialObject* other, bool genID /*= false*/)
 {
 	if(genID)
-		this->GenerateID();
+		this->zID = this->GenerateID();
 	else
-		this->SetID(other->GetID());
+		this->zID = other->GetID();
 
 	this->zRot = other->zRot;
 	this->zPos = other->zPos;
@@ -41,6 +43,7 @@ MaterialObject::MaterialObject(const MaterialObject* other, bool genID /*= false
 	this->zWeight = other->zWeight;
 	this->zStacks = other->zStacks;
 	this->zIconPath = other->zIconPath;
+	this->zActorType = other->zActorType;
 	this->zActorModel = other->zActorModel;
 	this->zDescription = other->zDescription;
 	this->zCraftingType = other->zCraftingType;

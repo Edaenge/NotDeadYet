@@ -46,6 +46,8 @@ public:
 	/*! Removes the GuiElement From the Renderer and Stops Rendering it*/
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
+	void SetDimension(Vector2 dim){ if(this->zGuiImage) zGuiImage->SetDimensions(dim); this->SetWidth(dim.x); this->SetHeight(dim.y); }
+
 	virtual bool IsHidden() {return this->zHidden;}
 	void HideGui();
 	void ShowGui();
@@ -55,10 +57,10 @@ protected:
 	float zX;
 	float zY;
 	float zWidth;
+	float zHeight;
 	bool zHidden;
 	bool zPressed;
 	bool zHovered;
-	float zHeight;
 	float zOpacity;
 	iImage* zGuiImage;
 	std::string zTextureName;

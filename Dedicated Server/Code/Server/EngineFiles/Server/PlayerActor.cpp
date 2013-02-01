@@ -1,21 +1,22 @@
 #include "PlayerActor.h"
+#include "ClientServerMessages.h"
 
 PlayerActor::PlayerActor(const long ID) : BioActor()
 {
 	InitValues();
-	this->SetID(ID);
+	this->zID = ID;
 }
 
 PlayerActor::PlayerActor(const long ID, const Vector3& startPos, PhysicsObject* pObj) : BioActor(startPos, pObj)
 {
 	InitValues();
-	this->SetID(ID);
+	this->zID = ID;
 }
 
 PlayerActor::PlayerActor(const long ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj) : BioActor(startPos, pObj, startRot)
 {
 	InitValues();
-	this->SetID(ID);
+	this->zID = ID;
 }
 
 void PlayerActor::InitValues()
@@ -30,11 +31,10 @@ void PlayerActor::InitValues()
 	this->zInitialDirection = Vector3(0,0,-1);
 	this->zInventory = new Inventory();
 	this->zEquipment = new Equipment();
+	this->zActorType = ACTOR_TYPE_PLAYER;
 
-	this->zHealthChanged = false;
-	this->zStaminaChanged = false;
-	this->zHunger = false;
-	this->zHydration = false;
+	this->zHungerChanged = true;
+	this->zHydrationChanged = true;
 }
 
 PlayerActor::~PlayerActor()
@@ -126,165 +126,170 @@ void PlayerActor::Update(float deltaTime)
 
 }
 
-bool PlayerActor::PickUpObject(DynamicObjectActor* object)
-{
-	//Not yet implemented
-	return false;
-}
-
 bool PlayerActor::PickUpObject(StaticObjectActor* object)
 {
-	FoodObject* fo				= NULL;
-	WeaponObject* wo			= NULL;
-	ContainerObject* co			= NULL;
-	StaticProjectileObject* spo = NULL;
-	MaterialObject*	mo			= NULL;
 	Item* item					= NULL; 
 
-	fo = dynamic_cast<FoodObject*>(object);
-	if(fo)
+	int itemType = object->GetActorType(); 
+	if (itemType == ACTOR_TYPE_STATIC_OBJECT_FOOD)
 	{
-		item = new Food(fo->GetID(), fo->GetType(), fo->GetHunger());
-
-		item->SetStacking(true);
-		item->SetItemWeight(fo->GetWeight());
-		item->SetIconPath(fo->GetIconPath());
-		item->SetStackSize(fo->GetStackSize());
-		item->SetItemName(fo->GetActorObjectName());
-		item->SetItemDescription(fo->GetDescription());
-		
-		if(!this->zInventory->AddItem(item))
+		FoodObject* fo = dynamic_cast<FoodObject*>(object);
+		if(fo)
 		{
-			SAFE_DELETE(item);
-			return false;
-		}
-
-		return true;
-	}
-
-	wo = dynamic_cast<WeaponObject*>(object);
-	if(wo)
-	{
-		
-		switch (wo->GetType())
-		{
-		case ITEM_TYPE_WEAPON_MELEE_AXE:
-			item = new MeleeWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
-
-			item->SetStacking(false);
-			item->SetItemWeight(wo->GetWeight());
-			item->SetIconPath(wo->GetIconPath());
-			item->SetStackSize(wo->GetStackSize());
-			item->SetItemName(wo->GetActorObjectName());
-			item->SetItemDescription(wo->GetDescription());
-			break;
-		case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
-			item = new MeleeWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
-
-			item->SetStacking(false);
-			item->SetItemWeight(wo->GetWeight());
-			item->SetIconPath(wo->GetIconPath());
-			item->SetStackSize(wo->GetStackSize());
-			item->SetItemName(wo->GetActorObjectName());
-			item->SetItemDescription(wo->GetDescription());
-			break;
-		case ITEM_TYPE_WEAPON_RANGED_BOW:
-			item = new RangedWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
-
-			item->SetStacking(false);
-			item->SetItemWeight(wo->GetWeight());
-			item->SetIconPath(wo->GetIconPath());
-			item->SetStackSize(wo->GetStackSize());
-			item->SetItemName(wo->GetActorObjectName());
-			item->SetItemDescription(wo->GetDescription());
-			break;
-		case ITEM_TYPE_WEAPON_RANGED_ROCK:
-			item = new RangedWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
+			item = new Food(fo->GetID(), fo->GetType(), fo->GetHunger());
 
 			item->SetStacking(true);
-			item->SetItemWeight(wo->GetWeight());
-			item->SetIconPath(wo->GetIconPath());
-			item->SetStackSize(wo->GetStackSize());
-			item->SetItemName(wo->GetActorObjectName());
-			item->SetItemDescription(wo->GetDescription());
-			break;
-		default:
-			//Return
-			return false;
-			break;
-		}
+			item->SetItemWeight(fo->GetWeight());
+			item->SetIconPath(fo->GetIconPath());
+			item->SetStackSize(fo->GetStackSize());
+			item->SetItemName(fo->GetActorObjectName());
+			item->SetItemDescription(fo->GetDescription());
 
-		if(!this->zInventory->AddItem(item))
-		{
-			SAFE_DELETE(item);
-			return false;
+			if(!this->zInventory->AddItem(item))
+			{
+				SAFE_DELETE(item);
+				return false;
+			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
-	co = dynamic_cast<ContainerObject*>(object);
-	if(co)
+	if (itemType == ACTOR_TYPE_STATIC_OBJECT_WEAPON)
 	{
-		item = new Container(co->GetID(), co->GetType(), co->GetMaxUses(), co->GetCurrentUses());
-		
-		item->SetStacking(false);
-		item->SetItemWeight(co->GetWeight());
-		item->SetIconPath(co->GetIconPath());
-		item->SetStackSize(co->GetStackSize());
-		item->SetItemName(co->GetActorObjectName());
-		item->SetItemDescription(co->GetDescription());
-
-		if(!this->zInventory->AddItem(item))
+		WeaponObject* wo = dynamic_cast<WeaponObject*>(object);
+		if(wo)
 		{
-			SAFE_DELETE(item);
-			return false;
+
+			switch (wo->GetType())
+			{
+			case ITEM_TYPE_WEAPON_MELEE_AXE:
+				item = new MeleeWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
+
+				item->SetStacking(false);
+				item->SetItemWeight(wo->GetWeight());
+				item->SetIconPath(wo->GetIconPath());
+				item->SetStackSize(wo->GetStackSize());
+				item->SetItemName(wo->GetActorObjectName());
+				item->SetItemDescription(wo->GetDescription());
+				break;
+			case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
+				item = new MeleeWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
+
+				item->SetStacking(false);
+				item->SetItemWeight(wo->GetWeight());
+				item->SetIconPath(wo->GetIconPath());
+				item->SetStackSize(wo->GetStackSize());
+				item->SetItemName(wo->GetActorObjectName());
+				item->SetItemDescription(wo->GetDescription());
+				break;
+			case ITEM_TYPE_WEAPON_RANGED_BOW:
+				item = new RangedWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
+
+				item->SetStacking(false);
+				item->SetItemWeight(wo->GetWeight());
+				item->SetIconPath(wo->GetIconPath());
+				item->SetStackSize(wo->GetStackSize());
+				item->SetItemName(wo->GetActorObjectName());
+				item->SetItemDescription(wo->GetDescription());
+				break;
+			case ITEM_TYPE_WEAPON_RANGED_ROCK:
+				item = new RangedWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
+
+				item->SetStacking(true);
+				item->SetItemWeight(wo->GetWeight());
+				item->SetIconPath(wo->GetIconPath());
+				item->SetStackSize(wo->GetStackSize());
+				item->SetItemName(wo->GetActorObjectName());
+				item->SetItemDescription(wo->GetDescription());
+				break;
+			default:
+				//Return
+				return false;
+				break;
+			}
+
+			if(!this->zInventory->AddItem(item))
+			{
+				SAFE_DELETE(item);
+				return false;
+			}
+			return true;
 		}
-
-		return true;
+		return false;
 	}
-
-	spo = dynamic_cast<StaticProjectileObject*>(object);
-	if(spo)
+	
+	if (itemType == ACTOR_TYPE_STATIC_OBJECT_CONTAINER)
 	{
-		item = new Projectile(spo->GetID(), spo->GetType(), spo->GetSpeed(), spo->GetDamage());
-
-		item->SetStacking(true);
-		item->SetItemWeight(spo->GetWeight());
-		item->SetIconPath(spo->GetIconPath());
-		item->SetStackSize(spo->GetStackSize());
-		item->SetItemName(spo->GetActorObjectName());
-		item->SetItemDescription(spo->GetDescription());
-
-		if(!this->zInventory->AddItem(item))
+		ContainerObject* co = dynamic_cast<ContainerObject*>(object);
+		if(co)
 		{
-			SAFE_DELETE(item);
-			return false;
+			item = new Container(co->GetID(), co->GetType(), co->GetMaxUses(), co->GetCurrentUses());
+
+			item->SetStacking(false);
+			item->SetItemWeight(co->GetWeight());
+			item->SetIconPath(co->GetIconPath());
+			item->SetStackSize(co->GetStackSize());
+			item->SetItemName(co->GetActorObjectName());
+			item->SetItemDescription(co->GetDescription());
+
+			if(!this->zInventory->AddItem(item))
+			{
+				SAFE_DELETE(item);
+				return false;
+			}
+
+			return true;
 		}
-
-		return true;
 	}
-
-	mo = dynamic_cast<MaterialObject*>(object);
-	if(mo)
+	
+	if (itemType == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
 	{
-		item = new Material(mo->GetID(), mo->GetType(), mo->GetCraftingType(), mo->GetRequiredStackToCraft());
-
-		item->SetStacking(true);
-		item->SetItemWeight(mo->GetWeight());
-		item->SetIconPath(mo->GetIconPath());
-		item->SetStackSize(mo->GetStackSize());
-		item->SetItemName(mo->GetActorObjectName());
-		item->SetItemDescription(mo->GetDescription());
-
-		if(!this->zInventory->AddItem(item))
+		StaticProjectileObject* spo = dynamic_cast<StaticProjectileObject*>(object);
+		if(spo)
 		{
-			SAFE_DELETE(item);
-			return false;
+			item = new Projectile(spo->GetID(), spo->GetType(), spo->GetSpeed(), spo->GetDamage());
+
+			item->SetStacking(true);
+			item->SetItemWeight(spo->GetWeight());
+			item->SetIconPath(spo->GetIconPath());
+			item->SetStackSize(spo->GetStackSize());
+			item->SetItemName(spo->GetActorObjectName());
+			item->SetItemDescription(spo->GetDescription());
+
+			if(!this->zInventory->AddItem(item))
+			{
+				SAFE_DELETE(item);
+				return false;
+			}
+			return true;
 		}
-
-		return true;
+		return false;
 	}
+	
+	if (itemType == ACTOR_TYPE_STATIC_OBJECT_MATERIAL)
+	{
+		MaterialObject*	mo = dynamic_cast<MaterialObject*>(object);
+		if(mo)
+		{
+			item = new Material(mo->GetID(), mo->GetType(), mo->GetCraftingType(), mo->GetRequiredStackToCraft());
 
+			item->SetStacking(true);
+			item->SetItemWeight(mo->GetWeight());
+			item->SetIconPath(mo->GetIconPath());
+			item->SetStackSize(mo->GetStackSize());
+			item->SetItemName(mo->GetActorObjectName());
+			item->SetItemDescription(mo->GetDescription());
+
+			if(!this->zInventory->AddItem(item))
+			{
+				SAFE_DELETE(item);
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
 	return false;
 }
 
@@ -298,7 +303,8 @@ bool PlayerActor::DropObject(const long ID)
 		return false;
 	}
 	this->zInventory->RemoveItem(item);
-	MaloW::Debug("Removed successes: " + MaloW::convertNrToString((float)ID));
+	if (Messages::FileWrite())	
+		Messages::Debug("Removed successes: " + MaloW::convertNrToString((float)ID));
 
 	return true;
 }
@@ -321,20 +327,24 @@ void PlayerActor::EatFood(float hunger)
 	this->zHungerChanged = true;
 }
 
-void PlayerActor::AddChangedHData(string& mess, NetworkMessageConverter* nmc)
+std::string PlayerActor::ToMessageString( NetworkMessageConverter* NMC )
 {
-	BioActor::AddChangedHData(mess, nmc);
+	string msg = "";
+	msg = BioActor::ToMessageString(NMC);
+
+	msg += NMC->Convert(MESSAGE_TYPE_STATE, (float)this->zState);
+	//msg += NMC->Convert(MESSAGE_TYPE_FRAME_TIME, this->zFrameTime);
 
 	if(zHungerChanged)
 	{
-		mess += nmc->Convert(MESSAGE_TYPE_HUNGER, this->zHunger);
+		msg += NMC->Convert(MESSAGE_TYPE_HUNGER, this->zHunger);
 		this->zHungerChanged = false;
 	}
 	if(zHydrationChanged)
 	{
-		mess += nmc->Convert(MESSAGE_TYPE_HYDRATION, this->zHydration);
+		msg += NMC->Convert(MESSAGE_TYPE_HYDRATION, this->zHydration);
 		this->zHydrationChanged = false;
 	}
 
-	this->AddChangedData(mess, nmc);
+	return msg;
 }
