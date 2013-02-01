@@ -621,7 +621,7 @@ void Client::SendUnEquipItem(const long ID, const int Slot)
 
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)Slot);
 
-	this->zServerChannel->sendData(msg);
+	this->zServerChannel->Send(msg);
 }
 
 void Client::SendLootItemMessage(const long ID, const long ItemID, const int TYPE)
@@ -631,7 +631,7 @@ void Client::SendLootItemMessage(const long ID, const long ItemID, const int TYP
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_ITEM, (float)ID);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_ID, (float)ItemID);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)TYPE);
-	this->zServerChannel->sendData(msg);
+	this->zServerChannel->Send(msg);
 }
 
 void Client::SendPickupItemMessage(const long ID)
@@ -640,7 +640,7 @@ void Client::SendPickupItemMessage(const long ID)
 
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PICKUP_ITEM, (float)ID);
 
-	this->zServerChannel->sendData(msg);
+	this->zServerChannel->Send(msg);
 }
 
 void Client::SendDropItemMessage(const long ID)
@@ -649,7 +649,7 @@ void Client::SendDropItemMessage(const long ID)
 
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_DROP_ITEM, (float)ID);
 
-	this->zServerChannel->sendData(msg);
+	this->zServerChannel->Send(msg);
 }
 
 void Client::HandleRemoveInventoryItem(const long ID)

@@ -4,12 +4,14 @@
 #include "../ClientServerMessages.h"
 #include "ClientServerMessages.h"
 #include "../WorldFiles/EntityList.h"
+#include "DisconnectedEvent.h"
 
 using namespace MaloW;
 
-//Timeout_value = 10 sek
+// Timeout_value = 10 sek
 static const float TIMEOUT_VALUE = 10.0f;
-// 50 updates per sec
+
+// 50 updates per second
 static const float UPDATE_DELAY = 0.020f;
 static const float MAX_DISTANCE_TO_OBJECT = 3.0f;
 
@@ -46,18 +48,12 @@ Client::Client()
 	this->zCrossHair = 0;
 }
 
-int Client::Connect(const std::string& ip, const int port)
+void Client::Connect(const std::string &IPAddress, const unsigned int &port)
 {
-	int code = 0;
-
-	this->zIP = ip;
+	this->zIP = IPAddress;
 	this->zPort = port;
-
-	this->zServerChannel = new ServerChannel();
-	//Tries to Connect to a server with the specified Ip and Port
-	code = this->zServerChannel->InitConnection(ip, port);
-	
-	return code;
+	this->zServerChannel = new ServerChannel(this, IPAddress, port);
+	this->zServerChannel->Start();
 }
 
 Client::~Client()
@@ -71,7 +67,6 @@ Client::~Client()
 	SAFE_DELETE(this->zPlayerInventory);
 
 	SAFE_DELETE(this->zWorld);
-	SAFE_DELETE(this->zWorldRenderer);
 	SAFE_DELETE(this->zCrossHair);
 }
 
@@ -92,7 +87,7 @@ float Client::Update()
 
 	this->zGuiManager->Update(this->zDeltaTime);
 
-	//Anchors with the world to decide what to render.
+	// Anchors with the world to decide what to render.
 	if(zWorld && zAnchor)
 	{
 		Vector2 cameraPos = this->zEng->GetCamera()->GetPosition().GetXZ();
@@ -119,8 +114,7 @@ void Client::InitGraphics()
 	if ( zWorld ) delete zWorld, zWorld=0;
 	this->zWorld = new World(this, "3x3.map");
 	this->zWorldRenderer = new WorldRenderer(zWorld, GetGraphics());
-
-	this->zAnchor = this->zWorld->CreateAnchor();
+	this->zAnchor = zWorld->CreateAnchor();
 
 	iGraphicsEngineParams* GEP = GetGraphics()->GetEngineParameters();
 	int windowWidth = GEP->windowWidth;
@@ -153,16 +147,12 @@ void Client::Init()
 	this->zGuiManager = new GuiManager(this->zEng);
 	this->zPlayerInventory = new Inventory();
 
-	Sleep(1000);
 	this->InitGraphics();
 }
 
 void Client::Life()
 {
 	MaloW::Debug("Client Process Started");
-	this->zServerChannel->setNotifier(this);
-
-	this->zServerChannel->Start();
 
 	this->Init();
 
@@ -188,9 +178,10 @@ void Client::Life()
 
 			this->UpdateWorldObjects();
 		}
+
 		if (this->stayAlive)
 		{
-			this->ReadMessage();
+			this->ReadMessages();
 
 			if (this->zTimeSinceLastPing > TIMEOUT_VALUE * 2.0f)
 			{
@@ -199,7 +190,7 @@ void Client::Life()
 			else if (this->zTimeSinceLastPing > TIMEOUT_VALUE)
 			{
 				MaloW::Debug("Timeout From Server!");
-				//Print a Timeout Message to Client
+				// Print a Timeout Message to Client
 			}
 		}
 
@@ -207,16 +198,17 @@ void Client::Life()
 		{
 			this->zGuiManager->ToggleIngameMenu();
 			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID);
-			this->zServerChannel->sendData(msg);
+			this->zServerChannel->TrySend(msg);
 			this->CloseConnection("Escape was pressed");
 		}
 
 		Sleep(5);
 	}
+
 	this->zRunning = false;
 }
 
-void Client::ReadMessage()
+void Client::ReadMessages()
 {
 	static const unsigned int MAX_NR_OF_MESSAGES = 10;
 
@@ -230,11 +222,15 @@ void Client::ReadMessage()
 		if (MaloW::ProcessEvent* ev = this->PeekEvent())
 		{
 			//Check if Client has received a Message
-			NetworkPacket* np = dynamic_cast<NetworkPacket*>(ev);
-			if (np != NULL)
+			if ( NetworkPacket* np = dynamic_cast<NetworkPacket*>(ev) )
 			{
-				this->HandleNetworkMessage(np->getMessage());
+				HandleNetworkMessage(np->getMessage());
 			}
+			else if ( DisconnectedEvent* np = dynamic_cast<DisconnectedEvent*>(ev) )
+			{
+				CloseConnection("Unknown");
+			}
+
 			SAFE_DELETE(ev);
 		}
 	}
@@ -257,7 +253,7 @@ void Client::SendClientUpdate()
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, up.x, up.y, up.z);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
 	
-	this->zServerChannel->sendData(msg);
+	this->zServerChannel->Send(msg);
 }
 
 void Client::SendAck(unsigned int IM_ID)
@@ -265,7 +261,7 @@ void Client::SendAck(unsigned int IM_ID)
 	std::string msg;
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACKNOWLEDGE, (float)IM_ID);
 
-	this->zServerChannel->sendData(msg);
+	this->zServerChannel->Send(msg);
 }
 
 void Client::UpdateCameraPos()
@@ -324,7 +320,7 @@ bool Client::CheckKey(const unsigned int ID)
 			std::string msg = "";
 			msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, (float)ID);
 
-			this->zServerChannel->sendData(msg);
+			this->zServerChannel->Send(msg);
 		}
 		this->zKeyInfo.SetKeyState(ID, true);
 		result = true;
@@ -337,7 +333,7 @@ bool Client::CheckKey(const unsigned int ID)
 			std::string msg = "";
 			msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)ID);
 
-			this->zServerChannel->sendData(msg);
+			this->zServerChannel->Send(msg);
 		}
 		this->zKeyInfo.SetKeyState(ID, false);
 		result = false;
@@ -367,7 +363,7 @@ void Client::CheckMovementKeys()
 void Client::SendUseItemMessage(const long ID)
 {
 	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-	this->zServerChannel->sendData(msg);
+	this->zServerChannel->Send(msg);
 }
 
 void Client::HandleKeyboardInput()
@@ -425,7 +421,7 @@ void Client::HandleKeyboardInput()
 				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
 				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_WEAPON);
 
-				this->zServerChannel->sendData(msg);
+				this->zServerChannel->Send(msg);
 			}
 		}
 	}
@@ -445,7 +441,7 @@ void Client::HandleKeyboardInput()
 				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
 				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_AMMO);
 
-				this->zServerChannel->sendData(msg);
+				this->zServerChannel->Send(msg);
 			}
 		}
 	}
@@ -524,7 +520,7 @@ void Client::HandleKeyboardInput()
 					else
 					{
 						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
-						this->zServerChannel->sendData(msg);
+						this->zServerChannel->Send(msg);
 					}
 				}
 			}
@@ -626,238 +622,222 @@ void Client::HandleWeaponEquips()
 void Client::Ping()
 {
 	this->zTimeSinceLastPing = 0.0f;
-	this->zServerChannel->sendData(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
+	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
 }
 
-void Client::HandleNetworkMessage(const std::string& msg)
+void Client::HandleNetworkMessage( const std::string& msg )
 {
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
-	
-	if(msgArray.size() > 0)
+
+	//Checks what type of message was sent
+	if(msg.find(M_PING.c_str()) == 0)
 	{
-		char key[1024];
-		sscanf_s(msgArray[0].c_str(), "%s ", &key, sizeof(key));
-
-		//Checks if the message has a 'important' tag.
-		if(strcmp(key, M_IMPORTANT_MESSAGE.c_str()) == 0)
+		this->Ping();
+	}
+	//Player
+	else if(msg.find(M_UPDATE_PLAYER.c_str()) == 0)
+	{ 
+		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_PLAYER, msgArray[0]);
+		this->UpdatePlayerObjects(msgArray, id);
+	}
+	//Animal
+	else if(msg.find(M_UPDATE_ANIMAL.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ANIMAL, msgArray[0]);
+		this->UpdateAnimalObjects(msgArray, id);
+	}
+	//Static Object
+	else if(msg.find(M_UPDATE_STATIC_OBJECT.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_STATIC_OBJECT, msgArray[0]);
+		this->UpdateStaticObjects(msgArray, id);
+	}
+	//Static Object
+	else if(msg.find(M_NEW_STATIC_OBJECT.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_STATIC_OBJECT, msgArray[0]);
+		this->AddNewStaticObject(msgArray, id);
+	}
+	//Static Object
+	else if(msg.find(M_REMOVE_STATIC_OBJECT.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_STATIC_OBJECT, msgArray[0]);
+		this->RemoveStaticObject(id);
+	}
+	//Dynamic Object
+	else if(msg.find(M_UPDATE_DYNAMIC_OBJECT.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_DYNAMIC_OBJECT, msgArray[0]);
+		this->UpdateDynamicObjects(msgArray, id);
+	}
+	//Dynamic Object
+	else if(msg.find(M_NEW_DYNAMIC_OBJECT.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_DYNAMIC_OBJECT, msgArray[0]);
+		this->AddNewDynamicObject(msgArray, id);
+	}
+	//Dynamic Object
+	else if(msg.find(M_REMOVE_DYNAMIC_OBJECT.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_DYNAMIC_OBJECT, msgArray[0]);
+		this->RemoveDynamicObject(id);
+	}
+	//Player
+	else if(msg.find(M_NEW_PLAYER.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_PLAYER, msgArray[0]);
+		this->AddNewPlayerObject(msgArray, id);
+	}
+	//Animal
+	else if(msg.find(M_NEW_ANIMAL.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_ANIMAL, msgArray[0]);
+		this->AddNewAnimalObject(msgArray, id);
+	}
+	//Animal
+	else if(msg.find(M_REMOVE_ANIMAL.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ANIMAL, msgArray[0]);
+		this->RemoveAnimalObject(id);
+	}
+	//Player
+	else if(msg.find(M_REMOVE_PLAYER.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_PLAYER, msgArray[0]);
+		this->RemovePlayerObject(id);
+	}
+	else if(msg.find(M_EQUIP_ITEM.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
+		int slot = -1;
+		if (msgArray.size() > 1)
 		{
-			unsigned int IM_ID = this->zMsgHandler.ConvertStringToInt(M_IMPORTANT_MESSAGE, msgArray[0]);
-			SendAck(IM_ID);
-
-			msgArray.erase(msgArray.begin());
-			sscanf_s(msgArray[0].c_str(), "%s ", &key, sizeof(key));
-		}
-
-		//Checks what type of message was sent
-		if(strcmp(key, M_PING.c_str()) == 0)
-		{
-			this->Ping();
-		}
-		//Player
-		else if(strcmp(key, M_UPDATE_PLAYER.c_str()) == 0)
-		{ 
-			long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_PLAYER, msgArray[0]);
-			this->UpdatePlayerObjects(msgArray, id);
-		}
-		//Animal
-		else if(strcmp(key, M_UPDATE_ANIMAL.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ANIMAL, msgArray[0]);
-			this->UpdateAnimalObjects(msgArray, id);
-		}
-		//Static Object
-		else if(strcmp(key, M_UPDATE_STATIC_OBJECT.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_STATIC_OBJECT, msgArray[0]);
-			this->UpdateStaticObjects(msgArray, id);
-		}
-		//Static Object
-		else if(strcmp(key, M_NEW_STATIC_OBJECT.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_NEW_STATIC_OBJECT, msgArray[0]);
-			this->AddNewStaticObject(msgArray, id);
-		}
-		//Static Object
-		else if(strcmp(key, M_REMOVE_STATIC_OBJECT.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_STATIC_OBJECT, msgArray[0]);
-			this->RemoveStaticObject(id);
-		}
-		//Dynamic Object
-		else if(strcmp(key, M_UPDATE_DYNAMIC_OBJECT.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_DYNAMIC_OBJECT, msgArray[0]);
-			this->UpdateDynamicObjects(msgArray, id);
-		}
-		//Dynamic Object
-		else if(strcmp(key, M_NEW_DYNAMIC_OBJECT.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_NEW_DYNAMIC_OBJECT, msgArray[0]);
-			this->AddNewDynamicObject(msgArray, id);
-		}
-		//Dynamic Object
-		else if(strcmp(key, M_REMOVE_DYNAMIC_OBJECT.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_DYNAMIC_OBJECT, msgArray[0]);
-			this->RemoveDynamicObject(id);
-		}
-		//Player
-		else if(strcmp(key, M_NEW_PLAYER.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_NEW_PLAYER, msgArray[0]);
-			this->AddNewPlayerObject(msgArray, id);
-		}
-		//Animal
-		else if(strcmp(key, M_NEW_ANIMAL.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_NEW_ANIMAL, msgArray[0]);
-			this->AddNewAnimalObject(msgArray, id);
-		}
-		//Animal
-		else if(strcmp(key, M_REMOVE_ANIMAL.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ANIMAL, msgArray[0]);
-			this->RemoveAnimalObject(id);
-		}
-		//Player
-		else if(strcmp(key, M_REMOVE_PLAYER.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_PLAYER, msgArray[0]);
-			this->RemovePlayerObject(id);
-		}
-		else if(strcmp(key, M_EQUIP_ITEM.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
-			int slot = -1;
-			if (msgArray.size() > 1)
-			{
-				slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
-			}
-			else
-			{
-				MaloW::Debug("Forgot Slot Type in Equip Item");
-			}
-			this->HandleEquipItem(id, slot);
-		}
-		else if(strcmp(key, M_ITEM_USE.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
-			this->HandleUseItem(id);
-		}
-		else if(strcmp(key, M_REMOVE_EQUIPMENT.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_EQUIPMENT, msgArray[0]);
-			int slot = -1;
-			if (msgArray.size() > 1)
-			{
-				slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
-			}
-			else
-			{
-				MaloW::Debug("Forgot Slot Type in Remove Equipment");
-			}
-			this->HandleRemoveEquipment(id, slot);
-		}
-		else if(strcmp(key, M_UNEQUIP_ITEM.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
-			int slot = -1;
-			if (msgArray.size() > 1)
-			{
-				slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
-			}
-			else
-			{
-				MaloW::Debug("Forgot Slot Type in UnEquip Item");
-			}
-			this->HandleUnEquipItem(id, slot);
-		}
-		else if(strcmp(key, M_ADD_INVENTORY_ITEM.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_ADD_INVENTORY_ITEM, msgArray[0]);
-			this->HandleAddInventoryItem(msgArray, id);
-		}
-		else if(strcmp(key, M_REMOVE_INVENTORY_ITEM.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_INVENTORY_ITEM, msgArray[0]);
-			this->HandleRemoveInventoryItem(id);
-		}
-		else if(strcmp(key, M_WEAPON_USE.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
-			this->HandleWeaponUse(id);
-		}
-		else if(strcmp(key, M_ADD_DEAD_PLAYER_OBJECT.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_ADD_DEAD_PLAYER_OBJECT, msgArray[0]);
-
-			this->AddNewDeadPlayerObject(msgArray, id);
-		}
-		else if(strcmp(key, M_DEAD_PLAYER_REMOVE_ITEM.c_str()) == 0)
-		{
-			long id = this->zMsgHandler.ConvertStringToInt(M_DEAD_PLAYER_REMOVE_ITEM, msgArray[0]);
-			int type = -1;
-			long itemID = -1;
-			if (msgArray.size() > 2)
-			{
-				itemID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, msgArray[1]);
-				type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
-
-				this->HandeRemoveDeadPlayerItem(id, itemID, type);
-			}
-			else
-			{
-				MaloW::Debug("Msg array size is to short size: " + MaloW::convertNrToString((float)msgArray.size()) + " Expected size 3");
-			}
-		}
-		else if(strcmp(key, M_DEAD_PLAYER.c_str()) == 0)
-		{
-			int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_PLAYER, msgArray[0]);
-
-			this->HandleDeadPlayerMessage(id);
-		}
-		else if(strcmp(key, M_SELF_ID.c_str()) == 0)
-		{
-			this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
-			
-			Vector3 camDir = this->zEng->GetCamera()->GetForward();
-			Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
-
-			std::string serverMessage = "";
-			serverMessage = this->zMsgHandler.Convert(MESSAGE_TYPE_USER_DATA);
-			serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_MESH_MODEL, this->zMeshID);
-			serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, camDir.x, camDir.y, camDir.z);
-			serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, camUp.x, camUp.y, camUp.z);
-
-			this->zServerChannel->sendData(serverMessage);
-		}
-		else if(strcmp(key, M_ERROR_MESSAGE.c_str()) == 0)
-		{
-			std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_ERROR_MESSAGE, msgArray[0]);
-			DisplayMessageToClient(error_Message);
-		}
-		else if(strcmp(key, M_SERVER_FULL.c_str()) == 0)
-		{
-			this->CloseConnection("Server is full");
-		}
-		else if(strcmp(key, M_KICKED.c_str()) == 0)
-		{
-			this->CloseConnection("You got kicked");
-		}
-		else if(strcmp(key, M_SERVER_SHUTDOWN.c_str()) == 0)
-		{
-			this->CloseConnection("Server Shutdown");
-		}
-		else if(strcmp(key, M_START_GAME.c_str()) == 0)
-		{
-			this->zGameStarted = true;
+			slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
 		}
 		else
 		{
-			MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[0] + " in HandleNetworkMessage");
-			MaloW::Debug("C: " + msg);
+			MaloW::Debug("Forgot Slot Type in Equip Item");
 		}
+		this->HandleEquipItem(id, slot);
+	}
+	else if(msg.find(M_ITEM_USE.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
+		this->HandleUseItem(id);
+	}
+	else if(msg.find(M_REMOVE_EQUIPMENT.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_EQUIPMENT, msgArray[0]);
+		int slot = -1;
+		if (msgArray.size() > 1)
+		{
+			slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+		}
+		else
+		{
+			MaloW::Debug("Forgot Slot Type in Remove Equipment");
+		}
+		this->HandleRemoveEquipment(id, slot);
+	}
+	else if(msg.find(M_UNEQUIP_ITEM.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
+		int slot = -1;
+		if (msgArray.size() > 1)
+		{
+			slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+		}
+		else
+		{
+			MaloW::Debug("Forgot Slot Type in UnEquip Item");
+		}
+		this->HandleUnEquipItem(id, slot);
+	}
+	else if(msg.find(M_ADD_INVENTORY_ITEM.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_ADD_INVENTORY_ITEM, msgArray[0]);
+		this->HandleAddInventoryItem(msgArray, id);
+	}
+	else if(msg.find(M_REMOVE_INVENTORY_ITEM.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_INVENTORY_ITEM, msgArray[0]);
+		this->HandleRemoveInventoryItem(id);
+	}
+	else if(msg.find(M_WEAPON_USE.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
+		this->HandleWeaponUse(id);
+	}
+	else if(msg.find(M_ADD_DEAD_PLAYER_OBJECT.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_ADD_DEAD_PLAYER_OBJECT, msgArray[0]);
+
+		this->AddNewDeadPlayerObject(msgArray, id);
+	}
+	else if(msg.find(M_DEAD_PLAYER_REMOVE_ITEM.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_DEAD_PLAYER_REMOVE_ITEM, msgArray[0]);
+		int type = -1;
+		long itemID = -1;
+		if (msgArray.size() > 2)
+		{
+			itemID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, msgArray[1]);
+			type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
+
+			this->HandeRemoveDeadPlayerItem(id, itemID, type);
+		}
+		else
+		{
+			MaloW::Debug("Msg array size is to short size: " + MaloW::convertNrToString((float)msgArray.size()) + " Expected size 3");
+		}
+	}
+	else if(msg.find(M_DEAD_PLAYER.c_str()) == 0)
+	{
+		int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_PLAYER, msgArray[0]);
+
+		this->HandleDeadPlayerMessage(id);
+	}
+	else if(msg.find(M_SELF_ID.c_str()) == 0)
+	{
+		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
+
+		Vector3 camDir = this->zEng->GetCamera()->GetForward();
+		Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
+
+		std::string serverMessage = "";
+		serverMessage = this->zMsgHandler.Convert(MESSAGE_TYPE_USER_DATA);
+		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_MESH_MODEL, this->zMeshID);
+		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, camDir.x, camDir.y, camDir.z);
+		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, camUp.x, camUp.y, camUp.z);
+
+		this->zServerChannel->Send(serverMessage);
+	}
+	else if(msg.find(M_ERROR_MESSAGE.c_str()) == 0)
+	{
+		std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_ERROR_MESSAGE, msgArray[0]);
+		DisplayMessageToClient(error_Message);
+	}
+	else if(msg.find(M_SERVER_FULL.c_str()) == 0)
+	{
+		this->CloseConnection("Server is full");
+	}
+	else if(msg.find(M_KICKED.c_str()) == 0)
+	{
+		this->CloseConnection("You got kicked");
+	}
+	else if(msg.find(M_SERVER_SHUTDOWN.c_str()) == 0)
+	{
+		this->CloseConnection("Server Shutdown");
+	}
+	else if(msg.find(M_START_GAME.c_str()) == 0)
+	{
+		this->zGameStarted = true;
+	}
+	else
+	{
+		MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[0] + " in HandleNetworkMessage");
+		MaloW::Debug("C: " + msg);
 	}
 }
 
@@ -995,15 +975,12 @@ void Client::OnEvent(Event* e)
 	{
 		// Create Anchor
 		zAnchor = WLE->world->CreateAnchor();
+		this->zWorldRenderer = new WorldRenderer(WLE->world, GetGraphics());
 	}
 	else if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )
 	{
 		if ( zWorldRenderer ) delete zWorldRenderer, zWorldRenderer = 0;
 		if ( zAnchor ) zWorld->DeleteAnchor( zAnchor );
 		if ( zWorld ) zWorld = 0;
-	}
-	else if ( EntityRemovedEvent *ERE = dynamic_cast<EntityRemovedEvent*>(e) )
-	{
-		//zTargetedEntities.erase(ERE->entity);
 	}
 }

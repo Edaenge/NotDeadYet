@@ -33,11 +33,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 	MainMenu* menu = new MainMenu();
 	menu->Init();
 	menu->Run();
-	delete menu;
-	Sleep(10);
+	SAFE_DELETE(menu);
 
 	// Free Graphics
-	FreeGraphics();
-	
+	try
+	{
+		FreeGraphics();
+	}
+	catch(...)
+	{
+
+	}
+
 	return 0;
 }

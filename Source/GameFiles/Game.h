@@ -20,7 +20,7 @@ class Game
 		Game();
 		/*! Creates a Client that connects to the Ip and Port in the Parameters.
 			The function will start the thread if succeeded.*/
-		int InitGameClient(std::string ip, int port);
+		void InitGameClient(const std::string &IP, const unsigned int &port);
 		virtual ~Game();
 
 		void Run();

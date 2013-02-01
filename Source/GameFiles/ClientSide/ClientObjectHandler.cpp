@@ -641,7 +641,14 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			position.y = zWorld->CalcHeightAtWorldPos(position.GetXZ()) + 0.1f;
+			try
+			{
+				position.y = zWorld->CalcHeightAtWorldPos(position.GetXZ()) + 0.1f;
+			}
+			catch(...)
+			{
+
+			}
 			animalObject->SetNextPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)

@@ -23,10 +23,9 @@ class Host : public MaloW::Process, public Observer
 public:
 	Host();
 	virtual ~Host();
-	/*! Creates a Server locally
-	returns a code that describes error or success*/
-	int InitHost(const int PORT, const unsigned int MAX_CLIENTS);
-	/*! Main loop for this thread*/
+	/*! Creates a Server locally */
+	const char* InitHost(const unsigned int &port, const unsigned int &maxClients);
+	/*! Main loop for this thread */
 	void Life();
 	/*! Checks if the server have players connected.*/
 	bool HasClients() const;
@@ -79,13 +78,14 @@ private:
 	/*! Creates all Animal/Static And Dynamic Objects in the Game At the Beginning of the Game.*/
 	void Init();
 	/*! Handles new incoming connections.*/
-	void HandleNewConnections();
+	void HandleNewConnection( MaloW::ClientChannel* CC );
 	/*! Handles messages from clients. This function will call the following functions:
 	HandleCloseConnectionMsg
 	HandleKeyPress
 	HandleKeyRelease
 	CreateNewPlayer
 	*/
+	void HandleReceivedMessage( const unsigned int& ConnectionID, const std::string& message );
 	void HandleReceivedMessages();
 	/*! Read messages from queue and saves them in*/
 	void ReadMessages(); 
@@ -208,4 +208,5 @@ private:
 	std::map<PlayerActor*, WorldAnchor*> zAnchorPlayerMap;
 protected:
 	virtual void onEvent(Event* e);
+	void HandleDisconnect( MaloW::ClientChannel* channel );
 };

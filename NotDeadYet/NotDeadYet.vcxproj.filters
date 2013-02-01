@@ -17,12 +17,6 @@
     <Filter Include="Network">
       <UniqueIdentifier>{9e096803-19e6-4e23-ba16-98558781c92e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="External">
-      <UniqueIdentifier>{c8c4a0bf-a0ff-4376-9a83-9cc10820a0b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="External\Graphics">
-      <UniqueIdentifier>{90262206-d2b8-4843-ac00-c2904e9ec0c2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Files\KeyUtil">
       <UniqueIdentifier>{f47f98b2-1160-44cb-afb3-7b2908837955}</UniqueIdentifier>
     </Filter>
@@ -258,39 +252,6 @@
     <ClInclude Include="..\Source\GameFiles\Graphics.h">
       <Filter>Game Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iLight.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iMesh.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iTerrain.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iText.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\Vector.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\GraphicsEngine.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iAnimatedMesh.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iCamera.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iGraphicsEngineParams.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iImage.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iKeyListener.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\SoundEngine\fmod.h">
       <Filter>Sound Engine Files</Filter>
     </ClInclude>
@@ -455,6 +416,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\ClientSide\WorldObject.h">
       <Filter>Game Files\ClientSide\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Network\DisconnectedEvent.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

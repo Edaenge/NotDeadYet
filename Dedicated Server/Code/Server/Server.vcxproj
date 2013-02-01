@@ -155,8 +155,8 @@
     <ClInclude Include="..\..\..\Source\Network\NetworkMessageConverter.h" />
     <ClInclude Include="EngineFiles\Network\ClientChannel.h" />
     <ClInclude Include="EngineFiles\Network\ClientConnectedEvent.h" />
+    <ClInclude Include="EngineFiles\Network\ClientDisconnectedEvent.h" />
     <ClInclude Include="EngineFiles\Network\NetworkPacket.h" />
-    <ClInclude Include="EngineFiles\Network\NetworkServer.h" />
     <ClInclude Include="EngineFiles\Network\ServerListener.h" />
     <ClInclude Include="EngineFiles\Network\Winsock.h" />
     <ClInclude Include="EngineFiles\ServerEngine.h" />
@@ -211,8 +211,6 @@
     <ClCompile Include="..\..\..\Source\MaloWLib\Process.cpp" />
     <ClCompile Include="..\..\..\Source\Network\NetworkMessageConverter.cpp" />
     <ClCompile Include="EngineFiles\Network\ClientChannel.cpp" />
-    <ClCompile Include="EngineFiles\Network\ClientConnectedEvent.cpp" />
-    <ClCompile Include="EngineFiles\Network\NetworkServer.cpp" />
     <ClCompile Include="EngineFiles\Network\ServerListener.cpp" />
     <ClCompile Include="EngineFiles\ServerEngine.cpp" />
     <ClCompile Include="EngineFiles\Server\Actor.cpp" />
