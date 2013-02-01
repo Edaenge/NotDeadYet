@@ -186,10 +186,9 @@ bool InventoryGui::RemoveFromRenderer(GraphicsEngine* ge)
 	return true;
 }
 
-int InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
+Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
 {
 	Vector2 dimension = this->GetDimension();
-	int counter = 0;
 	bool bCollision = false;
 
 	if (!((mouseX < this->zX || mouseX > (this->zX + dimension.x)) || (mouseY < this->zY || mouseY > (this->zY + dimension.y))))
@@ -202,13 +201,40 @@ int InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, 
 				if (bCollision)
 				{
 					if(mousePressed)
-						return (*x)->GetID();
+					{
+						Selected_Item_ReturnData sir;
+						sir.ID = (*x)->GetID();
+						sir.type = (*x)->GetType();
+						sir.inventory = 0;
+						return sir;
+					}
 				}
 			}
-			counter++;
+		}
+		for (auto x = this->zWeaponSlotGui.begin(); x < this->zWeaponSlotGui.end() && !bCollision; x++)
+		{
+			if ((*x))
+			{
+				bCollision = (*x)->CheckCollision(mouseX, mouseY, mousePressed, ge);
+				if (bCollision)
+				{
+					if(mousePressed)
+					{
+						Selected_Item_ReturnData sir;
+						sir.ID = (*x)->GetID();
+						sir.type = (*x)->GetType();
+						sir.inventory = 1;
+						return sir;
+					}
+				}
+			}
 		}
 	}
-	return -1;
+	Selected_Item_ReturnData sir;
+	sir.ID = -1;
+	sir.type = -1;
+	sir.inventory = -1;
+	return sir;
 }
 
 void InventoryGui::HideGui()
