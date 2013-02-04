@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{1dde2059-b526-431b-a964-bc8a5f289ad2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Physics">
+      <UniqueIdentifier>{c1cbe427-4547-406f-b7e2-e8dd52c7f9e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{ac0db977-4857-4b3e-bffd-f8d23bb19406}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\PhysicsEngine\Physics.cpp">
+      <Filter>Source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PhysicsEngine\PhysicsEngine.cpp">
+      <Filter>Source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PhysicsEngine\PhysicsObject.cpp">
+      <Filter>Source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PhysicsEngine\ObjLoader.cpp">
+      <Filter>Source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GhostActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Host.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\HostConversions.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\HostItemHandler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MaterialObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ObjectManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PhysicsActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ServerEngine.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StaticObjectActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StaticProjectileObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WeaponObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WolfActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ActorHandler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AI.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AnimalActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BearActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BioActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ClientData.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ContainerObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DeadActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DeadAnimalObjectActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DeadPlayerObjectActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DeerActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DynamicObjectActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DynamicProjectileObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FoodObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ServerEngineWrapper.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\PhysicsEngine\Physics.h">
+      <Filter>Source\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsEngine\PhysicsEngine.h">
+      <Filter>Source\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsEngine\PhysicsObject.h">
+      <Filter>Source\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsEngine\BoundingSphere.h">
+      <Filter>Source\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsEngine\ObjLoader.h">
+      <Filter>Source\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FoodObject.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GhostActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Host.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MaterialObject.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ObjectManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ServerEngine.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StaticObjectActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StaticProjectileObject.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WeaponObject.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WolfActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ActorHandler.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AI.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimalActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimalHandler.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BearActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BioActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ClientData.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ContainerObject.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DeadActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DeadAnimalObjectActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DeadPlayerObjectActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DeerActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DynamicObjectActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DynamicProjectileObject.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ServerEngineWrapper.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

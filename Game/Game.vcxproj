@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{491BD409-2AB4-49D7-8F27-19FFE6FF928C}</ProjectGuid>
+    <RootNamespace>Game</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(SolutionDir)\External\NDYGFX\Include\;$(SolutionDir)\Malow\Include\;$(IncludePath)</IncludePath>
+    <OutDir>$(ProjectDir)\Bin\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)D</TargetName>
+    <LibraryPath>$(SolutionDir)\Malow\Bin\Debug;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)\Bin\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)\$(Configuration)\</IntDir>
+    <IncludePath>$(SolutionDir)\External\NDYGFX\Include\;$(SolutionDir)\Malow\Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\Malow\Bin\Release\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Include\;$(ProjectDir)\Include\World\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Include\;$(ProjectDir)\Include\World\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\ClientServerMessages.h" />
+    <ClInclude Include="Include\Container.h" />
+    <ClInclude Include="Include\Equipment.h" />
+    <ClInclude Include="Include\Food.h" />
+    <ClInclude Include="Include\Gear.h" />
+    <ClInclude Include="Include\Inventory.h" />
+    <ClInclude Include="Include\Item.h" />
+    <ClInclude Include="Include\KeyBindConfig.h" />
+    <ClInclude Include="Include\Keybinds.h" />
+    <ClInclude Include="Include\KeyConverter.h" />
+    <ClInclude Include="Include\KeyHandler.h" />
+    <ClInclude Include="Include\KeyStates.h" />
+    <ClInclude Include="Include\KeyValues.h" />
+    <ClInclude Include="Include\Material.h" />
+    <ClInclude Include="Include\MeleeWeapon.h" />
+    <ClInclude Include="Include\NetworkMessageConverter.h" />
+    <ClInclude Include="Include\Projectile.h" />
+    <ClInclude Include="Include\RangedWeapon.h" />
+    <ClInclude Include="Include\Weapon.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Container.cpp" />
+    <ClCompile Include="Source\Equipment.cpp" />
+    <ClCompile Include="Source\Food.cpp" />
+    <ClCompile Include="Source\Gear.cpp" />
+    <ClCompile Include="Source\Graphics.cpp" />
+    <ClCompile Include="Source\Inventory.cpp" />
+    <ClCompile Include="Source\Item.cpp" />
+    <ClCompile Include="Source\KeyStates.cpp" />
+    <ClCompile Include="Source\Material.cpp" />
+    <ClCompile Include="Source\MeleeWeapon.cpp" />
+    <ClCompile Include="Source\NetworkMessageConverter.cpp" />
+    <ClCompile Include="Source\Projectile.cpp" />
+    <ClCompile Include="Source\RangedWeapon.cpp" />
+    <ClCompile Include="Source\World\Entity.cpp" />
+    <ClCompile Include="Source\World\EntityList.cpp" />
+    <ClCompile Include="Source\World\Sector.cpp" />
+    <ClCompile Include="Source\World\World.cpp" />
+    <ClCompile Include="Source\World\WorldFile.cpp" />
+    <ClCompile Include="Source\World\WorldRenderer.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

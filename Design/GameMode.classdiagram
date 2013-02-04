@@ -1,0 +1,373 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="f028be13-54a5-475f-8aa4-262c388ccc13" name="GameMode" linkedPackageId="a10774ef-d98f-4179-8296-995a24e577f0" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <profileInstances>
+    <packageHasProfileInstances Id="83349698-5c4a-488f-9f55-2d6318545467">
+      <profileInstance Id="0e934781-0dc8-45ca-baff-b13aca28fa09" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="00927c46-5e4b-429b-8522-7780cc463248">
+      <profileInstance Id="97857e27-58d7-4c97-a78b-4857d895be72" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="aeb47f97-dc37-4ef9-8e08-e51d1e2b5178" name="World" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="4c60813b-d9e5-4711-889c-48d0a46495f0" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="3ea6408b-6fc9-483e-a45e-b0866d62d25b" name="Host" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="f9cb3426-9ff6-464a-8cf6-c6918326415b" />
+        <targetEnds>
+          <association Id="5f14e1f3-c947-4ad4-ab8c-05bce4c4c006" isDerived="false" sourceEndRoleName="Host" targetEndRoleName="World" isLeaf="false" isAbstract="false">
+            <classMoniker Id="aeb47f97-dc37-4ef9-8e08-e51d1e2b5178" LastKnownName="World" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="04ef55df-94cf-47d2-8005-f8d610dd6a4e" name="Host" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="050e985a-0fd6-430c-a593-d6760f7e11ce" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="dfaf94e9-08e1-48da-a756-dbd7bd249fa3" name="World" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="1630aa27-f94d-4d9e-adb8-f8aef293aab2" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="acf85216-154c-4036-a420-f8b779338c22" />
+          </association>
+          <association Id="6f04f1c1-75fe-48ed-bc5a-ec727369a691" isDerived="false" sourceEndRoleName="Host" targetEndRoleName="Player" isLeaf="false" isAbstract="false">
+            <classMoniker Id="b067ff10-d9c6-4eef-920a-18a5d739d59d" LastKnownName="Player" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="a40ee668-6575-4428-b3aa-51d403707916" name="Host" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="e1b5e44c-6875-4469-a4ed-6761e88c697d" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="e41dd4b3-c9c3-4d4f-aea0-a653323766db" name="Player" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="a8556774-abf8-44b6-8fa6-8660f61539f0" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="dae237e6-80ff-4ce2-87e5-be571626be15" />
+          </association>
+          <association Id="bbfda012-28b8-41d4-9731-8da6ca278a0c" isDerived="false" sourceEndRoleName="Host" targetEndRoleName="Actor" isLeaf="false" isAbstract="false">
+            <classMoniker Id="cd5c4b52-66ab-4a3d-bfe9-ed755430a057" LastKnownName="Actor" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="dd67558e-9478-4c5b-8f46-be0bdd221f35" name="Host" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="921f72c7-c950-49bf-8a2b-35cee7d64d95" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8a703836-ffb3-4d87-b847-d89cc945b410" name="Actor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="adf072c0-f1da-44e3-9ec9-d2c8c2ed1382" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="936fdb1c-bacc-4898-8e19-2e122173682e" />
+          </association>
+          <association Id="8bbddda8-849a-4020-b450-1da3911748fc" isDerived="false" sourceEndRoleName="Host" targetEndRoleName="Movement Behvaiour" isLeaf="false" isAbstract="false">
+            <classMoniker Id="35b7cd9d-5f9e-4f11-9321-921da72a3b9a" LastKnownName="Movement Behvaiour" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="69473146-990c-43db-9a7c-ae0462583307" name="Host" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="abad3d50-c9d5-4313-81ec-676fc264d348" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="d984a6bc-2177-4981-b977-90cf777087d8" name="Movement Behvaiour" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="b00162a5-9451-40f8-b2cb-a41a2b710045" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="68b293bf-e316-4b65-a614-3f5afcce884b" />
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="771c021a-0a89-48c2-9248-da5b152234ac" name="Player* Players[]" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="8f52e8b1-162d-462c-a7ad-420029678986" />
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="35b7cd9d-5f9e-4f11-9321-921da72a3b9a" name="Movement Behvaiour" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="eba2d050-3245-4071-b1d3-b433694b81cd" />
+        <suppliersInternal>
+          <dependency Id="f6e0ae78-9aec-4418-b84a-cb193a23a9ba">
+            <classMoniker Id="aeb47f97-dc37-4ef9-8e08-e51d1e2b5178" LastKnownName="World" />
+            <elementDefinition Id="6ef56098-05a6-4b33-ac14-5dd5ed64e13d" />
+          </dependency>
+        </suppliersInternal>
+        <targetEnds>
+          <association Id="4c679601-d5e3-4ebf-a7c7-0bf6b7d8b272" isDerived="false" sourceEndRoleName="Movement Behvaiour" targetEndRoleName="Actor" isLeaf="false" isAbstract="false">
+            <classMoniker Id="cd5c4b52-66ab-4a3d-bfe9-ed755430a057" LastKnownName="Actor" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="416a8c39-1096-41d5-a2e5-00f3a1cfe5f3" name="Movement Behvaiour" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="7fe57dbf-405d-4c5c-b1e3-7cfdad89d600" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="d55f2db2-bb42-4a97-9c49-a5005e5329ad" name="Actor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="02b21893-d4b8-4708-8ddd-dcbb37e11360" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="e03b3e3a-77e1-4d2a-8d0c-ddcc1a040509" />
+          </association>
+          <association Id="d0dfe6db-0cbe-43d8-9331-79ee3987949a" isDerived="false" sourceEndRoleName="Movement Behvaiour" targetEndRoleName="PhysicsEngine" isLeaf="false" isAbstract="false">
+            <classMoniker Id="a629b66b-ff43-4581-b826-4792a6d0af6f" LastKnownName="PhysicsEngine" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="0799aaf5-ac42-40ca-92a0-118032ecbb2c" name="Movement Behvaiour" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="dffc020a-adef-401e-a1d9-56e7d92d2523" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="d6534527-1db5-4405-9fff-7dca7f4554ad" name="PhysicsEngine" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="60e85d55-eca9-4a36-844c-034b3960d570" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="85dbd4f1-f52a-44cc-b233-a30dbbf1977a" />
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="2864ea74-8482-4bdb-a48a-2ad07c227349" name="Pure Virtual" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="d834d327-b849-448f-bd76-c5748406a031" />
+          </property>
+          <property Id="0ab1ec13-a57a-4814-b714-2c9f6720ae04" name="Actor*" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="137f0d3b-3039-4d3f-be5c-2f13263f9302" />
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="b067ff10-d9c6-4eef-920a-18a5d739d59d" name="Player" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="f289648f-91cb-4ebe-a293-4986eaa07c9c" />
+        <targetEnds>
+          <association Id="1820fe4c-5483-448e-b89c-67c05f4447bf" isDerived="false" sourceEndRoleName="Player" targetEndRoleName="Channel" isLeaf="false" isAbstract="false">
+            <classMoniker Id="c2a63fb1-0e2f-4cf3-8fe4-29285dc28a69" LastKnownName="Channel" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="0b13e0e9-35d4-456a-ae70-47e6c04a41df" name="Player" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="5da96979-012a-438f-bf93-9af41af0a884" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="3d807e3e-8802-41b0-a515-495b31c6397b" name="Channel" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="6a17f7d5-16aa-4b94-9e9c-1c6933a228f5" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="a4e1c981-4945-42dd-96ab-83222cbe808e" />
+          </association>
+          <association Id="80bb8139-7c7f-4f61-9a3c-405cb9f1d627" isDerived="false" sourceEndRoleName="Player" targetEndRoleName="Movement Behvaiour" isLeaf="false" isAbstract="false">
+            <classMoniker Id="35b7cd9d-5f9e-4f11-9321-921da72a3b9a" LastKnownName="Movement Behvaiour" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="51577a05-7eac-4b32-bcfa-1f8bc0a971d8" name="Player" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="b35e4b9a-5945-4252-aa46-008e19334a9e" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="1b8fcb32-d26b-4298-b28e-8f39049b9ba6" name="Movement Behvaiour" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="e97c81d8-f830-4fa2-8773-86efcc3279b0" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="8b409aed-c0e8-4534-b1a7-afa39e21201a" />
+          </association>
+          <association Id="0083c88a-e7b9-4eb8-b5cb-cdb26e526203" isDerived="false" sourceEndRoleName="Player" targetEndRoleName="Movement Behvaiour" isLeaf="false" isAbstract="false">
+            <classMoniker Id="35b7cd9d-5f9e-4f11-9321-921da72a3b9a" LastKnownName="Movement Behvaiour" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="e03f1508-f580-4a10-bdb3-e0473015cddc" name="Player" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="311ee809-f940-4498-9ae1-733b8e353e58" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="2c65d994-a178-4869-bb3e-16e084e0104a" name="Movement Behvaiour" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="8a417aa8-d902-4c35-ba32-fbfa4eb3528c" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="74988ef0-266f-41ca-ab1f-08896a6dbea3" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="2ca2ba58-9348-4c7f-a042-1f15bd2e6968" name="Ghost" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="13b5e0c3-e764-470c-9983-73fdbed63909" />
+        <generalsInternal>
+          <generalization Id="6e201be3-27db-4519-8b6d-02c148ff9a9d" isSubstitutable="false">
+            <classMoniker Id="35b7cd9d-5f9e-4f11-9321-921da72a3b9a" LastKnownName="Movement Behvaiour" />
+            <elementDefinition Id="a9666735-2431-477e-9727-8bcee26d92ac" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="f13e2feb-3c1d-457e-989d-130ae1ce8b9b" name="Player" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="7079aada-3fe0-473c-af9e-d4d771aa0854" />
+        <generalsInternal>
+          <generalization Id="28c25f9c-1868-49a6-a5a9-4543bacc4a02" isSubstitutable="false">
+            <classMoniker Id="35b7cd9d-5f9e-4f11-9321-921da72a3b9a" LastKnownName="Movement Behvaiour" />
+            <elementDefinition Id="60a26700-2168-4863-b837-cb1ff3b6acb9" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="de277176-f0ef-4b0a-ad3a-c306f3ac2043" name="Deer" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="8b0feba7-e66b-401d-b4ef-cca8968d7fad" />
+        <generalsInternal>
+          <generalization Id="24c920c2-cefc-4e4c-8e0d-d1508e2c590d" isSubstitutable="false">
+            <classMoniker Id="35b7cd9d-5f9e-4f11-9321-921da72a3b9a" LastKnownName="Movement Behvaiour" />
+            <elementDefinition Id="45a00fde-cb25-4112-99b2-b1614ceecd1b" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="9c07ab94-6fd6-4305-81e3-6283e671fb56" name="Wolf" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="8716107e-1160-4927-985a-52f38931ae94" />
+        <generalsInternal>
+          <generalization Id="01539b2f-5a93-4f57-858c-3ea8649fef8f" isSubstitutable="false">
+            <classMoniker Id="35b7cd9d-5f9e-4f11-9321-921da72a3b9a" LastKnownName="Movement Behvaiour" />
+            <elementDefinition Id="05ecb0d8-72c5-443f-8e3b-2a8fd3b00ebd" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="c2a63fb1-0e2f-4cf3-8fe4-29285dc28a69" name="Channel" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="c3cbabcf-7969-4e88-ae88-dff4a925588f" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="91eee8fa-dadc-4de6-9ed9-2b529e746efa" name="Mesh" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="31018eb1-d4bf-4bba-83f4-0c8494f1608e" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="8ceece72-2815-4e7d-a0a8-5ac600e86d4f" name="Inventory" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="8564624e-3e27-4937-8d87-e4021444a571" />
+        <targetEnds>
+          <association Id="0690e5cd-5494-4817-8def-add022cfca48" isDerived="false" sourceEndRoleName="Inventory" targetEndRoleName="Actor" isLeaf="false" isAbstract="false">
+            <classMoniker Id="cd5c4b52-66ab-4a3d-bfe9-ed755430a057" LastKnownName="Actor" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="5f220521-6848-4cc7-a207-49424555c417" name="Inventory" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="55144fd6-a5b4-43d5-9a56-7a7cd1751c4a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="2f639ec7-3b32-44ce-95f4-abcd3a692322" name="Actor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="c16387ae-83c1-4765-ad6a-a648d891fe47" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="463b8570-0d77-4c72-96c6-e2ea3b8bdb88" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="cd5c4b52-66ab-4a3d-bfe9-ed755430a057" name="Actor" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="1e743809-7305-4086-bb94-09c97ff64657" />
+        <targetEnds>
+          <association Id="670121b6-1b5b-4805-a0aa-7db35f849e20" isDerived="false" sourceEndRoleName="Actor" targetEndRoleName="Mesh" isLeaf="false" isAbstract="false">
+            <classMoniker Id="91eee8fa-dadc-4de6-9ed9-2b529e746efa" LastKnownName="Mesh" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8fe6a7e0-d4bc-416e-85f4-7f022b143d34" name="Actor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="8ba3366e-5804-4dc6-8349-d9448ea5978a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="3db299f1-d76c-4cbb-a1db-48e7c2e09b90" name="Mesh" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="f62be50d-ddab-4269-a718-e471b28c0eeb" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="00aa5ebc-d755-4d6e-b124-a96cdfe4b8f8" />
+          </association>
+          <association Id="f34d4397-d820-4593-b1ea-bda5b1ca229d" isDerived="false" sourceEndRoleName="Actor" targetEndRoleName="Anchor" isLeaf="false" isAbstract="false">
+            <classMoniker Id="9be7b1f7-6edd-40f7-bfbf-d65b62841824" LastKnownName="Anchor" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="b4078e11-5bbe-471c-9480-19a802d8f428" name="Actor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="802c956b-263e-4970-8bc8-dd3ce281f715" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="33c0cbb2-d000-4918-bbc6-3b621bb3d222" name="Anchor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="9679983f-300a-4c3f-aadb-3d0fd2b86e1d" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="50cf38af-1a84-418b-b8c6-407a875aeba1" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="a629b66b-ff43-4581-b826-4792a6d0af6f" name="PhysicsEngine" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="d818d8ca-d947-4277-8193-a6828d9d077d" />
+        <targetEnds>
+          <association Id="e7d34107-6720-46a2-9a5f-0034b253bc9b" isDerived="false" sourceEndRoleName="PhysicsEngine" targetEndRoleName="Mesh" isLeaf="false" isAbstract="false">
+            <classMoniker Id="91eee8fa-dadc-4de6-9ed9-2b529e746efa" LastKnownName="Mesh" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8399c82e-b0a5-45f5-a6f4-1e6c46c0f54e" name="PhysicsEngine" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="688f8e98-0034-490b-bc37-08a9b6a7aa86" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="3d42e5dc-8509-4780-aa29-98495b0f461d" name="Mesh" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="629f4c8f-1a69-4dab-9b68-b4fb0707de9e" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="c788a689-fb6f-4136-972c-b75bb58df3db" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="9be7b1f7-6edd-40f7-bfbf-d65b62841824" name="Anchor" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="9741d7d7-53c2-45b2-b04c-496eb324b018" />
+        <targetEnds>
+          <association Id="2ff60487-de78-4294-bd2a-f5c4a39a7b61" isDerived="false" sourceEndRoleName="Anchor" targetEndRoleName="World" isLeaf="false" isAbstract="false">
+            <classMoniker Id="aeb47f97-dc37-4ef9-8e08-e51d1e2b5178" LastKnownName="World" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="d5997403-02e5-41bf-9b54-2d37ed7b254c" name="Anchor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="9ceecc6d-95f2-4ba4-bb49-e0a2a08ac3cc" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f4bf1a7d-8220-46bf-a5bb-0d9af226dda2" name="World" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="0e71a32e-3687-4d5c-a877-7fe9b1e9e5d1" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="5bfd2857-2677-4d53-be97-9117ed7d9def" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+  </packagedElements>
+  <package Id="a10774ef-d98f-4179-8296-995a24e577f0" name="ModelingProject1">
+    <elementDefinition Id="bd43730d-04bf-4a10-90be-c903d2a964f3" />
+  </package>
+</logicalClassDesignerModel>

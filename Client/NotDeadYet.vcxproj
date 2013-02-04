@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GameIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="NotDeadYet.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\AnimalObject.cpp" />
+    <ClCompile Include="Source\Client.cpp" />
+    <ClCompile Include="Source\ClientItemHandler.cpp" />
+    <ClCompile Include="Source\ClientObjectHandler.cpp" />
+    <ClCompile Include="Source\DeadPlayerObject.cpp" />
+    <ClCompile Include="Source\DynamicObject.cpp" />
+    <ClCompile Include="Source\Game.cpp" />
+    <ClCompile Include="Source\GuiManager.cpp" />
+    <ClCompile Include="Source\GUI\ChangeSetEvent.cpp" />
+    <ClCompile Include="Source\GUI\CircularListGui.cpp" />
+    <ClCompile Include="Source\GUI\Element.cpp" />
+    <ClCompile Include="Source\GUI\GuiElement.cpp" />
+    <ClCompile Include="Source\GUI\GUIEvent.cpp" />
+    <ClCompile Include="Source\GUI\GUIPicture.cpp" />
+    <ClCompile Include="Source\GUI\GUISet.cpp" />
+    <ClCompile Include="Source\GUI\InventoryGui.cpp" />
+    <ClCompile Include="Source\GUI\InventorySlotGui.cpp" />
+    <ClCompile Include="Source\GUI\NoEvent.cpp" />
+    <ClCompile Include="Source\GUI\SimpleButton.cpp" />
+    <ClCompile Include="Source\GUI\TextBox.cpp" />
+    <ClCompile Include="Source\KeyUtil\KeyBindConfig.cpp" />
+    <ClCompile Include="Source\KeyUtil\Keybinds.cpp" />
+    <ClCompile Include="Source\KeyUtil\KeyConverter.cpp" />
+    <ClCompile Include="Source\KeyUtil\KeyHandler.cpp" />
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\MainMenu.cpp" />
+    <ClCompile Include="Source\MovingObject.cpp" />
+    <ClCompile Include="Source\PlayerObject.cpp" />
+    <ClCompile Include="Source\SoundEngine\SoundEffect.cpp" />
+    <ClCompile Include="Source\SoundEngine\SoundEngine.cpp" />
+    <ClCompile Include="Source\SoundEngine\SoundHandler.cpp" />
+    <ClCompile Include="Source\SoundEngine\SoundSong.cpp" />
+    <ClCompile Include="Source\SoundReader.cpp" />
+    <ClCompile Include="Source\Sounds.cpp" />
+    <ClCompile Include="Source\StaticObject.cpp" />
+    <ClCompile Include="Source\WorldObjectManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\AnimalObject.h" />
+    <ClInclude Include="Source\Client.h" />
+    <ClInclude Include="Source\DeadPlayerObject.h" />
+    <ClInclude Include="Source\DynamicObject.h" />
+    <ClInclude Include="Source\Game.h" />
+    <ClInclude Include="Source\GuiManager.h" />
+    <ClInclude Include="Source\GUI\ChangeSetEvent.h" />
+    <ClInclude Include="Source\GUI\CircularListGui.h" />
+    <ClInclude Include="Source\GUI\Element.h" />
+    <ClInclude Include="Source\GUI\GuiElement.h" />
+    <ClInclude Include="Source\GUI\GUIEvent.h" />
+    <ClInclude Include="Source\GUI\GUIPicture.h" />
+    <ClInclude Include="Source\GUI\GUISet.h" />
+    <ClInclude Include="Source\GUI\InventoryGui.h" />
+    <ClInclude Include="Source\GUI\InventorySlotGui.h" />
+    <ClInclude Include="Source\GUI\NoEvent.h" />
+    <ClInclude Include="Source\GUI\SimpleButton.h" />
+    <ClInclude Include="Source\GUI\TextBox.h" />
+    <ClInclude Include="Source\KeyUtil\KeyBindConfig.h" />
+    <ClInclude Include="Source\KeyUtil\Keybinds.h" />
+    <ClInclude Include="Source\KeyUtil\KeyConverter.h" />
+    <ClInclude Include="Source\KeyUtil\KeyHandler.h" />
+    <ClInclude Include="Source\MainMenu.h" />
+    <ClInclude Include="Source\MovingObject.h" />
+    <ClInclude Include="Source\OrganicObject.h" />
+    <ClInclude Include="Source\PlayerObject.h" />
+    <ClInclude Include="Source\SoundEngine\fmod.h" />
+    <ClInclude Include="Source\SoundEngine\SoundEffect.h" />
+    <ClInclude Include="Source\SoundEngine\SoundEngine.h" />
+    <ClInclude Include="Source\SoundEngine\SoundHandler.h" />
+    <ClInclude Include="Source\SoundEngine\SoundSong.h" />
+    <ClInclude Include="Source\SoundReader.h" />
+    <ClInclude Include="Source\Sounds.h" />
+    <ClInclude Include="Source\StaticObject.h" />
+    <ClInclude Include="Source\WorldObject.h" />
+    <ClInclude Include="Source\WorldObjectManager.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FB7EE0D5-90C1-4BBD-8828-F5A39BE7D296}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>NotDeadYet</RootNamespace>
+    <ProjectName>Client</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)\Bin\$(Configuration)</OutDir>
+    <IntDir>$(ProjectDir)\$(Configuration)</IntDir>
+    <IncludePath>$(SolutionDir)\External\FMOD\Include\;$(SolutionDir)\External\NDYGFX\Include\;$(SolutionDir)\External\VLD\Include;$(SolutionDir)\Malow\Include\;$(SolutionDir)\Game\Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\External\FMOD\Lib\x86;$(SolutionDir)\External\NDYGFX\lib\;$(SolutionDir)\External\VLD\lib\Win32\;$(SolutionDir)\Game\bin\Debug\;$(SolutionDir)\Malow\bin\Debug\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)</TargetName>
+    <ExecutablePath>..\Source\External\D3D\Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>../../NotDeadYetBin/</OutDir>
+    <IntDir>../../NotDeadYetIntermediate/</IntDir>
+    <ExecutablePath>..\Source\External\D3D\Utilities\bin\x64;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>..\Source\SoundEngine\Include;..\Source\GraphicsEngine\MaloWLib;..\Source\MaloWLib;..\Source\GraphicsEngine;..\Source;..\Source\External\D3D\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\Source\SoundEngine\Lib\x64;..\Source\External\D3D\Lib\x64;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)D64</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)\Bin\$(Configuration)</OutDir>
+    <IntDir>$(ProjectDir)\$(Configuration)</IntDir>
+    <ExecutablePath>..\Source\External\D3D\Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(SolutionDir)\External\FMOD\Include\;$(SolutionDir)\External\NDYGFX\Include\;$(SolutionDir)\External\VLD\Include;$(SolutionDir)\Malow\Include\;$(SolutionDir)\Game\Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\External\FMOD\Lib\x86;$(SolutionDir)\External\NDYGFX\lib\;$(SolutionDir)\External\VLD\lib\Win32\;$(SolutionDir)\Game\bin\Release\;$(SolutionDir)\Malow\bin\Release\;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>../../NotDeadYetBin/</OutDir>
+    <IntDir>../../NotDeadYetIntermediate/</IntDir>
+    <ExecutablePath>..\Source\External\D3D\Utilities\bin\x64;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>..\Source\SoundEngine\Include;..\Source\GraphicsEngine\MaloWLib;..\Source\MaloWLib;..\Source\GraphicsEngine;..\Source;..\Source\External\D3D\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\Source\SoundEngine\Lib\x64;..\Source\External\D3D\Lib\x64;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)R64</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source\SoundEngine\;$(ProjectDir)\Source\GUI\;$(ProjectDir)\Source\KeyUtil\</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>GameD.lib;MalowD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source\SoundEngine\;$(ProjectDir)\Source\GUI\;$(ProjectDir)\Source\KeyUtil\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Game.lib;Malow.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

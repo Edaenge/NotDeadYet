@@ -70,3 +70,23 @@
 /Dedicated Server/Code/Server.sdf
 
 /WorkingDir/Media/Thumbs.db
+/Malow/Bin
+/Malow/Debug
+/Server/Bin
+/Server/C++CLI/Debug
+/Server/C++CLI/Release
+/Server/GUI/obj
+/Server/Server/Debug
+/Server/Server/Release
+/Client/Debug
+/Client/Release
+/Client/Bin
+/Game/Release
+/Game/Bin
+/Game/Debug
+/Malow/Release
+/MasterServer/Debug
+/MasterServer/Release
+/MasterServer/Bin
+/ModelingProject1/obj
+/ModelingProject1/bin
