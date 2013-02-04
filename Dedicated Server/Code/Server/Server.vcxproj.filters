@@ -166,6 +166,9 @@
     <ClCompile Include="EngineFiles\Server\GhostActor.cpp">
       <Filter>Server\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Server\GameMode.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineFiles\Server\Actor.h">
@@ -378,6 +381,9 @@
     <ClInclude Include="EngineFiles\Server\GhostActor.h">
       <Filter>Server\Actors</Filter>
     </ClInclude>
+    <ClInclude Include="EngineFiles\Server\GameMode.h">
+      <Filter>Server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Server">
@@ -407,5 +413,8 @@
     <Filter Include="Wrapper">
       <UniqueIdentifier>{a1850df5-0e86-4596-9281-f55050218360}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

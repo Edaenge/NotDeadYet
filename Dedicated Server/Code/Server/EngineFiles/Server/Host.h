@@ -10,6 +10,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "ActorHandler.h"
 #include "ClientData.h"
 #include "World.h"
+#include "GameMode.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 //#include <vld.h>
@@ -62,7 +63,7 @@ public:
 	/*! Updates the server clock.*/
 	float Update();
 	/*! Updates the objects.*/
-	void UpdateObjects();
+	void UpdateObjects(); //MOVE
 	/*! Kicks client. Sends a message if reason is given.
 		If sendAMessage is false, the client will not be notified.
 		This function notifies all the other clients to remove this player.
@@ -88,9 +89,9 @@ private:
 	/*! Read messages from queue and saves them in*/
 	void ReadMessages(); 
 	/*! Handles clients key press.*/
-	void HandleKeyPress(PlayerActor* pl, const std::string& key);
+	void HandleKeyPress(PlayerActor* pl, const std::string& key); //MOVE
 	/*! Handles clients key releases.*/
-	void HandleKeyRelease(PlayerActor* pl, const std::string& key);
+	void HandleKeyRelease(PlayerActor* pl, const std::string& key);  //MOVE
 	/*! Handles incoming data from player, such as Direction, Up vector and Rotation.*/
 	void HandlePlayerUpdate(PlayerActor* pl, ClientData* cd, const std::vector<std::string> &data);
 	/*! Handles the players Important messages, updates them.
@@ -100,19 +101,19 @@ private:
 	/*! Search for a client. Returns -1 if none was found.*/
 	int SearchForClient(const int ID) const;
 	/*! Creates a new player and notifies all clients.*/
-	void CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data);
+	void CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data); 
 	/*! Returns an Array Containing Existing Static Objects Messages.*/
 	void GetExistingObjects(std::vector<std::string>& static_Objects);
 	/*! Called When player Disconnects or Dies.*/
-	void OnBioActorRemove(BioActor* actor );
-	void OnBioActorDeath(BioActor* actor);	
-	void SendStartMessage();	
+	void OnBioActorRemove(BioActor* actor ); //MOVE
+	void OnBioActorDeath(BioActor* actor);	//MOVE
+	void SendStartMessage();	//DELTE
 	//3x3 center = 54,0,54, Map_xxxx center = 1900, 0, 1900
-	Vector3 CalculateSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center = Vector3(54, 0.0f, 44));
+	Vector3 CalculateSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center = Vector3(54, 0.0f, 44)); //MOVE
 	/*! Temporary function.*/
-	void RespawnPlayer(PlayerActor* pActor);
+	void RespawnPlayer(PlayerActor* pActor); //MOVE
 
-	void RemovePlayer(unsigned int ID);
+	void RemovePlayer(unsigned int ID); //MOVE
 	//////////////////////////////////////
 	//									//
 	//	   Objects/Items Conversions	//
