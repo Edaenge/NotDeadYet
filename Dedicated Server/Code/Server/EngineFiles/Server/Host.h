@@ -88,10 +88,6 @@ private:
 	void HandleReceivedMessage( const unsigned int &ID, const std::string &message );
 	/*! Read messages from queue and saves them in*/
 	void ReadMessages(); 
-	/*! Handles clients key press.*/
-	void HandleKeyPress(PlayerActor* pl, const std::string& key); //MOVE
-	/*! Handles clients key releases.*/
-	void HandleKeyRelease(PlayerActor* pl, const std::string& key);  //MOVE
 	/*! Handles incoming data from player, such as Direction, Up vector and Rotation.*/
 	void HandlePlayerUpdate(PlayerActor* pl, ClientData* cd, const std::vector<std::string> &data);
 	/*! Handles the players Important messages, updates them.
@@ -123,9 +119,9 @@ private:
 	//////////////////////////////////////
 
 	/*! Creates an Object From the Item Data.*/
-	bool CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item);
-	bool CreateObjectFromItem(PlayerActor* pActor, Food* food_Item);
-	bool CreateObjectFromItem(PlayerActor* pActor, Container* weapon_Item);
+	//bool CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item);
+	//bool CreateObjectFromItem(PlayerActor* pActor, Food* food_Item);
+	//bool CreateObjectFromItem(PlayerActor* pActor, Container* weapon_Item);
 	bool CreateObjectFromItem(PlayerActor* pActor, Projectile* projectile_Item);
 	bool CreateObjectFromItem(PlayerActor* pActor, Material* material_Item);
 	/*! Creates An Item From the Object Data.*/
@@ -137,14 +133,6 @@ private:
 	/*! Create Animal Actors*/
 	bool CreateAnimalActor(DeerActor*& deerAct, const bool genID);
 	bool CreateAnimalActor(WolfActor** deerAct, const bool genID);
-	/*! Creates a StaticObject with default values.*/
-	bool CreateStaticObjectActor(const int type, FoodObject** foodObj, const bool genID = false);
-	bool CreateStaticObjectActor(const int type, WeaponObject** weaponObj, const bool genID = false);
-	bool CreateStaticObjectActor(const int type, MaterialObject** materialObj, const bool genID = false);
-	bool CreateStaticObjectActor(const int type, ContainerObject** containerObj, const bool genID = false);
-	bool CreateStaticObjectActor(const int type, StaticProjectileObject** projectileObj, const bool genID = false);
-	/*! Creates a DynamicObject with default values.*/
-	bool CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID = false);
 	/*! Creates a Dead Player*/
 	std::string CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectActor** dpoActor);
 	/*! Creates a Dead Animal*/

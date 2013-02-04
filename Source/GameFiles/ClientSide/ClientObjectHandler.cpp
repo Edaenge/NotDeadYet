@@ -80,7 +80,8 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 			this->zGuiManager = new GuiManager(this->zEng);
 			this->zCreated = true;
 			//filename = "Media/Models/Ball.obj";
-			//scale = Vector3(0.05f, 0.05f, 0.05f);
+			scale *= 0.1f;
+			GetGraphics()->GetCamera()->SetPosition(position + Vector3(0, 1.7, 0));
 		}
 	}
 	if (Messages::FileWrite())
@@ -91,7 +92,6 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	mesh->ResetRotation();
 	mesh->SetQuaternion(rotation);
 	mesh->SetScale(scale);
-	GetGraphics()->GetCamera()->SetPosition(position + Vector3(0, 1.7, 0));
 
 	//Create player data
 	playerObject->SetStaticMesh(mesh);

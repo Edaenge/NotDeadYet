@@ -36,7 +36,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 				}
 				DynamicProjectileObject* projectileObj = NULL;
 
-				if(!this->CreateDynamicObjectActor(type, &projectileObj, true))
+				if(!this->zGameMode->GetObjectCreatorPtr()->CreateDynamicObjectActor(type, projectileObj, true))
 				{
 					MaloW::Debug("Failed to Create Projectile");
 					SAFE_DELETE(projectileObj);
@@ -90,7 +90,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 
 			DynamicProjectileObject* projectileObj = NULL;
 
-			if(!this->CreateDynamicObjectActor(type, &projectileObj, true))
+			if(!this->zGameMode->GetObjectCreatorPtr()->CreateDynamicObjectActor(type, projectileObj, true))
 			{
 				MaloW::Debug("Failed to Create Projectile");
 				SAFE_DELETE(projectileObj);
@@ -667,9 +667,13 @@ void Host::HandleDropItem(PlayerActor* pActor, const long ItemID)
 			MaloW::Debug("Wrong Item Type Set");
 			return;
 		}
+		FoodObject* foodObj = NULL;
+		if(this->zGameMode->GetObjectCreatorPtr()->CreateObjectFromItem(pActor->GetPosition(), item_Food, foodObj))
+		{
+			SendRemoveItemMessage(pActor->GetID(), item_Food->GetID());
 
-		if(this->CreateObjectFromItem(pActor, item_Food))
 			pActor->DropObject(ItemID);
+		}
 		return;
 	}
 	if (item_type == ITEM_TYPE_WEAPON_RANGED_BOW || item_type == ITEM_TYPE_WEAPON_RANGED_ROCK || 
@@ -681,21 +685,30 @@ void Host::HandleDropItem(PlayerActor* pActor, const long ItemID)
 			MaloW::Debug("Wrong Item Type Set");
 			return;
 		}
-		if(this->CreateObjectFromItem(pActor, item_Weapon))
+		WeaponObject* weaponObj = NULL;
+		if(this->zGameMode->GetObjectCreatorPtr()->CreateObjectFromItem(pActor->GetPosition(), item_Weapon, weaponObj))
+		{
+			SendRemoveItemMessage(pActor->GetID(), item_Weapon->GetID());
 			pActor->DropObject(ItemID);
+
+		}
 		return;
 	}
 	if (item_type == ITEM_TYPE_PROJECTILE_ARROW)
 	{
-		Projectile* item_Weapon = dynamic_cast<Projectile*>(item);
-		if (!item_Weapon)
+		Projectile* item_Projectile = dynamic_cast<Projectile*>(item);
+		if (!item_Projectile)
 		{
 			MaloW::Debug("Wrong Item Type Set");
 			return;
 		}
 
-		if(this->CreateObjectFromItem(pActor, item_Weapon))
+		StaticProjectileObject* projectileObj = NULL;
+		if(this->zGameMode->GetObjectCreatorPtr()->CreateObjectFromItem(pActor->GetPosition(), item_Projectile, projectileObj))
+		{
+			SendRemoveItemMessage(pActor->GetID(), item_Projectile->GetID());
 			pActor->DropObject(ItemID);
+		}
 		return;
 	}
 	if (item_type == ITEM_TYPE_MATERIAL_SMALL_STICK || item_type == ITEM_TYPE_MATERIAL_MEDIUM_STICK || 
@@ -707,8 +720,12 @@ void Host::HandleDropItem(PlayerActor* pActor, const long ItemID)
 			MaloW::Debug("Wrong Item Type Set");
 			return;
 		}
-		if(this->CreateObjectFromItem(pActor, item_Material))
+		MaterialObject* materialObj = NULL;
+		if(this->zGameMode->GetObjectCreatorPtr()->CreateObjectFromItem(pActor->GetPosition(), item_Material, materialObj))
+		{
+			SendRemoveItemMessage(pActor->GetID(), item_Material->GetID());
 			pActor->DropObject(ItemID);
+		}
 		return;
 	}
 	if (item_type == ITEM_TYPE_CONTAINER_CANTEEN || item_type == ITEM_TYPE_CONTAINER_WATER_BOTTLE)
@@ -719,8 +736,12 @@ void Host::HandleDropItem(PlayerActor* pActor, const long ItemID)
 			MaloW::Debug("Wrong Item Type Set");
 			return;
 		}
-		if(this->CreateObjectFromItem(pActor, item_Container))
+		ContainerObject* containerObj = NULL;
+		if(this->zGameMode->GetObjectCreatorPtr()->CreateObjectFromItem(pActor->GetPosition(), item_Container, containerObj))
+		{
+			this->SendRemoveItemMessage(pActor->GetID(), item_Container->GetID());
 			pActor->DropObject(ItemID);
+		}
 		return;
 	}
 }
@@ -1336,7 +1357,7 @@ Item* Host::CreateItemFromDefault(const int ItemType)
 	if (ItemType == ITEM_TYPE_PROJECTILE_ARROW)
 	{
 		StaticProjectileObject* new_Arrow = NULL;
-		this->CreateStaticObjectActor(ItemType, &new_Arrow, true);
+		this->zGameMode->GetObjectCreatorPtr()->CreateStaticObjectActor(ItemType, new_Arrow, true);
 
 		if (!new_Arrow)
 		{
@@ -1361,7 +1382,7 @@ Item* Host::CreateItemFromDefault(const int ItemType)
 	if (ItemType == ITEM_TYPE_WEAPON_RANGED_BOW)
 	{
 		WeaponObject* new_Bow = NULL;
-		this->CreateStaticObjectActor(ItemType, &new_Bow, true);
+		this->zGameMode->GetObjectCreatorPtr()->CreateStaticObjectActor(ItemType, new_Bow, true);
 
 		if (!new_Bow)
 		{

@@ -219,6 +219,7 @@ void Client::Life()
 		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 		{
 			this->zGuiManager->ToggleIngameMenu();
+			this->CloseConnection("");
 		}
 
 		Sleep(5);

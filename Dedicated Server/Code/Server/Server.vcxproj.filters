@@ -387,12 +387,14 @@
     <ClInclude Include="EngineFiles\Server\ObjectCreator.h">
       <Filter>Server</Filter>
     </ClInclude>
-    <ClInclude Include="EngineFiles\Network\ClientDisconnectedEvent.h" />
     <ClInclude Include="EngineFiles\Server\GameMode.h">
       <Filter>Server\GameModes</Filter>
     </ClInclude>
     <ClInclude Include="EngineFiles\Server\GameModeFFA.h">
       <Filter>Server\GameModes</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Network\ClientDisconnectedEvent.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -426,8 +428,5 @@
     <Filter Include="Server\GameModes">
       <UniqueIdentifier>{1206da5a-4d6f-4b8f-93b7-21059bd7140f}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

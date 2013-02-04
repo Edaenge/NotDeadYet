@@ -4,6 +4,7 @@
 ObjectCreator::ObjectCreator(PhysicsEngine* zPhysicEngine)
 {
 	this->zObjectManager = new ObjectManager();
+	this->zObjectManager->ReadFromFile();
 	this->zPhysicEngine = zPhysicEngine;
 }
 
@@ -17,7 +18,7 @@ bool ObjectCreator::InitObjectCreator()
 	return this->zObjectManager->ReadFromFile();
 }
 
-bool ObjectCreator::CreateStaticObjectActor( const int type, FoodObject*& foodObj, const bool genID /*= false*/ )
+bool ObjectCreator::CreateStaticObjectActor(const int type, FoodObject*& foodObj, const bool genID /*= false*/)
 {
 	//Get Default Values For a Meat Object
 	const FoodObject* food = this->zObjectManager->GetFoodObject(type);
@@ -30,7 +31,7 @@ bool ObjectCreator::CreateStaticObjectActor( const int type, FoodObject*& foodOb
 	return true;
 }
 
-bool ObjectCreator::CreateStaticObjectActor( const int type, WeaponObject*& weaponObj, const bool genID /*= false*/ )
+bool ObjectCreator::CreateStaticObjectActor(const int type, WeaponObject*& weaponObj, const bool genID /*= false*/)
 {
 	//Get Default Values For a Weapon Object
 	const WeaponObject* weapon = this->zObjectManager->GetWeaponObject(type);
@@ -43,7 +44,7 @@ bool ObjectCreator::CreateStaticObjectActor( const int type, WeaponObject*& weap
 	return true;
 }
 
-bool ObjectCreator::CreateStaticObjectActor( const int type, MaterialObject*& materialObj, const bool genID /*= false*/ )
+bool ObjectCreator::CreateStaticObjectActor(const int type, MaterialObject*& materialObj, const bool genID /*= false*/)
 {
 	//Get Default Values For a container Object
 	const MaterialObject* material = this->zObjectManager->GetMaterialObject(type);
@@ -56,7 +57,7 @@ bool ObjectCreator::CreateStaticObjectActor( const int type, MaterialObject*& ma
 	return true;
 }
 
-bool ObjectCreator::CreateStaticObjectActor( const int type, ContainerObject*& containerObj, const bool genID /*= false*/ )
+bool ObjectCreator::CreateStaticObjectActor(const int type, ContainerObject*& containerObj, const bool genID /*= false*/)
 {
 	//Get Default Values For a container Object
 	const ContainerObject* container = this->zObjectManager->GetContainerObject(type);
@@ -69,7 +70,7 @@ bool ObjectCreator::CreateStaticObjectActor( const int type, ContainerObject*& c
 	return true;
 }
 
-bool ObjectCreator::CreateStaticObjectActor( const int type, StaticProjectileObject*& projectileObj, const bool genID /*= false*/ )
+bool ObjectCreator::CreateStaticObjectActor(const int type, StaticProjectileObject*& projectileObj, const bool genID /*= false*/)
 {
 	//Get Default Values For a Projectile Object
 	const StaticProjectileObject* projectile = this->zObjectManager->GetStaticProjectileObject(type);
@@ -82,7 +83,7 @@ bool ObjectCreator::CreateStaticObjectActor( const int type, StaticProjectileObj
 	return true;
 }
 
-bool ObjectCreator::CreateDynamicObjectActor( const int type, DynamicProjectileObject*& projectileObj, bool genID )
+bool ObjectCreator::CreateDynamicObjectActor(const int type, DynamicProjectileObject*& projectileObj, bool genID)
 {
 	//Get Default Values For a Projectile Object
 	const StaticProjectileObject* projectile = this->zObjectManager->GetStaticProjectileObject(type);
@@ -112,7 +113,7 @@ bool ObjectCreator::CreateDynamicObjectActor( const int type, DynamicProjectileO
 	return true;
 }
 
-bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Weapon* weapon_Item, WeaponObject*& objOut )
+bool ObjectCreator::CreateObjectFromItem(const Vector3& pos, Weapon* weapon_Item, WeaponObject*& objOut)
 {
 	if(objOut)
 		SAFE_DELETE(objOut);
@@ -132,7 +133,7 @@ bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Weapon* weapon_Ite
 	return true;
 }
 
-bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Food* food_Item, FoodObject*& objOut )
+bool ObjectCreator::CreateObjectFromItem(const Vector3& pos, Food* food_Item, FoodObject*& objOut)
 {
 	if(objOut)
 		SAFE_DELETE(objOut);
@@ -152,7 +153,7 @@ bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Food* food_Item, F
 	return true;
 }
 
-bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Container* container_item, ContainerObject*& objOut )
+bool ObjectCreator::CreateObjectFromItem(const Vector3& pos, Container* container_item, ContainerObject*& objOut)
 {
 	if(objOut)
 		SAFE_DELETE(objOut);
@@ -172,7 +173,7 @@ bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Container* contain
 	return true;
 }
 
-bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Projectile* projectile_Item, StaticProjectileObject*& objOut )
+bool ObjectCreator::CreateObjectFromItem(const Vector3& pos, Projectile* projectile_Item, StaticProjectileObject*& objOut)
 {
 	if(objOut)
 		SAFE_DELETE(objOut);
@@ -184,7 +185,7 @@ bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Projectile* projec
 		return false;
 	}
 
-	//Creates A New FoodObject With an Id And Default Values 
+	//Creates A New ProjectileObject With an Id And Default Values 
 
 	objOut->SetID(projectile_Item->GetID());
 	objOut->SetPosition(pos);
@@ -192,7 +193,7 @@ bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Projectile* projec
 	return true;
 }
 
-bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Material* material_Item, MaterialObject*& objOut )
+bool ObjectCreator::CreateObjectFromItem(const Vector3& pos, Material* material_Item, MaterialObject*& objOut)
 {
 	if(objOut)
 		SAFE_DELETE(objOut);
@@ -204,7 +205,7 @@ bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Material* material
 		return false;
 	}
 
-	//Creates A New FoodObject With an Id And Default Values 
+	//Creates A New MaterialObject With an Id And Default Values 
 
 	objOut->SetID(material_Item->GetID());
 	objOut->SetPosition(pos);
@@ -212,7 +213,7 @@ bool ObjectCreator::CreateObjectFromItem( const Vector3& pos, Material* material
 	return true;
 }
 
-Item* ObjectCreator::CreateItemFromDefault( const int ItemType )
+Item* ObjectCreator::CreateItemFromDefault(const int ItemType)
 {
 	if (ItemType == ITEM_TYPE_PROJECTILE_ARROW)
 	{
@@ -266,13 +267,13 @@ Item* ObjectCreator::CreateItemFromDefault( const int ItemType )
 	return NULL;
 }
 
-void ObjectCreator::HandleConversion( DynamicProjectileObject* dynamicProjObj, StaticProjectileObject*& objOut )
+void ObjectCreator::HandleConversion(DynamicProjectileObject* dynamicProjObj, StaticProjectileObject*& objOut)
 {
-	objOut = new StaticProjectileObject(dynamicProjObj, false);
+	if (objOut)
+		SAFE_DELETE(objOut);
 
-	if (!objOut)
+	objOut = new StaticProjectileObject(dynamicProjObj, false);
+	if (objOut->GetType() == OBJECT_TYPE_WEAPON_RANGED_ROCK)
 	{
-		MaloW::Debug("Failed to convert Dynamic Projectile to static");
-		return;
 	}
 }
