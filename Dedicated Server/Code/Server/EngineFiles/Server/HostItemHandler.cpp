@@ -1,5 +1,5 @@
 #include "Host.h"
-#include "../../../../../Source/GameFiles/ClientServerMessages.h"
+#include "ClientServerMessages.h"
 
 void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 {

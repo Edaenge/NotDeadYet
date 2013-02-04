@@ -62,8 +62,6 @@ bool ServerListener::Accept( SOCKET &newConnection )
 	return true;
 }
 
-
-
 void ServerListener::Life()
 {
 	MaloW::Debug("ClientChannel Listener Started");
