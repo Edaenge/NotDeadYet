@@ -55,7 +55,18 @@ public:
 	inline void ResetPingCounter() {zPinged = 0; zTotalPingTime = 0.0f;}
 
 	/*! Sends a message to the client.*/
-	inline void SendM(const std::string& msg) {zClient->sendData(msg);}
+	inline void SendM(const std::string& msg)
+	{
+		try
+		{
+			zClient->Send(msg);
+		}
+		catch(...)
+		{
+
+		}
+	}
+
 	/*! Handle the ping from client.*/
 	void HandlePingMsg();
 	/*! Updates the latency of this client.*/

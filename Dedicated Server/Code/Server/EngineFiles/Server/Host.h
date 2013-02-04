@@ -24,7 +24,7 @@ public:
 	virtual ~Host();
 	/*! Creates a Server locally
 	returns a code that describes error or success*/
-	int InitHost(const int PORT, const unsigned int MAX_CLIENTS);
+	const char* InitHost(const unsigned int &port, const unsigned int &maxClients);
 	/*! Main loop for this thread*/
 	void Life();
 	/*! Checks if the server have players connected.*/
@@ -78,14 +78,14 @@ private:
 	/*! Creates all Animal/Static And Dynamic Objects in the Game At the Beginning of the Game.*/
 	void Init();
 	/*! Handles new incoming connections.*/
-	void HandleNewConnections();
+	void HandleNewConnection( MaloW::ClientChannel* CC );
 	/*! Handles messages from clients. This function will call the following functions:
 	HandleCloseConnectionMsg
 	HandleKeyPress
 	HandleKeyRelease
 	CreateNewPlayer
 	*/
-	void HandleReceivedMessages();
+	void HandleReceivedMessage( const unsigned int &ID, const std::string &message );
 	/*! Read messages from queue and saves them in*/
 	void ReadMessages(); 
 	/*! Handles clients key press.*/
@@ -114,6 +114,8 @@ private:
 	void RespawnPlayer(PlayerActor* pActor); //MOVE
 
 	void RemovePlayer(unsigned int ID); //MOVE
+
+	void HandleDisconnect( MaloW::ClientChannel* channel );
 	//////////////////////////////////////
 	//									//
 	//	   Objects/Items Conversions	//
@@ -188,6 +190,7 @@ private:
 	void SendUseItem(const int PlayerID, const long ID);
 
 	std::string AddItemMessage(StaticObjectActor* object);
+
 protected:
 	virtual void OnEvent(Event* e);
 
@@ -213,4 +216,5 @@ private:
 
 	World* zWorld;
 	std::map<BioActor*, WorldAnchor*> zAnchorPlayerMap;
+
 };

@@ -24,24 +24,27 @@ namespace MaloW
 	class ServerChannel : public MaloW::Process
 	{
 	private:
-		SOCKET sock;
-		Process* notifier;
-		string buffer;
-		string receiveData();
-		string unImportantFilter;
+		SOCKET zSocket;
+		Process* zNotifier;
+
+		// Receive Message
+		bool Receive(std::string& msg) throw(...);
 
 	protected:
 		void CloseSpecific();
 
 	public:
-		ServerChannel();
+		ServerChannel( MaloW::Process* observerProcess, const std::string &IP, const unsigned int &port );
 		virtual ~ServerChannel();
-		void sendData(string msg);
-		int InitConnection(std::string ip, int port);
 
-		void setNotifier(Process* notifier) {this->notifier = notifier;}
+		// Begin Process
 		void Life();
-		void setUnImportantFilter(string filter) {this->unImportantFilter = filter;}
+
+		// Send Data Through Channel
+		bool Send(const std::string& msg) throw(...);
+
+		// Send Data, Does not throw anything back
+		bool TrySend(const std::string& msg);
 	};
 }
 

@@ -378,7 +378,7 @@ void InventoryGui::Resize(float windowWidth, float windowHeight, float dx)
 	xTemp = this->zX + (EQXPOS[2] / 1024.0f) * dx;
 	newWeaponSlots[2] = Vector2(xTemp, this->zY + startOffsetY);
 
-	for(int i = 0; i < this->zWeaponSlotGui.size(); i++)
+	for(unsigned int i = 0; i < this->zWeaponSlotGui.size(); i++)
 	{
 		for(int k = 0; k < WEAPONSLOTS; k++)
 		{

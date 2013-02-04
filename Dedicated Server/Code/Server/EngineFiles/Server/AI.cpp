@@ -47,7 +47,14 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 			}
 			else
 			{
-				this->zGrid[j * GRIDSIZE + i] = this->zWorld->IsBlockingAt(pos);
+				if ( pos.x >= 0.0f && pos.y >= 0.0f && pos.x < zWorld->GetWorldSize().x & pos.y < zWorld->GetWorldSize().y )
+				{
+					this->zGrid[j * GRIDSIZE + i] = this->zWorld->IsBlockingAt(pos);
+				}
+				else
+				{
+					this->zGrid[j * GRIDSIZE + i] = false;
+				}
 			}	
 		}
 	}

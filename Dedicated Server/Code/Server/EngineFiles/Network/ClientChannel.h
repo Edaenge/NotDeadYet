@@ -24,30 +24,28 @@ namespace MaloW
 	class ClientChannel : public MaloW::Process
 	{
 	private:
-		SOCKET sock;
-		Process* notifier;
-		string buffer;
+		SOCKET zSocket;
+		MaloW::Process* zNotifier;
+		long zID;
 
-		static long NextCID;
-		long id;
-
-
-		string receiveData();
+		// Receive Message
+		bool Receive(std::string& msg) throw(...);
 
 	protected:
 		void CloseSpecific();
 
 	public:
-		ClientChannel(SOCKET hClient);
+		ClientChannel(MaloW::Process* zNotifier, SOCKET hClient);
 		virtual ~ClientChannel();
-		
-		void sendData(string msg);
 
+		// Begin Process
 		void Life();
-		
-		void setNotifier(Process* notifier) { this->notifier = notifier; }
 
-		long getClientID() { return this->id; }
+		// Send Message
+		bool Send(const std::string& msg) throw(...);
+
+		// Connection ID
+		inline long GetClientID() const { return zID; }
 	};
 }
 

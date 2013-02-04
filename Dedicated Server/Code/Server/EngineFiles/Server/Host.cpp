@@ -1,5 +1,8 @@
 #include "Host.h"
 #include "ClientServerMessages.h"
+#include "ClientConnectedEvent.h"
+#include "ClientDisconnectedEvent.h"
+
 // 50 updates per sec
 static const float UPDATE_DELAY = 0.020f;
 
@@ -239,6 +242,7 @@ void Host::Life()
 {
 	if (Messages::FileWrite())
 		Messages::Debug("Host Process Started");
+
 	this->zServerListener->Start();
 	
 	this->Init();
@@ -255,19 +259,13 @@ void Host::Life()
 	this->zGameStarted = false;
 	while(this->stayAlive)
 	{
+		if (zWorld) zWorld->Update();
+
 		Update();
 
+		//HandleClientNackIM();
 
-		//Checks if ServerListener is still working
-		if(!this->zServerListener->IsAlive())
-		{
-			MaloW::Debug("Server Listener has died.");
-		}
-
-		HandleClientNackIM();
-		HandleNewConnections();
 		ReadMessages();
-		HandleReceivedMessages();
 		if(this->zGameStarted)
 		{
 			waitTimer += this->zDeltaTime;
@@ -306,51 +304,39 @@ Vector3 Host::CalculateSpawnPoint(int currentPoint, int maxPoints, float radius,
 
 	float x = center.x + radius * cos(angle);
 	float z = center.z + radius * sin(angle);
+	float y = 0.0f;
 
-	float y = this->zWorld->CalcHeightAtWorldPos(Vector2(x, z));
+	if ( x >= 0.0f && y >= 0.0f && x<zWorld->GetWorldSize().x && y<zWorld->GetWorldSize().y )
+	{
+		y = this->zWorld->CalcHeightAtWorldPos(Vector2(x, z));
+	}
 
 	return Vector3(x, y, z);
 }
 
-int Host::InitHost(const int PORT, const unsigned int MAX_CLIENTS)
+const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients)
 {
-	int code = 0;
-
-	if(!this->zServerListener)
-		this->zServerListener = new ServerListener();
-	else
-	{
-		SAFE_DELETE(this->zServerListener);
-		this->zServerListener = new ServerListener();
-	}
-	
-	code = this->zServerListener->InitListener(PORT);
-
-	this->zMaxClients = MAX_CLIENTS;
-	this->zPort	= PORT;
-	
 	if ( zWorld ) delete zWorld, zWorld=0;
 	this->zWorld = new World(this, "3x3.map");
+
 	this->zActorHandler = new ActorHandler(this->zWorld);
 	
-	return code;
-}
-
-void Host::HandleNewConnections()
-{
-	MaloW::ProcessEvent* pe; 
-	pe = this->zServerListener->PeekEvent();
-
-	if(!pe)
-		return;
-
-	ClientConnectedEvent* cce = dynamic_cast<ClientConnectedEvent*>(pe);
-	if(!cce)
+	try
 	{
-		SAFE_DELETE(pe);
-		return;
+		if ( zServerListener ) delete zServerListener;
+		zServerListener = new ServerListener(this, port);
+		zServerListener->Start();
+	}
+	catch(const char *str)
+	{
+		return str;
 	}
 
+	return 0;
+}
+
+void Host::HandleNewConnection( MaloW::ClientChannel* CC )
+{
 	if (Messages::FileWrite())
 		Messages::Debug("New Player Connected.");
 
@@ -360,8 +346,8 @@ void Host::HandleNewConnections()
 		
 		message = zMessageConverter.Convert(MESSAGE_TYPE_SERVER_FULL);
 
-		cce->GetClientChannel()->sendData(message);
-		SAFE_DELETE(pe);
+		CC->Send(message);
+		SAFE_DELETE(CC);
 
 		return;
 	}
@@ -370,17 +356,13 @@ void Host::HandleNewConnections()
 		Messages::Debug("New Player Accepted.");
 
 	std::string message = "";
-	MaloW::ClientChannel* client = cce->GetClientChannel();
+	MaloW::ClientChannel* client = CC;
 	ClientData* cd = new ClientData(client);
-
-	client->setNotifier(this);
 	this->zClients.push_back(cd);
 
-	message = this->zMessageConverter.Convert(MESSAGE_TYPE_SELF_ID, (float)client->getClientID());
+	message = this->zMessageConverter.Convert(MESSAGE_TYPE_SELF_ID, (float)client->GetClientID());
 	client->Start();
 	SendToClient(cd, message, true);
-	
-	SAFE_DELETE(pe);
 
 	//Collect player infos
 	message = "";
@@ -559,6 +541,7 @@ void Host::SendToAllClients(const std::string& message, bool sendIM /*= false*/)
 	std::string im;
 	for(auto it = zClients.begin(); it < zClients.end(); it++)
 	{
+		/*
 		if(sendIM)
 		{
 			unsigned long m_id = (*it)->GetNextIPID();
@@ -567,6 +550,7 @@ void Host::SendToAllClients(const std::string& message, bool sendIM /*= false*/)
 
 			continue;
 		}
+		*/
 
 		(*it)->SendM(message);
 		
@@ -579,6 +563,12 @@ void Host::SendToClient(int clientID, const std::string& message, bool sendIM /*
 
 	if(pos == -1)
 		return;
+
+	ClientData* cd = this->zClients[pos];
+	cd->SendM(message);
+	return;
+	/*
+
 	ClientData* cd = this->zClients[pos];
 	if(!sendIM)
 	{
@@ -589,13 +579,17 @@ void Host::SendToClient(int clientID, const std::string& message, bool sendIM /*
 	unsigned long m_id = cd->GetNextIPID();
 	std::string im = this->zMessageConverter.Convert(MESSAGE_TYPE_IMPORTANT_MESSAGE, (float)m_id);
 	cd->SendIM((im + message), m_id);
+	*/
 }
 
 void Host::SendToClient(ClientData* cd, const std::string& message, bool sendIM /*= false*/)
 {
-	if(cd == NULL)
+	if(cd == NULL || message.size() == 0 )
 		return;
 
+	cd->SendM(message);
+	return;
+	/*
 	if(!sendIM)
 	{
 		cd->SendM(message);
@@ -604,7 +598,8 @@ void Host::SendToClient(ClientData* cd, const std::string& message, bool sendIM 
 
 	unsigned long m_id = cd->GetNextIPID();
 	std::string im = this->zMessageConverter.Convert(MESSAGE_TYPE_IMPORTANT_MESSAGE, (float)m_id);
-	cd->SendIM((im + message), m_id);
+	cd->SendIM((message), m_id);
+	*/
 }
 
 void Host::SendStartMessage()
@@ -803,15 +798,22 @@ void Host::ReadMessages()
 	{
 		pe = PeekEvent();
 
-		if(pe)
+		if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(pe) )
 		{
-			MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(pe);
-			if(np)
-				this->zMessages.push_back(np);
-			else
-				SAFE_DELETE(pe);
+			HandleReceivedMessage(np->getID(), np->getMessage());
 		}
-		
+		else if ( ClientConnectedEvent* CCE = dynamic_cast<ClientConnectedEvent*>(pe) )
+		{
+			// A Client Connected
+			HandleNewConnection(CCE->GetClientChannel());
+		}
+		else if ( ClientDisconnectedEvent* CDE = dynamic_cast<ClientDisconnectedEvent*>(pe) )
+		{
+			HandleDisconnect( CDE->GetClientChannel() );
+		}
+
+		// Unhandled Message
+		SAFE_DELETE(pe);
 	}
 }
 
@@ -1264,133 +1266,113 @@ void Host::SendNewObjectMessage(AnimalActor* animalObj)
 	this->SendToAllClients(msg, true);
 }
 
-void Host::HandleReceivedMessages()
+void Host::HandleReceivedMessage( const unsigned int &ID, const std::string &message )
 {
+	std::vector<std::string> msgArray;
+	msgArray = this->zMessageConverter.SplitMessage(message); 
 	
-	if(this->zMessages.empty())
-		return;
+	// Empty Array
+	if ( msgArray.size() == 0 ) return;
 
-	int c_index;
-	PlayerActor* p_actor = NULL; 
+	int c_index = SearchForClient(ID);
+	PlayerActor* p_actor = dynamic_cast<PlayerActor*>(this->zActorHandler->GetActor(ID, ACTOR_TYPE_PLAYER));
 
-	for (auto it = this->zMessages.begin(); it < this->zMessages.end(); it++)
+	//Handles updates from client.
+	if(msgArray[0].find(M_CLIENT_DATA.c_str()) == 0 && (p_actor))
 	{
-		//If null, skip and continue
-		if(!(*it))
-			continue;
-		
-		std::vector<std::string> msgArray;
-		msgArray = this->zMessageConverter.SplitMessage((*it)->getMessage()); 
+		this->HandlePlayerUpdate(p_actor, this->zClients[c_index], msgArray);
+	}
+	//Handles key presses from client.
+	else if(msgArray[0].find(M_KEY_DOWN.c_str()) == 0 && (p_actor))
+	{
+		this->HandleKeyPress(p_actor, msgArray[0]);
+	}
+	//Handles key releases from client.
+	else if(msgArray[0].find(M_KEY_UP.c_str()) == 0 && (p_actor))
+	{
+		this->HandleKeyRelease(p_actor, msgArray[0]);
+	}
+	//Handles Pings from client.
+	else if(msgArray[0].find(M_PING.c_str()) == 0 && (c_index != -1))
+	{
+		this->zClients[c_index]->HandlePingMsg();
+	}
+	//Handles Ack Messages
+	else if(msgArray[0].find(M_ACKNOWLEDGE_MESSAGE.c_str()) == 0 && (c_index != -1))
+	{
+		int m_id = this->zMessageConverter.ConvertStringToInt(M_ACKNOWLEDGE_MESSAGE, msgArray[0]);
+		this->zClients[c_index]->RemoveIM(m_id);
+	}
+	//Handle Item usage in Inventory
+	else if(msgArray[0].find(M_ITEM_USE.c_str()) == 0 && (c_index != -1))
+	{
+		int objID = this->zMessageConverter.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
+		this->HandleItemUse(p_actor, objID);
+	}
+	//Handle UnEquip Item in Equipment
+	else if(msgArray[0].find(M_UNEQUIP_ITEM.c_str()) == 0 && (c_index != -1))
+	{
+		int objID = this->zMessageConverter.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
+		int eq_Slot = -1;
+		if (msgArray.size() > 1)
+		{
+			eq_Slot = this->zMessageConverter.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+		}
+		this->HandleUnEquipItem(p_actor, objID, eq_Slot);
+	}
+	//Handles Equipped Weapon usage
+	else if(msgArray[0].find(M_WEAPON_USE.c_str()) == 0 && (c_index != -1))
+	{
+		int objID = this->zMessageConverter.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
+		this->HandleWeaponUse(p_actor, objID);
+	}
+	//Handles Pickup Object Requests from Client
+	else if(msgArray[0].find(M_PICKUP_ITEM.c_str()) == 0 && (p_actor))
+	{
+		int objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
+		this->HandlePickupItem(p_actor, objID);
+	}
+	else if(msgArray[0].find(M_LOOT_ITEM.c_str()) == 0 && (p_actor))
+	{
+		long objID = this->zMessageConverter.ConvertStringToInt(M_LOOT_ITEM, msgArray[0]);
+		int type = -1;
+		long itemID = -1;
+		if (msgArray.size() > 2)
+		{
+			itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_ID, msgArray[1]);
+			type = this->zMessageConverter.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
 
-		//If empty, skip and continue
-		if(msgArray.empty())
-			continue;
-
-		char key[128];
-		sscanf_s(msgArray[0].c_str(), "%s ", &key, sizeof(key));
-		
-		c_index = SearchForClient((*it)->getID());
-		p_actor = dynamic_cast<PlayerActor*>(this->zActorHandler->GetActor((*it)->getID(), ACTOR_TYPE_PLAYER));
-
-		//Handles updates from client.
-		if(strcmp(key, M_CLIENT_DATA.c_str()) == 0 && (p_actor))
-		{
-			this->HandlePlayerUpdate(p_actor, this->zClients[c_index], msgArray);
-		}
-		//Handles key presses from client.
-		else if(strcmp(key, M_KEY_DOWN.c_str()) == 0 && (p_actor))
-		{
-			this->HandleKeyPress(p_actor, msgArray[0]);
-		}
-		//Handles key releases from client.
-		else if(strcmp(key, M_KEY_UP.c_str()) == 0 && (p_actor))
-		{
-			this->HandleKeyRelease(p_actor, msgArray[0]);
-		}
-		//Handles Pings from client.
-		else if(strcmp(key, M_PING.c_str()) == 0 && (c_index != -1))
-		{
-			this->zClients[c_index]->HandlePingMsg();
-		}
-		//Handles Ack Messages
-		else if(strcmp(key, M_ACKNOWLEDGE_MESSAGE.c_str()) == 0 && (c_index != -1))
-		{
-			int m_id = this->zMessageConverter.ConvertStringToInt(M_ACKNOWLEDGE_MESSAGE, msgArray[0]);
-			this->zClients[c_index]->RemoveIM(m_id);
-		}
-		//Handle Item usage in Inventory
-		else if(strcmp(key, M_ITEM_USE.c_str()) == 0 && (c_index != -1))
-		{
-			int objID = this->zMessageConverter.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
-			this->HandleItemUse(p_actor, objID);
-		}
-		//Handle UnEquip Item in Equipment
-		else if(strcmp(key, M_UNEQUIP_ITEM.c_str()) == 0 && (c_index != -1))
-		{
-			int objID = this->zMessageConverter.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
-			int eq_Slot = -1;
-			if (msgArray.size() > 1)
+			if (this->HandleLootItem(p_actor, objID, itemID, type))
 			{
-				eq_Slot = this->zMessageConverter.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+				this->SendRemoveDeadPlayerItem(p_actor->GetID(), objID, itemID, type);
 			}
-			this->HandleUnEquipItem(p_actor, objID, eq_Slot);
-		}
-		//Handles Equipped Weapon usage
-		else if(strcmp(key, M_WEAPON_USE.c_str()) == 0 && (c_index != -1))
-		{
-			int objID = this->zMessageConverter.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
-			this->HandleWeaponUse(p_actor, objID);
-		}
-		//Handles Pickup Object Requests from Client
-		else if(strcmp(key, M_PICKUP_ITEM.c_str()) == 0 && (p_actor))
-		{
-			int objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
-			this->HandlePickupItem(p_actor, objID);
-		}
-		else if(strcmp(key, M_LOOT_ITEM.c_str()) == 0 && (p_actor))
-		{
-			long objID = this->zMessageConverter.ConvertStringToInt(M_LOOT_ITEM, msgArray[0]);
-			int type = -1;
-			long itemID = -1;
-			if (msgArray.size() > 2)
-			{
-				itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_ID, msgArray[1]);
-				type = this->zMessageConverter.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
 
-				if (this->HandleLootItem(p_actor, objID, itemID, type))
-				{
-					this->SendRemoveDeadPlayerItem(p_actor->GetID(), objID, itemID, type);
-				}
-				
-			}
-			else
-			{
-				MaloW::Debug("Msg array size is to short size: " + MaloW::convertNrToString((float)msgArray.size()) + " Expected size 3");
-			}
 		}
-		//Handles Drop Item Requests from Client
-		else if(strcmp(key, M_DROP_ITEM.c_str()) == 0 && (p_actor))
-		{
-			int objID = this->zMessageConverter.ConvertStringToInt(M_DROP_ITEM, msgArray[0]);
-			this->HandleDropItem(p_actor, objID);
-		}
-		//Handles user data from client. Used when the player is new.
-		else if(strcmp(key, M_USER_DATA.c_str()) == 0 && (c_index != -1))
-		{
-			this->CreateNewPlayer(this->zClients[c_index], msgArray);
-		}
-		//Handles if client disconnects.
-		else if(strcmp(key, M_CONNECTION_CLOSED.c_str()) == 0)
-		{
-			this->KickClient((*it)->getID());
-		}
-		//Handles if not of the above.
 		else
 		{
-			MaloW::Debug("Warning: The host cannot handle the message \""+(*it)->getMessage()+"\" in HandleReceivedMessages.");
+			MaloW::Debug("Msg array size is to short size: " + MaloW::convertNrToString((float)msgArray.size()) + " Expected size 3");
 		}
-
-		SAFE_DELETE((*it));
+	}
+	//Handles Drop Item Requests from Client
+	else if(msgArray[0].find(M_DROP_ITEM.c_str()) == 0 && (p_actor))
+	{
+		int objID = this->zMessageConverter.ConvertStringToInt(M_DROP_ITEM, msgArray[0]);
+		this->HandleDropItem(p_actor, objID);
+	}
+	//Handles user data from client. Used when the player is new.
+	else if(msgArray[0].find(M_USER_DATA.c_str()) == 0 && (c_index != -1))
+	{
+		this->CreateNewPlayer(this->zClients[c_index], msgArray);
+	}
+	//Handles if client disconnects.
+	else if(msgArray[0].find(M_CONNECTION_CLOSED.c_str()) == 0)
+	{
+		this->KickClient(ID);
+	}
+	//Handles if not of the above.
+	else
+	{
+		MaloW::Debug("Warning: The host cannot handle the message \"" + message + "\" in HandleReceivedMessages.");
 	}
 }
 
@@ -1514,7 +1496,7 @@ void Host::HandleClientNackIM()
 		(*it)->HandleNackIM(this->zDeltaTime);
 
 		if((*it)->GetNrOfExceededIM() > 0)
-			clientsToKick.push_back((*it)->GetClient()->getClientID());
+			clientsToKick.push_back((*it)->GetClient()->GetClientID());
 	}
 
 	for (auto it = clientsToKick.begin(); it < clientsToKick.end(); it++)
@@ -1531,7 +1513,7 @@ int Host::SearchForClient(const int ID) const
 
 	for (unsigned int i = 0; i < this->zClients.size(); i++)
 	{
-		if(this->zClients.at(i)->GetClient()->getClientID() == ID)
+		if(this->zClients.at(i)->GetClient()->GetClientID() == ID)
 		{
 			return i;
 		}
@@ -1570,7 +1552,7 @@ void Host::PingClients()
 			else
 			{
 				cd->SetCurrentPingTime(0.0f);
-				ch->sendData(this->zMessageConverter.Convert(MESSAGE_TYPE_PING));
+				ch->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_PING));
 				cd->SetPinged(true);
 			}
 		}
@@ -1580,7 +1562,7 @@ void Host::PingClients()
 			//If we sent a ping x sec ago, drop the client.
 			if(cd->GetCurrentPingTime() > zTimeOut)
 			{
-				KickClient(ch->getClientID());
+				KickClient(ch->GetClientID());
 			}
 			else
 				cd->IncPingTime(zDeltaTime);
@@ -1791,7 +1773,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 {
 	std::string mess;
 	
-	PlayerActor* pi = new PlayerActor(cd->GetClient()->getClientID());
+	PlayerActor* pi = new PlayerActor(cd->GetClient()->GetClientID());
 
 	for (auto it_m = data.begin() + 1; it_m < data.end(); it_m++)
 	{
@@ -1831,6 +1813,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 
 	pi->AddObserver(this);
 	zAnchorPlayerMap[pi] = this->zWorld->CreateAnchor();
+	zAnchorPlayerMap[pi]->radius = 200.0f;
 
 	//Gather New player information
 	mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_PLAYER, (float)pi->GetID());
@@ -1867,6 +1850,7 @@ void Host::RespawnPlayer(PlayerActor* pActor)
 
 	new_Player->AddObserver(this);
 	zAnchorPlayerMap[new_Player] = this->zWorld->CreateAnchor();
+	zAnchorPlayerMap[new_Player]->radius = 200.0f;
 
 	//Gather New player information
 	Vector3 pos = new_Player->GetPosition();
@@ -2032,7 +2016,7 @@ void Host::OnEvent(Event* e)
 	{
 		Vector3 playerTempPos = PUE->playerActor->GetPosition();
 		
-		if(playerTempPos.x >= 0 && playerTempPos.z >= 0)
+		if(playerTempPos.x >= 0 && playerTempPos.z >= 0 && playerTempPos.x < zWorld->GetWorldSize().x && playerTempPos.z < zWorld->GetWorldSize().y )
 		{
 			Vector3 oldPos = PUE->prevPos; 
 			float yPos = this->zWorld->CalcHeightAtWorldPos(Vector2(playerTempPos.x, playerTempPos.z));
@@ -2087,4 +2071,9 @@ void Host::OnEvent(Event* e)
 			PUE->validMove = true;
 		}
 	}
+}
+
+void Host::HandleDisconnect( MaloW::ClientChannel* channel )
+{
+	KickClient(channel->GetClientID());
 }

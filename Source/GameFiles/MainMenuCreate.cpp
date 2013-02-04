@@ -2,8 +2,9 @@
 
 void MainMenu::Init()
 {
-	int windowWidth = GetGraphics()->GetEngineParameters().WindowWidth;
-	int windowHeight = GetGraphics()->GetEngineParameters().WindowHeight;
+	const iGraphicsEngineParams& GEP = GetGraphics()->GetEngineParameters();
+	int windowWidth = GEP.WindowWidth;
+	int windowHeight = GEP.WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 

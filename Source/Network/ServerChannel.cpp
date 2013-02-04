@@ -3,198 +3,167 @@
 #include "Winsock.h"
 #include "NetworkMessageConverter.h"
 #include "../GameFiles/ClientServerMessages.h"
+#include "DisconnectedEvent.h"
 
 using namespace MaloW;
 
-ServerChannel::ServerChannel()
-{
-	this->stayAlive = false;
-	this->notifier = NULL;
-}
 
-int ServerChannel::InitConnection(std::string IP, int port)
-{
-	int returnCode = 0;
-	this->stayAlive = true;
-	this->notifier = NULL;
 
+ServerChannel::ServerChannel( MaloW::Process* observerProcess, const std::string &IP, const unsigned int &port ) :
+	zNotifier(observerProcess)
+{
 	WSADATA wsaData;
-	int retCode = WSAStartup(MAKEWORD(2,2), &wsaData);
-	if(retCode != 0) 
+	if(int errCode = WSAStartup(MAKEWORD(2,2), &wsaData)) 
 	{
-		returnCode = 2;
-		this->stayAlive = false;
-		MaloW::Debug("SC: Failed to init Winsock library. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
-		WSACleanup();
+		std::stringstream ss;
+		ss << "Failed Initializing Winsock! ErrCode: " << WSAGetLastError();
+		throw(ss.str());
 	}
 
-	// open a socket
-	this->sock = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
-	if(this->sock == INVALID_SOCKET) 
+	// Open a socket
+	zSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+	if(!zSocket) 
 	{
-		returnCode = 3;
-		this->stayAlive = false;
-		MaloW::Debug("SC: Invalid socket, failed to create socket. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
-		WSACleanup();
+		std::stringstream ss;
+		ss << "Failed Opening Socket! ErrCode:" << WSAGetLastError();
+		throw(ss.str());
 	}
 
-	// connect
+	// Connect
 	sockaddr_in saServer;
 	saServer.sin_port = htons((u_short)port);
 	saServer.sin_addr.s_addr = inet_addr(IP.c_str());
 	saServer.sin_family = AF_INET;
-	retCode = connect(this->sock, (sockaddr*)&saServer, sizeof(saServer));
-	if(retCode == SOCKET_ERROR)
+	if( connect(zSocket, (sockaddr*)&saServer, sizeof(saServer)) == SOCKET_ERROR )
 	{
-		returnCode = 1;
-		this->stayAlive = false;
-		MaloW::Debug("SC: Connection to server failed. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
-		WSACleanup();
+		closesocket(zSocket);
+		std::stringstream ss;
+		ss << "Failed Connecting Socket! ErrCode:" << WSAGetLastError();
+		throw(ss.str());
 	}
-
-	this->buffer = "";
-	this->unImportantFilter = "";
-
-	return returnCode;
 }
 
 ServerChannel::~ServerChannel()
 {
 	this->Close();
 	this->WaitUntillDone();
-
-	int retCode = 0;
-
-	if(this->sock != 0)
-	{
-		// close server socket
-		retCode = closesocket(this->sock);
-		if(retCode == SOCKET_ERROR) 
-			MaloW::Debug("SC: Error failed to close socket. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
-		
-	}
-	// Release WinSock DLL
-	retCode = WSACleanup();
-	if(retCode == SOCKET_ERROR) 
-		MaloW::Debug("SC: Error cleaning up Winsock Library. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));;
-
+	if(zSocket) closesocket(zSocket);
 }
 
-string ServerChannel::receiveData()
+bool ServerChannel::Receive( std::string& msg )
 {
-	std::string msg = "";
-	bool getNewData = true;
-	if(!this->buffer.empty())
-	{
-		if(int pos = this->buffer.find(10))
-		{
-			msg = this->buffer.substr(0, pos);
-			this->buffer = this->buffer.substr(pos+1, this->buffer.length());
-			getNewData = false;
-		}
-	}
-	if(getNewData)
-	{
-		bool goAgain = true;
-		do
-		{
-			char bufs[1024] = {0};
-			int retCode = 0;
-			retCode = recv(this->sock, bufs, sizeof(bufs), 0);
-			
-			//DEBUG
-			int asd = WSAGetLastError();
-			if(asd!=0)
-			{
-				int a = 5;
-			}
+	// Error Code
+	int errCode;
 
-			if(retCode == SOCKET_ERROR)
-			{
-				this->Close();
-				MaloW::Debug("SC: Error receiving data. Error: " + MaloW::convertNrToString((float)WSAGetLastError()) + ". Probably due to crash/improper disconnect");
-			}
-			else if(retCode == 0)
-			{
-				this->Close();
-				MaloW::Debug("SC: Server disconnected, closing.");
-			}
-			else
-			{
-				for(int i = 0; i < 1024; i++)
-				{
-					if(bufs[i] == 10)
-						goAgain = false;
-					if(bufs[i] != 0)
-						this->buffer += bufs[i];
-					else
-						i = 1024;
-				}
-				if(!goAgain)
-				{
-					for(int i = 0; i < 1024; i++)
-					{
-						if(this->buffer[i] != 10)
-							msg += this->buffer[i];
-						else
-						{
-							this->buffer = this->buffer.substr(i+1, this->buffer.length());
-							i = 1024;
-						}
-					}
-				}
-			}
+	// Receive Packet Size
+	unsigned int packetSize = 0;
+	if ( (errCode = recv(zSocket, reinterpret_cast<char*>(&packetSize), sizeof(unsigned int), 0)) <= 0 )
+	{
+		if ( errCode < 0 )
+		{
+			throw("Failed Receiving Packet Size!");
 		}
-		while(goAgain && this->stayAlive);
+		else
+		{
+			// Connection Canceled
+			return false;
+		}
 	}
-	if (Messages::MsgFileWrite())
-		Messages::Debug("SC: Received from Server " + msg);
-	return msg;
+
+	// Receive Packet
+	msg.resize(packetSize);
+	if ( (errCode = recv(zSocket, &msg[0], packetSize, 0)) <= 0 )
+	{
+		if ( errCode < 0 )
+		{
+			throw("Failed Receiving Packet Size!");
+		}
+		else
+		{
+			// Connection Canceled
+			return false;
+		}
+	}
+
+	return true;
 }
 
-void ServerChannel::sendData(string msg)
+bool ServerChannel::Send(const std::string& msg)
 {
+	// ErrorCode
+	int errCode;
+
+	// Send Packet Size
+	unsigned int size = msg.length();
+	if( (errCode = send(zSocket, reinterpret_cast<char*>(&size), sizeof(unsigned int), 0)) <= 0 )
+	{
+		if ( errCode < 0 )
+		{
+			throw("Failed Sending Packet Size!");
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// Send Packet Data
+	if( (errCode = send(zSocket, &msg[0], msg.length(), 0)) <= 0 )
+	{
+		if ( errCode < 0 )
+		{
+			throw("Failed Sending Packet Data!");
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// Log Messages Sent
 	if (Messages::MsgFileWrite())
 		Messages::Debug("Sc: Sending to Server " + msg);
 
-	msg += 10;
-	char bufs[1024] = {0};
-	for(unsigned int i = 0; i < msg.length(); i++)
-	{
-		bufs[i] = msg[i];
-	}
-	int retCode = send(this->sock, bufs, sizeof(bufs), 0);
-	if(retCode == SOCKET_ERROR)
-	{
-		MaloW::Debug("SC: Error sending data. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
-	}
+	return true;
 }
 
 void ServerChannel::Life()
 {
 	MaloW::Debug("ServerChannel Process Started");
 
-	while(this->stayAlive)
+	try
 	{
-		string msg = this->receiveData();
-		if(msg != "")
+		std::string msg;
+		while(this->stayAlive && Receive(msg))
 		{
-			if(this->notifier && this->stayAlive)
-			{
-				NetworkPacket* np = new NetworkPacket(msg, 0);
-				this->notifier->PutEvent(np);
-			}
+			zNotifier->PutEvent(new NetworkPacket(msg, this->getID()));
 		}
+	}
+	catch(...)
+	{
+		zNotifier->PutEvent(new DisconnectedEvent(this));
 	}
 }
 
 void ServerChannel::CloseSpecific()
 {
-	if(this->sock != 0)
+	if(zSocket)
 	{
-		int retCode = shutdown(this->sock, 2); // 2 = SD_BOTH
-		if(retCode == SOCKET_ERROR) 
-			MaloW::Debug("SC: Error trying to perform shutdown on socket from a ->Close() call. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
+		if( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
+		{
+			throw("Failed Shutting Down Socket!");
+		}
 	}
-	this->sock = 0;
+}
+
+bool MaloW::ServerChannel::TrySend( const std::string& msg )
+{
+	try
+	{
+		return Send(msg);
+	}
+	catch(...)
+	{
+		return false;
+	}
 }

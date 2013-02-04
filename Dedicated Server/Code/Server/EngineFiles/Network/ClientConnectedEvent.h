@@ -15,12 +15,16 @@ This class is not responsible for deallocation of ClientChannel.
 */
 class ClientConnectedEvent : public MaloW::ProcessEvent
 {
-public:
-	ClientConnectedEvent(MaloW::ClientChannel* clientChannel);
-	virtual ~ClientConnectedEvent();
-
-	MaloW::ClientChannel* GetClientChannel() const;
 private:
-	MaloW::ClientChannel* ch;
+	MaloW::ClientChannel* zChannel;
 
+	ClientConnectedEvent(MaloW::ClientChannel* channel) :
+		zChannel(channel)
+	{
+	}
+
+public:
+	inline MaloW::ClientChannel* GetClientChannel() const { return zChannel; }
+
+	friend class ServerListener;
 };

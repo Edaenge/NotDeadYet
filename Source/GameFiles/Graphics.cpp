@@ -21,9 +21,10 @@ GraphicsEngine* GetGraphics()
 bool FreeGraphics()
 {
 	if ( !engine )
-		return 0;
+		return false;
 
 	delete engine;
+	engine = 0;
 
 	return true;
 }
