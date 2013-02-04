@@ -11,6 +11,7 @@ ClientData::ClientData(MaloW::ClientChannel* cc)
 	nrOfExceededMsg = 0;
 	zMaxPingTime = 10.0f;
 	zUniqeIPID = 0;
+	zReady = false;
 }
 
 ClientData::~ClientData()
