@@ -132,6 +132,7 @@
     <ClInclude Include="..\..\..\External\NDYGFX\Include\Vector.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\AnimationStates.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\ClientServerMessages.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\FileReader.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Container.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Equipment.h" />
     <ClInclude Include="..\..\..\Source\GameFiles\Items\Food.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="Wrapper\ServerEngineWrapper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Source\GameFiles\FileReader.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Container.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Equipment.cpp" />
     <ClCompile Include="..\..\..\Source\GameFiles\Items\Food.cpp" />

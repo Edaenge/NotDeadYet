@@ -108,7 +108,7 @@ private:
 	void OnBioActorDeath(BioActor* actor);	
 	void SendStartMessage();	
 	//3x3 center = 54,0,54, Map_xxxx center = 1900, 0, 1900
-	Vector3 CalculateSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center = Vector3(54, 0, 44));
+	Vector3 CalculateSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center = Vector3(54, 0.0f, 44));
 	/*! Temporary function.*/
 	void RespawnPlayer(PlayerActor* pActor);
 
@@ -211,6 +211,6 @@ private:
 	float zPingMessageInterval;
 
 	World* zWorld;
-	std::map<PlayerActor*, WorldAnchor*> zAnchorPlayerMap;
+	std::map<BioActor*, WorldAnchor*> zAnchorPlayerMap;
 	void HandleDisconnect( MaloW::ClientChannel* channel );
 };

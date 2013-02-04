@@ -157,9 +157,6 @@
     <ClCompile Include="..\Source\GUI\SimpleButton.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\GameFiles\MainMenuCreate.cpp">
-      <Filter>Game Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\GUI\TextBox.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -214,6 +211,15 @@
     <ClCompile Include="..\Source\GameFiles\ClientSide\StaticObject.cpp">
       <Filter>Game Files\ClientSide\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\Sounds.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\FileReader.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\GameFiles\SoundReader.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\MaloWLib\Array.h">
@@ -257,39 +263,6 @@
     </ClInclude>
     <ClInclude Include="..\Source\GameFiles\Graphics.h">
       <Filter>Game Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iLight.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iMesh.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iTerrain.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iText.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\Vector.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\GraphicsEngine.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iAnimatedMesh.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iCamera.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iGraphicsEngineParams.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iImage.h">
-      <Filter>External\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\External\NDYGFX\Include\iKeyListener.h">
-      <Filter>External\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\SoundEngine\fmod.h">
       <Filter>Sound Engine Files</Filter>
@@ -459,10 +432,19 @@
     <ClInclude Include="..\Source\GameFiles\DebugMessages.h">
       <Filter>Game Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\Sounds.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\FileReader.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\GameFiles\SoundReader.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Network\DisconnectedEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GameIcon.ico" />
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="NotDeadYet.rc" />

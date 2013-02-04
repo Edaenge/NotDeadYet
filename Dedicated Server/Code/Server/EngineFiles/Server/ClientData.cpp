@@ -49,7 +49,11 @@ bool ClientData::SendIM(const std::string& message,
 						const unsigned long uniqe_ID, const float timeToResend /*= DEFAULT_MAX_TIME_RESEND*/, 
 						const int nrToResend /*= DEFAULT_MAX_NR_RESEND*/ )
 {
-	/*
+	// Removed Important Message, Alexivan	
+	SendM(message);
+	return true;
+
+	/*	
 	if(uniqe_ID >= this->zUniqeIPID)
 		return false;
 
@@ -64,8 +68,9 @@ bool ClientData::SendIM(const std::string& message,
 	this->zImportantMessages.push_back(new_important_msg);
 
 	SortIM();
-	*/
+	
 	SendM(message);
+	*/
 
 	return true;
 }

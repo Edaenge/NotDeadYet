@@ -160,6 +160,9 @@
     <ClCompile Include="EngineFiles\Server\DeadAnimalObjectActor.cpp">
       <Filter>Server\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\GameFiles\FileReader.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
     <ClCompile Include="EngineFiles\Server\GhostActor.cpp">
       <Filter>Server\Actors</Filter>
     </ClCompile>
@@ -368,6 +371,9 @@
     </ClInclude>
     <ClInclude Include="EngineFiles\Server\DeadAnimalObjectActor.h">
       <Filter>Server\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\GameFiles\FileReader.h">
+      <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="EngineFiles\Server\GhostActor.h">
       <Filter>Server\Actors</Filter>

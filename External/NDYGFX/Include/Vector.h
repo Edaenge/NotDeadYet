@@ -137,11 +137,6 @@ public:
 		this->y /= length;
 	}
 
-	inline bool operator==( const Vector2 &v ) const
-	{
-		return ( x == v.x && y == v.y );
-	}
-
 	inline bool operator<( const Vector2& v ) const
 	{
 		if ( x < v.x ) return true;
@@ -169,6 +164,11 @@ public:
 	inline Vector2 operator+( const float& scalar ) const
 	{
 		return Vector2( x + scalar, y + scalar );
+	}
+
+	inline bool operator==( const Vector2& v) const
+	{
+		return ( x == v.x && y == v.y );
 	}
 
 	inline float& operator[]( unsigned int i ) throw(...)

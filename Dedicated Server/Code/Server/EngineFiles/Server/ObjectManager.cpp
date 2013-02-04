@@ -1,8 +1,5 @@
 #include "ObjectManager.h"
-#include "../../../../../Source/MaloWLib/MaloW.h"
-#include <fstream>
-#include <string>
-#include <algorithm>
+#include "MaloW.h"
 
 static const std::string FILENAME			=	"WorldObjects.cfg";
 static const std::string COMMENT			=	"//";
@@ -67,7 +64,7 @@ ObjectManager::~ObjectManager()
 	}
 }
 
-bool ObjectManager::ReadObjects()
+bool ObjectManager::ReadFromFile()
 {
 	std::ifstream read;
 	read.open(FILENAME);
@@ -172,51 +169,6 @@ bool ObjectManager::ReadObjects()
 		}
 	}
 
-	return true;
-}
-
-void ObjectManager::TrimAndSet( char* ret )
-{
-	if(ret == NULL)
-		return;
-
-	std::string str(ret);
-	str.erase(remove_if(str.begin(), str.end(), isspace), str.end());
-
-	size_t found;
-	found = str.find("=");
-
-	if(found == std::string::npos)
-		return;
-
-	int index = (int)found;
-
-	std::string subA;
-	std::string subB;
-	subA = str.substr(0,index);
-	subB = str.substr(index+1,str.size()-1);
-
-	subA += " = ";
-	str = subA + subB;
-
-	strcpy(ret, str.c_str());
-}
-
-bool ObjectManager::Replace(char* key)
-{
-	if (strcmp(key, "") == 0)
-		return false;
-
-	std::string str = string(key);
-
-	for (unsigned int i = 0; i < str.length(); i++)
-	{
-		if (str.at(i) == '_')
-		{
-			str.at(i) = ' ';
-		}
-	}
-	strcpy(key, str.c_str());
 	return true;
 }
 
