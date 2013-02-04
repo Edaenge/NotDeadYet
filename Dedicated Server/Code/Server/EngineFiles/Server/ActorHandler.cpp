@@ -936,3 +936,34 @@ void ActorHandler::DynamicActorVsBioActors( DynamicObjectActor* pTest, std::vect
 	}
 
 }
+
+void ActorHandler::CreateDeerAnimal(const bool bGenID, const Vector3 position)
+{
+	
+	DeerActor* deerActor = new DeerActor(bGenID);
+
+	std::string path = "Media/Models/Tree_02_v02_r.obj";
+	PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(path, position);
+
+	deerActor->SetActorModel(path);
+	deerActor->SetPhysicObject(pObj);
+	deerActor->SetWorldPointer(zWorld);
+	deerActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+	this->AddNewAnimalActor(deerActor);
+}
+
+void ActorHandler::CreateWolfAnimal(const bool bGenID, const Vector3 position)
+{
+	WolfActor* wolfActor = new WolfActor(bGenID);
+
+	std::string path = "Media/Models/Tree_02_v02_r.obj";
+	PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(path, position);
+
+	wolfActor->SetActorModel(path);
+	wolfActor->SetPhysicObject(pObj);
+	wolfActor->SetWorldPointer(zWorld);
+	wolfActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+	this->AddNewAnimalActor(wolfActor);
+}

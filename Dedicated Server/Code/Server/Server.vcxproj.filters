@@ -160,10 +160,10 @@
     <ClCompile Include="EngineFiles\Server\GhostActor.cpp">
       <Filter>Server\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="EngineFiles\Server\GamdeModeFFA.cpp">
+    <ClCompile Include="EngineFiles\Server\GameMode.cpp">
       <Filter>Server\GameModes</Filter>
     </ClCompile>
-    <ClCompile Include="EngineFiles\Server\GameMode.cpp">
+    <ClCompile Include="EngineFiles\Server\GameModeFFA.cpp">
       <Filter>Server\GameModes</Filter>
     </ClCompile>
   </ItemGroup>
@@ -378,11 +378,11 @@
     <ClInclude Include="EngineFiles\Server\GameMode.h">
       <Filter>Server\GameModes</Filter>
     </ClInclude>
-    <ClInclude Include="EngineFiles\Server\GamdeModeFFA.h">
-      <Filter>Server\GameModes</Filter>
-    </ClInclude>
     <ClInclude Include="EngineFiles\Network\ClientDisconnectedEvent.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\GameModeFFA.h">
+      <Filter>Server\GameModes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

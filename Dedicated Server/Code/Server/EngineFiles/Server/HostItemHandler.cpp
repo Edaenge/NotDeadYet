@@ -60,7 +60,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 				projectileObj->SetObjOwner(pActor->GetID());
 				projectileObj->SetModelLength(0.85f);
 			    //Adds The Object To the Array
-				this->zActorHandler->AddNewDynamicProjectileActor(projectileObj, pActor->GetDirection());
+				this->zGameMode->GetActorHandlerPtr()->AddNewDynamicProjectileActor(projectileObj, pActor->GetDirection());
 
 				SendNewObjectMessage(projectileObj);
 
@@ -109,7 +109,7 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 			projectileObj->SetSpeed(velocity);
 			projectileObj->SetModelLength(0.85f);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewDynamicProjectileActor(projectileObj, pActor->GetDirection());
+			this->zGameMode->GetActorHandlerPtr()->AddNewDynamicProjectileActor(projectileObj, pActor->GetDirection());
 
 			SendNewObjectMessage(projectileObj);
 
@@ -140,9 +140,9 @@ void Host::HandleWeaponUse(PlayerActor* pActor, const long ItemID)
 		float damage;
 		mWpn->UseWeapon(range, damage);
 		//Check Collision
-		CollisionEvent cEvent = this->zActorHandler->CheckMeeleCollision(pActor, range);
+		CollisionEvent cEvent = this->zGameMode->GetActorHandlerPtr()->CheckMeeleCollision(pActor, range);
 
-		BioActor* pVictim = dynamic_cast<BioActor*>(this->zActorHandler->GetActor(cEvent.actor_victim_ID, cEvent.actor_victim_type));
+		BioActor* pVictim = dynamic_cast<BioActor*>(this->zGameMode->GetActorHandlerPtr()->GetActor(cEvent.actor_victim_ID, cEvent.actor_victim_type));
 
 		if (pVictim)
 		{
@@ -731,7 +731,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const long ObjectID)
 		return false;
 
 	//Check For FoodObject
-	FoodObject* food = dynamic_cast<FoodObject*>(this->zActorHandler->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_FOOD));
+	FoodObject* food = dynamic_cast<FoodObject*>(this->zGameMode->GetActorHandlerPtr()->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_FOOD));
 
 	if (food)
 	{
@@ -746,7 +746,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const long ObjectID)
 	}
 
 	//Check For Weapon Object
-	WeaponObject* weapon = dynamic_cast<WeaponObject*>(this->zActorHandler->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_WEAPON));
+	WeaponObject* weapon = dynamic_cast<WeaponObject*>(this->zGameMode->GetActorHandlerPtr()->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_WEAPON));
 
 	if (weapon)
 	{
@@ -762,7 +762,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const long ObjectID)
 	}
 
 	//Check For Container Object
-	ContainerObject* container = dynamic_cast<ContainerObject*>(this->zActorHandler->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_CONTAINER));
+	ContainerObject* container = dynamic_cast<ContainerObject*>(this->zGameMode->GetActorHandlerPtr()->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_CONTAINER));
 
 	if (container)
 	{
@@ -778,7 +778,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const long ObjectID)
 	}
 
 	//Check For Projectile Object
-	StaticProjectileObject* projectile = dynamic_cast<StaticProjectileObject*>(this->zActorHandler->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_PROJECTILE));
+	StaticProjectileObject* projectile = dynamic_cast<StaticProjectileObject*>(this->zGameMode->GetActorHandlerPtr()->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_PROJECTILE));
 
 	if (projectile)
 	{
@@ -794,7 +794,7 @@ bool Host::HandlePickupItem(PlayerActor* pActor, const long ObjectID)
 	}
 
 	//Check For Material Object
-	MaterialObject* material = dynamic_cast<MaterialObject*>(this->zActorHandler->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_MATERIAL));
+	MaterialObject* material = dynamic_cast<MaterialObject*>(this->zGameMode->GetActorHandlerPtr()->GetActor(ObjectID, ACTOR_TYPE_STATIC_OBJECT_MATERIAL));
 
 	if (material)
 	{
@@ -818,7 +818,7 @@ bool Host::HandleLootItem(PlayerActor* pActor, const int deadPlayerID, const lon
 	if (!HasClients())
 		return false;
 
-	DeadPlayerObjectActor* dpoActor = dynamic_cast<DeadPlayerObjectActor*>(this->zActorHandler->GetActor(deadPlayerID, ACTOR_TYPE_DEAD_PLAYER));
+	DeadPlayerObjectActor* dpoActor = dynamic_cast<DeadPlayerObjectActor*>(this->zGameMode->GetActorHandlerPtr()->GetActor(deadPlayerID, ACTOR_TYPE_DEAD_PLAYER));
 
 	if (!dpoActor)
 	{

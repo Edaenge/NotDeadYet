@@ -38,6 +38,7 @@ ObjectManager::ObjectManager()
 
 ObjectManager::~ObjectManager()
 {
+
 	for(auto x = zWeapons.begin(); x < zWeapons.end(); x++)
 	{
 		SAFE_DELETE((*x));
@@ -168,7 +169,7 @@ bool ObjectManager::ReadFromFile()
 			this->zMaterials.push_back(ma);
 		}
 	}
-
+	read.close();
 	return true;
 }
 

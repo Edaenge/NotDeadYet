@@ -41,7 +41,6 @@ Host::~Host()
 
 	this->zServerListener->Close();
 	SAFE_DELETE(this->zServerListener);
-	SAFE_DELETE(this->zActorHandler);
 
 	for(auto x = zClients.begin(); x < zClients.end(); x++)
 	{
@@ -53,6 +52,7 @@ Host::~Host()
 //NEEDS FIXING
 void Host::Init()
 {
+	
 	Vector3 position;
 	float radius = 3.5f;
 	int maxObjects = 12;
@@ -70,7 +70,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			foodObj->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticFoodActor(foodObj);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticFoodActor(foodObj);
 
 			if (Messages::FileWrite())
 				Messages::Debug("Created Deer Meat Object ID: " + MaloW::convertNrToString((float)foodObj->GetID()));
@@ -83,7 +83,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			foodObj->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticFoodActor(foodObj);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticFoodActor(foodObj);
 
 			if (Messages::FileWrite())
 				Messages::Debug("Created Wolf Meat Object ID: " + MaloW::convertNrToString((float)foodObj->GetID()));
@@ -97,7 +97,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			weaponObj->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticWeaponActor(weaponObj);
 
 
 			if (Messages::FileWrite())
@@ -111,7 +111,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			weaponObj->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticWeaponActor(weaponObj);
 
 
 			if (Messages::FileWrite())
@@ -125,7 +125,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			weaponObj->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticWeaponActor(weaponObj);
 
 			if (Messages::FileWrite())
 				Messages::Debug("Created Axe Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
@@ -138,7 +138,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			weaponObj->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticWeaponActor(weaponObj);
 
 			if (Messages::FileWrite())
 				Messages::Debug("Created Pocket Knife Object ID: " + MaloW::convertNrToString((float)weaponObj->GetID()));
@@ -152,7 +152,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			containerObj->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticContainerActor(containerObj);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticContainerActor(containerObj);
 
 			if (Messages::FileWrite())
 				Messages::Debug("Created Canteen Object ID: " + MaloW::convertNrToString((float)containerObj->GetID()));
@@ -165,7 +165,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			containerObj->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticContainerActor(containerObj);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticContainerActor(containerObj);
 
 			if (Messages::FileWrite())
 				Messages::Debug("Created Water Bottle Object ID: " + MaloW::convertNrToString((float)containerObj->GetID()));
@@ -178,7 +178,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			projectileObj->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticProjectileActor(projectileObj);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticProjectileActor(projectileObj);
 
 			if (Messages::FileWrite())
 				Messages::Debug("Created Arrow Object ID: " + MaloW::convertNrToString((float)projectileObj->GetID()));
@@ -191,7 +191,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			material->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticMaterialObject(material);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticMaterialObject(material);
 
 			if (Messages::FileWrite())
 				Messages::Debug("Created Small Stick Object ID: " + MaloW::convertNrToString((float)material->GetID()));
@@ -204,7 +204,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			material->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticMaterialObject(material);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticMaterialObject(material);
 
 			if (Messages::FileWrite())
 				Messages::Debug("Created Medium Stick Object ID: " + MaloW::convertNrToString((float)material->GetID()));
@@ -217,7 +217,7 @@ void Host::Init()
 			position = CalculateSpawnPoint(counter, maxObjects, radius, center);
 			material->SetPosition(position);
 			//Adds The Object To the Array
-			this->zActorHandler->AddNewStaticMaterialObject(material);
+			this->zGameMode->GetActorHandlerPtr()->AddNewStaticMaterialObject(material);
 
 			if (Messages::FileWrite())
 				Messages::Debug("Created Thread Object ID: " + MaloW::convertNrToString((float)material->GetID()));
@@ -227,15 +227,16 @@ void Host::Init()
 		total += counter;
 		counter = 0;
 	}
-
+	/*
 	DeerActor* testDeer = NULL;
-	if (this->CreateAnimalActor(&testDeer, true))
+	if (this->CreateAnimalActor(testDeer, true))
 	{
 		this->zActorHandler->AddNewAnimalActor(testDeer);
 	}
 
 	if (Messages::FileWrite())
 		Messages::Debug("Created " + MaloW::convertNrToString((float)total) + " Objects");
+		*/
 }
 
 void Host::Life()
@@ -319,7 +320,8 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	if ( zWorld ) delete zWorld, zWorld=0;
 	this->zWorld = new World(this, "3x3.map");
 
-	this->zActorHandler = new ActorHandler(this->zWorld);
+	this->zGameMode = new GameModeFFA(this->zWorld);
+	//this->zActorHandler = new ActorHandler(this->zWorld);
 	
 	try
 	{
@@ -352,6 +354,7 @@ void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 		return;
 	}
 
+	ActorHandler* actorHandler = this->zGameMode->GetActorHandlerPtr();
 	if (Messages::FileWrite())
 		Messages::Debug("New Player Accepted.");
 
@@ -367,7 +370,7 @@ void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 	//Collect player infos
 	message = "";
 	std::vector<std::string> temp;
-	std::vector<PlayerActor *> players = this->zActorHandler->GetPlayers();
+	std::vector<PlayerActor *> players = actorHandler->GetPlayers();
 
 	//Gets Players Information
 	for(auto it = players.begin(); it < players.end(); it++)
@@ -379,7 +382,7 @@ void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 		temp.push_back(message);
 	}
 	message = "";
-	std::vector<AnimalActor *> animals = this->zActorHandler->GetAnimals();
+	std::vector<AnimalActor *> animals = actorHandler->GetAnimals();
 
 	//Gets AnimalInformation
 	for(auto it = animals.begin(); it < animals.end(); it++)
@@ -393,7 +396,7 @@ void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 
 	this->GetExistingObjects(temp);
 
-	std::vector<DeadPlayerObjectActor*> deadPlayers = this->zActorHandler->GetDeadPlayers();
+	std::vector<DeadPlayerObjectActor*> deadPlayers = actorHandler->GetDeadPlayers();
 	std::vector<Item*> items;
 
 	for (auto it = deadPlayers.begin(); it < deadPlayers.end(); it++)
@@ -503,7 +506,7 @@ void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 	}
 
 	//Dead animals
-	std::vector<DeadAnimalObjectActor*> deadAnimals = this->zActorHandler->GetDeadAnimals();
+	std::vector<DeadAnimalObjectActor*> deadAnimals = actorHandler->GetDeadAnimals();
 	for (auto it = deadAnimals.begin(); it < deadAnimals.end(); it++)
 	{
 		message = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_DEAD_ANIMAL_OBJECT, (float)(*it)->GetID());
@@ -618,7 +621,7 @@ void Host::SendPlayerActorUpdates()
 	std::string mess = "";
 
 	//Fetch player data
-	std::vector<PlayerActor*> pl = this->zActorHandler->GetPlayers();
+	std::vector<PlayerActor*> pl = this->zGameMode->GetActorHandlerPtr()->GetPlayers();
 	for (auto it_Player = pl.begin(); it_Player < pl.end(); it_Player++)
 	{
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_PLAYER, (float)(*it_Player)->GetID());
@@ -646,7 +649,7 @@ void Host::SendAnimalActorUpdates()
 	std::string mess = "";
 
 	//Fetch player data
-	std::vector<AnimalActor*> al = this->zActorHandler->GetAnimals();
+	std::vector<AnimalActor*> al = this->zGameMode->GetActorHandlerPtr()->GetAnimals();
 	for (auto it_Animal = al.begin(); it_Animal < al.end(); it_Animal++)
 	{
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_ANIMAL, (float)(*it_Animal)->GetID());
@@ -670,11 +673,12 @@ void Host::SendStaticActorUpdates()
 	if(!HasClients())
 		return;
 
+	ActorHandler* actorHandler = this->zGameMode->GetActorHandlerPtr();
 	std::vector<std::string> staticData;
 	std::string mess = "";
 
 	//Fetch Static Objects data
-	std::vector<FoodObject*> stf = this->zActorHandler->GetFoods();
+	std::vector<FoodObject*> stf = actorHandler->GetFoods();
 	for (auto it_Static = stf.begin(); it_Static < stf.end(); it_Static++)
 	{
 		Vector3 pos = (*it_Static)->GetPosition();
@@ -693,7 +697,7 @@ void Host::SendStaticActorUpdates()
 		staticData.push_back(mess);
 	}
 
-	std::vector<WeaponObject*> stw = this->zActorHandler->GetWeapons();
+	std::vector<WeaponObject*> stw = actorHandler->GetWeapons();
 	for (auto it_Static = stw.begin(); it_Static < stw.end(); it_Static++)
 	{
 		Vector3 pos = (*it_Static)->GetPosition();
@@ -712,7 +716,7 @@ void Host::SendStaticActorUpdates()
 		staticData.push_back(mess);
 	}
 
-	std::vector<ContainerObject*> stc = this->zActorHandler->GetContainers();
+	std::vector<ContainerObject*> stc = actorHandler->GetContainers();
 	for (auto it_Static = stc.begin(); it_Static < stc.end(); it_Static++)
 	{
 		Vector3 pos = (*it_Static)->GetPosition();
@@ -749,7 +753,7 @@ void Host::SendDynamicActorUpdates()
 	std::string mess = "";
 
 	//Fetch Static Objects data
-	std::vector<DynamicProjectileObject*> dyp = this->zActorHandler->GetDynamicProjectiles();
+	std::vector<DynamicProjectileObject*> dyp = this->zGameMode->GetActorHandlerPtr()->GetDynamicProjectiles();
 	for (auto it_Dynamic = dyp.begin(); it_Dynamic < dyp.end(); it_Dynamic++)
 	{
 		Vector3 pos = (*it_Dynamic)->GetPosition();
@@ -1066,32 +1070,32 @@ std::string Host::CreateDeadAnimalObject( AnimalActor* aAnimal, DeadAnimalObject
 	return msg;
 }
 
-bool Host::CreateAnimalActor(DeerActor** deerAct, const bool genID)
+bool Host::CreateAnimalActor(DeerActor*& deerAct, const bool genID)
 {
 	static Vector3 position;
-
+	/*
 	int size = this->zActorHandler->GetAnimals().size();
 	position = CalculateSpawnPoint(size, 10, 10);
 
-	(*deerAct) = new DeerActor(genID);
+	(deerAct) = new DeerActor(genID);
 	std::string path = "Media/Models/Tree_02_v02_r.obj";	
 	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(
 		path, position);
 	
-	zAnchorPlayerMap[(*deerAct)] = this->zWorld->CreateAnchor();
+	zAnchorPlayerMap[(deerAct)] = this->zWorld->CreateAnchor();
 
-	(*deerAct)->SetActorModel(path);
-	(*deerAct)->SetPhysicObject(pObj);
-	(*deerAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	(*deerAct)->SetWorldPointer(this->zWorld);
-
+	(deerAct)->SetActorModel(path);
+	(deerAct)->SetPhysicObject(pObj);
+	(deerAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	(deerAct)->SetWorldPointer(this->zWorld);
+	*/
 	return true;
 }
 
 bool Host::CreateAnimalActor(WolfActor** wolfAct, const bool genID)
 {
 	static Vector3 position;
-
+	/*
 	int size = this->zActorHandler->GetAnimals().size();
 	position = CalculateSpawnPoint(size, 10, 10);
 
@@ -1105,14 +1109,14 @@ bool Host::CreateAnimalActor(WolfActor** wolfAct, const bool genID)
 	(*wolfAct)->SetPhysicObject(pObj);
 	(*wolfAct)->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 	(*wolfAct)->SetWorldPointer(this->zWorld);
-
+	*/
 	return true;
 }
 
 bool Host::CreateStaticObjectActor(const int type, WeaponObject** weaponObj, const bool genID)
 {
 	//Get Default Values For a Weapon Object
-	const WeaponObject* weapon = this->zActorHandler->GetObjManager()->GetWeaponObject(type);
+	const WeaponObject* weapon = this->zGameMode->GetActorHandlerPtr()->GetObjManager()->GetWeaponObject(type);
 
 	if (!weapon)
 		return false;
@@ -1125,7 +1129,7 @@ bool Host::CreateStaticObjectActor(const int type, WeaponObject** weaponObj, con
 bool Host::CreateStaticObjectActor(const int type, FoodObject** foodObj, const bool genID)
 {
 	//Get Default Values For a Meat Object
-	const FoodObject* food = this->zActorHandler->GetObjManager()->GetFoodObject(type);
+	const FoodObject* food = this->zGameMode->GetActorHandlerPtr()->GetObjManager()->GetFoodObject(type);
 
 	if (!food)
 		return false;
@@ -1138,7 +1142,7 @@ bool Host::CreateStaticObjectActor(const int type, FoodObject** foodObj, const b
 bool Host::CreateStaticObjectActor(const int type, ContainerObject** containerObj, const bool genID)
 {
 	//Get Default Values For a container Object
-	const ContainerObject* container = this->zActorHandler->GetObjManager()->GetContainerObject(type);
+	const ContainerObject* container = this->zGameMode->GetActorHandlerPtr()->GetObjManager()->GetContainerObject(type);
 
 	if (!container)
 		return false;
@@ -1151,7 +1155,7 @@ bool Host::CreateStaticObjectActor(const int type, ContainerObject** containerOb
 bool Host::CreateStaticObjectActor(const int type, StaticProjectileObject** projectileObj, const bool genID)
 {
 	//Get Default Values For a Projectile Object
-	const StaticProjectileObject* projectile = this->zActorHandler->GetObjManager()->GetStaticProjectileObject(type);
+	const StaticProjectileObject* projectile = this->zGameMode->GetActorHandlerPtr()->GetObjManager()->GetStaticProjectileObject(type);
 
 	if (!projectile)
 		return false;
@@ -1163,7 +1167,7 @@ bool Host::CreateStaticObjectActor(const int type, StaticProjectileObject** proj
 
 bool Host::CreateStaticObjectActor(const int type, MaterialObject** materialObj, const bool genID)
 {
-	const MaterialObject* material = this->zActorHandler->GetObjManager()->GetMaterialObject(type);
+	const MaterialObject* material = this->zGameMode->GetActorHandlerPtr()->GetObjManager()->GetMaterialObject(type);
 
 	if (!material)
 		return false;
@@ -1176,7 +1180,7 @@ bool Host::CreateStaticObjectActor(const int type, MaterialObject** materialObj,
 bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID)
 {
 	////Get Default Values For a Projectile Object
-	const StaticProjectileObject* projectile = this->zActorHandler->GetObjManager()->GetStaticProjectileObject(type);
+	const StaticProjectileObject* projectile = this->zGameMode->GetActorHandlerPtr()->GetObjManager()->GetStaticProjectileObject(type);
 
 	if (!projectile)
 		return false;
@@ -1185,7 +1189,7 @@ bool Host::CreateDynamicObjectActor(const int type, DynamicProjectileObject** pr
 
 	(*projectileObj) = new DynamicProjectileObject(genID);
 
-	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(modelPath, Vector3(0,0,0));
+	PhysicsObject* pObj = this->zGameMode->GetActorHandlerPtr()->GetPhysicEnginePtr()->CreatePhysicsObject(modelPath, Vector3(0,0,0));
 
 	(*projectileObj)->SetPhysicObject(pObj);
 
@@ -1275,7 +1279,7 @@ void Host::HandleReceivedMessage( const unsigned int &ID, const std::string &mes
 	if ( msgArray.size() == 0 ) return;
 
 	int c_index = SearchForClient(ID);
-	PlayerActor* p_actor = dynamic_cast<PlayerActor*>(this->zActorHandler->GetActor(ID, ACTOR_TYPE_PLAYER));
+	PlayerActor* p_actor = dynamic_cast<PlayerActor*>(this->zGameMode->GetActorHandlerPtr()->GetActor(ID, ACTOR_TYPE_PLAYER));
 
 	//Handles updates from client.
 	if(msgArray[0].find(M_CLIENT_DATA.c_str()) == 0 && (p_actor))
@@ -1285,11 +1289,17 @@ void Host::HandleReceivedMessage( const unsigned int &ID, const std::string &mes
 	//Handles key presses from client.
 	else if(msgArray[0].find(M_KEY_DOWN.c_str()) == 0 && (p_actor))
 	{
+		int key = this->zMessageConverter.ConvertStringToInt(M_KEY_DOWN, msgArray[0]);
+
+		//this->zGameMode->HandleKeyPress(ID, key);
 		this->HandleKeyPress(p_actor, msgArray[0]);
 	}
 	//Handles key releases from client.
 	else if(msgArray[0].find(M_KEY_UP.c_str()) == 0 && (p_actor))
 	{
+		int key = this->zMessageConverter.ConvertStringToInt(M_KEY_UP, msgArray[0]);
+
+		//this->zGameMode->HandleKeyPress(ID, key);
 		this->HandleKeyRelease(p_actor, msgArray[0]);
 	}
 	//Handles Pings from client.
@@ -1591,15 +1601,15 @@ float Host::Update()
 void Host::UpdateObjects()
 {
 	//Update the objects in the world.
-	this->zActorHandler->UpdateObjects(zDeltaTime);
+	this->zGameMode->GetActorHandlerPtr()->UpdateObjects(zDeltaTime);
 
 	std::vector<CollisionEvent> ce;
 	//CheckCollisions is not complete.
-	this->zActorHandler->CheckCollisions();
-	ce = this->zActorHandler->CheckProjectileCollisions();
+	this->zGameMode->GetActorHandlerPtr()->CheckCollisions();
+	ce = this->zGameMode->GetActorHandlerPtr()->CheckProjectileCollisions();
 
 	//Iterate projectiles and converts them to static if they have stopped
-	std::vector<DynamicProjectileObject*> dynamicProjectileObj = this->zActorHandler->GetDynamicProjectiles();
+	std::vector<DynamicProjectileObject*> dynamicProjectileObj = this->zGameMode->GetActorHandlerPtr()->GetDynamicProjectiles();
 
 	for (auto it_proj = dynamicProjectileObj.begin(); it_proj < dynamicProjectileObj.end(); it_proj++)
 	{
@@ -1607,13 +1617,13 @@ void Host::UpdateObjects()
 		{
 			HandleConversion((*it_proj));
 
-			if(!this->zActorHandler->RemoveDynamicProjectileActor((*it_proj)->GetID()))
+			if(!this->zGameMode->GetActorHandlerPtr()->RemoveDynamicProjectileActor((*it_proj)->GetID()))
 				MaloW::Debug("Failed to Remove Object in Host::UpdateObjects");
 		}
 	}
 
 	//Iterate players and see if they are dead.
-	std::vector<PlayerActor*> pActors = this->zActorHandler->GetPlayers();
+	std::vector<PlayerActor*> pActors = this->zGameMode->GetActorHandlerPtr()->GetPlayers();
 	for (auto it_player = pActors.begin(); it_player < pActors.end(); it_player++)
 	{
 		if (!(*it_player)->IsAlive())
@@ -1672,7 +1682,7 @@ bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 		temp_c->SendM(mess);
 	}
 	//Create Dead Player Object
-	BioActor* bActor = dynamic_cast<BioActor*>(this->zActorHandler->GetActor(ID, ACTOR_TYPE_PLAYER));
+	BioActor* bActor = dynamic_cast<BioActor*>(this->zGameMode->GetActorHandlerPtr()->GetActor(ID, ACTOR_TYPE_PLAYER));
 	OnBioActorRemove(bActor);
 
 	//Create a remove player message.
@@ -1681,7 +1691,7 @@ bool Host::KickClient(const int ID, bool sendAMessage, std::string reason)
 	//Remove the player
 
 	this->zClients.erase(zClients.begin() + index);
-	this->zActorHandler->RemovePlayerActor(ID);
+	this->zGameMode->GetActorHandlerPtr()->RemovePlayerActor(ID);
 
 	SAFE_DELETE(temp_c);
 
@@ -1721,7 +1731,7 @@ void Host::OnBioActorRemove( BioActor* actor )
 	else
 		return;
 
-	this->zActorHandler->AddNewDeadPlayer(dpoActor);
+	this->zGameMode->GetActorHandlerPtr()->AddNewDeadPlayer(dpoActor);
 
 	this->SendToAllClients(msg, true);
 }
@@ -1746,12 +1756,12 @@ void Host::OnBioActorDeath( BioActor* actor )
 		
 		//
 
-		this->zActorHandler->RemovePlayerActor(pActor->GetID());
+		this->zGameMode->GetActorHandlerPtr()->RemovePlayerActor(pActor->GetID());
 	}
 	else if(type == ACTOR_TYPE_ANIMAL)
 	{
 		messageType = MESSAGE_TYPE_DEAD_ANIMAL;
-		this->zActorHandler->RemoveAnimalActor(actor->GetID());
+		this->zGameMode->GetActorHandlerPtr()->RemoveAnimalActor(actor->GetID());
 	}
 	else
 	{
@@ -1799,9 +1809,9 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 	}
 
 	//Debug Pos
-	int currentPoint = this->zActorHandler->GetPlayers().size() % this->zMaxClients;
+	int currentPoint = this->zGameMode->GetActorHandlerPtr()->GetPlayers().size() % this->zMaxClients;
 	Vector3 position = CalculateSpawnPoint(currentPoint, this->zMaxClients, 20);
-	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(pi->GetActorModel(), position);
+	PhysicsObject* pObj = this->zGameMode->GetActorHandlerPtr()->GetPhysicEnginePtr()->CreatePhysicsObject(pi->GetActorModel(), position);
 	pi->SetPhysicObject(pObj);
 	pi->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 
@@ -1809,7 +1819,7 @@ void Host::CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data 
 		MaloW::Debug("Error in function AddNewPlayer in ActorHandler: PhysicObj is null.");
 
 	/*End debug*/	//Add new player to the list
-	this->zActorHandler->AddNewPlayer(pi);
+	this->zGameMode->GetActorHandlerPtr()->AddNewPlayer(pi);
 
 	pi->AddObserver(this);
 	zAnchorPlayerMap[pi] = this->zWorld->CreateAnchor();
@@ -1835,9 +1845,9 @@ void Host::RespawnPlayer(PlayerActor* pActor)
 	std::string model = pActor->GetActorModel();
 	PlayerActor* new_Player = new PlayerActor(pActor->GetID());
 
-	int currentPoint = this->zActorHandler->GetPlayers().size() % this->zMaxClients;
+	int currentPoint = this->zGameMode->GetActorHandlerPtr()->GetPlayers().size() % this->zMaxClients;
 	Vector3 position = CalculateSpawnPoint(currentPoint, this->zMaxClients, 20);
-	PhysicsObject* pObj = this->zActorHandler->GetPhysicEnginePtr()->CreatePhysicsObject(model, position);
+	PhysicsObject* pObj = this->zGameMode->GetActorHandlerPtr()->GetPhysicEnginePtr()->CreatePhysicsObject(model, position);
 	new_Player->SetPhysicObject(pObj);
 	new_Player->SetActorModel(model);
 	new_Player->SetScale(Vector3(0.05f, 0.05f, 0.05f));
@@ -1846,7 +1856,7 @@ void Host::RespawnPlayer(PlayerActor* pActor)
 		MaloW::Debug("Error in function AddNewPlayer in ActorHandler: PhysicObj is null.");
 
 	/*End debug*/	//Add new player to the list
-	this->zActorHandler->AddNewPlayer(new_Player);
+	this->zGameMode->GetActorHandlerPtr()->AddNewPlayer(new_Player);
 
 	new_Player->AddObserver(this);
 	zAnchorPlayerMap[new_Player] = this->zWorld->CreateAnchor();
@@ -1886,7 +1896,7 @@ void Host::CreateNewGhostActor(PlayerActor* pActor)
 void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 {
 	std::string mess;
-	std::vector<FoodObject*> static_Food = this->zActorHandler->GetFoods();
+	std::vector<FoodObject*> static_Food = this->zGameMode->GetActorHandlerPtr()->GetFoods();
 	//Gets Static Food Objects Data
 	for(auto it = static_Food.begin(); it < static_Food.end(); it++)
 	{
@@ -1908,7 +1918,7 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 		static_Objects.push_back(mess);
 
 	}
-	std::vector<WeaponObject*> static_Weapon = this->zActorHandler->GetWeapons();
+	std::vector<WeaponObject*> static_Weapon = this->zGameMode->GetActorHandlerPtr()->GetWeapons();
 	//Gets Static Weapon Objects Data
 	for(auto it = static_Weapon.begin(); it < static_Weapon.end(); it++)
 	{
@@ -1930,7 +1940,7 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 		static_Objects.push_back(mess);
 	}
 
-	std::vector<ContainerObject*> static_Container = this->zActorHandler->GetContainers();
+	std::vector<ContainerObject*> static_Container = this->zGameMode->GetActorHandlerPtr()->GetContainers();
 	//Gets Static Container Objects Data
 	for(auto it = static_Container.begin(); it < static_Container.end(); it++)
 	{
@@ -1952,7 +1962,7 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 		static_Objects.push_back(mess);
 	}
 
-	std::vector<StaticProjectileObject*> static_Projectile = this->zActorHandler->GetStaticProjectiles();
+	std::vector<StaticProjectileObject*> static_Projectile = this->zGameMode->GetActorHandlerPtr()->GetStaticProjectiles();
 	//Gets Static Projectile Objects Data
 	for(auto it = static_Projectile.begin(); it < static_Projectile.end(); it++)
 	{
@@ -1974,7 +1984,7 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 		static_Objects.push_back(mess);
 	}
 
-	std::vector<MaterialObject*> static_Material = this->zActorHandler->GetMaterials();
+	std::vector<MaterialObject*> static_Material = this->zGameMode->GetActorHandlerPtr()->GetMaterials();
 	//Gets Static Weapon Objects Data
 	for(auto it = static_Material.begin(); it < static_Material.end(); it++)
 	{

@@ -10,10 +10,10 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "ActorHandler.h"
 #include "ClientData.h"
 #include "World.h"
-#include "GameMode.h"
+#include "GameModeFFA.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
-//#include <vld.h>
+#include <vld.h>
 #define INCLUDE_MODEL_VIEWER
 #endif
 
@@ -135,7 +135,7 @@ private:
 	bool CreateItemFromObject(PlayerActor* pActor, StaticProjectileObject* projectileObj);
 	bool CreateItemFromObject(PlayerActor* pActor, MaterialObject* materialObj);
 	/*! Create Animal Actors*/
-	bool CreateAnimalActor(DeerActor** deerAct, const bool genID);
+	bool CreateAnimalActor(DeerActor*& deerAct, const bool genID);
 	bool CreateAnimalActor(WolfActor** deerAct, const bool genID);
 	/*! Creates a StaticObject with default values.*/
 	bool CreateStaticObjectActor(const int type, FoodObject** foodObj, const bool genID = false);
@@ -200,7 +200,7 @@ private:
 	std::vector<ClientData*>			zClients;
 	std::vector<MaloW::NetworkPacket*>	zMessages;
 
-	ActorHandler* zActorHandler;
+	//ActorHandler* zActorHandler;
 	
 	NetworkMessageConverter zMessageConverter;
 
@@ -217,4 +217,5 @@ private:
 	World* zWorld;
 	std::map<BioActor*, WorldAnchor*> zAnchorPlayerMap;
 
+	GameMode* zGameMode; 
 };
