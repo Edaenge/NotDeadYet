@@ -47,8 +47,8 @@ std::string PhysicsActor::ToMessageString( NetworkMessageConverter* NMC )
 
 	if (this->zScaleChanged)
 	{
-		float scale = this->GetScale().x;
-		msg += NMC->Convert(MESSAGE_TYPE_SCALE, scale);
+		Vector3 scale = this->GetScale();
+		msg += NMC->Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
 		this->zScaleChanged = false;
 	}
 	

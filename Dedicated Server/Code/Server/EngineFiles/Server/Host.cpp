@@ -678,82 +678,6 @@ void Host::SendAnimalActorUpdates()
 	}
 }
 
-void Host::SendStaticActorUpdates()
-{
-	if(!HasClients())
-		return;
-
-	ActorHandler* actorHandler = this->zGameMode->GetActorHandlerPtr();
-	std::vector<std::string> staticData;
-	std::string mess = "";
-
-	//Fetch Static Objects data
-	std::vector<FoodObject*> stf = actorHandler->GetFoods();
-	for (auto it_Static = stf.begin(); it_Static < stf.end(); it_Static++)
-	{
-		Vector3 pos = (*it_Static)->GetPosition();
-		Vector4 rot = (*it_Static)->GetRotation();
-
-		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_STATIC_OBJECT, (float)(*it_Static)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)(*it_Static)->GetType());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)(*it_Static)->GetWeight());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it_Static)->GetDescription());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it_Static)->GetIconPath());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it_Static)->GetActorObjectName());
-
-		staticData.push_back(mess);
-	}
-
-	std::vector<WeaponObject*> stw = actorHandler->GetWeapons();
-	for (auto it_Static = stw.begin(); it_Static < stw.end(); it_Static++)
-	{
-		Vector3 pos = (*it_Static)->GetPosition();
-		Vector4 rot = (*it_Static)->GetRotation();
-
-		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_STATIC_OBJECT, (float)(*it_Static)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)(*it_Static)->GetType());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)(*it_Static)->GetWeight());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it_Static)->GetDescription());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it_Static)->GetIconPath());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it_Static)->GetActorObjectName());
-
-		staticData.push_back(mess);
-	}
-
-	std::vector<ContainerObject*> stc = actorHandler->GetContainers();
-	for (auto it_Static = stc.begin(); it_Static < stc.end(); it_Static++)
-	{
-		Vector3 pos = (*it_Static)->GetPosition();
-		Vector4 rot = (*it_Static)->GetRotation();
-
-		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_STATIC_OBJECT, (float)(*it_Static)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)(*it_Static)->GetType());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)(*it_Static)->GetWeight());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it_Static)->GetDescription());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it_Static)->GetIconPath());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it_Static)->GetActorObjectName());
-
-		staticData.push_back(mess);
-	}
-	//Send Data to clients
-	for (auto it_Client = zClients.begin(); it_Client < zClients.end(); it_Client++)
-	{
-		for (auto it_Message = staticData.begin(); it_Message < staticData.end(); it_Message++)
-		{
-			(*it_Client)->SendM((*it_Message));
-		}
-	}
-}
-
 void Host::SendDynamicActorUpdates()
 {
 	if(!HasClients())
@@ -770,13 +694,7 @@ void Host::SendDynamicActorUpdates()
 		Vector4 rot = (*it_Dynamic)->GetRotation();
 
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_UPDATE_DYNAMIC_OBJECT, (float)(*it_Dynamic)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)(*it_Dynamic)->GetType());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)(*it_Dynamic)->GetWeight());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it_Dynamic)->GetDescription());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it_Dynamic)->GetIconPath());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it_Dynamic)->GetActorObjectName());
+		mess += (*it_Dynamic)->ToMessageString(&this->zMessageConverter);
 
 		dynamicData.push_back(mess);
 	}
@@ -1915,20 +1833,8 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 	//Gets Static Food Objects Data
 	for(auto it = static_Food.begin(); it < static_Food.end(); it++)
 	{
-		Vector3 pos = (*it)->GetPosition();
-		Vector3 scale = (*it)->GetScale();
-		Vector4 rot = (*it)->GetRotation();
-
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, (float)(*it)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)(*it)->GetType());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it)->GetActorObjectName());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)(*it)->GetWeight());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it)->GetIconPath());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it)->GetDescription());
+		mess += (*it)->ToMessageString(&this->zMessageConverter);
 
 		static_Objects.push_back(mess);
 
@@ -1937,20 +1843,8 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 	//Gets Static Weapon Objects Data
 	for(auto it = static_Weapon.begin(); it < static_Weapon.end(); it++)
 	{
-		Vector3 pos = (*it)->GetPosition();
-		Vector3 scale = (*it)->GetScale();
-		Vector4 rot = (*it)->GetRotation();
-
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, (float)(*it)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)(*it)->GetType());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it)->GetActorObjectName());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)(*it)->GetWeight());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it)->GetIconPath());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it)->GetDescription());
+		mess += (*it)->ToMessageString(&this->zMessageConverter);
 
 		static_Objects.push_back(mess);
 	}
@@ -1959,20 +1853,8 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 	//Gets Static Container Objects Data
 	for(auto it = static_Container.begin(); it < static_Container.end(); it++)
 	{
-		Vector3 pos = (*it)->GetPosition();
-		Vector3 scale = (*it)->GetScale();
-		Vector4 rot = (*it)->GetRotation();
-
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, (float)(*it)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)(*it)->GetType());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it)->GetActorObjectName());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)(*it)->GetWeight());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it)->GetIconPath());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it)->GetDescription());
+		mess += (*it)->ToMessageString(&this->zMessageConverter);
 
 		static_Objects.push_back(mess);
 	}
@@ -1981,20 +1863,8 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 	//Gets Static Projectile Objects Data
 	for(auto it = static_Projectile.begin(); it < static_Projectile.end(); it++)
 	{
-		Vector3 pos = (*it)->GetPosition();
-		Vector3 scale = (*it)->GetScale();
-		Vector4 rot = (*it)->GetRotation();
-
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, (float)(*it)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)(*it)->GetType());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it)->GetActorObjectName());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)(*it)->GetWeight());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it)->GetIconPath());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it)->GetDescription());
+		mess += (*it)->ToMessageString(&this->zMessageConverter);
 
 		static_Objects.push_back(mess);
 	}
@@ -2003,20 +1873,8 @@ void Host::GetExistingObjects(std::vector<std::string>& static_Objects)
 	//Gets Static Weapon Objects Data
 	for(auto it = static_Material.begin(); it < static_Material.end(); it++)
 	{
-		Vector3 pos = (*it)->GetPosition();
-		Vector3 scale = (*it)->GetScale();
-		Vector4 rot = (*it)->GetRotation();
-
 		mess =  this->zMessageConverter.Convert(MESSAGE_TYPE_NEW_STATIC_OBJECT, (float)(*it)->GetID());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)(*it)->GetType());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, (*it)->GetActorObjectName());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)(*it)->GetWeight());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, (*it)->GetIconPath());
-		mess += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, (*it)->GetDescription());
+		mess += (*it)->ToMessageString(&this->zMessageConverter);
 
 		static_Objects.push_back(mess);
 	}

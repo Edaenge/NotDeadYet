@@ -144,7 +144,6 @@ public:
 	/*! Returns Static Projectile Objects.*/
 	inline const std::vector<StaticProjectileObject*>& GetStaticProjectiles() const {return this->zStaticProjectiles;}
 
-
 //////////////////////////////
 	/*! Returns an Actor. TYPE is a enum to identify which Actor to get.
 		ACTOR_TYPE_PLAYER,

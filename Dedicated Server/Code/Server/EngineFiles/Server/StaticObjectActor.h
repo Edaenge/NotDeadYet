@@ -6,6 +6,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "Actor.h"
+#include "NetworkMessageConverter.h"
 
 static const enum M_OBJECT_TYPE
 {
@@ -52,10 +53,13 @@ public:
 	void SetStackSize(const int size) {this->zStacks = size;}
 	inline void SetPosition(const Vector3& pos) {zPos = pos;}
 	inline void SetRotation(const Vector4& rot) {zRot = rot;}
-	void SetScale(const Vector3& scale) {zScale = scale;}
+	void SetScale(const Vector3& scale) {zScale = scale; zScaleChanged = true;}
 	void ModifyStackSize(const int size) {this->zStacks += size;}
+	/*! Converts Pos, Rot, Scale, type, icon path, description, item name, weight to network message string.*/
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC, bool getDataOnly = false);
 
 protected:
+	bool zScaleChanged;
 	int zWeight;
 	int zType;
 	int zStacks;

@@ -1188,13 +1188,8 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, StaticProjectileObjec
 	std::string msg;
 
 	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)projectileObj->GetID());
-	msg += this->AddItemMessage(projectileObj);
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)projectileObj->GetType());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, projectileObj->GetDescription());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, projectileObj->GetActorObjectName());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, projectileObj->GetIconPath());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_STACK_SIZE, (float)projectileObj->GetStackSize());
-	//msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)projectileObj->GetWeight());
+	msg += projectileObj->ToMessageString(&this->zMessageConverter, true);
+
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_DAMAGE, projectileObj->GetDamage());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_PROJECTILE_VELOCITY, projectileObj->GetSpeed());
 
@@ -1223,7 +1218,7 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, ContainerObject* cont
 	std::string msg;
 
 	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)containerObj->GetID());
-	msg += this->AddItemMessage(containerObj);
+	msg += containerObj->ToMessageString(&this->zMessageConverter, true);
 
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_CONTAINER_MAX, (float)containerObj->GetMaxUses());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)containerObj->GetCurrentUses());
@@ -1253,7 +1248,7 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, FoodObject* foodObj)
 	std::string msg;
 
 	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)foodObj->GetID());
-	msg += this->AddItemMessage(foodObj);
+	msg += foodObj->ToMessageString(&this->zMessageConverter, true);
 
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_HUNGER, foodObj->GetHunger());
 
@@ -1276,7 +1271,7 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, WeaponObject* weaponO
 	std::string msg;
 
 	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)weaponObj->GetID());
-	msg += this->AddItemMessage(weaponObj);
+	msg += weaponObj->ToMessageString(&this->zMessageConverter, true);
 
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_DAMAGE, weaponObj->GetDamage());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_WEAPON_RANGE, weaponObj->GetRange());
@@ -1299,7 +1294,7 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, MaterialObject* mater
 	std::string msg;
 
 	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)materialObj->GetID());
-	msg += this->AddItemMessage(materialObj);
+	msg += materialObj->ToMessageString(&this->zMessageConverter, true);
 
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE, (float)materialObj->GetCraftingType());
 	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_MATERIAL_STACKS_REQUIRED, (float)materialObj->GetRequiredStackToCraft());
@@ -1316,19 +1311,6 @@ void Host::SendAddInventoryItemMessage(const int PlayerID, Material* material)
 	msg += material->ToMessageString(&this->zMessageConverter);
 	
 	this->SendToClient(PlayerID, msg);
-}
-
-std::string Host::AddItemMessage(StaticObjectActor* object)
-{
-	std::string msg = "";
-	msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)object->GetType());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, object->GetDescription());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_NAME, object->GetActorObjectName());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float)object->GetWeight());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_STACK_SIZE, (float)object->GetStackSize());
-	msg += this->zMessageConverter.Convert(MESSAGE_TYPE_ITEM_ICON_PATH, object->GetIconPath());
-
-	return msg;
 }
 
 Item* Host::CreateItemFromDefault(const int ItemType)

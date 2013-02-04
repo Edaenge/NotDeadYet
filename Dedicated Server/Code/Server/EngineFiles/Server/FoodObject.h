@@ -21,6 +21,7 @@ public:
 	float GetHunger() const {return this->zHunger;}
 
 	void SetHunger(const float hunger){this->zHunger = hunger;}
+
 private:
 	float zHunger;
 };
