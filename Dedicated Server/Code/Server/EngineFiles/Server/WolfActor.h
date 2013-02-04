@@ -23,4 +23,8 @@ public:
 
 private:
 	
+	int		zSelfPreservationHealth;
+	float	zHuntingKoef;
+	int		zPreyMinimumHealth;
+
 };
