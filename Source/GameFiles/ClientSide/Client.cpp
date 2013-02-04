@@ -787,6 +787,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
 
+	Messages::Debug(msg);
+
 	//Checks what type of message was sent
 	if(msg.find(M_PING.c_str()) == 0)
 	{

@@ -44,8 +44,6 @@ public:
 	void SendPlayerActorUpdates();
 	/*! Sends Animal Actor updates to clients.*/
 	void SendAnimalActorUpdates();
-	/*! Sends Static Actor updates to clients.*/
-	void SendStaticActorUpdates();
 	/*! Sends Dynamic Actor updates to clients.*/
 	void SendDynamicActorUpdates();
 	/*! Sends new Static Object Data to Clients*/
@@ -176,8 +174,6 @@ private:
 	void SendRemoveDeadPlayerItem(const int PlayerID, const long ObjID, const long ItemID, const int Type);
 	void SendEquipMessage(const int PlayerID, const long ID, const int Slot);
 	void SendUseItem(const int PlayerID, const long ID);
-
-	std::string AddItemMessage(StaticObjectActor* object);
 
 protected:
 	virtual void OnEvent(Event* e);
