@@ -13,7 +13,7 @@ ServerEngineWrapper::~ServerEngineWrapper()
 	SAFE_DELETE(zServerEngine);
 }
 
-char* ServerEngineWrapper::Init(const int port, const int maxPlayers) const
+const char* ServerEngineWrapper::Init(const unsigned int &port, const unsigned int &maxPlayers) const
 {
 	return zServerEngine->InitHost(port, maxPlayers);
 }

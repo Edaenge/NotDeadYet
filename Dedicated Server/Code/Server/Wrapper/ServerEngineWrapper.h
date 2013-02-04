@@ -17,11 +17,12 @@ class DLL_USAGE ServerEngineWrapper
 {
 private:
 	ServerEngine* zServerEngine;
+
 public:
 	ServerEngineWrapper();
 	~ServerEngineWrapper();
 
-	char* Init(const int port, const int maxPlayers) const;
+	const char* Init(const unsigned int &port, const unsigned int &maxPlayers) const;
 	bool StartHost() const;
 	void ShutdownHost() const;
 

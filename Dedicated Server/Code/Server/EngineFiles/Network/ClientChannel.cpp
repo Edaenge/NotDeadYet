@@ -1,17 +1,17 @@
 #include "ClientChannel.h"
 #include "Winsock.h"
 #include "../../../../../Source/GameFiles/ClientServerMessages.h"
+#include "ClientDisconnectedEvent.h"
+
 using namespace MaloW;
 
-long ClientChannel::NextCID = 0;
 
-ClientChannel::ClientChannel(SOCKET sock)
+ClientChannel::ClientChannel(MaloW::Process* observerProcess, SOCKET sock) :
+	zNotifier(observerProcess),
+	zSocket(sock)
 {
-	this->id = this->NextCID;
-	this->NextCID++;
-	this->sock = sock;
-	this->stayAlive = true;
-	this->buffer = "";
+	static unsigned int id = 0;
+	zID = id++;
 }
 
 ClientChannel::~ClientChannel()
@@ -19,120 +19,117 @@ ClientChannel::~ClientChannel()
 	this->Close();
 	this->WaitUntillDone();
 
-	int retCode = 0;
-
-	if(sock != 0)
-	{
-		retCode = closesocket(this->sock);
-		if(retCode == SOCKET_ERROR) 
-			MaloW::Debug("CC: Error failed to close socket. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
-	}
+	if(zSocket) closesocket(zSocket);
 }
 
-string ClientChannel::receiveData()
+bool ClientChannel::Receive( std::string& msg )
 {
-	std::string msg = "";
-	bool getNewData = true;
-	if(!this->buffer.empty())
+	// Receive Packet Size
+	unsigned int packetSize = 0;
+	int retCode;
+	if ( (retCode = recv(zSocket, reinterpret_cast<char*>(&packetSize), sizeof(unsigned int), 0)) <= 0 )
 	{
-		if(int pos = this->buffer.find(10))
+		if ( retCode < 0 )
 		{
-			msg = this->buffer.substr(0, pos);
-			this->buffer = this->buffer.substr(pos+1, this->buffer.length());
-			getNewData = false;
+			std::stringstream ss;
+			ss << "Failed Receiving Packet Size! ErrCode:" << WSAGetLastError();
+			throw(ss.str());
+		}
+		else
+		{
+			// Connection Canceled
+			return false;
 		}
 	}
-	if(getNewData)
-	{
-		bool goAgain = true;
-		do
-		{
-			char bufs[1024];
-			std::fill(bufs,bufs+1024,255);
 
-			int retCode = 0;
-			retCode = recv(this->sock, bufs, sizeof(bufs), 0);
-			if(retCode == SOCKET_ERROR)
-			{
-				this->Close();
-				MaloW::Debug("CC: Error receiving data. Error: " + MaloW::convertNrToString((float)WSAGetLastError()) + ". Probably due to crash/improper disconnect");
-			}
-			else if(retCode == 0)
-			{
-				this->Close();
-				MaloW::Debug("CC: Client disconnected, closing.");
-			}
-			else
-			{
-				for(int i = 0; i < 1024; i++)
-				{
-					if(bufs[i] == 10)
-						goAgain = false;
-					if(bufs[i] != 0)
-						this->buffer += bufs[i];
-					else
-						i = 1024;
-				}
-				
-				if(!goAgain)
-				{
-					for(int i = 0; i < 1024; i++)
-					{
-						if(this->buffer[i] != 10)
-							msg += this->buffer[i];
-						else
-						{
-							this->buffer = this->buffer.substr(i+1, this->buffer.length());
-							i = 1024;
-						}
-					}
-				}
-			}
+	// Receive Packet
+	msg.resize(packetSize);
+	if ( (retCode = recv(zSocket, &msg[0], packetSize, 0)) <= 0 )
+	{
+		if ( retCode < 0 )
+		{
+			std::stringstream ss;
+			ss << "Failed Receiving Packet Size! ErrCode:" << WSAGetLastError();
+			throw(ss.str());
 		}
-		while(goAgain && this->stayAlive);
+		else
+		{
+			// Connection Canceled
+			return false;
+		}
 	}
-	if (Messages::MsgFileWrite())
-		Messages::Debug("CC: Received from Client " + msg);
-	return msg;
+
+	return true;
 }
 
-void ClientChannel::sendData(string msg)
+bool ClientChannel::Send(const std::string& msg)
 {
-	msg += 10;
-	char bufs[1024] = {0};
-	for(unsigned int i = 0; i < msg.length(); i++)
-		bufs[i] = msg[i];
-
-	int retCode = send(this->sock, bufs, sizeof(bufs), 0);
-	if(retCode == SOCKET_ERROR)
+	// Send Packet Size
+	int retCode;
+	unsigned int size = msg.length();
+	if( (retCode = send(zSocket, reinterpret_cast<char*>(&size), sizeof(unsigned int), 0)) <= 0 )
 	{
-		MaloW::Debug("CC: Error sending data. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
+		if ( retCode < 0 )
+		{
+			std::stringstream ss;
+			ss << "Failed Sending Packet Size! ErrCode:" << WSAGetLastError();
+			throw(ss.str());
+		}
+		else
+		{
+			return false;
+		}
 	}
+
+	// Send Packet Data
+	if( (retCode = send(zSocket, &msg[0], msg.length(), 0)) <= 0 )
+	{
+		if ( retCode < 0 )
+		{
+			std::stringstream ss;
+			ss << "Failed Sending Packet Data! ErrCode:" << WSAGetLastError();
+			throw(ss.str());
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// Log Messages Sent
 	if (Messages::MsgFileWrite())
-		Messages::Debug("Sent to Client " + msg);
+		Messages::Debug("Sc: Sending to Server " + msg);
+
+	return true;
 }
 
 void ClientChannel::Life()
 {
-	if (Messages::FileWrite())
-		Messages::Debug("ClientChannel Process Started");
-	while(this->stayAlive)
+	MaloW::Debug("ClientChannel Process Started");
+
+	try
 	{
-		string msg = this->receiveData();
-		if(msg != "")
+		std::string msg;
+		while(this->stayAlive && Receive(msg))
 		{
-			if(this->notifier)
-			{
-				NetworkPacket* np = new NetworkPacket(msg, this->id);
-				this->notifier->PutEvent(np);
-			}
+			zNotifier->PutEvent(new NetworkPacket(msg, this->GetClientID()));
 		}
+	}
+	catch(...)
+	{
+		zNotifier->PutEvent(new ClientDisconnectedEvent(this));
 	}
 }
 
 void ClientChannel::CloseSpecific()
 {
-	int retCode = shutdown(this->sock, SD_RECEIVE);
-	if(retCode == SOCKET_ERROR) 
-		MaloW::Debug("CC: Error trying to perform shutdown on socket from a ->Close() call. Error: " + MaloW::convertNrToString((float)WSAGetLastError()));
+	if(zSocket)
+	{
+		if( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
+		{
+			std::stringstream ss;
+			ss << "Failed Shutting Down Socket! ErrCode:" << WSAGetLastError();
+			throw(ss.str());
+		}
+	}
 }

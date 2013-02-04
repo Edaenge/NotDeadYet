@@ -11,8 +11,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 {
 	MaloW::ClearDebug();
 #ifdef INCLUDE_MODEL_VIEWER
-	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	MaloW::Debug("(DEBUG): NotDeadYet: Debug flag set to: _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF). ");
+	// _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	// MaloW::Debug("(DEBUG): NotDeadYet: Debug flag set to: _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF). ");
 	MaloW::Debug("(DEBUG): NotDeadYet: vld.h included.");
 #endif
 
@@ -27,25 +27,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 		return 1;
 	}
 
-	/*int** memLeakTest = new int*[100];
-	for(int i = 0; i < 100; i++)
-	{
-		memLeakTest[i] = new int(1);
-	}*/
-	// Tester
-	//test();
-	
 	// IMPLEMENT MAIN PROGRAM HERE.
 	MainMenu* menu = new MainMenu();
 	menu->Init();
 	menu->Run();
-	delete menu;
-	Sleep(10);
+	SAFE_DELETE(menu);
 
 	// Free Graphics
 	FreeGraphics();
+
 	// Free Sounds
-	FreeSounds();
-	
+	FreeSounds();	
 	return 0;
 }

@@ -53,7 +53,6 @@
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyHandler.cpp" />
     <ClCompile Include="..\Source\GameFiles\KeyUtil\KeyStates.cpp" />
     <ClCompile Include="..\Source\GameFiles\MainMenu.cpp" />
-    <ClCompile Include="..\Source\GameFiles\MainMenuCreate.cpp" />
     <ClCompile Include="..\Source\GameFiles\SoundReader.cpp" />
     <ClCompile Include="..\Source\GameFiles\Sounds.cpp" />
     <ClCompile Include="..\Source\GUI\ChangeSetEvent.cpp" />
@@ -80,17 +79,6 @@
     <ClCompile Include="..\Source\WorldFiles\WorldRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\External\NDYGFX\Include\GraphicsEngine.h" />
-    <ClInclude Include="..\External\NDYGFX\Include\iAnimatedMesh.h" />
-    <ClInclude Include="..\External\NDYGFX\Include\iCamera.h" />
-    <ClInclude Include="..\External\NDYGFX\Include\iGraphicsEngineParams.h" />
-    <ClInclude Include="..\External\NDYGFX\Include\iImage.h" />
-    <ClInclude Include="..\External\NDYGFX\Include\iKeyListener.h" />
-    <ClInclude Include="..\External\NDYGFX\Include\iLight.h" />
-    <ClInclude Include="..\External\NDYGFX\Include\iMesh.h" />
-    <ClInclude Include="..\External\NDYGFX\Include\iTerrain.h" />
-    <ClInclude Include="..\External\NDYGFX\Include\iText.h" />
-    <ClInclude Include="..\External\NDYGFX\Include\Vector.h" />
     <ClInclude Include="..\Source\GameFiles\AnimationStates.h" />
     <ClInclude Include="..\Source\GameFiles\ClientServerMessages.h" />
     <ClInclude Include="..\Source\GameFiles\ClientSide\AnimalObject.h" />
@@ -146,6 +134,7 @@
     <ClInclude Include="..\Source\MaloWLib\MaloWFileDebug.h" />
     <ClInclude Include="..\Source\MaloWLib\Process.h" />
     <ClInclude Include="..\Source\MaloWLib\Queue.h" />
+    <ClInclude Include="..\Source\Network\DisconnectedEvent.h" />
     <ClInclude Include="..\Source\Network\NetworkMessageConverter.h" />
     <ClInclude Include="..\Source\Network\NetworkPacket.h" />
     <ClInclude Include="..\Source\Network\ServerChannel.h" />

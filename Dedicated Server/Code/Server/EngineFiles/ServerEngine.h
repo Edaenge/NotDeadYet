@@ -17,7 +17,7 @@ public:
 	ServerEngine();
 	~ServerEngine();
 
-	char* InitHost(const int port, const int maxPlayers);
+	const char* InitHost(const unsigned int& port, const unsigned int& maxPlayers);
 	bool StartHost();
 	void ShutDownHost();
 

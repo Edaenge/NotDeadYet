@@ -37,7 +37,7 @@ class Client : public MaloW::Process, public Observer
 public:
 	Client();
 	/*! Connects to a Host with the specified parameters*/
-	int Connect(const std::string& IP, const int PORT);
+	void Connect(const std::string& IPAddress, const unsigned int &port);
 	virtual ~Client();
 	void Life();
 	/*! Checks if Thread is alive*/
@@ -74,7 +74,7 @@ private:
 	/*! Splits Network Message and detects what type was sent*/
 	void HandleNetworkMessage(const std::string& msg);
 	/*! Reads Messages from the server*/
-	void ReadMessage();
+	void ReadMessages();
 	/*! Sends an acknowledge, important message received.*/
 	void SendAck(unsigned int IM_ID);
 

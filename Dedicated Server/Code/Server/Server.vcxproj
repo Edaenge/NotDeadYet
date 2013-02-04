@@ -156,8 +156,8 @@
     <ClInclude Include="..\..\..\Source\Network\NetworkMessageConverter.h" />
     <ClInclude Include="EngineFiles\Network\ClientChannel.h" />
     <ClInclude Include="EngineFiles\Network\ClientConnectedEvent.h" />
+    <ClInclude Include="EngineFiles\Network\ClientDisconnectedEvent.h" />
     <ClInclude Include="EngineFiles\Network\NetworkPacket.h" />
-    <ClInclude Include="EngineFiles\Network\NetworkServer.h" />
     <ClInclude Include="EngineFiles\Network\ServerListener.h" />
     <ClInclude Include="EngineFiles\Network\Winsock.h" />
     <ClInclude Include="EngineFiles\ServerEngine.h" />
@@ -176,6 +176,8 @@
     <ClInclude Include="EngineFiles\Server\DynamicObjectActor.h" />
     <ClInclude Include="EngineFiles\Server\DynamicProjectileObject.h" />
     <ClInclude Include="EngineFiles\Server\FoodObject.h" />
+    <ClInclude Include="EngineFiles\Server\GamdeModeFFA.h" />
+    <ClInclude Include="EngineFiles\Server\GameMode.h" />
     <ClInclude Include="EngineFiles\Server\GhostActor.h" />
     <ClInclude Include="EngineFiles\Server\Host.h" />
     <ClInclude Include="EngineFiles\Server\MaterialObject.h" />
@@ -217,8 +219,6 @@
     <ClCompile Include="..\..\..\Source\MaloWLib\Process.cpp" />
     <ClCompile Include="..\..\..\Source\Network\NetworkMessageConverter.cpp" />
     <ClCompile Include="EngineFiles\Network\ClientChannel.cpp" />
-    <ClCompile Include="EngineFiles\Network\ClientConnectedEvent.cpp" />
-    <ClCompile Include="EngineFiles\Network\NetworkServer.cpp" />
     <ClCompile Include="EngineFiles\Network\ServerListener.cpp" />
     <ClCompile Include="EngineFiles\ServerEngine.cpp" />
     <ClCompile Include="EngineFiles\Server\Actor.cpp" />
@@ -236,6 +236,8 @@
     <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />
     <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp" />
     <ClCompile Include="EngineFiles\Server\FoodObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\GamdeModeFFA.cpp" />
+    <ClCompile Include="EngineFiles\Server\GameMode.cpp" />
     <ClCompile Include="EngineFiles\Server\GhostActor.cpp" />
     <ClCompile Include="EngineFiles\Server\Host.cpp" />
     <ClCompile Include="EngineFiles\Server\HostConversions.cpp" />
@@ -258,6 +260,9 @@
     <ClCompile Include="PhysicsEngine\PhysicsEngine.cpp" />
     <ClCompile Include="PhysicsEngine\PhysicsObject.cpp" />
     <ClCompile Include="Wrapper\ServerEngineWrapper.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
