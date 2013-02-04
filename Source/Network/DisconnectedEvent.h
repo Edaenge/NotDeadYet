@@ -13,7 +13,7 @@ class DisconnectedEvent : public MaloW::ProcessEvent
 	}
 
 public:
-	~DisconnectedEvent() {};
+	virtual ~DisconnectedEvent() {};
 
 	inline MaloW::ServerChannel* GetChannel() const { return zChannel; }
 

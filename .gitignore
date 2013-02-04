@@ -66,3 +66,7 @@
 /Dedicated Server/Bin/x86/Media/Models/Cache
 /Dedicated Server/Bin/x86/Media/Models/Flag/Cache
 /WorkingDir/MapDebugData.txt
+
+/Dedicated Server/Code/Server.sdf
+
+/WorkingDir/Media/Thumbs.db
