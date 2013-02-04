@@ -165,6 +165,7 @@
     <ClInclude Include="EngineFiles\Server\ActorHandler.h" />
     <ClInclude Include="EngineFiles\Server\AI.h" />
     <ClInclude Include="EngineFiles\Server\AnimalActor.h" />
+    <ClInclude Include="EngineFiles\Server\BearActor.h" />
     <ClInclude Include="EngineFiles\Server\BioActor.h" />
     <ClInclude Include="EngineFiles\Server\ClientData.h" />
     <ClInclude Include="EngineFiles\Server\ContainerObject.h" />
@@ -224,6 +225,7 @@
     <ClCompile Include="EngineFiles\Server\ActorHandler.cpp" />
     <ClCompile Include="EngineFiles\Server\AI.cpp" />
     <ClCompile Include="EngineFiles\Server\AnimalActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\BearActor.cpp" />
     <ClCompile Include="EngineFiles\Server\BioActor.cpp" />
     <ClCompile Include="EngineFiles\Server\ClientData.cpp" />
     <ClCompile Include="EngineFiles\Server\ContainerObject.cpp" />
