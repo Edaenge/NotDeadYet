@@ -166,6 +166,9 @@
     <ClCompile Include="EngineFiles\Server\GameMode.cpp">
       <Filter>Server\GameModes</Filter>
     </ClCompile>
+    <ClCompile Include="EngineFiles\Server\ObjectCreator.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EngineFiles\Server\Actor.h">
@@ -383,6 +386,9 @@
     </ClInclude>
     <ClInclude Include="EngineFiles\Network\ClientDisconnectedEvent.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineFiles\Server\ObjectCreator.h">
+      <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
