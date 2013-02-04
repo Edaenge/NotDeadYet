@@ -165,6 +165,7 @@
     <ClInclude Include="EngineFiles\Server\ActorHandler.h" />
     <ClInclude Include="EngineFiles\Server\AI.h" />
     <ClInclude Include="EngineFiles\Server\AnimalActor.h" />
+    <ClInclude Include="EngineFiles\Server\BearActor.h" />
     <ClInclude Include="EngineFiles\Server\BioActor.h" />
     <ClInclude Include="EngineFiles\Server\ClientData.h" />
     <ClInclude Include="EngineFiles\Server\ContainerObject.h" />
@@ -180,6 +181,7 @@
     <ClInclude Include="EngineFiles\Server\GhostActor.h" />
     <ClInclude Include="EngineFiles\Server\Host.h" />
     <ClInclude Include="EngineFiles\Server\MaterialObject.h" />
+    <ClInclude Include="EngineFiles\Server\ObjectCreator.h" />
     <ClInclude Include="EngineFiles\Server\ObjectManager.h" />
     <ClInclude Include="EngineFiles\Server\PhysicsActor.h" />
     <ClInclude Include="EngineFiles\Server\PlayerActor.h" />
@@ -224,6 +226,7 @@
     <ClCompile Include="EngineFiles\Server\ActorHandler.cpp" />
     <ClCompile Include="EngineFiles\Server\AI.cpp" />
     <ClCompile Include="EngineFiles\Server\AnimalActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\BearActor.cpp" />
     <ClCompile Include="EngineFiles\Server\BioActor.cpp" />
     <ClCompile Include="EngineFiles\Server\ClientData.cpp" />
     <ClCompile Include="EngineFiles\Server\ContainerObject.cpp" />
@@ -241,6 +244,7 @@
     <ClCompile Include="EngineFiles\Server\HostConversions.cpp" />
     <ClCompile Include="EngineFiles\Server\HostItemHandler.cpp" />
     <ClCompile Include="EngineFiles\Server\MaterialObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\ObjectCreator.cpp" />
     <ClCompile Include="EngineFiles\Server\ObjectManager.cpp" />
     <ClCompile Include="EngineFiles\Server\PhysicsActor.cpp" />
     <ClCompile Include="EngineFiles\Server\PlayerActor.cpp" />

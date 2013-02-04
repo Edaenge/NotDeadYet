@@ -270,7 +270,7 @@ void Host::Life()
 		if(this->zGameStarted)
 		{
 			waitTimer += this->zDeltaTime;
-			//PingClients();
+			PingClients();
 			UpdateObjects();
 
 			if(waitTimer >= UPDATE_DELAY)
@@ -284,11 +284,21 @@ void Host::Life()
 		}
 		else
 		{
-			if (this->zClients.size() >= this->zMinClients)
+			int clientsReady = 0;
+			for(int i = 0; i < this->zClients.size(); i++)
+			{
+				if(this->zClients.at(i)->GetReady()) clientsReady++;
+			}
+			if(clientsReady >= this->zClients.size() && this->zClients.size())
 			{
 				this->zGameStarted = true;
 				this->SendStartMessage();
 			}
+			/*if (this->zClients.size() >= this->zMinClients)
+			{
+				this->zGameStarted = true;
+				this->SendStartMessage();
+			}*/
 		}
 	
 		Sleep(5);
@@ -1306,6 +1316,11 @@ void Host::HandleReceivedMessage( const unsigned int &ID, const std::string &mes
 	else if(msgArray[0].find(M_PING.c_str()) == 0 && (c_index != -1))
 	{
 		this->zClients[c_index]->HandlePingMsg();
+	}
+	//Handles ready from client.
+	else if(msgArray[0].find(M_READY_PLAYER.c_str()) == 0 && (c_index != -1))
+	{
+		this->zClients[c_index]->SetReady(true);
 	}
 	//Handles Ack Messages
 	else if(msgArray[0].find(M_ACKNOWLEDGE_MESSAGE.c_str()) == 0 && (c_index != -1))

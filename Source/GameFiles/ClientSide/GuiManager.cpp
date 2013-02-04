@@ -29,7 +29,8 @@ GuiManager::GuiManager()
 	this->zInvCircGui = NULL;
 	this->zEng = NULL;
 
-	zSelectedItem = 0;
+	zSelectedItem = -1;
+	zSelectedType = -1;
 	zSelectedCircMenu = 0;
 	zMinorFix = false;
 }
@@ -278,6 +279,7 @@ Menu_select_data GuiManager::CheckCollisionInv()
 			Menu_select_data msd;
 			msd.zAction = (CIRCMENU)this->zSelectedCircMenu;
 			msd.zID = this->zSelectedItem;
+			msd.zType = this->zSelectedType;
 			return msd;
 		}
 		else if(!zEng->GetKeyListener()->IsClicked(2))
@@ -293,6 +295,7 @@ Menu_select_data GuiManager::CheckCollisionInv()
 		Selected_Item_ReturnData sir;
 		sir = this->zInvGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(2), zEng);
 		zSelectedItem = sir.ID;
+		zSelectedType = sir.type;
 		this->zInvCircGui->Adjust(sir.type, sir.inventory);
 		if(zSelectedItem != -1 && !this->zCircularInventorySelectionOpen && !zMinorFix)
 		{
@@ -304,6 +307,7 @@ Menu_select_data GuiManager::CheckCollisionInv()
 	Menu_select_data msd;
 	msd.zAction = (CIRCMENU)-1;
 	msd.zID = -1;
+	msd.zType = -1;
 	return msd;
 }
 

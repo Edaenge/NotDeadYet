@@ -45,9 +45,11 @@ public:
 	inline float GetCurrentPingTime() const {return zCurrentPingTime;}
 	inline float GetTotalPingTime() const {return zTotalPingTime;}
 	inline int GetNrOfPings() const {return zNrOfPings;}
+	inline bool GetReady(){ return zReady; }
 	/*! Returns the next unique important message ID.*/
 	inline const unsigned long GetNextIPID() {return zUniqeIPID++; }
 	
+	inline void SetReady(bool ready){ zReady = ready; }
 	inline void SetPinged(const bool pinged) {zPinged = pinged;}
 	inline void SetCurrentPingTime(float const cpt) {zCurrentPingTime = cpt;}
 	inline bool HasBeenPinged() const {return zPinged;}
@@ -107,6 +109,7 @@ private:
 	float zMaxPingTime;
 	int zNrOfPings;
 	int nrOfExceededMsg;
+	bool zReady;
 
 	MaloW::ClientChannel* zClient;
 	std::vector<IMessage *> zImportantMessages;

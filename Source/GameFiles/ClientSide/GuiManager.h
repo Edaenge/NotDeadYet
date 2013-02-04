@@ -12,7 +12,7 @@ struct Menu_select_data
 {
 	CIRCMENU zAction;
 	int zID;
-
+	int zType;
 };
 class GuiManager
 {
@@ -49,6 +49,7 @@ private:
 	float zInventoryGuiShowTimer;
 
 	int zSelectedItem;
+	int zSelectedType;
 	int zSelectedCircMenu;
 	bool zMinorFix;
 

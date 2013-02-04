@@ -1,6 +1,6 @@
 #pragma once
 
-static const int KEY_CAP = 16;
+static const int KEY_CAP = 17;
 
 enum KEY_BINDINGS
 {
@@ -19,5 +19,6 @@ enum KEY_BINDINGS
 	MOUSE_RIGHT_PRESS,
 	KEY_TEST,
 	KEY_EQUIP,
-	KEY_DEBUG_INFO
+	KEY_DEBUG_INFO,
+	KEY_READY
 };

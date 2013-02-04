@@ -73,7 +73,6 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 				break;
 			case CRAFT:
 				texName = "Media/Icons/Craft.png";
-				this->zOptions[i] = USE;
 				break;
 			case DROP:
 				texName = "Media/Icons/Drop.png";
@@ -83,7 +82,6 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 				break;
 			case EQUIP:
 				texName = "Media/Icons/Equip.png";
-				this->zOptions[i] = USE;
 				break;
 			case NOTHING:
 				texName = "Media/Icons/Cancel.png";
