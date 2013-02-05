@@ -9,7 +9,7 @@ class Actor // For testing
 
 class Behavior
 {
-private:
+protected:
 	Actor* zActor;
 	World* zWorld;
 public:
