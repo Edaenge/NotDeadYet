@@ -1,4 +1,6 @@
 #include "Game.h"
+#include "GameMode.h"
+#include <world/World.h>
 
 
 Game::Game( GameMode* mode, World* world ) : zGameMode(mode), zWorld(world)
@@ -8,8 +10,9 @@ Game::Game( GameMode* mode, World* world ) : zGameMode(mode), zWorld(world)
 bool Game::Update( float dt )
 {
 	// TODO: Update Behaviors
-	// TODO: Update Game Mode
-	// TODO: Update World
+
+	zGameMode->update(dt);
+	zWorld->Update();
 
 	return true;
 }
