@@ -2121,14 +2121,21 @@
             <ownedParameters>
               <operationHasOwnedParameters>
                 <parameter
-                  Id="f0e59a4b-b800-4ec0-aecf-27c84cccb8be"
+                  Id="fcb543fc-8c2d-4211-8500-9954033e252c"
+                  name="ActorSynchronizer"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="85745ef2-0b3e-49f9-8f36-e04d5005a910"
                   name="GameMode"
                   direction="In"
                   isUnique="false" />
               </operationHasOwnedParameters>
               <operationHasOwnedParameters>
                 <parameter
-                  Id="dbb15660-1fc7-42a5-aae3-9af2d42e724b"
+                  Id="3f24c91e-5d83-4f4e-8628-6de3fb2452dd"
                   name="Map"
                   direction="In"
                   isUnique="false" />
@@ -2314,7 +2321,7 @@
             isAbstract="false">
             <classMoniker
               Id="0de2ad79-47ac-4646-bdd2-afbc28218b83"
-              LastKnownName="ActorSyncher : Observer"
+              LastKnownName="ActorSynchronizer : Observer"
               LastKnownLocation="ModelingProject1.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -3288,7 +3295,7 @@
             isAbstract="false">
             <classMoniker
               Id="0de2ad79-47ac-4646-bdd2-afbc28218b83"
-              LastKnownName="ActorSyncher : Observer"
+              LastKnownName="ActorSynchronizer : Observer"
               LastKnownLocation="ModelingProject1.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -4155,7 +4162,7 @@
     <packageHasNamedElement>
       <class
         Id="0de2ad79-47ac-4646-bdd2-afbc28218b83"
-        name="ActorSyncher : Observer"
+        name="ActorSynchronizer : Observer"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">

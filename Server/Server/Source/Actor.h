@@ -4,9 +4,10 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 */
 #pragma once
 
-#include "Safe.h"
 #include <string>
-#include "Vector.h"
+#include <Vector.h>
+#include <Safe.h>
+#include <Observer.h>
 
 static const enum ACTOR_TYPE
 {
@@ -27,7 +28,7 @@ static const enum ACTOR_TYPE
    Every time an actor is created, an ID will be generated in this class. This id should be used for this actor.
    An exception is Players. They have the same ID as the ClientChannel.
 */
-class Actor
+class Actor : public Observed
 {
 public:
 	Actor()
@@ -63,6 +64,7 @@ protected:
 	std::string zActorObjectName;
 	unsigned int zActorType;
 	long zID;
+
 private:
 	static long zNextAID;
 
