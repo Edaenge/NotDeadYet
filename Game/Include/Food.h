@@ -16,7 +16,6 @@ static const enum M_FOOD_ITEM_SUB_TYPE
 class Food : public Item
 {
 public:
-	Food(const long id, const unsigned int Type, const float hunger);
 	Food(const long ID, const unsigned int Type, const unsigned int SubType, const float hunger);
 	Food(const Food& other);
 	Food(const Food* other);

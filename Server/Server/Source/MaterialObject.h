@@ -7,6 +7,14 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "StaticObjectActor.h"
 
+static const enum M_MATERIAL_OBJECT_SUB_TYPE
+{
+	OBJECT_SUB_TYPE_SMALL_STICK,
+	OBJECT_SUB_TYPE_MEDIUM_STICK,
+	OBJECT_SUB_TYPE_LARGE_STICK,
+	OBJECT_SUB_TYPE_THREAD
+};
+
 class MaterialObject : public StaticObjectActor
 {
 public:

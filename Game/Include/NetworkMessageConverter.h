@@ -91,7 +91,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_NEW_GHOST_ACTOR,
 	MESSAGE_TYPE_REMOVE_GHOST_ACTOR,
 	MESSAGE_TYPE_UPDATE_GHOST_ACTOR,
-	MESSAGE_TYPE_PLAYER_READY
+	MESSAGE_TYPE_PLAYER_READY,
+	MESSAGE_TYPE_ITEM_SUB_TYPE
 };
 //Data Messages
 static const std::string M_POSITION					= "P";
@@ -108,6 +109,7 @@ static const std::string M_FRAME_TIME				= "FT";
 static const std::string M_STAMINA					= "STAM";
 static const std::string M_STATE					= "STAT";
 static const std::string M_ITEM_TYPE				= "IT";
+static const std::string M_ITEM_SUB_TYPE			= "IST";
 static const std::string M_ITEM_ID					= "IID";
 static const std::string M_ITEM_NAME				= "IN";
 static const std::string M_ITEM_DESCRIPTION			= "IDE";

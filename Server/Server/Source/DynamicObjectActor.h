@@ -20,6 +20,7 @@ public:
 
 	int GetWeight() const {return this->zWeight;}
 	int GetType() const {return this->zType;}
+	int GetSubType() const {return this->zSubType;}
 	std::string GetDescription() const {return this->zDescription;}
 	std::string GetIconPath() const {return this->zIconPath;}
 	int GetStackSize() const {return this->zStackSize;}
@@ -33,7 +34,8 @@ public:
 	void SetIconPath(const std::string& path) {this->zIconPath = path;}
 	void SetDescription(const std::string& description) {this->zDescription = description;}
 	void SetWeight(const int weight) {this->zWeight = weight;}
-	void SetType(const int TYPE) {this->zType = TYPE;}
+	void SetType(const int Type) {this->zType = Type;}
+	void SetType(const int Type) {this->zSubType = Type;}
 	void SetStackSize(const int size) {this->zStackSize = size;}
 	void SetMoving(const bool op){this->zMoving = op;}
 
@@ -45,6 +47,7 @@ private:
 
 protected:
 	int zType;
+	int zSubType;
 	int zWeight;
 	int zStackSize;
 	int zObjPlayerOwner;

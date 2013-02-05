@@ -1,18 +1,5 @@
 #include "Item.h"
 
-Item::Item(const long ID, const unsigned int itemType)
-{
-	this->zStacks = 1;
-	this->zID = ID;
-	this->zStacks = 1;
-	this->zWeight = 0;
-	this->zItemType = itemType;
-	this->zItemName = "Unknown";
-	this->zIconPath = "Unknown";
-	this->zItemSubType = 0;
-	this->zItemDescription = "Unknown";
-}
-
 Item::Item()
 {
 	this->zID = -1;
@@ -36,7 +23,7 @@ Item::Item(const long ID, const unsigned int itemType, const unsigned int itemSu
 	this->zItemSubType = itemSubType;
 	this->zItemDescription = "Unknown";
 }
-std::string Item::ToMessageString( NetworkMessageConverter* NMC )
+std::string Item::ToMessageString(NetworkMessageConverter* NMC)
 {
 	std::string msg;
 

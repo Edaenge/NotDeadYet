@@ -94,7 +94,8 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	//Todo add map + game mode to parameters
 	std::string path = "3x3.map";
 	GameMode* gameMode = new GameModeFFA();
-	//this->zGame = new Game(gameMode, path);
+	ActorSyncher as = new ActorSyncher();
+	this->zGame = new Game(,gameMode, path);
 	try
 	{
 		if ( zServerListener ) delete zServerListener;

@@ -18,7 +18,7 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject& 
 
 
 	this->zPhysicObj = other.zPhysicObj;
-
+	this->zSubType = other.zSubType;
 	this->zType = other.zType;
 	this->zStackSize = other.zStackSize;
 	this->zDamage = other.zDamage;
@@ -39,6 +39,7 @@ DynamicProjectileObject::DynamicProjectileObject(const DynamicProjectileObject* 
 	else
 		this->zID = other->GetID();
 
+	this->zSubType = other.zSubType;
 	this->zSpeed = other->zSpeed;
 	this->zStackSize = other->zStackSize;
 	this->zDamage = other->zDamage;

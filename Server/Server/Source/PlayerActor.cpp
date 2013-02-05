@@ -117,10 +117,10 @@ void PlayerActor::Update(float deltaTime)
 	bool validMove = false;
 	SetPosition(modified);
 
-	PlayerUpdatedEvent temp = PlayerUpdatedEvent(this, validMove, this->zPreviousPos);
-	NotifyObservers( &temp);
-	if(!temp.validMove)
-		SetPosition(temp.prevPos);
+	//PlayerUpdatedEvent temp = PlayerUpdatedEvent(this, validMove, this->zPreviousPos);
+//	NotifyObservers( &temp);
+	//if(!temp.validMove)
+		//SetPosition(temp.prevPos);
 
 }
 
@@ -134,7 +134,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 		FoodObject* fo = dynamic_cast<FoodObject*>(object);
 		if(fo)
 		{
-			item = new Food(fo->GetID(), fo->GetType(), fo->GetHunger());
+			item = new Food(fo->GetID(), fo->GetType(), fo->GetSubType(), fo->GetHunger());
 
 			item->SetStacking(true);
 			item->SetItemWeight(fo->GetWeight());
@@ -158,12 +158,10 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 		WeaponObject* wo = dynamic_cast<WeaponObject*>(object);
 		if(wo)
 		{
-
 			switch (wo->GetType())
 			{
-			case ITEM_TYPE_WEAPON_MELEE_AXE:
-				item = new MeleeWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
-
+			case ITEM_TYPE_WEAPON_MELEE:
+				item = new MeleeWeapon(wo->GetID(), wo->GetType(), wo->GetSubType(), wo->GetDamage(), wo->GetRange());
 				item->SetStacking(false);
 				item->SetItemWeight(wo->GetWeight());
 				item->SetIconPath(wo->GetIconPath());
@@ -171,30 +169,9 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 				item->SetItemName(wo->GetActorObjectName());
 				item->SetItemDescription(wo->GetDescription());
 				break;
-			case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
-				item = new MeleeWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
-
+			case ITEM_TYPE_WEAPON_RANGED:
+				item = new RangedWeapon(wo->GetID(), wo->GetType(), wo->GetSubType(), wo->GetDamage(), wo->GetRange());
 				item->SetStacking(false);
-				item->SetItemWeight(wo->GetWeight());
-				item->SetIconPath(wo->GetIconPath());
-				item->SetStackSize(wo->GetStackSize());
-				item->SetItemName(wo->GetActorObjectName());
-				item->SetItemDescription(wo->GetDescription());
-				break;
-			case ITEM_TYPE_WEAPON_RANGED_BOW:
-				item = new RangedWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
-
-				item->SetStacking(false);
-				item->SetItemWeight(wo->GetWeight());
-				item->SetIconPath(wo->GetIconPath());
-				item->SetStackSize(wo->GetStackSize());
-				item->SetItemName(wo->GetActorObjectName());
-				item->SetItemDescription(wo->GetDescription());
-				break;
-			case ITEM_TYPE_WEAPON_RANGED_ROCK:
-				item = new RangedWeapon(wo->GetID(), wo->GetType(), wo->GetDamage(), wo->GetRange());
-
-				item->SetStacking(true);
 				item->SetItemWeight(wo->GetWeight());
 				item->SetIconPath(wo->GetIconPath());
 				item->SetStackSize(wo->GetStackSize());
@@ -222,7 +199,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 		ContainerObject* co = dynamic_cast<ContainerObject*>(object);
 		if(co)
 		{
-			item = new Container(co->GetID(), co->GetType(), co->GetMaxUses(), co->GetCurrentUses());
+			item = new Container(co->GetID(), co->GetType(), co->GetSubType(), co->GetMaxUses(), co->GetCurrentUses());
 
 			item->SetStacking(false);
 			item->SetItemWeight(co->GetWeight());
@@ -246,7 +223,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 		StaticProjectileObject* spo = dynamic_cast<StaticProjectileObject*>(object);
 		if(spo)
 		{
-			item = new Projectile(spo->GetID(), spo->GetType(), spo->GetSpeed(), spo->GetDamage());
+			item = new Projectile(spo->GetID(), spo->GetType(), spo->GetSubType(), spo->GetSpeed(), spo->GetDamage());
 
 			item->SetStacking(true);
 			item->SetItemWeight(spo->GetWeight());
@@ -270,7 +247,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 		MaterialObject*	mo = dynamic_cast<MaterialObject*>(object);
 		if(mo)
 		{
-			item = new Material(mo->GetID(), mo->GetType(), mo->GetCraftingType(), mo->GetRequiredStackToCraft());
+			item = new Material(mo->GetID(), mo->GetType(), mo->GetSubType(), mo->GetCraftingType(), mo->GetRequiredStackToCraft());
 
 			item->SetStacking(true);
 			item->SetItemWeight(mo->GetWeight());

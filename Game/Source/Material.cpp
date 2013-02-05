@@ -1,13 +1,5 @@
 #include "Material.h"
 
-Material::Material(const long id, const unsigned int itemType, const unsigned int craftingType, const int stacksRequiredToCraft)
-	: Item(id, itemType)
-{
-	this->zStacking = true;
-	this->zCraftingType = craftingType;
-	this->zRequiredStackToCraft = stacksRequiredToCraft;
-}
-
 Material::Material(const Material& other)
 {
 	this->zID = other.zID;
