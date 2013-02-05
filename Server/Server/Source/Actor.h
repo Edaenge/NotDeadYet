@@ -24,12 +24,31 @@ static const enum ACTOR_TYPE
 	ACTOR_TYPE_DEAD_ANIMAL
 };
 
+class ActorPositionEvent : public Event
+{
+public:
+	Actor *zActor;
+};
+
+class ActorRotationEvent : public Event
+{
+public:
+	Actor *zActor;
+};
+
+class ActorScaleEvent : public Event
+{
+public:
+	Actor *zActor;
+};
+
 /* 
    Every time an actor is created, an ID will be generated in this class. This id should be used for this actor.
    An exception is Players. They have the same ID as the ClientChannel.
 */
 class Actor : public Observed
 {
+	Vector3 zPos, zRot, zScale;
 public:
 	Actor()
 	{
@@ -52,6 +71,16 @@ public:
 	virtual void SetActorModel(const std::string& modelStr) {zActorModel = modelStr;}
 	virtual void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
 	virtual void SetUpVector(const Vector3& up){this->zUp = up;}
+
+	// Set Transformation Functions
+	void SetPosition( const Vector3& pos );
+	void SetRotation( const Vector3& rot );
+	void SetScale( const Vector3& scale );
+
+	// Get Transformation Functions
+	inline const Vector3& GetPosition() const { return zPos; }
+	inline const Vector3& GetRotation() const { return zRot; }
+	inline const Vector3& GetScale() const { return zScale; }
 
 	long GenerateID()
 	{
