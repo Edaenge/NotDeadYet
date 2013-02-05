@@ -11,7 +11,7 @@ class World;
 class GameMode;
 class Player;
 class Behavior;
-class ActorSyncher;
+class ActorSynchronizer;
 
 class Game : public Observer, public Observed
 {
@@ -23,7 +23,7 @@ class Game : public Observer, public Observed
 	std::map<Player*, KeyStates> _keyStates;
 
 public:
-	Game( ActorSyncher* syncher, GameMode* mode, const std::string& worldFile );
+	Game( ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile );
 	virtual ~Game();
 
 	// Returns false if game has finished
