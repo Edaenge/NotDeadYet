@@ -7,10 +7,19 @@
 
 #include "Item.h"
 
+static const enum M_MATERIAL_ITEM_SUB_TYPE
+{
+	ITEM_SUB_TYPE_SMALL_STICK,
+	ITEM_SUB_TYPE_MEDIUM_STICK,
+	ITEM_SUB_TYPE_LARGE_STICK,
+	ITEM_SUB_TYPE_THREAD
+};
+
 class Material : public Item
 {
 public:
 	Material(const long id, const unsigned int itemType, const unsigned int craftingType, const int stacksRequiredToCraft);
+	Material(const long id, const unsigned int itemType, const unsigned int itemSubType, const unsigned int craftingType, const int stacksRequiredToCraft);
 	Material(const Material& other);
 	Material(const Material* other);
 	virtual ~Material();

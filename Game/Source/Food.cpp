@@ -1,7 +1,7 @@
 #include "Food.h"
 
-Food::Food(const long id, const unsigned int TYPE, const float hunger)
-	: Item(id, TYPE)
+Food::Food(const long ID, const unsigned int Type, const float hunger)
+	: Item(ID, Type)
 {
 	this->zHunger = hunger;
 	this->zStacking = true;
@@ -16,6 +16,7 @@ Food::Food(const Food& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
 }
 
@@ -28,7 +29,15 @@ Food::Food(const Food* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
+}
+
+Food::Food(const long ID, const unsigned int Type, const unsigned int SubType, const float hunger)
+	: Item(ID, Type, SubType)
+{
+		this->zHunger = hunger;
+		this->zStacking = true;
 }
 
 Food::~Food()
@@ -46,7 +55,7 @@ bool Food::Use()
 	return false;
 }
 
-std::string Food::ToMessageString( NetworkMessageConverter* NMC )
+std::string Food::ToMessageString(NetworkMessageConverter* NMC)
 {
 	std::string msg = Item::ToMessageString(NMC);
 

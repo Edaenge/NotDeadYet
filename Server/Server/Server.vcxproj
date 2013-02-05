@@ -21,9 +21,13 @@
   <ItemGroup>
     <ClCompile Include="Source\Actor.cpp" />
     <ClCompile Include="Source\ActorHandler.cpp" />
+    <ClCompile Include="Source\ActorSynchronizer.cpp" />
     <ClCompile Include="Source\AI.cpp" />
+    <ClCompile Include="Source\AIDeerBehavior.cpp" />
+    <ClCompile Include="Source\AIWolfBehavior.cpp" />
     <ClCompile Include="Source\AnimalActor.cpp" />
     <ClCompile Include="Source\BearActor.cpp" />
+    <ClCompile Include="Source\Behavior.cpp" />
     <ClCompile Include="Source\BioActor.cpp" />
     <ClCompile Include="Source\ClientData.cpp" />
     <ClCompile Include="Source\ContainerObject.cpp" />
@@ -34,10 +38,10 @@
     <ClCompile Include="Source\DynamicObjectActor.cpp" />
     <ClCompile Include="Source\DynamicProjectileObject.cpp" />
     <ClCompile Include="Source\FoodObject.cpp" />
+    <ClCompile Include="Source\Game.cpp" />
+    <ClCompile Include="Source\GameModeFFA.cpp" />
     <ClCompile Include="Source\GhostActor.cpp" />
     <ClCompile Include="Source\Host.cpp" />
-    <ClCompile Include="Source\HostConversions.cpp" />
-    <ClCompile Include="Source\HostItemHandler.cpp" />
     <ClCompile Include="Source\MaterialObject.cpp" />
     <ClCompile Include="Source\ObjectManager.cpp" />
     <ClCompile Include="Source\PhysicsActor.cpp" />
@@ -45,7 +49,12 @@
     <ClCompile Include="Source\PhysicsEngine\Physics.cpp" />
     <ClCompile Include="Source\PhysicsEngine\PhysicsEngine.cpp" />
     <ClCompile Include="Source\PhysicsEngine\PhysicsObject.cpp" />
+    <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\PlayerActor.cpp" />
+    <ClCompile Include="Source\PlayerBehavior.cpp" />
+    <ClCompile Include="Source\PlayerDeerBehavior.cpp" />
+    <ClCompile Include="Source\PlayerWolfBehavior.cpp" />
+    <ClCompile Include="Source\ProjectileBehavior.cpp" />
     <ClCompile Include="Source\ServerEngine.cpp" />
     <ClCompile Include="Source\ServerEngineWrapper.cpp" />
     <ClCompile Include="Source\StaticObjectActor.cpp" />
@@ -57,10 +66,13 @@
     <ClInclude Include="Include\ServerEngineWrapper.h" />
     <ClInclude Include="Source\Actor.h" />
     <ClInclude Include="Source\ActorHandler.h" />
+    <ClInclude Include="Source\ActorSynchronizer.h" />
     <ClInclude Include="Source\AI.h" />
+    <ClInclude Include="Source\AIDeerBehavior.h" />
+    <ClInclude Include="Source\AIWolfBehavior.h" />
     <ClInclude Include="Source\AnimalActor.h" />
-    <ClInclude Include="Source\AnimalHandler.h" />
     <ClInclude Include="Source\BearActor.h" />
+    <ClInclude Include="Source\Behavior.h" />
     <ClInclude Include="Source\BioActor.h" />
     <ClInclude Include="Source\ClientData.h" />
     <ClInclude Include="Source\ContainerObject.h" />
@@ -71,6 +83,9 @@
     <ClInclude Include="Source\DynamicObjectActor.h" />
     <ClInclude Include="Source\DynamicProjectileObject.h" />
     <ClInclude Include="Source\FoodObject.h" />
+    <ClInclude Include="Source\Game.h" />
+    <ClInclude Include="Source\GameMode.h" />
+    <ClInclude Include="Source\GameModeFFA.h" />
     <ClInclude Include="Source\GhostActor.h" />
     <ClInclude Include="Source\Host.h" />
     <ClInclude Include="Source\MaterialObject.h" />
@@ -81,7 +96,12 @@
     <ClInclude Include="Source\PhysicsEngine\Physics.h" />
     <ClInclude Include="Source\PhysicsEngine\PhysicsEngine.h" />
     <ClInclude Include="Source\PhysicsEngine\PhysicsObject.h" />
+    <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\PlayerActor.h" />
+    <ClInclude Include="Source\PlayerBehavior.h" />
+    <ClInclude Include="Source\PlayerDeerBehavior.h" />
+    <ClInclude Include="Source\PlayerWolfBehavior.h" />
+    <ClInclude Include="Source\ProjectileBehavior.h" />
     <ClInclude Include="Source\ServerEngine.h" />
     <ClInclude Include="Source\StaticObjectActor.h" />
     <ClInclude Include="Source\StaticProjectileObject.h" />
