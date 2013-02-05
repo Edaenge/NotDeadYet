@@ -10,6 +10,9 @@
     <Filter Include="Include">
       <UniqueIdentifier>{ac0db977-4857-4b3e-bffd-f8d23bb19406}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Behavior">
+      <UniqueIdentifier>{89d052e5-f5c9-4937-bc7c-e0d8f27606de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PhysicsEngine\Physics.cpp">
@@ -111,6 +114,27 @@
     <ClCompile Include="Source\ServerEngineWrapper.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Behavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ProjectileBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerWolfBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AIWolfBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AIDeerBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerDeerBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -211,6 +235,27 @@
     </ClInclude>
     <ClInclude Include="Include\ServerEngineWrapper.h">
       <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Behavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerBehavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ProjectileBehavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerWolfBehavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AIWolfBehavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AIDeerBehavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerDeerBehavior.h">
+      <Filter>Source\Behavior</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
