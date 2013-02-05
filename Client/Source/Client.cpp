@@ -435,8 +435,7 @@ void Client::HandleKeyboardInput()
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-			PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
-			Equipment* eq = pObject->GetEquipmentPtr();
+			Inventory* eq = this->zPlayerInventory;
 
 			Item* item = eq->GetMeleeWeapon();
 			if (item)
@@ -455,8 +454,7 @@ void Client::HandleKeyboardInput()
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-			PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
-			Equipment* eq = pObject->GetEquipmentPtr();
+			Inventory* eq = this->zPlayerInventory;
 
 			Item* item = eq->GetRangedWeapon();
 			if (item)
@@ -476,7 +474,7 @@ void Client::HandleKeyboardInput()
 		{
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
 			PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
-			Equipment* eq = pObject->GetEquipmentPtr();
+			Inventory* eq = this->zPlayerInventory;
 
 			Item* item = eq->GetProjectile();
 			if (item)
@@ -575,7 +573,7 @@ void Client::HandleKeyboardInput()
 					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
 					PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
 
-					Equipment* eq = player->GetEquipmentPtr();
+					Inventory* eq = this->zPlayerInventory;
 					Weapon* weapon = eq->GetRangedWeapon();
 
 					if (!weapon)

@@ -76,17 +76,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Client\Source\KeyUtil\KeyBindConfig.h" />
+    <ClInclude Include="..\Client\Source\KeyUtil\Keybinds.h" />
+    <ClInclude Include="..\Client\Source\KeyUtil\KeyConverter.h" />
+    <ClInclude Include="..\Client\Source\KeyUtil\KeyHandler.h" />
     <ClInclude Include="Include\ClientServerMessages.h" />
     <ClInclude Include="Include\Container.h" />
-    <ClInclude Include="Include\Equipment.h" />
     <ClInclude Include="Include\Food.h" />
     <ClInclude Include="Include\Gear.h" />
     <ClInclude Include="Include\Inventory.h" />
     <ClInclude Include="Include\Item.h" />
-    <ClInclude Include="Include\KeyBindConfig.h" />
-    <ClInclude Include="Include\Keybinds.h" />
-    <ClInclude Include="Include\KeyConverter.h" />
-    <ClInclude Include="Include\KeyHandler.h" />
     <ClInclude Include="Include\KeyStates.h" />
     <ClInclude Include="Include\KeyValues.h" />
     <ClInclude Include="Include\Material.h" />
@@ -97,8 +96,11 @@
     <ClInclude Include="Include\Weapon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Client\Source\KeyUtil\KeyBindConfig.cpp" />
+    <ClCompile Include="..\Client\Source\KeyUtil\Keybinds.cpp" />
+    <ClCompile Include="..\Client\Source\KeyUtil\KeyConverter.cpp" />
+    <ClCompile Include="..\Client\Source\KeyUtil\KeyHandler.cpp" />
     <ClCompile Include="Source\Container.cpp" />
-    <ClCompile Include="Source\Equipment.cpp" />
     <ClCompile Include="Source\Food.cpp" />
     <ClCompile Include="Source\Gear.cpp" />
     <ClCompile Include="Source\Graphics.cpp" />

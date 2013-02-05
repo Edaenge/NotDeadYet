@@ -20,7 +20,7 @@ class Game : public Observer, public Observed
 
 public:
 	Game( GameMode* mode, World* world );
-	virtual ~Game();
+	virtual ~Game() {};
 
 	// Returns false if game has finished
 	bool Update( float dt );

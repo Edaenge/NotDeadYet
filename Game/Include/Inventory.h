@@ -7,11 +7,23 @@
 
 #include "RangedWeapon.h"
 #include "MeleeWeapon.h"
+#include "Projectile.h"
 #include "Gear.h"
 #include "Food.h"
 #include "Container.h"
 #include "Material.h"
 #include <vector>
+
+enum EQUIPMENT_SLOT
+{
+	EQUIPMENT_SLOT_AMMO,
+	EQUIPMENT_SLOT_RANGED_WEAPON,
+	EQUIPMENT_SLOT_MELEE_WEAPON,
+	EQUIPMENT_SLOT_HEAD,
+	EQUIPMENT_SLOT_CHEST,
+	EQUIPMENT_SLOT_LEGS,
+	EQUIPMENT_SLOT_BOOTS
+};
 
 /*! Class That keeps track of the inventory data*/
 class Inventory
@@ -48,19 +60,41 @@ public:
 		Doesn't delete the Item.
 	*/
 	Item* EraseItem(const long ID);
+
+	//Equipment
+	/*! Equips Weapon*/
+	void EquipRangedWeapon(RangedWeapon* weapon);
+	void EquipMeleeWeapon(MeleeWeapon* weapon);
+
+	void EquipProjectile(Projectile* projectile);
+	void UnEquipProjectile();
+	Projectile* GetProjectile();
+
+	RangedWeapon* GetRangedWeapon();
+	MeleeWeapon* GetMeleeWeapon();
+
+	void UnEquipRangedWeapon();
+	void UnEquipMeleeWeapon();
+
+	bool EquipGear(const unsigned int type, Gear* item);
+	Gear* GetGear(const unsigned int type);
+	void UnEquipGear(const unsigned int type);
+
 private:
 	/*! Array of items*/
 	std::vector<Item*> zItems;
 	/*! Array to keep track of Gui Representation*/
 	std::vector<bool> zInventorySlotBlocked;
-
 	/*! Nr of slots available in inventory == zInventorySlotBlocked array*/
 	unsigned int zSlotsAvailable;
-
 	/*! Max nr of slots in The zInventorySlotBlocked array*/
 	unsigned int zInventoryCap;
-
 	/*! Nr of slots Occupied == Current Weight*/
 	unsigned int zWeightTotal;
+
+	//Equipment Variables
+	Projectile* zProjectile;
+	RangedWeapon* zRangedWeapon;
+	MeleeWeapon* zMeleeWeapon;
+	std::vector<Gear*> zGear;
 };
-/* Weight = number of Items + blocked slots*/

@@ -11,7 +11,7 @@ bool Game::Update( float dt )
 {
 	// TODO: Update Behaviors
 
-	zGameMode->update(dt);
+	zGameMode->Update(dt);
 	zWorld->Update();
 
 	return true;

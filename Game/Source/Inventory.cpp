@@ -3,6 +3,8 @@
 #include <MaloWFileDebug.h>
 #include <Safe.h>
 
+const unsigned int GEAR_SLOTS = 4;
+
 Inventory::Inventory()
 {
 	this->zInventoryCap = 49;
@@ -16,6 +18,14 @@ Inventory::Inventory()
 		this->zInventorySlotBlocked.push_back(false);
 	}
 	this->zSlotsAvailable = this->zInventoryCap;
+
+	this->zRangedWeapon = NULL;
+	this->zMeleeWeapon = NULL;
+	this->zProjectile = NULL;
+	for (unsigned int i = 0; i < GEAR_SLOTS; i++)
+	{
+		this->zGear.push_back(NULL);
+	}
 }
 
 Inventory::Inventory(const unsigned int inventorySize)
@@ -40,6 +50,15 @@ Inventory::~Inventory()
 	{
 		SAFE_DELETE((*x));
 
+	}
+
+	SAFE_DELETE(this->zRangedWeapon);
+	SAFE_DELETE(this->zMeleeWeapon);
+	SAFE_DELETE(this->zProjectile);
+
+	for (auto x = this->zGear.begin(); x < this->zGear.end(); x++)
+	{
+		SAFE_DELETE((*x));
 	}
 }
 
@@ -226,4 +245,107 @@ Item* Inventory::EraseItem(const long ID)
 		return item;
 	}
 	return NULL;
+}
+
+//Equipment
+void Inventory::EquipRangedWeapon(RangedWeapon* weapon)
+{
+	this->zRangedWeapon = weapon;
+}
+
+void Inventory::EquipMeleeWeapon(MeleeWeapon* weapon)
+{
+	this->zMeleeWeapon = weapon;
+}
+
+bool Inventory::EquipGear(const unsigned int type, Gear* item)
+{
+	if (type < GEAR_SLOTS)
+	{
+		this->zGear[type] = item;
+		return true;
+	}
+	return false;
+}
+
+Gear* Inventory::GetGear(const unsigned int type)
+{
+	if (type < GEAR_SLOTS)
+	{
+		return this->zGear[type];
+	}
+	return NULL;
+}
+
+void Inventory::UnEquipGear(const unsigned int type)
+{
+	if (type < GEAR_SLOTS)
+	{
+		this->zGear[type] = NULL;
+	}
+}
+
+MeleeWeapon* Inventory::GetMeleeWeapon()
+{
+	return this->zMeleeWeapon;
+}
+
+RangedWeapon* Inventory::GetRangedWeapon()
+{
+	return this->zRangedWeapon;
+}
+
+void Inventory::UnEquipRangedWeapon()
+{
+	if (Messages::FileWrite())
+		Messages::Debug("UnEquipped Weapon");
+
+	this->zRangedWeapon = NULL;
+}
+
+void Inventory::UnEquipMeleeWeapon()
+{
+	if (Messages::FileWrite())
+		Messages::Debug("UnEquipped Weapon");
+
+	this->zMeleeWeapon = NULL;
+}
+
+void Inventory::EquipProjectile(Projectile* projectile)
+{
+	if (!projectile)
+		return;
+
+	if (this->zProjectile)
+	{
+		if (Messages::FileWrite())
+			Messages::Debug("Equipped projectile");
+
+		if (this->zProjectile->GetItemType() == projectile->GetItemType())
+		{
+			int totalStacks = this->zProjectile->GetStackSize() + projectile->GetStackSize();
+			this->zProjectile->SetStackSize(totalStacks);
+		}
+		else
+		{
+			this->zProjectile = projectile;
+		}
+	}
+	else
+	{
+		this->zProjectile = projectile;
+	}
+
+}
+
+void Inventory::UnEquipProjectile()
+{
+	if (Messages::FileWrite())
+		Messages::Debug("UnEquipped Projectile");
+
+	this->zProjectile = NULL;
+}
+Projectile* Inventory::GetProjectile()
+{
+	return this->zProjectile;
 }

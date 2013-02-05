@@ -30,7 +30,6 @@ void PlayerActor::InitValues()
 	this->zHydrationMax = 100.0f;
 	this->zInitialDirection = Vector3(0,0,-1);
 	this->zInventory = new Inventory();
-	this->zEquipment = new Equipment();
 	this->zActorType = ACTOR_TYPE_PLAYER;
 
 	this->zHungerChanged = true;
@@ -40,7 +39,6 @@ void PlayerActor::InitValues()
 PlayerActor::~PlayerActor()
 {
 	SAFE_DELETE(this->zInventory);
-	SAFE_DELETE(this->zEquipment);
 }
 
 void PlayerActor::Update(float deltaTime)
