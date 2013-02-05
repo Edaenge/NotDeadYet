@@ -35,7 +35,6 @@
     <ClCompile Include="Source\DynamicProjectileObject.cpp" />
     <ClCompile Include="Source\FoodObject.cpp" />
     <ClCompile Include="Source\Game.cpp" />
-    <ClCompile Include="Source\GameMode.cpp" />
     <ClCompile Include="Source\GhostActor.cpp" />
     <ClCompile Include="Source\Host.cpp" />
     <ClCompile Include="Source\MaterialObject.cpp" />

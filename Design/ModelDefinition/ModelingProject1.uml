@@ -2075,42 +2075,6 @@
         </ownedAttributesInternal>
         <ownedOperationsInternal>
           <operation
-            Id="d0b46d08-5e96-4e4e-b06b-df113a4bf779"
-            name="NewPlayerEvent"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false">
-            <ownedParameters>
-              <operationHasOwnedParameters>
-                <parameter
-                  Id="c09ecc13-dda6-4eaf-bce7-02934b27c987"
-                  name="ClientData*"
-                  direction="In"
-                  isUnique="false" />
-              </operationHasOwnedParameters>
-            </ownedParameters>
-          </operation>
-          <operation
-            Id="83299b43-e440-4091-b00f-f85b8851d203"
-            name="PlayerQuitEvent"
-            isLeaf="false"
-            isStatic="false"
-            isAbstract="false"
-            concurrency="Sequential"
-            isQuery="false">
-            <ownedParameters>
-              <operationHasOwnedParameters>
-                <parameter
-                  Id="383dc7c1-0682-4ea5-b124-ffee79bd7789"
-                  name="ClientData*"
-                  direction="In"
-                  isUnique="false" />
-              </operationHasOwnedParameters>
-            </ownedParameters>
-          </operation>
-          <operation
             Id="f5b309b9-3cd5-40b7-86ea-eb77c6b06d5a"
             name="bool update"
             isLeaf="false"
