@@ -34,6 +34,7 @@
     <ClCompile Include="Source\DynamicObjectActor.cpp" />
     <ClCompile Include="Source\DynamicProjectileObject.cpp" />
     <ClCompile Include="Source\FoodObject.cpp" />
+    <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\GhostActor.cpp" />
     <ClCompile Include="Source\Host.cpp" />
     <ClCompile Include="Source\HostConversions.cpp" />
@@ -45,6 +46,7 @@
     <ClCompile Include="Source\PhysicsEngine\Physics.cpp" />
     <ClCompile Include="Source\PhysicsEngine\PhysicsEngine.cpp" />
     <ClCompile Include="Source\PhysicsEngine\PhysicsObject.cpp" />
+    <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\PlayerActor.cpp" />
     <ClCompile Include="Source\ServerEngine.cpp" />
     <ClCompile Include="Source\ServerEngineWrapper.cpp" />
@@ -71,6 +73,7 @@
     <ClInclude Include="Source\DynamicObjectActor.h" />
     <ClInclude Include="Source\DynamicProjectileObject.h" />
     <ClInclude Include="Source\FoodObject.h" />
+    <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\GhostActor.h" />
     <ClInclude Include="Source\Host.h" />
     <ClInclude Include="Source\MaterialObject.h" />
@@ -81,6 +84,7 @@
     <ClInclude Include="Source\PhysicsEngine\Physics.h" />
     <ClInclude Include="Source\PhysicsEngine\PhysicsEngine.h" />
     <ClInclude Include="Source\PhysicsEngine\PhysicsObject.h" />
+    <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\PlayerActor.h" />
     <ClInclude Include="Source\ServerEngine.h" />
     <ClInclude Include="Source\StaticObjectActor.h" />
