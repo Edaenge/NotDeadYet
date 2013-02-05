@@ -12,6 +12,9 @@
     <Filter Include="Source Files\World">
       <UniqueIdentifier>{7718bf89-5125-4831-9892-d743849daaa4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\World">
+      <UniqueIdentifier>{3ae0a3bd-b76c-4fc4-82c6-cbe7082a447f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\KeyStates.h">
@@ -67,6 +70,33 @@
     </ClInclude>
     <ClInclude Include="..\Client\Source\KeyUtil\KeyHandler.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\World\Observer.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\World\Sector.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\World\World.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\World\WorldEvents.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\World\WorldFile.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\World\WorldRenderer.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\World\CircleAndRect.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\World\Entity.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\World\EntityList.h">
+      <Filter>Header Files\World</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

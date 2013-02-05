@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Actor.cpp" />
     <ClCompile Include="Source\ActorHandler.cpp" />
-    <ClCompile Include="Source\ActorManager.cpp" />
+    <ClCompile Include="Source\ActorSynchronizer.cpp" />
     <ClCompile Include="Source\AI.cpp" />
     <ClCompile Include="Source\AIDeerBehavior.cpp" />
     <ClCompile Include="Source\AIWolfBehavior.cpp" />
@@ -39,6 +39,7 @@
     <ClCompile Include="Source\DynamicProjectileObject.cpp" />
     <ClCompile Include="Source\FoodObject.cpp" />
     <ClCompile Include="Source\Game.cpp" />
+    <ClCompile Include="Source\GameModeFFA.cpp" />
     <ClCompile Include="Source\GhostActor.cpp" />
     <ClCompile Include="Source\Host.cpp" />
     <ClCompile Include="Source\MaterialObject.cpp" />
@@ -65,7 +66,7 @@
     <ClInclude Include="Include\ServerEngineWrapper.h" />
     <ClInclude Include="Source\Actor.h" />
     <ClInclude Include="Source\ActorHandler.h" />
-    <ClInclude Include="Source\ActorManager.h" />
+    <ClInclude Include="Source\ActorSynchronizer.h" />
     <ClInclude Include="Source\AI.h" />
     <ClInclude Include="Source\AIDeerBehavior.h" />
     <ClInclude Include="Source\AIWolfBehavior.h" />
@@ -84,6 +85,7 @@
     <ClInclude Include="Source\FoodObject.h" />
     <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\GameMode.h" />
+    <ClInclude Include="Source\GameModeFFA.h" />
     <ClInclude Include="Source\GhostActor.h" />
     <ClInclude Include="Source\Host.h" />
     <ClInclude Include="Source\MaterialObject.h" />

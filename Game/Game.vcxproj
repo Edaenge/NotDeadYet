@@ -94,6 +94,15 @@
     <ClInclude Include="Include\Projectile.h" />
     <ClInclude Include="Include\RangedWeapon.h" />
     <ClInclude Include="Include\Weapon.h" />
+    <ClInclude Include="Include\World\CircleAndRect.h" />
+    <ClInclude Include="Include\World\Entity.h" />
+    <ClInclude Include="Include\World\EntityList.h" />
+    <ClInclude Include="Include\World\Observer.h" />
+    <ClInclude Include="Include\World\Sector.h" />
+    <ClInclude Include="Include\World\World.h" />
+    <ClInclude Include="Include\World\WorldEvents.h" />
+    <ClInclude Include="Include\World\WorldFile.h" />
+    <ClInclude Include="Include\World\WorldRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Client\Source\KeyUtil\KeyBindConfig.cpp" />
