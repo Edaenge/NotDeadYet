@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ClientChannel.h"
+#include <ClientChannel.h>
 
 class Player
 {

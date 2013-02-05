@@ -35,6 +35,8 @@
     <ClCompile Include="Source\DynamicProjectileObject.cpp" />
     <ClCompile Include="Source\FoodObject.cpp" />
     <ClCompile Include="Source\Game.cpp" />
+    <ClCompile Include="Source\GameMode.cpp" />
+    <ClCompile Include="Source\GameModeFFA.cpp" />
     <ClCompile Include="Source\GhostActor.cpp" />
     <ClCompile Include="Source\Host.cpp" />
     <ClCompile Include="Source\MaterialObject.cpp" />
@@ -72,6 +74,8 @@
     <ClInclude Include="Source\DynamicProjectileObject.h" />
     <ClInclude Include="Source\FoodObject.h" />
     <ClInclude Include="Source\Game.h" />
+    <ClInclude Include="Source\GameMode.h" />
+    <ClInclude Include="Source\GameModeFFA.h" />
     <ClInclude Include="Source\GhostActor.h" />
     <ClInclude Include="Source\Host.h" />
     <ClInclude Include="Source\MaterialObject.h" />

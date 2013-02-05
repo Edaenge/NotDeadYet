@@ -111,6 +111,12 @@
     <ClCompile Include="Source\Player.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GameMode.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameModeFFA.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -216,6 +222,12 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\Player.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameMode.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameModeFFA.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
