@@ -7,7 +7,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "Actor.h"
 #include "NetworkMessageConverter.h"
-
+/*
 static const enum M_OBJECT_TYPE
 {
 	OBJECT_TYPE_WEAPON_RANGED_BOW,
@@ -28,6 +28,17 @@ static const enum M_OBJECT_TYPE
 	OBJECT_TYPE_MATERIAL_LARGE_STICK,
 	OBJECT_TYPE_MATERIAL_THREAD
 };
+*/
+static const enum M_OBJECT_TYPE
+{
+	OBJECT_TYPE_WEAPON_RANGED,
+	OBJECT_TYPE_WEAPON_MELEE,
+	OBJECT_TYPE_PROJECTILE,
+	OBJECT_TYPE_CONTAINER,
+	OBJECT_TYPE_FOOD,
+	OBJECT_TYPE_MATERIAL,
+	OBJECT_TYPE_GEAR
+};
 /*Class for Static objects, such as Food, Weapons basically things that cannot move.*/
 class StaticObjectActor : public Actor
 {
@@ -38,6 +49,7 @@ public:
 	
 	int GetWeight() const {return this->zWeight;}
 	int GetType() const {return this->zType;}
+	int GetSubType() const {return this->zSubType;}
 	std::string GetDescription() const {return this->zDescription;}
 	std::string GetIconPath() const {return this->zIconPath;}
 	/*! Returns number of stacks the object has.*/
@@ -49,7 +61,8 @@ public:
 	void SetIconPath(const std::string& path) {this->zIconPath = path;}
 	void SetDescription(const std::string& description) {this->zDescription = description;}
 	void SetWeight(const int weight) {this->zWeight = weight;}
-	void SetType(const int TYPE) {this->zType = TYPE;}
+	void SetType(const int Type) {this->zType = Type;}
+	void SetItemSubType(const int SubType) {this->zSubType = SubType;}
 	void SetStackSize(const int size) {this->zStacks = size;}
 	inline void SetPosition(const Vector3& pos) {zPos = pos;}
 	inline void SetRotation(const Vector4& rot) {zRot = rot;}
@@ -62,6 +75,7 @@ protected:
 	bool zScaleChanged;
 	int zWeight;
 	int zType;
+	int zSubType;
 	int zStacks;
 	std::string zDescription;
 	std::string zIconPath;

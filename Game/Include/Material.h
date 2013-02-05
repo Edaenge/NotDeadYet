@@ -18,7 +18,6 @@ static const enum M_MATERIAL_ITEM_SUB_TYPE
 class Material : public Item
 {
 public:
-	Material(const long id, const unsigned int itemType, const unsigned int craftingType, const int stacksRequiredToCraft);
 	Material(const long id, const unsigned int itemType, const unsigned int itemSubType, const unsigned int craftingType, const int stacksRequiredToCraft);
 	Material(const Material& other);
 	Material(const Material* other);

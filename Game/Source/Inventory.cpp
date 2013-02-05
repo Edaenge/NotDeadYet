@@ -79,7 +79,7 @@ bool Inventory::AddItem(Item* item)
 
 		if (item->GetStacking())
 		{
-			Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType());
+			Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType(), item->GetItemSubType());
 			if (existingItem)
 			{
 				if (existingItem->GetItemType() == item->GetItemType())
@@ -209,18 +209,6 @@ int Inventory::SearchForItemType(const unsigned int TYPE)
 	}
 
 	return counter;
-}
-
-Item* Inventory::SearchAndGetItemFromType(const int Type)
-{
-	for (auto it = this->zItems.begin(); it < this->zItems.end(); it++)
-	{
-		if ((*it)->GetItemType() == Type)
-		{
-			return (*it);
-		}
-	}
-	return NULL;
 }
 
 Item* Inventory::SearchAndGetItemFromType(const int Type, const int SubType)

@@ -1,12 +1,5 @@
 #include "Food.h"
 
-Food::Food(const long ID, const unsigned int Type, const float hunger)
-	: Item(ID, Type)
-{
-	this->zHunger = hunger;
-	this->zStacking = true;
-}
-
 Food::Food(const Food& other)
 {
 	this->zID = other.zID;

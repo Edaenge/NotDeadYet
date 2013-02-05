@@ -1,7 +1,7 @@
 #include "RangedWeapon.h"
 
-RangedWeapon::RangedWeapon(const long id, const unsigned int itemType, const float damage, const float range)
-						   : Weapon(id, itemType, damage, range)
+RangedWeapon::RangedWeapon(const long ID, const unsigned int itemType, const int itemSubType, 
+						   const float damage, const float range) : Weapon(ID, itemType, itemSubType, damage, range)
 {
 	this->zStacking = false;
 }
@@ -32,12 +32,6 @@ RangedWeapon::RangedWeapon(const RangedWeapon* other)
 	this->zItemType = other->zItemType;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
-}
-
-RangedWeapon::RangedWeapon(const long ID, const unsigned int itemType, const int itemSubType, 
-						   const float damage, const float range) : Weapon(ID, itemType, itemSubType, damage, range)
-{
-	this->zStacking = false;
 }
 
 RangedWeapon::~RangedWeapon()

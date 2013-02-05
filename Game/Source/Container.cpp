@@ -1,8 +1,7 @@
 #include "Container.h"
 
-
-Container::Container(const long id, const unsigned int itemType, 
-					 const int maxUse, const int currUse) : Item(id, itemType)
+Container::Container(const long ID, const unsigned int itemType, const unsigned int itemSubType,
+					 const int maxUse, const int currUse) : Item(ID, itemType, itemSubType)
 {
 	this->zStacking = false;
 	this->zMaxUses = maxUse;
@@ -18,6 +17,7 @@ Container::Container(const Container& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zItemSubType = other.zItemSubType;
 	this->zUsesRemaining = other.zUsesRemaining;
 	this->zItemDescription = other.zItemDescription;
 }
@@ -31,16 +31,9 @@ Container::Container(const Container* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zItemSubType = other->zItemSubType;
 	this->zUsesRemaining = other->zUsesRemaining;
 	this->zItemDescription = other->zItemDescription;
-}
-
-Container::Container(const long ID, const unsigned int itemType, const unsigned int itemSubType,
-					 const int maxUse, const int currUse) : Item(ID, itemType, itemSubType)
-{
-	this->zStacking = false;
-	this->zMaxUses = maxUse;
-	this->zUsesRemaining = currUse;
 }
 
 Container::~Container()

@@ -18,14 +18,7 @@ static const enum M_WEAPON_ITEM_SUB_TYPE
 class Weapon : public Item
 {
 public:
-	Weapon() : Item() {this->zDamage = 0; this->zRange = 0;}
-	Weapon(const long id, const unsigned int itemType, 
-		const float damage, const float range)
-		: Item(id, itemType)
-	{
-		this->zDamage = damage; 
-		this->zRange = range;
-	}
+	Weapon() {this->zDamage = 0; this->zRange = 0;}
 	Weapon(const long id, const unsigned int itemType, const unsigned int itemSubType, 
 		const float damage, const float range)
 		: Item(id, itemType, itemSubType)

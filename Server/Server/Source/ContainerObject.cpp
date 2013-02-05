@@ -23,6 +23,7 @@ ContainerObject::ContainerObject(const ContainerObject& other, const bool genID 
 	this->zWeight = other.zWeight;
 	this->zMaxUse = other.zMaxUse;
 	this->zStacks = other.zStacks;
+	this->zSubType = other.zSubType;
 	this->zUsesLeft = other.zUsesLeft;
 	this->zIconPath = other.zIconPath;
 	this->zActorModel = other.zActorModel;
@@ -44,6 +45,7 @@ ContainerObject::ContainerObject(const ContainerObject* other, const bool genID 
 	this->zWeight = other->zWeight;
 	this->zMaxUse = other->zMaxUse;
 	this->zStacks = other->zStacks;
+	this->zSubType = other->zSubType;
 	this->zUsesLeft = other->zUsesLeft;
 	this->zIconPath = other->zIconPath;
 	this->zActorModel = other->zActorModel;

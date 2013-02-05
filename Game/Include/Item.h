@@ -7,7 +7,7 @@
 
 #include <string>
 #include "NetworkMessageConverter.h"
-
+/*
 static const enum M_ITEM_TYPE
 {
 	ITEM_TYPE_WEAPON_RANGED_BOW,
@@ -28,7 +28,7 @@ static const enum M_ITEM_TYPE
 	ITEM_TYPE_MATERIAL_LARGE_STICK,
 	ITEM_TYPE_MATERIAL_THREAD
 };
-/*
+*/
 static const enum M_ITEM_TYPE
 {
 	ITEM_TYPE_WEAPON_RANGED,
@@ -38,13 +38,12 @@ static const enum M_ITEM_TYPE
 	ITEM_TYPE_FOOD,
 	ITEM_TYPE_MATERIAL,
 	ITEM_TYPE_GEAR
-};*/
+};
 /*! Abstract class for Items*/
 class Item
 {
 public:
 	Item();
-	Item(const long ID, const unsigned int itemType);
 	Item(const long ID, const unsigned int itemType, const unsigned int itemSubType);
 	virtual ~Item(){}
 	/*! Returns Item ID*/

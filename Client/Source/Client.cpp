@@ -608,7 +608,7 @@ void Client::HandleWeaponEquips()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_RANGED_BOW);
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW);
 			if (item)
 			{
 				SendUseItemMessage(item->GetID());
@@ -622,7 +622,7 @@ void Client::HandleWeaponEquips()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_PROJECTILE_ARROW);
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_PROJECTILE, ITEM_SUB_TYPE_ARROW);
 			if (item)
 			{
 				SendUseItemMessage(item->GetID());
@@ -636,7 +636,7 @@ void Client::HandleWeaponEquips()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_RANGED_ROCK);
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_PROJECTILE, ITEM_SUB_TYPE_ROCK);
 			if (item)
 			{
 				SendUseItemMessage(item->GetID());
@@ -650,7 +650,7 @@ void Client::HandleWeaponEquips()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE_AXE);
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE, ITEM_SUB_TYPE_AXE);
 			if (item)
 			{
 				SendUseItemMessage(item->GetID());
@@ -664,7 +664,7 @@ void Client::HandleWeaponEquips()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE);
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE, ITEM_SUB_TYPE_POCKET_KNIFE);
 			if (item)
 			{
 				SendUseItemMessage(item->GetID());
