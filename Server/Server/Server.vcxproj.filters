@@ -54,9 +54,6 @@
     <ClCompile Include="Source\Game.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GameMode.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Player.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -149,6 +146,9 @@
     </ClCompile>
     <ClCompile Include="Source\AIWolfBehavior.cpp">
       <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ActorSynchronizer.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -280,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="Source\PlayerDeerBehavior.h">
       <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ActorSynchronizer.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
