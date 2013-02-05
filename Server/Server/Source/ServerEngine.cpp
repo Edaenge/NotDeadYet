@@ -21,7 +21,7 @@ bool ServerEngine::IsRunning() const
 
 int ServerEngine::GetNrOfPlayers() const
 {
-	return this->zHost->GetNrOfPlayers();
+	return 0;//this->zHost->GetNrOfPlayers();
 }
 
 bool ServerEngine::StartHost()
