@@ -30,12 +30,6 @@
     <ClCompile Include="Source\Host.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\HostConversions.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\HostItemHandler.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\MaterialObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>

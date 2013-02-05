@@ -36,8 +36,6 @@
     <ClCompile Include="Source\FoodObject.cpp" />
     <ClCompile Include="Source\GhostActor.cpp" />
     <ClCompile Include="Source\Host.cpp" />
-    <ClCompile Include="Source\HostConversions.cpp" />
-    <ClCompile Include="Source\HostItemHandler.cpp" />
     <ClCompile Include="Source\MaterialObject.cpp" />
     <ClCompile Include="Source\ObjectManager.cpp" />
     <ClCompile Include="Source\PhysicsActor.cpp" />
