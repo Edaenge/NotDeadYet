@@ -51,27 +51,6 @@
     <ClCompile Include="Source\ServerEngineWrapper.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Behavior.cpp">
-      <Filter>Source\Behavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PlayerBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ProjectileBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PlayerWolfBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AIWolfBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AIDeerBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PlayerDeerBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Game.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -147,6 +126,30 @@
     <ClCompile Include="Source\ObjectManager.cpp">
       <Filter>Source\Handlers</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GameModeFFA.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerWolfBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ProjectileBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Behavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerDeerBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AIDeerBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AIWolfBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -178,27 +181,6 @@
     </ClInclude>
     <ClInclude Include="Include\ServerEngineWrapper.h">
       <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Behavior.h">
-      <Filter>Source\Behavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PlayerBehavior.h">
-      <Filter>Source\Behavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ProjectileBehavior.h">
-      <Filter>Source\Behavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PlayerWolfBehavior.h">
-      <Filter>Source\Behavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AIWolfBehavior.h">
-      <Filter>Source\Behavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AIDeerBehavior.h">
-      <Filter>Source\Behavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PlayerDeerBehavior.h">
-      <Filter>Source\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game.h">
       <Filter>Source</Filter>
@@ -274,6 +256,30 @@
     </ClInclude>
     <ClInclude Include="Source\ObjectManager.h">
       <Filter>Source\Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameModeFFA.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AIDeerBehavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AIWolfBehavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerWolfBehavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ProjectileBehavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerBehavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Behavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerDeerBehavior.h">
+      <Filter>Source\Behavior</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

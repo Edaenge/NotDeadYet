@@ -92,6 +92,7 @@ void Host::Life()
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients)
 {
 	//Todo add map + game mode to parameters
+	this->zGame = NULL;
 	try
 	{
 		if ( zServerListener ) delete zServerListener;
