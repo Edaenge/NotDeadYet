@@ -128,3 +128,9 @@ void ClientChannel::CloseSpecific()
 		}
 	}
 }
+
+void MaloW::ClientChannel::Disconnect()
+{
+	CloseSpecific();
+	this->zNotifier->PutEvent(new ClientDisconnectedEvent(this));
+}
