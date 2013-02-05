@@ -1,9 +1,9 @@
 #include "Host.h"
-
+/*
 bool Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
 {
 	FoodObject* foodObj = NULL;
-	if (!this->CreateStaticObjectActor(food_Item->GetItemType(), &foodObj))
+	if (!this->zGameMode->GetObjectCreatorPtr()->CreateStaticObjectActor(food_Item->GetItemType(), foodObj))
 	{
 		MaloW::Debug("Failed to Create StaticObject Food");
 		SAFE_DELETE(foodObj);
@@ -17,7 +17,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Food* food_Item)
 
 	this->SendRemoveItemMessage(pActor->GetID(), food_Item->GetID());
 
-	this->zActorHandler->AddNewStaticFoodActor(foodObj);
+	this->zGameMode->GetActorHandlerPtr()->AddNewStaticFoodActor(foodObj);
 
 	this->SendNewObjectMessage(foodObj);
 
@@ -28,7 +28,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 {
 	WeaponObject* weaponObj = NULL;
 
-	if (!this->CreateStaticObjectActor(weapon_Item->GetItemType(), &weaponObj))
+	if (!this->zGameMode->GetObjectCreatorPtr()->CreateStaticObjectActor(weapon_Item->GetItemType(), weaponObj))
 	{
 		MaloW::Debug("Failed to Create StaticObject Weapon");
 		SAFE_DELETE(weaponObj);
@@ -40,7 +40,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item)
 
 	this->SendRemoveItemMessage(pActor->GetID(), weapon_Item->GetID());
 
-	this->zActorHandler->AddNewStaticWeaponActor(weaponObj);
+	this->zGameMode->GetActorHandlerPtr()->AddNewStaticWeaponActor(weaponObj);
 
 	this->SendNewObjectMessage(weaponObj);
 
@@ -51,7 +51,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Projectile* projectile_Item
 {
 	StaticProjectileObject* projectileObj = NULL;
 
-	if (!this->CreateStaticObjectActor(projectile_Item->GetItemType(), &projectileObj))
+	if (!this->zGameMode->GetObjectCreatorPtr()->CreateStaticObjectActor(projectile_Item->GetItemType(), projectileObj))
 	{
 		MaloW::Debug("Failed to Create StaticObject Projectile");
 		SAFE_DELETE(projectileObj);
@@ -63,7 +63,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Projectile* projectile_Item
 
 	this->SendRemoveItemMessage(pActor->GetID(), projectile_Item->GetID());
 
-	this->zActorHandler->AddNewStaticProjectileActor(projectileObj);
+	this->zGameMode->GetActorHandlerPtr()->AddNewStaticProjectileActor(projectileObj);
 
 	this->SendNewObjectMessage(projectileObj);
 
@@ -74,7 +74,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Material* material_Item)
 {
 	MaterialObject* materialObj = NULL;
 
-	if (!this->CreateStaticObjectActor(material_Item->GetItemType(), &materialObj))
+	if (!this->zGameMode->GetObjectCreatorPtr()->CreateStaticObjectActor(material_Item->GetItemType(), materialObj))
 	{
 		MaloW::Debug("Failed to Create StaticObject Projectile");
 		SAFE_DELETE(materialObj);
@@ -86,7 +86,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Material* material_Item)
 
 	this->SendRemoveItemMessage(pActor->GetID(), material_Item->GetID());
 
-	this->zActorHandler->AddNewStaticMaterialObject(materialObj);
+	this->zGameMode->GetActorHandlerPtr()->AddNewStaticMaterialObject(materialObj);
 
 	this->SendNewObjectMessage(materialObj);
 
@@ -97,7 +97,7 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Container* container_Item)
 {
 	ContainerObject* containerObj = NULL;
 
-	if (!this->CreateStaticObjectActor(container_Item->GetItemType(), &containerObj))
+	if (!this->zGameMode->GetObjectCreatorPtr()->CreateStaticObjectActor(container_Item->GetItemType(), containerObj))
 	{
 		MaloW::Debug("Failed to Create StaticObject Container");
 		SAFE_DELETE(containerObj);
@@ -109,13 +109,13 @@ bool Host::CreateObjectFromItem(PlayerActor* pActor, Container* container_Item)
 
 	SendRemoveItemMessage(pActor->GetID(), container_Item->GetID());
 
-	this->zActorHandler->AddNewStaticContainerActor(containerObj);
+	this->zGameMode->GetActorHandlerPtr()->AddNewStaticContainerActor(containerObj);
 
 	this->SendNewObjectMessage(containerObj);
 
 	return true;
 }
-
+*/
 bool Host::CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj)
 {
 	this->SendAddInventoryItemMessage(pActor->GetID(), foodObj);
@@ -124,7 +124,7 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, FoodObject* foodObj)
 
 	this->SendToAllClients(removeMsg);
 
-	if(!this->zActorHandler->RemoveStaticFoodActor(foodObj->GetID()))
+	if(!this->zGameMode->GetActorHandlerPtr()->RemoveStaticFoodActor(foodObj->GetID()))
 		MaloW::Debug("Failed to remove static object food.");
 
 	return true;
@@ -138,7 +138,7 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, WeaponObject* weaponObj)
 
 	this->SendToAllClients(removeMsg);
 
-	if(this->zActorHandler->RemoveStaticWeaponActor(weaponObj->GetID()))
+	if(this->zGameMode->GetActorHandlerPtr()->RemoveStaticWeaponActor(weaponObj->GetID()))
 		MaloW::Debug("Failed to remove static object weapon.");
 
 	return true;
@@ -152,7 +152,7 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, ContainerObject* containerO
 
 	this->SendToAllClients(removeMsg);
 
-	if(this->zActorHandler->RemoveStaticContainerActor(containerObj->GetID()))
+	if(this->zGameMode->GetActorHandlerPtr()->RemoveStaticContainerActor(containerObj->GetID()))
 		MaloW::Debug("Failed to remove static object container.");
 
 	return true;
@@ -166,7 +166,7 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, StaticProjectileObject* pro
 
 	this->SendToAllClients(removeMsg);
 
-	if(this->zActorHandler->RemoveStaticProjectileActor(projectileObj->GetID()))
+	if(this->zGameMode->GetActorHandlerPtr()->RemoveStaticProjectileActor(projectileObj->GetID()))
 		MaloW::Debug("Failed to remove static object projectile.");
 
 	return true;
@@ -180,7 +180,7 @@ bool Host::CreateItemFromObject(PlayerActor* pActor, MaterialObject* materialObj
 
 	this->SendToAllClients(removeMsg);
 
-	if(this->zActorHandler->RemoveStaticMaterialActor(materialObj->GetID()))
+	if(this->zGameMode->GetActorHandlerPtr()->RemoveStaticMaterialActor(materialObj->GetID()))
 		MaloW::Debug("Failed to remove static object material.");
 
 	return true;
@@ -201,5 +201,5 @@ void Host::HandleConversion(DynamicProjectileObject* dynamicProjObj)
 
 	this->SendNewObjectMessage(staticProjObj);
 
-	this->zActorHandler->AddNewStaticProjectileActor(staticProjObj);
+	this->zGameMode->GetActorHandlerPtr()->AddNewStaticProjectileActor(staticProjObj);
 }

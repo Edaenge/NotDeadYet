@@ -181,12 +181,13 @@ void Client::Life()
 	{
 		this->Update();
 
+		this->HandleKeyboardInput();
 		if(this->zCreated && this->zGameStarted)
 		{
 			this->zSendUpdateDelayTimer += this->zDeltaTime;
 			this->zTimeSinceLastPing += this->zDeltaTime;
 
-			this->HandleKeyboardInput();
+			
 
  			if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
  			{
@@ -218,6 +219,7 @@ void Client::Life()
 		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 		{
 			this->zGuiManager->ToggleIngameMenu();
+			this->CloseConnection("");
 		}
 
 		Sleep(5);
@@ -289,7 +291,7 @@ void Client::UpdateCameraPos()
 	{
 		Vector3 position = this->zObjectManager->GetPlayerObject(index)->GetPosition();
 
-		position.y += 2.0f;
+		position.y += 1.7f;
 		this->zEng->GetCamera()->SetPosition(position);
 	}
 
@@ -406,7 +408,7 @@ void Client::HandleKeyboardInput()
 		{
 			if (msd.zID != -1)
 			{
-				if (msd.zAction == USE)
+				if (msd.zAction == USE || msd.zAction == EQUIP)
 				{
 					Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
 
@@ -421,7 +423,7 @@ void Client::HandleKeyboardInput()
 				}
 				else if (msd.zAction == UNEQUIP)
 				{
-					this->SendUnEquipItem(msd.zID, EQUIPMENT_SLOT_MELEE_WEAPON);
+					this->SendUnEquipItem(msd.zID, (msd.zType));
 				}
 			}
 		}
@@ -494,6 +496,27 @@ void Client::HandleKeyboardInput()
 			this->zKeyInfo.SetKeyState(KEY_TEST, false);
 		}
 	}
+	
+	if(this->zEng->GetKeyListener()->IsPressed('F'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_READY))
+		{
+			this->zKeyInfo.SetKeyState(KEY_READY, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAYER_READY);
+
+			this->zServerChannel->Send(msg);
+		}
+		
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_READY))
+		{
+			this->zKeyInfo.SetKeyState(KEY_READY, false);
+		}
+	}
+	
 	if (this->zIsHuman)
 	{
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
@@ -652,24 +675,6 @@ void Client::HandleWeaponEquips()
 			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}
 	}
-	else if(this->zEng->GetKeyListener()->IsPressed('T'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			if(zEng->GetEngineParameters().WindowWidth != 1024)
-			{
-				zEng->ResizeGraphicsEngine(1024, 768);
-				this->zGuiManager->Resize(1024, 768);
-			}
-			else
-			{
-				zEng->ResizeGraphicsEngine(1800, 1000);
-				this->zGuiManager->Resize(1800, 1000);
-			}
-
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-		}
-	}
 	else
 	{
 		if (this->zKeyInfo.GetKeyState(KEY_EQUIP))
@@ -781,6 +786,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 {
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
+
+	Messages::Debug(msg);
 
 	//Checks what type of message was sent
 	if(msg.find(M_PING.c_str()) == 0)

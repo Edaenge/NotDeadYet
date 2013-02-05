@@ -10,9 +10,10 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "ActorHandler.h"
 #include "ClientData.h"
 #include <World/World.h>
+#include "GameModeFFA.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
-//#include <vld.h>
+#include <vld.h>
 #define INCLUDE_MODEL_VIEWER
 #endif
 
@@ -21,9 +22,10 @@ class Host : public MaloW::Process, public Observer
 public:
 	Host();
 	virtual ~Host();
-	/*! Creates a Server locally */
+	/*! Creates a Server locally
+	returns a code that describes error or success*/
 	const char* InitHost(const unsigned int &port, const unsigned int &maxClients);
-	/*! Main loop for this thread */
+	/*! Main loop for this thread*/
 	void Life();
 	/*! Checks if the server have players connected.*/
 	bool HasClients() const;
@@ -42,8 +44,6 @@ public:
 	void SendPlayerActorUpdates();
 	/*! Sends Animal Actor updates to clients.*/
 	void SendAnimalActorUpdates();
-	/*! Sends Static Actor updates to clients.*/
-	void SendStaticActorUpdates();
 	/*! Sends Dynamic Actor updates to clients.*/
 	void SendDynamicActorUpdates();
 	/*! Sends new Static Object Data to Clients*/
@@ -61,7 +61,7 @@ public:
 	/*! Updates the server clock.*/
 	float Update();
 	/*! Updates the objects.*/
-	void UpdateObjects();
+	void UpdateObjects(); //MOVE
 	/*! Kicks client. Sends a message if reason is given.
 		If sendAMessage is false, the client will not be notified.
 		This function notifies all the other clients to remove this player.
@@ -83,14 +83,9 @@ private:
 	HandleKeyRelease
 	CreateNewPlayer
 	*/
-	void HandleReceivedMessage( const unsigned int& ConnectionID, const std::string& message );
-	void HandleReceivedMessages();
+	void HandleReceivedMessage( const unsigned int &ID, const std::string &message );
 	/*! Read messages from queue and saves them in*/
 	void ReadMessages(); 
-	/*! Handles clients key press.*/
-	void HandleKeyPress(PlayerActor* pl, const std::string& key);
-	/*! Handles clients key releases.*/
-	void HandleKeyRelease(PlayerActor* pl, const std::string& key);
 	/*! Handles incoming data from player, such as Direction, Up vector and Rotation.*/
 	void HandlePlayerUpdate(PlayerActor* pl, ClientData* cd, const std::vector<std::string> &data);
 	/*! Handles the players Important messages, updates them.
@@ -100,19 +95,21 @@ private:
 	/*! Search for a client. Returns -1 if none was found.*/
 	int SearchForClient(const int ID) const;
 	/*! Creates a new player and notifies all clients.*/
-	void CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data);
+	void CreateNewPlayer(ClientData* cd, const std::vector<std::string> &data); 
 	/*! Returns an Array Containing Existing Static Objects Messages.*/
 	void GetExistingObjects(std::vector<std::string>& static_Objects);
 	/*! Called When player Disconnects or Dies.*/
-	void OnBioActorRemove(BioActor* actor );
-	void OnBioActorDeath(BioActor* actor);	
-	void SendStartMessage();	
+	void OnBioActorRemove(BioActor* actor ); //MOVE
+	void OnBioActorDeath(BioActor* actor);	//MOVE
+	void SendStartMessage();	//DELTE
 	//3x3 center = 54,0,54, Map_xxxx center = 1900, 0, 1900
-	Vector3 CalculateSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center = Vector3(54, 0.0f, 44));
+	Vector3 CalculateSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center = Vector3(54, 0.0f, 44)); //MOVE
 	/*! Temporary function.*/
-	void RespawnPlayer(PlayerActor* pActor);
+	void RespawnPlayer(PlayerActor* pActor); //MOVE
 
-	void RemovePlayer(unsigned int ID);
+	void RemovePlayer(unsigned int ID); //MOVE
+
+	void HandleDisconnect( MaloW::ClientChannel* channel );
 	//////////////////////////////////////
 	//									//
 	//	   Objects/Items Conversions	//
@@ -120,9 +117,9 @@ private:
 	//////////////////////////////////////
 
 	/*! Creates an Object From the Item Data.*/
-	bool CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item);
-	bool CreateObjectFromItem(PlayerActor* pActor, Food* food_Item);
-	bool CreateObjectFromItem(PlayerActor* pActor, Container* weapon_Item);
+	//bool CreateObjectFromItem(PlayerActor* pActor, Weapon* weapon_Item);
+	//bool CreateObjectFromItem(PlayerActor* pActor, Food* food_Item);
+	//bool CreateObjectFromItem(PlayerActor* pActor, Container* weapon_Item);
 	bool CreateObjectFromItem(PlayerActor* pActor, Projectile* projectile_Item);
 	bool CreateObjectFromItem(PlayerActor* pActor, Material* material_Item);
 	/*! Creates An Item From the Object Data.*/
@@ -132,16 +129,8 @@ private:
 	bool CreateItemFromObject(PlayerActor* pActor, StaticProjectileObject* projectileObj);
 	bool CreateItemFromObject(PlayerActor* pActor, MaterialObject* materialObj);
 	/*! Create Animal Actors*/
-	bool CreateAnimalActor(DeerActor** deerAct, const bool genID);
+	bool CreateAnimalActor(DeerActor*& deerAct, const bool genID);
 	bool CreateAnimalActor(WolfActor** deerAct, const bool genID);
-	/*! Creates a StaticObject with default values.*/
-	bool CreateStaticObjectActor(const int type, FoodObject** foodObj, const bool genID = false);
-	bool CreateStaticObjectActor(const int type, WeaponObject** weaponObj, const bool genID = false);
-	bool CreateStaticObjectActor(const int type, MaterialObject** materialObj, const bool genID = false);
-	bool CreateStaticObjectActor(const int type, ContainerObject** containerObj, const bool genID = false);
-	bool CreateStaticObjectActor(const int type, StaticProjectileObject** projectileObj, const bool genID = false);
-	/*! Creates a DynamicObject with default values.*/
-	bool CreateDynamicObjectActor(const int type, DynamicProjectileObject** projectileObj, bool genID = false);
 	/*! Creates a Dead Player*/
 	std::string CreateDeadPlayerObject(PlayerActor* pActor, DeadPlayerObjectActor** dpoActor);
 	/*! Creates a Dead Animal*/
@@ -186,7 +175,6 @@ private:
 	void SendEquipMessage(const int PlayerID, const long ID, const int Slot);
 	void SendUseItem(const int PlayerID, const long ID);
 
-	std::string AddItemMessage(StaticObjectActor* object);
 protected:
 	virtual void OnEvent(Event* e);
 
@@ -196,7 +184,7 @@ private:
 	std::vector<ClientData*>			zClients;
 	std::vector<MaloW::NetworkPacket*>	zMessages;
 
-	ActorHandler* zActorHandler;
+	//ActorHandler* zActorHandler;
 	
 	NetworkMessageConverter zMessageConverter;
 
@@ -212,5 +200,6 @@ private:
 
 	World* zWorld;
 	std::map<BioActor*, WorldAnchor*> zAnchorPlayerMap;
-	void HandleDisconnect( MaloW::ClientChannel* channel );
+
+	GameMode* zGameMode; 
 };

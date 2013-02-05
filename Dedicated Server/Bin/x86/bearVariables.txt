@@ -1,0 +1,25 @@
+200   //health
+200   //max fear
+1     //zFearInterval
+15    //zMinimumDistance
+0.6   //zFieldOfView
+2     //zThreatMovementSpeedThreshold
+0.33  //zConfidenceKoef
+15    //zTooCloseInDistance
+10    //zExtraFearWithNumberOfPlayers
+10    //zExtraFearWithCloseProximity
+8     //zExtraFearAtSight
+5     //zExtraFearAtThreatMovementSpeed
+4     //zFearDecrease
+30    //zFearAtDamageDone
+20    //zCalmToAggressiveThreshold
+10    //zDistanceToWalkWhenCalm
+8     //zDistanceToWalkWhenSuspicious
+3     //zNewTargetCloseByAFactorOf
+40    //zFleeDistance
+200   //zLargeSoundEventFearIncrease
+5     //zCalmRandomInterval
+3     //zCalmRandomAddition
+2.0   //zWalkingVelocity
+5.0   //zAttackingVelocity
+4.8   //zFleeingVelocity

@@ -222,7 +222,14 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 					{
 						Selected_Item_ReturnData sir;
 						sir.ID = (*x)->GetID();
-						sir.type = (*x)->GetType();
+						if(this->zWeaponSlots[MELEE] == (*x)->GetPosition())
+							sir.type = MELEE;
+						if(this->zWeaponSlots[RANGED] == (*x)->GetPosition())
+							sir.type = RANGED;
+						if(this->zWeaponSlots[PROJECTILE] == (*x)->GetPosition())
+							sir.type = PROJECTILE;
+
+						//sir.type = (*x)->GetType();
 						sir.inventory = 1;
 						return sir;
 					}
@@ -291,7 +298,7 @@ void InventoryGui::EquipItem( int type, const Gui_Item_Data gid, bool guiOpen )
 		}
 	}
 	InventorySlotGui* gui = new InventorySlotGui(zWeaponSlots[type].x, zWeaponSlots[type].y, zSlotImageWidth
-		, zSlotImageHeight, gid.zFilePath, gid.zID, gid.zType, gid.zStacks);
+		, zSlotImageHeight, gid.zFilePath, gid.zID, type, gid.zStacks);
 
 	if(guiOpen)
 		gui->AddToRenderer(GetGraphics());

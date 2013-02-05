@@ -19,6 +19,7 @@ static const std::string COMMAND_SPRINT		= "C_SPRINT";
 static const std::string COMMAND_DUCK		= "C_DUCK";
 static const std::string COMMAND_INVENTORY	= "C_INVENTORY";
 static const std::string COMMAND_EQUIPMENT	= "C_EQUIPMENT";
+static const std::string COMMAND_READY		= "C_READY";
 
 
 /*cfg path*/
@@ -57,7 +58,8 @@ void KeyBindConfig::CreateDefaultIni(char* bindings)
 		'E',
 		VK_ESCAPE,
 		'B',
-		'C'
+		'C',
+		'F'
 	};
 
 	memcpy(bindings, defaultBindings, sizeof(defaultBindings));
@@ -206,6 +208,11 @@ int KeyBindConfig::GetKeyValue(std::string CC)
 	if(CC == COMMAND_INVENTORY)
 	{
 		return KEY_INVENTORY;
+	}
+
+	if(CC == COMMAND_READY)
+	{
+		return KEY_READY;
 	}
 
 	return -1;

@@ -12,9 +12,13 @@ KeyStates::~KeyStates()
 }
 bool KeyStates::GetKeyState(const unsigned int key) const
 {
-	return this->zKeyState[key];
+	if (key < KEY_CAP)
+		return this->zKeyState[key];
+
+	return false;
 }
 void KeyStates::SetKeyState(const unsigned int key, const bool value)
 {
-	this->zKeyState[key] = value;
+	if (key < KEY_CAP)
+		this->zKeyState[key] = value;
 }

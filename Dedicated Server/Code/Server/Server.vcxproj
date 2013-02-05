@@ -1,0 +1,269 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FF26E365-FE3C-4224-B691-A4EE74CA0782}</ProjectGuid>
+    <RootNamespace>Server</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)..\Bin\x86\</OutDir>
+    <IntDir>$(SolutionDir)..\Obj\x86\$(ProjectName)\$(Configuration)\</IntDir>
+    <IncludePath>$(SolutionDir)..\..\External\VLD\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\External\VLD\lib\Win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)..\Bin\x64\</OutDir>
+    <IntDir>$(SolutionDir)..\Obj\x64\$(ProjectName)\$(Configuration)\</IntDir>
+    <LibraryPath>$(SolutionDir)..\..\External\VLD\lib\Win64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\..\External\VLD\include\;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\External\NDYGFX\Include;$(SolutionDir)\..\..\Source\MaloWLib;$(SolutionDir)\Server\PhysicsEngine;$(SolutionDir)\Server\Wrapper;$(SolutionDir)\Server\EngineFiles\Network;$(SolutionDir)\..\..\Source\Network;$(SolutionDir)\..\..\Source\GameFiles;$(SolutionDir)\Server\EngineFiles\WorldFiles;$(SolutionDir)\..\..\Source\GameFiles\Items;$(SolutionDir)\..\..\Source\GameFiles\KeyUtil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Server\EngineFiles\Network;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\External\NDYGFX\Include\Vector.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\AnimationStates.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\ClientServerMessages.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\FileReader.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Container.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Equipment.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Food.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Gear.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Inventory.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Item.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Material.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Projectile.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\RangedWeapon.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\Items\Weapon.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\KeyUtil\KeyStates.h" />
+    <ClInclude Include="..\..\..\Source\GameFiles\KeyUtil\KeyValues.h" />
+    <ClInclude Include="..\..\..\Source\MaloWLib\Array.h" />
+    <ClInclude Include="..\..\..\Source\MaloWLib\List.h" />
+    <ClInclude Include="..\..\..\Source\MaloWLib\MaloW.h" />
+    <ClInclude Include="..\..\..\Source\MaloWLib\MaloWFileDebug.h" />
+    <ClInclude Include="..\..\..\Source\MaloWLib\Process.h" />
+    <ClInclude Include="..\..\..\Source\MaloWLib\Queue.h" />
+    <ClInclude Include="..\..\..\Source\MaloWLib\Safe.h" />
+    <ClInclude Include="..\..\..\Source\Network\NetworkMessageConverter.h" />
+    <ClInclude Include="EngineFiles\Network\ClientChannel.h" />
+    <ClInclude Include="EngineFiles\Network\ClientConnectedEvent.h" />
+    <ClInclude Include="EngineFiles\Network\ClientDisconnectedEvent.h" />
+    <ClInclude Include="EngineFiles\Network\NetworkPacket.h" />
+    <ClInclude Include="EngineFiles\Network\ServerListener.h" />
+    <ClInclude Include="EngineFiles\Network\Winsock.h" />
+    <ClInclude Include="EngineFiles\ServerEngine.h" />
+    <ClInclude Include="EngineFiles\Server\Actor.h" />
+    <ClInclude Include="EngineFiles\Server\ActorHandler.h" />
+    <ClInclude Include="EngineFiles\Server\AI.h" />
+    <ClInclude Include="EngineFiles\Server\AnimalActor.h" />
+    <ClInclude Include="EngineFiles\Server\BearActor.h" />
+    <ClInclude Include="EngineFiles\Server\BioActor.h" />
+    <ClInclude Include="EngineFiles\Server\ClientData.h" />
+    <ClInclude Include="EngineFiles\Server\ContainerObject.h" />
+    <ClInclude Include="EngineFiles\Server\DeadActor.h" />
+    <ClInclude Include="EngineFiles\Server\DeadAnimalObjectActor.h" />
+    <ClInclude Include="EngineFiles\Server\DeadPlayerObjectActor.h" />
+    <ClInclude Include="EngineFiles\Server\DeerActor.h" />
+    <ClInclude Include="EngineFiles\Server\DynamicObjectActor.h" />
+    <ClInclude Include="EngineFiles\Server\DynamicProjectileObject.h" />
+    <ClInclude Include="EngineFiles\Server\FoodObject.h" />
+    <ClInclude Include="EngineFiles\Server\GameMode.h" />
+    <ClInclude Include="EngineFiles\Server\GameModeFFA.h" />
+    <ClInclude Include="EngineFiles\Server\GhostActor.h" />
+    <ClInclude Include="EngineFiles\Server\Host.h" />
+    <ClInclude Include="EngineFiles\Server\MaterialObject.h" />
+    <ClInclude Include="EngineFiles\Server\ObjectCreator.h" />
+    <ClInclude Include="EngineFiles\Server\ObjectManager.h" />
+    <ClInclude Include="EngineFiles\Server\PhysicsActor.h" />
+    <ClInclude Include="EngineFiles\Server\PlayerActor.h" />
+    <ClInclude Include="EngineFiles\Server\StaticObjectActor.h" />
+    <ClInclude Include="EngineFiles\Server\StaticProjectileObject.h" />
+    <ClInclude Include="EngineFiles\Server\WeaponObject.h" />
+    <ClInclude Include="EngineFiles\Server\WolfActor.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\CircleAndRect.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\Entity.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\EntityList.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\Observer.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\Sector.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\World.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\WorldEvents.h" />
+    <ClInclude Include="EngineFiles\WorldFiles\WorldFile.h" />
+    <ClInclude Include="PhysicsEngine\BoundingSphere.h" />
+    <ClInclude Include="PhysicsEngine\ObjLoader.h" />
+    <ClInclude Include="PhysicsEngine\Physics.h" />
+    <ClInclude Include="PhysicsEngine\PhysicsEngine.h" />
+    <ClInclude Include="PhysicsEngine\PhysicsObject.h" />
+    <ClInclude Include="Wrapper\ServerEngineWrapper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\GameFiles\FileReader.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Container.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Equipment.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Food.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Gear.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Inventory.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Item.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Material.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\MeleeWeapon.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\Projectile.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\Items\RangedWeapon.cpp" />
+    <ClCompile Include="..\..\..\Source\GameFiles\KeyUtil\KeyStates.cpp" />
+    <ClCompile Include="..\..\..\Source\MaloWLib\Process.cpp" />
+    <ClCompile Include="..\..\..\Source\Network\NetworkMessageConverter.cpp" />
+    <ClCompile Include="EngineFiles\Network\ClientChannel.cpp" />
+    <ClCompile Include="EngineFiles\Network\ServerListener.cpp" />
+    <ClCompile Include="EngineFiles\ServerEngine.cpp" />
+    <ClCompile Include="EngineFiles\Server\Actor.cpp" />
+    <ClCompile Include="EngineFiles\Server\ActorHandler.cpp" />
+    <ClCompile Include="EngineFiles\Server\AI.cpp" />
+    <ClCompile Include="EngineFiles\Server\AnimalActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\BearActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\BioActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\ClientData.cpp" />
+    <ClCompile Include="EngineFiles\Server\ContainerObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeadActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeadAnimalObjectActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeadPlayerObjectActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\DynamicObjectActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\DeerActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\DynamicProjectileObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\FoodObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\GameMode.cpp" />
+    <ClCompile Include="EngineFiles\Server\GameModeFFA.cpp" />
+    <ClCompile Include="EngineFiles\Server\GhostActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\Host.cpp" />
+    <ClCompile Include="EngineFiles\Server\HostConversions.cpp" />
+    <ClCompile Include="EngineFiles\Server\HostItemHandler.cpp" />
+    <ClCompile Include="EngineFiles\Server\MaterialObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\ObjectCreator.cpp" />
+    <ClCompile Include="EngineFiles\Server\ObjectManager.cpp" />
+    <ClCompile Include="EngineFiles\Server\PhysicsActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\PlayerActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\StaticObjectActor.cpp" />
+    <ClCompile Include="EngineFiles\Server\StaticProjectileObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\WeaponObject.cpp" />
+    <ClCompile Include="EngineFiles\Server\WolfActor.cpp" />
+    <ClCompile Include="EngineFiles\WorldFiles\Entity.cpp" />
+    <ClCompile Include="EngineFiles\WorldFiles\EntityList.cpp" />
+    <ClCompile Include="EngineFiles\WorldFiles\Sector.cpp" />
+    <ClCompile Include="EngineFiles\WorldFiles\World.cpp" />
+    <ClCompile Include="EngineFiles\WorldFiles\WorldFile.cpp" />
+    <ClCompile Include="PhysicsEngine\ObjLoader.cpp" />
+    <ClCompile Include="PhysicsEngine\Physics.cpp" />
+    <ClCompile Include="PhysicsEngine\PhysicsEngine.cpp" />
+    <ClCompile Include="PhysicsEngine\PhysicsObject.cpp" />
+    <ClCompile Include="Wrapper\ServerEngineWrapper.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

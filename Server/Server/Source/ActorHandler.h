@@ -107,6 +107,8 @@ public:
 	bool RemoveDeadAnimalObject(const long ID);
 	inline const std::vector<DeadAnimalObjectActor*>& GetDeadAnimals() const {return this->zDeadAnimals;}
 
+	void CreateDeerAnimal(const bool bGenID, const Vector3 position);
+	void CreateWolfAnimal(const bool bGenID, const Vector3 position);
 ////////////////////////////////
 //			Objects		     //
 ///////////////////////////////
@@ -141,6 +143,7 @@ public:
 	inline const std::vector<DynamicProjectileObject*>& GetDynamicProjectiles() const {return this->zDynamicProjectiles;}
 	/*! Returns Static Projectile Objects.*/
 	inline const std::vector<StaticProjectileObject*>& GetStaticProjectiles() const {return this->zStaticProjectiles;}
+
 //////////////////////////////
 	/*! Returns an Actor. TYPE is a enum to identify which Actor to get.
 		ACTOR_TYPE_PLAYER,
