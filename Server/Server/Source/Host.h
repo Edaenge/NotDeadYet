@@ -10,6 +10,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "ActorHandler.h"
 #include "ClientData.h"
 #include <World/World.h>
+#include "Game.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
@@ -83,4 +84,5 @@ private:
 	float zTimeOut;
 	float zPingMessageInterval;
 
+	Game* zGame;
 };
