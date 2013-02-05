@@ -211,11 +211,23 @@ int Inventory::SearchForItemType(const unsigned int TYPE)
 	return counter;
 }
 
-Item* Inventory::SearchAndGetItemFromType( const unsigned int TYPE )
+Item* Inventory::SearchAndGetItemFromType(const int Type)
 {
 	for (auto it = this->zItems.begin(); it < this->zItems.end(); it++)
 	{
-		if ((*it)->GetItemType() == TYPE)
+		if ((*it)->GetItemType() == Type)
+		{
+			return (*it);
+		}
+	}
+	return NULL;
+}
+
+Item* Inventory::SearchAndGetItemFromType(const int Type, const int SubType)
+{
+	for (auto it = this->zItems.begin(); it < this->zItems.end(); it++)
+	{
+		if ((*it)->GetItemType() == Type && (*it)->GetItemSubType() == SubType)
 		{
 			return (*it);
 		}

@@ -28,13 +28,24 @@ static const enum M_ITEM_TYPE
 	ITEM_TYPE_MATERIAL_LARGE_STICK,
 	ITEM_TYPE_MATERIAL_THREAD
 };
-
+/*
+static const enum M_ITEM_TYPE
+{
+	ITEM_TYPE_WEAPON_RANGED,
+	ITEM_TYPE_WEAPON_MELEE,
+	ITEM_TYPE_PROJECTILE,
+	ITEM_TYPE_CONTAINER,
+	ITEM_TYPE_FOOD,
+	ITEM_TYPE_MATERIAL,
+	ITEM_TYPE_GEAR
+};*/
 /*! Abstract class for Items*/
 class Item
 {
 public:
 	Item();
-	Item(const long id, const unsigned int itemType);
+	Item(const long ID, const unsigned int itemType);
+	Item(const long ID, const unsigned int itemType, const unsigned int itemSubType);
 	virtual ~Item(){}
 	/*! Returns Item ID*/
 	inline int GetID() const {return this->zID;}
@@ -44,6 +55,7 @@ public:
 	std::string GetItemName() const {return this->zItemName;}
 	/*! Returns the Item Type*/
 	unsigned int GetItemType() const {return this->zItemType;}
+	unsigned int GetItemSubType() const {return this->zItemSubType;}
 	/*! Returns the Item Description*/
 	std::string GetItemDescription() const {return this->zItemDescription;}
 	/*! Returns number of stacks the item has.*/
@@ -60,6 +72,7 @@ public:
 	void SetItemName(const std::string& name) {this->zItemName = name;}
 	/*! Sets The Item Type*/
 	void SetItemType(const unsigned int type) {this->zItemType = type;}
+	void SetItemSubType(const unsigned int SubType) {this->zItemSubType = SubType;}
 	/*! Sets the Item Description*/
 	void SetItemDescription(const std::string& description) {this->zItemDescription = description;}
 	/*! Sets the Item Stack Size.*/
@@ -70,16 +83,13 @@ public:
 	void SetStacking(bool value) {this->zStacking = value;}
 	virtual bool Use() = 0;
 	virtual std::string ToMessageString(NetworkMessageConverter* NMC);  
-
-private:
-	void InitValues(const int id = -1, const unsigned int itemType = 0, const unsigned int weight = 0, 
-		const std::string& name = "Unknown", const std::string& description = "Unknown", const std::string iconPath = "Unknown");
 protected:
 	int zStacks;
 	long zID;
 	int zWeight;
 	std::string zItemName;
 	unsigned int zItemType;
+	unsigned int zItemSubType;
 	std::string zItemDescription;
 	std::string zIconPath;
 	bool zStacking;

@@ -7,10 +7,18 @@
 
 #include "Item.h"
 
+static const enum M_CONTAINER_ITEM_SUB_TYPE
+{
+	ITEM_SUB_TYPE_CANTEEN,
+	ITEM_SUB_TYPE_WATER_BOTTLE
+};
+
 class Container : public Item
 {
 public:
 	Container(const long id, const unsigned int itemType, 
+		const int maxUse, const int currUse);
+	Container(const long id, const unsigned int itemType, const unsigned int itemSubType,
 		const int maxUse, const int currUse);
 	Container(const Container& other);
 	Container(const Container* other);

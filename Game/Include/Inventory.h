@@ -55,7 +55,8 @@ public:
 	int SearchForItemType(const unsigned int TYPE);
 	/*! Removes a stack from Item*/
 	bool RemoveItemStack(const long ID, const unsigned int numberOfStacks = 1);
-	Item* SearchAndGetItemFromType(const unsigned int TYPE);
+	Item* SearchAndGetItemFromType(const int Type);
+	Item* SearchAndGetItemFromType(const int Type, const int SubType);
 	/*! Returns Item and removes it from inventory
 		Doesn't delete the Item.
 	*/

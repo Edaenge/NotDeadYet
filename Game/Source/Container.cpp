@@ -35,6 +35,14 @@ Container::Container(const Container* other)
 	this->zItemDescription = other->zItemDescription;
 }
 
+Container::Container(const long ID, const unsigned int itemType, const unsigned int itemSubType,
+					 const int maxUse, const int currUse) : Item(ID, itemType, itemSubType)
+{
+	this->zStacking = false;
+	this->zMaxUses = maxUse;
+	this->zUsesRemaining = currUse;
+}
+
 Container::~Container()
 {
 

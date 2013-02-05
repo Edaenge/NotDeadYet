@@ -7,6 +7,13 @@
 
 #include "Item.h"
 
+static const enum M_WEAPON_ITEM_SUB_TYPE
+{
+	ITEM_SUB_TYPE_BOW,
+	ITEM_SUB_TYPE_AXE,
+	ITEM_SUB_TYPE_POCKET_KNIFE
+};
+
  /*! Abstract class for Weapons*/
 class Weapon : public Item
 {
@@ -15,6 +22,13 @@ public:
 	Weapon(const long id, const unsigned int itemType, 
 		const float damage, const float range)
 		: Item(id, itemType)
+	{
+		this->zDamage = damage; 
+		this->zRange = range;
+	}
+	Weapon(const long id, const unsigned int itemType, const unsigned int itemSubType, 
+		const float damage, const float range)
+		: Item(id, itemType, itemSubType)
 	{
 		this->zDamage = damage; 
 		this->zRange = range;

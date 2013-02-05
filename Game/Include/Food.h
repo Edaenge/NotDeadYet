@@ -7,10 +7,17 @@
 
 #include "Item.h"
 
+static const enum M_FOOD_ITEM_SUB_TYPE
+{
+	ITEM_SUB_TYPE_DEER_FOOD,
+	ITEM_SUB_TYPE_WOLF_FOOD
+};
+
 class Food : public Item
 {
 public:
-	Food(const long id, const unsigned int TYPE, const float hunger);
+	Food(const long id, const unsigned int Type, const float hunger);
+	Food(const long ID, const unsigned int Type, const unsigned int SubType, const float hunger);
 	Food(const Food& other);
 	Food(const Food* other);
 	virtual ~Food();
