@@ -105,6 +105,12 @@
     <ClCompile Include="Source\ServerEngineWrapper.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Player.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -205,6 +211,12 @@
     </ClInclude>
     <ClInclude Include="Include\ServerEngineWrapper.h">
       <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Player.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
