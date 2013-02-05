@@ -1,0 +1,458 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="bfe6b102-6cb2-4476-8a7e-a372d2189d39" name="Movement" linkedPackageId="0f1873c1-8f9a-479b-a9b1-05058f02af8d" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <profileInstances>
+    <packageHasProfileInstances Id="5b3b3645-99a0-4e02-bcc3-3457a9cc2e8a">
+      <profileInstance Id="da5ba2e6-255c-4055-98f7-5e36b00f86c3" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="cba9b595-c497-4a91-85bc-a06ac141f491">
+      <profileInstance Id="8e8b70b2-051a-493d-846a-9bed36858b38" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="c3a0c2c1-02c5-4e2e-be5a-9326cf7eab16" name="World" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="4af49f03-f9e3-4479-bbab-13dd6cfff098" />
+        <ownedOperationsInternal>
+          <operation Id="cf3615d2-7543-4068-8f01-caafa0c91d89" name="getHeightAt" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="38a4fe5e-b852-46c3-b9ae-0213e4186d74" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="06eb2021-ae7d-4811-a986-3240238ae762" name="Behavior" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="a6c4c4e7-c0ab-4c5d-a8a6-5a6fee47b9b0" />
+        <suppliersInternal>
+          <dependency Id="ef60146f-253b-4ed6-88a4-73f7c7963b1a">
+            <classMoniker Id="04d1d997-3ed2-4956-860f-6851960513e6" LastKnownName="Actor" />
+            <elementDefinition Id="02129e46-8201-4c1a-8e75-4b2125d40529" />
+          </dependency>
+          <dependency Id="07c461f3-201a-4e3c-bfb0-8c54e55c207a">
+            <classMoniker Id="88022657-2969-45d0-ba0b-14d67e1423e1" LastKnownName="PhysicsEngine" />
+            <elementDefinition Id="fb6842c5-fe75-4126-a261-7fb892ddba7e" />
+          </dependency>
+        </suppliersInternal>
+        <targetEnds>
+          <association Id="efa79510-e2cc-4de9-9e9b-e0cb2a7d33f7" isDerived="false" sourceEndRoleName="Movement" targetEndRoleName="World" isLeaf="false" isAbstract="false">
+            <classMoniker Id="c3a0c2c1-02c5-4e2e-be5a-9326cf7eab16" LastKnownName="World" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f6edb532-5cee-48c0-b77a-0c8084c401ca" name="Movement" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="d8798d21-ec21-4ffa-876b-f345da44e737" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="870c77a5-36f8-49ce-81aa-368f86e061dc" name="World" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="8d7e8b97-39f6-4d2b-a50a-a8d1ea50f4ac" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="ae7a9604-cf53-4454-af72-09c834a39ec5" />
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="02351ca7-e5fc-4717-bb40-080e64808479" name="*zWorld" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="8ac8e330-e995-42b1-a3ec-a33c1de5f25e" />
+          </property>
+          <property Id="36a54cd1-bc34-4595-a705-4bd75841ec6a" name="*zPhysics" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="33a81728-4bd2-4025-8eb1-15e51ffb34ce" />
+          </property>
+          <property Id="9a55cf2e-524d-4ad5-855a-f634016fc8c5" name="*zActor" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="e64f6b1d-2365-4cc8-9ef1-c06bbcdd4941" />
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="45b82cc4-915e-4d26-8982-4b9a24e29e66" name="applyMovement" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="5b798fe5-5a5b-4b2e-8fd5-8efbeb387a8b" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="1ae25f2c-a944-41b6-8729-039efb82ecd6" name="float dt" direction="In" isUnique="false">
+                  <elementDefinition Id="d0b00cc0-c86c-4407-9630-11ebb7432180" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation Id="f0beb9fb-afdd-4d99-a5c4-514e4270d07c" name="Movement" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="71c7f842-16d3-4740-8c20-11ce02933fd5" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="5927d626-8072-4419-bcfb-68bcc69aff81" name="Actor*" direction="In" isUnique="false">
+                  <elementDefinition Id="ea1411cc-f3a9-4bf4-a173-3b4ebedf14ba" />
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="8984ba7b-ae32-41bf-8013-8e71a3b52767" name="PhysicsEngine*" direction="In" isUnique="false">
+                  <elementDefinition Id="7707833f-48b6-484e-8f45-83f119cb1717" />
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="89e71508-c19f-462c-bab8-1dd9f40fb4a4" name="World*" direction="In" isUnique="false">
+                  <elementDefinition Id="5d3e65e4-c050-4aa4-ba22-6e5c00c2f1de" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="04d1d997-3ed2-4956-860f-6851960513e6" name="Actor" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="1b03a7bb-581a-4391-9859-1d1b97fc17e4" />
+        <suppliersInternal>
+          <dependency Id="5d26b2fc-a2d6-4140-9e9f-2f2f1625d104">
+            <classMoniker Id="ccb96d60-526f-4304-b646-ca600c88721b" LastKnownName="Mesh" />
+            <elementDefinition Id="23df9028-d5b5-4053-a978-6c1b79be2fc7" />
+          </dependency>
+        </suppliersInternal>
+        <ownedAttributesInternal>
+          <property Id="c95ba09d-02dd-447e-9970-4d2cd71f1f03" name="*zMesh" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="73981706-5b2c-4f71-9867-79bf95407849" />
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="c55ba3ec-1112-4f6d-b32e-7f46ad7d876e" name="GetMesh" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="741043f7-0623-4abd-9c5c-023c02947fe4" />
+          </operation>
+          <operation Id="7505c892-14c7-41da-99af-a611a51c1e19" name="Actor" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="8e572b59-6063-4c42-a365-5a4fd05f1b99" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="66c19011-32d7-4431-884e-7d7fb97fbeee" name="Mesh*" direction="In" isUnique="false">
+                  <elementDefinition Id="36daf5de-0f43-4fd8-8c73-b3bd02ec5aff" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="ccb96d60-526f-4304-b646-ca600c88721b" name="Mesh" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="94eaaa98-f028-4af8-8102-064224daa3f9" />
+        <targetEnds>
+          <association Id="e8cf4469-175d-4b85-bc55-3486cc5ff402" isDerived="false" sourceEndRoleName="Mesh" targetEndRoleName="BoundingSphere" isLeaf="false" isAbstract="false">
+            <classMoniker Id="a2664083-eefe-4cc2-9df2-e6059ff75de5" LastKnownName="BoundingVolume" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="ca64354e-4274-42f0-91bf-a61871dfff79" name="Mesh" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="4a69f4c1-9e4d-4d5b-8060-3610a13c348b" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="bb6582b1-3a0b-489d-940b-9ad6e1b7bee9" name="BoundingSphere" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="009a8b7d-7405-4cc6-846c-e4dd4901cc19" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="c95635b7-3844-43c0-84f5-0afe772fd599" />
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="c0ac9bf7-f497-498a-96e2-74ee0756df73" name="zBoundingVolume" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="a5e55347-e959-4b97-bb34-c04da3931514" />
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="b354e6e5-6fa4-4806-a0fe-49c0641ad839" name="GetEngine" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="8a528e6e-8531-4162-81d5-20d6d3b83e92" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="88022657-2969-45d0-ba0b-14d67e1423e1" name="PhysicsEngine" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="e0420ab8-7040-4773-81d4-afe8f0f2d4a2" />
+        <targetEnds>
+          <association Id="9d828be8-53e3-496f-bdc9-497f013575ca" isDerived="false" sourceEndRoleName="PhysicsEngine" targetEndRoleName="Mesh" isLeaf="false" isAbstract="false">
+            <classMoniker Id="ccb96d60-526f-4304-b646-ca600c88721b" LastKnownName="Mesh" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="dbbe73f3-3156-488d-9d82-950552d20de9" name="PhysicsEngine" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="175f60c8-a1ad-4105-97f9-3e5120165c99" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="d8da8cab-8492-4184-86bd-f8481df3c572" name="Mesh" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <lowerValueInternal>
+                    <literalString Id="ad25cfc5-8b8c-49b0-a91b-b655500fb971" name="Lower" value="0">
+                      <elementDefinition Id="0c8e3ddc-5d5c-4695-bd15-3b4577b34824" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="5ecacd49-f138-4388-ab27-08c68790b07a" name="Upper" value="*">
+                      <elementDefinition Id="d6a89254-2051-462e-87ad-40f07ef75ff7" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="720c526e-4a6b-43c1-8ac6-9fe4477dc59c" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="52635088-9409-4b10-9c14-e3e8dd19fc9a" />
+          </association>
+          <association Id="293e80a4-ef34-4e3d-8c51-68d884bfc020" isDerived="false" sourceEndRoleName="PhysicsEngine" targetEndRoleName="QuadTree" isLeaf="false" isAbstract="false">
+            <classMoniker Id="d85eeb6c-1891-4ff1-b597-99f92cdf95a8" LastKnownName="QuadTree" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="dd5f90e7-4f9c-40d7-9224-0f3e825485d8" name="PhysicsEngine" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="422ad99b-f3d9-4914-b0b5-c399cc6aaba3" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="51cc70da-efa9-4bc9-b7bd-248b7d5c6332" name="QuadTree" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="34bcc641-a4aa-48c4-ad90-243bccc03679" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="35971dfe-d447-4f7c-a042-c9b977998d16" />
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation Id="09eb6826-b098-45f6-9b5f-07b5c3c6b26b" name="doCollision" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="83c80416-97c2-4170-a608-e21a1ee35adb" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="518fb1a5-6799-4380-a955-0ac5d452bcd2" name="Mesh*" direction="In" isUnique="false">
+                  <elementDefinition Id="df63c5bc-3200-47bd-be59-72d0f21e2267" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation Id="733a3cf1-5ea9-4bfc-a6aa-1dd2795514a2" name="Mesh* loadMesh" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="1d32beb6-240b-4236-9704-4e68c8b93cc7" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="03fe760d-9200-4cc8-b977-5fcf953dcbfe" name="Host" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="752fa9ff-25bf-4db0-902e-338ed77298a2" />
+        <targetEnds>
+          <association Id="17fb3d9d-ddb1-439f-ade9-37ddb0d9a333" isDerived="false" sourceEndRoleName="Host" targetEndRoleName="Game" isLeaf="false" isAbstract="false">
+            <classMoniker Id="61118c70-4b10-4a8c-8734-ff8a61f54049" LastKnownName="Game" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="1e5df78e-6cf9-4ca5-9427-5063a374fbde" name="Host" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="0fc11da4-95df-41f7-95c5-f42cbfb3eff5" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="adefeeda-45e0-4c80-b729-cfc94d465997" name="Game" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="3f1df801-9358-4e69-9231-3a3411e9f945" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="6821bf05-e27d-4d26-a66c-6acef2e3a852" />
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="870de921-706e-4b0d-9c50-067a7ca5bce3" name="zGame" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="5149df9f-5fe3-40b7-8931-17e212ea8055" />
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="99f4abf1-1e60-40bd-84a7-7a2caa031b8a" name="ActorManager" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="f3248e6d-1c1d-4f2a-a234-463edee197a4" />
+        <targetEnds>
+          <association Id="d32cb507-82a7-42a5-b938-2ca81419375f" isDerived="false" sourceEndRoleName="ActorManager" targetEndRoleName="Actor" isLeaf="false" isAbstract="false">
+            <classMoniker Id="04d1d997-3ed2-4956-860f-6851960513e6" LastKnownName="Actor" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="9f7f7531-196d-4e02-adbd-684d3b7bd9bd" name="ActorManager" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="40de04c5-533d-4bea-a174-d7a0f07cd86b" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8703a963-d3ae-4bbf-8951-2143985def90" name="Actor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <lowerValueInternal>
+                    <literalString Id="01430350-2371-46b7-9462-40532b3ab228" name="Lower" value="0">
+                      <elementDefinition Id="3e11abd5-9434-42d4-bc22-4d8c01cb737e" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="e24b19bd-18f5-40cc-99f2-19bd1f03c899" name="Upper" value="*">
+                      <elementDefinition Id="5b5838ac-f804-45a8-b58a-ca6e73cb8ab9" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="93903dc5-26ff-4cd1-ab0b-4eb3aff92b8a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="8b9455eb-e49e-47fe-9e16-624c57de28ba" />
+          </association>
+          <association Id="587bdc9c-fcbd-4b63-b26b-d8aa33539e35" isDerived="false" sourceEndRoleName="ActorManager" targetEndRoleName="PhysicsEngine" isLeaf="false" isAbstract="false">
+            <classMoniker Id="88022657-2969-45d0-ba0b-14d67e1423e1" LastKnownName="PhysicsEngine" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="744cdb11-edc4-476b-b441-00020876bb0d" name="ActorManager" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="e5f72a5d-1d55-4295-b835-3e056dccace7" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="fcf862fd-805e-40a7-b502-03b8d567f1e8" name="PhysicsEngine" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="1d8bb5b5-d16a-41e8-b47b-f55487578832" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="a48e52f2-50d8-49bf-95fc-c132c2d3a5e6" />
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="bddabfa7-65e3-48fb-899f-d85138a2d142" name="zActors[]" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="02ac5ddd-331d-44af-a51f-611df36b1b24" />
+          </property>
+          <property Id="9025eeee-ef94-42fa-a701-834f0eb785c5" name="zPhysics" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="42c98d70-5b1a-4956-b8ee-104e36076d47" />
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="d85eeb6c-1891-4ff1-b597-99f92cdf95a8" name="QuadTree" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="b07dbab4-2231-413b-95e1-dcde3c9b31dd" />
+        <targetEnds>
+          <association Id="cc0ecba4-ebdd-46fe-bade-02f61d8dd473" isDerived="false" sourceEndRoleName="QuadTree" targetEndRoleName="Mesh" isLeaf="false" isAbstract="false">
+            <classMoniker Id="ccb96d60-526f-4304-b646-ca600c88721b" LastKnownName="Mesh" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="bb057cf1-8095-4613-9831-01d1c07ccef9" name="QuadTree" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="df2f8394-281e-4170-b458-d034fa1b9eee" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="cdb9166b-a064-40f3-83f4-d4bc4411a0b3" name="Mesh" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <lowerValueInternal>
+                    <literalString Id="27925709-0085-4fe6-bde9-d983afdb263f" name="Lower" value="0">
+                      <elementDefinition Id="0c6ff663-057c-48d4-9709-055fc2d39fa4" />
+                    </literalString>
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString Id="5a283225-2318-4548-ba9a-560411677fd7" name="Upper" value="*">
+                      <elementDefinition Id="3a9f98c2-1500-4c74-9f09-61dc53e65079" />
+                    </literalString>
+                  </upperValueInternal>
+                  <elementDefinition Id="96e5a9e6-09de-4628-8465-958476c876ca" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="f6ee43da-0610-4cd9-be7a-eafd635911fa" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="a2664083-eefe-4cc2-9df2-e6059ff75de5" name="BoundingVolume" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="df8350a4-dc5a-4ef5-a112-8b4ec36517e9" />
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="772a4c4c-3403-45bd-b38d-ff9b5a7411ea" name="BoundingSphere" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="6ebb73b6-c43f-4d27-922f-798ac1384baa" />
+        <generalsInternal>
+          <generalization Id="ea02936a-6f6c-4a31-835a-5f885eafe760" isSubstitutable="false">
+            <classMoniker Id="a2664083-eefe-4cc2-9df2-e6059ff75de5" LastKnownName="BoundingVolume" />
+            <elementDefinition Id="9ea37cfc-161a-45a2-8810-b7a3cfb2986f" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="fe768134-bf18-4268-ba7d-a596411fba77" name="AABB" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="9cc8f97d-3a10-4667-a196-f46e147faa71" />
+        <generalsInternal>
+          <generalization Id="c0f90c79-18c5-40a5-8c20-b98aa262f788" isSubstitutable="false">
+            <classMoniker Id="a2664083-eefe-4cc2-9df2-e6059ff75de5" LastKnownName="BoundingVolume" />
+            <elementDefinition Id="05d4b04b-fdaf-4923-b4a9-131941b4d41b" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="f7b17da9-184d-40e5-8201-c2ecd13c5937" name="OBB" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="73d16d3d-3e03-4cf3-89b6-f41e08b365b8" />
+        <generalsInternal>
+          <generalization Id="5a6f754e-d12a-400e-bc26-f110f1aaf991" isSubstitutable="false">
+            <classMoniker Id="a2664083-eefe-4cc2-9df2-e6059ff75de5" LastKnownName="BoundingVolume" />
+            <elementDefinition Id="9ba3b1ab-aa39-4e75-b4fc-a4b20be70358" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="61118c70-4b10-4a8c-8734-ff8a61f54049" name="Game" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="64c706d2-341f-49ba-be34-c1b8576da3c1" />
+        <targetEnds>
+          <association Id="b0f44d30-df97-413f-a6aa-846fded08546" isDerived="false" sourceEndRoleName="Game" targetEndRoleName="Behavior" isLeaf="false" isAbstract="false">
+            <classMoniker Id="06eb2021-ae7d-4811-a986-3240238ae762" LastKnownName="Behavior" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="4144af15-d6dd-4e23-a57d-d3f4a8836d1c" name="Game" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="0d599251-d007-413e-a04a-9557671f3285" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="1339efa8-590f-44ec-ba49-c6f25cf2bf2a" name="Behavior" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="44014d2e-923a-41dc-b781-2ccbbc4dec7e" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="33e36c55-4ad0-4ed2-97e4-848e2a8c2590" />
+          </association>
+          <association Id="0fb21399-a8b5-460c-89ef-119cb48c414d" isDerived="false" sourceEndRoleName="Game" targetEndRoleName="ActorManager" isLeaf="false" isAbstract="false">
+            <classMoniker Id="99f4abf1-1e60-40bd-84a7-7a2caa031b8a" LastKnownName="ActorManager" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="5afe61db-cf03-4a6c-b0be-627d35cde780" name="Game" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="174af06c-d30f-4a52-b48b-4a8b3b2e208f" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="8066dba4-54db-40e4-bad4-3dde9574b136" name="ActorManager" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="c017a8be-af36-41a2-9f42-c6ff3f774a63" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="d8dae370-ad66-4c6c-a7cc-ec9d7db1f96d" />
+          </association>
+          <association Id="0c1d982f-ac07-4054-8cd2-3c3796643434" isDerived="false" sourceEndRoleName="Game" targetEndRoleName="World" isLeaf="false" isAbstract="false">
+            <classMoniker Id="c3a0c2c1-02c5-4e2e-be5a-9326cf7eab16" LastKnownName="World" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="84db1b1a-de50-4d08-87c0-8f5f1c61cb3d" name="Game" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="44c3e134-57d8-4bd4-8edc-bf49893aa1e6" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="79628792-f0fe-4cb5-b76b-f44fa0859acd" name="World" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="4bb695d8-c3bb-4a9e-9b75-1499fc71f155" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="3b85a5ca-b071-481c-8ee0-a01ffcc69b87" />
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="27a9866d-f498-47d4-9e12-e1b6d75ae328" name="zWorld" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="08b8c271-cc6f-4983-939c-3edd564c0ad9" />
+          </property>
+          <property Id="1d3bcbf2-51aa-4b07-8b49-48d1fae3fabd" name="zActorManager" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="7027ef80-d6bf-4379-8c55-8edec54a4a12" />
+          </property>
+          <property Id="d0d84803-ece8-498b-a014-e7bbb032d8ef" name="zBehaviors[]" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="2d3c3690-d314-4bcd-ba25-dac24e034fe6" />
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+  </packagedElements>
+  <package Id="0f1873c1-8f9a-479b-a9b1-05058f02af8d" name="ModelingProject1">
+    <elementDefinition Id="bd43730d-04bf-4a10-90be-c903d2a964f3" />
+  </package>
+</logicalClassDesignerModel>

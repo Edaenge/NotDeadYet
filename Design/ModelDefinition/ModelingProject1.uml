@@ -121,7 +121,7 @@
             isAbstract="false">
             <classMoniker
               Id="f289648f-91cb-4ebe-a293-4986eaa07c9c"
-              LastKnownName="Player"
+              LastKnownName="ClientData"
               LastKnownLocation="ModelingProject1.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
@@ -402,7 +402,7 @@
     <packageHasNamedElement>
       <class
         Id="f289648f-91cb-4ebe-a293-4986eaa07c9c"
-        name="Player"
+        name="ClientData"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -549,7 +549,7 @@
     <packageHasNamedElement>
       <class
         Id="7079aada-3fe0-473c-af9e-d4d771aa0854"
-        name="Player"
+        name="Default"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false">
@@ -853,6 +853,3378 @@
                 <memberEnd
                   Id="0e71a32e-3687-4d5c-a877-7fe9b1e9e5d1"
                   name="World"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="4af49f03-f9e3-4479-bbab-13dd6cfff098"
+        name="World"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedOperationsInternal>
+          <operation
+            Id="38a4fe5e-b852-46c3-b9ae-0213e4186d74"
+            name="getHeightAt"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="a6c4c4e7-c0ab-4c5d-a8a6-5a6fee47b9b0"
+        name="Behavior"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="02129e46-8201-4c1a-8e75-4b2125d40529">
+            <classMoniker
+              Id="1b03a7bb-581a-4391-9859-1d1b97fc17e4"
+              LastKnownName="Actor"
+              LastKnownLocation="ModelingProject1.uml" />
+          </dependency>
+          <dependency
+            Id="fb6842c5-fe75-4126-a261-7fb892ddba7e">
+            <classMoniker
+              Id="e0420ab8-7040-4773-81d4-afe8f0f2d4a2"
+              LastKnownName="PhysicsEngine"
+              LastKnownLocation="ModelingProject1.uml" />
+          </dependency>
+        </suppliersInternal>
+        <targetEnds>
+          <association
+            Id="ae7a9604-cf53-4454-af72-09c834a39ec5"
+            isDerived="false"
+            sourceEndRoleName="Movement"
+            targetEndRoleName="World"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="4af49f03-f9e3-4479-bbab-13dd6cfff098"
+              LastKnownName="World"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="d8798d21-ec21-4ffa-876b-f345da44e737"
+                  name="Movement"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="8d7e8b97-39f6-4d2b-a50a-a8d1ea50f4ac"
+                  name="World"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="8ac8e330-e995-42b1-a3ec-a33c1de5f25e"
+            name="*zWorld"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="33a81728-4bd2-4025-8eb1-15e51ffb34ce"
+            name="*zPhysics"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="e64f6b1d-2365-4cc8-9ef1-c06bbcdd4941"
+            name="*zActor"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="5b798fe5-5a5b-4b2e-8fd5-8efbeb387a8b"
+            name="applyMovement"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="d0b00cc0-c86c-4407-9630-11ebb7432180"
+                  name="float dt"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="71c7f842-16d3-4740-8c20-11ce02933fd5"
+            name="Movement"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="ea1411cc-f3a9-4bf4-a173-3b4ebedf14ba"
+                  name="Actor*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="7707833f-48b6-484e-8f45-83f119cb1717"
+                  name="PhysicsEngine*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="5d3e65e4-c050-4aa4-ba22-6e5c00c2f1de"
+                  name="World*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="1b03a7bb-581a-4391-9859-1d1b97fc17e4"
+        name="Actor"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <dependency
+            Id="23df9028-d5b5-4053-a978-6c1b79be2fc7">
+            <classMoniker
+              Id="94eaaa98-f028-4af8-8102-064224daa3f9"
+              LastKnownName="Mesh"
+              LastKnownLocation="ModelingProject1.uml" />
+          </dependency>
+        </suppliersInternal>
+        <ownedAttributesInternal>
+          <property
+            Id="73981706-5b2c-4f71-9867-79bf95407849"
+            name="*zMesh"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="741043f7-0623-4abd-9c5c-023c02947fe4"
+            name="GetMesh"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="8e572b59-6063-4c42-a365-5a4fd05f1b99"
+            name="Actor"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="36daf5de-0f43-4fd8-8c73-b3bd02ec5aff"
+                  name="Mesh*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="94eaaa98-f028-4af8-8102-064224daa3f9"
+        name="Mesh"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="c95635b7-3844-43c0-84f5-0afe772fd599"
+            isDerived="false"
+            sourceEndRoleName="Mesh"
+            targetEndRoleName="BoundingSphere"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="df8350a4-dc5a-4ef5-a112-8b4ec36517e9"
+              LastKnownName="BoundingVolume"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4a69f4c1-9e4d-4d5b-8060-3610a13c348b"
+                  name="Mesh"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="009a8b7d-7405-4cc6-846c-e4dd4901cc19"
+                  name="BoundingSphere"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="a5e55347-e959-4b97-bb34-c04da3931514"
+            name="zBoundingVolume"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="8a528e6e-8531-4162-81d5-20d6d3b83e92"
+            name="GetEngine"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="e0420ab8-7040-4773-81d4-afe8f0f2d4a2"
+        name="PhysicsEngine"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="52635088-9409-4b10-9c14-e3e8dd19fc9a"
+            isDerived="false"
+            sourceEndRoleName="PhysicsEngine"
+            targetEndRoleName="Mesh"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="94eaaa98-f028-4af8-8102-064224daa3f9"
+              LastKnownName="Mesh"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="175f60c8-a1ad-4105-97f9-3e5120165c99"
+                  name="PhysicsEngine"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="720c526e-4a6b-43c1-8ac6-9fe4477dc59c"
+                  name="Mesh"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="0c8e3ddc-5d5c-4695-bd15-3b4577b34824"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="d6a89254-2051-462e-87ad-40f07ef75ff7"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="35971dfe-d447-4f7c-a042-c9b977998d16"
+            isDerived="false"
+            sourceEndRoleName="PhysicsEngine"
+            targetEndRoleName="QuadTree"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="b07dbab4-2231-413b-95e1-dcde3c9b31dd"
+              LastKnownName="QuadTree"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="422ad99b-f3d9-4914-b0b5-c399cc6aaba3"
+                  name="PhysicsEngine"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="34bcc641-a4aa-48c4-ad90-243bccc03679"
+                  name="QuadTree"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation
+            Id="83c80416-97c2-4170-a608-e21a1ee35adb"
+            name="doCollision"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="df63c5bc-3200-47bd-be59-72d0f21e2267"
+                  name="Mesh*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="1d32beb6-240b-4236-9704-4e68c8b93cc7"
+            name="Mesh* loadMesh"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="752fa9ff-25bf-4db0-902e-338ed77298a2"
+        name="Host"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="6821bf05-e27d-4d26-a66c-6acef2e3a852"
+            isDerived="false"
+            sourceEndRoleName="Host"
+            targetEndRoleName="Game"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="64c706d2-341f-49ba-be34-c1b8576da3c1"
+              LastKnownName="Game"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="0fc11da4-95df-41f7-95c5-f42cbfb3eff5"
+                  name="Host"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="3f1df801-9358-4e69-9231-3a3411e9f945"
+                  name="Game"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="5149df9f-5fe3-40b7-8931-17e212ea8055"
+            name="zGame"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="f3248e6d-1c1d-4f2a-a234-463edee197a4"
+        name="ActorManager"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="8b9455eb-e49e-47fe-9e16-624c57de28ba"
+            isDerived="false"
+            sourceEndRoleName="ActorManager"
+            targetEndRoleName="Actor"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="1b03a7bb-581a-4391-9859-1d1b97fc17e4"
+              LastKnownName="Actor"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="40de04c5-533d-4bea-a174-d7a0f07cd86b"
+                  name="ActorManager"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="93903dc5-26ff-4cd1-ab0b-4eb3aff92b8a"
+                  name="Actor"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="3e11abd5-9434-42d4-bc22-4d8c01cb737e"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="5b5838ac-f804-45a8-b58a-ca6e73cb8ab9"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="a48e52f2-50d8-49bf-95fc-c132c2d3a5e6"
+            isDerived="false"
+            sourceEndRoleName="ActorManager"
+            targetEndRoleName="PhysicsEngine"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="e0420ab8-7040-4773-81d4-afe8f0f2d4a2"
+              LastKnownName="PhysicsEngine"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="e5f72a5d-1d55-4295-b835-3e056dccace7"
+                  name="ActorManager"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="1d8bb5b5-d16a-41e8-b47b-f55487578832"
+                  name="PhysicsEngine"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="02ac5ddd-331d-44af-a51f-611df36b1b24"
+            name="zActors[]"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="42c98d70-5b1a-4956-b8ee-104e36076d47"
+            name="zPhysics"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="b07dbab4-2231-413b-95e1-dcde3c9b31dd"
+        name="QuadTree"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="f6ee43da-0610-4cd9-be7a-eafd635911fa"
+            isDerived="false"
+            sourceEndRoleName="QuadTree"
+            targetEndRoleName="Mesh"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="94eaaa98-f028-4af8-8102-064224daa3f9"
+              LastKnownName="Mesh"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="df2f8394-281e-4170-b458-d034fa1b9eee"
+                  name="QuadTree"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="96e5a9e6-09de-4628-8465-958476c876ca"
+                  name="Mesh"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="0c6ff663-057c-48d4-9709-055fc2d39fa4"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="3a9f98c2-1500-4c74-9f09-61dc53e65079"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="df8350a4-dc5a-4ef5-a112-8b4ec36517e9"
+        name="BoundingVolume"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="6ebb73b6-c43f-4d27-922f-798ac1384baa"
+        name="BoundingSphere"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="9ea37cfc-161a-45a2-8810-b7a3cfb2986f"
+            isSubstitutable="false">
+            <classMoniker
+              Id="df8350a4-dc5a-4ef5-a112-8b4ec36517e9"
+              LastKnownName="BoundingVolume"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9cc8f97d-3a10-4667-a196-f46e147faa71"
+        name="AABB"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="05d4b04b-fdaf-4923-b4a9-131941b4d41b"
+            isSubstitutable="false">
+            <classMoniker
+              Id="df8350a4-dc5a-4ef5-a112-8b4ec36517e9"
+              LastKnownName="BoundingVolume"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="73d16d3d-3e03-4cf3-89b6-f41e08b365b8"
+        name="OBB"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="9ba3b1ab-aa39-4e75-b4fc-a4b20be70358"
+            isSubstitutable="false">
+            <classMoniker
+              Id="df8350a4-dc5a-4ef5-a112-8b4ec36517e9"
+              LastKnownName="BoundingVolume"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="1c3bce1f-13a4-448d-81ab-2d40ad27b269"
+        name="PhysicsObject"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="38509638-0490-4bbc-9153-27479314f1be"
+        name="Host : Process"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="59b5fb6c-907f-4a61-ab75-dc8714e80422"
+            isDerived="false"
+            sourceEndRoleName="Host"
+            targetEndRoleName="GameMode"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="4b66bfec-f5cd-4549-8336-e5a1bd4bd410"
+              LastKnownName="Game : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4e9d0a4a-342b-4efc-a533-be59e48944b6"
+                  name="Host"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="3cbbb691-ea49-416e-851e-ddfd90884511"
+                  name="GameMode"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="010c4c21-a5bc-444b-9bc1-310535d3f7eb"
+            isDerived="false"
+            sourceEndRoleName="Host"
+            targetEndRoleName="ClientData"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="29c48100-9a80-445a-a2b6-f41113f62198"
+              LastKnownName="ClientData"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="d41d2ffe-d766-4f90-88ba-51fc854f19fa"
+                  name="Host"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="6b9521d0-5070-4e25-b295-de7f766a31b0"
+                  name="ClientData"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation
+            Id="1838a1e8-f36c-4e56-a5b2-a5304a21f24a"
+            name="Life"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="7a89f2d8-f4fc-4d60-962d-59f4af21b4a5"
+            name="Message"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="462702ea-66fc-4ef7-bd51-e37597d8fd9b"
+                  name="ClientChannel*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="92bb9fbe-91da-4559-bba1-9c5456b618d5"
+                  name="string"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="4b66bfec-f5cd-4549-8336-e5a1bd4bd410"
+        name="Game : Observed"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="bcd19a18-8c06-412d-ada2-c7dfaed53d19"
+            isDerived="false"
+            sourceEndRoleName="GameMode"
+            targetEndRoleName="ActorManager"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="45498f34-1c37-4a97-81a0-9020a414e63f"
+              LastKnownName="ActorManager : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ce1a4874-512d-4d50-9efa-bf76a1d60ee3"
+                  name="GameMode"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ef3ef6fb-4a2e-48de-abef-8f511a4d4327"
+                  name="ActorManager"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="b4a458a1-06cb-4f33-ac7f-71380a75c0da"
+            isDerived="false"
+            sourceEndRoleName="Game"
+            targetEndRoleName="GameMode"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="489396f1-da0b-4892-a3b0-9c8a0b5c7292"
+              LastKnownName="GameMode : Abstract"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="65f11ad8-ca1e-4b79-a01b-292f0b53336c"
+                  name="Game"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="46b79579-bc42-4878-9710-340112f014a1"
+                  name="GameMode"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="589ef5a0-fbfd-4cdb-ae95-2bfde7f3a91f"
+            isDerived="false"
+            sourceEndRoleName="Game"
+            targetEndRoleName="Player"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="606c071a-a447-46cb-af2f-d2e10efc0ba5"
+              LastKnownName="Player : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ecacd1ea-2568-465d-a358-8de899a7b578"
+                  name="Game"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="6d1c9533-1698-4df2-86f5-9df65ccf83ea"
+                  name="Player"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="8d8e87de-d78b-4ec2-9e37-c1bd6b5d10b6"
+            isDerived="false"
+            sourceEndRoleName="Game : Observed"
+            targetEndRoleName="Behavior"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="66156a6b-5c43-4b55-be3f-19c8284e7cab"
+              LastKnownName="Behavior : Abstract"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="8a8f8a7e-f541-4673-90a2-cc64e3347134"
+                  name="Game : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="d16994e9-cb39-401f-a99d-548ef141b351"
+                  name="Behavior"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="48c1ad7b-6e89-4382-acae-235922cc37fd"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="cc98ffd0-80eb-4234-9fe5-a756336835ec"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="14f693cf-c4a7-4082-b238-02476cde5ed2"
+            isDerived="false"
+            sourceEndRoleName="Game : Observed"
+            targetEndRoleName="World"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="8c7a75c4-5320-4fe2-9935-4b6b655abe03"
+              LastKnownName="World"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="6b565141-5f46-426a-be4a-9825c642c144"
+                  name="Game : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="c99f12eb-228e-4922-a867-3320a05bf5b2"
+                  name="World"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="4e14b2aa-9bae-45cb-97ba-92b894ef15dc"
+            isDerived="false"
+            sourceEndRoleName="Game : Observed"
+            targetEndRoleName="KeyStates"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="fe6408c8-fdd5-48eb-92f8-1125695c05d2"
+              LastKnownName="KeyStates"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="0282f018-12ef-43d1-a7f9-070eb149916e"
+                  name="Game : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="1eda033f-282f-4936-8649-b79847250579"
+                  name="KeyStates"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="6401bc02-c95b-4f69-b362-0fe0e3909ddd"
+            name="zBehaviors[]"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="d8c671c8-f443-415f-905f-3e36ea17fb97"
+            name="zPlayers[]"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="5255d84c-3556-4f23-afd5-8f438f6e23e2"
+            name="map&lt;Player,Behavior&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="053c96a6-8396-492a-9d03-39c47d627cef"
+            name="Map&lt;ClientData*, Player&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="53c8a0c0-088a-4597-adf6-65d4480ad12a"
+            name="Map&lt;Player,KeyStates&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="6e3c8b6d-a386-46aa-a8ad-f88617cfa89a"
+            name="GameMode* zMode;"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="d0b46d08-5e96-4e4e-b06b-df113a4bf779"
+            name="NewPlayerEvent"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c09ecc13-dda6-4eaf-bce7-02934b27c987"
+                  name="ClientData*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="83299b43-e440-4091-b00f-f85b8851d203"
+            name="PlayerQuitEvent"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="383dc7c1-0682-4ea5-b124-ffee79bd7789"
+                  name="ClientData*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="f5b309b9-3cd5-40b7-86ea-eb77c6b06d5a"
+            name="bool update"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="e7a54569-0352-46aa-a95e-72813be6c66a"
+                  name="float  dt"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="10b66d4b-bc0d-441f-b8e9-24d0bfdde084"
+            name="OnEvent"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="9b6f922a-813d-455e-8fed-6a66fce9cb3a"
+                  name="Event*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="9b4f740e-a82c-4665-abe4-8e106f401d7e"
+            name="Game"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="f0e59a4b-b800-4ec0-aecf-27c84cccb8be"
+                  name="GameMode"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="dbb15660-1fc7-42a5-aae3-9af2d42e724b"
+                  name="Map"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="29c48100-9a80-445a-a2b6-f41113f62198"
+        name="ClientData"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="997b38e6-adc3-479e-b468-1313b91eb81d"
+            isDerived="false"
+            sourceEndRoleName="ClientData"
+            targetEndRoleName="ClientChannel : Process"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="cea2a73d-5660-47fc-9ed5-f7710e2c0f12"
+              LastKnownName="ClientChannel : Process"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="b60e90ae-f14d-4377-ba85-7803151876e3"
+                  name="ClientData"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="143e32dc-61f4-4939-b0d3-bcbc3d2c5df0"
+                  name="ClientChannel : Process"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation
+            Id="0cd41dc4-41dc-415d-ab56-074ab721e890"
+            name="Kick"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="8f42b760-e4d8-4d80-9175-4c586db88de8"
+        name="ClientManager"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="45498f34-1c37-4a97-81a0-9020a414e63f"
+        name="ActorManager : Observed"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="57ad35c8-0c7a-4c24-9477-acc60f2d1af5"
+            isDerived="false"
+            sourceEndRoleName="ActorManager : Observed"
+            targetEndRoleName="GameMode : Abstract"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="489396f1-da0b-4892-a3b0-9c8a0b5c7292"
+              LastKnownName="GameMode : Abstract"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="022f3d07-30b3-405c-b2fb-17512a8a33f6"
+                  name="ActorManager : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="853e0ec2-a846-4840-b716-6831c6fceaf3"
+                  name="GameMode : Abstract"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="02077297-8ee5-4c4a-b802-2db8771423b9"
+            isDerived="false"
+            sourceEndRoleName="ActorManager : Observed"
+            targetEndRoleName="Actor"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="93a7b46f-f03c-489a-aacd-55fcce13880f"
+              LastKnownName="Actor : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="0aaefc6b-b49c-4ccb-b94f-b9a67caa4be9"
+                  name="ActorManager : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4551f493-078f-4a86-9624-6735e5268e84"
+                  name="Actor"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="8f6e9f9f-052e-416e-ad06-fc34be469427"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="9950e97c-aacc-4ccc-81ee-3854a6362eb7"
+                      name="Upper"
+                      value="*" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="189c25bc-38f6-4b29-9680-78741e1a4216"
+            isDerived="false"
+            sourceEndRoleName="ActorManager : Observed"
+            targetEndRoleName="ActorSyncher"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="0de2ad79-47ac-4646-bdd2-afbc28218b83"
+              LastKnownName="ActorSyncher : Observer"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="75959458-2499-4f14-abbb-dbe6f5440615"
+                  name="ActorManager : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4a379b00-0aba-4a40-92dd-6c685961f0c4"
+                  name="ActorSyncher"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="34055e4d-3f1f-4a15-a615-bb12b7203447"
+            name="*Actor[]"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="87b88622-78f4-4240-9d45-2604f4351e73"
+            name="*zSyncher"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="004cc39a-4fe7-409f-9500-6170eb0864d2"
+            name="AddActor"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="906a93ee-3cd1-4dc2-8211-bb36db9472d8"
+                  name="Actor*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="79497b18-3adb-4084-aef6-5cddd40ee61d"
+            name="RemoveActor"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="a522e3e7-8b5e-40e7-9ad3-e3b45dd70f7c"
+                  name="Actor*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="51bb8c3e-a9d0-410d-96ee-447afda4d080"
+            name="ActorManager"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="fba4205f-0fe9-40e7-ab3f-bfa94f9fe0e2"
+                  name="ActorSyncher*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="489396f1-da0b-4892-a3b0-9c8a0b5c7292"
+        name="GameMode : Abstract"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="7da74406-e87c-439d-a76b-be41021a11a0"
+            name="*zGame"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="57921313-a6af-4b98-8886-5279f869846f"
+            name="OnEvent"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="63240a2f-d3fb-4288-b519-486f09b8fdd8"
+                  name="Event*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="03d36a34-ec1e-4bd6-949c-fae6ea32daf7"
+            name="bool update"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="bdebf5b2-c3da-4daf-b5f6-75130197985c"
+                  name="float"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="606c071a-a447-46cb-af2f-d2e10efc0ba5"
+        name="Player : Observed"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="acdd8eb9-4f73-46e0-b5fc-4d5318e1e957"
+            isDerived="false"
+            sourceEndRoleName="Player"
+            targetEndRoleName="ClientData"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="29c48100-9a80-445a-a2b6-f41113f62198"
+              LastKnownName="ClientData"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="654e9375-2e6e-46e0-aed1-7f422d3fc12f"
+                  name="Player"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="5354150c-3137-41bf-9302-c74eab2207d7"
+                  name="ClientData"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="234c67e5-d320-4faa-adbd-c61f2b993a07"
+            isDerived="false"
+            sourceEndRoleName="Player : Observed"
+            targetEndRoleName="GameMode : Abstract"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="489396f1-da0b-4892-a3b0-9c8a0b5c7292"
+              LastKnownName="GameMode : Abstract"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ebae3e09-4894-4284-b78a-1d9473796221"
+                  name="Player : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="02fa633f-c042-415b-a680-81a71f908cae"
+                  name="GameMode : Abstract"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="ddb80684-2ca3-42c5-9a0b-bdae455f5255"
+            name="zClientData"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="c1e72e8d-47e2-4c2f-96b8-74c1441bb627"
+            name="Player"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="6665fead-bbc9-457a-9dbd-11e5b106d09e"
+                  name="ClientData*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="924f5e58-227e-4e25-bac5-e67fb5b46544"
+            name="Kick"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="3c7dc556-e068-4075-ba62-f3efbbd5a82b"
+        name="FFAPLayer"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="5f7eea6f-faf3-42e1-a477-b35b8e439686"
+        name="BIOActor : Abstract, Observed"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="34303f73-448d-4f9d-bf0f-dc32f5f023b0"
+            isSubstitutable="false">
+            <classMoniker
+              Id="93a7b46f-f03c-489a-aacd-55fcce13880f"
+              LastKnownName="Actor : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association
+            Id="b4c681da-9e01-485d-8be3-43f1291c0964"
+            isDerived="false"
+            sourceEndRoleName="BIOActor : Observed"
+            targetEndRoleName="Inventory"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="25e86a7d-0d3e-40a7-8adf-e7f43bb83b01"
+              LastKnownName="Inventory : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4f6073a7-6194-44ce-a4d8-72ffef9341ce"
+                  name="BIOActor : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="69c30fbb-1063-4f9c-9d63-65ea801b173f"
+                  name="Inventory"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="79dda233-42c0-40fb-94f0-8be2960ffdfc"
+            isDerived="false"
+            sourceEndRoleName="BIOActor : Observed"
+            targetEndRoleName="GameMode : Abstract"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="489396f1-da0b-4892-a3b0-9c8a0b5c7292"
+              LastKnownName="GameMode : Abstract"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="94149eb0-4514-4a47-9adb-129e0e54a87c"
+                  name="BIOActor : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="df562ce8-2cec-4413-9436-1bbc4b1b4d66"
+                  name="GameMode : Abstract"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="b1567393-b51c-4353-84d9-99e429170f65"
+            name="zHealth"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="162719aa-cb77-4784-8f0a-76da4830f249"
+            name="zStamina"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="9e826d9c-91c4-4dbc-9761-295b9818a8bd"
+            name="isAlive"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="1fe4d968-fb29-4dc5-aaba-7bf8393c7e60"
+            name="*zPhysicsObject"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="c13a5daf-62e3-4c5c-9ecc-dd5341278349"
+            name="takeDamage"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="36e5231c-9996-4025-8db2-86e548e7daac"
+                  name="float"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="25e86a7d-0d3e-40a7-8adf-e7f43bb83b01"
+        name="Inventory : Observed"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="bda44d7f-a1bc-4a13-a091-7013a8ed6f0e"
+            isDerived="false"
+            sourceEndRoleName="Inventory : Observed"
+            targetEndRoleName="GameMode : Abstract"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="489396f1-da0b-4892-a3b0-9c8a0b5c7292"
+              LastKnownName="GameMode : Abstract"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="f4509e6a-e294-40c7-8c8a-39f76731cf95"
+                  name="Inventory : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="dec46f3c-646a-4753-ad6c-b3f22b3f15f4"
+                  name="GameMode : Abstract"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="88b23f58-599a-48e0-a8f7-89c01b85af1b"
+        name="PlayerActor : BIOActor"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="695ce19f-9659-4bd1-99ba-09bf102f715b"
+            isSubstitutable="false">
+            <classMoniker
+              Id="5f7eea6f-faf3-42e1-a477-b35b8e439686"
+              LastKnownName="BIOActor : Abstract, Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association
+            Id="2a4cddc0-d3c5-4523-bd69-2193186097a2"
+            isDerived="false"
+            sourceEndRoleName="PlayerActor : BIOActor"
+            targetEndRoleName="Player : Observed"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="606c071a-a447-46cb-af2f-d2e10efc0ba5"
+              LastKnownName="Player : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="acad4a71-989f-4a7d-90d1-91f134490a04"
+                  name="PlayerActor : BIOActor"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="b920b328-5ce3-42aa-9f83-3ce8111a7aaf"
+                  name="Player : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="cad94121-4104-48d4-bea4-3b3d6beb7de5"
+            name="Player* zPlayer"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="5494325a-cc91-431c-8c51-49f48fc90c6b"
+            name="PlayerActor"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="467cf948-698f-4b9e-b42d-f218af83d68e"
+                  name="Player*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="64c706d2-341f-49ba-be34-c1b8576da3c1"
+        name="Game"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="33e36c55-4ad0-4ed2-97e4-848e2a8c2590"
+            isDerived="false"
+            sourceEndRoleName="Game"
+            targetEndRoleName="Behavior"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="a6c4c4e7-c0ab-4c5d-a8a6-5a6fee47b9b0"
+              LastKnownName="Behavior"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="0d599251-d007-413e-a04a-9557671f3285"
+                  name="Game"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="44014d2e-923a-41dc-b781-2ccbbc4dec7e"
+                  name="Behavior"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="d8dae370-ad66-4c6c-a7cc-ec9d7db1f96d"
+            isDerived="false"
+            sourceEndRoleName="Game"
+            targetEndRoleName="ActorManager"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="f3248e6d-1c1d-4f2a-a234-463edee197a4"
+              LastKnownName="ActorManager"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="174af06c-d30f-4a52-b48b-4a8b3b2e208f"
+                  name="Game"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="c017a8be-af36-41a2-9f42-c6ff3f774a63"
+                  name="ActorManager"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="3b85a5ca-b071-481c-8ee0-a01ffcc69b87"
+            isDerived="false"
+            sourceEndRoleName="Game"
+            targetEndRoleName="World"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="4af49f03-f9e3-4479-bbab-13dd6cfff098"
+              LastKnownName="World"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="44c3e134-57d8-4bd4-8edc-bf49893aa1e6"
+                  name="Game"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="4bb695d8-c3bb-4a9e-9b75-1499fc71f155"
+                  name="World"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="08b8c271-cc6f-4983-939c-3edd564c0ad9"
+            name="zWorld"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="7027ef80-d6bf-4379-8c55-8edec54a4a12"
+            name="zActorManager"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="2d3c3690-d314-4bcd-ba25-dac24e034fe6"
+            name="zBehaviors[]"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="cea2a73d-5660-47fc-9ed5-f7710e2c0f12"
+        name="ClientChannel : Process"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="e5c10615-e137-4493-93ec-de93c3ec04e0"
+            name="zHostProcess"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="d704f1cc-3dcf-41c0-9f48-6d3c563160ba"
+            name="Disconnect"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="3d14b904-2c4e-41e6-912b-46516d3f45ff"
+        name="GhostActor"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="8679cdfe-0c74-4cda-8663-84005d9e0f75"
+            isSubstitutable="false">
+            <classMoniker
+              Id="93a7b46f-f03c-489a-aacd-55fcce13880f"
+              LastKnownName="Actor : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association
+            Id="a199624e-c391-47fe-8a75-c5982cd231a8"
+            isDerived="false"
+            sourceEndRoleName="GhostActor"
+            targetEndRoleName="Player : Observed"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="606c071a-a447-46cb-af2f-d2e10efc0ba5"
+              LastKnownName="Player : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="64219d7f-231d-413f-927d-5b4578c6cf7e"
+                  name="GhostActor"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="57d715d1-ad6a-48fa-b264-01614c2858d6"
+                  name="Player : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="f860cb29-967c-4d00-9ca0-0ad28fbec736"
+            name="Energy"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="16d54537-3be5-4bb6-b607-bbdd0f3193e2"
+            name="Player* zPlayer"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="a486b183-e677-472c-a72c-24e4422a45fb"
+            name="GhostActor"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="b2e44c0a-02dd-4b16-98ba-d0a640715273"
+                  name="Player*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="93a7b46f-f03c-489a-aacd-55fcce13880f"
+        name="Actor : Observed"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="4a6a5c64-c7e7-473c-a9b5-246fc9d6d9f2"
+            isDerived="false"
+            sourceEndRoleName="Actor"
+            targetEndRoleName="Object"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="c6e247eb-ffae-4dcd-b4c9-b8e604f491c3"
+              LastKnownName="Object"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="107db62e-23cf-48d5-b175-3f49cf795993"
+                  name="Actor"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="2d520d03-0486-40b9-9e57-6fb990255cde"
+                  name="Object"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="9a4e7a83-3da5-4b8e-a471-01c84b011237"
+            isDerived="false"
+            sourceEndRoleName="Actor"
+            targetEndRoleName="ActorSyncher"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="0de2ad79-47ac-4646-bdd2-afbc28218b83"
+              LastKnownName="ActorSyncher : Observer"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="682038c7-7dcd-46de-80c7-b42fe9a3db60"
+                  name="Actor"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="6ee19b82-d36c-4b40-93b9-e47f41b360ed"
+                  name="ActorSyncher"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="1d82d9cc-7d40-4e55-82a9-0141e4bd5245"
+            isDerived="false"
+            sourceEndRoleName="Actor : Observed"
+            targetEndRoleName="PhysicsObject"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="bf750b44-688f-4392-8909-e8b17041601d"
+              LastKnownName="PhysicsObject"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="f5773928-8421-4254-a893-2e6ff91d88b9"
+                  name="Actor : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="d3eb0b69-7ebc-4075-90d5-dfbeb9ca028f"
+                  name="PhysicsObject"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true">
+                  <lowerValueInternal>
+                    <literalString
+                      Id="0a066028-1535-4fb2-b285-01ea9a5c1c76"
+                      name="Lower"
+                      value="0" />
+                  </lowerValueInternal>
+                  <upperValueInternal>
+                    <literalString
+                      Id="b4577142-7a42-48a2-86f8-a7e19863bb05"
+                      name="Upper"
+                      value="1" />
+                  </upperValueInternal>
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="da30961d-3e29-41bd-ba37-7968f85e18f7"
+            name="ID"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="229a4f73-9040-4d53-bf19-773d3ef63a7a"
+            name="Position"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="74e24dc8-ef3c-4155-bfee-7689f9bdafde"
+            name="Rotation"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="88b1ef24-7a6f-418a-81e6-0b98b644665a"
+            name="Scale"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="d9a7f9ee-2200-42c4-90d7-642ad7f6ccad"
+            name="PhysicsObject *zPhysics"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="66156a6b-5c43-4b55-be3f-19c8284e7cab"
+        name="Behavior : Abstract"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="7e554b38-3a5c-4d23-bdb1-70ba9fafe208"
+            isDerived="false"
+            sourceEndRoleName="Behavior"
+            targetEndRoleName="Actor"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="93a7b46f-f03c-489a-aacd-55fcce13880f"
+              LastKnownName="Actor : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="77305ab7-121c-48a4-b31f-7c99975e2d89"
+                  name="Behavior"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="87123318-003b-400e-b4f4-46406fc1c0b6"
+                  name="Actor"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="17e51d6b-6c34-4757-a458-77e0edcaf035"
+            isDerived="false"
+            sourceEndRoleName="Behavior"
+            targetEndRoleName="Anchor"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="ec037ba6-8b2c-483a-97e6-fe96236fbcb9"
+              LastKnownName="Anchor"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="3e078b1f-b74d-48cd-b15d-a0b9036bc004"
+                  name="Behavior"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="ca003a6b-0ca6-4941-9975-663fe406cb8a"
+                  name="Anchor"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+          <association
+            Id="8f7df435-8272-418a-a6da-2c1ec466d20c"
+            isDerived="false"
+            sourceEndRoleName="Behavior"
+            targetEndRoleName="World"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="8c7a75c4-5320-4fe2-9935-4b6b655abe03"
+              LastKnownName="World"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="7a7edf0a-0fb9-43a2-95ec-b6f6cb0504e3"
+                  name="Behavior"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="562bf8b6-f57e-45df-9cbe-ba4f8d951b89"
+                  name="World"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="7840bbc9-f61d-493c-a207-2b68c565d672"
+            name="*zActor"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="55840dcb-fcbf-42d1-96f3-8c48565a21fc"
+            name="*zWorld"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="eacc88f1-7e16-4d59-941d-550e3ea56228"
+            name="*zAnchor"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="dc93bbe5-6672-4cf2-afe7-13fcb3704e68"
+            name="Behavior"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="fa06f1c8-efdc-410a-87f0-2c0529f2e807"
+                  name="Actor*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="c93b8fa8-172e-4192-a073-652d634ee97a"
+                  name="World*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation
+            Id="f6b5af09-ac40-4798-8140-f6bbb4f54b29"
+            name="bool update"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="e3f3b07f-8b51-471e-adec-9e4fbaa9ee12"
+                  name="float dt"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="aaf2ef8e-44fa-4612-bf6f-4f9e233347bc"
+        name="ProjectileActor"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="d68f8a92-cceb-479a-aa56-7f938a51d1b1"
+            isSubstitutable="false">
+            <classMoniker
+              Id="93a7b46f-f03c-489a-aacd-55fcce13880f"
+              LastKnownName="Actor : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+        <ownedAttributesInternal>
+          <property
+            Id="cf160e5a-dc8a-41ba-bae8-43d59b1be104"
+            name="*zPhysicsObject"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="5d0e077e-8e91-47b2-b43e-b205d4d731cf"
+        name="WorldActor"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="738216e2-4327-4c9f-b182-be91c0ccc94b"
+            isSubstitutable="false">
+            <classMoniker
+              Id="93a7b46f-f03c-489a-aacd-55fcce13880f"
+              LastKnownName="Actor : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+        <ownedAttributesInternal>
+          <property
+            Id="92d61016-9326-4e4e-ad40-7ab5c10174ac"
+            name="zEntity"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="70004e1a-3fd3-434f-9b71-44629b2d8207"
+            name="*zPhysicsObject"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="8c7a75c4-5320-4fe2-9935-4b6b655abe03"
+        name="World"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="42797684-94ea-4a5f-a200-e388564f10d7"
+            isDerived="false"
+            sourceEndRoleName="World"
+            targetEndRoleName="Anchor"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="ec037ba6-8b2c-483a-97e6-fe96236fbcb9"
+              LastKnownName="Anchor"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="aece4364-2576-4d13-99dd-9c77bc3aeb98"
+                  name="World"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="73622264-8ccb-4dfb-aeef-953dce68cd84"
+                  name="Anchor"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="ec037ba6-8b2c-483a-97e6-fe96236fbcb9"
+        name="Anchor"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="8b1701f8-2161-4112-9ccd-7b7798ec1e24"
+        name="PlayerBehavior"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="8bb15c18-c4a6-42c1-abb7-1f132fa494b2"
+            isSubstitutable="false">
+            <classMoniker
+              Id="66156a6b-5c43-4b55-be3f-19c8284e7cab"
+              LastKnownName="Behavior : Abstract"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association
+            Id="47fdd725-ffe6-4620-8f89-86d76a1ce8a6"
+            isDerived="false"
+            sourceEndRoleName="PlayerBehavior"
+            targetEndRoleName="KeyStates"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="fe6408c8-fdd5-48eb-92f8-1125695c05d2"
+              LastKnownName="KeyStates"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="9cb80e58-50b9-4548-8b16-c8556843248f"
+                  name="PlayerBehavior"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="8747bb24-9be4-4119-b468-414bc3832e3b"
+                  name="KeyStates"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="70f0a400-f9a4-4c15-97f5-7f8455ef3960"
+            name="zKeyStates"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="3b00dd1a-fceb-4ab8-83dc-d5a2e82286ef"
+        name="PlayerWolfBehavior"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="9c5d4a89-1665-4df3-9267-ecc14886e772"
+            isSubstitutable="false">
+            <classMoniker
+              Id="66156a6b-5c43-4b55-be3f-19c8284e7cab"
+              LastKnownName="Behavior : Abstract"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association
+            Id="415e96d2-cf9a-40ec-bd2d-b7a3a901d67d"
+            isDerived="false"
+            sourceEndRoleName="PlayerWolfBehavior"
+            targetEndRoleName="KeyStates"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="fe6408c8-fdd5-48eb-92f8-1125695c05d2"
+              LastKnownName="KeyStates"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="2bcc7a2e-adb3-419f-b6a9-dbbac4f2de04"
+                  name="PlayerWolfBehavior"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="7c83112b-c311-4233-bda2-9c1e96b6af91"
+                  name="KeyStates"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="4dcf0d6d-2051-47f8-8e36-245981a1e0a2"
+            name="zKeyStates"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="2cd55698-3ddb-4a92-a518-99a91629ebaa"
+        name="WolfBehavior"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="a6fcfe67-8fee-4672-b6cb-79fd8b555f05"
+            isSubstitutable="false">
+            <classMoniker
+              Id="66156a6b-5c43-4b55-be3f-19c8284e7cab"
+              LastKnownName="Behavior : Abstract"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="2afdc5cd-1c0b-40ef-bf9e-097f2e6b8a34"
+        name="ProjectileBehavior"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="eda2975d-c963-4c80-ac86-be05a22c462f"
+            isSubstitutable="false">
+            <classMoniker
+              Id="66156a6b-5c43-4b55-be3f-19c8284e7cab"
+              LastKnownName="Behavior : Abstract"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="fe6408c8-fdd5-48eb-92f8-1125695c05d2"
+        name="KeyStates"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="bf750b44-688f-4392-8909-e8b17041601d"
+        name="PhysicsObject"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="1393db01-c9dd-454d-a2c9-2c60c27cddca"
+            name="Position"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="e5ef56d0-96b9-4dfe-bc0f-e57122c0f6ac"
+            name="Rotation"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="f8e9d8eb-6bc0-4bd8-88d2-8f6073f39186"
+            name="Scale"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="6556b90d-16ed-4b1f-8fc7-d2dafb467cba"
+        name="Class3"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="c6e247eb-ffae-4dcd-b4c9-b8e604f491c3"
+        name="Object"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="f7b7f18a-7fa0-4bc2-9f8f-83344b13d80c"
+            isDerived="false"
+            sourceEndRoleName="Object"
+            targetEndRoleName="PhysicsObject"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="bf750b44-688f-4392-8909-e8b17041601d"
+              LastKnownName="PhysicsObject"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="c5692afd-bf55-48db-967f-d20e7993e26e"
+                  name="Object"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="0d6daa9d-51ac-4bba-8330-9d542d02b7a0"
+                  name="PhysicsObject"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="4a43a1b5-7633-453e-bb8f-1d44206d4a71"
+            name="Position"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="eecac21f-b45d-4d8e-870b-48734a7852b3"
+            name="Rotation"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="833882a5-6697-4259-a952-41e4fd95a329"
+            name="Scale"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9d16751c-e7b2-4b92-ab8a-9ed4354fe33a"
+        name="AnimalActor"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="cdda0b9f-699e-45b0-aafa-4b7f7df07d11"
+            isSubstitutable="false">
+            <classMoniker
+              Id="5f7eea6f-faf3-42e1-a477-b35b8e439686"
+              LastKnownName="BIOActor : Abstract, Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="cb78d5ad-72b0-45a9-b2c8-17537d9b81e6"
+        name="SurvivalPlayer"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <ownedAttributesInternal>
+          <property
+            Id="8725485a-33a8-4847-9bef-8aaf3f8aa1c8"
+            name="Hunger"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="7445516c-f965-41c3-a278-0678aaac6a68"
+            name="Thirst"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="0de2ad79-47ac-4646-bdd2-afbc28218b83"
+        name="ActorSyncher : Observer"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="94e48e6a-7642-4880-8d36-a6d0ea210828"
+            isDerived="false"
+            sourceEndRoleName="ActorSyncher : Observer"
+            targetEndRoleName="Host : Process"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="38509638-0490-4bbc-9153-27479314f1be"
+              LastKnownName="Host : Process"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="1c9a3d24-af8a-4e6a-8809-705a070323a7"
+                  name="ActorSyncher : Observer"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="a71abdca-e456-4462-83d0-5ecf20518e02"
+                  name="Host : Process"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
