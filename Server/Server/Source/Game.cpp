@@ -1,9 +1,10 @@
 #include "Game.h"
 #include "GameMode.h"
+#include "Behavior.h"
 #include <world/World.h>
 
 
-Game::Game( GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
+Game::Game( ActorSyncher* syncher, GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
 {
 	// Create World
 	zWorld = new World(this, worldFile.c_str());
@@ -16,8 +17,24 @@ Game::~Game()
 
 bool Game::Update( float dt )
 {
-	// TODO: Update Behaviors
+	// Update Behaviors
+	auto i = _behaviors.begin();
+	while( i != _behaviors.end() )
+	{
+		if ( i->second->Update(dt) )
+		{
+			i = _behaviors.erase(i);
+		}
+		else
+		{
+			++i;
+		}
+	}
+
+	// Update Game Mode
 	zGameMode->Update(dt);
+	
+	// Update World
 	zWorld->Update();
 
 	return true;

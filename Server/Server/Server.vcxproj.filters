@@ -123,9 +123,6 @@
     <ClCompile Include="Source\ObjectManager.cpp">
       <Filter>Source\Handlers</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GameModeFFA.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\PlayerBehavior.cpp">
       <Filter>Source\Behavior</Filter>
     </ClCompile>
@@ -148,6 +145,9 @@
       <Filter>Source\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\ActorSynchronizer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameModeFFA.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -257,9 +257,6 @@
     <ClInclude Include="Source\ObjectManager.h">
       <Filter>Source\Handlers</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GameModeFFA.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\AIDeerBehavior.h">
       <Filter>Source\Behavior</Filter>
     </ClInclude>
@@ -282,6 +279,9 @@
       <Filter>Source\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\ActorSynchronizer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameModeFFA.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,15 +3,7 @@
 
 void Client::HandleWeaponUse(const long ID)
 {
-	PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
-
-	if (!player)
-	{
-		MaloW::Debug("Player Not Found");
-
-		return;
-	}
-	Equipment* eq = player->GetEquipmentPtr();
+	Inventory* eq = this->zPlayerInventory;
 
 	Weapon* weapon = eq->GetRangedWeapon();
 	if (!weapon)
@@ -157,10 +149,9 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Bow)");
 			return;
 		}
-		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
-		Equipment* eq = player->GetEquipmentPtr();
+		Inventory* eq = this->zPlayerInventory;
 
-		this->zPlayerInventory->EraseItem(rWpn->GetID());
+		eq->EraseItem(rWpn->GetID());
 
 		/*Weapon* oldWeapon = eq->GetWeapon();
 
@@ -241,8 +232,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Rock)");
 			return;
 		}
-		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
-		Equipment* eq = player->GetEquipmentPtr();
+		Inventory* eq = this->zPlayerInventory;
 
 		/*Weapon* oldWeapon = eq->GetWeapon();
 
@@ -311,7 +301,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			return;
 		}
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
-		Equipment* eq = player->GetEquipmentPtr();
+		Inventory* eq = this->zPlayerInventory;
 
 		Projectile* oldProjectile = eq->GetProjectile();
 		if (oldProjectile)
@@ -364,8 +354,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			return;
 		}
 
-		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
-		Equipment* eq = player->GetEquipmentPtr();
+		Inventory* eq = this->zPlayerInventory;
 
 
 		this->zPlayerInventory->EraseItem(mWpn->GetID());
@@ -392,7 +381,7 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 		return false;
 	}
 
-	Equipment* eq = pObject->GetEquipmentPtr();
+	Inventory* eq = this->zPlayerInventory;
 
 	if (Slot == EQUIPMENT_SLOT_AMMO)
 	{
@@ -597,7 +586,7 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 	{
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 
-		Equipment* eq = player->GetEquipmentPtr();
+		Inventory* eq = this->zPlayerInventory;
 
 		Weapon* weapon = eq->GetRangedWeapon();
 
@@ -626,7 +615,7 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 	{
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 
-		Equipment* eq = player->GetEquipmentPtr();
+		Inventory* eq = this->zPlayerInventory;
 
 		Weapon* weapon = eq->GetMeleeWeapon();
 
@@ -654,7 +643,7 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 	{
 		PlayerObject* player = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
 
-		Equipment* eq = player->GetEquipmentPtr();
+		Inventory* eq = this->zPlayerInventory;
 
 		Projectile* projectile = eq->GetProjectile();
 

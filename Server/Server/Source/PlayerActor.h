@@ -11,7 +11,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "KeyValues.h"
 #include "KeyStates.h"
 #include "Inventory.h"
-#include "Equipment.h"
 #include <World/WorldEvents.h>
 
 /*This class is used to save player information such as position and states.
@@ -66,10 +65,8 @@ public:
 
 	/*! Sets the objm. This class is not responsible for deallocation.*/
 	void SetObjManager(ObjectManager* objm) {this->zObjManager = objm;}
-	Equipment* GetEquipment() {return this->zEquipment;}
 	Inventory* GetInventory() {return this->zInventory;}
 	void SetInventory(Inventory* inv) {this->zInventory = inv;}
-	void SetEquipment(Equipment* eq) {this->zEquipment = eq;}
 	void EatFood(float hunger);
 	void Drink(float hydration);
 	/*! Returns Pos, Rot, Scale, Stamina, Health, State, Hunger, Hydration.*/
@@ -92,7 +89,6 @@ private:
 	KeyStates zKeyStates;
 
 	Inventory* zInventory;
-	Equipment* zEquipment;
 
 	ObjectManager* zObjManager;
 };

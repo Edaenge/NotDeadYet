@@ -192,6 +192,26 @@
           </property>
         </ownedAttributesInternal>
         <ownedOperationsInternal>
+          <operation Id="88126907-6525-4fb3-bd27-37b0fa2cb0dd" name="NewPlayerEvent" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="d0b46d08-5e96-4e4e-b06b-df113a4bf779" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="63a3672e-bd49-4631-a08f-8dcb53883a8e" name="ClientData*" direction="In" isUnique="false">
+                  <elementDefinition Id="c09ecc13-dda6-4eaf-bce7-02934b27c987" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation Id="a977b54d-4d1a-4d9c-97ff-8af15e01203f" name="PlayerQuitEvent" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="83299b43-e440-4091-b00f-f85b8851d203" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="56710a98-0257-4ee3-aec3-bd49c1887981" name="ClientData*" direction="In" isUnique="false">
+                  <elementDefinition Id="383dc7c1-0682-4ea5-b124-ffee79bd7789" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
           <operation Id="0b7c19bd-3d37-4a9d-84c9-82605c88b9d1" name="bool update" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="f5b309b9-3cd5-40b7-86ea-eb77c6b06d5a" />
             <ownedParameters>
@@ -216,13 +236,18 @@
             <elementDefinition Id="9b4f740e-a82c-4665-abe4-8e106f401d7e" />
             <ownedParameters>
               <operationHasOwnedParameters>
-                <parameter Id="abf8b3bf-8156-477b-adbb-8dcd462630a0" name="GameMode" direction="In" isUnique="false">
-                  <elementDefinition Id="f0e59a4b-b800-4ec0-aecf-27c84cccb8be" />
+                <parameter Id="1de2faf7-8120-4e83-bacf-dc1f388d8231" name="ActorSynchronizer" direction="In" isUnique="false">
+                  <elementDefinition Id="fcb543fc-8c2d-4211-8500-9954033e252c" />
                 </parameter>
               </operationHasOwnedParameters>
               <operationHasOwnedParameters>
-                <parameter Id="dfe51f8f-9287-4ec5-afdf-18adf6137aa7" name="Map" direction="In" isUnique="false">
-                  <elementDefinition Id="dbb15660-1fc7-42a5-aae3-9af2d42e724b" />
+                <parameter Id="95555458-7625-4f5a-a0be-3f6b0e9db1c9" name="GameMode" direction="In" isUnique="false">
+                  <elementDefinition Id="85745ef2-0b3e-49f9-8f36-e04d5005a910" />
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="7901e708-8c5e-49ae-a03f-550dd6bef19b" name="Map" direction="In" isUnique="false">
+                  <elementDefinition Id="3f24c91e-5d83-4f4e-8628-6de3fb2452dd" />
                 </parameter>
               </operationHasOwnedParameters>
             </ownedParameters>
@@ -305,7 +330,7 @@
             <elementDefinition Id="02077297-8ee5-4c4a-b802-2db8771423b9" />
           </association>
           <association Id="706e3b87-2cf0-48f0-9d24-2dc98c5127cf" isDerived="false" sourceEndRoleName="ActorManager : Observed" targetEndRoleName="ActorSyncher" isLeaf="false" isAbstract="false">
-            <classMoniker Id="c3a6ea58-98a6-4ea4-b7d0-bb2047b3ae92" LastKnownName="ActorSyncher : Observer" />
+            <classMoniker Id="c3a6ea58-98a6-4ea4-b7d0-bb2047b3ae92" LastKnownName="ActorSynchronizer : Observer" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd Id="7e105ee7-acfb-49ab-b48b-57587387b3be" name="ActorManager : Observed" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
@@ -663,7 +688,7 @@
         <elementDefinition Id="93a7b46f-f03c-489a-aacd-55fcce13880f" />
         <targetEnds>
           <association Id="dc718247-0e8f-44ea-a901-ebf63f73c384" isDerived="false" sourceEndRoleName="Actor" targetEndRoleName="ActorSyncher" isLeaf="false" isAbstract="false">
-            <classMoniker Id="c3a6ea58-98a6-4ea4-b7d0-bb2047b3ae92" LastKnownName="ActorSyncher : Observer" />
+            <classMoniker Id="c3a6ea58-98a6-4ea4-b7d0-bb2047b3ae92" LastKnownName="ActorSynchronizer : Observer" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd Id="02f3e62d-1619-4fa5-abdc-a97dd6f688ad" name="Actor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
@@ -1003,7 +1028,7 @@
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
-      <class Id="c3a6ea58-98a6-4ea4-b7d0-bb2047b3ae92" name="ActorSyncher : Observer" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="c3a6ea58-98a6-4ea4-b7d0-bb2047b3ae92" name="ActorSynchronizer : Observer" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="0de2ad79-47ac-4646-bdd2-afbc28218b83" />
         <targetEnds>
           <association Id="77095443-6bd6-4b82-8263-5d47e3a55ce3" isDerived="false" sourceEndRoleName="ActorSyncher : Observer" targetEndRoleName="Host : Process" isLeaf="false" isAbstract="false">

@@ -11,13 +11,14 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "ClientData.h"
 #include <World/World.h>
 #include "Game.h"
+#include "GameModeFFA.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
 #define INCLUDE_MODEL_VIEWER
 #endif
 
-class Host : public MaloW::Process, public Observer	
+class Host : public MaloW::Process
 {
 public:
 	Host();
@@ -66,8 +67,6 @@ private:
 
 	void HandleDisconnect( MaloW::ClientChannel* channel );
 	void Message(MaloW::ClientChannel* cc, std::string msg);
-protected:
-	virtual void OnEvent(Event* e);
 
 private:
 	ServerListener* zServerListener;

@@ -16,6 +16,7 @@ RangedWeapon::RangedWeapon(const RangedWeapon& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
 }
 
@@ -29,7 +30,14 @@ RangedWeapon::RangedWeapon(const RangedWeapon* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
+}
+
+RangedWeapon::RangedWeapon(const long ID, const unsigned int itemType, const int itemSubType, 
+						   const float damage, const float range) : Weapon(ID, itemType, itemSubType, damage, range)
+{
+	this->zStacking = false;
 }
 
 RangedWeapon::~RangedWeapon()
