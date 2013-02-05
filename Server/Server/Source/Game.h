@@ -19,7 +19,7 @@ class Game : public Observer, public Observed
 	std::map<Player*, KeyStates> _keyStates;
 
 public:
-	Game( GameMode* mode, World* world );
+	Game( GameMode* mode, const std::string& worldFile );
 	virtual ~Game();
 
 	// Returns false if game has finished
