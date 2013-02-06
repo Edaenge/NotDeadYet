@@ -88,6 +88,7 @@ public:
 	// Set Transformation Functions
 	void SetPosition(const Vector3& pos);
 	void SetRotation(const Vector4& rot);
+	void SetRotation(const Vector3& around, const float angle);
 	void SetScale(const Vector3& scale);
 	void SetDir(const Vector3& dir);
 
@@ -96,6 +97,7 @@ public:
 	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
 	inline const Vector3& GetDir() const { return zDir; }
+	inline PhysicsObject* GetPhysicsObject() const {return this->zPhysicsObject;}
 
 	long GenerateID()
 	{

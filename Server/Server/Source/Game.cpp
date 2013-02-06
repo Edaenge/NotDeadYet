@@ -3,9 +3,9 @@
 #include "Behavior.h"
 #include <world/World.h>
 #include "GameEvents.h"
-#include "PlayerBehavior.h"
+#include "PlayerHumanBehavior.h"
 #include "PlayerWolfBehavior.h"
-#include "PlayerActor.h"
+#include "PlayerActor.h""
 #include "PlayerWolfBehavior.h"
 #include "AIWolfBehavior.h"
 #include "WorldActor.h"
@@ -71,12 +71,13 @@ void Game::OnEvent( Event* e )
 		zPlayers[PCE->clientData] = player;
 
 		// Create Player Actor
-		Actor* actor = new PlayerActor(player);
+		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/scale.obj");
+		Actor* actor = new PlayerActor(player, pObject);
+		actor->SetPosition(Vector3(50, 0, 50));
 		zActorManager->AddActor(actor);
 
 		// Apply Default Player Behavior
-		SetPlayerBehavior(player, new PlayerHumanBehavior(actor, zWorld, player));	
-	}
+		SetPlayerBehavior(player, new PlayerHumanBehavior(actor, zWorld, player));	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
@@ -87,10 +88,8 @@ void Game::OnEvent( Event* e )
 	}
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
 	{
-		Behavior* behavior = zBehaviors[zPlayers[CDE->clientData]];
-		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(behavior))
-			int i = 0;
-		//_behaviors[_players[CDE->clientData]]->ProcessClientData(CDE->direction, CDE->direction);
+		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(zPlayers[CDE->clientData]->GetBehavior()))
+			dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{

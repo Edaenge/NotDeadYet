@@ -16,5 +16,5 @@ public:
 	Actor* GetActor() const { return zActor; }
 	World* GetWorld() const { return zWorld; }
 
-	virtual bool Update(float dt);
+	virtual bool Update(float dt) = 0;
 };

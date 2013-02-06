@@ -21,7 +21,7 @@ class PlayerActor : public BioActor, public Observed
 	Vector3 zInitialDirection;
 
 public:
-	PlayerActor(Player* player);
+	PlayerActor(Player* player, PhysicsObject* pObj);
 
 	virtual ~PlayerActor();
 
