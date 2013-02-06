@@ -8,10 +8,15 @@
 #include "PlayerActor.h"
 #include "PlayerWolfBehavior.h"
 #include "AIWolfBehavior.h"
+#include "WorldActor.h"
+#include <World/EntityList.h>
 
 
 Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
 {
+	// Load Entities
+	LoadEntList("Entities.txt");
+
 	// Game Mode Observes
 	AddObserver(zGameMode);
 
@@ -106,13 +111,38 @@ void Game::OnEvent( Event* e )
 		delete i->second;
 		zPlayers.erase(i);
 	}
+	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
+	{
+		auto i = zWorldActors.find(EUE->entity);
+		if ( i != zWorldActors.end() )
+		{
+			i->second->SetPosition(EUE->entity->GetPosition());
+			// TODO: Rotation
+			i->second->SetScale(EUE->entity->GetScale());
+		}
+	}
 	else if ( EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e) )
 	{
+		PhysicsObject* phys = 0;
+		
+		if ( GetEntBlockRadius(ELE->entity->GetType()) > 0.0f )
+		{
+			phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(ELE->entity->GetType()), ELE->entity->GetPosition());
+		}
 
+		// Create Physics Object
+		WorldActor* actor = new WorldActor();
+		zWorldActors[ELE->entity] = actor;
+		zActorManager->AddActor(actor);
 	}
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
-
+		auto i = zWorldActors.find(ERE->entity);
+		if ( i != zWorldActors.end() )
+		{
+			delete i->second;
+			zWorldActors.erase(i);
+		}
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
@@ -128,7 +158,7 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	Behavior* curPlayerBehavior = player->GetBehavior();
 
 	// Find In Behaviors
-	if ( curPlayerBehavior ) 
+	if ( curPlayerBehavior )
 	{
 		zBehaviors.erase(curPlayerBehavior);
 		delete curPlayerBehavior;

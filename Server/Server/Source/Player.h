@@ -19,10 +19,11 @@ class Player : public Observed
 	// Pointer Set By Game Class
 	Behavior* zBehavior;
 
-public:
+private:
 	Player( ClientData* client );
 	virtual ~Player();
 
+public:
 	// Players Current Key States
 	inline KeyStates& GetKeys() { return zKeys; }
 
