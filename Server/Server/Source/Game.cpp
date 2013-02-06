@@ -2,6 +2,7 @@
 #include "GameMode.h"
 #include "Behavior.h"
 #include <world/World.h>
+#include "GameEvents.h"
 
 
 Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
@@ -55,6 +56,16 @@ void Game::OnEvent( Event* e )
 	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
 
+	}
+	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
+	{
+		Player* temp = _players[KDE->clientData];
+		_keyStates[temp].SetKeyState(KDE->key, true);
+	}
+	else if( KeyUpEvent* KDE = dynamic_cast<KeyUpEvent*>(e) )
+	{
+		Player* temp = _players[KDE->clientData];
+		_keyStates[temp].SetKeyState(KDE->key, false);
 	}
 }
 
