@@ -71,7 +71,7 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
-		// Delete Player Behavior
+		// TODO: Delete Player Behavior
 
 
 		// Delete Player
