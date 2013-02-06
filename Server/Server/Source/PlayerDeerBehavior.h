@@ -1,11 +1,13 @@
-#include "Behavior.h"
+#pragma once
+#include "PlayerBehavior.h"
 
-class PlayerDeerBehavior : public Behavior
+class PlayerDeerBehavior : public PlayerBehavior
 {
 private:
 
 public:
-	PlayerDeerBehavior(Actor* actor, World* world);
+	PlayerDeerBehavior(Actor* actor, World* world, Player* palyer);
+	virtual ~PlayerDeerBehavior();
 
 	bool Update(float dt);
 };

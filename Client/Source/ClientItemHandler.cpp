@@ -3,9 +3,9 @@
 
 void Client::HandleWeaponUse(const long ID)
 {
-	Inventory* eq = this->zPlayerInventory;
+	
 
-	Weapon* weapon = eq->GetRangedWeapon();
+	Weapon* weapon = this->zPlayerInventory->GetRangedWeapon();
 	if (!weapon)
 	{
 		MaloW::Debug("No Weapon Is Equipped");
@@ -16,7 +16,7 @@ void Client::HandleWeaponUse(const long ID)
 	{
 		if (weapon->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
 		{
-			Projectile* arrow = eq->GetProjectile();
+			Projectile* arrow = this->zPlayerInventory->GetProjectile();
 
 			if (!arrow)
 			{
@@ -146,11 +146,11 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Bow)");
 			return;
 		}
-		Inventory* eq = this->zPlayerInventory;
+		
 
-		eq->EraseItem(rWpn->GetID());
+		this->zPlayerInventory->EraseItem(rWpn->GetID());
 
-		/*Weapon* oldWeapon = eq->GetWeapon();
+		/*Weapon* oldWeapon = this->zPlayerInventory->GetWeapon();
 
 		if (oldWeapon)
 		{
@@ -170,7 +170,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
 
-				eq->UnEquipWeapon();
+				this->zPlayerInventory->UnEquipWeapon();
 			}
 			else
 			{
@@ -178,7 +178,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 				return;
 			}
 		}
-		Projectile* projectile = eq->GetProjectile();
+		Projectile* projectile = this->zPlayerInventory->GetProjectile();
 
 		if (projectile)
 		{
@@ -195,7 +195,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
 
-					eq->UnEquipProjectile();
+					this->zPlayerInventory->UnEquipProjectile();
 				}
 				else
 				{
@@ -205,7 +205,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			}
 		}
 		*/
-		eq->EquipRangedWeapon(rWpn);
+		this->zPlayerInventory->EquipRangedWeapon(rWpn);
 
 		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetStackSize(), 
 			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType());
@@ -229,9 +229,9 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Rock)");
 			return;
 		}
-		Inventory* eq = this->zPlayerInventory;
+		
 
-		/*Weapon* oldWeapon = eq->GetWeapon();
+		/*Weapon* oldWeapon = this->zPlayerInventory->GetWeapon();
 
 		if (oldWeapon)
 		{
@@ -246,7 +246,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
 
-				eq->UnEquipWeapon();
+				this->zPlayerInventory->UnEquipWeapon();
 			}
 			else
 			{
@@ -254,7 +254,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 				return;
 			}
 		}
-		Projectile* oldProjectile = eq->GetProjectile();
+		Projectile* oldProjectile = this->zPlayerInventory->GetProjectile();
 		if (oldProjectile)
 		{
 			if(this->zPlayerInventory->AddItem(oldProjectile))
@@ -264,7 +264,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
 
-				eq->UnEquipProjectile();
+				this->zPlayerInventory->UnEquipProjectile();
 			}
 			else
 			{
@@ -273,7 +273,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			}
 		}*/
 		this->zPlayerInventory->EraseItem(rWpn->GetID());
-		eq->EquipRangedWeapon(rWpn);
+		this->zPlayerInventory->EquipRangedWeapon(rWpn);
 
 		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetStackSize(), 
 			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType());
@@ -297,9 +297,9 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Arrow)");
 			return;
 		}
-		Inventory* eq = this->zPlayerInventory;
+		
 
-		Projectile* oldProjectile = eq->GetProjectile();
+		Projectile* oldProjectile = this->zPlayerInventory->GetProjectile();
 		if (oldProjectile)
 		{
 			if (oldProjectile->GetItemType() != projectile->GetItemType())
@@ -311,7 +311,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 
 					this->zGuiManager->AddInventoryItemToGui(gid);
 
-					eq->UnEquipProjectile();
+					this->zPlayerInventory->UnEquipProjectile();
 				}
 				else
 				{
@@ -325,7 +325,7 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			}
 		}
 		this->zPlayerInventory->EraseItem(projectile->GetID());
-		eq->EquipProjectile(projectile);
+		this->zPlayerInventory->EquipProjectile(projectile);
 
 		Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
 			projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType());
@@ -350,11 +350,11 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 			return;
 		}
 
-		Inventory* eq = this->zPlayerInventory;
+		
 
 
 		this->zPlayerInventory->EraseItem(mWpn->GetID());
-		eq->EquipMeleeWeapon(mWpn);
+		this->zPlayerInventory->EquipMeleeWeapon(mWpn);
 
 		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), mWpn->GetStackSize(), 
 			mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType());
@@ -369,19 +369,9 @@ void Client::HandleEquipItem(const long ItemID, const int Slot)
 
 bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 {
-	PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
-
-	if (!pObject)
-	{
-		MaloW::Debug("Client: this Player cant be found");
-		return false;
-	}
-
-	Inventory* eq = this->zPlayerInventory;
-
 	if (Slot == EQUIPMENT_SLOT_AMMO)
 	{
-		Projectile* projectile = eq->GetProjectile();
+		Projectile* projectile = this->zPlayerInventory->GetProjectile();
 
 		if (projectile)
 		{
@@ -395,7 +385,7 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 					this->zGuiManager->AddInventoryItemToGui(gid);
 					this->zGuiManager->UnEquipItem(projectile->GetID(), projectile->GetStackSize());
 
-					eq->UnEquipProjectile();
+					this->zPlayerInventory->UnEquipProjectile();
 					return true;
 				}
 				return false;
@@ -409,7 +399,7 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 	if (Slot == EQUIPMENT_SLOT_RANGED_WEAPON)
 	{
-		Weapon* wpn = eq->GetRangedWeapon();
+		Weapon* wpn = this->zPlayerInventory->GetRangedWeapon();
 
 		if (wpn)
 		{
@@ -427,7 +417,7 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 					this->zGuiManager->AddInventoryItemToGui(gid);
 					this->zGuiManager->UnEquipItem(wpn->GetID(), 0);
 
-					eq->UnEquipRangedWeapon();
+					this->zPlayerInventory->UnEquipRangedWeapon();
 					return false;
 				}
 				return true;
@@ -441,7 +431,7 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 	if (Slot == EQUIPMENT_SLOT_MELEE_WEAPON)
 	{
-		Weapon* wpn = eq->GetMeleeWeapon();
+		Weapon* wpn = this->zPlayerInventory->GetMeleeWeapon();
 
 		if (wpn)
 		{
@@ -455,7 +445,7 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 					this->zGuiManager->AddInventoryItemToGui(gid);
 					this->zGuiManager->UnEquipItem(wpn->GetID(), 0);
 
-					eq->UnEquipMeleeWeapon();
+					this->zPlayerInventory->UnEquipMeleeWeapon();
 					return false;
 				}
 				return true;
@@ -469,13 +459,13 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 	if (Slot == EQUIPMENT_SLOT_HEAD)
 	{
-		Gear* head = eq->GetGear(EQUIPMENT_SLOT_HEAD);
+		Gear* head = this->zPlayerInventory->GetGear(EQUIPMENT_SLOT_HEAD);
 
 		if (head)
 		{
 			if (head->GetID() == ItemID)
 			{
-				eq->UnEquipGear(EQUIPMENT_SLOT_HEAD);
+				this->zPlayerInventory->UnEquipGear(EQUIPMENT_SLOT_HEAD);
 
 				if(this->zPlayerInventory->AddItem(head))
 				{
@@ -496,13 +486,13 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 	if (Slot == EQUIPMENT_SLOT_CHEST)
 	{
-		Gear* chest = eq->GetGear(EQUIPMENT_SLOT_CHEST);
+		Gear* chest = this->zPlayerInventory->GetGear(EQUIPMENT_SLOT_CHEST);
 
 		if (chest)
 		{
 			if (chest->GetID() == ItemID)
 			{
-				eq->UnEquipGear(EQUIPMENT_SLOT_CHEST);
+				this->zPlayerInventory->UnEquipGear(EQUIPMENT_SLOT_CHEST);
 
 				if(this->zPlayerInventory->AddItem(chest))
 				{
@@ -523,13 +513,13 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 	if (Slot == EQUIPMENT_SLOT_LEGS)
 	{
-		Gear* legs = eq->GetGear(EQUIPMENT_SLOT_LEGS);
+		Gear* legs = this->zPlayerInventory->GetGear(EQUIPMENT_SLOT_LEGS);
 
 		if (legs)
 		{
 			if (legs->GetID() == ItemID)
 			{
-				eq->UnEquipGear(EQUIPMENT_SLOT_LEGS);
+				this->zPlayerInventory->UnEquipGear(EQUIPMENT_SLOT_LEGS);
 
 				if(this->zPlayerInventory->AddItem(legs))
 				{
@@ -550,13 +540,13 @@ bool Client::HandleUnEquipItem(const long ItemID, const int Slot)
 
 	if (Slot == EQUIPMENT_SLOT_BOOTS)
 	{
-		Gear* boots = eq->GetGear(EQUIPMENT_SLOT_BOOTS);
+		Gear* boots = this->zPlayerInventory->GetGear(EQUIPMENT_SLOT_BOOTS);
 
 		if (boots)
 		{
 			if (boots->GetID() == ItemID)
 			{
-				eq->UnEquipGear(EQUIPMENT_SLOT_BOOTS);
+				this->zPlayerInventory->UnEquipGear(EQUIPMENT_SLOT_BOOTS);
 
 				if(this->zPlayerInventory->AddItem(boots))
 				{
@@ -580,9 +570,7 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 {
 	if (Slot == EQUIPMENT_SLOT_RANGED_WEAPON)
 	{
-		Inventory* eq = this->zPlayerInventory;
-
-		Weapon* weapon = eq->GetRangedWeapon();
+		Weapon* weapon = this->zPlayerInventory->GetRangedWeapon();
 
 		if (weapon)
 		{
@@ -598,7 +586,7 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 
 				SAFE_DELETE(weapon);
 
-				eq->UnEquipRangedWeapon();
+				this->zPlayerInventory->UnEquipRangedWeapon();
 
 			}
 		}
@@ -607,9 +595,7 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 
 	if (Slot == EQUIPMENT_SLOT_MELEE_WEAPON)
 	{
-		Inventory* eq = this->zPlayerInventory;
-
-		Weapon* weapon = eq->GetMeleeWeapon();
+		Weapon* weapon = this->zPlayerInventory->GetMeleeWeapon();
 
 		if (weapon)
 		{
@@ -625,7 +611,7 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 
 				SAFE_DELETE(weapon);
 
-				eq->UnEquipMeleeWeapon();
+				this->zPlayerInventory->UnEquipMeleeWeapon();
 			}
 		}
 		return;
@@ -633,9 +619,7 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 
 	if (Slot == EQUIPMENT_SLOT_AMMO)
 	{
-		Inventory* eq = this->zPlayerInventory;
-
-		Projectile* projectile = eq->GetProjectile();
+		Projectile* projectile = this->zPlayerInventory->GetProjectile();
 
 		if (projectile)
 		{
@@ -647,10 +631,9 @@ void Client::HandleRemoveEquipment(const long ItemID, const int Slot)
 				delete projectile;
 				projectile = NULL;
 
-				eq->UnEquipProjectile();
+				this->zPlayerInventory->UnEquipProjectile();
 			}
 		}
-
 		return;
 	}
 }
@@ -969,7 +952,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 
 void Client::HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, const int type)
 {
-	DeadPlayerObject* dpo = this->zObjectManager->SearchAndGetDeadPlayerObject(ObjID);
+	DeadPlayerObject* dpo = dynamic_cast<DeadPlayerObject*>(this->zObjectManager->SearchAndGetActor(ObjID));
 
 	if (!dpo)
 	{

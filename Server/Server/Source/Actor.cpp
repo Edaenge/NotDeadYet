@@ -61,3 +61,8 @@ void Actor::SetDir( const Vector3& dir )
 	ASE.zActor = this;
 	NotifyObservers(&ASE);
 }
+
+void Actor::SetPhysicsObject( PhysicsObject* pObj )
+{
+	this->zPhysicsObject = pObj;
+}

@@ -150,6 +150,9 @@
     <ClCompile Include="Source\ActorManager.cpp">
       <Filter>Source\Handlers</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PlayerHumanBehavior.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -292,6 +295,9 @@
     </ClInclude>
     <ClInclude Include="Source\GameEvents.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerHumanBehavior.h">
+      <Filter>Source\Behavior</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

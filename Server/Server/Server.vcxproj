@@ -53,6 +53,7 @@
     <ClCompile Include="Source\PlayerActor.cpp" />
     <ClCompile Include="Source\PlayerBehavior.cpp" />
     <ClCompile Include="Source\PlayerDeerBehavior.cpp" />
+    <ClCompile Include="Source\PlayerHumanBehavior.cpp" />
     <ClCompile Include="Source\PlayerWolfBehavior.cpp" />
     <ClCompile Include="Source\ProjectileActor.cpp" />
     <ClCompile Include="Source\ProjectileBehavior.cpp" />
@@ -105,6 +106,7 @@
     <ClInclude Include="Source\PlayerActor.h" />
     <ClInclude Include="Source\PlayerBehavior.h" />
     <ClInclude Include="Source\PlayerDeerBehavior.h" />
+    <ClInclude Include="Source\PlayerHumanBehavior.h" />
     <ClInclude Include="Source\PlayerWolfBehavior.h" />
     <ClInclude Include="Source\ProjectileActor.h" />
     <ClInclude Include="Source\ProjectileBehavior.h" />
