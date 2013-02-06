@@ -11,7 +11,7 @@ ClientChannel::ClientChannel(MaloW::Process* observerProcess, SOCKET sock) :
 	NetworkChannel(sock)
 {
 	static unsigned int id = 0;
-	zID = id++;
+	this->zID = id++;
 }
 
 ClientChannel::~ClientChannel()
