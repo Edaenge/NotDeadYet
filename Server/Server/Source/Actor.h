@@ -93,6 +93,7 @@ public:
 	inline const Vector3& GetPosition() const { return zPos; }
 	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
+	inline const Vector3& GetDir() const { return zDir; }
 
 	long GenerateID()
 	{
