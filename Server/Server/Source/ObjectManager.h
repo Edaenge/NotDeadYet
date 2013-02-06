@@ -43,7 +43,7 @@ public:
 	/*! Returns a Projectile object from given type.
 		Returns null if it cannot be found.
 	*/
-	const ProjectileActor* GetProjectileObject(const int type);
+	//const ProjectileActor* GetProjectileObject(const int type);
 private:
 	bool InterpCommand(char* command, char* key, WeaponObject* wp);
 	bool InterpCommand(char* command, char* key, FoodObject* fd);
@@ -55,7 +55,7 @@ private:
 	const WeaponObject* SearchType(std::vector<WeaponObject*>& weapons, const int type) const;
 	const MaterialObject* SearchType(std::vector<MaterialObject*>& materials, const int type) const;
 	const ContainerObject* SearchType(std::vector<ContainerObject*>& containers, const int type) const;
-	const ProjectileActor* SearchType(std::vector<ProjectileActor*>& projectiles, const int type) const;
+	//const ProjectileActor* SearchType(std::vector<ProjectileActor*>& projectiles, const int type) const;
 
 private:
 	std::vector<FoodObject*> zFood;

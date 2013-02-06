@@ -20,7 +20,7 @@ public:
 	ServerEngineWrapper();
 	~ServerEngineWrapper();
 
-	const char* Init(const unsigned int &port, const unsigned int &maxPlayers, const char* gameMode, const char* mapName) const;
+	const char* Init(const unsigned int &port, const unsigned int &maxPlayers, char* gameMode, char* mapName) const;
 	bool StartHost() const;
 	void ShutdownHost() const;
 
