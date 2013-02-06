@@ -4,7 +4,7 @@
 #include <map>
 #include <KeyStates.h>
 #include "ActorManager.h"
-
+#include "ActorSynchronizer.h"
 
 class ClientData;
 class World;
@@ -23,7 +23,7 @@ class Game : public Observer, public Observed
 	std::map<Player*, KeyStates> _keyStates;
 
 public:
-	Game( ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile );
+	Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile);
 	virtual ~Game();
 
 	// Returns false if game has finished

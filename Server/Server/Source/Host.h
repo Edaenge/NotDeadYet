@@ -12,7 +12,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include <World/World.h>
 #include "Game.h"
 #include "GameModeFFA.h"
-#include "ActorSyncher.h"
+#include "ActorSynchronizer.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
