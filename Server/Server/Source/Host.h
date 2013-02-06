@@ -33,22 +33,14 @@ public:
 	bool HasClients() const;
 	/*! Returns the port*/
 	inline int GetPort() const{return this->zPort;}
-	/*! Sends a message to all connected clients.
-		If sendIM is true, it will send a Important message to the client(s).
-	*/
-	void SendToAllClients(const std::string& message, bool sendIM = false);
-	/*! Sends to a specific client.
-		If sendIM is true, it will send a Important message to the client(s).
-	*/
-	void SendToClient(int clientID, const std::string& message, bool sendIM = false);
-	void SendToClient(ClientData* cd, const std::string& message, bool sendIM = false);
-
 	/*! Notifies all clients, the server is shutting down.*/
 	void BroadCastServerShutdown();
 	/*! Pings the clients.*/
 	//void PingClients();
 	/*! Updates the server clock.*/
 	float Update();
+	/*! */
+	void SendToAllClients(const std::string& message);
 
 	/*! Checks if the server is alive.*/
 	bool IsAlive() const;
@@ -59,7 +51,7 @@ private:
 	/*! Handles messages from clients.*/
 	void HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &message );
 	/*! */
-	void HandleClientUpdate(const std::vector<std::string> msgArray, ClientData* cd);
+	void HandleClientUpdate(const std::vector<std::string> &msgArray, ClientData* cd);
 	/*! */
 	void HandleDisconnect( MaloW::ClientChannel* channel );
 	/*! */
@@ -68,7 +60,8 @@ private:
 	void HandleUserData(const std::vector<std::string> &msgArray, ClientData* cd);
 	/*! Read messages from queue and saves them in*/
 	void ReadMessages(); 
-
+	/*! */
+	void PingClients();
 	void Message(MaloW::ClientChannel* cc, std::string msg);
 
 private:
