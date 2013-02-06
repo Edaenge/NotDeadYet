@@ -6,7 +6,7 @@ class Player;
 class PlayerBehavior : public Behavior
 {
 public:
-	PlayerBehavior(Actor* actor, World* world, Player* player);
+	PlayerBehavior(Actor* actor, World* world, WorldAnchor* zAnchor, Player* player);
 	virtual	~PlayerBehavior();
 
 

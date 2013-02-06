@@ -2,7 +2,7 @@
 #include "Actor.h"
 #include "Player.h"
 
-PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) : Behavior(actor, world)
+PlayerBehavior::PlayerBehavior(Actor* actor, World* world, WorldAnchor* zAnchor, Player* player) : Behavior(actor, world, anchor)
 {	this->zPlayer = player;
 	this->zVelocity = Vector3(0, 0, 0);
 }
