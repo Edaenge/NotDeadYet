@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="f028be13-54a5-475f-8aa4-262c388ccc13" name="GameMode" linkedPackageId="a10774ef-d98f-4179-8296-995a24e577f0" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="f028be13-54a5-475f-8aa4-262c388ccc13" name="GameMode" linkedPackageId="a10774ef-d98f-4179-8296-995a24e577f0" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
   <packagedElements>
     <logicalClassDesignerModelHasTypes>
       <class Id="e9818c4e-215f-4a8e-9fd7-9338b52afb98" name="Host : Process : Observed" isAbstract="false" isLeaf="false" isActiveClass="false">
@@ -857,15 +857,8 @@
               </operationHasOwnedParameters>
             </ownedParameters>
           </operation>
-          <operation Id="b46a0cfd-36ae-49f6-8cf5-489f38db343c" name="bool update" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+          <operation Id="b46a0cfd-36ae-49f6-8cf5-489f38db343c" name="+ virtual bool update(float dt) = 0" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="f6b5af09-ac40-4798-8140-f6bbb4f54b29" />
-            <ownedParameters>
-              <operationHasOwnedParameters>
-                <parameter Id="9174863f-4fc7-411f-8209-1b7037400c2a" name="float dt" direction="In" isUnique="false">
-                  <elementDefinition Id="e3f3b07f-8b51-471e-adec-9e4fbaa9ee12" />
-                </parameter>
-              </operationHasOwnedParameters>
-            </ownedParameters>
           </operation>
         </ownedOperationsInternal>
       </class>
@@ -961,7 +954,7 @@
           </association>
         </targetEnds>
         <ownedAttributesInternal>
-          <property Id="a0360d7b-ab51-473f-88a6-783a99e20ba0" name="zKeyStates" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+          <property Id="a0360d7b-ab51-473f-88a6-783a99e20ba0" name="*zPlayer" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="70f0a400-f9a4-4c15-97f5-7f8455ef3960" />
           </property>
           <property Id="d5bd07ab-e113-43cc-a29d-e77da3dd6b31" name="zVelocity" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
@@ -987,6 +980,18 @@
             <elementDefinition Id="50a6a15c-aa13-4562-8486-23a75b30ebd7" />
           </generalization>
         </generalsInternal>
+        <ownedOperationsInternal>
+          <operation Id="10ff61e0-94d7-4cfa-940c-1d64a55e5350" name="virtual bool Update" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="a2580265-d06d-4f54-9e93-6b0f03fd4a86" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="bff6e2bc-4ce6-490d-9daf-aaa99431a125" name="float dt" direction="In" isUnique="false">
+                  <elementDefinition Id="b6522bd5-5d5c-44b3-bc0d-d1c33e4817d0" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -1080,6 +1085,18 @@
             <elementDefinition Id="4941fbf4-118f-40af-9e82-4a9fe98e5f11" />
           </generalization>
         </generalsInternal>
+        <ownedOperationsInternal>
+          <operation Id="a838f430-872c-4a6b-ba20-107be1eae146" name="virtual bool Update" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="89ef861b-f67b-4ade-807b-f5ba27a81d0c" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="6ff4a717-8cef-4ff9-893f-7af22c572eeb" name="float dt" direction="In" isUnique="false">
+                  <elementDefinition Id="9a3b8759-8c25-46cd-baeb-dbf1c7e34770" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
   </packagedElements>

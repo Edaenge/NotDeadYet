@@ -1,23 +1,23 @@
-#include "PlayerWolfBehavior.h"
+#include "PlayerHumanBehavior.h"
 #include "Player.h"
 
-const int MAX_VELOCITY = 20;
+const int MAX_VELOCITY = 30;
 const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 const float ELASTICITY = 0.5f;
-const float ACCELERATION = 1.0f;
-const float PLAYERHEIGHT = 1.0f;
+const float ACCELERATION = 2.0f;
+const float PLAYERHEIGHT = 1.7f;
 
-PlayerWolfBehavior::PlayerWolfBehavior( Actor* actor, World* world, WorldAnchor* anchor, Player* player) : PlayerBehavior(actor, world, anchor, player)
+PlayerHumanBehavior::PlayerHumanBehavior( Actor* actor, World* world, WorldAnchor* anchor, Player* player ) : PlayerBehavior(actor, world, anchor, player)
 {
 
 }
 
-PlayerWolfBehavior::~PlayerWolfBehavior()
+PlayerHumanBehavior::~PlayerHumanBehavior()
 {
 
 }
 
-bool PlayerWolfBehavior::Update( float dt )
+bool PlayerHumanBehavior::Update( float dt )
 {
 	KeyStates keyStates = this->zPlayer->GetKeys();
 	Vector3 newPlayerPos;
@@ -61,3 +61,5 @@ bool PlayerWolfBehavior::Update( float dt )
 
 	return true;
 }
+
+

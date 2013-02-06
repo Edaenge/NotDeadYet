@@ -12,6 +12,7 @@ class World;
 class GameMode;
 class Player;
 class Behavior;
+class PlayerBehavior;
 class ActorSynchronizer;
 class KeyStates;
 
