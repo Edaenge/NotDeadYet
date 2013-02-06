@@ -100,7 +100,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\..\Bin\$(Configuration)</OutDir>
+    <OutDir>$(ProjectDir)\..\Bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)D</TargetName>
     <IncludePath>$(SolutionDir)\Server\Server\Include;$(IncludePath)</IncludePath>
@@ -116,7 +116,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir)\Server\Server\Include;$(IncludePath)</IncludePath>
-    <OutDir>$(ProjectDir)\..\Bin\$(Configuration)</OutDir>
+    <OutDir>$(ProjectDir)\..\Bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

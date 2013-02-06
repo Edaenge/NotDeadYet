@@ -1,3 +1,4 @@
+#include <World/World.h>
 #include "Host.h"
 #include "ClientServerMessages.h"
 #include "ClientConnectedEvent.h"
@@ -148,7 +149,7 @@ void Host::ReadMessages()
 	static unsigned int MAX_MESSAGES_TO_READ = 10;
 	unsigned int nrOfMessages = this->GetEventQueueSize();
 
-	//No new messsages
+	// No new messages
 	if(nrOfMessages == 0)
 		return;
 
@@ -161,10 +162,7 @@ void Host::ReadMessages()
 
 		if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(pe) )
 		{
-			MaloW::ClientChannel* cc = NULL;
-			cc = dynamic_cast<MaloW::ClientChannel*>(np->GetChannel());
-
-			HandleReceivedMessage(cc, np->GetMessage());
+			HandleReceivedMessage(dynamic_cast<MaloW::ClientChannel*>(np->GetChannel()), np->GetMessage());
 		}
 		else if ( ClientConnectedEvent* CCE = dynamic_cast<ClientConnectedEvent*>(pe) )
 		{
@@ -173,7 +171,7 @@ void Host::ReadMessages()
 		}
 		else if ( ClientDisconnectedEvent* CDE = dynamic_cast<ClientDisconnectedEvent*>(pe) )
 		{
-			HandleDisconnect( CDE->GetClientChannel() );
+			HandleDisconnect(CDE->GetClientChannel());
 		}
 
 		// Unhandled Message

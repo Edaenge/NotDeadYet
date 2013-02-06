@@ -33,12 +33,6 @@ int ServerEngineWrapper::GetNrOfPlayers() const
 	return zServerEngine->GetNrOfPlayers();
 }
 
-char* ServerEngineWrapper::ProcessText(char* msg)
-{
-	//return zServerEngine->ProcessText(msg);
-	return NULL;
-}
-
 bool ServerEngineWrapper::IsRunning() const
 {
 	return zServerEngine->IsRunning();

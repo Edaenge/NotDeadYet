@@ -30,7 +30,5 @@ namespace System { namespace Windows { namespace Interop
 
 		bool IsRunning();
 		int GetNrOfPlayers();
-		String^ ProcessText(String^ text);
-
 	};
 }}}
