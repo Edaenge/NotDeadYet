@@ -1,7 +1,8 @@
 #pragma once
 
 #include "World/World.h"
-#include "Actor.h"class Behavior
+#include "Actor.h"
+class Behavior
 {
 protected:
 	Actor* zActor;

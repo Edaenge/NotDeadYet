@@ -95,7 +95,6 @@
     <ClInclude Include="Source\NetworkEvents.h" />
     <ClInclude Include="Source\ObjectCreator.h" />
     <ClInclude Include="Source\ObjectManager.h" />
-    <ClInclude Include="Source\PhysicsActor.h" />
     <ClInclude Include="Source\PhysicsEngine\BoundingSphere.h" />
     <ClInclude Include="Source\PhysicsEngine\ObjLoader.h" />
     <ClInclude Include="Source\PhysicsEngine\Physics.h" />
