@@ -5,13 +5,12 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #pragma once
 
-#include "PhysicsActor.h"
+#include "Actor.h"
 #include <AnimationStates.h>
 #include <string>
-#include "PhysicsObject.h"
-
+#include "Inventory.h"
 /*This class is Abstract, this class is used to create living creatures such as humans, animals etc. */
-class BioActor : public PhysicsActor
+class BioActor : public Actor
 {
 public:
 
@@ -43,7 +42,7 @@ public:
 	float GetStamina() const {return this->zStamina;}
 	float GetHealth() const {return this->zHealth;}
 	Vector3 GetDirection() const {return this->zDirection;}
-	inline PhysicsObject* GetPhysicObject() const {return this->zPhysicObj;}
+	inline PhysicsObject* GetPhysicObject() const {return this->zPhysicsObject;}
 
 	/*! Sets the player state.
 		Enum is defined in AnimationStates.h.

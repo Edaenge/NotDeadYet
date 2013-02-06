@@ -8,6 +8,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include <Vector.h>
 #include <Safe.h>
 #include <Observer.h>
+#include "PhysicsObject.h"
 
 static const enum ACTOR_TYPE
 {
@@ -93,6 +94,7 @@ protected:
 	std::string zActorObjectName;
 	unsigned int zActorType;
 	long zID;
+	PhysicsObject* zPhysicsObject;
 
 private:
 	static long zNextAID;
