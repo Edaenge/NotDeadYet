@@ -20,10 +20,7 @@ public:
 class BioActor : public Actor
 {
 public:
-
 	BioActor();
-	BioActor(const Vector3& startPos);
-	BioActor(const Vector3& startPos, const Vector4& rot);
 	virtual ~BioActor();
 
 	virtual void Update(float deltaTime) = 0;

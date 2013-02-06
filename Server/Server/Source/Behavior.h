@@ -1,11 +1,7 @@
 #pragma once
 
 #include "World/World.h"
-class Actor // For testing
-{
-
-};
-
+#include "Actor.h"
 
 class Behavior
 {
@@ -14,7 +10,7 @@ protected:
 	World* zWorld;
 public:
 	Behavior(Actor* actor, World* world);
-	virtual ~Behavior();
+	virtual ~Behavior(){};
 
 	virtual bool Update(float dt);
 

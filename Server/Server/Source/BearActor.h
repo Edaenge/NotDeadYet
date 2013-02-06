@@ -10,8 +10,6 @@ class BearActor : public AnimalActor
 {
 public:
 	BearActor(bool genID = true, bool isPlayerControlled = false);
-	BearActor(const Vector3& startPos, PhysicsObject* pObj, bool genID = true, bool isPlayerControlled = false);
-	BearActor(const Vector3& startPos, PhysicsObject* pObj, const Vector4& rot, bool genID = true, bool isPlayerControlled = false);
 	virtual ~BearActor();
 
 	void InitBear() throw(...);

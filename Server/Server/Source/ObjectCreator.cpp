@@ -251,7 +251,7 @@ Item* ObjectCreator::CreateItemFromDefault(const int ItemType)
 			return NULL;
 		}
 
-		RangedWeapon* bow = new RangedWeapon(new_Bow->GetID(), new_Bow->GetType(), new_Bow->GetDamage(), new_Bow->GetRange());
+		RangedWeapon* bow = new RangedWeapon(new_Bow->GetID(), new_Bow->GetType(), new_Bow->GetSubType(), new_Bow->GetDamage(), new_Bow->GetRange());
 
 		bow->SetStacking(false);
 		bow->SetItemWeight(new_Bow->GetWeight());

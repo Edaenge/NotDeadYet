@@ -1,12 +1,12 @@
-#include "PlayerWolfBehavior.h"
+#include "PlayerDeerBehavior.h"
 
 
-PlayerWolfBehavior::PlayerWolfBehavior( Actor* actor, World* world ) : Behavior(actor, world)
+PlayerDeerBehavior::PlayerDeerBehavior( Actor* actor, World* world ) : Behavior(actor, world)
 {
 
 }
 
-bool PlayerWolfBehavior::Update( float dt )
+bool PlayerDeerBehavior::Update( float dt )
 {
 
 	return true;
