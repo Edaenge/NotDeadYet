@@ -1,13 +1,12 @@
 #include "Player.h"
-#include "ClientChannel.h"
+#include "ClientData.h"
 
 
-Player::Player( MaloW::ClientChannel* channel ) :
-	zChannel(channel)
+Player::Player( ClientData* client ) :
+	zClient(client)
 {
 
 }
-
 
 Player::~Player()
 {
@@ -16,6 +15,5 @@ Player::~Player()
 
 void Player::Kick()
 {
-	// TODO: Implement
-	throw("Function Not Implemented!");
+	zClient->Kick();
 }

@@ -13,6 +13,7 @@ class GameMode;
 class Player;
 class Behavior;
 class ActorSynchronizer;
+class KeyStates;
 
 class Game : public Observer, public Observed
 {
@@ -20,9 +21,9 @@ class Game : public Observer, public Observed
 	GameMode* zGameMode;
 	World* zWorld;
 
-	std::map<ClientData*, Player*> _players;
-	std::map<Player*, Behavior*> _behaviors;
-	std::map<Player*, KeyStates> _keyStates;
+	std::map<ClientData*, Player*> zPlayers;
+	std::map<Player*, Behavior*> zBehaviors;
+	std::map<Player*, KeyStates*> zKeyStates;
 
 public:
 	Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile);

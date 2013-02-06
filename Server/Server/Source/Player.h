@@ -1,13 +1,19 @@
 #pragma once
 
-#include <ClientChannel.h>
+#include <KeyStates.h>
 
-class Player
+class ClientData;
+
+class Player : public Observed
 {
-	MaloW::ClientChannel* zChannel;
+	ClientData* zClient;
+	KeyStates zKeys;
 public:
-	Player( MaloW::ClientChannel* channel );
+	Player( ClientData* client );
 	virtual ~Player();
+
+	// Players Current Key States
+	inline KeyStates& GetKeys() { return zKeys; }
 
 	// Disconnect This Player
 	void Kick();
