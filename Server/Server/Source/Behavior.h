@@ -1,10 +1,7 @@
 #pragma once
 
 #include "World/World.h"
-class Actor // For testing
-{
-
-};
+class Actor;
 
 
 class Behavior
