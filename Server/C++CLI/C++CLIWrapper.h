@@ -24,7 +24,7 @@ namespace System { namespace Windows { namespace Interop
 		CppCLI();
 		~CppCLI();
 
-		String^ Init(int port, int nrOfPlayers);
+		String^ Init(int port, int nrOfPlayers, String^ gameMode, String^ mapName);
 		void ShutdownHost();
 		bool StartHost();
 

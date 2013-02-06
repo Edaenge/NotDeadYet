@@ -16,11 +16,11 @@ namespace System { namespace Windows { namespace Interop
 			delete zServer;
 	}
 
-	String^ CppCLI::Init(int port, int nrOfPlayers)
+	String^ CppCLI::Init(int port, int nrOfPlayers, String^ gameMode, String^ mapName)
 	{
 		String^ returnText;
 		
-		returnText = gcnew String(zServer->Init(port, nrOfPlayers));
+		returnText = gcnew String(zServer->Init(port, nrOfPlayers, gameMode, mapName));
 
 		return returnText;
 	}

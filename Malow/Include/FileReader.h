@@ -18,8 +18,8 @@ public:
 	virtual bool ReadFromFile() = 0;
 
 protected:
-	virtual void TrimAndSet(char* ret);
-	virtual bool Replace(char* key);
+	virtual void TrimAndSet(std::string& string);
+	virtual bool Replace(std::string& string);
 
 
 private:

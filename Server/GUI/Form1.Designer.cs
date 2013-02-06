@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button_copy = new System.Windows.Forms.Button();
             this.label_IP_address = new System.Windows.Forms.Label();
             this.textBox_public_ip = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -51,7 +52,11 @@
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.button_copy = new System.Windows.Forms.Button();
+            this.MapsListBox = new System.Windows.Forms.ListBox();
+            this.FFARadioButton = new System.Windows.Forms.RadioButton();
+            this.TestGameModeRadioButton = new System.Windows.Forms.RadioButton();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.Maps = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -73,6 +78,11 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.Silver;
+            this.tabPage1.Controls.Add(this.Maps);
+            this.tabPage1.Controls.Add(this.radioButton3);
+            this.tabPage1.Controls.Add(this.TestGameModeRadioButton);
+            this.tabPage1.Controls.Add(this.FFARadioButton);
+            this.tabPage1.Controls.Add(this.MapsListBox);
             this.tabPage1.Controls.Add(this.button_copy);
             this.tabPage1.Controls.Add(this.label_IP_address);
             this.tabPage1.Controls.Add(this.textBox_public_ip);
@@ -85,10 +95,20 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Setup";
             // 
+            // button_copy
+            // 
+            this.button_copy.Location = new System.Drawing.Point(238, 250);
+            this.button_copy.Name = "button_copy";
+            this.button_copy.Size = new System.Drawing.Size(42, 23);
+            this.button_copy.TabIndex = 16;
+            this.button_copy.Text = "Copy";
+            this.button_copy.UseVisualStyleBackColor = true;
+            this.button_copy.MouseClick += new System.Windows.Forms.MouseEventHandler(this.button_copy_MouseClick);
+            // 
             // label_IP_address
             // 
             this.label_IP_address.AutoSize = true;
-            this.label_IP_address.Location = new System.Drawing.Point(46, 304);
+            this.label_IP_address.Location = new System.Drawing.Point(47, 253);
             this.label_IP_address.Name = "label_IP_address";
             this.label_IP_address.Size = new System.Drawing.Size(54, 13);
             this.label_IP_address.TabIndex = 15;
@@ -96,7 +116,7 @@
             // 
             // textBox_public_ip
             // 
-            this.textBox_public_ip.Location = new System.Drawing.Point(105, 301);
+            this.textBox_public_ip.Location = new System.Drawing.Point(106, 250);
             this.textBox_public_ip.Name = "textBox_public_ip";
             this.textBox_public_ip.ReadOnly = true;
             this.textBox_public_ip.Size = new System.Drawing.Size(126, 20);
@@ -112,7 +132,7 @@
             this.panel1.Controls.Add(this.textBox_Port);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.textBox_Players);
-            this.panel1.Location = new System.Drawing.Point(49, 78);
+            this.panel1.Location = new System.Drawing.Point(50, 20);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(208, 202);
             this.panel1.TabIndex = 8;
@@ -253,15 +273,59 @@
             // 
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
-            // button_copy
+            // MapsListBox
             // 
-            this.button_copy.Location = new System.Drawing.Point(237, 301);
-            this.button_copy.Name = "button_copy";
-            this.button_copy.Size = new System.Drawing.Size(42, 23);
-            this.button_copy.TabIndex = 16;
-            this.button_copy.Text = "Copy";
-            this.button_copy.UseVisualStyleBackColor = true;
-            this.button_copy.MouseClick += new System.Windows.Forms.MouseEventHandler(this.button_copy_MouseClick);
+            this.MapsListBox.FormattingEnabled = true;
+            this.MapsListBox.Items.AddRange(new object[] {
+            "3x3",
+            "Map_01_v01"});
+            this.MapsListBox.Location = new System.Drawing.Point(224, 287);
+            this.MapsListBox.Name = "MapsListBox";
+            this.MapsListBox.Size = new System.Drawing.Size(84, 43);
+            this.MapsListBox.TabIndex = 17;
+            this.MapsListBox.SelectedIndexChanged += new System.EventHandler(this.MapsListBox_SelectedIndexChanged);
+            // 
+            // FFARadioButton
+            // 
+            this.FFARadioButton.AutoSize = true;
+            this.FFARadioButton.Location = new System.Drawing.Point(50, 297);
+            this.FFARadioButton.Name = "FFARadioButton";
+            this.FFARadioButton.Size = new System.Drawing.Size(44, 17);
+            this.FFARadioButton.TabIndex = 18;
+            this.FFARadioButton.TabStop = true;
+            this.FFARadioButton.Text = "FFA";
+            this.FFARadioButton.UseVisualStyleBackColor = true;
+            // 
+            // TestGameModeRadioButton
+            // 
+            this.TestGameModeRadioButton.AutoSize = true;
+            this.TestGameModeRadioButton.Location = new System.Drawing.Point(50, 321);
+            this.TestGameModeRadioButton.Name = "TestGameModeRadioButton";
+            this.TestGameModeRadioButton.Size = new System.Drawing.Size(73, 17);
+            this.TestGameModeRadioButton.TabIndex = 19;
+            this.TestGameModeRadioButton.TabStop = true;
+            this.TestGameModeRadioButton.Text = "TestMode";
+            this.TestGameModeRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Location = new System.Drawing.Point(50, 345);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(14, 13);
+            this.radioButton3.TabIndex = 20;
+            this.radioButton3.TabStop = true;
+            this.radioButton3.UseVisualStyleBackColor = true;
+            this.radioButton3.Visible = false;
+            // 
+            // Maps
+            // 
+            this.Maps.AutoSize = true;
+            this.Maps.Location = new System.Drawing.Point(183, 301);
+            this.Maps.Name = "Maps";
+            this.Maps.Size = new System.Drawing.Size(35, 13);
+            this.Maps.TabIndex = 21;
+            this.Maps.Text = "label3";
             // 
             // Form1
             // 
@@ -312,6 +376,11 @@
         private System.Windows.Forms.TextBox textBox_public_ip;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Button button_copy;
+        private System.Windows.Forms.ListBox MapsListBox;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton TestGameModeRadioButton;
+        private System.Windows.Forms.RadioButton FFARadioButton;
+        private System.Windows.Forms.Label Maps;
 
     }
 }

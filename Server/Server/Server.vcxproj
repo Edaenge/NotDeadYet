@@ -32,7 +32,9 @@
     <ClCompile Include="Source\ClientData.cpp" />
     <ClCompile Include="Source\ContainerObject.cpp" />
     <ClCompile Include="Source\DeerActor.cpp" />
-    <ClCompile Include="Source\DynamicObjectActor.cpp" />
+    <ClCompile Include="Source\DynamicObjectActor.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Source\DynamicProjectileObject.cpp" />
     <ClCompile Include="Source\FoodObject.cpp" />
     <ClCompile Include="Source\Game.cpp" />
@@ -76,7 +78,9 @@
     <ClInclude Include="Source\ClientData.h" />
     <ClInclude Include="Source\ContainerObject.h" />
     <ClInclude Include="Source\DeerActor.h" />
-    <ClInclude Include="Source\DynamicObjectActor.h" />
+    <ClInclude Include="Source\DynamicObjectActor.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Source\DynamicProjectileObject.h" />
     <ClInclude Include="Source\FoodObject.h" />
     <ClInclude Include="Source\Game.h" />
@@ -85,8 +89,10 @@
     <ClInclude Include="Source\GhostActor.h" />
     <ClInclude Include="Source\Host.h" />
     <ClInclude Include="Source\MaterialObject.h" />
+    <ClInclude Include="Source\NetworkEvents.h" />
     <ClInclude Include="Source\ObjectCreator.h" />
     <ClInclude Include="Source\ObjectManager.h" />
+    <ClInclude Include="Source\PhysicsActor.h" />
     <ClInclude Include="Source\PhysicsEngine\BoundingSphere.h" />
     <ClInclude Include="Source\PhysicsEngine\ObjLoader.h" />
     <ClInclude Include="Source\PhysicsEngine\Physics.h" />

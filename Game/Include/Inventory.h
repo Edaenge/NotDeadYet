@@ -13,7 +13,7 @@
 #include "Container.h"
 #include "Material.h"
 #include <vector>
-
+#include "Observer.h"
 enum EQUIPMENT_SLOT
 {
 	EQUIPMENT_SLOT_AMMO,
@@ -26,7 +26,7 @@ enum EQUIPMENT_SLOT
 };
 
 /*! Class That keeps track of the inventory data*/
-class Inventory
+class Inventory : public Observed
 {
 public:
 	Inventory();

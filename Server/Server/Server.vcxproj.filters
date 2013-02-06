@@ -263,6 +263,9 @@
     <ClInclude Include="Source\PlayerDeerBehavior.h">
       <Filter>Source\Behavior</Filter>
     </ClInclude>
+    <ClInclude Include="Source\NetworkEvents.h">
+      <Filter>Source</Filter>
+    </ClInclude>
     <ClInclude Include="Source\ActorSynchronizer.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -278,5 +281,6 @@
     <ClInclude Include="Source\WorldActor.h">
       <Filter>Source\Actors</Filter>
     </ClInclude>
+    <ClInclude Include="Source\PhysicsActor.h" />
   </ItemGroup>
 </Project>
