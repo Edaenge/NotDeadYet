@@ -70,7 +70,8 @@ void Game::OnEvent( Event* e )
 		zActorManager->AddActor(actor);
 
 		// Apply Default Player Behavior
-		SetPlayerBehavior(player, new PlayerHumanBehavior(actor, zWorld, player));	}
+		SetPlayerBehavior(player, new PlayerHumanBehavior(actor, zWorld, player));	
+	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
