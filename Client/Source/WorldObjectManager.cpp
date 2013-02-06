@@ -32,7 +32,7 @@ WorldObjectManager::~WorldObjectManager()
 		SAFE_DELETE((*x));
 	}
 }
-
+/*
 bool WorldObjectManager::AddObject(PlayerObject* new_PlayerObject)
 {
 	if (new_PlayerObject)
@@ -317,24 +317,6 @@ bool WorldObjectManager::SearchAndRemove(const unsigned int type, const int ID)
 	return true;
 }
 
-void WorldObjectManager::UpdateObjects( float deltaTime )
-{
-	for (auto x = this->zPlayerObjects.begin(); x < this->zPlayerObjects.end(); x++)
-	{
-		(*x)->Update(deltaTime);
-	}
-
-	for (auto x = this->zAnimalObjects.begin(); x < this->zAnimalObjects.end(); x++)
-	{
-		(*x)->Update(deltaTime);
-	}
-
-	for (auto x = this->zDynamicObjects.begin(); x < this->zDynamicObjects.end(); x++)
-	{
-		(*x)->Update(deltaTime);
-	}
-}
-
 PlayerObject* WorldObjectManager::SearchAndGetPlayerObject(const int ID)
 {
 	int position = this->SearchForPlayerObject(ID);
@@ -364,11 +346,29 @@ DeadPlayerObject* WorldObjectManager::SearchAndGetDeadPlayerObject(const long ID
 	int position = this->SearchForDeadPlayerObject(ID);
 	return this->zDeadPlayerObjects[position];
 }
-
+*/
 WorldObject* WorldObjectManager::SearchAndGetActor(const long ID)
 {
 	int position = this->SearchForActor(ID);
 	return this->zActors[position];
+}
+
+void WorldObjectManager::UpdateObjects( float deltaTime )
+{
+	for (auto x = this->zPlayerObjects.begin(); x < this->zPlayerObjects.end(); x++)
+	{
+		(*x)->Update(deltaTime);
+	}
+
+	for (auto x = this->zAnimalObjects.begin(); x < this->zAnimalObjects.end(); x++)
+	{
+		(*x)->Update(deltaTime);
+	}
+
+	for (auto x = this->zDynamicObjects.begin(); x < this->zDynamicObjects.end(); x++)
+	{
+		(*x)->Update(deltaTime);
+	}
 }
 
 WorldObject* WorldObjectManager::GetActor( const int Index )

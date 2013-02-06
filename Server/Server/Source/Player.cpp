@@ -3,7 +3,8 @@
 
 
 Player::Player( ClientData* client ) :
-	zClient(client)
+	zClient(client),
+	zBehavior(0)
 {
 
 }

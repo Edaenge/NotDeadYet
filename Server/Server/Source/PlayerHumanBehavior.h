@@ -1,3 +1,4 @@
+#pragma once
 #include "PlayerBehavior.h"
 
 class PlayerHumanBehavior : public PlayerBehavior

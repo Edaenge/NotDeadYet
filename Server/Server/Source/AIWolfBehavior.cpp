@@ -6,6 +6,11 @@ AIWolfBehavior::AIWolfBehavior( Actor* actor, World* world ) : Behavior(actor, w
 
 }
 
+AIWolfBehavior::~AIWolfBehavior()
+{
+
+}
+
 bool AIWolfBehavior::Update( float dt )
 {
 

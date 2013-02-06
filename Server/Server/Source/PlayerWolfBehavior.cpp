@@ -32,7 +32,6 @@ bool PlayerWolfBehavior::Update( float dt )
 	currentPlayerUp.Normalize();
 	Vector3 currentPlayerRight = currentPlayerUp.GetCrossProduct(currentPlayerDir);
 	Vector3 currentGroundNormal = this->zWorld->CalcNormalAt(currentPlayerPos.GetXZ());
-	float currentGroundHeights = this->zWorld->CalcHeightAtWorldPos(currentPlayerPos.GetXZ());
 
 	// Calc the movement vector
 	moveDir += currentPlayerDir * (float)(keyStates.GetKeyState(KEY_FORWARD) - //if KEY_BACKWARD then currentPlayerDir inverse 

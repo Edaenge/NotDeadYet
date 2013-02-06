@@ -1,3 +1,4 @@
+#pragma once
 #include "Behavior.h"
 
 class ProjectileBehavior : public Behavior

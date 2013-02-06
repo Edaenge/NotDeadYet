@@ -6,6 +6,8 @@
 #include "PlayerHumanBehavior.h"
 #include "PlayerWolfBehavior.h"
 #include "PlayerActor.h""
+#include "PlayerWolfBehavior.h"
+#include "AIWolfBehavior.h"
 
 
 Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
@@ -31,7 +33,7 @@ bool Game::Update( float dt )
 	auto i = zBehaviors.begin();
 	while( i != zBehaviors.end() )
 	{
-		if ( i->second->Update(dt) )
+		if ( (*i)->Update(dt) )
 		{
 			i = zBehaviors.erase(i);
 		}
@@ -41,13 +43,14 @@ bool Game::Update( float dt )
 		}
 	}
 
-	// Update Game Mode
+	// Update Game Mode, Might Notify That GameMode is Finished
 	if ( !zGameMode->Update(dt) )
 		return false;
 	
 	// Update World
 	zWorld->Update();
 
+	// Game Still Active
 	return true;
 }
 
@@ -67,29 +70,47 @@ void Game::OnEvent( Event* e )
 		zActorManager->AddActor(actor);
 
 		// Apply Default Player Behavior
-		zBehaviors[player] = new PlayerHumanBehavior(actor, zWorld, player);
-	}
+		SetPlayerBehavior(player, new PlayerHumanBehavior(actor, zWorld, player));	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
 	}
 	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )
 	{
-		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, false);
+		zPlayers[KUE->clientData]->GetKeys().SetKeyState(KUE->key, false);
 	}
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
 	{
-		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(zBehaviors[zPlayers[CDE->clientData]]))
+		Behavior* clientBehavior = zPlayers[CDE->clientData]->GetBehavior();
+		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(clientBehavior))
 			dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
-		// TODO: Delete Player Behavior
+		// Delete Player Behavior
+		auto playerIterator = zPlayers.find(PDCE->clientData);
+		auto playerBehavior = playerIterator->second->GetBehavior();
+
+		// Create AI Behavior For Players That Disconnected
+		if ( PlayerWolfBehavior* playerWolf = dynamic_cast<PlayerWolfBehavior*>(playerBehavior) )
+		{
+			AIWolfBehavior* aiWolf = new AIWolfBehavior(playerWolf->GetActor(), zWorld);
+			SetPlayerBehavior(playerIterator->second, 0);
+			zBehaviors.insert(aiWolf);
+		}
 
 		// Delete Player
 		auto i = zPlayers.find(PDCE->clientData);
 		delete i->second;
 		zPlayers.erase(i);
+	}
+	else if ( EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e) )
+	{
+
+	}
+	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
+	{
+
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
@@ -99,4 +120,20 @@ void Game::OnEvent( Event* e )
 	NotifyObservers(e);
 }
 
+void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
+{
+	// Find Old Behavior
+	Behavior* curPlayerBehavior = player->GetBehavior();
+
+	// Find In Behaviors
+	if ( curPlayerBehavior ) 
+	{
+		zBehaviors.erase(curPlayerBehavior);
+		delete curPlayerBehavior;
+	}
+
+	// Set New Behavior
+	if ( behavior )	zBehaviors.insert(behavior);
+	player->zBehavior = behavior;
+}
 

@@ -6,6 +6,7 @@ private:
 
 public:
 	AIWolfBehavior(Actor* actor, World* world);
+	virtual ~AIWolfBehavior();
 
 	bool Update(float dt);
 };
