@@ -7,7 +7,7 @@ const float ELASTICITY = 0.5f;
 const float ACCELERATION = 1.0f;
 const float PLAYERHEIGHT = 1.0f;
 
-PlayerWolfBehavior::PlayerWolfBehavior( Actor* actor, World* world, Player* player) : PlayerBehavior(actor, world, player)
+PlayerWolfBehavior::PlayerWolfBehavior( Actor* actor, World* world, WorldAnchor* anchor, Player* player) : PlayerBehavior(actor, world, anchor, player)
 {
 
 }

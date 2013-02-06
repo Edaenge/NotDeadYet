@@ -7,7 +7,7 @@ const float ELASTICITY = 0.5f;
 const float ACCELERATION = 1.0f;
 const float PLAYERHEIGHT = 1.2f;
 
-PlayerDeerBehavior::PlayerDeerBehavior( Actor* actor, World* world, Player* player) : PlayerBehavior(actor, world, player)
+PlayerDeerBehavior::PlayerDeerBehavior( Actor* actor, World* world, WorldAnchor* anchor, Player* player) : PlayerBehavior(actor, world, anchor, player)
 {
 
 }

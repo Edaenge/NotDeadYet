@@ -8,9 +8,10 @@ class Behavior
 protected:
 	Actor* zActor;
 	World* zWorld;
+	WorldAnchor* zAnchor;
 
 public:
-	Behavior(Actor* actor, World* world);
+	Behavior(Actor* actor, World* world, WorldAnchor* anchor);
 	virtual ~Behavior(){};
 
 	Actor* GetActor() const { return zActor; }
