@@ -26,7 +26,7 @@ namespace System { namespace Windows { namespace Interop
 			gameModeName = (char*)Marshal::StringToHGlobalAnsi(gameMode).ToPointer();
 			mapNameChar = (char*)Marshal::StringToHGlobalAnsi(mapName).ToPointer();
 		}
-		catch(const char* str)
+		catch(...)
 		{
 			return "Failed";
 		}

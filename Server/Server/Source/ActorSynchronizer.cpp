@@ -28,7 +28,7 @@ void ActorSynchronizer::OnEvent( Event* e )
 
 void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 {
-	NetworkMessageConverter* nmc = new NetworkMessageConverter();
+	NetworkMessageConverter nmc;
 	std::string msg;
 	Vector3 pos;
 	Vector4 rot;
@@ -40,10 +40,10 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 		rot = (*it)->GetRotation();
 		scale = (*it)->GetScale();
 
-		msg = nmc->Convert(MESSAGE_TYPE_UPDATE_PLAYER, cd->GetClient()->GetClientID());
-		msg += nmc->Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		msg += nmc->Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		msg += nmc->Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+		msg = nmc.Convert(MESSAGE_TYPE_UPDATE_ACTOR, (*it)->GetID());
+		msg += nmc.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
+		msg += nmc.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+		msg += nmc.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
 
 		cd->SendMessage(msg);
 	}

@@ -163,7 +163,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)\..\Bin\$(Configuration)</OutDir>
+    <OutDir>$(ProjectDir)\..\Bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)\External\VLD\include\;$(SolutionDir)\Malow\Include\;$(SolutionDir)\External\NDYGFX\Include\;$(SolutionDir)\Game\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)\Malow\Bin\Debug;$(SolutionDir)\Game\Bin\Debug;$(SolutionDir)\External\NDYGFX\Lib\;$(LibraryPath)</LibraryPath>
@@ -176,7 +176,7 @@
     <IncludePath>$(SolutionDir)..\..\External\VLD\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)\..\Bin\$(Configuration)</OutDir>
+    <OutDir>$(ProjectDir)\..\Bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)\External\VLD\include\;$(SolutionDir)\Malow\Include\;$(SolutionDir)\External\NDYGFX\Include\;$(SolutionDir)\Game\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)\Malow\Bin\Release;$(SolutionDir)\Game\Bin\Release;$(SolutionDir)\External\NDYGFX\Lib\;$(LibraryPath)</LibraryPath>
