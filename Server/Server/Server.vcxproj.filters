@@ -16,9 +16,6 @@
     <Filter Include="Source\Actors">
       <UniqueIdentifier>{50a47ee4-51e7-49bf-b61f-129906fa7671}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Objects">
-      <UniqueIdentifier>{c6201ae5-5d7c-4255-94f3-9c71df5a41a7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Handlers">
       <UniqueIdentifier>{2d91f24d-3e37-49b2-80e5-94f5c85ed464}</UniqueIdentifier>
     </Filter>
@@ -69,16 +66,10 @@
     <ClCompile Include="Source\DeerActor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DynamicObjectActor.cpp">
-      <Filter>Source\Actors</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GhostActor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
     <ClCompile Include="Source\PlayerActor.cpp">
-      <Filter>Source\Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\StaticObjectActor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
     <ClCompile Include="Source\WolfActor.cpp">
@@ -86,24 +77,6 @@
     </ClCompile>
     <ClCompile Include="Source\Actor.cpp">
       <Filter>Source\Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\WeaponObject.cpp">
-      <Filter>Source\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\StaticProjectileObject.cpp">
-      <Filter>Source\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MaterialObject.cpp">
-      <Filter>Source\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\FoodObject.cpp">
-      <Filter>Source\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\DynamicProjectileObject.cpp">
-      <Filter>Source\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ContainerObject.cpp">
-      <Filter>Source\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Source\ActorHandler.cpp">
       <Filter>Source\Handlers</Filter>
@@ -149,6 +122,9 @@
     </ClCompile>
     <ClCompile Include="Source\ActorManager.cpp">
       <Filter>Source\Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ItemActor.cpp">
+      <Filter>Source\Actors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,16 +179,10 @@
     <ClInclude Include="Source\DeerActor.h">
       <Filter>Source\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="Source\DynamicObjectActor.h">
-      <Filter>Source\Actors</Filter>
-    </ClInclude>
     <ClInclude Include="Source\GhostActor.h">
       <Filter>Source\Actors</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerActor.h">
-      <Filter>Source\Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StaticObjectActor.h">
       <Filter>Source\Actors</Filter>
     </ClInclude>
     <ClInclude Include="Source\WolfActor.h">
@@ -220,24 +190,6 @@
     </ClInclude>
     <ClInclude Include="Source\Actor.h">
       <Filter>Source\Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\WeaponObject.h">
-      <Filter>Source\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StaticProjectileObject.h">
-      <Filter>Source\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\MaterialObject.h">
-      <Filter>Source\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\FoodObject.h">
-      <Filter>Source\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\DynamicProjectileObject.h">
-      <Filter>Source\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ContainerObject.h">
-      <Filter>Source\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Source\ActorHandler.h">
       <Filter>Source\Handlers</Filter>
@@ -292,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="Source\GameEvents.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ItemActor.h">
+      <Filter>Source\Actors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
