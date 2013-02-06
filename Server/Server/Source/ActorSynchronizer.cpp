@@ -24,7 +24,7 @@ void ActorSynchronizer::OnEvent( Event* e )
 	{
 		zUpdateSet.insert(UPE->zActor);
 	}
-	}}
+}
 
 void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 {
@@ -47,11 +47,9 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 
 		cd->SendMessage(msg);
 	}
-	return true;
 }
 
 void ActorSynchronizer::ClearAll()
 {
 	this->zUpdateSet.clear();
-	return true;
 }

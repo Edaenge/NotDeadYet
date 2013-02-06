@@ -42,6 +42,7 @@ bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
 	BioActorTakeDamageEvent BATD;
 	BATD.zActor = this;
 	BATD.zDamage = dmg;
+	BATD.zDealer = dealer;
 	NotifyObservers(&BATD);
 
 	return this->zAlive;
@@ -84,7 +85,6 @@ bool BioActor::HasMoved()
 std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 {
 	string msg = "";
-	msg = PhysicsActor::ToMessageString(NMC);
 	msg += NMC->Convert(MESSAGE_TYPE_STATE, this->zState);
 
 	if(zHealthChanged)
