@@ -3,6 +3,8 @@
 #include "Behavior.h"
 #include <world/World.h>
 #include "GameEvents.h"
+#include "PlayerBehavior.h"
+#include "PlayerWolfBehavior.h"
 
 
 Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
@@ -59,13 +61,18 @@ void Game::OnEvent( Event* e )
 	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
-		Player* temp = _players[KDE->clientData];
-		_keyStates[temp].SetKeyState(KDE->key, true);
+		_keyStates[_players[KDE->clientData]].SetKeyState(KDE->key, true);
 	}
-	else if( KeyUpEvent* KDE = dynamic_cast<KeyUpEvent*>(e) )
+	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )
 	{
-		Player* temp = _players[KDE->clientData];
-		_keyStates[temp].SetKeyState(KDE->key, false);
+		_keyStates[_players[KUE->clientData]].SetKeyState(KUE->key, false);
+	}
+	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
+	{
+		Behavior* behavior = _behaviors[_players[CDE->clientData]];
+		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(behavior))
+			int i = 0;
+		//_behaviors[_players[CDE->clientData]]->ProcessClientData(CDE->direction, CDE->direction);
 	}
 }
 
