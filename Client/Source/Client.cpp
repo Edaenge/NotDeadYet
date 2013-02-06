@@ -846,23 +846,29 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		this->Ping();
 	}
-	//Player
-	else if(msg.find(M_UPDATE_PLAYER.c_str()) == 0)
-	{ 
-		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_PLAYER, msgArray[0]);
-		this->UpdatePlayerObjects(msgArray, id);
-	}
-	//Animal
-	else if(msg.find(M_UPDATE_ANIMAL.c_str()) == 0)
+	////Player
+	//else if(msg.find(M_UPDATE_PLAYER.c_str()) == 0)
+	//{ 
+	//	long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_PLAYER, msgArray[0]);
+	//	this->UpdateActor(msgArray, id);
+	//}
+	////Animal
+	//else if(msg.find(M_UPDATE_ANIMAL.c_str()) == 0)
+	//{
+	//	long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ANIMAL, msgArray[0]);
+	//	this->UpdateActor(msgArray, id);
+	//}
+	////Static Object
+	//else if(msg.find(M_UPDATE_STATIC_OBJECT.c_str()) == 0)
+	//{
+	//	long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_STATIC_OBJECT, msgArray[0]);
+	//	this->UpdateActor(msgArray, id);
+	//}
+	//WorldObjects
+	else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ANIMAL, msgArray[0]);
-		this->UpdateAnimalObjects(msgArray, id);
-	}
-	//Static Object
-	else if(msg.find(M_UPDATE_STATIC_OBJECT.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_STATIC_OBJECT, msgArray[0]);
-		this->UpdateStaticObjects(msgArray, id);
+		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
+		this->UpdateActor(msgArray, id);
 	}
 	//Static Object
 	else if(msg.find(M_NEW_STATIC_OBJECT.c_str()) == 0)
@@ -880,7 +886,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	else if(msg.find(M_UPDATE_DYNAMIC_OBJECT.c_str()) == 0)
 	{
 		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_DYNAMIC_OBJECT, msgArray[0]);
-		this->UpdateDynamicObjects(msgArray, id);
+		this->UpdateActor(msgArray, id);
 	}
 	//Dynamic Object
 	else if(msg.find(M_NEW_DYNAMIC_OBJECT.c_str()) == 0)
@@ -888,12 +894,12 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_DYNAMIC_OBJECT, msgArray[0]);
 		this->AddNewDynamicObject(msgArray, id);
 	}
-	//Dynamic Object
-	else if(msg.find(M_REMOVE_DYNAMIC_OBJECT.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_DYNAMIC_OBJECT, msgArray[0]);
-		this->RemoveDynamicObject(id);
-	}
+	////Dynamic Object
+	//else if(msg.find(M_REMOVE_DYNAMIC_OBJECT.c_str()) == 0)
+	//{
+	//	long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_DYNAMIC_OBJECT, msgArray[0]);
+	//	this->RemoveDynamicObject(id);
+	//}
 	//Player
 	else if(msg.find(M_NEW_PLAYER.c_str()) == 0)
 	{
@@ -906,18 +912,18 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_ANIMAL, msgArray[0]);
 		this->AddNewAnimalObject(msgArray, id);
 	}
-	//Animal
-	else if(msg.find(M_REMOVE_ANIMAL.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ANIMAL, msgArray[0]);
-		this->RemoveAnimalObject(id);
-	}
-	//Player
-	else if(msg.find(M_REMOVE_PLAYER.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_PLAYER, msgArray[0]);
-		this->RemovePlayerObject(id);
-	}
+	////Animal
+	//else if(msg.find(M_REMOVE_ANIMAL.c_str()) == 0)
+	//{
+	//	long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ANIMAL, msgArray[0]);
+	//	this->RemoveAnimalObject(id);
+	//}
+	////Player
+	//else if(msg.find(M_REMOVE_PLAYER.c_str()) == 0)
+	//{
+	//	long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_PLAYER, msgArray[0]);
+	//	this->RemovePlayerObject(id);
+	//}
 	else if(msg.find(M_EQUIP_ITEM.c_str()) == 0)
 	{
 		long id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
