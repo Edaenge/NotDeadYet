@@ -1,11 +1,12 @@
-#include "Behavior.h"
+#include "PlayerBehavior.h"
 
-class PlayerWolfBehavior : public Behavior
+class PlayerWolfBehavior : public PlayerBehavior
 {
 private:
 
 public:
-	PlayerWolfBehavior(Actor* actor, World* world);
+	PlayerWolfBehavior(Actor* actor, World* world, Player* player);
+	virtual ~PlayerWolfBehavior();
 
-	bool Update(float dt);
+	virtual bool Update(float dt);
 };

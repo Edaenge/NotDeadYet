@@ -1,24 +1,23 @@
-#include "PlayerDeerBehavior.h"
+#include "PlayerHumanBehavior.h"
 #include "Player.h"
 
-const int MAX_VELOCITY = 20;
+const int MAX_VELOCITY = 30;
 const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 const float ELASTICITY = 0.5f;
-const float ACCELERATION = 1.0f;
-const float PLAYERHEIGHT = 1.2f;
+const float ACCELERATION = 2.0f;
+const float PLAYERHEIGHT = 1.7f;
 
-PlayerDeerBehavior::PlayerDeerBehavior( Actor* actor, World* world, Player* player) : PlayerBehavior(actor, world, player)
+PlayerHumanBehavior::PlayerHumanBehavior( Actor* actor, World* world, Player* player ) : PlayerBehavior(actor, world, player)
 {
 
 }
 
-PlayerDeerBehavior::~PlayerDeerBehavior()
+PlayerHumanBehavior::~PlayerHumanBehavior()
 {
 
 }
 
-
-bool PlayerDeerBehavior::Update( float dt )
+bool PlayerHumanBehavior::Update( float dt )
 {
 	KeyStates keyStates = this->zPlayer->GetKeys();
 	Vector3 newPlayerPos;
@@ -63,3 +62,5 @@ bool PlayerDeerBehavior::Update( float dt )
 
 	return true;
 }
+
+

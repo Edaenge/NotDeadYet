@@ -3,9 +3,9 @@
 #include "Behavior.h"
 #include <world/World.h>
 #include "GameEvents.h"
-#include "PlayerBehavior.h"
+#include "PlayerHumanBehavior.h"
 #include "PlayerWolfBehavior.h"
-#include "PlayerActor.h"
+#include "PlayerActor.h""
 
 
 Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
@@ -67,7 +67,7 @@ void Game::OnEvent( Event* e )
 		zActorManager->AddActor(actor);
 
 		// Apply Default Player Behavior
-		//zBehaviors[player] = new PlayerHumanBehavior(actor, zWorld, player);
+		zBehaviors[player] = new PlayerHumanBehavior(actor, zWorld, player);
 	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
@@ -79,10 +79,8 @@ void Game::OnEvent( Event* e )
 	}
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
 	{
-		Behavior* behavior = zBehaviors[zPlayers[CDE->clientData]];
-		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(behavior))
-			int i = 0;
-		//_behaviors[_players[CDE->clientData]]->ProcessClientData(CDE->direction, CDE->direction);
+		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(zBehaviors[zPlayers[CDE->clientData]]))
+			dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
