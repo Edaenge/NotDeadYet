@@ -1,11 +1,13 @@
 #include "PlayerBehavior.h"
 #include "Actor.h"
+#include "Player.h"
 
 
-PlayerBehavior::PlayerBehavior( Actor* actor, World* world, KeyStates* zKeyState ) : Behavior(actor, world)
+PlayerBehavior::PlayerBehavior( Actor* actor, World* world, Player* player ) : 
+	Behavior(actor, world),
+	zVelocity(0.0f, 0.0f, 0.0f),
+	zPlayer(player)
 {
-	this->zKeyState = zKeyState;
-	this->zVelocity = Vector3(0, 0, 0);
 }
 
 bool PlayerBehavior::Update( float dt )
