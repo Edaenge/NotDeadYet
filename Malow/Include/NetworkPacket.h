@@ -9,13 +9,13 @@ namespace MaloW
 	{
 	private:
 		string message;
-		int id;
+		MaloW::ClientChannel* cc;
 
 	public:
-		NetworkPacket(string message, int SenderID) { this->message = message; this->id = SenderID; }
+		NetworkPacket(string message, MaloW::ClientChannel* sender) { this->message = message; this->cc = sender; }
 		virtual ~NetworkPacket() { }
 		string getMessage() { return this->message; }
-		int getID() { return this->id; }
+		MaloW::ClientChannel* getChannel() { return this->cc; }
 	};
 }
 

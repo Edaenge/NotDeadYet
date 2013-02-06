@@ -107,7 +107,7 @@ void ClientChannel::Life()
 		std::string msg;
 		while(this->stayAlive && Receive(msg))
 		{
-			zNotifier->PutEvent(new NetworkPacket(msg, this->GetClientID()));
+			zNotifier->PutEvent(new NetworkPacket(msg, this));
 		}
 	}
 	catch(...)

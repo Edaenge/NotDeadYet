@@ -13,13 +13,14 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "Game.h"
 #include "GameModeFFA.h"
 #include "ActorSyncher.h"
+#include "GameEvents.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
 #define INCLUDE_MODEL_VIEWER
 #endif
 
-class Host : public MaloW::Process
+class Host : public MaloW::Process, public Observed
 {
 public:
 	Host();
@@ -56,17 +57,19 @@ public:
 private:
 	/*! Handles new incoming connections.*/
 	void HandleNewConnection( MaloW::ClientChannel* CC );
-	/*! Handles messages from clients. This function will call the following functions:
-	HandleCloseConnectionMsg
-	HandleKeyPress
-	HandleKeyRelease
-	CreateNewPlayer
-	*/
-	void HandleReceivedMessage( const unsigned int &ID, const std::string &message );
+	/*! Handles messages from clients.*/
+	void HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &message );
+	/*! */
+	void HandleClientUpdate(const std::vector<std::string> msgArray, ClientData* cd);
+	/*! */
+	void HandleDisconnect( MaloW::ClientChannel* channel );
+	/*! */
+	void HandleLootRequest(const std::vector<std::string> &msgArray, ClientData* cd);
+	/*! */
+	void HandleUserData(const std::vector<std::string> &msgArray, ClientData* cd);
 	/*! Read messages from queue and saves them in*/
 	void ReadMessages(); 
 
-	void HandleDisconnect( MaloW::ClientChannel* channel );
 	void Message(MaloW::ClientChannel* cc, std::string msg);
 
 private:
@@ -84,5 +87,6 @@ private:
 	float zTimeOut;
 	float zPingMessageInterval;
 
+	std::map<MaloW::ClientChannel*, ClientData*> _clients;
 	Game* zGame;
 };

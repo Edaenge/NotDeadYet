@@ -37,7 +37,28 @@
             </relationshipOwnedElementsInternal>
             <elementDefinition Id="010c4c21-a5bc-444b-9bc1-310535d3f7eb" />
           </association>
+          <association Id="c149e925-edb5-4c9d-a11a-a83a28662d19" isDerived="false" sourceEndRoleName="Host : Process" targetEndRoleName="ClientChannel : Process" isLeaf="false" isAbstract="false">
+            <classMoniker Id="05c93f09-a71b-46dd-b0e5-0d5123501dca" LastKnownName="ClientChannel : Process" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="51e065bb-6899-4882-9ef4-19fe9223a6d6" name="Host : Process" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="73f2b90d-6488-4f5f-b232-64946c43424a" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="cc1ac76b-2235-494a-81dd-f7f02abebb6c" name="ClientChannel : Process" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="0fc3db55-eb68-4596-ba24-7f1d11d31424" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="caa49049-3d5c-47d5-9683-297c25f03a8c" />
+          </association>
         </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="f6106d4a-fe66-423b-9220-68d6e4d019c6" name="map&lt;ClientChannel*, ClientData*&gt;" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="31815396-10e7-4b2f-ac3c-359b8ea9a1f1" />
+          </property>
+        </ownedAttributesInternal>
         <ownedOperationsInternal>
           <operation Id="b838ccde-0813-416b-8ba5-4b116077960b" name="Life" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="1838a1e8-f36c-4e56-a5b2-a5304a21f24a" />

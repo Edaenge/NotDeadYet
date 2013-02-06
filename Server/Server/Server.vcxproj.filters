@@ -284,5 +284,8 @@
     <ClInclude Include="Source\GameModeFFA.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\GameEvents.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

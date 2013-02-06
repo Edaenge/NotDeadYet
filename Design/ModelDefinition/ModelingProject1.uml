@@ -1711,7 +1711,59 @@
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
+          <association
+            Id="caa49049-3d5c-47d5-9683-297c25f03a8c"
+            isDerived="false"
+            sourceEndRoleName="Host : Process"
+            targetEndRoleName="ClientChannel : Process"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="cea2a73d-5660-47fc-9ed5-f7710e2c0f12"
+              LastKnownName="ClientChannel : Process"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="73f2b90d-6488-4f5f-b232-64946c43424a"
+                  name="Host : Process"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="0fc3db55-eb68-4596-ba24-7f1d11d31424"
+                  name="ClientChannel : Process"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
         </targetEnds>
+        <ownedAttributesInternal>
+          <property
+            Id="31815396-10e7-4b2f-ac3c-359b8ea9a1f1"
+            name="map&lt;ClientChannel*, ClientData*&gt;"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
         <ownedOperationsInternal>
           <operation
             Id="1838a1e8-f36c-4e56-a5b2-a5304a21f24a"

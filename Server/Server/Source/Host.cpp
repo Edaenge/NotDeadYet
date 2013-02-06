@@ -96,6 +96,7 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	GameMode* gameMode = new GameModeFFA();
 	ActorSyncher as = new ActorSyncher();
 	this->zGame = new Game(,gameMode, path);
+	this->AddObserver(this->zGame);
 	try
 	{
 		if ( zServerListener ) delete zServerListener;
@@ -108,11 +109,6 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	}
 
 	return 0;
-}
-
-void Host::HandleNewConnection( MaloW::ClientChannel* CC )
-{
-
 }
 
 void Host::SendToAllClients(const std::string& message, bool sendIM /*= false*/)
@@ -137,7 +133,7 @@ bool Host::HasClients() const
 
 void Host::ReadMessages()
 {
-	/*
+	
 	static unsigned int MAX_MESSAGES_TO_READ = 10;
 	unsigned int nrOfMessages = this->GetEventQueueSize();
 
@@ -154,7 +150,7 @@ void Host::ReadMessages()
 
 		if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(pe) )
 		{
-			HandleReceivedMessage(np->getID(), np->getMessage());
+			HandleReceivedMessage(np->getChannel(), np->getMessage());
 		}
 		else if ( ClientConnectedEvent* CCE = dynamic_cast<ClientConnectedEvent*>(pe) )
 		{
@@ -168,130 +164,135 @@ void Host::ReadMessages()
 
 		// Unhandled Message
 		SAFE_DELETE(pe);
-	}*/
+	}
 }
 
-void Host::HandleReceivedMessage( const unsigned int &ID, const std::string &message )
+void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &message )
 {
-	/*
+	
 	std::vector<std::string> msgArray;
 	msgArray = this->zMessageConverter.SplitMessage(message); 
+	ClientData* cd = this->_clients.at(cc);
 	
 	// Empty Array
 	if ( msgArray.size() == 0 ) return;
 
-	int c_index = SearchForClient(ID);
-	PlayerActor* p_actor = dynamic_cast<PlayerActor*>(this->zGameMode->GetActorHandlerPtr()->GetActor(ID, ACTOR_TYPE_PLAYER));
-
 	//Handles updates from client.
-	if(msgArray[0].find(M_CLIENT_DATA.c_str()) == 0 && (p_actor))
+	if(msgArray[0].find(M_CLIENT_DATA.c_str()) == 0)
 	{
-		this->HandlePlayerUpdate(p_actor, this->zClients[c_index], msgArray);
+		this->HandleClientUpdate(msgArray, cd);
 	}
 	//Handles key presses from client.
-	else if(msgArray[0].find(M_KEY_DOWN.c_str()) == 0 && (p_actor))
+	else if(msgArray[0].find(M_KEY_DOWN.c_str()))
 	{
-		int key = this->zMessageConverter.ConvertStringToInt(M_KEY_DOWN, msgArray[0]);
+		KeyDownEvent e;
+		int dKey = this->zMessageConverter.ConvertStringToInt(M_KEY_DOWN, msgArray[0]);
 
-		this->zGameMode->HandleKeyPress(ID, key);
-		//this->HandleKeyPress(p_actor, msgArray[0]);
+		e.clientData = cd;
+		e.key = dKey;
+		NotifyObservers(&e);
 	}
 	//Handles key releases from client.
-	else if(msgArray[0].find(M_KEY_UP.c_str()) == 0 && (p_actor))
+	else if(msgArray[0].find(M_KEY_UP.c_str()) == 0)
 	{
-		int key = this->zMessageConverter.ConvertStringToInt(M_KEY_UP, msgArray[0]);
+		KeyUpEvent e;
+		int uKey = this->zMessageConverter.ConvertStringToInt(M_KEY_UP, msgArray[0]);
 
-		this->zGameMode->HandleKeyRelease(ID, key);
-		//this->HandleKeyRelease(p_actor, msgArray[0]);
+		e.clientData = cd;
+		e.key = uKey;
+		NotifyObservers(&e);
 	}
 	//Handles Pings from client.
-	else if(msgArray[0].find(M_PING.c_str()) == 0 && (c_index != -1))
+	else if(msgArray[0].find(M_PING.c_str()) == 0)
 	{
-		this->zClients[c_index]->HandlePingMsg();
+		/*this->zClients[c_index]->HandlePingMsg();*/
+
 	}
 	//Handles ready from client.
-	else if(msgArray[0].find(M_READY_PLAYER.c_str()) == 0 && (c_index != -1))
+	else if(msgArray[0].find(M_READY_PLAYER.c_str()))
 	{
-		this->zClients[c_index]->SetReady(true);
-	}
-	//Handles Ack Messages
-	else if(msgArray[0].find(M_ACKNOWLEDGE_MESSAGE.c_str()) == 0 && (c_index != -1))
-	{
-		int m_id = this->zMessageConverter.ConvertStringToInt(M_ACKNOWLEDGE_MESSAGE, msgArray[0]);
-		this->zClients[c_index]->RemoveIM(m_id);
+		PlayerReadyEvent e;
+
+		e.clientData = cd;
+		NotifyObservers(&e);
 	}
 	//Handle Item usage in Inventory
-	else if(msgArray[0].find(M_ITEM_USE.c_str()) == 0 && (c_index != -1))
+	else if(msgArray[0].find(M_ITEM_USE.c_str()))
 	{
-		int objID = this->zMessageConverter.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
-		this->HandleItemUse(p_actor, objID);
+		PlayerUseItemEvent e;
+		int _itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
+
+		e.clientData = cd;
+		e.itemID = _itemID;
+		NotifyObservers(&e);
 	}
 	//Handle UnEquip Item in Equipment
-	else if(msgArray[0].find(M_UNEQUIP_ITEM.c_str()) == 0 && (c_index != -1))
+	else if(msgArray[0].find(M_UNEQUIP_ITEM.c_str()) == 0)
 	{
-		int objID = this->zMessageConverter.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
-		int eq_Slot = -1;
+		PlayerUnEquipItemEvent e;
+		int _itemID = this->zMessageConverter.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
+		int _eq_Slot = -1;
+
 		if (msgArray.size() > 1)
 		{
-			eq_Slot = this->zMessageConverter.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+			_eq_Slot = this->zMessageConverter.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
 		}
-		this->HandleUnEquipItem(p_actor, objID, eq_Slot);
+
+		e.eq_Slot = _eq_Slot;
+		e.itemID = _itemID;
+
+		NotifyObservers(&e);
 	}
 	//Handles Equipped Weapon usage
-	else if(msgArray[0].find(M_WEAPON_USE.c_str()) == 0 && (c_index != -1))
+	else if(msgArray[0].find(M_WEAPON_USE.c_str()))
 	{
-		int objID = this->zMessageConverter.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
-		this->HandleWeaponUse(p_actor, objID);
+		PlayerUseEquippedWeaponEvent e;
+		int _itemID = this->zMessageConverter.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
+
+		e.clientData = cd;
+		e.itemID = _itemID;
+		NotifyObservers(&e);
 	}
 	//Handles Pickup Object Requests from Client
-	else if(msgArray[0].find(M_PICKUP_ITEM.c_str()) == 0 && (p_actor))
+	else if(msgArray[0].find(M_PICKUP_ITEM.c_str()))
 	{
-		int objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
-		this->HandlePickupItem(p_actor, objID);
+		PlayerPickupObjectEvent e;
+		int _objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
+
+		e.objID = _objID;
+		NotifyObservers(&e);
 	}
-	else if(msgArray[0].find(M_LOOT_ITEM.c_str()) == 0 && (p_actor))
+	//Handles loot item request
+	else if(msgArray[0].find(M_LOOT_ITEM.c_str()))
 	{
-		long objID = this->zMessageConverter.ConvertStringToInt(M_LOOT_ITEM, msgArray[0]);
-		int type = -1;
-		long itemID = -1;
-		if (msgArray.size() > 2)
-		{
-			itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_ID, msgArray[1]);
-			type = this->zMessageConverter.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
-
-			if (this->HandleLootItem(p_actor, objID, itemID, type))
-			{
-				this->SendRemoveDeadPlayerItem(p_actor->GetID(), objID, itemID, type);
-			}
-
-		}
-		else
-		{
-			MaloW::Debug("Msg array size is to short size: " + MaloW::convertNrToString((float)msgArray.size()) + " Expected size 3");
-		}
+		HandleLootRequest(msgArray, cd);
 	}
 	//Handles Drop Item Requests from Client
-	else if(msgArray[0].find(M_DROP_ITEM.c_str()) == 0 && (p_actor))
+	else if(msgArray[0].find(M_DROP_ITEM.c_str()) == 0)
 	{
-		int objID = this->zMessageConverter.ConvertStringToInt(M_DROP_ITEM, msgArray[0]);
-		this->HandleDropItem(p_actor, objID);
+		PlayerDropItemEvent e;
+		int _itemID = this->zMessageConverter.ConvertStringToInt(M_DROP_ITEM, msgArray[0]);
+
+		e.clientData = cd;
+		e.itemID = _itemID;
+		NotifyObservers(&e);
 	}
 	//Handles user data from client. Used when the player is new.
-	else if(msgArray[0].find(M_USER_DATA.c_str()) == 0 && (c_index != -1))
+	else if(msgArray[0].find(M_USER_DATA.c_str()) == 0)
 	{
-		this->CreateNewPlayer(this->zClients[c_index], msgArray);
+		HandleUserData(msgArray, cd);
 	}
 	//Handles if client disconnects.
 	else if(msgArray[0].find(M_CONNECTION_CLOSED.c_str()) == 0)
 	{
-		this->KickClient(ID);
+		//this->KickClient(ID);
 	}
 	//Handles if not of the above.
 	else
 	{
 		MaloW::Debug("Warning: The host cannot handle the message \"" + message + "\" in HandleReceivedMessages.");
 	}
-	*/
+	
 }
 
 void Host::BroadCastServerShutdown()
@@ -370,10 +371,136 @@ bool Host::IsAlive() const
 
 void Host::HandleDisconnect( MaloW::ClientChannel* channel )
 {
-	//KickClient(channel->GetClientID());
+	std::map<MaloW::ClientChannel*, ClientData*>::iterator it;
+
+	it = _clients.find(channel);
+	SAFE_DELETE( _clients.at(channel));
+	SAFE_DELETE(channel);
+	
+	_clients.erase(it);
+}
+
+void Host::HandleNewConnection( MaloW::ClientChannel* CC )
+{
+	ClientData* cd = new ClientData(CC);
+	PlayerConnectedEvent e;
+	_clients[CC] = cd;
+	
+	e.clientData = cd;
+	NotifyObservers(&e);
+}
+
+void Host::HandleClientUpdate( const std::vector<std::string> msgArray, ClientData* cd)
+{
+	Vector3 dir;
+	Vector3 up;
+	Vector4 rot;
+	float ft = 0.0f;
+
+	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
+	{
+		char key[512];
+		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
+
+		if(strcmp(key, M_DIRECTION.c_str()) == 0)
+		{
+			dir = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it));
+		}
+		else if(strcmp(key, M_UP.c_str()) == 0)
+		{
+			up = this->zMessageConverter.ConvertStringToVector(M_UP, (*it));
+		}
+		else if(strcmp(key, M_ROTATION.c_str()) == 0)
+		{
+			rot = this->zMessageConverter.ConvertStringToQuaternion(M_ROTATION, (*it));
+		}
+		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
+		{
+			ft = this->zMessageConverter.ConvertStringToFloat(M_FRAME_TIME, (*it));
+		}
+		else
+			MaloW::Debug("Unknown message in HandleClientUpdate.");
+	}
+
+	ClientDataEvent e;
+	e.direction = dir;
+	e.rotation = rot;
+	e.upVector = up;
+	e.frameTime = ft;
+	e.clientData = cd;
+
+	NotifyObservers(&e);
+
+	//Update Latency
+// 	float latency;
+// 
+// 	if(!cd->CalculateLatency(latency))
+// 		return;
+// 
+// 	pl->SetLatency(latency);
+}
+
+void Host::HandleLootRequest( const std::vector<std::string> &msgArray, ClientData* cd )
+{
+	PlayerLootItemEvent e;
+	long _objID = -1;
+	int _type = -1;
+	long _itemID = -1;
+
+	if (msgArray.size() > 2)
+	{
+		
+		_objID = this->zMessageConverter.ConvertStringToInt(M_LOOT_ITEM, msgArray[0]);
+		_itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_ID, msgArray[1]);
+		_type = this->zMessageConverter.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
+
+		e.clientData = cd;
+		e.itemID = _itemID;
+		e.objID = _objID;
+		NotifyObservers(&e);
+	}
+	else
+	{
+		MaloW::Debug("Msg array size is to short size: " + MaloW::convertNrToString((float)msgArray.size()) + " Expected size 3");
+	}
+}
+
+void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData* cd )
+{
+	UserDataEvent e;
+	std::string uModel;
+	Vector3 uDir;
+	Vector3 uUp;
+	Vector3 uDir;
+
+	for (auto it_m = msgArray.begin() + 1; it_m < msgArray.end(); it_m++)
+	{
+		char key[512];
+		sscanf_s((*it_m).c_str(), "%s ", &key, sizeof(key));
+
+		if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
+		{
+			uModel = this->zMessageConverter.ConvertStringToSubstring(M_MESH_MODEL, (*it_m));
+		}
+		else if(strcmp(key, M_DIRECTION.c_str()) == 0)
+		{
+			uDir = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it_m));
+		}
+		else if(strcmp(key, M_UP.c_str()) == 0)
+		{
+			uUp = this->zMessageConverter.ConvertStringToVector(M_UP, (*it_m));
+		}
+	}
+
+	e.upVector = uUp;
+	e.direction = uDir;
+	e.playerModel = uModel;
+	e.clientData = cd;
+	NotifyObservers(&e);
 }
 
 void Host::Message(MaloW::ClientChannel* cc, std::string msg)
 {
 
 }
+

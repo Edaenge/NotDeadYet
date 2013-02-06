@@ -84,6 +84,7 @@
     <ClInclude Include="Source\DynamicProjectileObject.h" />
     <ClInclude Include="Source\FoodObject.h" />
     <ClInclude Include="Source\Game.h" />
+    <ClInclude Include="Source\GameEvents.h" />
     <ClInclude Include="Source\GameMode.h" />
     <ClInclude Include="Source\GameModeFFA.h" />
     <ClInclude Include="Source\GhostActor.h" />
