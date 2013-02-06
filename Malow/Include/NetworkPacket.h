@@ -2,20 +2,21 @@
 #define NETWORKPACKET_H
 
 #include "Process.h"
+#include "ClientChannel.h"
 
 namespace MaloW
 {
 	class NetworkPacket : public MaloW::ProcessEvent
 	{
 	private:
-		string message;
-		MaloW::ClientChannel* cc;
+		std::string message;
+		ClientChannel* cc;
 
 	public:
-		NetworkPacket(string message, MaloW::ClientChannel* sender) { this->message = message; this->cc = sender; }
+		NetworkPacket(std::string message, ClientChannel* sender) { this->message = message; this->cc = sender; }
 		virtual ~NetworkPacket() { }
-		string getMessage() { return this->message; }
-		MaloW::ClientChannel* getChannel() { return this->cc; }
+		std::string getMessage() { return this->message; }
+		ClientChannel* getChannel() { return this->cc; }
 	};
 }
 

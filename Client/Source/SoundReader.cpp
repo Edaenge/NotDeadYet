@@ -39,54 +39,51 @@ bool SoundReader::ReadFromFile()
 	std::string text;
 	while(!read.eof())
 	{
-		char line[256] = "";
-		char key [52] = "";
-		char command [126] = "";
+		std::string line;
+		std::getline(read,line);
 
-		read.getline(line, sizeof(line));
-
-		if(strcmp(line, "") == 0)
+		if(line.empty())
 			continue;
 
-		if(strcmp(line, MUSIC.c_str()) == 0)
+		if(line == MUSIC)
 			aSound = false;
-		else if(strcmp(line, SOUND.c_str()) == 0)
+		else if(line == SOUND)
 			aSound = true;
 		else
 			continue;
 		
-		while (!read.eof() && strcmp(line, END.c_str()) != 0)
+		while (!read.eof() && line == END)
 		{
-			char path [52];
+			std::string path;
 			bool loop;
+			std::getline(read, line);
 
-			read.getline(line, sizeof(line));
-			TrimAndSet(line);
+			std::string command;
+			std::string key;
+			TrimAndSet(line, command, key);
 
-			sscanf_s(line, "%s = %s", &command, sizeof(command), &key, sizeof(key));
-
-			if(strcmp(command, PATH.c_str()) == 0)
+			if(command == PATH)
 			{
-				strcpy(path, key);
+				path = key;
 			}
-			else if(strcmp(command, LOOP.c_str()) == 0)
+			else if(command == LOOP)
 			{
-				if(strcmp(key, "TRUE") == 0)
+				if(key == "TRUE")
 					loop = true;
 				else
 					loop = false;
 			}
-			else if(strcmp(command, END.c_str()) == 0)
+			else if(command == END)
 			{
 				if(!aSound)
 				{
-					if(!zEngine->LoadMusicIntoSystem(path, loop))
-						MaloW::Debug("Cant load music sound:" + std::string(line));
+					if(!zEngine->LoadMusicIntoSystem(path.c_str(), loop))
+						MaloW::Debug("Cant load music sound:" + line);
 				}
 				else
 				{
-					if(!zEngine->LoadSoundIntoSystem(path, loop))
-						MaloW::Debug("Cant load sound sound:" + std::string(line));
+					if(!zEngine->LoadSoundIntoSystem(path.c_str(), loop))
+						MaloW::Debug("Cant load sound sound:" + line);
 				}
 			}
 		}

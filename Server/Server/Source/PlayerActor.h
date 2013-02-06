@@ -10,7 +10,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "DynamicObjectActor.h"
 #include "KeyValues.h"
 #include "KeyStates.h"
-#include "Inventory.h"
+#include "Player.h"
 #include <World/WorldEvents.h>
 
 /*This class is used to save player information such as position and states.
@@ -19,6 +19,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 class PlayerActor : public BioActor, public Observed
 {
 public:
+	PlayerActor(Player* player);
 	/*! ID should be the same ID as in ClientChannel.*/
 	PlayerActor(const long ID);
 	/*! ID should be the same ID as in ClientChannel.*/
@@ -65,7 +66,7 @@ public:
 
 	/*! Sets the objm. This class is not responsible for deallocation.*/
 	void SetObjManager(ObjectManager* objm) {this->zObjManager = objm;}
-	Inventory* GetInventory() {return this->zInventory;}
+	
 	void SetInventory(Inventory* inv) {this->zInventory = inv;}
 	void EatFood(float hunger);
 	void Drink(float hydration);
@@ -91,6 +92,7 @@ private:
 	Inventory* zInventory;
 
 	ObjectManager* zObjManager;
+	Player* zPlayer;
 };
 
 class PlayerUpdatedEvent : public Event
@@ -99,5 +101,6 @@ public:
 	PlayerActor* playerActor;
 	bool validMove;
 	Vector3 prevPos;
-	PlayerUpdatedEvent(PlayerActor* playerActor, bool& validMove, Vector3 prevPos) : playerActor(playerActor), validMove(validMove), prevPos(prevPos){}
+	PlayerUpdatedEvent(PlayerActor* playerActor, bool& validMove, Vector3 prevPos) 
+		: playerActor(playerActor), validMove(validMove), prevPos(prevPos){}
 };

@@ -4,10 +4,15 @@
 #include <world/World.h>
 
 
-Game::Game( ActorSyncher* syncher, GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
+Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
 {
 	// Create World
 	zWorld = new World(this, worldFile.c_str());
+
+	// Actor Manager
+	zActorManager = new ActorManager(syncher);
+
+
 }
 
 Game::~Game()

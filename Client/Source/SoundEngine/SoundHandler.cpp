@@ -184,7 +184,7 @@ int SoundHandler::Init() //This is a barebones initialization.
 	return 0;
 }
 
-bool SoundHandler::LoadSoundIntoSystem(char* filename, bool loop) throw (...)
+bool SoundHandler::LoadSoundIntoSystem(const char* filename, bool loop) throw (...)
 {
 
 	FMOD_RESULT result;
@@ -230,7 +230,7 @@ bool SoundHandler::LoadSoundIntoSystem(char* filename, bool loop) throw (...)
 	
 }
 
-bool SoundHandler::LoadMusicIntoSystem(char* filename, bool loop) throw (...)
+bool SoundHandler::LoadMusicIntoSystem(const char* filename, bool loop) throw (...)
 {
 	FMOD_RESULT result;
 

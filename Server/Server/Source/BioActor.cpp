@@ -1,17 +1,7 @@
 #include "BioActor.h"
 
 
-BioActor::BioActor() : PhysicsActor()
-{
-	InitValues();
-}
-
-BioActor::BioActor(const Vector3& startPos, PhysicsObject* pObj) : PhysicsActor(startPos, pObj)
-{
-	InitValues();
-}
-
-BioActor::BioActor(const Vector3& startPos, PhysicsObject* pObj, const Vector4& rot) : PhysicsActor(startPos, pObj, rot)
+BioActor::BioActor() : Actor()
 {
 	InitValues();
 }
@@ -22,9 +12,6 @@ BioActor::~BioActor()
 
 void BioActor::InitValues()
 {
-	if(zPhysicObj)
-		this->zPreviousPos = this->zPhysicObj->GetPosition();
-	
 	this->zState = STATE_IDLE;
 	this->zVelocity = V_WALK_SPEED;
 	this->zActorModel = "none";
@@ -40,16 +27,22 @@ void BioActor::InitValues()
 	this->zStaminaChanged = true;
 }
 
-bool BioActor::TakeDamage(const float dmg)
+bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
 {
-	this->zHealth -= dmg; 
-	
+	this->zHealth -= dmg.GetTotal();
+	this->zHealthChanged = true;
+
 	if(this->zHealth <= 0.0f)
 	{
 		this->zHealth = 0.0f;
 		this->zAlive = false;
 	}
-	this->zHealthChanged = true;
+
+	// Notify Damage
+	BioActorTakeDamageEvent BATD;
+	BATD.zActor = this;
+	BATD.zDamage = dmg;
+	NotifyObservers(&BATD);
 
 	return this->zAlive;
 }
@@ -81,8 +74,8 @@ void BioActor::RewindPosition()
 
 bool BioActor::HasMoved()
 {
-	if(GetPosition() == this->zPreviousPos)
-		return false;
+	//if(GetPosition() == this->zPreviousPos)
+	return false;
 	
 	return true;
 }
@@ -90,7 +83,6 @@ bool BioActor::HasMoved()
 std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 {
 	string msg = "";
-	msg = PhysicsActor::ToMessageString(NMC);
 
 	msg += NMC->Convert(MESSAGE_TYPE_STATE, this->zState);
 

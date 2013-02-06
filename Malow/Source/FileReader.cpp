@@ -11,12 +11,11 @@ FileReader::~FileReader()
 
 }
 
-void FileReader::TrimAndSet( char* ret )
+void FileReader::TrimAndSet( std::string& str )
 {
-	if(ret == NULL)
+	if( str.empty() )
 		return;
 
-	std::string str(ret);
 	str.erase(remove_if(str.begin(), str.end(), isspace), str.end());
 
 	size_t found;
@@ -32,19 +31,32 @@ void FileReader::TrimAndSet( char* ret )
 	subA = str.substr(0,index);
 	subB = str.substr(index+1,str.size()-1);
 
-	subA += " = ";
-	str = subA + subB;
-
-	// TODO: Not Correct
-	strcpy(ret, str.c_str());
+	str = subA +  " = " + subB;
 }
 
-bool FileReader::Replace( char* key )
+void FileReader::TrimAndSet( const std::string& string, std::string& a, std::string& b )
 {
-	if (strcmp(key, "") == 0)
-		return false;
+	if( string.empty() )
+		return;
+	std::string str = string;
+	str.erase(remove_if(str.begin(), str.end(), isspace), str.end());
 
-	std::string str = std::string(key);
+	size_t found;
+	found = str.find("=");
+
+	if(found == std::string::npos)
+		return;
+
+	int index = (int)found;
+
+	a = str.substr(0,index);
+	b = str.substr(index+1,str.size()-1);
+}
+
+bool FileReader::Replace( std::string& str )
+{
+	if (str.empty())
+		return false;
 
 	for (unsigned int i = 0; i < str.length(); i++)
 	{
@@ -53,9 +65,6 @@ bool FileReader::Replace( char* key )
 			str.at(i) = ' ';
 		}
 	}
-
-	// TODO: Not Correct
-	strcpy(key, str.c_str());
 	
 	return true;
 }

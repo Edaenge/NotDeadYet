@@ -1,30 +1,28 @@
 #include "ActorSynchronizer.h"
-struct ActorPositionEvent
+
+ActorSynchronizer::ActorSynchronizer()
 {
-	Actor* actor;
-};
-struct ActorRotationEvent
+
+}
+
+ActorSynchronizer::~ActorSynchronizer()
 {
-	Actor* actor;
-};
-struct ActorScaleEvent
-{
-	Actor* actor;
-};
+
+}
 
 void ActorSynchronizer::OnEvent( Event* e )
 {
 	if ( ActorPositionEvent* UPE = dynamic_cast<ActorPositionEvent*>(e) )
 	{
-		zUpdateSet.insert(UPE->actor);
+		zUpdateSet.insert(UPE->zActor);
 	}
 	else if ( ActorRotationEvent* UPE = dynamic_cast<ActorRotationEvent*>(e) )
 	{
-		zUpdateSet.insert(UPE->actor);
+		zUpdateSet.insert(UPE->zActor);
 	}
 	else if ( ActorScaleEvent* UPE = dynamic_cast<ActorScaleEvent*>(e) )
 	{
-		zUpdateSet.insert(UPE->actor);
+		zUpdateSet.insert(UPE->zActor);
 	}
 }
 
@@ -47,10 +45,11 @@ bool ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 		msg += nmc->Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
 		cd->SendMessage(msg);
 	}
+	return true;
 }
 
 bool ActorSynchronizer::ClearAll()
 {
 	this->zUpdateSet.clear();
+	return true;
 }
-

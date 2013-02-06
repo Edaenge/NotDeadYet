@@ -7,16 +7,24 @@ PlayerActor::PlayerActor(const long ID) : BioActor()
 	this->zID = ID;
 }
 
-PlayerActor::PlayerActor(const long ID, const Vector3& startPos, PhysicsObject* pObj) : BioActor(startPos, pObj)
+PlayerActor::PlayerActor(const long ID, const Vector3& startPos, PhysicsObject* pObj) : BioActor()
 {
 	InitValues();
 	this->zID = ID;
+	this->zPhysicsObject = pObj;
 }
 
-PlayerActor::PlayerActor(const long ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj) : BioActor(startPos, pObj, startRot)
+PlayerActor::PlayerActor(const long ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj) : BioActor()
 {
 	InitValues();
 	this->zID = ID;
+	this->zPhysicsObject = pObj;
+}
+
+PlayerActor::PlayerActor( Player* player )
+{
+	InitValues();
+	this->zPlayer = player;
 }
 
 void PlayerActor::InitValues()
@@ -28,7 +36,6 @@ void PlayerActor::InitValues()
 	this->zHungerMax = 100.0f;
 	this->zHydration = 100.0f;
 	this->zHydrationMax = 100.0f;
-	this->zInitialDirection = Vector3(0,0,-1);
 	this->zInventory = new Inventory();
 	this->zActorType = ACTOR_TYPE_PLAYER;
 
@@ -218,29 +225,29 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 		}
 	}
 	
-	if (itemType == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
-	{
-		StaticProjectileObject* spo = dynamic_cast<StaticProjectileObject*>(object);
-		if(spo)
-		{
-			item = new Projectile(spo->GetID(), spo->GetType(), spo->GetSubType(), spo->GetSpeed(), spo->GetDamage());
+	//if (itemType == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
+	//{
+	//	StaticProjectileObject* spo = dynamic_cast<StaticProjectileObject*>(object);
+	//	if(spo)
+	//	{
+	//		item = new Projectile(spo->GetID(), spo->GetType(), spo->GetSubType(), spo->GetSpeed(), spo->GetDamage());
 
-			item->SetStacking(true);
-			item->SetItemWeight(spo->GetWeight());
-			item->SetIconPath(spo->GetIconPath());
-			item->SetStackSize(spo->GetStackSize());
-			item->SetItemName(spo->GetActorObjectName());
-			item->SetItemDescription(spo->GetDescription());
+	//		item->SetStacking(true);
+	//		item->SetItemWeight(spo->GetWeight());
+	//		item->SetIconPath(spo->GetIconPath());
+	//		item->SetStackSize(spo->GetStackSize());
+	//		item->SetItemName(spo->GetActorObjectName());
+	//		item->SetItemDescription(spo->GetDescription());
 
-			if(!this->zInventory->AddItem(item))
-			{
-				SAFE_DELETE(item);
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
+	//		if(!this->zInventory->AddItem(item))
+	//		{
+	//			SAFE_DELETE(item);
+	//			return false;
+	//		}
+	//		return true;
+	//	}
+	//	return false;
+	//}
 	
 	if (itemType == ACTOR_TYPE_STATIC_OBJECT_MATERIAL)
 	{

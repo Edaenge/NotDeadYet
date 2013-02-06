@@ -125,7 +125,7 @@ void ServerChannel::Life()
 		std::string msg;
 		while(this->stayAlive && Receive(msg))
 		{
-			zNotifier->PutEvent(new NetworkPacket(msg, this->getID()));
+			zNotifier->PutEvent(new NetworkPacket(msg, this));
 		}
 	}
 	catch(...)

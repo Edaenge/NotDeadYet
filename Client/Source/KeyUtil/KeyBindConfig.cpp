@@ -20,6 +20,7 @@ static const std::string COMMAND_DUCK		= "C_DUCK";
 static const std::string COMMAND_INVENTORY	= "C_INVENTORY";
 static const std::string COMMAND_EQUIPMENT	= "C_EQUIPMENT";
 static const std::string COMMAND_READY		= "C_READY";
+static const std::string COMMAND_NONE		= "C_NONE";
 
 
 /*cfg path*/
@@ -129,14 +130,15 @@ bool KeyBindConfig::ReadFromFile(const std::string path, char* data)
 
 	while(!read.eof() && count < KEY_CAP)
 	{
-		char line[256]; 
+		std::string line;
+
 		char key[52];
 		char command[52];
 
-		read.getline(line,256);
+		std::getline(read, line);
 		TrimAndSet(line);
-		sscanf_s(line, "%s = ", &key, sizeof(key));
-		sscanf_s(line, (std::string(key) + " = %s").c_str(), &command, sizeof(command));
+		sscanf_s(line.c_str(), "%s = ", &key, sizeof(key));
+		sscanf_s(line.c_str(), (std::string(key) + " = %s").c_str(), &command, sizeof(command));
 
 		index = GetKeyValue(command);
 
@@ -256,17 +258,16 @@ const std::string& KeyBindConfig::GetCommand(const int keyValue)
 		return COMMAND_EQUIPMENT;
 		break;
 	default:
-		return "none";
+		return COMMAND_NONE;
 		break;
 	}
 }
 
-void KeyBindConfig::TrimAndSet(char* ret)
+void KeyBindConfig::TrimAndSet(std::string& str)
 {
-	if(ret == NULL)
+	if(str.empty())
 		return;
 
-	std::string str(ret);
 	str.erase(remove_if(str.begin(), str.end(), isspace), str.end());
 
 	size_t found;
@@ -282,10 +283,7 @@ void KeyBindConfig::TrimAndSet(char* ret)
 	subB = str.substr(index+1,str.size()-1);
 
 	subA += " = ";
-	str = subA + subB;
-
-	strcpy(ret, str.c_str());
-	
+	str = subA + subB;	
 }
 
 

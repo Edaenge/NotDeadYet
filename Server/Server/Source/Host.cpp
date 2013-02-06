@@ -89,14 +89,25 @@ void Host::Life()
 	}
 }
 
-const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients)
+const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients,  const std::string& gameModeName, const std::string& mapName)
 {
 	//Todo add map + game mode to parameters
 	std::string path = "3x3.map";
-	GameMode* gameMode = new GameModeFFA();
-	ActorSyncher as = new ActorSyncher();
-	this->zGame = new Game(,gameMode, path);
+	GameMode* gameMode = NULL;
+
+	if (gameModeName.find("FFA") == 0 )
+	{
+		gameMode = new GameModeFFA();
+	}
+	else
+	{
+		gameMode = new GameModeFFA();
+	}
+
+	ActorSynchronizer* actorSync = new ActorSynchronizer();
+	this->zGame = new Game(actorSync, gameMode, mapName + ".map");
 	this->AddObserver(this->zGame);
+
 	try
 	{
 		if ( zServerListener ) delete zServerListener;
@@ -471,7 +482,6 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 	std::string uModel;
 	Vector3 uDir;
 	Vector3 uUp;
-	Vector3 uDir;
 
 	for (auto it_m = msgArray.begin() + 1; it_m < msgArray.end(); it_m++)
 	{

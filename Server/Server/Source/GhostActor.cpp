@@ -10,6 +10,12 @@ GhostActor::GhostActor(const bool genID /*= false*/, const Vector3& position)
 	this->zDirection = Vector3(0,0,1);
 
 	this->zVelocity = 5.0f;
+	this->zEnergy = 100.0f;
+}
+
+GhostActor::GhostActor(Player* player)
+{
+	this->zPlayer = player;
 }
 
 GhostActor::~GhostActor()

@@ -7,18 +7,6 @@ BearActor::BearActor(bool genID /*= true*/, bool isPlayerControlled /*= false*/)
 	
 }
 
-BearActor::BearActor(const Vector3& startPos, PhysicsObject* pObj, bool genID /*= true*/, bool isPlayerControlled /*= false*/) : AnimalActor(startPos, pObj, genID)
-{
-	this->SetIfPlayerControlled(isPlayerControlled);
-	this->InitBear();
-}
-
-BearActor::BearActor(const Vector3& startPos, PhysicsObject* pObj, const Vector4& rot, bool genID /*= true*/, bool isPlayerControlled /*= false*/) : AnimalActor(startPos, pObj, rot, genID)
-{
-	this->SetIfPlayerControlled(isPlayerControlled);
-	this->InitBear();
-}
-
 BearActor::~BearActor()
 {
 
@@ -32,7 +20,7 @@ void BearActor::InitBear() throw(...)
 	char characters[16];
 
 	std::ifstream infile("bearVariables.txt");
-	if(infile.good()) //Getting values from a textfile needs to be more properly implemented
+	if(infile.good()) //Getting values from a text file needs to be more properly implemented
 	{
 		//Health
 		infile.getline(characters, 256,' ');

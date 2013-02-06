@@ -1,6 +1,7 @@
 #include "MasterServer.h"
 #include "ClientConnectedEvent.h"
 #include "ClientDisconnectedEvent.h"
+#include <NetworkPacket.h>
 
 
 MasterServer::MasterServer( const unsigned short &port ) :
@@ -43,9 +44,9 @@ void MasterServer::Life()
 
 		if (MaloW::NetworkPacket *packetEvent = dynamic_cast<MaloW::NetworkPacket*>(e))
 		{
-			MaloW::ClientChannel *channel;
+			MaloW::ClientChannel *channel = packetEvent->getChannel();
 			zChannelsMutex.lock();
-			channel = zChannels[packetEvent->getID()];
+			channel = zChannels[channel->getID()];
 			zChannelsMutex.unlock();
 			HandleMessage(channel, packetEvent->getMessage());
 		}

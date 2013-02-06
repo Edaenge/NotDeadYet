@@ -16,11 +16,21 @@ namespace System { namespace Windows { namespace Interop
 			delete zServer;
 	}
 
-	String^ CppCLI::Init(int port, int nrOfPlayers)
+	String^ CppCLI::Init(int port, int nrOfPlayers, String^ gameMode, String^ mapName)
 	{
 		String^ returnText;
-		
-		returnText = gcnew String(zServer->Init(port, nrOfPlayers));
+		char* gameModeName = nullptr;
+		char* mapNameChar = nullptr;
+		try
+		{
+			gameModeName = (char*)Marshal::StringToHGlobalAnsi(gameMode).ToPointer();
+			mapNameChar = (char*)Marshal::StringToHGlobalAnsi(mapName).ToPointer();
+		}
+		catch(char* str)
+		{
+			return "Failed";
+		}
+		returnText = gcnew String(zServer->Init(port, nrOfPlayers, gameModeName, mapNameChar));
 
 		return returnText;
 	}

@@ -17,7 +17,7 @@ public:
 	ServerEngine();
 	~ServerEngine();
 
-	const char* InitHost(const unsigned int& port, const unsigned int& maxPlayers);
+	const char* InitHost(const unsigned int& port, const unsigned int& maxPlayers, const std::string& gameMode, const std::string& mapName);
 	bool StartHost();
 	void ShutDownHost();
 

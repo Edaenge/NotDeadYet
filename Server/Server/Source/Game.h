@@ -4,7 +4,8 @@
 #include <map>
 #include <KeyStates.h>
 #include "ActorManager.h"
-
+#include "ActorSynchronizer.h"
+#include "PhysicsEngine.h"
 
 class ClientData;
 class World;
@@ -15,6 +16,7 @@ class ActorSynchronizer;
 
 class Game : public Observer, public Observed
 {
+	ActorManager* zActorManager;
 	GameMode* zGameMode;
 	World* zWorld;
 
@@ -23,7 +25,7 @@ class Game : public Observer, public Observed
 	std::map<Player*, KeyStates> _keyStates;
 
 public:
-	Game( ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile );
+	Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile);
 	virtual ~Game();
 
 	// Returns false if game has finished
@@ -31,4 +33,7 @@ public:
 
 	// Event input
 	void OnEvent( Event* e );
+
+private:
+	PhysicsEngine* zPhysicsEngine;
 };

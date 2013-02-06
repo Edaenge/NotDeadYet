@@ -12,8 +12,8 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include <World/World.h>
 #include "Game.h"
 #include "GameModeFFA.h"
-#include "ActorSyncher.h"
 #include "GameEvents.h"
+#include "ActorSynchronizer.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
@@ -27,7 +27,7 @@ public:
 	virtual ~Host();
 	/*! Creates a Server locally
 	returns a code that describes error or success*/
-	const char* InitHost(const unsigned int &port, const unsigned int &maxClients);
+	const char* InitHost(const unsigned int &port, const unsigned int &maxClients, const std::string& gameMode, const std::string& mapName);
 	/*! Main loop for this thread*/
 	void Life();
 	/*! Checks if the server have players connected.*/

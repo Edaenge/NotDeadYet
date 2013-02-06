@@ -92,6 +92,7 @@ bool Inventory::AddItem(Item* item)
 				}
 			}
 		}
+		//this->NotifyObservers()
 		this->zItems.push_back(item);
 
 		if (Messages::FileWrite())

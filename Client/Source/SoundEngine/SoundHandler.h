@@ -80,8 +80,8 @@ public:
 
 	int			Init();
 	
-	bool		LoadSoundIntoSystem(char* filename, bool loop) throw (...);
-	bool		LoadMusicIntoSystem(char* filename, bool loop) throw (...);
+	bool		LoadSoundIntoSystem(const char* filename, bool loop) throw (...);
+	bool		LoadMusicIntoSystem(const char* filename, bool loop) throw (...);
 	//These three have no priority.
 	//void		InitLandGeometry(/*Something that allows to get all vertices the land has, like a file name to be read*/); 
 	//void		InitObjectGeometry(/*Something that allows knowing what object it is and its vertices information, and maybe rotation and pos too*/);

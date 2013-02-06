@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="f028be13-54a5-475f-8aa4-262c388ccc13" name="GameMode" linkedPackageId="a10774ef-d98f-4179-8296-995a24e577f0" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="f028be13-54a5-475f-8aa4-262c388ccc13" name="GameMode" linkedPackageId="a10774ef-d98f-4179-8296-995a24e577f0" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
   <packagedElements>
     <logicalClassDesignerModelHasTypes>
-      <class Id="e9818c4e-215f-4a8e-9fd7-9338b52afb98" name="Host : Process" isAbstract="false" isLeaf="false" isActiveClass="false">
+      <class Id="e9818c4e-215f-4a8e-9fd7-9338b52afb98" name="Host : Process : Observed" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="38509638-0490-4bbc-9153-27479314f1be" />
         <targetEnds>
           <association Id="2797ec0f-b093-46e8-addc-21bbd3328dc4" isDerived="false" sourceEndRoleName="Host" targetEndRoleName="GameMode" isLeaf="false" isAbstract="false">
@@ -213,26 +213,6 @@
           </property>
         </ownedAttributesInternal>
         <ownedOperationsInternal>
-          <operation Id="88126907-6525-4fb3-bd27-37b0fa2cb0dd" name="NewPlayerEvent" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="d0b46d08-5e96-4e4e-b06b-df113a4bf779" />
-            <ownedParameters>
-              <operationHasOwnedParameters>
-                <parameter Id="63a3672e-bd49-4631-a08f-8dcb53883a8e" name="ClientData*" direction="In" isUnique="false">
-                  <elementDefinition Id="c09ecc13-dda6-4eaf-bce7-02934b27c987" />
-                </parameter>
-              </operationHasOwnedParameters>
-            </ownedParameters>
-          </operation>
-          <operation Id="a977b54d-4d1a-4d9c-97ff-8af15e01203f" name="PlayerQuitEvent" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
-            <elementDefinition Id="83299b43-e440-4091-b00f-f85b8851d203" />
-            <ownedParameters>
-              <operationHasOwnedParameters>
-                <parameter Id="56710a98-0257-4ee3-aec3-bd49c1887981" name="ClientData*" direction="In" isUnique="false">
-                  <elementDefinition Id="383dc7c1-0682-4ea5-b124-ffee79bd7789" />
-                </parameter>
-              </operationHasOwnedParameters>
-            </ownedParameters>
-          </operation>
           <operation Id="0b7c19bd-3d37-4a9d-84c9-82605c88b9d1" name="bool update" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="f5b309b9-3cd5-40b7-86ea-eb77c6b06d5a" />
             <ownedParameters>
@@ -767,6 +747,9 @@
           <property Id="97aab85a-c40f-49c7-9ae6-ef4001091e0c" name="PhysicsObject *zPhysics" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="d9a7f9ee-2200-42c4-90d7-642ad7f6ccad" />
           </property>
+          <property Id="01e45236-616f-45c6-a7e4-3b4cb30dcc16" name="Dir" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="7d8fbe78-b071-4f02-b2c1-73bacb11c166" />
+          </property>
         </ownedAttributesInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
@@ -957,6 +940,12 @@
           <property Id="a0360d7b-ab51-473f-88a6-783a99e20ba0" name="zKeyStates" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="70f0a400-f9a4-4c15-97f5-7f8455ef3960" />
           </property>
+          <property Id="d5bd07ab-e113-43cc-a29d-e77da3dd6b31" name="zVelocity" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="d761a64f-e4d1-4998-9548-6109a3584c88" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="011087bd-cf87-4ece-9001-924be8f13f27" LastKnownName="Vector3" />
+            </type_NamedElement>
+          </property>
         </ownedAttributesInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
@@ -1053,7 +1042,7 @@
         <elementDefinition Id="0de2ad79-47ac-4646-bdd2-afbc28218b83" />
         <targetEnds>
           <association Id="77095443-6bd6-4b82-8263-5d47e3a55ce3" isDerived="false" sourceEndRoleName="ActorSyncher : Observer" targetEndRoleName="Host : Process" isLeaf="false" isAbstract="false">
-            <classMoniker Id="e9818c4e-215f-4a8e-9fd7-9338b52afb98" LastKnownName="Host : Process" />
+            <classMoniker Id="e9818c4e-215f-4a8e-9fd7-9338b52afb98" LastKnownName="Host : Process : Observed" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd Id="c44cf568-3f70-4ce2-a4e2-c00c05a4be5e" name="ActorSyncher : Observer" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
@@ -1071,6 +1060,11 @@
         </targetEnds>
       </class>
     </logicalClassDesignerModelHasTypes>
+    <packageHasNamedElement>
+      <referencedType Id="011087bd-cf87-4ece-9001-924be8f13f27" name="Vector3" isAbstract="false" isLeaf="false" cachedFullName="Vector3">
+        <elementDefinition Id="89f24c64-97b8-4d96-8acb-ff119de262c3" />
+      </referencedType>
+    </packageHasNamedElement>
   </packagedElements>
   <package Id="a10774ef-d98f-4179-8296-995a24e577f0" name="ModelingProject1">
     <elementDefinition Id="bd43730d-04bf-4a10-90be-c903d2a964f3" />

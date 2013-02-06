@@ -5,33 +5,45 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #pragma once
 
-#include "PhysicsActor.h"
+#include "Actor.h"
 #include <AnimationStates.h>
 #include <string>
-#include "PhysicsObject.h"
+#include "Damage.h"
+#include "Inventory.h"
 
-/*This class is Abstract, this class is used to create living creatures such as humans, animals etc. */
-class BioActor : public PhysicsActor
+class BioActorTakeDamageEvent : public Event
 {
 public:
+	Actor* zActor;
+	Damage zDamage;
+	Actor* zDealer;
+};
 
+/*This class is Abstract, this class is used to create living creatures such as humans, animals etc. */
+class BioActor : public Actor
+{
+public:
 	BioActor();
-	BioActor(const Vector3& startPos, PhysicsObject* pObj);
-	BioActor(const Vector3& startPos, PhysicsObject* pObj, const Vector4& rot);
 	virtual ~BioActor();
 
 	virtual void Update(float deltaTime) = 0;
+
 	/*! Returns true if BioActor dies from the damage done.*/
-	virtual bool TakeDamage(const float dmg);
+	virtual bool TakeDamage(const Damage& dmg, Actor* dealer);
+
 	/*! Returns false if player cannot sprint, due to stamina.*/
 	virtual bool Sprint(float dt);
+
 	virtual bool IsAlive() const;
+
 	/*! Rewinds to previous position.*/
 	virtual void RewindPosition();
+
 	/*! Check if the player has moved after last update.
 		Note that it may change if the player collides with an other Actor.
 	*/
 	virtual bool HasMoved();
+
 	/*! Adds a message string with health,stamina,hunger, hydration to mess.
 	    This function checks if the data has changed since last update.
 		If it has changed, we need to send it to the client.
@@ -43,7 +55,7 @@ public:
 	float GetStamina() const {return this->zStamina;}
 	float GetHealth() const {return this->zHealth;}
 	Vector3 GetDirection() const {return this->zDirection;}
-	inline PhysicsObject* GetPhysicObject() const {return this->zPhysicObj;}
+	inline PhysicsObject* GetPhysicObject() const {return this->zPhysicsObject;}
 
 	/*! Sets the player state.
 		Enum is defined in AnimationStates.h.
