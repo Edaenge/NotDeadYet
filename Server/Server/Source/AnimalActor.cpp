@@ -5,6 +5,7 @@ AnimalActor::AnimalActor( bool genID /*= true*/ ) : BioActor()
 {
 	if(genID)
 		this->zID = this->GenerateID();
+
 	this->InitPathfinder();
 	
 	Target vectorFilling; 
@@ -49,6 +50,7 @@ AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, const V
 {
 	if(genID)
 		this->zID = this->GenerateID();
+
 	this->InitPathfinder();
 
 	Target vectorFilling; 
@@ -59,12 +61,10 @@ AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, const V
 
 	for(int i = 0; i < 32; i++)
 	{
-	this->zTargets.push_back(vectorFilling);
+		this->zTargets.push_back(vectorFilling);
 	}
 
 	this->zIntervalCounter = 0;
-
-	
 }
 
 AnimalActor::~AnimalActor()

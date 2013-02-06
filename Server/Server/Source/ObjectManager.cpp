@@ -75,16 +75,16 @@ bool ObjectManager::ReadFromFile()
 
 	while(!read.eof())
 	{
-		char line[256] = "";
+		std::string line;
 		char key[52] = "";
 		char command[126] = "";
 
-		read.getline(line,sizeof(line));
+		std::getline(read, line);
 
-		if(strcmp(line, "") == 0)
+		if(line.empty())
 			continue;
 
-		sscanf_s(line, "%s", &key, sizeof(key));
+		sscanf_s(line.c_str(), "%s", &key, sizeof(key));
 
 		if(strcmp(key, COMMENT.c_str()) == 0)
 			continue;
@@ -94,10 +94,10 @@ bool ObjectManager::ReadFromFile()
 			WeaponObject* wp = new WeaponObject(false);
 			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
-				read.getline(line, sizeof(line));
+				std::getline(read, line);
 				TrimAndSet(line);
 
-				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
+				sscanf_s(line.c_str(), "%s = %s" , &command, sizeof(command), &key, sizeof(key));
 
 				if(strcmp(command,END.c_str()) != 0)
 					InterpCommand(command, key, wp);
@@ -109,10 +109,10 @@ bool ObjectManager::ReadFromFile()
 			FoodObject* fd = new FoodObject(false);
 			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
-				read.getline(line, sizeof(line));
+				std::getline(read, line);
 				TrimAndSet(line);
 
-				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
+				sscanf_s(line.c_str(), "%s = %s" , &command, sizeof(command), &key, sizeof(key));
 
 				if(strcmp(command,END.c_str()) != 0)
 					InterpCommand(command, key, fd);
@@ -125,10 +125,10 @@ bool ObjectManager::ReadFromFile()
 			ContainerObject* ct = new ContainerObject(false);
 			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
-				read.getline(line, sizeof(line));
+				std::getline(read, line);
 				TrimAndSet(line);
 
-				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
+				sscanf_s(line.c_str(), "%s = %s" , &command, sizeof(command), &key, sizeof(key));
 
 				if(strcmp(command,END.c_str()) != 0)
 					InterpCommand(command, key, ct);
@@ -157,10 +157,10 @@ bool ObjectManager::ReadFromFile()
 			MaterialObject* ma = new MaterialObject(false);
 			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
-				read.getline(line, sizeof(line));
+				std::getline(read, line);
 				TrimAndSet(line);
 
-				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
+				sscanf_s(line.c_str(), "%s = %s" , &command, sizeof(command), &key, sizeof(key));
 
 				if(strcmp(command,END.c_str()) != 0)
 					InterpCommand(command, key, ma);

@@ -19,9 +19,9 @@ public:
 	ActorSynchronizer();
 	virtual ~ActorSynchronizer();
 
-	bool SendUpdatesTo(ClientData* cd);
+	void SendUpdatesTo(ClientData* cd);
 
-	bool ClearAll();
+	void ClearAll();
 
 protected:
 	virtual void OnEvent(Event* e);

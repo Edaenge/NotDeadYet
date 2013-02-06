@@ -84,7 +84,9 @@ void BioActor::RewindPosition()
 
 bool BioActor::HasMoved()
 {
-	if(GetPosition() == this->zPreviousPos)
+	Vector3 curPos = GetPosition();
+
+	if(curPos == this->zPreviousPos)
 		return false;
 	
 	return true;
@@ -93,7 +95,7 @@ bool BioActor::HasMoved()
 std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 {
 	string msg = "";
-	msg = PhysicsActor::ToMessageString(NMC);
+	msg = Actor::ToMessageString(NMC);
 
 	msg += NMC->Convert(MESSAGE_TYPE_STATE, this->zState);
 
@@ -102,6 +104,7 @@ std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 		msg += NMC->Convert(MESSAGE_TYPE_HEALTH, this->zHealth);
 		this->zHealthChanged = false;
 	}
+
 	if(zStaminaChanged)
 	{
 		msg += NMC->Convert(MESSAGE_TYPE_STAMINA, this->zStamina);

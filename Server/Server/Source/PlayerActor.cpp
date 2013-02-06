@@ -1,24 +1,6 @@
 #include "PlayerActor.h"
 #include "ClientServerMessages.h"
 
-PlayerActor::PlayerActor(const long ID) : BioActor()
-{
-	InitValues();
-	this->zID = ID;
-}
-
-PlayerActor::PlayerActor(const long ID, const Vector3& startPos, PhysicsObject* pObj) : BioActor(startPos, pObj)
-{
-	InitValues();
-	this->zID = ID;
-}
-
-PlayerActor::PlayerActor(const long ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj) : BioActor(startPos, pObj, startRot)
-{
-	InitValues();
-	this->zID = ID;
-}
-
 PlayerActor::PlayerActor( Player* player )
 {
 	InitValues();
@@ -34,7 +16,7 @@ void PlayerActor::InitValues()
 	this->zHungerMax = 100.0f;
 	this->zHydration = 100.0f;
 	this->zHydrationMax = 100.0f;
-	this->zInitialDirection = Vector3(0,0,-1);
+	this->zInitialDirection = Vector3(0.0f, 0.0f, -1.0f);
 	this->zInventory = new Inventory();
 	this->zActorType = ACTOR_TYPE_PLAYER;
 
@@ -226,6 +208,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 	
 	if (itemType == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
 	{
+		/*
 		StaticProjectileObject* spo = dynamic_cast<StaticProjectileObject*>(object);
 		if(spo)
 		{
@@ -246,6 +229,7 @@ bool PlayerActor::PickUpObject(StaticObjectActor* object)
 			return true;
 		}
 		return false;
+		*/
 	}
 	
 	if (itemType == ACTOR_TYPE_STATIC_OBJECT_MATERIAL)
