@@ -16,7 +16,7 @@ namespace System { namespace Windows { namespace Interop
 			delete zServer;
 	}
 
-	String^ CppCLI::Init(int port, int nrOfPlayers, const char* gameMode, const char* mapName)
+	String^ CppCLI::Init(int port, int nrOfPlayers, String^ gameMode, String^ mapName)
 	{
 		String^ returnText;
 		

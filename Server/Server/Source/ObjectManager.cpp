@@ -484,10 +484,10 @@ const ContainerObject* ObjectManager::GetContainerObject( const int type )
 	return SearchType(this->zContainers, type);
 }
 
-const ProjectileActor* ObjectManager::GetProjectileObject( const int type )
-{
-	return SearchType(this->zStaticProjectiles, type);
-}
+//const ProjectileActor* ObjectManager::GetProjectileObject( const int type )
+//{
+//	return SearchType(this->zStaticProjectiles, type);
+//}
 
 const WeaponObject* ObjectManager::SearchType( std::vector<WeaponObject*>& weapons, const int type ) const
 {
@@ -522,16 +522,16 @@ const ContainerObject* ObjectManager::SearchType( std::vector<ContainerObject*>&
 	return NULL;
 }
 
-const ProjectileActor* ObjectManager::SearchType(std::vector<ProjectileActor*>& projectiles, const int type) const
-{
-	for(auto it = projectiles.begin(); it < projectiles.end(); it++)
-	{
-		if((*it)->GetType() == type)
-			return (*it);
-	}
-
-	return NULL;
-}
+//const ProjectileActor* ObjectManager::SearchType(std::vector<ProjectileActor*>& projectiles, const int type) const
+//{
+//	for(auto it = projectiles.begin(); it < projectiles.end(); it++)
+//	{
+//		if((*it)->GetType() == type)
+//			return (*it);
+//	}
+//
+//	return NULL;
+//}
 
 const MaterialObject* ObjectManager::SearchType(std::vector<MaterialObject*>& materials, const int type) const
 {
