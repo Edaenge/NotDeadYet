@@ -9,7 +9,7 @@
 class BearActor : public AnimalActor
 {
 public:
-	BearActor(bool genID = true, bool isPlayerControlled = false);
+	BearActor(PhysicsObject* pObj, bool genID = true, bool isPlayerControlled = false);
 	virtual ~BearActor();
 
 	void InitBear() throw(...);

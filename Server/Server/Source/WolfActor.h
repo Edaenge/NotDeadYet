@@ -9,7 +9,7 @@
 class WolfActor : public AnimalActor
 {
 public:
-	WolfActor(bool genID = true, bool isPlayerControlled = false);
+	WolfActor(PhysicsObject* pObj, bool genID = true, bool isPlayerControlled = false);
 	virtual ~WolfActor();
 
 	void InitWolf() throw(...);

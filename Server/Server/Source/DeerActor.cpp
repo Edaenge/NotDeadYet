@@ -1,7 +1,8 @@
 #include "DeerActor.h"
 
-DeerActor::DeerActor( bool genID /*= true*/, bool isPlayerControlled /*= false*/ ) : AnimalActor(genID)
+DeerActor::DeerActor(PhysicsObject* pObj, bool genID /*= true*/, bool isPlayerControlled /*= false*/ ) : AnimalActor(genID)
 {
+	this->zPhysicsObject = pObj;
 	this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitDeer();
 }
