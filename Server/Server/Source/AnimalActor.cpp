@@ -200,74 +200,74 @@ void AnimalActor::SetWorldPointer(World* theWorld)
 
 Vector3 AnimalActor::ExaminePathfindingArea()
 {
-		Vector3 dest;
-		//We make a check to see if the position is available, to avoid wasting time in the pathfinder functions.
-		dest = this->zMainTarget.position - this->GetPosition();
-		dest.Normalize();
-		dest = dest * -1;
-		dest *= (float)this->zFleeDistance;
+	Vector3 dest;
+	//We make a check to see if the position is available, to avoid wasting time in the pathfinder functions.
+	dest = this->zMainTarget.position - this->GetPosition();
+	dest.Normalize();
+	dest = dest * -1;
+	dest *= (float)this->zFleeDistance;
 
-		dest = this->GetPosition() + dest;
+	dest = this->GetPosition() + dest;
 				
-		bool getEmergencyDirection = false;
-		bool foundPath = false;
-		int counter = 0; //Just for testing stuff
+	bool getEmergencyDirection = false;
+	bool foundPath = false;
+	int counter = 0; //Just for testing stuff
+	getEmergencyDirection = false;
+
+
+	while(foundPath == false)
+	{
 		getEmergencyDirection = false;
-
-
-		while(foundPath == false)
+		if(dest.x < 0)
 		{
-			getEmergencyDirection = false;
-			if(dest.x < 0)
-			{
-				dest.x = 0;
-			}
-			else if(dest.x > this->zWorld->GetWorldSize().x)
-			{
-				dest.x = this->zWorld->GetWorldSize().x - 1; 
-			}
+			dest.x = 0;
+		}
+		else if(dest.x > this->zWorld->GetWorldSize().x)
+		{
+			dest.x = this->zWorld->GetWorldSize().x - 1; 
+		}
 
-			if(dest.z < 0)
-			{
-				dest.z = 0;
-			}
-			else if(dest.z > this->zWorld->GetWorldSize().y)
-			{
-				dest.z = this->zWorld->GetWorldSize().y - 1;
-			}
-			while(this->zWorld->IsBlockingAt(Vector2(dest.x, dest.z)) && ( dest - this->GetPosition() ).GetLength() > 2)
-			{
-				dest = (dest - this->GetPosition());
-				dest = this->GetPosition() + (dest - dest * 0.75);
+		if(dest.z < 0)
+		{
+			dest.z = 0;
+		}
+		else if(dest.z > this->zWorld->GetWorldSize().y)
+		{
+			dest.z = this->zWorld->GetWorldSize().y - 1;
+		}
+		while(this->zWorld->IsBlockingAt(Vector2(dest.x, dest.z)) && ( dest - this->GetPosition() ).GetLength() > 2)
+		{
+			dest = (dest - this->GetPosition());
+			dest = this->GetPosition() + (dest - dest * 0.75);
 						
-			}
-			if(( dest - this->GetPosition() ).GetLength() < 2)
-			{
-				getEmergencyDirection = true; //There is basically a thick wall in the way...
-			}
+		}
+		if(( dest - this->GetPosition() ).GetLength() < 2)
+		{
+			getEmergencyDirection = true; //There is basically a thick wall in the way...
+		}
 
-			if(getEmergencyDirection) //...so let's find another direction.
-			{
-				//this->zDestination.Normalize();
-				counter++;
-				float angle = (-10 * counter) * 3.14/180;
-				float oldX, oldY;
-				oldX = dest.x;
-				oldY = dest.z;
+		if(getEmergencyDirection) //...so let's find another direction.
+		{
+			//this->zDestination.Normalize();
+			counter++;
+			float angle = (-10 * counter) * 3.14/180;
+			float oldX, oldY;
+			oldX = dest.x;
+			oldY = dest.z;
 
-				dest.x = cos(angle) * oldX - sin(angle) * oldY;
-				dest.z = cos(angle) * oldY + sin(angle) * oldX;
-				dest.Normalize();
-				dest = dest * zFleeDistance;
+			dest.x = cos(angle) * oldX - sin(angle) * oldY;
+			dest.z = cos(angle) * oldY + sin(angle) * oldX;
+			dest.Normalize();
+			dest = dest * zFleeDistance;
 
 					
-			}
-			else
-			{
-				foundPath = true;
-				return dest;
-			}
 		}
+		else
+		{
+			foundPath = true;
+			return dest;
+		}
+	}
 }
 
 std::string AnimalActor::ToMessageString( NetworkMessageConverter* NMC )

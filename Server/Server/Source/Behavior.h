@@ -2,6 +2,7 @@
 
 #include "World/World.h"
 #include "Actor.h"
+
 class Behavior
 {
 protected:
