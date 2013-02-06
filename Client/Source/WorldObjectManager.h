@@ -26,7 +26,7 @@ class WorldObjectManager
 public:
 	WorldObjectManager();
 	virtual ~WorldObjectManager();
-
+	/*
 	bool AddObject(PlayerObject* new_PlayerObject);
 	bool AddObject(AnimalObject* new_AnimalObject);
 	bool AddObject(StaticObject* new_StaticObject);
@@ -46,7 +46,7 @@ public:
 	StaticObject* GetStaticObject(const unsigned int Index);
 	DynamicObject* GetDynamicObject(const unsigned int Index);
 	DeadPlayerObject* GetDeadPlayerObject(const unsigned int Index);
-	/*! Search for the Object With the ID.*/
+	//! Search for the Object With the ID.
 	int SearchForObject(const unsigned int type, const int ID);
 	
 	PlayerObject* SearchAndGetPlayerObject(const int ID);
@@ -54,7 +54,7 @@ public:
 	StaticObject* SearchAndGetStaticObject(const long ID);
 	DynamicObject* SearchAndGetDynamicObject(const long ID);
 	DeadPlayerObject* SearchAndGetDeadPlayerObject(const long ID);
-	
+	*/
 	/*! Interpolates all the Objects towards their final Position*/
 	void UpdateObjects(float deltaTime);
 
@@ -64,23 +64,24 @@ public:
 	bool RemoveActor(const int Index);
 	int SearchForActor(const long ID);
 private:
-	/*! Search for the object with the correct ID and returns a Position if found.*/
-	int SearchForPlayerObject(const int ID);
-	/*! Search for the object with the correct ID and returns a Position if found.*/
-	int SearchForAnimalObject(const long ID);
-	/*! Search for the object with the correct ID and returns a Position if found.*/
-	int SearchForStaticObject(const long ID);
-	/*! Search for the object with the correct ID and returns a Position if found.*/
-	int SearchForDynamicObject(const long ID);
-	/*! Search for the object with the correct ID and returns a Position if found.*/
-	int SearchForDeadPlayerObject(const long ID);
+
+	///*! Search for the object with the correct ID and returns a Position if found.*/
+	//int SearchForPlayerObject(const int ID);
+	///*! Search for the object with the correct ID and returns a Position if found.*/
+	//int SearchForAnimalObject(const long ID);
+	///*! Search for the object with the correct ID and returns a Position if found.*/
+	//int SearchForStaticObject(const long ID);
+	///*! Search for the object with the correct ID and returns a Position if found.*/
+	//int SearchForDynamicObject(const long ID);
+	///*! Search for the object with the correct ID and returns a Position if found.*/
+	//int SearchForDeadPlayerObject(const long ID);
 	
 private:
-	/*! Vectors to keep track of World Objects.*/
-	std::vector<PlayerObject*> zPlayerObjects;
-	std::vector<AnimalObject*> zAnimalObjects;
-	std::vector<StaticObject*> zStaticObjects;
-	std::vector<DynamicObject*> zDynamicObjects;
-	std::vector<DeadPlayerObject*> zDeadPlayerObjects;
+	///*! Vectors to keep track of World Objects.*/
+	//std::vector<PlayerObject*> zPlayerObjects;
+	//std::vector<AnimalObject*> zAnimalObjects;
+	//std::vector<StaticObject*> zStaticObjects;
+	//std::vector<DynamicObject*> zDynamicObjects;
+	//std::vector<DeadPlayerObject*> zDeadPlayerObjects;
 	std::vector<WorldObject*> zActors;
 };

@@ -261,11 +261,13 @@ void Client::SendClientUpdate()
 	std::string msg;
 	Vector3 dir = this->zEng->GetCamera()->GetForward();
 	Vector3 up = this->zEng->GetCamera()->GetUpVector();
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
 	Vector4 rot = Vector4(0, 0, 0, 0);
-	if (index != -1)
+
+	PlayerObject* player = dynamic_cast<PlayerObject*>(this->zObjectManager->SearchAndGetActor(this->zID));
+	
+	if (player)
 	{
-		rot = this->zObjectManager->GetPlayerObject(index)->GetRotation();
+		rot = player->GetRotation();
 	}
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CLIENT_DATA);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_FRAME_TIME, this->zFrameTime);
@@ -286,10 +288,10 @@ void Client::SendAck(unsigned int IM_ID)
 
 void Client::UpdateCameraPos()
 {
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
-	if (index != -1)
+	WorldObject* player = dynamic_cast<WorldObject*>(this->zObjectManager->SearchAndGetActor(this->zID));
+	if (player)
 	{
-		Vector3 position = this->zObjectManager->GetPlayerObject(index)->GetPosition();
+		Vector3 position = player->GetPosition();
 
 		position.y += 1.7f;
 		this->zEng->GetCamera()->SetPosition(position);
@@ -311,8 +313,8 @@ void Client::UpdateCameraPos()
 
 	if(camDir.x > 0.0f)
 		angle *= -1;
-
-	iMesh* playerMesh = this->zObjectManager->SearchAndGetPlayerObject(this->zID)->GetMesh();
+	WorldObject* object = this->zObjectManager->GetActor(this->zID);
+	iMesh* playerMesh = object->GetMesh();
 
 	playerMesh->ResetRotation();
 	playerMesh->RotateAxis(around, angle);}
@@ -388,8 +390,7 @@ void Client::SendUseItemMessage(const long ID)
 
 void Client::HandleKeyboardInput()
 {
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
-	if (index == -1)
+	if (this->zCreated && this->zGameStarted)
 	{
 		MaloW::Debug("Something Went Wrong. This player cannot be found. In function Client::HandleKeyBoardInput");
 		return;
@@ -435,9 +436,9 @@ void Client::HandleKeyboardInput()
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-			Inventory* eq = this->zPlayerInventory;
+			
 
-			Item* item = eq->GetMeleeWeapon();
+			Item* item = this->zPlayerInventory->GetMeleeWeapon();
 			if (item)
 			{
 				MaloW::Debug("Item UnEquipped " + item->GetItemName());
@@ -454,9 +455,9 @@ void Client::HandleKeyboardInput()
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-			Inventory* eq = this->zPlayerInventory;
+			
 
-			Item* item = eq->GetRangedWeapon();
+			Item* item = this->zPlayerInventory->GetRangedWeapon();
 			if (item)
 			{
 				MaloW::Debug("Item UnEquipped " + item->GetItemName());
@@ -473,10 +474,8 @@ void Client::HandleKeyboardInput()
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-			PlayerObject* pObject = this->zObjectManager->SearchAndGetPlayerObject(this->zID);
-			Inventory* eq = this->zPlayerInventory;
 
-			Item* item = eq->GetProjectile();
+			Item* item = this->zPlayerInventory->GetProjectile();
 			if (item)
 			{
 				MaloW::Debug("Item UnEquipped " + item->GetItemName());
@@ -571,10 +570,9 @@ void Client::HandleKeyboardInput()
 				if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
 				{
 					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
-					PlayerObject* player = this->zObjectManager->GetPlayerObject(index);
 
-					Inventory* eq = this->zPlayerInventory;
-					Weapon* weapon = eq->GetRangedWeapon();
+					
+					Weapon* weapon = this->zPlayerInventory->GetRangedWeapon();
 
 					if (!weapon)
 					{
@@ -864,11 +862,24 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	//	long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_STATIC_OBJECT, msgArray[0]);
 	//	this->UpdateActor(msgArray, id);
 	//}
+
 	//WorldObjects
 	else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
 	{
 		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
 		this->UpdateActor(msgArray, id);
+	}
+	//WorldObjects
+	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
+		this->UpdateActor(msgArray, id);
+	}
+	//WorldObjects
+	else if(msg.find(M_DEAD_ACTOR.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
+		//this->UpdateActor(msgArray, id);
 	}
 	//Static Object
 	else if(msg.find(M_NEW_STATIC_OBJECT.c_str()) == 0)
@@ -876,18 +887,18 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_STATIC_OBJECT, msgArray[0]);
 		this->AddNewStaticObject(msgArray, id);
 	}
-	//Static Object
-	else if(msg.find(M_REMOVE_STATIC_OBJECT.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_STATIC_OBJECT, msgArray[0]);
-		this->RemoveStaticObject(id);
-	}
-	//Dynamic Object
-	else if(msg.find(M_UPDATE_DYNAMIC_OBJECT.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_DYNAMIC_OBJECT, msgArray[0]);
-		this->UpdateActor(msgArray, id);
-	}
+	////Static Object
+	//else if(msg.find(M_REMOVE_STATIC_OBJECT.c_str()) == 0)
+	//{
+	//	long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_STATIC_OBJECT, msgArray[0]);
+	//	this->RemoveStaticObject(id);
+	//}
+	////Dynamic Object
+	//else if(msg.find(M_UPDATE_DYNAMIC_OBJECT.c_str()) == 0)
+	//{
+	//	long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_DYNAMIC_OBJECT, msgArray[0]);
+	//	this->UpdateActor(msgArray, id);
+	//}
 	//Dynamic Object
 	else if(msg.find(M_NEW_DYNAMIC_OBJECT.c_str()) == 0)
 	{
@@ -1074,7 +1085,7 @@ std::vector<Looting_Data> Client::RayVsWorld()
 	CollisionData data;
 	std::vector<Looting_Data> Collisions;
 	//Static objects
-	std::vector<StaticObject*> staticObjects = this->zObjectManager->GetStaticObjects();
+	/*std::vector<StaticObject*> staticObjects = this->zObjectManager->GetStaticObjects();
 	iMesh* mesh = NULL;
 	for(auto it = staticObjects.begin(); it < staticObjects.end(); it++)
 	{
@@ -1155,12 +1166,13 @@ std::vector<Looting_Data> Client::RayVsWorld()
 			
 		}
 	}
-
+	*/
 	return Collisions;
 }
 
 bool Client::CheckCollision()
 {
+	/*
 	int position = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, this->zID);
 
 	if (position == -1)
@@ -1172,7 +1184,7 @@ bool Client::CheckCollision()
 
 	if (!playerMesh)
 		return false;
-
+	*/
 	return false;
 }
 

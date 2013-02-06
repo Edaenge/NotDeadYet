@@ -3,7 +3,7 @@
 
 bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const long ID)
 {
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, ID);
+	int index = this->zObjectManager->SearchForActor(ID);
 
 	if (index != -1)
 	{
@@ -272,7 +272,7 @@ bool Client::CreateItemFromMessage(std::vector<std::string> msgArray, int& Index
 
 bool Client::AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, const long ID)
 {
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_DEAD_PLAYER, ID);
+	int index = this->zObjectManager->SearchForActor(ID);
 
 	if (index != -1)
 	{
@@ -348,7 +348,7 @@ bool Client::AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, co
 
 bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const long ID)
 {
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, ID);
+	int index = this->zObjectManager->SearchForActor(ID);
 
 	if (index != -1)
 	{
@@ -432,7 +432,7 @@ bool Client::AddNewAnimalObject(const std::vector<std::string>& msgArray, const 
 
 bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const long ID)
 {
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, ID);
+	int index = this->zObjectManager->SearchForActor(ID);
 
 	if (index != -1)
 	{
@@ -524,7 +524,7 @@ bool Client::AddNewStaticObject(const std::vector<std::string>& msgArray, const 
 
 bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const long ID)
 {
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, ID);
+	int index = this->zObjectManager->SearchForActor(ID);
 
 	if (index != -1)
 	{
@@ -616,7 +616,7 @@ bool Client::AddNewDynamicObject(const std::vector<std::string>& msgArray, const
 	dynamicObject->SetStaticMesh(mesh);
 	dynamicObject->SetRotation(rotation);
 
-	this->zObjectManager->AddObject(dynamicObject);
+	this->zObjectManager->AddActor(dynamicObject);
 
 	return true;
 }
@@ -643,7 +643,7 @@ bool Client::UpdatePlayerObjects(const std::vector<std::string>& msgArray, Playe
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
 			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
-			if(ID != this->zID)
+			if(PlayerObjectPointer->GetID() != this->zID)
 				PlayerObjectPointer->SetRotation(rotation);
 		}
 		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
@@ -1132,7 +1132,7 @@ void Client::HandleDeadPlayerMessage(const int ID)
 	if (ID == -1)
 		return;
 
-	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, ID);
+	int index = this->zObjectManager->SearchForActor(ID);
 
 	//Check if object was found in the array
 	if(index == -1)
@@ -1143,13 +1143,13 @@ void Client::HandleDeadPlayerMessage(const int ID)
 		this->zCreated = false;
 	}
 
-	iMesh* mesh = this->zObjectManager->GetPlayerObject(index)->GetMesh();
+	iMesh* mesh = this->zObjectManager->GetActor(index)->GetMesh();
 
 	if(mesh)
 	{
 		this->zEng->DeleteMesh(mesh);
 	}
-	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_PLAYER, index))
+	if(!this->zObjectManager->RemoveActor(index))
 	{
 		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString((float)ID));
 	}
