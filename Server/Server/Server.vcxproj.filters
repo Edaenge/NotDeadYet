@@ -66,15 +66,6 @@
     <ClCompile Include="Source\BioActor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DeadAnimalObjectActor.cpp">
-      <Filter>Source\Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\DeadActor.cpp">
-      <Filter>Source\Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\DeadPlayerObjectActor.cpp">
-      <Filter>Source\Actors</Filter>
-    </ClCompile>
     <ClCompile Include="Source\DeerActor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
@@ -82,9 +73,6 @@
       <Filter>Source\Actors</Filter>
     </ClCompile>
     <ClCompile Include="Source\GhostActor.cpp">
-      <Filter>Source\Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PhysicsActor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
     <ClCompile Include="Source\PlayerActor.cpp">
@@ -150,6 +138,15 @@
     <ClCompile Include="Source\GameModeFFA.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ObjectCreator.cpp">
+      <Filter>Source\Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ProjectileActor.cpp">
+      <Filter>Source\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WorldActor.cpp">
+      <Filter>Source\Actors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -200,15 +197,6 @@
     <ClInclude Include="Source\BioActor.h">
       <Filter>Source\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="Source\DeadActor.h">
-      <Filter>Source\Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\DeadAnimalObjectActor.h">
-      <Filter>Source\Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\DeadPlayerObjectActor.h">
-      <Filter>Source\Actors</Filter>
-    </ClInclude>
     <ClInclude Include="Source\DeerActor.h">
       <Filter>Source\Actors</Filter>
     </ClInclude>
@@ -216,9 +204,6 @@
       <Filter>Source\Actors</Filter>
     </ClInclude>
     <ClInclude Include="Source\GhostActor.h">
-      <Filter>Source\Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PhysicsActor.h">
       <Filter>Source\Actors</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerActor.h">
@@ -283,6 +268,15 @@
     </ClInclude>
     <ClInclude Include="Source\GameModeFFA.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ObjectCreator.h">
+      <Filter>Source\Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ProjectileActor.h">
+      <Filter>Source\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WorldActor.h">
+      <Filter>Source\Actors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

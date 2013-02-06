@@ -40,6 +40,7 @@ public:
 private:
 	float zVelocity;
 	float maxHeight;
+	float zEnergy;
 	Vector3 zPosition;
 	Vector3 zDirection;
 	KeyStates zKeyStates;

@@ -1,17 +1,17 @@
 #include "BioActor.h"
 
 
-BioActor::BioActor() : PhysicsActor()
+BioActor::BioActor() : Actor()
 {
 	InitValues();
 }
 
-BioActor::BioActor(const Vector3& startPos, PhysicsObject* pObj) : PhysicsActor(startPos, pObj)
+BioActor::BioActor(const Vector3& startPos) : Actor()
 {
 	InitValues();
 }
 
-BioActor::BioActor(const Vector3& startPos, PhysicsObject* pObj, const Vector4& rot) : PhysicsActor(startPos, pObj, rot)
+BioActor::BioActor(const Vector3& startPos, const Vector4& rot) : Actor()
 {
 	InitValues();
 }
@@ -22,9 +22,6 @@ BioActor::~BioActor()
 
 void BioActor::InitValues()
 {
-	if(zPhysicObj)
-		this->zPreviousPos = this->zPhysicObj->GetPosition();
-	
 	this->zState = STATE_IDLE;
 	this->zVelocity = V_WALK_SPEED;
 	this->zActorModel = "none";
@@ -44,6 +41,9 @@ bool BioActor::TakeDamage(const float dmg)
 {
 	this->zHealth -= dmg; 
 	
+	BioActorTakeDamageEvent BATD;
+	BATD.zActor = this;
+
 	if(this->zHealth <= 0.0f)
 	{
 		this->zHealth = 0.0f;

@@ -4,7 +4,7 @@
 /* After that you can send update info to clients.						*/
 /************************************************************************/
 
-#include "Actor.h"
+#include "BioActor.h"
 #include "Observer.h"
 #include "ClientData.h"
 #include "NetworkMessageConverter.h"

@@ -19,6 +19,12 @@ PlayerActor::PlayerActor(const long ID, const Vector3& startPos, const Vector4& 
 	this->zID = ID;
 }
 
+PlayerActor::PlayerActor( Player* player )
+{
+	InitValues();
+	this->zPlayer = player;
+}
+
 void PlayerActor::InitValues()
 {
 	this->zObjManager = NULL;

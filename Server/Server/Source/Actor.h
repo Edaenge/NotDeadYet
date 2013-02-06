@@ -49,7 +49,9 @@ public:
 */
 class Actor : public Observed
 {
-	Vector3 zPos, zRot, zScale;
+	Vector3 zPos;
+	Vector4 zRot;
+	Vector3 zScale;
 public:
 	Actor()
 	{
@@ -58,6 +60,7 @@ public:
 		this->zActorObjectName = "none";
 		this->zUp = Vector3(0.0f, 1.0f, 0.0f);
 		this->zActorType = ACTOR_TYPE_NONE;
+		this->zPhysicsObject = NULL;
 	}
 
 	virtual ~Actor() {};
@@ -74,13 +77,13 @@ public:
 	virtual void SetUpVector(const Vector3& up){this->zUp = up;}
 
 	// Set Transformation Functions
-	void SetPosition( const Vector3& pos );
-	void SetRotation( const Vector3& rot );
-	void SetScale( const Vector3& scale );
+	void SetPosition(const Vector3& pos);
+	void SetRotation(const Vector4& rot);
+	void SetScale(const Vector3& scale);
 
 	// Get Transformation Functions
 	inline const Vector3& GetPosition() const { return zPos; }
-	inline const Vector3& GetRotation() const { return zRot; }
+	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
 
 	long GenerateID()

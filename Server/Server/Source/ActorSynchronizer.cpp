@@ -11,6 +11,10 @@ struct ActorScaleEvent
 {
 	Actor* actor;
 };
+struct BioActorTakeDamageEvent
+{
+	Actor* actor;
+};
 
 void ActorSynchronizer::OnEvent( Event* e )
 {
@@ -23,6 +27,10 @@ void ActorSynchronizer::OnEvent( Event* e )
 		zUpdateSet.insert(UPE->actor);
 	}
 	else if ( ActorScaleEvent* UPE = dynamic_cast<ActorScaleEvent*>(e) )
+	{
+		zUpdateSet.insert(UPE->actor);
+	}
+	else if( BioActorTakeDamageEvent* UPE = dynamic_cast<BioActorTakeDamageEvent*>(e))
 	{
 		zUpdateSet.insert(UPE->actor);
 	}
