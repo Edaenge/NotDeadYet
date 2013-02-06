@@ -6,7 +6,7 @@ class ProjectileActor : public Actor
 {
 	Actor* zShooter;
 public:
-	ProjectileActor( Actor* shooter );
+	ProjectileActor(Actor* shooter, PhysicsObject* pObj);
 	virtual ~ProjectileActor();
 
 protected:

@@ -1,6 +1,6 @@
 #include "BearActor.h"
 
-BearActor::BearActor(bool genID /*= true*/, bool isPlayerControlled /*= false*/) : AnimalActor(genID)
+BearActor::BearActor(PhysicsObject* pObj, bool genID /*= true*/, bool isPlayerControlled /*= false*/) : AnimalActor(genID)
 {
 	this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitBear();

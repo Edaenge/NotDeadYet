@@ -66,7 +66,9 @@ void Game::OnEvent( Event* e )
 		zPlayers[PCE->clientData] = player;
 
 		// Create Player Actor
-		Actor* actor = new PlayerActor(player);
+		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/scale.obj");
+		Actor* actor = new PlayerActor(player, pObject);
+		actor->SetPosition(Vector3(50, 0, 50));
 		zActorManager->AddActor(actor);
 
 		// Apply Default Player Behavior
