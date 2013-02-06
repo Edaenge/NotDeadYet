@@ -1,6 +1,7 @@
 #pragma once
 
 #include <KeyStates.h>
+#include <Observer.h>
 
 class ClientData;
 
