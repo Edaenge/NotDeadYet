@@ -5,10 +5,10 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #pragma once
 
-#include "PhysicsActor.h"
+//#include "PhysicsActor.h"
 #include "PhysicsObject.h"
 
-class DynamicObjectActor : public PhysicsActor
+class DynamicObjectActor// : public PhysicsActor
 {
 public:
 	DynamicObjectActor(bool genID = false);

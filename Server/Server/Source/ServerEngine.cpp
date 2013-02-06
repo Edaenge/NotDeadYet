@@ -39,9 +39,9 @@ void ServerEngine::ShutDownHost()
 	SAFE_DELETE(this->zHost);
 }
 
-const char* ServerEngine::InitHost( const unsigned int& port, const unsigned int& maxPlayers )
+const char* ServerEngine::InitHost( const unsigned int& port, const unsigned int& maxPlayers, const std::string& gameMode, const std::string& mapName )
 {
 	zHost = new Host();
-	return zHost->InitHost(port, maxPlayers);
+	return zHost->InitHost(port, maxPlayers, gameMode, mapName);
 }
 

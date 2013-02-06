@@ -13,9 +13,9 @@ ServerEngineWrapper::~ServerEngineWrapper()
 	SAFE_DELETE(zServerEngine);
 }
 
-const char* ServerEngineWrapper::Init(const unsigned int &port, const unsigned int &maxPlayers) const
+const char* ServerEngineWrapper::Init(const unsigned int &port, const unsigned int &maxPlayers, const char* gameMode, const char* mapName) const
 {
-	return zServerEngine->InitHost(port, maxPlayers);
+	return zServerEngine->InitHost(port, maxPlayers, gameMode, mapName);
 }
 
 void ServerEngineWrapper::ShutdownHost() const

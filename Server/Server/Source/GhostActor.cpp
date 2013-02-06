@@ -13,6 +13,11 @@ GhostActor::GhostActor(const bool genID /*= false*/, const Vector3& position)
 	this->zEnergy = 100.0f;
 }
 
+GhostActor::GhostActor(Player* player)
+{
+	this->zPlayer = player;
+}
+
 GhostActor::~GhostActor()
 {
 
