@@ -14,8 +14,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "GameEvents.h"
 #include "ActorSynchronizer.h"
 
-class World;
-
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
 #define INCLUDE_MODEL_VIEWER

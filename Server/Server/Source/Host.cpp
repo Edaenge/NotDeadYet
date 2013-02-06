@@ -1,4 +1,3 @@
-#include <World/World.h>
 #include "Host.h"
 #include "ClientServerMessages.h"
 #include "ClientConnectedEvent.h"

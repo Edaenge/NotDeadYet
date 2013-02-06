@@ -1,6 +1,6 @@
 #include "ActorManager.h"
 #include "Actor.h"
-
+#include "ActorSynchronizer.h"
 ActorManager::ActorManager( ActorSynchronizer* syncher ) : 
 	zSynch(syncher)
 {
@@ -9,10 +9,11 @@ ActorManager::ActorManager( ActorSynchronizer* syncher ) :
 
 void ActorManager::AddActor( Actor* actor )
 {
-	// TODO: Implement
+	actor->AddObserver(this->zSynch);
+	zActors.insert(actor);
 }
 
 void ActorManager::RemoveActor( Actor* actor )
 {
-	// TODO: Implement
+	this->zActors.erase(actor);
 }
