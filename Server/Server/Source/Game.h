@@ -22,8 +22,9 @@ class Game : public Observer, public Observed
 	World* zWorld;
 
 	std::map<ClientData*, Player*> zPlayers;
-	std::map<Player*, Behavior*> zBehaviors;
+	std::map<Player*, Behavior*> zPlayerBehaviors;
 	std::map<Player*, KeyStates*> zKeyStates;
+	std::set<Behavior*> zBehaviors;
 
 public:
 	Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile);
@@ -34,6 +35,9 @@ public:
 
 	// Event input
 	void OnEvent( Event* e );
+
+	// Sets The Behavior Of Player
+	void SetPlayerBehavior( Player* player, PlayerBehavior* behavior );
 
 private:
 	PhysicsEngine* zPhysicsEngine;

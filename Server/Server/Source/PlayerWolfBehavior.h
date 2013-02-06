@@ -1,6 +1,6 @@
 #include "Behavior.h"
 
-class PlayerWolfBehavior : public Behavior
+class PlayerWolfBehavior : public PlayerBehavior
 {
 private:
 

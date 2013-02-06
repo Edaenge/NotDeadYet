@@ -183,9 +183,6 @@
           <property Id="ca7738f3-c7ec-4e87-904f-6b5e15206707" name="zPlayers[]" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="d8c671c8-f443-415f-905f-3e36ea17fb97" />
           </property>
-          <property Id="859fd78e-c1f7-49fd-bd3d-a9f15110dfd2" name="map&lt;Player,Behavior&gt;" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="5255d84c-3556-4f23-afd5-8f438f6e23e2" />
-          </property>
           <property Id="f1b860f2-44a0-40a0-92ab-75e02dbff7cb" name="Map&lt;ClientData*, Player&gt;" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="053c96a6-8396-492a-9d03-39c47d627cef" />
           </property>
@@ -194,6 +191,9 @@
           </property>
           <property Id="d163dcd8-932c-4899-a921-29c456b255a6" name="GameMode* zMode;" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="6e3c8b6d-a386-46aa-a8ad-f88617cfa89a" />
+          </property>
+          <property Id="ec49c440-b423-40f7-bd60-de25dd702da3" name="Set&lt;Behavior*&gt;" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="672d4b4b-4c66-4c00-88bd-5b3c70b1cfa1" />
           </property>
         </ownedAttributesInternal>
         <ownedOperationsInternal>
@@ -233,6 +233,21 @@
               <operationHasOwnedParameters>
                 <parameter Id="7901e708-8c5e-49ae-a03f-550dd6bef19b" name="Map" direction="In" isUnique="false">
                   <elementDefinition Id="3f24c91e-5d83-4f4e-8628-6de3fb2452dd" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+          <operation Id="8d514392-c152-4d81-aeec-8602737f66ce" name="SetPlayerBehavior" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="86e993a1-bed4-4ad2-88f7-bbfa5788cdd5" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="7e885397-4880-47c8-9470-7f7bfc4713d9" name="Player*" direction="In" isUnique="false">
+                  <elementDefinition Id="70de036c-9023-4894-b674-7c7562c4ebd6" />
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="06b76294-1cc3-4f3e-bc76-8ec3dafde0db" name="PlayerBehavior*" direction="In" isUnique="false">
+                  <elementDefinition Id="2298cdc4-087a-4365-be0e-292ea9d2946c" />
                 </parameter>
               </operationHasOwnedParameters>
             </ownedParameters>
@@ -459,8 +474,14 @@
           </association>
         </targetEnds>
         <ownedAttributesInternal>
-          <property Id="487934e0-0059-4104-ad6b-402fc06c413e" name="zClientData" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="ddb80684-2ca3-42c5-9a0b-bdae455f5255" />
+          <property Id="707aa96b-f655-4d84-bd59-5ccb025e6ef4" name="zBehavior" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="773d73a2-57fa-4850-90fd-56c11ce61c7f" />
+          </property>
+          <property Id="f2ffb581-58fd-49d1-ba43-d1af4c6cc2e2" name="zClientData" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="519bdccf-21db-4094-96a8-64c2dfb45485" />
+          </property>
+          <property Id="7f80e82e-391e-42bc-b350-21fb5d18c5b4" name="zKeys" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="b0c62eae-69bc-4896-a8f2-f1d7aa6a1b1a" />
           </property>
         </ownedAttributesInternal>
         <ownedOperationsInternal>

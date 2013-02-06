@@ -1,9 +1,12 @@
 #include "PlayerBehavior.h"
 #include "Actor.h"
+#include "Player.h"
 
 
-PlayerBehavior::PlayerBehavior( Actor* actor, World* world) : Behavior(actor, world)
-{
+PlayerBehavior::PlayerBehavior( Actor* actor, World* world, Player* player ) : 
+	Behavior(actor, world),
+	zVelocity(0.0f, 0.0f, 0.0f),
+	zPlayer(player){
 }
 
 bool PlayerBehavior::Update( float dt )

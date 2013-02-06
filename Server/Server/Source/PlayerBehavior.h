@@ -9,10 +9,9 @@ static const float ELASTICITY = 0.5f;
 class PlayerBehavior : public Behavior
 {
 private:
-
+	Player* zPlayer;
 public:
-	PlayerBehavior(Actor* actor, World* world);
-
+	PlayerBehavior(Actor* actor, World* world, Player* Player);
 	bool Update(float dt);
 
 	bool ProcessClientData(Vector3 direction, Vector4 rotation);
