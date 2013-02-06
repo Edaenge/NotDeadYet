@@ -1,6 +1,6 @@
 #include "ServerListener.h"
 #include "ClientConnectedEvent.h"
-
+#include "NetworkException.h"
 
 
 ServerListener::ServerListener( MaloW::Process *observer, const unsigned int &port ) : 
@@ -11,12 +11,12 @@ ServerListener::ServerListener( MaloW::Process *observer, const unsigned int &po
 	WSADATA wsaData;
 	if ( WSAStartup(MAKEWORD(2,2), &wsaData) )
 	{
-		throw("Failed WSA Startup!");
+		throw NetworkException("Failed WSA Startup!", WSAGetLastError());
 	}
 
 	if ((zListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP)) == INVALID_SOCKET) 
 	{
-		throw("Failed Creating Listen Socket!");
+		throw NetworkException("Failed Creating Listen Socket!", WSAGetLastError());
 	}
 
 	sockaddr_in saListen;
@@ -25,12 +25,12 @@ ServerListener::ServerListener( MaloW::Process *observer, const unsigned int &po
 	saListen.sin_family = AF_INET;
 	if ( bind(zListenSocket, (sockaddr*)&saListen, sizeof(sockaddr)) == SOCKET_ERROR  )
 	{
-		throw("Failed Binding Listen Socket!");
+		throw NetworkException("Failed Binding Listen Socket!", WSAGetLastError());
 	}
 
 	if ( listen(zListenSocket, SOMAXCONN) == SOCKET_ERROR )
 	{
-		throw("Failed Initializing Listen Socket!");
+		throw NetworkException("Failed Initializing Listen Socket!", WSAGetLastError());
 	}
 }
 
@@ -51,7 +51,7 @@ bool ServerListener::Accept( SOCKET &newConnection )
 	{
 		if ( newConnection < 0 )
 		{
-			throw("Failed Accepting On Listen Socket!");
+			throw NetworkException("Failed Accepting On Listen Socket!", WSAGetLastError());
 		}
 		else
 		{

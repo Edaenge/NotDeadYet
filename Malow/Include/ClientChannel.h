@@ -44,6 +44,9 @@ namespace MaloW
 		// Send Message
 		bool Send(const std::string& msg) throw(...);
 
+		// Try Sending A message, does not throw when failing
+		bool TrySend(const std::string& msg);
+
 		// Connection ID
 		inline long GetClientID() const { return zID; }
 	};

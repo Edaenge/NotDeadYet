@@ -1,6 +1,7 @@
 #include "ClientChannel.h"
 #include "Winsock.h"
 #include "ClientDisconnectedEvent.h"
+#include "NetworkException.h"
 
 using namespace MaloW;
 
@@ -30,9 +31,7 @@ bool ClientChannel::Receive( std::string& msg )
 	{
 		if ( retCode < 0 )
 		{
-			std::stringstream ss;
-			ss << "Failed Receiving Packet Size! ErrCode:" << WSAGetLastError();
-			throw(ss.str());
+			throw NetworkException("Failed Receiving Packet Size!", WSAGetLastError());
 		}
 		else
 		{
@@ -47,9 +46,7 @@ bool ClientChannel::Receive( std::string& msg )
 	{
 		if ( retCode < 0 )
 		{
-			std::stringstream ss;
-			ss << "Failed Receiving Packet Size! ErrCode:" << WSAGetLastError();
-			throw(ss.str());
+			throw NetworkException("Failed Receiving Packet Size!", WSAGetLastError());
 		}
 		else
 		{
@@ -70,9 +67,7 @@ bool ClientChannel::Send(const std::string& msg)
 	{
 		if ( retCode < 0 )
 		{
-			std::stringstream ss;
-			ss << "Failed Sending Packet Size! ErrCode:" << WSAGetLastError();
-			throw(ss.str());
+			throw NetworkException("Failed Sending Packet Size!", WSAGetLastError());
 		}
 		else
 		{
@@ -85,9 +80,7 @@ bool ClientChannel::Send(const std::string& msg)
 	{
 		if ( retCode < 0 )
 		{
-			std::stringstream ss;
-			ss << "Failed Sending Packet Data! ErrCode:" << WSAGetLastError();
-			throw(ss.str());
+			throw NetworkException("Failed Sending Packet Data!", WSAGetLastError());
 		}
 		else
 		{
@@ -122,9 +115,19 @@ void ClientChannel::CloseSpecific()
 	{
 		if( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
 		{
-			std::stringstream ss;
-			ss << "Failed Shutting Down Socket! ErrCode:" << WSAGetLastError();
-			throw(ss.str());
+			throw NetworkException("Failed Shutting Down Socket!", WSAGetLastError());
 		}
+	}
+}
+
+bool MaloW::ClientChannel::TrySend( const std::string& msg )
+{
+	try
+	{
+		return Send(msg);
+	}
+	catch(...)
+	{
+		return false;
 	}
 }

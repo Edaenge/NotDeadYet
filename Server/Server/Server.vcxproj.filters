@@ -54,9 +54,6 @@
     <ClCompile Include="Source\Game.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GameMode.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Player.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -280,6 +277,9 @@
     </ClInclude>
     <ClInclude Include="Source\PlayerDeerBehavior.h">
       <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\NetworkEvents.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
