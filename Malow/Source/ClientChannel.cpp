@@ -120,6 +120,12 @@ void ClientChannel::CloseSpecific()
 	}
 }
 
+void MaloW::ClientChannel::Disconnect()
+{
+	CloseSpecific();
+	this->zNotifier->PutEvent(new ClientDisconnectedEvent(this));
+}
+
 bool MaloW::ClientChannel::TrySend( const std::string& msg )
 {
 	try

@@ -101,7 +101,7 @@ bool Client::AddNewPlayerObject(const std::vector<std::string>& msgArray, const 
 	return true;
 }
 
-bool Client::CreateItemFromMessage(std::vector<std::string> msgArray, int& Index, Item** item, const long ID)
+bool Client::CreateItemFromMessage(std::vector<std::string> msgArray, int& Index, Item*& item, const long ID)
 {
 	std::string itemName = "Unknown";
 	std::string itemDescription = "<UNKNOWN DESCRIPTION>";
@@ -109,6 +109,7 @@ bool Client::CreateItemFromMessage(std::vector<std::string> msgArray, int& Index
 	int itemWeight = 0;
 	int itemStackSize = 0;
 	int itemType = -1;
+	int itemSubType = -1;
 	float weaponDamage = 0.0f;
 	float weaponRange = 0.0f;
 	float projectileDamage = 0.0f;
@@ -148,6 +149,10 @@ bool Client::CreateItemFromMessage(std::vector<std::string> msgArray, int& Index
 		else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
 		{
 			itemType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it));
+		}
+		else if(strcmp(key, M_ITEM_SUB_TYPE.c_str()) == 0)
+		{
+			itemSubType = this->zMsgHandler.ConvertStringToInt(M_ITEM_SUB_TYPE, (*it));
 		}
 		else if(strcmp(key, M_WEAPON_DAMAGE.c_str()) == 0)
 		{
@@ -196,148 +201,68 @@ bool Client::CreateItemFromMessage(std::vector<std::string> msgArray, int& Index
 	//Todo add more data to item to identify type ex Bow/Axe/Pocket Knife
 	switch (itemType)
 	{
-	case ITEM_TYPE_FOOD_DEER_MEAT:
-		(*item) = new Food(ID, itemType, hunger);
-		(*item)->SetStacking(true);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
+	case ITEM_TYPE_FOOD:
+		item = new Food(ID, itemType, itemSubType, hunger);
+		item->SetStacking(true);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
-	case ITEM_TYPE_FOOD_WOLF_MEAT:
-		(*item) = new Food(ID, itemType, hunger);
-		(*item)->SetStacking(true);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
+	case ITEM_TYPE_WEAPON_RANGED:
+		item = new RangedWeapon(ID, itemType, itemSubType, weaponDamage, weaponRange);
+		item->SetItemName(itemName);
+		item->SetStacking(false);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
-	case ITEM_TYPE_WEAPON_RANGED_BOW:
-		(*item) = new RangedWeapon(ID,itemType, weaponDamage, weaponRange);
-		(*item)->SetItemName(itemName);
-		(*item)->SetStacking(false);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
+	case ITEM_TYPE_WEAPON_MELEE:
+		item = new MeleeWeapon(ID, itemType, itemSubType, weaponDamage, weaponRange);
+		item->SetStacking(false);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
-	case ITEM_TYPE_WEAPON_RANGED_ROCK:
-		(*item) = new RangedWeapon(ID,itemType, weaponDamage, weaponRange);
-		(*item)->SetStacking(true);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
+	case ITEM_TYPE_CONTAINER:
+		item = new Container(ID, itemType, itemSubType, maxUse, currUse);
+		item->SetStacking(false);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
-	case ITEM_TYPE_WEAPON_MELEE_AXE:
-		(*item) = new MeleeWeapon(ID, itemType, weaponDamage, weaponRange);
-		(*item)->SetStacking(false);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
+	case ITEM_TYPE_PROJECTILE:
+		item = new Projectile(ID, itemType, itemSubType, projectileVelocity, projectileDamage);
+		item->SetStacking(true);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
-	case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
-		(*item) = new MeleeWeapon(ID, itemType, weaponDamage, weaponRange);
-		(*item)->SetStacking(false);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
+	case ITEM_TYPE_MATERIAL:
+		item = new Material(ID, itemType, itemSubType, craftingType, stacksRequired);
+		item->SetStacking(true);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
-	case ITEM_TYPE_CONTAINER_CANTEEN:
-		(*item) = new Container(ID, itemType, maxUse, currUse);
-		(*item)->SetStacking(false);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
-		break;
-	case ITEM_TYPE_PROJECTILE_ARROW:
-		(*item) = new Projectile(ID, itemType, projectileVelocity, projectileDamage);
-		(*item)->SetStacking(true);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
-		break;
-	case ITEM_TYPE_MATERIAL_SMALL_STICK:
-		(*item) = new Material(ID, itemType, craftingType, stacksRequired);
-		(*item)->SetStacking(true);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
-		break;
-	case ITEM_TYPE_MATERIAL_MEDIUM_STICK:
-		(*item) = new Material(ID, itemType, craftingType, stacksRequired);
-		(*item)->SetStacking(true);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
-		break;
-	case ITEM_TYPE_MATERIAL_THREAD:
-		(*item) = new Material(ID, itemType, craftingType, stacksRequired);
-		(*item)->SetStacking(true);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
-		break;
-	case ITEM_TYPE_MATERIAL_LARGE_STICK:
-		(*item) = new Material(ID, itemType, craftingType, stacksRequired);
-		(*item)->SetStacking(true);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
-		break;
-	case ITEM_TYPE_GEAR_HEAD:
-		(*item) = new Gear(ID, itemType);
-		(*item)->SetStacking(false);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
-		break;
-	case ITEM_TYPE_GEAR_CHEST:
-		(*item) = new Gear(ID, itemType);
-		(*item)->SetStacking(false);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
-		break;
-	case ITEM_TYPE_GEAR_LEGS:
-		(*item) = new Gear(ID, itemType);
-		(*item)->SetStacking(false);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
-		break;
-	case ITEM_TYPE_GEAR_BOOTS:
-		(*item) = new Gear(ID, itemType);
-		(*item)->SetStacking(false);
-		(*item)->SetItemName(itemName);
-		(*item)->SetItemWeight(itemWeight);
-		(*item)->SetStackSize(itemStackSize);
-		(*item)->SetIconPath(itemIconFilePath);
-		(*item)->SetItemDescription(itemDescription);
+	case ITEM_TYPE_GEAR:
+		item = new Gear(ID, itemType, itemSubType);
+		item->SetStacking(false);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
 		break;
 	default:
 		break;
@@ -371,230 +296,9 @@ bool Client::AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, co
 		if(strcmp(key, M_DEAD_PLAYER_ADD_ITEM.c_str()) == 0)
 		{
 			id = this->zMsgHandler.ConvertStringToInt(M_DEAD_PLAYER_ADD_ITEM, (*it));
-			//it++;
-			//index++;
+
 			Item* item = NULL;
-			/*for(; (it < msgArray.end()) && (!strcmp(key, M_DEAD_PLAYER_ITEM_FINISHED.c_str()) == 0); it++)
-			{
-				sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
-
-				if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
-				{
-					itemName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it));
-				}
-				else if(strcmp(key, M_ITEM_DESCRIPTION.c_str()) == 0)
-				{
-					itemDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it));
-				}
-				else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
-				{
-					itemIconFilePath = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it));
-				}
-				else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
-				{
-					itemWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it));
-				}
-				else if(strcmp(key, M_ITEM_STACK_SIZE.c_str()) == 0)
-				{
-					itemStackSize = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, (*it));
-				}
-				else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
-				{
-					itemType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it));
-				}
-				else if(strcmp(key, M_WEAPON_DAMAGE.c_str()) == 0)
-				{
-					weaponDamage = this->zMsgHandler.ConvertStringToFloat(M_WEAPON_DAMAGE, (*it));
-				}
-				else if(strcmp(key, M_WEAPON_RANGE.c_str()) == 0)
-				{
-					weaponRange = this->zMsgHandler.ConvertStringToFloat(M_WEAPON_RANGE, (*it));
-				}
-				else if(strcmp(key, M_PROJECTILE_VELOCITY.c_str()) == 0)
-				{
-					projectileVelocity = this->zMsgHandler.ConvertStringToFloat(M_PROJECTILE_VELOCITY, (*it));
-				}
-				else if(strcmp(key, M_PROJECTILE_DAMAGE.c_str()) == 0)
-				{
-					projectileDamage = this->zMsgHandler.ConvertStringToFloat(M_PROJECTILE_DAMAGE, (*it));
-				}
-				else if(strcmp(key, M_HUNGER.c_str()) == 0)
-				{
-					hunger = this->zMsgHandler.ConvertStringToFloat(M_HUNGER, (*it));
-				}
-				else if(strcmp(key, M_CONTAINER_MAX.c_str()) == 0)
-				{
-					maxUse = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_MAX, (*it));
-				}
-				else if(strcmp(key, M_CONTAINER_CURRENT.c_str()) == 0)
-				{
-					currUse = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_CURRENT, (*it));
-				}
-				else if(strcmp(key, M_MATERIAL_CRAFTING_TYPE.c_str()) == 0)
-				{
-					craftingType = this->zMsgHandler.ConvertStringToInt(M_MATERIAL_CRAFTING_TYPE, (*it));
-				}
-				else if(strcmp(key, M_MATERIAL_STACKS_REQUIRED.c_str()) == 0)
-				{
-					stacksRequired = this->zMsgHandler.ConvertStringToInt(M_MATERIAL_STACKS_REQUIRED, (*it));
-				}
-			}
-
-			if (itemType == -1)
-			{
-				MaloW::Debug("Wrong or no Item Type sent from server in Client::AddDeadPlayerObject ItemType: " + MaloW::convertNrToString((float)itemType));
-				return false;
-			}
-			//Todo add more data to item to identify type ex Bow/Axe/Pocket Knife
-			switch (itemType)
-			{
-			case ITEM_TYPE_FOOD_DEER_MEAT:
-				item = new Food(ID, itemType, hunger);
-				item->SetStacking(true);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_FOOD_WOLF_MEAT:
-				item = new Food(ID, itemType, hunger);
-				item->SetStacking(true);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_WEAPON_RANGED_BOW:
-				item = new RangedWeapon(ID,itemType, weaponDamage, weaponRange);
-				item->SetItemName(itemName);
-				item->SetStacking(false);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_WEAPON_RANGED_ROCK:
-				item = new RangedWeapon(ID,itemType, weaponDamage, weaponRange);
-				item->SetStacking(true);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_WEAPON_MELEE_AXE:
-				item = new MeleeWeapon(ID, itemType, weaponDamage, weaponRange);
-				item->SetStacking(false);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
-				item = new MeleeWeapon(ID, itemType, weaponDamage, weaponRange);
-				item->SetStacking(false);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_CONTAINER_CANTEEN:
-				item = new Container(ID, itemType, maxUse, currUse);
-				item->SetStacking(false);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_PROJECTILE_ARROW:
-				item = new Projectile(ID, itemType, projectileVelocity, projectileDamage);
-				item->SetStacking(true);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_MATERIAL_SMALL_STICK:
-				item = new Material(ID, itemType, craftingType, stacksRequired);
-				item->SetStacking(true);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_MATERIAL_MEDIUM_STICK:
-				item = new Material(ID, itemType, craftingType, stacksRequired);
-				item->SetStacking(true);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_MATERIAL_THREAD:
-				item = new Material(ID, itemType, craftingType, stacksRequired);
-				item->SetStacking(true);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_MATERIAL_LARGE_STICK:
-				item = new Material(ID, itemType, craftingType, stacksRequired);
-				item->SetStacking(true);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_GEAR_HEAD:
-				item = new Gear(ID, itemType);
-				item->SetStacking(false);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_GEAR_CHEST:
-				item = new Gear(ID, itemType);
-				item->SetStacking(false);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_GEAR_LEGS:
-				item = new Gear(ID, itemType);
-				item->SetStacking(false);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			case ITEM_TYPE_GEAR_BOOTS:
-				item = new Gear(ID, itemType);
-				item->SetStacking(false);
-				item->SetItemName(itemName);
-				item->SetItemWeight(itemWeight);
-				item->SetStackSize(itemStackSize);
-				item->SetIconPath(itemIconFilePath);
-				item->SetItemDescription(itemDescription);
-				break;
-			default:
-				break;
-			}*/
-			this->CreateItemFromMessage(msgArray, index, &item, id);
+			this->CreateItemFromMessage(msgArray, index, item, id);
 			it = msgArray.begin() + (index);
 			if (item)
 			{

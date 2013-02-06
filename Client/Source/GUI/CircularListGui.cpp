@@ -219,63 +219,29 @@ void CircularListGui::Adjust(int type, int inventory)
 	}
 	switch(type)
 	{
-	case ITEM_TYPE_WEAPON_RANGED_BOW:
+	case ITEM_TYPE_WEAPON_RANGED:
 		this->zOptions[0] = EQUIP;
 		this->zOptions[1] = DROP;
 		break;
-	case ITEM_TYPE_WEAPON_RANGED_ROCK:
+	case ITEM_TYPE_WEAPON_MELEE:
 		this->zOptions[0] = EQUIP;
 		this->zOptions[1] = DROP;
 		break;
-	case ITEM_TYPE_WEAPON_MELEE_AXE:
-		this->zOptions[0] = EQUIP;
-		this->zOptions[1] = DROP;
+	case ITEM_TYPE_GEAR:
 		break;
-	case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
-		this->zOptions[0] = EQUIP;
-		this->zOptions[1] = DROP;
-		break;
-	case ITEM_TYPE_GEAR_HEAD:
-		break;
-	case ITEM_TYPE_GEAR_CHEST:
-		break;
-	case ITEM_TYPE_GEAR_LEGS:
-		break;
-	case ITEM_TYPE_GEAR_BOOTS:
-		break;
-	case ITEM_TYPE_CONTAINER_CANTEEN:
+	case ITEM_TYPE_CONTAINER:
 		this->zOptions[0] = USE;
 		this->zOptions[1] = DROP;
 		break;
-	case ITEM_TYPE_CONTAINER_WATER_BOTTLE:
+	case ITEM_TYPE_FOOD:
 		this->zOptions[0] = USE;
 		this->zOptions[1] = DROP;
 		break;
-	case ITEM_TYPE_FOOD_DEER_MEAT:
-		this->zOptions[0] = USE;
-		this->zOptions[1] = DROP;
-		break;
-	case ITEM_TYPE_FOOD_WOLF_MEAT:
-		this->zOptions[0] = USE;
-		this->zOptions[1] = DROP;
-		break;
-	case ITEM_TYPE_PROJECTILE_ARROW:
+	case ITEM_TYPE_PROJECTILE:
 		this->zOptions[0] = EQUIP;
 		this->zOptions[1] = DROP;
 		break;
-	case ITEM_TYPE_MATERIAL_SMALL_STICK:
-		this->zOptions[0] = CRAFT;
-		this->zOptions[1] = DROP;
-		break;
-	case ITEM_TYPE_MATERIAL_MEDIUM_STICK:
-		this->zOptions[0] = CRAFT;
-		this->zOptions[1] = DROP;
-		break;
-	case ITEM_TYPE_MATERIAL_LARGE_STICK:
-		this->zOptions[0] = CRAFT;
-		this->zOptions[1] = DROP;
-		break;
-	case ITEM_TYPE_MATERIAL_THREAD:
+	case ITEM_TYPE_MATERIAL:
 		this->zOptions[0] = CRAFT;
 		this->zOptions[1] = DROP;
 		break;

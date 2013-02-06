@@ -7,6 +7,12 @@
 
 #include "StaticObjectActor.h"
 
+static const enum M_CONTAINER_OBJECT_SUB_TYPE
+{
+	OBJECT_SUB_TYPE_CANTEEN,
+	OBJECT_SUB_TYPE_WATER_BOTTLE
+};
+
 class ContainerObject : public StaticObjectActor
 {
 public:

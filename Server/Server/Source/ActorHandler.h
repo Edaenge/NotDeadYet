@@ -13,8 +13,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "PlayerActor.h"
 #include "ObjectManager.h"
 #include "PhysicsEngine.h"
-#include "DeadPlayerObjectActor.h"
-#include "DeadAnimalObjectActor.h"
 #include "DynamicProjectileObject.h"
 
 

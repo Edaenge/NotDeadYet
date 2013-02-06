@@ -1,16 +1,13 @@
 #pragma once
 #include "Behavior.h"
-class KeyState
-{
-
-};
+#include "KeyStates.h"
 
 class PlayerBehavior : public Behavior
 {
 private:
-	KeyState* zKeyState;
+	KeyStates* zKeyState;
 public:
-	PlayerBehavior(Actor* actor, World* world, KeyState* zKeyState);
+	PlayerBehavior(Actor* actor, World* world, KeyStates* zKeyState);
 
 	bool Update(float dt);
 };

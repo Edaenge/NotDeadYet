@@ -8,5 +8,5 @@ Behavior::Behavior( Actor* actor, World* world )
 
 bool Behavior::Update( float dt )
 {
-
+	return true;
 }

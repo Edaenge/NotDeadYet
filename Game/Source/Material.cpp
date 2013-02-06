@@ -1,13 +1,5 @@
 #include "Material.h"
 
-Material::Material(const long id, const unsigned int itemType, const unsigned int craftingType, const int stacksRequiredToCraft)
-	: Item(id, itemType)
-{
-	this->zStacking = true;
-	this->zCraftingType = craftingType;
-	this->zRequiredStackToCraft = stacksRequiredToCraft;
-}
-
 Material::Material(const Material& other)
 {
 	this->zID = other.zID;
@@ -16,6 +8,7 @@ Material::Material(const Material& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zItemSubType = other.zItemSubType;
 	this->zCraftingType = other.zCraftingType;
 	this->zItemDescription = other.zItemDescription;
 	this->zRequiredStackToCraft = other.zRequiredStackToCraft;
@@ -29,9 +22,18 @@ Material::Material(const Material* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zItemSubType = other->zItemSubType;
 	this->zCraftingType = other->zCraftingType;
 	this->zItemDescription = other->zItemDescription;
 	this->zRequiredStackToCraft = other->zRequiredStackToCraft;
+}
+
+Material::Material(const long ID, const unsigned int itemType, const unsigned int itemSubType, 
+				   const unsigned int craftingType, const int stacksRequiredToCraft) : Item(ID, itemType, itemSubType)
+{
+	this->zStacking = true;
+	this->zCraftingType = craftingType;
+	this->zRequiredStackToCraft = stacksRequiredToCraft;
 }
 
 Material::~Material()

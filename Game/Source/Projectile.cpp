@@ -1,13 +1,5 @@
 #include "Projectile.h"
 
-Projectile::Projectile(const long id, const unsigned int itemType, float velocity, float damage) 
-	: Item(id, itemType)
-{
-	this->zStacking = true;
-	this->zDamage = damage;
-	this->zVelocity = velocity;
-}
-
 Projectile::Projectile(const Projectile& other)
 {
 	this->zID = other.zID;
@@ -18,6 +10,7 @@ Projectile::Projectile(const Projectile& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
 }
 
@@ -31,7 +24,16 @@ Projectile::Projectile(const Projectile* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
+}
+
+Projectile::Projectile(const long ID, const unsigned int itemType, const unsigned int itemSubType, 
+					   float velocity, float damage) : Item(ID, itemType, itemSubType)
+{
+	this->zStacking = true;
+	this->zDamage = damage;
+	this->zVelocity = velocity;
 }
 
 Projectile::~Projectile()

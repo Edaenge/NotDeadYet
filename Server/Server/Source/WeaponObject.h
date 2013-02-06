@@ -7,6 +7,13 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "StaticObjectActor.h"
 
+static const enum M_WEAPON_OBJECT_SUB_TYPE
+{
+	OBJECT_SUB_TYPE_BOW,
+	OBJECT_SUB_TYPE_AXE,
+	OBJECT_SUB_TYPE_POCKET_KNIFE
+};
+
 /**/
 class WeaponObject : public StaticObjectActor
 {

@@ -92,7 +92,10 @@ void Host::Life()
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients)
 {
 	//Todo add map + game mode to parameters
-	this->zGame = NULL;
+	std::string path = "3x3.map";
+	GameMode* gameMode = new GameModeFFA();
+	ActorSynchronizer* actorSync = new ActorSynchronizer();
+	this->zGame = new Game(actorSync, gameMode, path);
 	try
 	{
 		if ( zServerListener ) delete zServerListener;

@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Actor.cpp" />
     <ClCompile Include="Source\ActorHandler.cpp" />
-    <ClCompile Include="Source\ActorManager.cpp" />
+    <ClCompile Include="Source\ActorSynchronizer.cpp" />
     <ClCompile Include="Source\AI.cpp" />
     <ClCompile Include="Source\AIDeerBehavior.cpp" />
     <ClCompile Include="Source\AIWolfBehavior.cpp" />
@@ -31,19 +31,17 @@
     <ClCompile Include="Source\BioActor.cpp" />
     <ClCompile Include="Source\ClientData.cpp" />
     <ClCompile Include="Source\ContainerObject.cpp" />
-    <ClCompile Include="Source\DeadActor.cpp" />
-    <ClCompile Include="Source\DeadAnimalObjectActor.cpp" />
-    <ClCompile Include="Source\DeadPlayerObjectActor.cpp" />
     <ClCompile Include="Source\DeerActor.cpp" />
     <ClCompile Include="Source\DynamicObjectActor.cpp" />
     <ClCompile Include="Source\DynamicProjectileObject.cpp" />
     <ClCompile Include="Source\FoodObject.cpp" />
     <ClCompile Include="Source\Game.cpp" />
+    <ClCompile Include="Source\GameModeFFA.cpp" />
     <ClCompile Include="Source\GhostActor.cpp" />
     <ClCompile Include="Source\Host.cpp" />
     <ClCompile Include="Source\MaterialObject.cpp" />
+    <ClCompile Include="Source\ObjectCreator.cpp" />
     <ClCompile Include="Source\ObjectManager.cpp" />
-    <ClCompile Include="Source\PhysicsActor.cpp" />
     <ClCompile Include="Source\PhysicsEngine\ObjLoader.cpp" />
     <ClCompile Include="Source\PhysicsEngine\Physics.cpp" />
     <ClCompile Include="Source\PhysicsEngine\PhysicsEngine.cpp" />
@@ -53,6 +51,7 @@
     <ClCompile Include="Source\PlayerBehavior.cpp" />
     <ClCompile Include="Source\PlayerDeerBehavior.cpp" />
     <ClCompile Include="Source\PlayerWolfBehavior.cpp" />
+    <ClCompile Include="Source\ProjectileActor.cpp" />
     <ClCompile Include="Source\ProjectileBehavior.cpp" />
     <ClCompile Include="Source\ServerEngine.cpp" />
     <ClCompile Include="Source\ServerEngineWrapper.cpp" />
@@ -60,12 +59,13 @@
     <ClCompile Include="Source\StaticProjectileObject.cpp" />
     <ClCompile Include="Source\WeaponObject.cpp" />
     <ClCompile Include="Source\WolfActor.cpp" />
+    <ClCompile Include="Source\WorldActor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\ServerEngineWrapper.h" />
     <ClInclude Include="Source\Actor.h" />
     <ClInclude Include="Source\ActorHandler.h" />
-    <ClInclude Include="Source\ActorManager.h" />
+    <ClInclude Include="Source\ActorSynchronizer.h" />
     <ClInclude Include="Source\AI.h" />
     <ClInclude Include="Source\AIDeerBehavior.h" />
     <ClInclude Include="Source\AIWolfBehavior.h" />
@@ -75,19 +75,18 @@
     <ClInclude Include="Source\BioActor.h" />
     <ClInclude Include="Source\ClientData.h" />
     <ClInclude Include="Source\ContainerObject.h" />
-    <ClInclude Include="Source\DeadActor.h" />
-    <ClInclude Include="Source\DeadAnimalObjectActor.h" />
-    <ClInclude Include="Source\DeadPlayerObjectActor.h" />
     <ClInclude Include="Source\DeerActor.h" />
     <ClInclude Include="Source\DynamicObjectActor.h" />
     <ClInclude Include="Source\DynamicProjectileObject.h" />
     <ClInclude Include="Source\FoodObject.h" />
     <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\GameMode.h" />
+    <ClInclude Include="Source\GameModeFFA.h" />
     <ClInclude Include="Source\GhostActor.h" />
     <ClInclude Include="Source\Host.h" />
     <ClInclude Include="Source\MaterialObject.h" />
-    <ClInclude Include="Source\NetworkEvents.h" />
+	<ClInclude Include="Source\NetworkEvents.h" />
+    <ClInclude Include="Source\ObjectCreator.h" />
     <ClInclude Include="Source\ObjectManager.h" />
     <ClInclude Include="Source\PhysicsActor.h" />
     <ClInclude Include="Source\PhysicsEngine\BoundingSphere.h" />
@@ -100,12 +99,14 @@
     <ClInclude Include="Source\PlayerBehavior.h" />
     <ClInclude Include="Source\PlayerDeerBehavior.h" />
     <ClInclude Include="Source\PlayerWolfBehavior.h" />
+    <ClInclude Include="Source\ProjectileActor.h" />
     <ClInclude Include="Source\ProjectileBehavior.h" />
     <ClInclude Include="Source\ServerEngine.h" />
     <ClInclude Include="Source\StaticObjectActor.h" />
     <ClInclude Include="Source\StaticProjectileObject.h" />
     <ClInclude Include="Source\WeaponObject.h" />
     <ClInclude Include="Source\WolfActor.h" />
+    <ClInclude Include="Source\WorldActor.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FF26E365-FE3C-4224-B691-A4EE74CA0782}</ProjectGuid>

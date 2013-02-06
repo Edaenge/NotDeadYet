@@ -1,10 +1,7 @@
 #pragma once
+
+#include "World/World.h"
 class Actor // For testing
-{
-
-};
-
-class World // For testing
 {
 
 };
@@ -12,7 +9,7 @@ class World // For testing
 
 class Behavior
 {
-private:
+protected:
 	Actor* zActor;
 	World* zWorld;
 public:

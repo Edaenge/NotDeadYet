@@ -7,6 +7,12 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "StaticObjectActor.h"
 
+static const enum M_FOOD_OBJECT_SUB_TYPE
+{
+	OBJECT_SUB_TYPE_DEER_FOOD,
+	OBJECT_SUB_TYPE_WOLF_FOOD
+};
+
 class FoodObject : public StaticObjectActor
 {
 public:

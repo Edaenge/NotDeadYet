@@ -25,6 +25,7 @@ StaticProjectileObject::StaticProjectileObject(const StaticProjectileObject& oth
 	this->zStacks = other.zStacks;
 	this->zDamage = other.zDamage;
 	this->zWeight = other.zWeight;
+	this->zSubType = other.zSubType;
 	this->zIconPath = other.zIconPath;
 	this->zActorType = other.zActorType;
 	this->zActorModel = other.zActorModel;
@@ -48,6 +49,7 @@ StaticProjectileObject::StaticProjectileObject(const DynamicProjectileObject* ot
 	this->zPos = other->GetPosition();
 	this->zDamage = other->GetDamage();
 	this->zWeight = other->GetWeight();
+	this->zSubType = other->GetSubType();
 	this->zStacks = other->GetStackSize();
 	this->zIconPath = other->GetIconPath();
 	this->zActorModel = other->GetActorModel();
@@ -71,6 +73,7 @@ StaticProjectileObject::StaticProjectileObject( const StaticProjectileObject* ot
 	this->zStacks = other->zStacks;
 	this->zDamage = other->zDamage;
 	this->zWeight = other->zWeight;
+	this->zSubType = other->zSubType;
 	this->zIconPath = other->zIconPath;
 	this->zActorType = other->zActorType;
 	this->zActorModel = other->zActorModel;

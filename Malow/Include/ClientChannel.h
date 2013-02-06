@@ -49,6 +49,9 @@ namespace MaloW
 
 		// Connection ID
 		inline long GetClientID() const { return zID; }
+
+		// Disconnects the channel. Will push a Player DisconnectedEvent.
+		void Disconnect();
 	};
 }
 
