@@ -1,8 +1,8 @@
 #include "ProjectileActor.h"
 
-ProjectileActor::ProjectileActor()
+ProjectileActor::ProjectileActor( Actor* shooter ) :
+	zShooter(shooter)
 {
-
 }
 
 ProjectileActor::~ProjectileActor()
