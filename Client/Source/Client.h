@@ -117,14 +117,14 @@ private:
 	//////////////////////
 
 	/*! Updates A Static Object.*/
-	bool UpdateStaticObjects(const std::vector<std::string>& msgArray, const long ID);
+	bool UpdateStaticObjects(const std::vector<std::string>& msgArray, StaticObject* StaticObjectPointer);
 	/*! Updates An Animal Object.*/
-	bool UpdateAnimalObjects(const std::vector<std::string>& msgArray, const long ID);
+	bool UpdateAnimalObjects(const std::vector<std::string>& msgArray, AnimalObject* AnimalObjectPointer);
 	/*! Updates A Dynamic Object.*/
-	bool UpdateDynamicObjects(const std::vector<std::string>& msgArray, const long ID);
+	bool UpdateDynamicObjects(const std::vector<std::string>& msgArray, DynamicObject* DynamicObjectPointer);
 	/*! Updates A Player Object.*/
-	bool UpdatePlayerObjects(const std::vector<std::string>& msgArray, const long ID);
-	
+	bool UpdatePlayerObjects(const std::vector<std::string>& msgArray, PlayerObject* PlayerObjectPointer);
+
 	/*! Removes A Player Objec.t*/
 	bool RemovePlayerObject(const long ID);
 	/*! Removes An Animal Object.*/
@@ -133,6 +133,7 @@ private:
 	bool RemoveStaticObject(const long ID);
 	/*! Removes A Dynamic Object.*/
 	bool RemoveDynamicObject(const long ID);
+	bool RemoveActor(const long ID);
 
 	/*! Adds A Player Object.*/
 	bool AddNewPlayerObject(const std::vector<std::string>& msgArray, const long ID);
@@ -169,9 +170,13 @@ private:
 	void HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, const int type);
 	void HandleWeaponUse(const long ID);
 
+
+	//Temporary Code
+	bool UpdateActor(const std::vector<std::string>& msgArray, const long ID);
+
 protected:
 	virtual void onEvent(Event* e);
-	
+
 private:
 	/*! Current Client ID*/
 	long zID;

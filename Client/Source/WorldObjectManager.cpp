@@ -1,5 +1,5 @@
 #include "WorldObjectManager.h"
-
+#include "Safe.h"
 
 WorldObjectManager::WorldObjectManager()
 {
@@ -10,38 +10,26 @@ WorldObjectManager::~WorldObjectManager()
 {
 	for(auto x = this->zPlayerObjects.begin(); x < this->zPlayerObjects.end(); x++)
 	{
-		if((*x))
-		{
-			delete (*x);
-			(*x) = 0;
-		}
+		SAFE_DELETE((*x));
 	}
 
 	for(auto x = this->zAnimalObjects.begin(); x < this->zAnimalObjects.end(); x++)
 	{
-		if((*x))
-		{
-			delete (*x);
-			(*x) = 0;
-		}
+		SAFE_DELETE((*x));
 	}
 
 	for(auto x = this->zStaticObjects.begin(); x < this->zStaticObjects.end(); x++)
 	{
-		if((*x))
-		{
-			delete (*x);
-			(*x) = 0;
-		}
+		SAFE_DELETE((*x));
 	}
 
 	for(auto x = this->zDynamicObjects.begin(); x < this->zDynamicObjects.end(); x++)
 	{
-		if((*x))
-		{
-			delete (*x);
-			(*x) = 0;
-		}
+		SAFE_DELETE((*x));
+	}
+	for(auto x = this->zActors.begin(); x < this->zActors.end(); x++)
+	{
+		SAFE_DELETE((*x));
 	}
 }
 
@@ -375,4 +363,51 @@ DeadPlayerObject* WorldObjectManager::SearchAndGetDeadPlayerObject(const long ID
 {
 	int position = this->SearchForDeadPlayerObject(ID);
 	return this->zDeadPlayerObjects[position];
+}
+
+WorldObject* WorldObjectManager::SearchAndGetActor(const long ID)
+{
+	int position = this->SearchForActor(ID);
+	return this->zActors[position];
+}
+
+WorldObject* WorldObjectManager::GetActor( const int Index )
+{
+	if ((unsigned int)Index < this->zActors.size())
+		return this->zActors[Index];
+
+	return NULL;
+}
+
+int WorldObjectManager::SearchForActor( const long ID )
+{
+	for (unsigned int i = 0; i < this->zActors.size(); i++)
+	{
+		if (this->zActors[i]->GetID() == ID)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+bool WorldObjectManager::RemoveActor( const int Index )
+{
+	if ((unsigned int)Index < this->zActors.size())
+	{
+		WorldObject* worldObject = this->zActors[Index];
+		this->zActors.erase(this->zActors.begin() + Index);
+		SAFE_DELETE(worldObject);
+		return true;
+	}
+}
+
+bool WorldObjectManager::AddActor(WorldObject* actor)
+{
+	if (actor)
+	{
+		this->zActors.push_back(actor);
+		return true;
+	}
+	return false;
 }
