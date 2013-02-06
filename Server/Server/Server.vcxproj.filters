@@ -282,5 +282,8 @@
       <Filter>Source\Actors</Filter>
     </ClInclude>
     <ClInclude Include="Source\PhysicsActor.h" />
+    <ClInclude Include="Source\Damage.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

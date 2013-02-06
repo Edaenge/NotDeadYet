@@ -4,10 +4,14 @@
 
 class ProjectileActor : public Actor
 {
+	Actor* zShooter;
 public:
-	ProjectileActor();
+	ProjectileActor( Actor* shooter );
 	virtual ~ProjectileActor();
+
 protected:
 
+
 private:
+
 };

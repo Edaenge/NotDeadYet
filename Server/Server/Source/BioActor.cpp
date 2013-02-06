@@ -37,19 +37,22 @@ void BioActor::InitValues()
 	this->zStaminaChanged = true;
 }
 
-bool BioActor::TakeDamage(const float dmg)
+bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
 {
-	this->zHealth -= dmg; 
-	
-	BioActorTakeDamageEvent BATD;
-	BATD.zActor = this;
+	this->zHealth -= dmg.GetTotal();
+	this->zHealthChanged = true;
 
 	if(this->zHealth <= 0.0f)
 	{
 		this->zHealth = 0.0f;
 		this->zAlive = false;
 	}
-	this->zHealthChanged = true;
+
+	// Notify Damage
+	BioActorTakeDamageEvent BATD;
+	BATD.zActor = this;
+	BATD.zDamage = dmg;
+	NotifyObservers(&BATD);
 
 	return this->zAlive;
 }

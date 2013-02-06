@@ -1,20 +1,5 @@
 #include "ActorSynchronizer.h"
-struct ActorPositionEvent
-{
-	Actor* actor;
-};
-struct ActorRotationEvent
-{
-	Actor* actor;
-};
-struct ActorScaleEvent
-{
-	Actor* actor;
-};
-struct BioActorTakeDamageEvent
-{
-	Actor* actor;
-};
+#include "Actor.h"
 
 void ActorSynchronizer::OnEvent( Event* e )
 {
