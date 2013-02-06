@@ -4,6 +4,7 @@
 #include <world/World.h>
 #include "GameEvents.h"
 #include "PlayerBehavior.h"
+#include "PlayerWolfBehavior.h"
 #include "PlayerActor.h"
 #include "PlayerWolfBehavior.h"
 #include "AIWolfBehavior.h"
@@ -69,8 +70,7 @@ void Game::OnEvent( Event* e )
 		zActorManager->AddActor(actor);
 
 		// Apply Default Player Behavior
-		SetPlayerBehavior(player, new PlayerHumanBehavior(actor, zWorld, player));
-	}
+		SetPlayerBehavior(player, new PlayerHumanBehavior(actor, zWorld, player));	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
@@ -78,6 +78,13 @@ void Game::OnEvent( Event* e )
 	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )
 	{
 		zPlayers[KUE->clientData]->GetKeys().SetKeyState(KUE->key, false);
+	}
+	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
+	{
+		Behavior* behavior = zBehaviors[zPlayers[CDE->clientData]];
+		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(behavior))
+			int i = 0;
+		//_behaviors[_players[CDE->clientData]]->ProcessClientData(CDE->direction, CDE->direction);
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
@@ -130,5 +137,4 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	if ( behavior )	zBehaviors.insert(behavior);
 	player->zBehavior = behavior;
 }
-
 

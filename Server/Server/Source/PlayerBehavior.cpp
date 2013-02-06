@@ -6,13 +6,12 @@
 PlayerBehavior::PlayerBehavior( Actor* actor, World* world, Player* player ) : 
 	Behavior(actor, world),
 	zVelocity(0.0f, 0.0f, 0.0f),
-	zPlayer(player)
-{
+	zPlayer(player){
 }
 
 bool PlayerBehavior::Update( float dt )
 {
-	Vector3 newPlayerPos;
+	/*Vector3 newPlayerPos;
 	Vector3 moveDir = Vector3(0,0,0);
 
 	Vector3 currentPlayerPos = this->zActor->GetPosition();
@@ -50,10 +49,11 @@ bool PlayerBehavior::Update( float dt )
 		Vector3 newGroundNormal = zWorld->CalcNormalAt(newPlayerPos.GetXZ());
 		this->zVelocity = newGroundNormal * this->zVelocity.GetLength() * ELASTICITY;
 	}
-	this->zActor->SetPosition(newPlayerPos);
-	// TODO: Check normal if its too steep.
-	// Check it try to move down or up.
-	// Make fall down.
-	// See if below ground.
+	this->zActor->SetPosition(newPlayerPos);*/
+	return true;
+}
+
+bool PlayerBehavior::ProcessClientData( Vector3 direction, Vector4 rotation )
+{
 	return true;
 }

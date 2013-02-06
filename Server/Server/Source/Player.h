@@ -2,6 +2,7 @@
 
 #include <Observer.h>
 #include <KeyStates.h>
+#include "Observer.h"
 
 class ClientData;
 class Behavior;

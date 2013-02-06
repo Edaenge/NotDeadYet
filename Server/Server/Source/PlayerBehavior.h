@@ -10,9 +10,9 @@ class PlayerBehavior : public Behavior
 {
 private:
 	Player* zPlayer;
-	Vector3 zVelocity;
 public:
 	PlayerBehavior(Actor* actor, World* world, Player* Player);
-
 	bool Update(float dt);
+
+	bool ProcessClientData(Vector3 direction, Vector4 rotation);
 };

@@ -131,7 +131,6 @@ public:
 	Vector3 upVector;
 	Vector3 direction;
 	Vector4 rotation;
-	float frameTime;
 };
 
 /*Event when a client sends an information to server.
