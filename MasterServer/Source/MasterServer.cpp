@@ -14,7 +14,7 @@ MasterServer::MasterServer( const unsigned short &port ) :
 void MasterServer::HandleConnected( MaloW::ClientChannel *channel )
 {
 	zChannelsMutex.lock();
-	zChannels[channel->GetClientID()] = channel;
+	//zChannels[channel->GetClientID()] = channel;
 	zChannelsMutex.unlock();
 
 	channel->Start();
@@ -27,13 +27,13 @@ void MasterServer::HandleMessage( MaloW::ClientChannel *channel, const std::stri
 
 void MasterServer::HandleDisconnected( MaloW::ClientChannel *channel )
 {
-	zChannelsMutex.lock();
-	auto i = zChannels.find(channel->GetClientID());
-	if ( i != zChannels.end() )
-		zChannels.erase(i);
-	zChannelsMutex.unlock();
-
-	delete channel;
+// 	zChannelsMutex.lock();
+// 	auto i = zChannels.find(channel->GetClientID());
+// 	if ( i != zChannels.end() )
+// 		zChannels.erase(i);
+// 	zChannelsMutex.unlock();
+// 
+// 	delete channel;
 }
 
 void MasterServer::Life()

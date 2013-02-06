@@ -42,6 +42,7 @@ bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
 	BioActorTakeDamageEvent BATD;
 	BATD.zActor = this;
 	BATD.zDamage = dmg;
+	BATD.zDealer = dealer;
 	NotifyObservers(&BATD);
 
 	return this->zAlive;
@@ -74,16 +75,16 @@ void BioActor::RewindPosition()
 
 bool BioActor::HasMoved()
 {
-	//if(GetPosition() == this->zPreviousPos)
-	return false;
-	
+	Vector3 curPos = GetPosition();
+
+	if(curPos == this->zPreviousPos)
+		return false;	
 	return true;
 }
 
 std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 {
 	string msg = "";
-
 	msg += NMC->Convert(MESSAGE_TYPE_STATE, this->zState);
 
 	if(zHealthChanged)
@@ -91,6 +92,7 @@ std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 		msg += NMC->Convert(MESSAGE_TYPE_HEALTH, this->zHealth);
 		this->zHealthChanged = false;
 	}
+
 	if(zStaminaChanged)
 	{
 		msg += NMC->Convert(MESSAGE_TYPE_STAMINA, this->zStamina);

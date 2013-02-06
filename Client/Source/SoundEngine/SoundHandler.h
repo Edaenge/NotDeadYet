@@ -35,9 +35,9 @@
 struct SoundStruct
 {
 	FMOD::Sound*	sound;
-	char*			name;
+	std::string		name;
 
-	SoundStruct(FMOD::Sound* sound, char* name) { this->sound = sound; this->name = name; };
+	SoundStruct(FMOD::Sound* sound, const std::string& name) { this->sound = sound; this->name = name; };
 };
 
 

@@ -1,9 +1,13 @@
-#pragma once
+#ifndef CLIENTCHANNEL_H
+#define CLIENTCHANNEL_H
 
 #include <iostream>
 #include <stdio.h>
 #include <tchar.h>
 #include <string>
+
+#include "NetworkPacket.h"
+#include "NetworkChannel.h"
 
 using namespace std;
 
@@ -18,10 +22,9 @@ This class will be listening for data with its own process and it will send data
 
 namespace MaloW
 {
-	class ClientChannel : public MaloW::Process
+	class ClientChannel : public MaloW::NetworkChannel, public MaloW::Process
 	{
 	private:
-		SOCKET zSocket;
 		MaloW::Process* zNotifier;
 		long zID;
 
@@ -37,17 +40,8 @@ namespace MaloW
 
 		// Begin Process
 		void Life();
-
-		// Send Message
-		bool Send(const std::string& msg) throw(...);
-
-		// Try Sending A message, does not throw when failing
-		bool TrySend(const std::string& msg);
-
-		// Connection ID
-		inline long GetClientID() const { return zID; }
-
-		// Disconnects the channel. Will push a Player DisconnectedEvent.
-		void Disconnect();
 	};
 }
+
+
+#endif

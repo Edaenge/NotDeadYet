@@ -7,8 +7,7 @@
 #include <string>
 #include <vector>
 #include "Process.h"
-
-using namespace std;
+#include "NetworkChannel.h"
 
 /*
 Implement your own client class with this class as an object for sending / recieving data.
@@ -21,14 +20,10 @@ server and you can also send data to the server.s
 
 namespace MaloW
 {
-	class ServerChannel : public MaloW::Process
+	class ServerChannel : public MaloW::NetworkChannel, public MaloW::Process
 	{
 	private:
-		SOCKET zSocket;
 		Process* zNotifier;
-
-		// Receive Message
-		bool Receive(std::string& msg) throw(...);
 
 	protected:
 		void CloseSpecific();
@@ -39,12 +34,6 @@ namespace MaloW
 
 		// Begin Process
 		void Life();
-
-		// Send Data Through Channel
-		bool Send(const std::string& msg) throw(...);
-
-		// Send Data, Does not throw anything back
-		bool TrySend(const std::string& msg);
 	};
 }
 

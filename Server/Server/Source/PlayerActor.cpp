@@ -1,30 +1,10 @@
 #include "PlayerActor.h"
 #include "ClientServerMessages.h"
 
-PlayerActor::PlayerActor(const long ID) : BioActor()
-{
-	InitValues();
-	this->zID = ID;
-}
-
-PlayerActor::PlayerActor(const long ID, const Vector3& startPos, PhysicsObject* pObj) : BioActor()
-{
-	InitValues();
-	this->zID = ID;
-	this->zPhysicsObject = pObj;
-}
-
-PlayerActor::PlayerActor(const long ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj) : BioActor()
-{
-	InitValues();
-	this->zID = ID;
-	this->zPhysicsObject = pObj;
-}
-
 PlayerActor::PlayerActor( Player* player )
 {
-	InitValues();
 	this->zPlayer = player;
+	InitValues();
 }
 
 void PlayerActor::InitValues()

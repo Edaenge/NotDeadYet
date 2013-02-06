@@ -72,6 +72,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Include\NetworkChannel.cpp" />
     <ClCompile Include="Include\Process.cpp" />
     <ClCompile Include="Source\ClientChannel.cpp" />
     <ClCompile Include="Source\FileReader.cpp" />
@@ -88,6 +89,7 @@
     <ClInclude Include="Include\List.h" />
     <ClInclude Include="Include\MaloW.h" />
     <ClInclude Include="Include\MaloWFileDebug.h" />
+    <ClInclude Include="Include\NetworkChannel.h" />
     <ClInclude Include="Include\NetworkException.h" />
     <ClInclude Include="Include\NetworkPacket.h" />
     <ClInclude Include="Include\Process.h" />

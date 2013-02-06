@@ -244,7 +244,7 @@ void Client::ReadMessages()
 			//Check if Client has received a Message
 			if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(ev) )
 			{
-				HandleNetworkMessage(np->getMessage());
+				HandleNetworkMessage(np->GetMessage());
 			}
 			else if ( DisconnectedEvent* np = dynamic_cast<DisconnectedEvent*>(ev) )
 			{

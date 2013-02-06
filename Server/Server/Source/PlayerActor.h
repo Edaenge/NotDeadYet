@@ -18,14 +18,10 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 */
 class PlayerActor : public BioActor, public Observed
 {
+	Vector3 zInitialDirection;
+
 public:
 	PlayerActor(Player* player);
-	/*! ID should be the same ID as in ClientChannel.*/
-	PlayerActor(const long ID);
-	/*! ID should be the same ID as in ClientChannel.*/
-	PlayerActor(const long ID, const Vector3& startPos, PhysicsObject* pObj);
-	/*! ID should be the same ID as in ClientChannel.*/
-	PlayerActor(const long ID, const Vector3& startPos, const Vector4& startRot, PhysicsObject* pObj);
 
 	virtual ~PlayerActor();
 
