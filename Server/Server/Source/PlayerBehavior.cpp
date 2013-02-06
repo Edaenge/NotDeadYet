@@ -46,11 +46,11 @@ bool PlayerBehavior::Update( float dt )
 		Vector3 newGroundNormal = zWorld->CalcNormalAt(newPlayerPos.GetXZ());
 		this->zVelocity = newGroundNormal * this->zVelocity.GetLength() * ELASTICITY;
 	}
-	this->zActor->SetPosition(newPlayerPos);
-	return true;*/
+	this->zActor->SetPosition(newPlayerPos);*/
+	return true;
 }
 
 bool PlayerBehavior::ProcessClientData( Vector3 direction, Vector4 rotation )
 {
-
+	return true;
 }

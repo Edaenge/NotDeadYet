@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
+<modelStoreModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/LogicalClassDesigner"
   dslVersion="1.0.0.0"
   Id="bd43730d-04bf-4a10-90be-c903d2a964f3"
   name="ModelingProject1" xmlns="http://schemas.microsoft.com/dsltools/ModelStore">
@@ -2017,45 +2017,6 @@
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
-          <association
-            Id="4e14b2aa-9bae-45cb-97ba-92b894ef15dc"
-            isDerived="false"
-            sourceEndRoleName="Game : Observed"
-            targetEndRoleName="KeyStates"
-            isLeaf="false"
-            isAbstract="false">
-            <classMoniker
-              Id="fe6408c8-fdd5-48eb-92f8-1125695c05d2"
-              LastKnownName="KeyStates"
-              LastKnownLocation="ModelingProject1.uml" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="0282f018-12ef-43d1-a7f9-070eb149916e"
-                  name="Game : Observed"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="Shared"
-                  isComposite="false"
-                  isNavigableOwned="false" />
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="1eda033f-282f-4936-8649-b79847250579"
-                  name="KeyStates"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false" />
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-          </association>
         </targetEnds>
         <ownedAttributesInternal>
           <property
@@ -2632,6 +2593,45 @@
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
+          <association
+            Id="7a614216-f145-4f36-8ab5-d475f99774bf"
+            isDerived="false"
+            sourceEndRoleName="Player : Observed"
+            targetEndRoleName="KeyStates"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="fe6408c8-fdd5-48eb-92f8-1125695c05d2"
+              LastKnownName="KeyStates"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="d7a8639d-2a4c-4b81-8f84-c9fab37ddc9d"
+                  name="Player : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="698a433b-e1d4-4fc0-a336-5d2fd9e125f9"
+                  name="KeyStates"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
         </targetEnds>
         <ownedAttributesInternal>
           <property
@@ -2668,6 +2668,14 @@
           <operation
             Id="924f5e58-227e-4e25-bac5-e67fb5b46544"
             name="Kick"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="47faa892-69f4-46bd-9dc4-8f83b7e0458b"
+            name="GetKeys"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -3860,20 +3868,20 @@
         </generalsInternal>
         <targetEnds>
           <association
-            Id="47fdd725-ffe6-4620-8f89-86d76a1ce8a6"
+            Id="e76e7c52-07cb-4b2e-a76c-6afab15698d5"
             isDerived="false"
             sourceEndRoleName="PlayerBehavior"
-            targetEndRoleName="KeyStates"
+            targetEndRoleName="Player : Observed"
             isLeaf="false"
             isAbstract="false">
             <classMoniker
-              Id="fe6408c8-fdd5-48eb-92f8-1125695c05d2"
-              LastKnownName="KeyStates"
+              Id="606c071a-a447-46cb-af2f-d2e10efc0ba5"
+              LastKnownName="Player : Observed"
               LastKnownLocation="ModelingProject1.uml" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
                 <memberEnd
-                  Id="9cb80e58-50b9-4548-8b16-c8556843248f"
+                  Id="f2e2e3cd-e0d8-428d-afe6-cda504ede7d9"
                   name="PlayerBehavior"
                   isLeaf="false"
                   isStatic="false"
@@ -3886,8 +3894,8 @@
               </associationHasOwnedEnds>
               <associationHasOwnedEnds>
                 <memberEnd
-                  Id="8747bb24-9be4-4119-b468-414bc3832e3b"
-                  name="KeyStates"
+                  Id="7e875cd4-8cf0-4ea8-9222-bece2477286d"
+                  name="Player : Observed"
                   isLeaf="false"
                   isStatic="false"
                   isReadOnly="false"
@@ -3930,6 +3938,16 @@
             </type_NamedElement>
           </property>
         </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="41ac9c43-1846-4650-8d0b-5bcebc0350cb"
+            name="ProcessClientData"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -3941,68 +3959,14 @@
         isActiveClass="false">
         <generalsInternal>
           <generalization
-            Id="9c5d4a89-1665-4df3-9267-ecc14886e772"
+            Id="50a6a15c-aa13-4562-8486-23a75b30ebd7"
             isSubstitutable="false">
             <classMoniker
-              Id="66156a6b-5c43-4b55-be3f-19c8284e7cab"
-              LastKnownName="Behavior : Abstract"
+              Id="8b1701f8-2161-4112-9ccd-7b7798ec1e24"
+              LastKnownName="PlayerBehavior"
               LastKnownLocation="ModelingProject1.uml" />
           </generalization>
         </generalsInternal>
-        <targetEnds>
-          <association
-            Id="415e96d2-cf9a-40ec-bd2d-b7a3a901d67d"
-            isDerived="false"
-            sourceEndRoleName="PlayerWolfBehavior"
-            targetEndRoleName="KeyStates"
-            isLeaf="false"
-            isAbstract="false">
-            <classMoniker
-              Id="fe6408c8-fdd5-48eb-92f8-1125695c05d2"
-              LastKnownName="KeyStates"
-              LastKnownLocation="ModelingProject1.uml" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="2bcc7a2e-adb3-419f-b6a9-dbbac4f2de04"
-                  name="PlayerWolfBehavior"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="Composite"
-                  isComposite="false"
-                  isNavigableOwned="false" />
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="7c83112b-c311-4233-bda2-9c1e96b6af91"
-                  name="KeyStates"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="true" />
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-          </association>
-        </targetEnds>
-        <ownedAttributesInternal>
-          <property
-            Id="4dcf0d6d-2051-47f8-8e36-245981a1e0a2"
-            name="zKeyStates"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-        </ownedAttributesInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>
@@ -4294,6 +4258,25 @@
       <undefinedType
         Id="89f24c64-97b8-4d96-8acb-ff119de262c3"
         name="Vector3" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="45bde56d-fce5-4761-8588-880b59749066"
+        name="PlayerHumanBehavior"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="4941fbf4-118f-40af-9e82-4a9fe98e5f11"
+            isSubstitutable="false">
+            <classMoniker
+              Id="8b1701f8-2161-4112-9ccd-7b7798ec1e24"
+              LastKnownName="PlayerBehavior"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType

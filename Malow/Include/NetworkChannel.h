@@ -13,7 +13,7 @@ namespace MaloW
 		NetworkChannel( SOCKET socket );
 
 		// Receive Message
-		bool Receive(std::string& msg) throw(...);
+		virtual bool Receive(std::string& msg) throw(...);
 
 	public:
 		// Send Message

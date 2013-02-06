@@ -29,7 +29,7 @@ namespace MaloW
 		long zID;
 
 		// Receive Message
-		bool Receive(std::string& msg) throw(...);
+		//bool Receive(std::string& msg) {NetworkChannel::Receive(msg);} throw(...)
 
 	protected:
 		void CloseSpecific();

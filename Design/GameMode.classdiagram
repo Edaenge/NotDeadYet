@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="f028be13-54a5-475f-8aa4-262c388ccc13" name="GameMode" linkedPackageId="a10774ef-d98f-4179-8296-995a24e577f0" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="f028be13-54a5-475f-8aa4-262c388ccc13" name="GameMode" linkedPackageId="a10774ef-d98f-4179-8296-995a24e577f0" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
   <packagedElements>
     <logicalClassDesignerModelHasTypes>
       <class Id="e9818c4e-215f-4a8e-9fd7-9338b52afb98" name="Host : Process : Observed" isAbstract="false" isLeaf="false" isActiveClass="false">
@@ -174,22 +174,6 @@
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
             <elementDefinition Id="14f693cf-c4a7-4082-b238-02476cde5ed2" />
-          </association>
-          <association Id="3c41eb7a-aa5d-4b81-9874-488521596db6" isDerived="false" sourceEndRoleName="Game : Observed" targetEndRoleName="KeyStates" isLeaf="false" isAbstract="false">
-            <classMoniker Id="c7ad1d2c-b823-42e7-bc6d-c114b86d91ff" LastKnownName="KeyStates" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd Id="91a9b31c-caca-4f62-8fe7-31a102523a4d" name="Game : Observed" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
-                  <elementDefinition Id="0282f018-12ef-43d1-a7f9-070eb149916e" />
-                </memberEnd>
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd Id="9c7980f9-6842-4a26-bff7-8a6039cd906e" name="KeyStates" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-                  <elementDefinition Id="1eda033f-282f-4936-8649-b79847250579" />
-                </memberEnd>
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-            <elementDefinition Id="4e14b2aa-9bae-45cb-97ba-92b894ef15dc" />
           </association>
         </targetEnds>
         <ownedAttributesInternal>
@@ -457,6 +441,22 @@
             </relationshipOwnedElementsInternal>
             <elementDefinition Id="234c67e5-d320-4faa-adbd-c61f2b993a07" />
           </association>
+          <association Id="0abc91d0-0a9f-42b8-9a93-8e2fcb1a82aa" isDerived="false" sourceEndRoleName="Player : Observed" targetEndRoleName="KeyStates" isLeaf="false" isAbstract="false">
+            <classMoniker Id="c7ad1d2c-b823-42e7-bc6d-c114b86d91ff" LastKnownName="KeyStates" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="48cac07f-5725-4db8-a984-fc29caebb078" name="Player : Observed" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="d7a8639d-2a4c-4b81-8f84-c9fab37ddc9d" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="83cc7543-0322-4bcf-a384-16df42a7d0ec" name="KeyStates" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="698a433b-e1d4-4fc0-a336-5d2fd9e125f9" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="7a614216-f145-4f36-8ab5-d475f99774bf" />
+          </association>
         </targetEnds>
         <ownedAttributesInternal>
           <property Id="487934e0-0059-4104-ad6b-402fc06c413e" name="zClientData" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
@@ -476,6 +476,9 @@
           </operation>
           <operation Id="d040b47e-cfa3-42d9-86b6-bc0a256ff687" name="Kick" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="924f5e58-227e-4e25-bac5-e67fb5b46544" />
+          </operation>
+          <operation Id="c83288a6-96de-41ef-a239-c641789f212a" name="GetKeys" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="47faa892-69f4-46bd-9dc4-8f83b7e0458b" />
           </operation>
         </ownedOperationsInternal>
       </class>
@@ -919,21 +922,21 @@
           </generalization>
         </generalsInternal>
         <targetEnds>
-          <association Id="17b83868-510f-4cc3-a367-d83a1c0cd501" isDerived="false" sourceEndRoleName="PlayerBehavior" targetEndRoleName="KeyStates" isLeaf="false" isAbstract="false">
-            <classMoniker Id="c7ad1d2c-b823-42e7-bc6d-c114b86d91ff" LastKnownName="KeyStates" />
+          <association Id="1e4854e4-024e-496e-ae15-6f16211f2204" isDerived="false" sourceEndRoleName="PlayerBehavior" targetEndRoleName="Player : Observed" isLeaf="false" isAbstract="false">
+            <classMoniker Id="5cb4c6ea-e4d5-42ec-8a70-63f480b1cc0f" LastKnownName="Player : Observed" />
             <relationshipOwnedElementsInternal>
               <associationHasOwnedEnds>
-                <memberEnd Id="ddb5a37f-f307-4ac0-9595-540f58251725" name="PlayerBehavior" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
-                  <elementDefinition Id="9cb80e58-50b9-4548-8b16-c8556843248f" />
+                <memberEnd Id="8d37ce81-3d53-4595-af08-b311c806df3f" name="PlayerBehavior" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="f2e2e3cd-e0d8-428d-afe6-cda504ede7d9" />
                 </memberEnd>
               </associationHasOwnedEnds>
               <associationHasOwnedEnds>
-                <memberEnd Id="d214bd85-2c8a-4585-b833-1e13fa6950c0" name="KeyStates" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
-                  <elementDefinition Id="8747bb24-9be4-4119-b468-414bc3832e3b" />
+                <memberEnd Id="e1757b20-5715-46d4-b96f-1b824a29324a" name="Player : Observed" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="7e875cd4-8cf0-4ea8-9222-bece2477286d" />
                 </memberEnd>
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
-            <elementDefinition Id="47fdd725-ffe6-4620-8f89-86d76a1ce8a6" />
+            <elementDefinition Id="e76e7c52-07cb-4b2e-a76c-6afab15698d5" />
           </association>
         </targetEnds>
         <ownedAttributesInternal>
@@ -947,40 +950,22 @@
             </type_NamedElement>
           </property>
         </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="c5f94e5c-7210-4c9b-996f-d3276818d3f2" name="ProcessClientData" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="41ac9c43-1846-4650-8d0b-5bcebc0350cb" />
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
       <class Id="d377774b-5000-4c64-b1ca-27eeec0ba1cf" name="PlayerWolfBehavior" isAbstract="false" isLeaf="false" isActiveClass="false">
         <elementDefinition Id="3b00dd1a-fceb-4ab8-83dc-d5a2e82286ef" />
         <generalsInternal>
-          <generalization Id="c0a58de7-7353-434a-9406-8754ded051bf" isSubstitutable="false">
-            <classMoniker Id="e96d2201-7554-4d10-b02e-25fd0fea7bc0" LastKnownName="Behavior : Abstract" />
-            <elementDefinition Id="9c5d4a89-1665-4df3-9267-ecc14886e772" />
+          <generalization Id="1bb576d1-0693-4b2f-baed-e363f56a2ae0" isSubstitutable="false">
+            <classMoniker Id="1c40ccfd-e1a6-41c9-a30f-c152aed237b1" LastKnownName="PlayerBehavior" />
+            <elementDefinition Id="50a6a15c-aa13-4562-8486-23a75b30ebd7" />
           </generalization>
         </generalsInternal>
-        <targetEnds>
-          <association Id="dcbb4995-e007-4ec9-8646-f3b003ea0b2b" isDerived="false" sourceEndRoleName="PlayerWolfBehavior" targetEndRoleName="KeyStates" isLeaf="false" isAbstract="false">
-            <classMoniker Id="c7ad1d2c-b823-42e7-bc6d-c114b86d91ff" LastKnownName="KeyStates" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd Id="8076cac8-74b4-4deb-8cd8-a58cbe994928" name="PlayerWolfBehavior" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
-                  <elementDefinition Id="2bcc7a2e-adb3-419f-b6a9-dbbac4f2de04" />
-                </memberEnd>
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd Id="eaee933e-5a5d-46f5-8dd7-18549f07d129" name="KeyStates" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
-                  <elementDefinition Id="7c83112b-c311-4233-bda2-9c1e96b6af91" />
-                </memberEnd>
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-            <elementDefinition Id="415e96d2-cf9a-40ec-bd2d-b7a3a901d67d" />
-          </association>
-        </targetEnds>
-        <ownedAttributesInternal>
-          <property Id="3f1ad52f-d54f-417b-a9dd-1c6e54fc73f2" name="zKeyStates" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="4dcf0d6d-2051-47f8-8e36-245981a1e0a2" />
-          </property>
-        </ownedAttributesInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <logicalClassDesignerModelHasTypes>
@@ -1065,6 +1050,17 @@
         <elementDefinition Id="89f24c64-97b8-4d96-8acb-ff119de262c3" />
       </referencedType>
     </packageHasNamedElement>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="2a4e63d3-3661-4af4-8906-257a69a891d1" name="PlayerHumanBehavior" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="45bde56d-fce5-4761-8588-880b59749066" />
+        <generalsInternal>
+          <generalization Id="6eebffdd-4f8c-446d-a6f1-b861a05608d0" isSubstitutable="false">
+            <classMoniker Id="1c40ccfd-e1a6-41c9-a30f-c152aed237b1" LastKnownName="PlayerBehavior" />
+            <elementDefinition Id="4941fbf4-118f-40af-9e82-4a9fe98e5f11" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
   </packagedElements>
   <package Id="a10774ef-d98f-4179-8296-995a24e577f0" name="ModelingProject1">
     <elementDefinition Id="bd43730d-04bf-4a10-90be-c903d2a964f3" />
