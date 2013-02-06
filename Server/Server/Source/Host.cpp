@@ -161,7 +161,10 @@ void Host::ReadMessages()
 
 		if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(pe) )
 		{
-			HandleReceivedMessage(np->getChannel(), np->getMessage());
+			MaloW::ClientChannel* cc = NULL;
+			cc = dynamic_cast<MaloW::ClientChannel*>(np->GetChannel());
+
+			HandleReceivedMessage(cc, np->GetMessage());
 		}
 		else if ( ClientConnectedEvent* CCE = dynamic_cast<ClientConnectedEvent*>(pe) )
 		{
