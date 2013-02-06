@@ -31,14 +31,7 @@ public:
 	/*! Sends a message to the client.*/
 	inline void SendMessage(const std::string& msg)
 	{
-		try
-		{
-			zClient->Send(msg);
-		}
-		catch(...)
-		{
-
-		}
+		zClient->TrySend(msg);
 	}
 
 	/*! Handle the ping from client.*/

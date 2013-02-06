@@ -8,6 +8,11 @@ Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldF
 {
 	// Create World
 	zWorld = new World(this, worldFile.c_str());
+
+	// Actor Manager
+	zActorManager = new ActorManager(syncher);
+
+
 }
 
 Game::~Game()

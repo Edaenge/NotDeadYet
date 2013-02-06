@@ -25,6 +25,8 @@ static const enum ACTOR_TYPE
 	ACTOR_TYPE_DEAD_ANIMAL
 };
 
+class Actor;
+
 class ActorPositionEvent : public Event
 {
 public:

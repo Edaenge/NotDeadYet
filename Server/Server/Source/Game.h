@@ -16,6 +16,7 @@ class ActorSynchronizer;
 
 class Game : public Observer, public Observed
 {
+	ActorManager* zActorManager;
 	GameMode* zGameMode;
 	World* zWorld;
 

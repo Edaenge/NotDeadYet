@@ -31,6 +31,6 @@ private:
 	*/
 	int GetKeyValue(std::string KP);
 	const std::string& GetCommand(const int keyValue);
-	void TrimAndSet(char* ret);
+	void TrimAndSet(std::string& ret);
 
 };

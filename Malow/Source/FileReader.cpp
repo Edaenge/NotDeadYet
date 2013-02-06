@@ -11,12 +11,11 @@ FileReader::~FileReader()
 
 }
 
-void FileReader::TrimAndSet( char* ret )
+void FileReader::TrimAndSet( std::string& str )
 {
-	if(ret == NULL)
+	if( str.empty() )
 		return;
 
-	std::string str(ret);
 	str.erase(remove_if(str.begin(), str.end(), isspace), str.end());
 
 	size_t found;
@@ -32,19 +31,13 @@ void FileReader::TrimAndSet( char* ret )
 	subA = str.substr(0,index);
 	subB = str.substr(index+1,str.size()-1);
 
-	subA += " = ";
-	str = subA + subB;
-
-	// TODO: Not Correct
-	strcpy(ret, str.c_str());
+	str = subA +  " = " + subB;
 }
 
-bool FileReader::Replace( char* key )
+bool FileReader::Replace( std::string& str )
 {
-	if (strcmp(key, "") == 0)
+	if (str.empty())
 		return false;
-
-	std::string str = std::string(key);
 
 	for (unsigned int i = 0; i < str.length(); i++)
 	{
@@ -53,9 +46,6 @@ bool FileReader::Replace( char* key )
 			str.at(i) = ' ';
 		}
 	}
-
-	// TODO: Not Correct
-	strcpy(key, str.c_str());
 	
 	return true;
 }
