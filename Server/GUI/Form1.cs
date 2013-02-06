@@ -20,7 +20,7 @@ namespace GUI
         const string RUNNING = "Running";
         const string NOT_RUNNING = "Not Running";
         String IPADD = "";
-
+        String mapName = "FFA";
         int max_pl = 0;
         CppCLI m_ServerEngine = null;
 
@@ -69,11 +69,20 @@ namespace GUI
             int port;
             int players;
             bool isNr = false;
+            String gameMode = "FFA";
+            String mapName = "3x3";
 
             String str_port = textBox_Port.Text.Trim();
             String str_players =textBox_Players.Text.Trim();
-
-          
+            if (FFARadioButton.Checked)
+            {
+                gameMode = "FFA";
+            }
+            else if (TestGameModeRadioButton.Checked)
+            {
+                gameMode = "TestMode";
+            }
+            
             isNr = int.TryParse(str_port, out port);
 
             if (!isNr)
@@ -97,7 +106,7 @@ namespace GUI
                 return;
             }
 
-            String ret = m_ServerEngine.Init(port, players);
+            String ret = m_ServerEngine.Init(port, players, gameMode, mapName);
             if (ret != "")
             {
                 MessageBox.Show("Error: "+ret);
@@ -179,6 +188,11 @@ namespace GUI
         private void button_copy_MouseClick(object sender, MouseEventArgs e)
         {
             Clipboard.SetText(textBox_public_ip.Text);
+        }
+
+        private void MapsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mapName = MapsListBox.SelectedItem.ToString();
         }
 
     }

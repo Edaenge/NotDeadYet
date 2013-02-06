@@ -26,7 +26,7 @@ public:
 	virtual ~Host();
 	/*! Creates a Server locally
 	returns a code that describes error or success*/
-	const char* InitHost(const unsigned int &port, const unsigned int &maxClients);
+	const char* InitHost(const unsigned int &port, const unsigned int &maxClients, const std::string& gameMode, const std::string& mapName);
 	/*! Main loop for this thread*/
 	void Life();
 	/*! Checks if the server have players connected.*/

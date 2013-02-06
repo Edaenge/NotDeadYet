@@ -138,19 +138,19 @@ bool ObjectManager::ReadFromFile()
 		}
 		else if(strcmp(key, OBJECT_PROJECTILE.c_str()) == 0)
 		{
-			StaticProjectileObject* ct = new StaticProjectileObject(false);
-			while(!read.eof() && strcmp(command, END.c_str()) != 0)
-			{
-				read.getline(line, sizeof(line));
-				TrimAndSet(line);
+			//ProjectileActor* ct = new ProjectileActor(false);
+			//while(!read.eof() && strcmp(command, END.c_str()) != 0)
+			//{
+			//	read.getline(line, sizeof(line));
+			//	TrimAndSet(line);
 
-				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
+			//	sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
 
-				if(strcmp(command,END.c_str()) != 0)
-					InterpCommand(command, key, ct);
-			}
+			//	if(strcmp(command,END.c_str()) != 0)
+			//		InterpCommand(command, key, ct);
+			//}
 
-			this->zStaticProjectiles.push_back(ct);
+			//this->zStaticProjectiles.push_back(ct);
 		}
 		else if(strcmp(key, OBJECT_MATERIAL.c_str()) == 0)
 		{
@@ -409,7 +409,7 @@ bool ObjectManager::InterpCommand(char* command, char* key, MaterialObject* ma)
 	return true;
 }
 
-bool ObjectManager::InterpCommand(char* command, char* key, StaticProjectileObject* pt)
+bool ObjectManager::InterpCommand(char* command, char* key, ProjectileActor* pa)
 {
 	if(strcmp(key, "") == 0)
 		return false;
@@ -418,53 +418,53 @@ bool ObjectManager::InterpCommand(char* command, char* key, StaticProjectileObje
 	std::transform(CC.begin(), CC.end(), CC.begin(), ::toupper);
 	strcpy(command, CC.c_str());
 
-	if(strcmp(command, TYPE.c_str()) == 0)
-	{
-		pt->SetType(MaloW::convertStringToInt(key));
-	}
-	else if(strcmp(command, SPEED.c_str()) == 0)
-	{
-		pt->SetSpeed(MaloW::convertStringToFloat(key));
-	}
-	else if(strcmp(command, DAMAGE.c_str()) == 0)
-	{
-		pt->SetDamage(MaloW::convertStringToFloat(key));
-	}
-	else if(strcmp(command, WEIGHT.c_str()) == 0)
-	{
-		pt->SetWeight(MaloW::convertStringToInt(key));
-	}
-	else if(strcmp(command, PATH.c_str()) == 0)
-	{
-		pt->SetIconPath(key);
-	}
-	else if(strcmp(command, DESCRIPTION.c_str()) == 0)
-	{
-		pt->SetDescription(key);
-	}
-	else if(strcmp(command, MODEL.c_str()) == 0)
-	{
-		pt->SetActorModel(key);
-	}
-	else if(strcmp(command, NAME.c_str()) == 0)
-	{
-		pt->SetActorObjectName(key);
-	}
-	else if(strcmp(command, STACKS.c_str()) == 0)
-	{
-		pt->SetStackSize(MaloW::convertStringToInt(key));
-	}
-	else if(strcmp(command, SCALE.c_str()) == 0)
-	{
-		char a[10];
-		char b[10];
-		char c[10];
+	//if(strcmp(command, TYPE.c_str()) == 0)
+	//{
+	//	pa->SetType(MaloW::convertStringToInt(key));
+	//}
+	//else if(strcmp(command, SPEED.c_str()) == 0)
+	//{
+	//	pa->SetSpeed(MaloW::convertStringToFloat(key));
+	//}
+	//else if(strcmp(command, DAMAGE.c_str()) == 0)
+	//{
+	//	pa->SetDamage(MaloW::convertStringToFloat(key));
+	//}
+	//else if(strcmp(command, WEIGHT.c_str()) == 0)
+	//{
+	//	pa->SetWeight(MaloW::convertStringToInt(key));
+	//}
+	//else if(strcmp(command, PATH.c_str()) == 0)
+	//{
+	//	pa->SetIconPath(key);
+	//}
+	//else if(strcmp(command, DESCRIPTION.c_str()) == 0)
+	//{
+	//	pa->SetDescription(key);
+	//}
+	//else if(strcmp(command, MODEL.c_str()) == 0)
+	//{
+	//	pa->SetActorModel(key);
+	//}
+	//else if(strcmp(command, NAME.c_str()) == 0)
+	//{
+	//	pa->SetActorObjectName(key);
+	//}
+	//else if(strcmp(command, STACKS.c_str()) == 0)
+	//{
+	//	pa->SetStackSize(MaloW::convertStringToInt(key));
+	//}
+	//else if(strcmp(command, SCALE.c_str()) == 0)
+	//{
+	//	char a[10];
+	//	char b[10];
+	//	char c[10];
 
-		sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
+	//	sscanf_s(key, "%[^','], %[^','], %[^','], %s", a, sizeof(a), b, sizeof(b), c, sizeof(c));
 
-		Vector3 scale((float)atof(a), (float)atof(b), (float)atof(c));
-		pt->SetScale(scale);
-	}
+	//	Vector3 scale((float)atof(a), (float)atof(b), (float)atof(c));
+	//	pa->SetScale(scale);
+	//}
 
 	return true;
 }
@@ -484,7 +484,7 @@ const ContainerObject* ObjectManager::GetContainerObject( const int type )
 	return SearchType(this->zContainers, type);
 }
 
-const StaticProjectileObject* ObjectManager::GetStaticProjectileObject( const int type )
+const ProjectileActor* ObjectManager::GetProjectileObject( const int type )
 {
 	return SearchType(this->zStaticProjectiles, type);
 }
@@ -522,7 +522,7 @@ const ContainerObject* ObjectManager::SearchType( std::vector<ContainerObject*>&
 	return NULL;
 }
 
-const StaticProjectileObject* ObjectManager::SearchType(std::vector<StaticProjectileObject*>& projectiles, const int type) const
+const ProjectileActor* ObjectManager::SearchType(std::vector<ProjectileActor*>& projectiles, const int type) const
 {
 	for(auto it = projectiles.begin(); it < projectiles.end(); it++)
 	{

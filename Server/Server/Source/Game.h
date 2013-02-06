@@ -5,6 +5,7 @@
 #include <KeyStates.h>
 #include "ActorManager.h"
 #include "ActorSynchronizer.h"
+#include "PhysicsEngine.h"
 
 class ClientData;
 class World;
@@ -32,4 +33,7 @@ public:
 
 	// Event input
 	void OnEvent( Event* e );
+
+private:
+	PhysicsEngine* zPhysicsEngine;
 };

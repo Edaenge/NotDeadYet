@@ -6,6 +6,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "Actor.h"
+#include "Player.h"
 #include "KeyValues.h"
 #include "KeyStates.h"
 #include "NetworkMessageConverter.h"
@@ -13,6 +14,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 class GhostActor : public Actor
 {
 public:
+	GhostActor(Player* player);
 	GhostActor(const bool genID /*= false*/, const Vector3& position);
 	virtual ~GhostActor();
 
@@ -44,4 +46,5 @@ private:
 	Vector3 zPosition;
 	Vector3 zDirection;
 	KeyStates zKeyStates;
+	Player* zPlayer;
 };
