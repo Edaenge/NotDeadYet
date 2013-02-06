@@ -23,8 +23,12 @@ public:
 class BioActor : public Actor
 {
 public:
+<<<<<<< HEAD
 
 	BioActor(const Vector3& startPos, const Vector4& rot);
+=======
+	BioActor();
+>>>>>>> f00bf6cdb57345348d729279fb4eee5bcf07ddab
 	virtual ~BioActor();
 
 	virtual void Update(float deltaTime) = 0;

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Actor.cpp" />
     <ClCompile Include="Source\ActorHandler.cpp" />
+    <ClCompile Include="Source\ActorManager.cpp" />
     <ClCompile Include="Source\ActorSynchronizer.cpp" />
     <ClCompile Include="Source\AI.cpp" />
     <ClCompile Include="Source\AIDeerBehavior.cpp" />
@@ -67,6 +68,7 @@
     <ClInclude Include="Include\ServerEngineWrapper.h" />
     <ClInclude Include="Source\Actor.h" />
     <ClInclude Include="Source\ActorHandler.h" />
+    <ClInclude Include="Source\ActorManager.h" />
     <ClInclude Include="Source\ActorSynchronizer.h" />
     <ClInclude Include="Source\AI.h" />
     <ClInclude Include="Source\AIDeerBehavior.h" />
@@ -93,7 +95,6 @@
     <ClInclude Include="Source\NetworkEvents.h" />
     <ClInclude Include="Source\ObjectCreator.h" />
     <ClInclude Include="Source\ObjectManager.h" />
-    <ClInclude Include="Source\PhysicsActor.h" />
     <ClInclude Include="Source\PhysicsEngine\BoundingSphere.h" />
     <ClInclude Include="Source\PhysicsEngine\ObjLoader.h" />
     <ClInclude Include="Source\PhysicsEngine\Physics.h" />

@@ -6,16 +6,6 @@ BioActor::BioActor() : Actor()
 	InitValues();
 }
 
-BioActor::BioActor(const Vector3& startPos) : Actor()
-{
-	InitValues();
-}
-
-BioActor::BioActor(const Vector3& startPos, const Vector4& rot) : Actor()
-{
-	InitValues();
-}
-
 BioActor::~BioActor()
 {
 }
@@ -87,16 +77,14 @@ bool BioActor::HasMoved()
 	Vector3 curPos = GetPosition();
 
 	if(curPos == this->zPreviousPos)
-		return false;
-	
+		return false;	
 	return true;
 }
 
 std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 {
 	string msg = "";
-	msg = Actor::ToMessageString(NMC);
-
+	msg = PhysicsActor::ToMessageString(NMC);
 	msg += NMC->Convert(MESSAGE_TYPE_STATE, this->zState);
 
 	if(zHealthChanged)

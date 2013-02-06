@@ -147,6 +147,9 @@
     <ClCompile Include="Source\WorldActor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ActorManager.cpp">
+      <Filter>Source\Handlers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -281,9 +284,11 @@
     <ClInclude Include="Source\WorldActor.h">
       <Filter>Source\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="Source\PhysicsActor.h" />
     <ClInclude Include="Source\Damage.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ActorManager.h">
+      <Filter>Source\Handlers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
