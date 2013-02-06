@@ -9,11 +9,12 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "ServerListener.h"
 #include "ActorHandler.h"
 #include "ClientData.h"
-#include <World/World.h>
 #include "Game.h"
 #include "GameModeFFA.h"
 #include "GameEvents.h"
 #include "ActorSynchronizer.h"
+
+class World;
 
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>

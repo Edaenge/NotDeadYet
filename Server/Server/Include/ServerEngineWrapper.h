@@ -26,7 +26,6 @@ public:
 
 	bool IsRunning() const;
 	int GetNrOfPlayers() const;
-	char* ProcessText(char* msg);
 
 };
 

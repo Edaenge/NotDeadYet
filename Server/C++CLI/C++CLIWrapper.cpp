@@ -26,7 +26,7 @@ namespace System { namespace Windows { namespace Interop
 			gameModeName = (char*)Marshal::StringToHGlobalAnsi(gameMode).ToPointer();
 			mapNameChar = (char*)Marshal::StringToHGlobalAnsi(mapName).ToPointer();
 		}
-		catch(char* str)
+		catch(const char* str)
 		{
 			return "Failed";
 		}
@@ -38,26 +38,6 @@ namespace System { namespace Windows { namespace Interop
 	int CppCLI::GetNrOfPlayers()
 	{
 		return zServer->GetNrOfPlayers();
-	}
-
-	String^ CppCLI::ProcessText(String^ msg)
-	{
-		char* lpText = nullptr;
-		String^ returnText;
-
-		//Konvertera String^ -> char*
-		try
-		{
-			lpText = (char*)Marshal::StringToHGlobalAnsi(msg).ToPointer();
-
-			returnText = gcnew String(zServer->ProcessText(lpText));
-		}
-		finally
-		{
-			Marshal::FreeHGlobal((IntPtr) const_cast<char*>(lpText)); // Free memory
-		}
-
-		return returnText;
 	}
 
 	bool CppCLI::StartHost()
