@@ -60,12 +60,11 @@ void Host::Life()
 	while(this->stayAlive)
 	{
 		Update();
-
-
 		ReadMessages();
+
 		if(this->zGameStarted)
 		{
-			//PingClients();
+			PingClients();
 		}
 		else
 		{
@@ -123,19 +122,15 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	return 0;
 }
 
-void Host::SendToAllClients(const std::string& message, bool sendIM /*= false*/)
+void Host::SendToAllClients(const std::string& message)
 {
 	if(!HasClients())
 		return;
-}
 
-void Host::SendToClient(int clientID, const std::string& message, bool sendIM /*= false*/)
-{
-	
-}
-
-void Host::SendToClient(ClientData* cd, const std::string& message, bool sendIM /*= false*/)
-{
+	for (auto it = _clients.begin(); it != _clients.end(); it++)
+	{
+		it->first->Send(message);
+	}
 }
 
 bool Host::HasClients() const
@@ -313,48 +308,48 @@ void Host::BroadCastServerShutdown()
 	SendToAllClients(mess);
 }
 
-//void Host::PingClients()
-//{
-//	if(!HasClients())
-//		return;
-//
-//	ClientData* cd; 
-//	MaloW::ClientChannel* ch;
-//
-//	for(unsigned int i = 0; i < (unsigned int)zClients.size(); i++)
-//	{
-//		cd = zClients.at(i);
-//		ch = cd->GetClient();
-//
-//		//If client has not been pinged.
-//		if(!cd->HasBeenPinged())
-//		{
-//			//If it was x sec ago we sent a ping, don't send a ping.
-//			if(cd->GetCurrentPingTime() < zPingMessageInterval)
-//				cd->IncPingTime(zDeltaTime);
-//
-//			//else send ping.
-//			else
-//			{
-//				cd->SetCurrentPingTime(0.0f);
-//				ch->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_PING));
-//				cd->SetPinged(true);
-//			}
-//		}
-//		//If he have sent a ping.
-//		else
-//		{
-//			//If we sent a ping x sec ago, drop the client.
-//			if(cd->GetCurrentPingTime() > zTimeOut)
-//			{
-//				//cd->Kick(ch->GetClientID());
-//			}
-//			else
-//				cd->IncPingTime(zDeltaTime);
-//
-//		}
-//	}
-//}
+void Host::PingClients()
+{
+	if(!HasClients())
+		return;
+
+	ClientData* cd; 
+	MaloW::ClientChannel* ch;
+
+	for(auto it = _clients.begin(); it != _clients.end(); it++)
+	{
+		cd = it->second;
+		ch = it->first;
+
+		//If client has not been pinged.
+		if(!cd->HasBeenPinged())
+		{
+			//If it was x sec ago we sent a ping, don't send a ping.
+			if(cd->GetCurrentPingTime() < zPingMessageInterval)
+				cd->IncPingTime(zDeltaTime);
+
+			//else send ping.
+			else
+			{
+				cd->SetCurrentPingTime(0.0f);
+				ch->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_PING));
+				cd->SetPinged(true);
+			}
+		}
+		//If he have sent a ping.
+		else
+		{
+			//If we sent a ping x sec ago, drop the client.
+			if(cd->GetCurrentPingTime() > zTimeOut)
+			{
+				//cd->Kick(ch->GetClientID());
+			}
+			else
+				cd->IncPingTime(zDeltaTime);
+
+		}
+	}
+}
 
 float Host::Update()
 {
@@ -402,12 +397,11 @@ void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 	NotifyObservers(&e);
 }
 
-void Host::HandleClientUpdate( const std::vector<std::string> msgArray, ClientData* cd)
+void Host::HandleClientUpdate( const std::vector<std::string> &msgArray, ClientData* cd)
 {
 	Vector3 dir;
 	Vector3 up;
 	Vector4 rot;
-	float ft = 0.0f;
 
 	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
@@ -426,10 +420,6 @@ void Host::HandleClientUpdate( const std::vector<std::string> msgArray, ClientDa
 		{
 			rot = this->zMessageConverter.ConvertStringToQuaternion(M_ROTATION, (*it));
 		}
-		else if(strcmp(key, M_FRAME_TIME.c_str()) == 0)
-		{
-			ft = this->zMessageConverter.ConvertStringToFloat(M_FRAME_TIME, (*it));
-		}
 		else
 			MaloW::Debug("Unknown message in HandleClientUpdate.");
 	}
@@ -438,7 +428,6 @@ void Host::HandleClientUpdate( const std::vector<std::string> msgArray, ClientDa
 	e.direction = dir;
 	e.rotation = rot;
 	e.upVector = up;
-	e.frameTime = ft;
 	e.clientData = cd;
 
 	NotifyObservers(&e);
