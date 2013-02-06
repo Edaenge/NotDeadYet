@@ -9,6 +9,8 @@
 #include "BoundingSphere.h"
 #include <assert.h>
 
+class PhysicsEngine;
+
 #ifndef __ABSOLUTE_MAX__
 #define REAL_MAX DBL_MAX
 #endif
@@ -38,6 +40,7 @@ struct Vertex
 class PhysicsObject
 {
 private:
+	PhysicsEngine* zEngine;
 
 	Vector3 velocity;
 	Vector3 acceleration;
@@ -61,8 +64,11 @@ private:
 	void RecreateWorldMatrix();
 
 public:
-	PhysicsObject(Vector3 position = Vector3(0, 0, 0));
+	PhysicsObject(PhysicsEngine* engine, const Vector3& position = Vector3(0, 0, 0));
 	virtual ~PhysicsObject();
+
+	// Access Physics Engine
+	inline PhysicsEngine* GetPhysicsEngine() const { return zEngine; }
 
 	void SetMass(const float mass);
 	void SetInverseMass(const float mass){inverseMass = mass;}

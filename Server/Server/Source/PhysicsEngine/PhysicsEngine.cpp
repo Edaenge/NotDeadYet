@@ -13,7 +13,7 @@ PhysicsEngine::~PhysicsEngine()
 
 PhysicsObject* PhysicsEngine::CreatePhysicsObject(string path, Vector3 pos)
 {
-	PhysicsObject* obj = new PhysicsObject(pos);
+	PhysicsObject* obj = new PhysicsObject(this, pos);
 
 	if(!obj->LoadFromFile(path))
 	{

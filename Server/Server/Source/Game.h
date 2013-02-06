@@ -15,6 +15,8 @@ class Behavior;
 class PlayerBehavior;
 class ActorSynchronizer;
 class KeyStates;
+class Entity;
+class WorldActor;
 
 class Game : public Observer, public Observed
 {
@@ -25,6 +27,8 @@ class Game : public Observer, public Observed
 	std::map<ClientData*, Player*> zPlayers;
 	std::map<Player*, Behavior*> zPlayerBehaviors;
 	std::map<Player*, KeyStates*> zKeyStates;
+	std::map<Entity*, WorldActor*> zWorldActors;
+
 	std::set<Behavior*> zBehaviors;
 
 public:

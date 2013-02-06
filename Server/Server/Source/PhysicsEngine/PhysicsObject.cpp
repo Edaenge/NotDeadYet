@@ -18,7 +18,9 @@ Vector4 QuatMult(Vector4 quat1, Vector4 quat2)
 	return newQuat;
 };
 
-PhysicsObject::PhysicsObject(Vector3 position)
+PhysicsObject::PhysicsObject(PhysicsEngine* engine, const Vector3& position) : 
+	zEngine(engine),
+	pos(position)
 {
 	this->pos = position;
 	this->forceAccum = Vector3(0,0,0);
