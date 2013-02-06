@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Actor.cpp" />
     <ClCompile Include="Source\ActorHandler.cpp" />
+    <ClCompile Include="Source\ActorManager.cpp" />
     <ClCompile Include="Source\ActorSynchronizer.cpp" />
     <ClCompile Include="Source\AI.cpp" />
     <ClCompile Include="Source\AIDeerBehavior.cpp" />
@@ -67,6 +68,7 @@
     <ClInclude Include="Include\ServerEngineWrapper.h" />
     <ClInclude Include="Source\Actor.h" />
     <ClInclude Include="Source\ActorHandler.h" />
+    <ClInclude Include="Source\ActorManager.h" />
     <ClInclude Include="Source\ActorSynchronizer.h" />
     <ClInclude Include="Source\AI.h" />
     <ClInclude Include="Source\AIDeerBehavior.h" />
@@ -77,6 +79,7 @@
     <ClInclude Include="Source\BioActor.h" />
     <ClInclude Include="Source\ClientData.h" />
     <ClInclude Include="Source\ContainerObject.h" />
+    <ClInclude Include="Source\Damage.h" />
     <ClInclude Include="Source\DeerActor.h" />
     <ClInclude Include="Source\DynamicObjectActor.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

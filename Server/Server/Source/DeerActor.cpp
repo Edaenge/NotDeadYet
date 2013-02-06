@@ -6,18 +6,6 @@ DeerActor::DeerActor( bool genID /*= true*/, bool isPlayerControlled /*= false*/
 	this->InitDeer();
 }
 
-DeerActor::DeerActor( const Vector3& startPos, PhysicsObject* pObj, bool genID /*= true*/, bool isPlayerControlled /*= false*/ ) : AnimalActor(startPos, pObj, genID)
-{
-	this->SetIfPlayerControlled(isPlayerControlled);
-	this->InitDeer();
-}
-
-DeerActor::DeerActor( const Vector3& startPos, PhysicsObject* pObj, const Vector4& rot, bool genID /*= true*/, bool isPlayerControlled /*= false*/ ) : AnimalActor(startPos, pObj, rot, genID)
-{
-	this->SetIfPlayerControlled(isPlayerControlled);
-	this->InitDeer();
-}
-
 DeerActor::~DeerActor()
 {
 

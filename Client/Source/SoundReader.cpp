@@ -61,7 +61,7 @@ bool SoundReader::ReadFromFile()
 			bool loop;
 
 			read.getline(line, sizeof(line));
-			TrimAndSet(line);
+			TrimAndSet(std::string(line));
 
 			sscanf_s(line, "%s = %s", &command, sizeof(command), &key, sizeof(key));
 

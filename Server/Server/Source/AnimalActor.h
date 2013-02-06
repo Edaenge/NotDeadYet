@@ -45,8 +45,6 @@ class AnimalActor : public BioActor
 {
 public:
 	AnimalActor(bool genID = true);
-	AnimalActor(const Vector3& startPos, PhysicsObject* pObj, bool genID = true);
-	AnimalActor(const Vector3& startPos, PhysicsObject* pObj, const Vector4& rot,  bool genID = true);
 	virtual ~AnimalActor();
 
 	virtual void Update(float deltaTime) = 0;

@@ -22,51 +22,6 @@ AnimalActor::AnimalActor( bool genID /*= true*/ ) : BioActor()
 	this->zIntervalCounter = 0;
 }
 
-AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, bool genID /*= true*/ ) : BioActor(startPos, pObj)
-{
-	if(genID)
-		this->zID = this->GenerateID();
-	this->InitPathfinder();
-
-	Target vectorFilling; 
-	vectorFilling.health = 0;
-	vectorFilling.movementNoise = 0;
-	vectorFilling.position = Vector3(0,0,0);
-	vectorFilling.valid = false;
-	zActorType = ACTOR_TYPE_ANIMAL;
-
-	for(int i = 0; i < 32; i++)
-	{
-	this->zTargets.push_back(vectorFilling);
-	}
-
-	this->zIntervalCounter = 0;
-
-	
-}
-
-AnimalActor::AnimalActor( const Vector3& startPos,  PhysicsObject* pObj, const Vector4& rot, bool genID /*= true*/ ) : BioActor(startPos, pObj, rot)
-{
-	if(genID)
-		this->zID = this->GenerateID();
-	this->InitPathfinder();
-
-	Target vectorFilling; 
-	vectorFilling.health = 0;
-	vectorFilling.movementNoise = 0;
-	vectorFilling.position = Vector3(0,0,0);
-	vectorFilling.valid = false;
-
-	for(int i = 0; i < 32; i++)
-	{
-	this->zTargets.push_back(vectorFilling);
-	}
-
-	this->zIntervalCounter = 0;
-
-	
-}
-
 AnimalActor::~AnimalActor()
 {
 	zTargets.clear();

@@ -95,7 +95,7 @@ bool ObjectManager::ReadFromFile()
 			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
-				TrimAndSet(line);
+				TrimAndSet(string(line));
 
 				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
 
@@ -110,7 +110,7 @@ bool ObjectManager::ReadFromFile()
 			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
-				TrimAndSet(line);
+				TrimAndSet(string(line));
 
 				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
 
@@ -126,7 +126,7 @@ bool ObjectManager::ReadFromFile()
 			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
-				TrimAndSet(line);
+				TrimAndSet(string(line));
 
 				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
 
@@ -142,7 +142,7 @@ bool ObjectManager::ReadFromFile()
 			//while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			//{
 			//	read.getline(line, sizeof(line));
-			//	TrimAndSet(line);
+			//	TrimAndSet(string(line));
 
 			//	sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
 
@@ -158,7 +158,7 @@ bool ObjectManager::ReadFromFile()
 			while(!read.eof() && strcmp(command, END.c_str()) != 0)
 			{
 				read.getline(line, sizeof(line));
-				TrimAndSet(line);
+				TrimAndSet(string(line));
 
 				sscanf_s(line, "%s = %s" , &command, sizeof(command), &key, sizeof(key));
 
