@@ -40,3 +40,12 @@ void Actor::SetScale( const Vector3& scale )
 	ASE.zActor = this;
 	NotifyObservers(&ASE);
 }
+
+void Actor::SetDir( const Vector3& dir )
+{
+	zDir = dir;
+
+	ActorScaleEvent ASE;
+	ASE.zActor = this;
+	NotifyObservers(&ASE);
+}

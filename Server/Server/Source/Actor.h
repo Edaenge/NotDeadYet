@@ -43,6 +43,12 @@ public:
 	Actor *zActor;
 };
 
+class ActorDirEvent : public Event
+{
+public:
+	Actor *zActor;
+};
+
 /* 
    Every time an actor is created, an ID will be generated in this class. This id should be used for this actor.
    An exception is Players. They have the same ID as the ClientChannel.
@@ -52,6 +58,7 @@ class Actor : public Observed
 	Vector3 zPos;
 	Vector4 zRot;
 	Vector3 zScale;
+	Vector3 zDir;
 public:
 	Actor()
 	{
@@ -80,11 +87,13 @@ public:
 	void SetPosition(const Vector3& pos);
 	void SetRotation(const Vector4& rot);
 	void SetScale(const Vector3& scale);
+	void SetDir(const Vector3& dir);
 
 	// Get Transformation Functions
 	inline const Vector3& GetPosition() const { return zPos; }
 	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
+	inline const Vector3& GetDir() const { return zDir; }
 
 	long GenerateID()
 	{
