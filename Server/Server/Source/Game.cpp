@@ -3,7 +3,6 @@
 #include "Behavior.h"
 #include <world/World.h>
 #include "GameEvents.h"
-#include "Player.h"
 #include "PlayerBehavior.h"
 #include "PlayerActor.h"
 
@@ -69,10 +68,17 @@ void Game::OnEvent( Event* e )
 		// Apply Default Player Behavior
 		zBehaviors[player] = new PlayerHumanBehavior(actor, zWorld, player);
 	}
+	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
+	{
+		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
+	}
+	else if( KeyUpEvent* KDE = dynamic_cast<KeyUpEvent*>(e) )
+	{
+		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, false);
+	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
 		// TODO: Delete Player Behavior
-
 
 		// Delete Player
 		auto i = zPlayers.find(PDCE->clientData);
@@ -85,6 +91,7 @@ void Game::OnEvent( Event* e )
 	}
 
 	NotifyObservers(e);
+}
 }
 
 
