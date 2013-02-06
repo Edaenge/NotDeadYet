@@ -83,8 +83,7 @@ void Game::OnEvent( Event* e )
 	}
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
 	{
-		Behavior* clientBehavior = zPlayers[CDE->clientData]->GetBehavior();
-		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(clientBehavior))
+		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(zPlayers[CDE->clientData]->GetBehavior()))
 			dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
