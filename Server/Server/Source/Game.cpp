@@ -92,6 +92,5 @@ void Game::OnEvent( Event* e )
 
 	NotifyObservers(e);
 }
-}
 
 

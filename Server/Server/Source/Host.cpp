@@ -37,6 +37,7 @@ Host::~Host()
 
 	this->zServerListener->Close();
 	SAFE_DELETE(this->zServerListener);
+
 }
 
 void Host::Life()
