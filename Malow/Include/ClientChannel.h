@@ -40,6 +40,8 @@ namespace MaloW
 
 		// Begin Process
 		void Life();
+
+		void Disconnect();
 	};
 }
 

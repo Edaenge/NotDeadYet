@@ -52,8 +52,12 @@ private:
 	void HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &message );
 	/*! */
 	void HandleClientUpdate(const std::vector<std::string> &msgArray, ClientData* cd);
+	/*! Handles if a client disconnects.
+		Deletes the client information.
+	*/
+	void HandleClientDisconnect( MaloW::ClientChannel* channel );
 	/*! */
-	void HandleDisconnect( MaloW::ClientChannel* channel );
+	void HandleClientDropped( MaloW::ClientChannel* channel );
 	/*! */
 	void HandleLootRequest(const std::vector<std::string> &msgArray, ClientData* cd);
 	/*! */

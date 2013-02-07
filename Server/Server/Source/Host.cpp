@@ -2,6 +2,7 @@
 #include "ClientServerMessages.h"
 #include "ClientConnectedEvent.h"
 #include "ClientDisconnectedEvent.h"
+#include "ClientDroppedEvent.h"
 
 // 50 updates per sec
 static const float UPDATE_DELAY = 0.020f;
@@ -166,9 +167,12 @@ void Host::ReadMessages()
 		}
 		else if ( ClientDisconnectedEvent* CDE = dynamic_cast<ClientDisconnectedEvent*>(pe) )
 		{
-			HandleDisconnect(CDE->GetClientChannel());
+			HandleClientDisconnect(CDE->GetClientChannel());
 		}
-
+		else if ( ClientDroppedEvent* CDE = dynamic_cast<ClientDroppedEvent*>(pe) )
+		{
+			HandleClientDropped(CCE->GetClientChannel());
+		}
 		// Unhandled Message
 		SAFE_DELETE(pe);
 	}
@@ -376,7 +380,7 @@ bool Host::IsAlive() const
 	return this->stayAlive;
 }
 
-void Host::HandleDisconnect( MaloW::ClientChannel* channel )
+void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 {
 	std::map<MaloW::ClientChannel*, ClientData*>::iterator it;
 
@@ -385,6 +389,14 @@ void Host::HandleDisconnect( MaloW::ClientChannel* channel )
 	SAFE_DELETE(channel);
 	
 	_clients.erase(it);
+}
+
+void Host::HandleClientDropped( MaloW::ClientChannel* channel )
+{
+	PlayerKickEvent e;
+	e.clientData = _clients.at(channel);
+
+	NotifyObservers(&e);
 }
 
 void Host::HandleNewConnection( MaloW::ClientChannel* CC )

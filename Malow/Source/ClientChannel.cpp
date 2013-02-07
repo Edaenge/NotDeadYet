@@ -50,3 +50,10 @@ void ClientChannel::CloseSpecific()
 		}
 	}
 }
+
+void MaloW::ClientChannel::Disconnect()
+{
+	NetworkChannel::Disconnect();
+	
+	this->zNotifier->PutEvent(new ClientDisconnectedEvent(this));
+}

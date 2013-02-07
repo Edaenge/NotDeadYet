@@ -30,6 +30,8 @@ Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldF
 Game::~Game()
 {
 	if ( zWorld ) delete zWorld, zWorld = 0;
+
+	SAFE_DELETE(zActorManager);
 }
 
 bool Game::Update( float dt )
@@ -91,7 +93,7 @@ void Game::OnEvent( Event* e )
 		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(zPlayers[CDE->clientData]->GetBehavior()))
 			dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
 	}
-	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
+	else if ( PlayerKickEvent* PDCE = dynamic_cast<PlayerKickEvent*>(e) )
 	{
 		// Delete Player Behavior
 		auto playerIterator = zPlayers.find(PDCE->clientData);
@@ -105,10 +107,17 @@ void Game::OnEvent( Event* e )
 			zBehaviors.insert(aiWolf);
 		}
 
+		//Kick it
+		PDCE->clientData->Kick();
+
 		// Delete Player
 		auto i = zPlayers.find(PDCE->clientData);
 		delete i->second;
 		zPlayers.erase(i);
+	}
+	else if ( PlayerPickupObjectEvent* PPOE = dynamic_cast<PlayerPickupObjectEvent*>(e))
+	{
+		
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{

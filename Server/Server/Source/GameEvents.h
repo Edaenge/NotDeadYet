@@ -120,6 +120,16 @@ public:
 	long itemID;
 };
 
+/*!*/
+class PlayerKickEvent : public Event
+{
+public:
+	virtual ~PlayerKickEvent() {}
+
+	ClientData* clientData;
+	std::string reason;
+};
+
 /*Event when a client sends an update to server.*/
 class ClientDataEvent : public Event
 {

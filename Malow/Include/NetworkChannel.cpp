@@ -1,5 +1,6 @@
 #include "NetworkChannel.h"
 #include "NetworkException.h"
+#include "ClientDisconnectedEvent.h"
 #include "Winsock.h"
 
 using MaloW::NetworkChannel;
