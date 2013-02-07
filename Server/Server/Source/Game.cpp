@@ -31,6 +31,8 @@ Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldF
 	this->zPhysicsEngine = GetPhysics();
 	// Actor Manager
 	zActorManager = new ActorManager(syncher);
+	//Temp
+	zWorldFile = worldFile;
 }
 
 Game::~Game()
@@ -77,21 +79,16 @@ void Game::OnEvent( Event* e )
 		Player* player = new Player(PCE->clientData);
 		zPlayers[PCE->clientData] = player;
 
-		//Gather Actors Information and send
+		//Tells the client it has been connected.
 		NetworkMessageConverter NMC;
-		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		std::string message;
 
-		for (auto it = actors.begin(); it != actors.end(); it++)
-		{
-			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (*it)->GetID());
-			message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
-			message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
-			message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
-			message += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetModel());
+		message = NMC.Convert(MESSAGE_TYPE_CONNECTED);
+		PCE->clientData->Send(message);
 
-			PCE->clientData->Send(message);
-		}
+		// Sends the world name
+		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorldFile);
+		PCE->clientData->Send(message);
 	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
@@ -173,7 +170,26 @@ void Game::OnEvent( Event* e )
 		actor->SetPosition(Vector3(50.0f, 0.0f, 50.0f));
 		zActorManager->AddActor(actor);
 		// Apply Default Player Behavior
-		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));	
+		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));
+
+		//Gather Actors Information and send to client
+		std::string message;
+		NetworkMessageConverter NMC;
+		std::set<Actor*>& actors = this->zActorManager->GetActors();
+		for (auto it = actors.begin(); it != actors.end(); it++)
+		{
+			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (*it)->GetID());
+			message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
+			message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
+			message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
+			message += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetModel());
+
+			PCE->clientData->Send(message);
+		}
+		//Tells the client which Actor he owns.
+		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, actor->GetID());
+		PCE->clientData->Send(message);
+
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
