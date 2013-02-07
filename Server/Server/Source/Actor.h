@@ -63,11 +63,6 @@ public:
 */
 class Actor : public Observed
 {
-	Vector3 zPos;
-	Vector4 zRot;
-	Vector3 zScale;
-	Vector3 zDir;
-
 	long zID;
 	PhysicsObject* zPhysicsObject;
 
@@ -75,20 +70,10 @@ class Actor : public Observed
 	// std::string zActorModel;
 	// std::string zActorObjectName;
 	// unsigned int zActorType;
-public:
 	Actor();
 	virtual ~Actor();
 	
 	inline long GetID() const { return this->zID; }
-	// std::string GetActorModel() const {return zActorModel;}
-	// std::string GetActorObjectName() const {return zActorObjectName;}
-	// const Vector3& GetUpVector() const {return this->zUp;}
-	// const unsigned int GetActorType() const {return zActorType;}
-
-	// inline  void SetID(const long id) {this->zID = id;}
-	// virtual void SetActorModel(const std::string& modelStr) {zActorModel = modelStr;}
-	// virtual void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
-	// virtual void SetUpVector(const Vector3& up){this->zUp = up;}
 
 	// Set Transformation Functions
 	void SetPosition(const Vector3& pos);
@@ -103,5 +88,4 @@ public:
 	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
 	inline const Vector3& GetDir() const { return zDir; }
-	inline PhysicsObject* GetPhysicsObject() const { return this->zPhysicsObject; }
 };

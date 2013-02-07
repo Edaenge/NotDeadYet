@@ -24,26 +24,15 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_ERROR_MESSAGE,
 	MESSAGE_TYPE_IMPORTANT_MESSAGE,
 	MESSAGE_TYPE_ACKNOWLEDGE,
-	//MESSAGE_TYPE_UPDATE_PLAYER,
-	//MESSAGE_TYPE_DEAD_PLAYER,
-	//MESSAGE_TYPE_UPDATE_ACTOR,
-	//MESSAGE_TYPE_UPDATE_STATIC_OBJECT,
-	//MESSAGE_TYPE_UPDATE_DYNAMIC_OBJECT,
-	//MESSAGE_TYPE_UPDATE_ANIMAL,
-	//MESSAGE_TYPE_DEAD_ANIMAL,
-	MESSAGE_TYPE_NEW_PLAYER,
-	MESSAGE_TYPE_NEW_STATIC_OBJECT,
-	MESSAGE_TYPE_NEW_DYNAMIC_OBJECT,
-	MESSAGE_TYPE_NEW_ANIMAL,
+	MESSAGE_TYPE_NEW_ACTOR,
+	MESSAGE_TYPE_UPDATE_ACTOR,
+	MESSAGE_TYPE_REMOVE_ACTOR,
+	MESSAGE_TYPE_DEAD_ACTOR,
 	MESSAGE_TYPE_KEY_DOWN,
 	MESSAGE_TYPE_KEY_UP,
 	MESSAGE_TYPE_PING,
 	MESSAGE_TYPE_SELF_ID,
 	MESSAGE_TYPE_KICKED,
-	//MESSAGE_TYPE_REMOVE_PLAYER,
-	//MESSAGE_TYPE_REMOVE_STATIC_OBJECT,
-	//MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT,
-	//MESSAGE_TYPE_REMOVE_ANIMAL,
 	MESSAGE_TYPE_USER_DATA,
 	MESSAGE_TYPE_FRAME_TIME,
 	MESSAGE_TYPE_CLIENT_DATA,
@@ -56,7 +45,6 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_STAMINA,
 	MESSAGE_TYPE_ITEM_TYPE,
 	MESSAGE_TYPE_ITEM_ID,
-	MESSAGE_TYPE_FETCH_INVENTORY,
 	MESSAGE_TYPE_REMOVE_INVENTORY_ITEM,
 	MESSAGE_TYPE_ADD_INVENTORY_ITEM,
 	MESSAGE_TYPE_EQUIPMENT_SLOT,
@@ -89,14 +77,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED,
 	MESSAGE_TYPE_DEAD_ANIMAL_ITEM_FINISHED,
 	MESSAGE_TYPE_START_GAME,
-	MESSAGE_TYPE_NEW_GHOST_ACTOR,
-	//MESSAGE_TYPE_REMOVE_GHOST_ACTOR,
-	//MESSAGE_TYPE_UPDATE_GHOST_ACTOR,
 	MESSAGE_TYPE_PLAYER_READY,
-	MESSAGE_TYPE_ITEM_SUB_TYPE,
-	MESSAGE_TYPE_UPDATE_ACTOR,
-	MESSAGE_TYPE_REMOVE_ACTOR,
-	MESSAGE_TYPE_DEAD_ACTOR
+	MESSAGE_TYPE_ITEM_SUB_TYPE
 };
 
 static const std::string M_UPDATE_ACTOR				= "UA";
@@ -142,20 +124,13 @@ static const std::string M_UNEQUIP_ITEM				= "UEI";
 static const std::string M_PICKUP_ITEM				= "PI";
 static const std::string M_LOOT_ITEM				= "LI";
 static const std::string M_DROP_ITEM				= "DI";
-static const std::string M_FETCH_INVENTORY			= "FI";
 static const std::string M_ADD_INVENTORY_ITEM		= "AII";
 static const std::string M_REMOVE_INVENTORY_ITEM	= "RII";
 //Animal Messages
-static const std::string M_NEW_ANIMAL				= "NA";
-//static const std::string M_REMOVE_ANIMAL			= "RA";
-//static const std::string M_UPDATE_ANIMAL			= "UA";
-static const std::string M_DEAD_ANIMAL				= "DA";
-//static const std::string M_ADD_DEAD_ANIMAL_OBJECT	= "ADAO";
 static const std::string M_ADD_DEAD_ANIMAL_ITEM		= "ADAI";
 static const std::string M_DEAD_ANIMAL_REMOVE_ITEM	= "DARI";
 static const std::string M_REMOVE_DEAD_ANIMAL_OBJECT= "RDAO";
 static const std::string M_DEAD_ANIMAL_ITEM_FINISHED= "DAIF";
-
 //Key Messages
 static const std::string M_KEY_DOWN					= "KD";
 static const std::string M_KEY_UP					= "KU";
@@ -172,27 +147,12 @@ static const std::string M_IMPORTANT_MESSAGE		= "IM";
 static const std::string M_ACKNOWLEDGE_MESSAGE		= "ACK";
 //Player Messages
 static const std::string M_CLIENT_DATA				= "CD";
-static const std::string M_NEW_PLAYER				= "NP";
-//static const std::string M_UPDATE_PLAYER			= "UP";
-//static const std::string M_REMOVE_PLAYER			= "RP";
-static const std::string M_DEAD_PLAYER				= "DP";
+static const std::string M_NEW_ACTOR				= "NP";
 static const std::string M_DEAD_PLAYER_ADD_ITEM		= "DPAI";
 static const std::string M_DEAD_PLAYER_REMOVE_ITEM	= "DPRI";
 static const std::string M_ADD_DEAD_PLAYER_OBJECT	= "ADPO";
-//static const std::string M_REMOVE_DEAD_PLAYER_OBJECT= "RDPO";
 static const std::string M_DEAD_PLAYER_ITEM_FINISHED= "DPIF";
-static const std::string M_NEW_GHOST_ACTOR			= "NGA";
-//static const std::string M_REMOVE_GHOST_ACTOR		= "RGA";
-//static const std::string M_UPDATE_GHOST_ACTOR		= "UGA";
 static const std::string M_READY_PLAYER				= "PRM";
-//Static Object Messages
-static const std::string M_NEW_STATIC_OBJECT		= "NSO";
-//static const std::string M_REMOVE_STATIC_OBJECT		= "RSO";
-//static const std::string M_UPDATE_STATIC_OBJECT		= "USO";
-//Dynamic Object Messages
-static const std::string M_NEW_DYNAMIC_OBJECT		= "NDO";
-//static const std::string M_REMOVE_DYNAMIC_OBJECT	= "RDO";
-//static const std::string M_UPDATE_DYNAMIC_OBJECT	= "UDO";
 //Confirmation Message
 static const std::string M_SELF_ID					= "SELF";
 //Ping Message

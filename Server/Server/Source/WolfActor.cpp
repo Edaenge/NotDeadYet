@@ -2,12 +2,7 @@
 
 WolfActor::WolfActor() : 
 	AnimalActor()
-{
-	/*
-	this->SetIfPlayerControlled(isPlayerControlled);
-	this->InitWolf();
-	*/
-}
+{}
 
 WolfActor::~WolfActor()
 {

@@ -4,16 +4,13 @@
 #include "Actor.h"
 #include "PlayerWolfBehavior.h"
 
-
-
-const int MAX_VELOCITY = 20;
 const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 const float ELASTICITY = 0.5f;
 const float ACCELERATION = 1.0f;
 const float PLAYERHEIGHT = 1.0f;
 
-
-PlayerWolfBehavior::PlayerWolfBehavior( Actor* actor, World* world, Player* player) : PlayerBehavior(actor, world, player)
+PlayerWolfBehavior::PlayerWolfBehavior( Actor* actor, World* world, Player* player) : 
+	PlayerBehavior(actor, world, player)
 {
 
 }
@@ -34,9 +31,10 @@ bool PlayerWolfBehavior::Update( float dt )
 	//Get Directions
 	Vector3 currentPlayerDir = this->zActor->GetDir();
 	Vector3 currentPlayerUp = Vector3(0.0f, 1.0f, 0.0f);
-	currentPlayerUp.y = 0; // Need a vector that is horizontal to X and Z
-	currentPlayerUp.Normalize();
+	currentPlayerDir.y = 0; // Need a vector that is horizontal to X and Z
+	currentPlayerDir.Normalize();
 	Vector3 currentPlayerRight = currentPlayerUp.GetCrossProduct(currentPlayerDir);
+	currentPlayerRight.Normalize();
 	Vector3 currentGroundNormal = this->zWorld->CalcNormalAt(currentPlayerPos.GetXZ());
 
 	// Calc the movement vector
@@ -66,6 +64,8 @@ bool PlayerWolfBehavior::Update( float dt )
 		this->zVelocity = newGroundNormal * this->zVelocity.GetLength() * ELASTICITY;
 	}
 	this->zActor->SetPosition(newPlayerPos);
+	this->zAnchor->position = newPlayerPos.GetXZ();
+	this->zAnchor->radius = SIGHTRADIUS;
 
 	return true;
 }

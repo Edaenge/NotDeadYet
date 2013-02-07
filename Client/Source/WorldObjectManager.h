@@ -4,21 +4,70 @@
 */
 #pragma once
 
-#include "PlayerObject.h"
-#include "AnimalObject.h"
-#include "StaticObject.h"
-#include "DynamicObject.h"
-#include "DeadPlayerObject.h"
+#include "Actor.h"
 #include <vector>
 
-static const enum OBJECT_TYPE
+class Updates
 {
-	OBJECT_TYPE_PLAYER,
-	OBJECT_TYPE_ANIMAL,
-	OBJECT_TYPE_STATIC_OBJECT,
-	OBJECT_TYPE_DYNAMIC_OBJECT,
-	OBJECT_TYPE_DEAD_PLAYER,
-	OBJECT_TYPE_ACTOR
+public:
+	Updates(const unsigned int ID) 
+	{
+		this->zID = ID;
+		this->zStateChange = false;
+		this->zPositionChange = false;
+		this->zRotationChange = false;
+	}
+
+	unsigned int GetID() const {return this->zID;}
+	Vector3 GetPosition() const {return this->zNextPosition;}
+	Vector4 GetRotation() const {return this->zRotation;}
+	unsigned int GetState() const {return this->zState;}
+
+	void SetPosition(Vector3 position) 
+	{
+		this->zNextPosition = position;
+		this->zPositionChange = true;
+	}
+	void SetRotation(Vector4 rotation) 
+	{
+		this->zRotation = rotation;
+		this->zRotationChange = true;
+	}
+	void SetState(unsigned int state) 
+	{
+		this->zState = state;
+		this->zStateChange = true;
+	}
+	bool ComparePosition(const Vector3& position)
+	{
+		if ((this->zNextPosition - position).GetLength() < 0.5f)
+			this->zPositionChange = false;
+
+		return this->zPositionChange;
+	}
+	bool CompareRotation(const Vector4& rotation)
+	{
+		if ((this->zRotation - rotation).GetLength() < 0.5f)
+			this->zRotationChange = false;
+
+		return this->zRotationChange;
+	}
+	bool CompareState(const float state)
+	{
+		if (this->zState == state)
+			this->zStateChange = false;
+
+		return this->zStateChange;
+	}
+private:
+	unsigned int zID;
+	Vector3 zNextPosition;
+	Vector4 zRotation;
+	unsigned int zState;
+
+	bool zStateChange;
+	bool zPositionChange;
+	bool zRotationChange;
 };
 
 class WorldObjectManager
@@ -58,30 +107,13 @@ public:
 	/*! Interpolates all the Objects towards their final Position*/
 	void UpdateObjects(float deltaTime);
 
-	bool AddActor(WorldObject* actor);
-	WorldObject* SearchAndGetActor(const long ID);
-	WorldObject* GetActor(const int Index);
+	bool AddActor(Actor* actor);
+	Actor* SearchAndGetActor(const long ID);
+	Actor* GetActor(const int Index);
 	bool RemoveActor(const int Index);
 	int SearchForActor(const long ID);
+	bool AddUpdate(Updates update);
 private:
-
-	///*! Search for the object with the correct ID and returns a Position if found.*/
-	//int SearchForPlayerObject(const int ID);
-	///*! Search for the object with the correct ID and returns a Position if found.*/
-	//int SearchForAnimalObject(const long ID);
-	///*! Search for the object with the correct ID and returns a Position if found.*/
-	//int SearchForStaticObject(const long ID);
-	///*! Search for the object with the correct ID and returns a Position if found.*/
-	//int SearchForDynamicObject(const long ID);
-	///*! Search for the object with the correct ID and returns a Position if found.*/
-	//int SearchForDeadPlayerObject(const long ID);
-	
-private:
-	///*! Vectors to keep track of World Objects.*/
-	//std::vector<PlayerObject*> zPlayerObjects;
-	//std::vector<AnimalObject*> zAnimalObjects;
-	//std::vector<StaticObject*> zStaticObjects;
-	//std::vector<DynamicObject*> zDynamicObjects;
-	//std::vector<DeadPlayerObject*> zDeadPlayerObjects;
-	std::vector<WorldObject*> zActors;
+	std::vector<Actor*> zActors;
+	std::vector<Updates> zUpdates;
 };

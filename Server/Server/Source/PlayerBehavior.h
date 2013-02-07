@@ -5,6 +5,8 @@
 
 class Player;
 
+const float SIGHTRADIUS = 200.0f;
+
 class PlayerBehavior : public Behavior
 {
 public:
@@ -13,6 +15,7 @@ public:
 
 
 	bool ProcessClientData(Vector3 direction, Vector4 rotation);
+
 protected:
 	Player* zPlayer;
 	Vector3 zVelocity;

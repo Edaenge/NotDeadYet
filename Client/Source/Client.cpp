@@ -187,8 +187,6 @@ void Client::Life()
 			this->zSendUpdateDelayTimer += this->zDeltaTime;
 			this->zTimeSinceLastPing += this->zDeltaTime;
 
-			
-
  			if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
  			{
 				this->zSendUpdateDelayTimer = 0.0f;
@@ -198,7 +196,7 @@ void Client::Life()
 
 			this->UpdateCameraPos();
 
-			this->UpdateWorldObjects();
+			this->UpdateActors();
 		}
 
 		if (this->stayAlive)
@@ -263,7 +261,7 @@ void Client::SendClientUpdate()
 	Vector3 up = this->zEng->GetCamera()->GetUpVector();
 	Vector4 rot = Vector4(0, 0, 0, 0);
 
-	PlayerObject* player = dynamic_cast<PlayerObject*>(this->zObjectManager->SearchAndGetActor(this->zID));
+	Actor* player = this->zObjectManager->SearchAndGetActor(this->zID);
 	
 	if (player)
 	{
@@ -288,7 +286,7 @@ void Client::SendAck(unsigned int IM_ID)
 
 void Client::UpdateCameraPos()
 {
-	WorldObject* player = dynamic_cast<WorldObject*>(this->zObjectManager->SearchAndGetActor(this->zID));
+	Actor* player = dynamic_cast<Actor*>(this->zObjectManager->SearchAndGetActor(this->zID));
 	if (player)
 	{
 		Vector3 position = player->GetPosition();
@@ -313,13 +311,13 @@ void Client::UpdateCameraPos()
 
 	if(camDir.x > 0.0f)
 		angle *= -1;
-	WorldObject* object = this->zObjectManager->GetActor(this->zID);
+	Actor* object = this->zObjectManager->GetActor(this->zID);
 	iMesh* playerMesh = object->GetMesh();
 
 	playerMesh->ResetRotation();
 	playerMesh->RotateAxis(around, angle);}
 
-void Client::UpdateWorldObjects()
+void Client::UpdateActors()
 {
 	this->zObjectManager->UpdateObjects(this->zDeltaTime);
 }
@@ -869,6 +867,11 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
 		this->UpdateActor(msgArray, id);
 	}
+	else if(msg.find(M_NEW_ACTOR.c_str()) == 0)
+	{
+		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
+		this->AddActor(msgArray, id);
+	}
 	//WorldObjects
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
 	{
@@ -881,60 +884,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		long id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
 		//this->UpdateActor(msgArray, id);
 	}
-	//Static Object
-	else if(msg.find(M_NEW_STATIC_OBJECT.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_STATIC_OBJECT, msgArray[0]);
-		this->AddNewStaticObject(msgArray, id);
-	}
-	////Static Object
-	//else if(msg.find(M_REMOVE_STATIC_OBJECT.c_str()) == 0)
-	//{
-	//	long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_STATIC_OBJECT, msgArray[0]);
-	//	this->RemoveStaticObject(id);
-	//}
-	////Dynamic Object
-	//else if(msg.find(M_UPDATE_DYNAMIC_OBJECT.c_str()) == 0)
-	//{
-	//	long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_DYNAMIC_OBJECT, msgArray[0]);
-	//	this->UpdateActor(msgArray, id);
-	//}
-	//Dynamic Object
-	else if(msg.find(M_NEW_DYNAMIC_OBJECT.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_DYNAMIC_OBJECT, msgArray[0]);
-		this->AddNewDynamicObject(msgArray, id);
-	}
-	////Dynamic Object
-	//else if(msg.find(M_REMOVE_DYNAMIC_OBJECT.c_str()) == 0)
-	//{
-	//	long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_DYNAMIC_OBJECT, msgArray[0]);
-	//	this->RemoveDynamicObject(id);
-	//}
-	//Player
-	else if(msg.find(M_NEW_PLAYER.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_PLAYER, msgArray[0]);
-		this->AddNewPlayerObject(msgArray, id);
-	}
-	//Animal
-	else if(msg.find(M_NEW_ANIMAL.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_ANIMAL, msgArray[0]);
-		this->AddNewAnimalObject(msgArray, id);
-	}
-	////Animal
-	//else if(msg.find(M_REMOVE_ANIMAL.c_str()) == 0)
-	//{
-	//	long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ANIMAL, msgArray[0]);
-	//	this->RemoveAnimalObject(id);
-	//}
-	////Player
-	//else if(msg.find(M_REMOVE_PLAYER.c_str()) == 0)
-	//{
-	//	long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_PLAYER, msgArray[0]);
-	//	this->RemovePlayerObject(id);
-	//}
 	else if(msg.find(M_EQUIP_ITEM.c_str()) == 0)
 	{
 		long id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
@@ -997,12 +946,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		long id = this->zMsgHandler.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
 		this->HandleWeaponUse(id);
 	}
-	else if(msg.find(M_ADD_DEAD_PLAYER_OBJECT.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_ADD_DEAD_PLAYER_OBJECT, msgArray[0]);
-
-		this->AddNewDeadPlayerObject(msgArray, id);
-	}
 	else if(msg.find(M_DEAD_PLAYER_REMOVE_ITEM.c_str()) == 0)
 	{
 		long id = this->zMsgHandler.ConvertStringToInt(M_DEAD_PLAYER_REMOVE_ITEM, msgArray[0]);
@@ -1019,12 +962,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		{
 			MaloW::Debug("Msg array size is to short size: " + MaloW::convertNrToString((float)msgArray.size()) + " Expected size 3");
 		}
-	}
-	else if(msg.find(M_DEAD_PLAYER.c_str()) == 0)
-	{
-		int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_PLAYER, msgArray[0]);
-
-		this->HandleDeadPlayerMessage(id);
 	}
 	else if(msg.find(M_SELF_ID.c_str()) == 0)
 	{

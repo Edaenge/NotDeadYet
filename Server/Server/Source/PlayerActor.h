@@ -38,7 +38,6 @@ public:
 	//	If it has changed, we need to send it to the client.
 	//	The parameter string is a network message string.
 	//*/
-
 	//Item* GetItem(const long ID){return this->zInventory->SearchAndGetItem(ID);}
 	//float GetLatency() const {return this->zLatency;}
 	//inline float GetFrameTime() const {return this->zFrameTime;}
@@ -58,13 +57,6 @@ public:
 
 	//inline void SetFrameTime(const float frameTime){this->zFrameTime = frameTime;}
 	//inline void SetLatency(const float latency){this->zLatency = latency;}
-
-	///*! Sets the objm. This class is not responsible for deallocation.*/
-	//void SetObjManager(ObjectManager* objm) {this->zObjManager = objm;}
-	//
-	//void SetInventory(Inventory* inv) {this->zInventory = inv;}
-	//void EatFood(float hunger);
-	//void Drink(float hydration);
 	/*! Returns Pos, Rot, Scale, Stamina, Health, State, Hunger, Hydration.*/
 	//virtual std::string ToMessageString(NetworkMessageConverter* NMC);
 private:
@@ -86,8 +78,7 @@ private:
 
 	Inventory* zInventory;
 
-	//ObjectManager* zObjManager;
-	Player* zPlayer;
+	ObjectManager* zObjManager;	Player* zPlayer;
 };
 
 //class PlayerUpdatedEvent : public Event

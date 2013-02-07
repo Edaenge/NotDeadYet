@@ -4373,6 +4373,80 @@
         </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="8af2fe2e-6380-45d9-afc3-3afc291523a9"
+        name="ItemActor"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="72694dbd-8cf2-4469-8624-510e3a4f9e4e"
+            isSubstitutable="false">
+            <classMoniker
+              Id="93a7b46f-f03c-489a-aacd-55fcce13880f"
+              LastKnownName="Actor : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+          </generalization>
+        </generalsInternal>
+        <ownedAttributesInternal>
+          <property
+            Id="219f432c-745b-4b46-9d12-d0e882261a83"
+            name="Item*"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="0440cbd5-d065-445f-bb78-452da6c55ad9"
+            name="GetItem"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="66fc0996-5a64-474f-80e0-7c250eea2589"
+            name="ItemActor"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="b2346d9a-0d07-46c3-aae8-a283249889df"
+                  name="Item*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="e4d3a3c8-9fe2-41d4-bd94-56bb511ba90a"
+                  name="Model"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="dce17476-0c7f-4364-aa41-891e9d1866c1"
+                  name="Position"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
   </packagedElements>
   <primitiveType
     Id="220a3521-e091-4221-bae9-3ef9018e845c"

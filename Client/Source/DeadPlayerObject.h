@@ -14,10 +14,10 @@
 
 #include <vector>
 
-class DeadPlayerObject : public WorldObject
+class DeadPlayerObject : public Actor
 {
 public:
-	DeadPlayerObject(const long ID) : WorldObject(ID) {}
+	DeadPlayerObject(const long ID) : Actor(ID) {}
 	virtual ~DeadPlayerObject() {}
 
 	Item* GetItemAt(const int Index) const;
