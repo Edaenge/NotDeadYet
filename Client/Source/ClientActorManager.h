@@ -94,7 +94,7 @@ public:
 	virtual ~ClientActorManager();
 
 	/*! Interpolates all the Objects towards their final Position*/
-	void UpdateObjects(float deltaTime);
+	void UpdateObjects(float deltaTime, unsigned int ignoreID);
 
 	bool AddActor(Actor* actor);
 	Actor* SearchAndGetActor(const unsigned int ID);

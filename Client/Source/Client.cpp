@@ -179,7 +179,7 @@ void Client::Life()
 				this->SendClientUpdate();
 			}
 
-			this->UpdateCameraPos();
+			//this->UpdateCameraPos(); // Will manage the local model later.
 
 			this->UpdateActors();
 		}
@@ -290,11 +290,12 @@ void Client::UpdateCameraPos()
 	iMesh* playerMesh = object->GetMesh();
 
 	playerMesh->ResetRotation();
-	playerMesh->RotateAxis(around, angle);}
+	playerMesh->RotateAxis(around, angle);
+}
 
 void Client::UpdateActors()
 {
-	this->zObjectManager->UpdateObjects(this->zDeltaTime);
+	this->zObjectManager->UpdateObjects(this->zDeltaTime, this->zID);
 }
 
 bool Client::IsAlive()
@@ -833,12 +834,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
 		this->UpdateActor(msgArray, id);
-	}
-	//WorldObjects
-	else if(msg.find(M_DEAD_ACTOR.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
-		//this->UpdateActor(msgArray, id);
 	}
 	else if(msg.find(M_EQUIP_ITEM.c_str()) == 0)
 	{

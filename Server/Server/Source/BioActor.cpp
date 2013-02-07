@@ -80,7 +80,7 @@ bool BioActor::HasMoved()
 std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 {
 	string msg = "";
-	msg += NMC->Convert(MESSAGE_TYPE_STATE, this->zState);
+	msg += NMC->Convert(MESSAGE_TYPE_STATE, (float)this->zState);
 
 	if(zHealthChanged)
 	{

@@ -77,6 +77,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	case MESSAGE_TYPE_KEY_UP:
 		ss << M_KEY_UP;
 		break;
+	case MESSAGE_TYPE_LOAD_MAP:
+		ss << M_LOAD_MAP;
+		break;
 	case MESSAGE_TYPE_ITEM_NAME:
 		ss << M_ITEM_NAME;
 		break;
@@ -272,6 +275,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 		break;
 	case MESSAGE_TYPE_START_GAME:
 		ss << M_START_GAME;
+		break;
+	case MESSAGE_TYPE_CONNECTED:
+		ss << M_CONNECTED;
 		break;
 	case MESSAGE_TYPE_PLAYER_READY:
 		ss << M_READY_PLAYER;

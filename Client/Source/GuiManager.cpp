@@ -324,7 +324,6 @@ void GuiManager::UnEquipItem( const int ID, int stacks )
 void GuiManager::Resize( int width, int height )
 {
 	float dx = ((float)height * 4.0f) / 3.0f;
-	float offSet = (float)(width - dx) / 2.0f;
 
 	float guiWidth = (InvWidth / 1024.0f) * dx;
 	float guiHeight = (InvHeight / 768.0f) * height;

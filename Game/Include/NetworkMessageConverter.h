@@ -19,6 +19,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_STATE,
 	MESSAGE_TYPE_MESH_MODEL,
 	MESSAGE_TYPE_CONNECTION_CLOSED,
+	MESSAGE_TYPE_CONNECTED,
+	MESSAGE_TYPE_LOAD_MAP,
 	MESSAGE_TYPE_SERVER_FULL,
 	MESSAGE_TYPE_SERVER_SHUTDOWN,
 	MESSAGE_TYPE_ERROR_MESSAGE,
@@ -85,6 +87,8 @@ static const std::string M_UPDATE_ACTOR				= "UA";
 static const std::string M_REMOVE_ACTOR				= "RA";
 static const std::string M_DEAD_ACTOR				= "DA";
 //Data Messages
+static const std::string M_LOAD_MAP					= "LM";
+static const std::string M_CONNECTED				= "CON";
 static const std::string M_POSITION					= "P";
 static const std::string M_ROTATION					= "R";
 static const std::string M_DIRECTION				= "D";

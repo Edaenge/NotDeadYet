@@ -20,7 +20,7 @@ public:
 	virtual void SetPosition(Vector2 pos);
 	virtual void SetDimension(Vector2 dim);
 
-	bool CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
+	bool CheckCollision(float mouseX, float mouseY);
 	
 	void FadeOut(float value);
 	void ShowGui();
