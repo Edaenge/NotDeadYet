@@ -70,7 +70,7 @@ namespace GUI
             int players;
             bool isNr = false;
             String gameMode = "FFA";
-            String mapName = this.map_combobox.GetItemText(this.map_combobox.SelectedItem); ;
+            String mapName = this.map_combobox.GetItemText(this.map_combobox.SelectedItem);
 
             String str_port = textBox_Port.Text.Trim();
             String str_players =textBox_Players.Text.Trim();
@@ -203,7 +203,8 @@ namespace GUI
             }
 
             this.map_combobox.Enabled = true;
-            this.map_combobox.SelectedIndex = 0;
+            if(files.Length > 0)
+                this.map_combobox.SelectedIndex = 0;
         }
 
     }

@@ -10,6 +10,7 @@
 #include "AIWolfBehavior.h"
 #include "WorldActor.h"
 #include <World/EntityList.h>
+#include "Physics.h"
 
 
 Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
@@ -21,8 +22,13 @@ Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldF
 	AddObserver(zGameMode);
 
 	// Create World
-	zWorld = new World(this, worldFile.c_str());
+	if(worldFile != "")
+		zWorld = new World(this, worldFile.c_str());
+	else
+		zWorld = new World(this, 10, 10);  // Handle Error.
 
+	PhysicsInit();
+	this->zPhysicsEngine = GetPhysics();
 	// Actor Manager
 	zActorManager = new ActorManager(syncher);
 }
@@ -65,7 +71,6 @@ void Game::OnEvent( Event* e )
 {
 	// TODO: Incoming Message
 
-	// World Loaded Event
 	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
 	{
 		// Create Player
@@ -94,7 +99,8 @@ void Game::OnEvent( Event* e )
 		PCE->clientData->Send(message);
 		delete NMC;
 
-	}	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
+	}	
+	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
 	}
