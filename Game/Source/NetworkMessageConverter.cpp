@@ -8,9 +8,14 @@ NetworkMessageConverter::NetworkMessageConverter()
 NetworkMessageConverter::~NetworkMessageConverter()
 {
 }
-std::string NetworkMessageConverter::Convert(const unsigned int ID, const float x, const float y, const float z)
+std::string NetworkMessageConverter::Convert(const unsigned int ID, const Vector3& vec)
 {
 	std::stringstream ss;
+
+	float x,y,z;
+	x = vec.x;
+	y = vec.y;
+	z = vec.z;
 
 	switch (ID)
 	{
@@ -33,9 +38,15 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 
 	return ss.str();
 }
-std::string NetworkMessageConverter::Convert(const unsigned int ID, const float x, const float y, const float z, const float w)
+std::string NetworkMessageConverter::Convert(const unsigned int ID, const Vector4& vec)
 {
 	std::stringstream ss;
+
+	float x,y,z,w;
+	x = vec.x;
+	y = vec.y;
+	z = vec.z;
+	w = vec.w;
 
 	switch (ID)
 	{

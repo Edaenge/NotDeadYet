@@ -75,44 +75,16 @@ class WorldObjectManager
 public:
 	WorldObjectManager();
 	virtual ~WorldObjectManager();
-	/*
-	bool AddObject(PlayerObject* new_PlayerObject);
-	bool AddObject(AnimalObject* new_AnimalObject);
-	bool AddObject(StaticObject* new_StaticObject);
-	bool AddObject(DynamicObject* new_DynamicObject);
-	bool AddObject(DeadPlayerObject* new_DeadPlayerObject);
-	bool RemoveObject(const unsigned int type, const int Index);
-	bool SearchAndRemove(const unsigned int type, const int ID);
 
-	inline std::vector<PlayerObject*>& GetPlayers() {return this->zPlayerObjects;}
-	inline std::vector<AnimalObject*>& GetAnimals() {return this->zAnimalObjects;}
-	inline std::vector<StaticObject*>& GetStaticObjects() {return this->zStaticObjects;}
-	inline std::vector<DynamicObject*>& GetDynamicObjects() {return this->zDynamicObjects;}
-	inline std::vector<DeadPlayerObject*>& GetDeadPlayerObjects() {return this->zDeadPlayerObjects;}
-
-	PlayerObject* GetPlayerObject(const unsigned int Index);
-	AnimalObject* GetAnimalObject(const unsigned int Index);
-	StaticObject* GetStaticObject(const unsigned int Index);
-	DynamicObject* GetDynamicObject(const unsigned int Index);
-	DeadPlayerObject* GetDeadPlayerObject(const unsigned int Index);
-	//! Search for the Object With the ID.
-	int SearchForObject(const unsigned int type, const int ID);
-	
-	PlayerObject* SearchAndGetPlayerObject(const int ID);
-	AnimalObject* SearchAndGetAnimalObject(const long ID);
-	StaticObject* SearchAndGetStaticObject(const long ID);
-	DynamicObject* SearchAndGetDynamicObject(const long ID);
-	DeadPlayerObject* SearchAndGetDeadPlayerObject(const long ID);
-	*/
 	/*! Interpolates all the Objects towards their final Position*/
 	void UpdateObjects(float deltaTime);
 
 	bool AddActor(Actor* actor);
-	Actor* SearchAndGetActor(const long ID);
+	Actor* SearchAndGetActor(const unsigned int ID);
 	Actor* GetActor(const int Index);
 	bool RemoveActor(const int Index);
-	int SearchForActor(const long ID);
-	bool AddUpdate(Updates update);
+	int SearchForActor(const unsigned int ID);
+	void AddUpdate(Updates update);
 private:
 	std::vector<Actor*> zActors;
 	std::vector<Updates> zUpdates;

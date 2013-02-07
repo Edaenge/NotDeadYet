@@ -53,7 +53,7 @@ void GhostActor::Update( float deltaTime )
 
 std::string GhostActor::ToMessageString(NetworkMessageConverter* NMC)
 {
-	std::string msg = NMC->Convert(MESSAGE_TYPE_POSITION, this->zPosition.x, this->zPosition.y, this->zPosition.z);
+	std::string msg = NMC->Convert(MESSAGE_TYPE_POSITION, this->zPosition);
 
 	return msg;
 }
