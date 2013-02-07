@@ -70,7 +70,7 @@ namespace GUI
             int players;
             bool isNr = false;
             String gameMode = "FFA";
-            String mapName = "3x3";
+            String mapName = this.map_combobox.GetItemText(this.map_combobox.SelectedItem); ;
 
             String str_port = textBox_Port.Text.Trim();
             String str_players =textBox_Players.Text.Trim();
@@ -190,9 +190,20 @@ namespace GUI
             Clipboard.SetText(textBox_public_ip.Text);
         }
 
-        private void MapsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
-            mapName = MapsListBox.SelectedItem.ToString();
+            DirectoryInfo taskDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
+            FileInfo[] files = taskDirectory.GetFiles("*.map");
+
+            this.map_combobox.Enabled = false;
+
+            for (int i = 0; i < files.Length; i++)
+            {
+                this.map_combobox.Items.Add(files[i].ToString());
+            }
+
+            this.map_combobox.Enabled = true;
+            this.map_combobox.SelectedIndex = 0;
         }
 
     }
