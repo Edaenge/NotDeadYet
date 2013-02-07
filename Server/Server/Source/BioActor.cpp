@@ -3,6 +3,7 @@
 
 BioActor::BioActor() : Actor()
 {
+	
 	this->zState = STATE_IDLE;
 	this->zVelocity = V_WALK_SPEED;
 
