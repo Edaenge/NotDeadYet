@@ -62,7 +62,7 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const Vector
 
 	return ss.str();
 }
-std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::string word)
+std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::string& word)
 {
 	std::stringstream ss;
 
