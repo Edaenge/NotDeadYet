@@ -20,15 +20,16 @@ namespace System { namespace Windows { namespace Interop
 	{
 	protected:
 		ServerEngineWrapper* zServer;
+
 	public:
 		CppCLI();
-		~CppCLI();
+		!CppCLI();
 
 		String^ Init(int port, int nrOfPlayers, String^ gameMode, String^ mapName);
 		void ShutdownHost();
 		bool StartHost();
 
 		bool IsRunning();
-		int GetNrOfPlayers();
+		unsigned int GetNumClients();
 	};
 }}}

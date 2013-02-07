@@ -20,7 +20,6 @@ namespace GUI
         const string RUNNING = "Running";
         const string NOT_RUNNING = "Not Running";
         String IPADD = "";
-        String mapName = "FFA";
         int max_pl = 0;
         CppCLI m_ServerEngine = null;
 
@@ -44,7 +43,6 @@ namespace GUI
                 Application.DoEvents();
 
                 Thread.Sleep(100);
-
             }
         }
 
@@ -52,7 +50,7 @@ namespace GUI
         {
             if (this.m_ServerEngine.IsRunning())
             {
-                toolStripStatusLabel2.Text = Convert.ToString(m_ServerEngine.GetNrOfPlayers() + "/" + max_pl);
+                toolStripStatusLabel2.Text = Convert.ToString(m_ServerEngine.GetNumClients() + "/" + max_pl);
                 toolStripStatusLabel4.Text = RUNNING;
             }
             else

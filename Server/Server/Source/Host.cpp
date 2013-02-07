@@ -136,7 +136,12 @@ void Host::SendToAllClients(const std::string& message)
 
 bool Host::HasClients() const
 {
-	return false;
+	return !_clients.empty();
+}
+
+unsigned int Host::GetNumClients() const
+{
+	return _clients.size();
 }
 
 void Host::ReadMessages()
@@ -402,9 +407,10 @@ void Host::HandleClientDropped( MaloW::ClientChannel* channel )
 void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 {
 	ClientData* cd = new ClientData(CC);
-	PlayerConnectedEvent e;
 	_clients[CC] = cd;
-	
+	CC->Start();
+
+	PlayerConnectedEvent e;
 	e.clientData = cd;
 	NotifyObservers(&e);
 }

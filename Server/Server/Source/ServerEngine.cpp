@@ -19,9 +19,9 @@ bool ServerEngine::IsRunning() const
 	return false;
 }
 
-int ServerEngine::GetNrOfPlayers() const
+unsigned int ServerEngine::GetNumClients() const
 {
-	return 0;//this->zHost->GetNrOfPlayers();
+	return zHost->GetNumClients();
 }
 
 bool ServerEngine::StartHost()

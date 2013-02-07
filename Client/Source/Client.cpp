@@ -269,9 +269,9 @@ void Client::SendClientUpdate()
 	}
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CLIENT_DATA);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_FRAME_TIME, this->zFrameTime);
-	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, dir.x, dir.y, dir.z);
-	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, up.x, up.y, up.z);
-	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, dir);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, up);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ROTATION, rot);
 	
 	this->zServerChannel->TrySend(msg);
 }
@@ -956,8 +956,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		std::string serverMessage = "";
 		serverMessage = this->zMsgHandler.Convert(MESSAGE_TYPE_USER_DATA);
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_MESH_MODEL, this->zMeshID);
-		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, camDir.x, camDir.y, camDir.z);
-		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, camUp.x, camUp.y, camUp.z);
+		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, camDir);
+		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, camUp);
 
 		this->zServerChannel->Send(serverMessage);
 	}

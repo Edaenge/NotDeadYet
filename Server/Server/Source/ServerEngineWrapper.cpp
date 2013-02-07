@@ -28,9 +28,9 @@ bool ServerEngineWrapper::StartHost() const
 	return this->zServerEngine->StartHost();
 }
 
-int ServerEngineWrapper::GetNrOfPlayers() const
+unsigned int ServerEngineWrapper::GetNumClients() const
 {
-	return zServerEngine->GetNrOfPlayers();
+	return zServerEngine->GetNumClients();
 }
 
 bool ServerEngineWrapper::IsRunning() const
