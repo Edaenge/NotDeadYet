@@ -20,6 +20,7 @@ public:
 	inline float GetTotalPingTime() const {return zTotalPingTime;}
 	inline int GetNrOfPings() const {return zNrOfPings;}
 	inline bool GetReady(){ return zReady; }
+	inline unsigned int GetClientID() const {return this->zClient->getID();}
 	
 	inline void SetReady(bool ready){ zReady = ready; }
 	inline void SetPinged(const bool pinged) {zPinged = pinged;}
@@ -29,7 +30,7 @@ public:
 	inline void ResetPingCounter() {zPinged = 0; zTotalPingTime = 0.0f;}
 
 	/*! Sends a message to the client.*/
-	inline void SendMessage(const std::string& msg)
+	inline void Send(const std::string& msg)
 	{
 		zClient->TrySend(msg);
 	}
