@@ -1,7 +1,7 @@
 #include "ProjectileBehavior.h"
 
 
-ProjectileBehavior::ProjectileBehavior( Actor* actor, World* world ) : Behavior(actor, world)
+ProjectileBehavior::ProjectileBehavior( Actor* actor, World* world ) : Behavior(actor, world, NULL)
 {
 	this->zVelocity = Vector3(0, 0, 0);
 	this->zDamping = 0.99f;

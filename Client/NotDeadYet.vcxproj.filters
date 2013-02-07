@@ -19,6 +19,9 @@
     <Filter Include="Source\KeyUtil">
       <UniqueIdentifier>{6018b1dc-988e-4e62-b593-0e280273fa9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Actors">
+      <UniqueIdentifier>{c7831163-bdbb-467e-9176-9ee7fbcb7646}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\SoundEngine\SoundEffect.cpp">
@@ -33,9 +36,6 @@
     <ClCompile Include="Source\SoundEngine\SoundSong.cpp">
       <Filter>Source\Sound</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AnimalObject.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Client.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -43,12 +43,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\ClientObjectHandler.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\DeadPlayerObject.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\DynamicObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game.cpp">
@@ -63,19 +57,10 @@
     <ClCompile Include="Source\MainMenu.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\MovingObject.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PlayerObject.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\SoundReader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Sounds.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\StaticObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\WorldObjectManager.cpp">
@@ -146,16 +131,7 @@
     <ClInclude Include="Source\SoundEngine\SoundSong.h">
       <Filter>Source\Sound</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AnimalObject.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Client.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\DeadPlayerObject.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\DynamicObject.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game.h">
@@ -167,25 +143,13 @@
     <ClInclude Include="Source\MainMenu.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\MovingObject.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\OrganicObject.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PlayerObject.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\SoundReader.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\Sounds.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StaticObject.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\WorldObject.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\WorldObjectManager.h">
@@ -238,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="Source\GUI\TextBox.h">
       <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Actor.h">
+      <Filter>Source\Actors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

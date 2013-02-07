@@ -30,14 +30,6 @@ public:
 		Genuine actors: StaticObjectActor, DynamicObjectActor.
 		This function DO NOT deallocates the Actor object.
 	*/
-	bool PickUpObject(StaticObjectActor* object);
-	/*! */
-	bool DropObject(const long ID);
-	/*! Adds a message string with health,stamina,hunger, hydration to mess.
-	    This function checks if the data has changed since last update.
-		If it has changed, we need to send it to the client.
-		The parameter string is a network message string.
-	*/
 
 	Item* GetItem(const long ID){return this->zInventory->SearchAndGetItem(ID);}
 	float GetLatency() const {return this->zLatency;}
@@ -58,9 +50,6 @@ public:
 
 	inline void SetFrameTime(const float frameTime){this->zFrameTime = frameTime;}
 	inline void SetLatency(const float latency){this->zLatency = latency;}
-
-	/*! Sets the objm. This class is not responsible for deallocation.*/
-	void SetObjManager(ObjectManager* objm) {this->zObjManager = objm;}
 	
 	void SetInventory(Inventory* inv) {this->zInventory = inv;}
 	void EatFood(float hunger);
@@ -86,7 +75,6 @@ private:
 
 	Inventory* zInventory;
 
-	ObjectManager* zObjManager;
 	Player* zPlayer;
 };
 

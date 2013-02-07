@@ -97,30 +97,15 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_UPDATE_ACTOR:
 		ss << M_UPDATE_ACTOR;
 		break;
+	case MESSAGE_TYPE_NEW_ACTOR:
+		ss << M_NEW_ACTOR;
+		break;
 	case MESSAGE_TYPE_REMOVE_ACTOR:
 		ss << M_REMOVE_ACTOR;
 		break;
 	case MESSAGE_TYPE_DEAD_ACTOR:
 		ss << M_DEAD_ACTOR;
 		break;
-	//case MESSAGE_TYPE_UPDATE_PLAYER:
-	//	ss << M_UPDATE_PLAYER;
-	//	break;
-	//case MESSAGE_TYPE_UPDATE_STATIC_OBJECT:
-	//	ss << M_UPDATE_STATIC_OBJECT;
-	//	break;
-	//case MESSAGE_TYPE_UPDATE_DYNAMIC_OBJECT:
-	//	ss << M_UPDATE_DYNAMIC_OBJECT;
-	//	break;
-	//case MESSAGE_TYPE_UPDATE_ANIMAL:
-	//	ss << M_UPDATE_ANIMAL;
-	//	break;
-	//case MESSAGE_TYPE_DEAD_PLAYER:
-	//	ss << M_DEAD_PLAYER;
-	//	break;
-	//case MESSAGE_TYPE_DEAD_ANIMAL:
-	//	ss << M_DEAD_ANIMAL;
-	//	break;
 	case MESSAGE_TYPE_KEY_DOWN:
 		ss << M_KEY_DOWN;
 		break;
@@ -132,18 +117,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 		break;
 	case MESSAGE_TYPE_STATE:
 		ss << M_STATE;
-		break;
-	case MESSAGE_TYPE_NEW_PLAYER:
-		ss << M_NEW_PLAYER;
-		break;
-	case MESSAGE_TYPE_NEW_STATIC_OBJECT:
-		ss << M_NEW_STATIC_OBJECT;
-		break;
-	case MESSAGE_TYPE_NEW_DYNAMIC_OBJECT:
-		ss << M_NEW_DYNAMIC_OBJECT;
-		break;
-	case MESSAGE_TYPE_NEW_ANIMAL:
-		ss << M_NEW_ANIMAL;
 		break;
 	case MESSAGE_TYPE_PICKUP_ITEM:
 		ss << M_PICKUP_ITEM;
@@ -229,48 +202,18 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_STAMINA:
 		ss << M_STAMINA;
 		break;
-	//case MESSAGE_TYPE_REMOVE_PLAYER:
-	//	ss << M_REMOVE_PLAYER;
-	//	break;
-	//case MESSAGE_TYPE_REMOVE_STATIC_OBJECT:
-	//	ss << M_REMOVE_STATIC_OBJECT;
-	//	break;
-	//case MESSAGE_TYPE_REMOVE_ANIMAL:
-	//	ss << M_REMOVE_ANIMAL;
-	//	break;
-	//case MESSAGE_TYPE_ADD_DEAD_ANIMAL_OBJECT:
-	//	ss << M_ADD_DEAD_ANIMAL_OBJECT;
-	//	break;
 	case MESSAGE_TYPE_DEAD_ANIMAL_ADD_ITEM:
 		ss << M_ADD_DEAD_ANIMAL_ITEM;
 		break;
 	case MESSAGE_TYPE_DEAD_ANIMAL_REMOVE_ITEM:
 		ss << M_DEAD_ANIMAL_REMOVE_ITEM;
 		break;
-	//case MESSAGE_TYPE_REMOVE_DEAD_ANIMAL_OBJECT:
-	//	ss << M_REMOVE_DEAD_ANIMAL_OBJECT;
-	//	break;
-	//case MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT:
-	//	ss << M_REMOVE_DYNAMIC_OBJECT;
-	//	break;
 	case MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM:
 		ss << M_DEAD_PLAYER_ADD_ITEM;
 		break;
 	case MESSAGE_TYPE_DEAD_PLAYER_REMOVE_ITEM:
 		ss << M_DEAD_PLAYER_REMOVE_ITEM;
 		break;
-	//case MESSAGE_TYPE_ADD_DEAD_PLAYER_OBJECT:
-	//	ss << M_ADD_DEAD_PLAYER_OBJECT;
-	//	break;
-	//case MESSAGE_TYPE_REMOVE_DEAD_PLAYER_OBJECT:
-	//	ss << M_REMOVE_DEAD_PLAYER_OBJECT;
-	//	break;
-	case MESSAGE_TYPE_NEW_GHOST_ACTOR:
-		ss << M_NEW_GHOST_ACTOR;
-		break;
-	//case MESSAGE_TYPE_REMOVE_GHOST_ACTOR:
-	//	ss << M_REMOVE_GHOST_ACTOR;
-	//	break;
 	case MESSAGE_TYPE_CONNECTION_CLOSED:
 		ss << M_CONNECTION_CLOSED;
 		break;
@@ -307,9 +250,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	case MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED:
 		ss << M_DEAD_PLAYER_ITEM_FINISHED;
 		break;;
-	case MESSAGE_TYPE_FETCH_INVENTORY:
-		ss << M_FETCH_INVENTORY;
-		break;
 	case MESSAGE_TYPE_SERVER_FULL:
 		ss << M_SERVER_FULL;
 		break;

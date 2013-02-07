@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm4="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm5="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="f028be13-54a5-475f-8aa4-262c388ccc13" name="GameMode" linkedPackageId="a10774ef-d98f-4179-8296-995a24e577f0" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="f028be13-54a5-475f-8aa4-262c388ccc13" name="GameMode" linkedPackageId="a10774ef-d98f-4179-8296-995a24e577f0" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
   <packagedElements>
     <logicalClassDesignerModelHasTypes>
       <class Id="e9818c4e-215f-4a8e-9fd7-9338b52afb98" name="Host : Process : Observed" isAbstract="false" isLeaf="false" isActiveClass="false">
@@ -1092,6 +1092,47 @@
               <operationHasOwnedParameters>
                 <parameter Id="6ff4a717-8cef-4ff9-893f-7af22c572eeb" name="float dt" direction="In" isUnique="false">
                   <elementDefinition Id="9a3b8759-8c25-46cd-baeb-dbf1c7e34770" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="b3728eea-6f9a-4ead-ae56-4e9eb791c38f" name="ItemActor" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="8af2fe2e-6380-45d9-afc3-3afc291523a9" />
+        <generalsInternal>
+          <generalization Id="b92e808e-7818-47b1-95f3-1159a2641ecb" isSubstitutable="false">
+            <classMoniker Id="9b6899fc-fb8f-409f-8fd0-083b1bc33ab1" LastKnownName="Actor : Observed" />
+            <elementDefinition Id="72694dbd-8cf2-4469-8624-510e3a4f9e4e" />
+          </generalization>
+        </generalsInternal>
+        <ownedAttributesInternal>
+          <property Id="c9e22fb0-ea9f-4319-bef8-b5e7d3f2b748" name="Item*" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="219f432c-745b-4b46-9d12-d0e882261a83" />
+          </property>
+        </ownedAttributesInternal>
+        <ownedOperationsInternal>
+          <operation Id="05d35b54-17f8-41fb-943d-421a6e9167e8" name="GetItem" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="0440cbd5-d065-445f-bb78-452da6c55ad9" />
+          </operation>
+          <operation Id="b2744950-f480-4ff2-bd39-501cae9535e6" name="ItemActor" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="66fc0996-5a64-474f-80e0-7c250eea2589" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="a957ba4e-75a4-4e98-abbd-e41dd5a25575" name="Item*" direction="In" isUnique="false">
+                  <elementDefinition Id="b2346d9a-0d07-46c3-aae8-a283249889df" />
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="8d1f6eed-d17b-4763-8df9-89bcb0b3d577" name="Model" direction="In" isUnique="false">
+                  <elementDefinition Id="e4d3a3c8-9fe2-41d4-bd94-56bb511ba90a" />
+                </parameter>
+              </operationHasOwnedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="0cb624fb-365b-4b78-8b11-4a99281bd380" name="Position" direction="In" isUnique="false">
+                  <elementDefinition Id="dce17476-0c7f-4364-aa41-891e9d1866c1" />
                 </parameter>
               </operationHasOwnedParameters>
             </ownedParameters>
