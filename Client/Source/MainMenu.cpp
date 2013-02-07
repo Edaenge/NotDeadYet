@@ -70,7 +70,7 @@ void MainMenu::Init()
 	zSets[FIND_SERVER].AddElement(temp);
 
 	temp = new SimpleButton(offSet + (849.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1, "Media/Menu/FindServer/Connect.png", 
-		(105.0f / 1024.0f) * dx,(29.0f / 650.0f) * windowHeight, new ChangeSetEvent(MAINMENU), "", "", 
+		(105.0f / 1024.0f) * dx,(29.0f / 650.0f) * windowHeight, new ChangeSetEvent(GETIPADRESS), "", "", 
 		offSet + (849.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
 		(105.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
 	zSets[FIND_SERVER].AddElement(temp);
@@ -103,13 +103,37 @@ void MainMenu::Init()
 	temp = new SimpleButton(70, 500, 1, "Media/Icons/Options.png", 100, 25, new ChangeSetEvent(MAINMENU), "Media/Icons/Quit.png", "Media/Icons/FindServer.png", 70, 500, 100, 25);
 	zSets[OPTIONS].AddElement(temp);
 
+	//Get IP
+	float AdressX = (offSet + (512.0f / 1024.0f) * dx) - (((200.0f / 1024.0f) * dx) / 2);
+	float AdressY = ((384.0f / 768.0f) * windowHeight) - (((100.0f / 768.0f) * windowHeight) / 2);
+	temp = new GUIPicture(AdressX, AdressY, 1, 
+		"Media/Icons/IP_Adress.png", (200.0f / 1024.0f) * dx, (100.0f / 768.0f) * windowHeight);
+	zSets[GETIPADRESS].AddElement(temp);
+
+	//IPAddress
+	temp = new TextBox(AdressX + (10.0f / 1024.0f) * dx, AdressY + (34.0f / 768.0f) * windowHeight, 1, "", 
+		(180.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "127.0.0.1", "IPAdress", 1.0f, 16, NR_SPECIAL);
+	zSets[GETIPADRESS].AddElement(temp);
+
+	temp = new SimpleButton(AdressX + (120.0f / 1024.0f) * dx, AdressY + (78.0f / 768.0f) * windowHeight, 1, 
+		"Media/Icons/buton_ok.png", (75.0f / 1024.0f) * dx, (20.0f / 768.0f) * windowHeight, 
+		new ChangeSetEvent(FIND_SERVER), "", "", AdressX + (120.0f / 1024.0f) * dx
+		, AdressY + (78.0f / 768.0f) * windowHeight, (75.0f / 1024.0f) * dx, (20.0f / 768.0f) * windowHeight);
+	zSets[GETIPADRESS].AddElement(temp);
+
+	temp = new SimpleButton(AdressX + (45.0f / 1024.0f) * dx, AdressY + (78.0f / 768.0f) * windowHeight, 1, 
+		"Media/Icons/buton_cancel.png", (75.0f / 1024.0f) * dx, (20.0f / 768.0f) * windowHeight, 
+		new ChangeTextAndMenuEvent(FIND_SERVER, "IPAdress"), "", "", AdressX + (45.0f / 1024.0f) * dx
+		, AdressY + (78.0f / 768.0f) * windowHeight, (75.0f / 1024.0f) * dx, (20.0f / 768.0f) * windowHeight);
+	zSets[GETIPADRESS].AddElement(temp);
+
 	this->zPrimarySet = MAINMENU;
 	this->zSecondarySet = NOMENU;
 }
 
 void MainMenu::StartTestRun()
 {
-	// zGame->InitGameClient("194.47.150.16", 11521);
+	//zGame->InitGameClient("194.47.150.20", 11521);
 	zGame->InitGameClient("127.0.0.1", 11521);	
 	zGame->Run();
 }
@@ -184,6 +208,25 @@ void MainMenu::Run()
 
 						break;
 					}
+				}
+				else if(retEvent->GetEventMessage() == "ChangeTextAndMenuEvent")
+				{
+					ChangeTextAndMenuEvent* cEvent = (ChangeTextAndMenuEvent*)retEvent;
+
+					string temp = zSets[this->zPrimarySet].GetTextFromField(cEvent->GetTextBoxName());
+
+					
+
+					this->SwapMenus(NOMENU, NOMENU);
+
+					this->EnableMouse(false);
+
+					zGame->InitGameClient(temp, 11521);	
+					zGame->Run();
+
+					this->EnableMouse(true);
+
+					this->SwapMenus(MAINMENU, this->zSecondarySet);
 				}
 			}
 			else

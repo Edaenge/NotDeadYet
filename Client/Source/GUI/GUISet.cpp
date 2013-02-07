@@ -109,7 +109,7 @@ GUIEvent* GUISet::UpdateAndCheckCollision(float mouseX, float mouseY, bool mouse
 {
 	return this->CheckCollision(mouseX, mouseY, mousePressed, ge);
 }
-/*string GUISet::GetTextFromField(string textBox)
+string GUISet::GetTextFromField(string textBox)
 {
 	for(int i = 0; i < this->mNrOfElements; i++)
 	{
@@ -123,7 +123,7 @@ GUIEvent* GUISet::UpdateAndCheckCollision(float mouseX, float mouseY, bool mouse
 		}
 	}
 	return "";
-}
+}/*
 GUIEvent* GUISet::GetEventFromDropDown(string dropDownMenu)
 {
 	for(int i = 0; i < this->mNrOfElements; i++)

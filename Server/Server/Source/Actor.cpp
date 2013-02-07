@@ -85,6 +85,5 @@ const std::string& Actor::GetModel() const
 {
 	if ( zPhysicsObject )
 		return zPhysicsObject->GetModel();
-	
 	return "";
 }

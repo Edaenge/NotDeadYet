@@ -78,7 +78,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 			this->zGuiManager = new GuiManager(this->zEng);
 			this->zCreated = true;
 			//filename = "Media/Models/Ball.obj";
-			scale *= 0.1f;
+			//scale *= 2.1f;
 			this->zEng->GetCamera()->SetPosition(position + Vector3(0.0f, 1.7f, 0.0f));
 		}
 	}
