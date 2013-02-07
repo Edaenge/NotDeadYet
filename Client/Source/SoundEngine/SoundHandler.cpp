@@ -70,13 +70,19 @@ SoundHandler::~SoundHandler()
 
 	//TODO: Release geometry here.
 
-	result = this->zLandGeometry->release();
-	ERRCHECK(result);
+	if ( zLandGeometry ) 
+	{
+		result = this->zLandGeometry->release();
+		ERRCHECK(result);
+	}
 
 	for(int i = 0; i < this->zNrOfGeometryObjects; i++)
 	{
-		result = this->zObjectGeometry[i]->release();
-		ERRCHECK(result);
+		if ( zObjectGeometry[i] )
+		{
+			result = this->zObjectGeometry[i]->release();
+			ERRCHECK(result);
+		}
 	}
 
 	delete this->zObjectGeometry; //It might be that I need to do delete [] this->zObjectGeometry, I'm not sure.

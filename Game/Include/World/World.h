@@ -62,11 +62,15 @@ public:
 	// Save World To File
 	void SaveFile();
 	void SaveFileAs( const std::string& fileName );
+	const std::string& GetFileName() const;
 
 	// World Settings
 	unsigned int GetNumSectorsWidth() const;
 	unsigned int GetNumSectorsHeight() const;
+	Vector2 GetWorldCenter() const;
+
 	Vector2 GetWorldSize() const;
+	bool IsInside( const Vector2& worldPos );
 
 	// Sun Settings
 	void SetSunProperties( const Vector3& dir, const Vector3& color, float intensity );
@@ -108,10 +112,11 @@ public:
 	void RemoveEntity(Entity* entity);
 
 	// Sector Functions
+	Sector* GetSector( const Vector2UINT& sectorCoords ) throw(...);
 	Sector* GetSector( unsigned int x, unsigned int y ) throw(...);
 	Sector* GetSectorAtWorldPos( const Vector2& worldPos );
 	Vector2UINT WorldPosToSector( const Vector2& worldPos ) const;
-	bool IsSectorLoaded( unsigned int x, unsigned int y ) const;
+	bool IsSectorLoaded( const Vector2UINT& sectorCoords ) const;
 	void SetSectorTexture( unsigned int x, unsigned int y, const std::string& texture, unsigned int index );
 	const char* const GetSectorTexture( unsigned int x, unsigned int y, unsigned int index );
 
@@ -128,8 +133,8 @@ public:
 
 	// Data Access
 	unsigned int GetAINodesInCircle(const Vector2& center, float radius, std::set<Vector2>& out) const;
-	unsigned int GetEntitiesInRect(const Rect& rect, std::set<Entity*>& out) const;
-	unsigned int GetEntitiesInCircle(const Vector2& center, float radius, std::set<Entity*>& out) const;
+	unsigned int GetEntitiesInRect(const Rect& rect, std::set<Entity*>& out, unsigned int typeFilter=0) const;
+	unsigned int GetEntitiesInCircle(const Vector2& center, float radius, std::set<Entity*>& out, unsigned int typeFilter=0) const;
 	unsigned int GetSectorsInCicle(const Vector2& center, float radius, std::set<Vector2UINT>& out) const;
 	unsigned int GetHeightNodesInCircle(const Vector2& center, float radius, std::set<Vector2>& out) const;
 	unsigned int GetTextureNodesInCircle(const Vector2& center, float radius, std::set<Vector2>& out) const;

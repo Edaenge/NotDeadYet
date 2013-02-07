@@ -6,6 +6,7 @@ Actor::Actor() :
 	zID(++NextActorID),
 	zPhysicsObject(0)
 {
+	SetScale(Vector3(0.05f, 0.05f, 0.05f));
 }
 
 Actor::~Actor()
@@ -83,8 +84,6 @@ void Actor::SetPhysicsObject( PhysicsObject* object )
 const std::string& Actor::GetModel() const
 {
 	if ( zPhysicsObject )
-	{
-		zPhysicsObject->GetModel();
-	}
+		return zPhysicsObject->GetModel();
 	return "";
 }
