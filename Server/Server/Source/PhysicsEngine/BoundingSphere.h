@@ -1,7 +1,6 @@
 #pragma once
 
-
-#include "../../External/NDYGFX/Include/Vector.h"
+#include <Vector.h>
 
 class BoundingSphere
 {

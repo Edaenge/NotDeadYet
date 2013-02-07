@@ -75,11 +75,12 @@ void Game::OnEvent( Event* e )
 		// Create Player Actor
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/scale.obj");
 		Actor* actor = new PlayerActor(player, pObject);
-		actor->SetPosition(Vector3(50, 0, 50));
+		actor->SetPosition(Vector3(50.0f, 0.0f, 50.0f));
 		zActorManager->AddActor(actor);
 
 		// Apply Default Player Behavior
-		SetPlayerBehavior(player, new PlayerHumanBehavior(actor, zWorld, player));	}
+		SetPlayerBehavior(player, new PlayerHumanBehavior(actor, zWorld, player));	
+	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);

@@ -1,5 +1,7 @@
 #pragma once
+
 #include "Behavior.h"
+#include <Vector.h>
 
 static const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 
@@ -15,5 +17,4 @@ public:
 
 	bool Update(float dt);
 	bool IsMoving() {return this->zMoving;}
-
 };

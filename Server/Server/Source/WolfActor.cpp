@@ -1,10 +1,12 @@
 #include "WolfActor.h"
 
-WolfActor::WolfActor(bool genID /*= true*/, bool isPlayerControlled /*= false*/) : AnimalActor(genID)
+WolfActor::WolfActor() : 
+	AnimalActor()
 {
+	/*
 	this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitWolf();
-	
+	*/
 }
 
 WolfActor::~WolfActor()
@@ -12,6 +14,7 @@ WolfActor::~WolfActor()
 
 }
 
+/*
 void WolfActor::InitWolf() throw(...)
 {
 	this->SetType(WOLF);
@@ -620,10 +623,9 @@ void WolfActor::UpdateForAnimal(float deltaTime)
 		if(this->GetBehaviour() == CALM && this->zCurrentPath.size() > 0 || this->GetBehaviour() == SUSPICIOUS && this->zCurrentPath.size() > 0) // && !this->zCurrentPath.empty() is necessary to be used again to avoid getting into an unlikely but posssible error.
 		{
 
-			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
-
-			result = result;
-			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
+			// double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
+			// result = result;
+			// this->SetDirection( Vector3( cos(result), 0.0f, sin(result) ));
 
 
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
@@ -642,10 +644,9 @@ void WolfActor::UpdateForAnimal(float deltaTime)
 		}
 		else if(this->GetBehaviour() == AGGRESSIVE  && this->zCurrentPath.size() > 0)
 		{
-			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
-
-			result = result;
-			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
+			// double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
+			// result = result;
+			// this->SetDirection( Vector3( cos(result), 0.0f, sin(result) ));
 
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - this->GetPosition();
@@ -658,10 +659,9 @@ void WolfActor::UpdateForAnimal(float deltaTime)
 		}
 		else if(this->GetBehaviour() == AFRAID && this->zCurrentPath.size() > 0)
 		{
-			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
-
-			result = result;
-			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
+			// double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
+			// result = result;
+			// this->SetDirection( Vector3( cos(result), 0.0f, sin(result) ));
 
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - this->GetPosition();
@@ -699,3 +699,5 @@ void WolfActor::LargeSuddenSoundReaction()
 	this->zPanic = true;
 	this->SetFearLevel( this->GetFearLevel() + zLargeSoundEventFearIncrease);
 }
+
+*/

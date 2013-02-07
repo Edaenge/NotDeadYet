@@ -45,6 +45,12 @@ public:
 	Actor *zActor;
 };
 
+class ActorDeleteEvent : public Event
+{
+public:
+	Actor* zActor;
+};
+
 class ActorDirEvent : public Event
 {
 public:
@@ -61,34 +67,34 @@ class Actor : public Observed
 	Vector4 zRot;
 	Vector3 zScale;
 	Vector3 zDir;
+
+	long zID;
+	PhysicsObject* zPhysicsObject;
+
+	// Vector3 zUp;
+	// std::string zActorModel;
+	// std::string zActorObjectName;
+	// unsigned int zActorType;
 public:
-	Actor()
-	{
-		this->zID = -1;
-		this->zActorModel = "none";
-		this->zActorObjectName = "none";
-		this->zUp = Vector3(0.0f, 1.0f, 0.0f);
-		this->zActorType = ACTOR_TYPE_NONE;
-		this->zPhysicsObject = NULL;
-	}
-
-	virtual ~Actor() {};
+	Actor();
+	virtual ~Actor();
 	
-	inline long GetID() const {return this->zID;}
-	std::string GetActorModel() const {return zActorModel;}
-	std::string GetActorObjectName() const {return zActorObjectName;}
-	const Vector3& GetUpVector() const {return this->zUp;}
-	const unsigned int GetActorType() const {return zActorType;}
+	inline long GetID() const { return this->zID; }
+	// std::string GetActorModel() const {return zActorModel;}
+	// std::string GetActorObjectName() const {return zActorObjectName;}
+	// const Vector3& GetUpVector() const {return this->zUp;}
+	// const unsigned int GetActorType() const {return zActorType;}
 
-	inline  void SetID(const long id) {this->zID = id;}
-	virtual void SetActorModel(const std::string& modelStr) {zActorModel = modelStr;}
-	virtual void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
-	virtual void SetUpVector(const Vector3& up){this->zUp = up;}
+	// inline  void SetID(const long id) {this->zID = id;}
+	// virtual void SetActorModel(const std::string& modelStr) {zActorModel = modelStr;}
+	// virtual void SetActorObjectName(const std::string& objectStr) {zActorObjectName = objectStr;}
+	// virtual void SetUpVector(const Vector3& up){this->zUp = up;}
 
 	// Set Transformation Functions
 	void SetPosition(const Vector3& pos);
 	void SetRotation(const Vector4& rot);
 	void SetRotation(const Vector3& around, const float angle);
+	void SetPhysicsObject( PhysicsObject* object );
 	void SetScale(const Vector3& scale);
 	void SetDir(const Vector3& dir);
 
@@ -97,22 +103,5 @@ public:
 	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
 	inline const Vector3& GetDir() const { return zDir; }
-	inline PhysicsObject* GetPhysicsObject() const {return this->zPhysicsObject;}
-
-	long GenerateID()
-	{
-		return this->zNextAID++;
-	}
-
-protected:
-	Vector3 zUp;
-	std::string zActorModel;
-	std::string zActorObjectName;
-	unsigned int zActorType;
-	long zID;
-	PhysicsObject* zPhysicsObject;
-
-private:
-	static long zNextAID;
-
+	inline PhysicsObject* GetPhysicsObject() const { return this->zPhysicsObject; }
 };

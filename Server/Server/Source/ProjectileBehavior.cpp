@@ -1,4 +1,6 @@
+#include <World/World.h>
 #include "ProjectileBehavior.h"
+#include "Actor.h"
 
 
 ProjectileBehavior::ProjectileBehavior( Actor* actor, World* world ) : Behavior(actor, world)
@@ -30,7 +32,7 @@ bool ProjectileBehavior::Update( float dt )
 
 	//Set Values
 	this->zActor->SetPosition(newPos);
-	this->zActor->SetRotation(Vector4(0,0,0,1));
+	this->zActor->SetRotation(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 	this->zActor->SetRotation(around, angle);
 
 	//**Check if the projectile has hit the ground**

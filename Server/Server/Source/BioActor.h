@@ -28,7 +28,7 @@ public:
 
 	virtual ~BioActor();
 
-	virtual void Update(float deltaTime) = 0;
+	// virtual void Update(float deltaTime) = 0;
 
 	/*! Returns true if BioActor dies from the damage done.*/
 	virtual bool TakeDamage(const Damage& dmg, Actor* dealer);
@@ -57,7 +57,6 @@ public:
 	float GetStamina() const {return this->zStamina;}
 	float GetHealth() const {return this->zHealth;}
 	Vector3 GetDirection() const {return this->zDirection;}
-	inline PhysicsObject* GetPhysicObject() const {return this->zPhysicsObject;}
 
 	/*! Sets the player state.
 		Enum is defined in AnimationStates.h.
@@ -69,10 +68,6 @@ public:
 	void SetDirection(const Vector3& dir) {this->zDirection = dir;}
 	/*! Returns Pos, Rot, Scale, Stamina, Health, State.*/
 	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
-
-private:
-	void InitValues();
-	
 
 protected:
 	int		zState;

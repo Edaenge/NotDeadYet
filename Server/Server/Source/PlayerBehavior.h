@@ -1,12 +1,14 @@
 #pragma once
+
 #include "Behavior.h"
+#include <Vector.h>
 
 class Player;
 
 class PlayerBehavior : public Behavior
 {
 public:
-	PlayerBehavior(Actor* actor, World* world, WorldAnchor* zAnchor, Player* player);
+	PlayerBehavior(Actor* actor, World* world, Player* player);
 	virtual	~PlayerBehavior();
 
 
