@@ -4,13 +4,15 @@
 
 class ProjectileActor : public Actor
 {
-	Actor* zShooter;
+	
 public:
-	ProjectileActor(Actor* shooter, PhysicsObject* pObj);
+	ProjectileActor(Actor* owner, PhysicsObject* pObj);
 	virtual ~ProjectileActor();
 
-protected:
+	Actor* GetOwner() {return this->zOwner;}
 
+protected:
+	Actor* zOwner;
 
 private:
 

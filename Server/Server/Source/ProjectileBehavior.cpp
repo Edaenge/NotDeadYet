@@ -5,7 +5,7 @@
 
 ProjectileBehavior::ProjectileBehavior( Actor* actor, World* world ) : Behavior(actor, world)
 {
-	this->zVelocity = Vector3(0, 0, 0);
+	this->zVelocity = actor->GetDir();
 	this->zDamping = 0.99f;
 	this->zMoving = true;
 }
@@ -16,24 +16,27 @@ bool ProjectileBehavior::Update( float dt )
 		return false;
 
 	Vector3 newPos;
+	Vector3 newDir;
 	
 	// Update linear position.
 	newPos += (zVelocity* dt);
+	newDir = zVelocity;
+	newDir.Normalize();
 
 	//Rotate Mesh
-	Vector3 ProjectileDirection = Vector3(0,0,-1);
-	Vector3 CameraDirection = this->zVelocity;
+	Vector3 ProjectileStartDirection = Vector3(0,0,-1);
+	Vector3 ProjectileMoveDirection = newDir;
 
-	ProjectileDirection.Normalize();
-	CameraDirection.Normalize();
+	ProjectileStartDirection.Normalize();
 
-	Vector3 around = ProjectileDirection.GetCrossProduct(CameraDirection);
-	float angle = acos(ProjectileDirection.GetDotProduct(CameraDirection));
+	Vector3 around = ProjectileStartDirection.GetCrossProduct(ProjectileMoveDirection);
+	float angle = acos(ProjectileStartDirection.GetDotProduct(ProjectileMoveDirection));
 
 	//Set Values
 	this->zActor->SetPosition(newPos);
 	this->zActor->SetRotation(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 	this->zActor->SetRotation(around, angle);
+	this->zActor->SetDir(newDir);
 
 	//**Check if the projectile has hit the ground**
 	float yValue;
