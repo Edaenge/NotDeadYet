@@ -6,7 +6,7 @@ class PlayerDeerBehavior : public PlayerBehavior
 private:
 
 public:
-	PlayerDeerBehavior(Actor* actor, World* world, WorldAnchor* anchor, Player* palyer);
+	PlayerDeerBehavior(Actor* actor, World* world, Player* palyer);
 	virtual ~PlayerDeerBehavior();
 
 	bool Update(float dt);
