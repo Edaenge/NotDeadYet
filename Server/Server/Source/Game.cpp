@@ -71,32 +71,28 @@ void Game::OnEvent( Event* e )
 		// Create Player
 		Player* player = new Player(PCE->clientData);
 		zPlayers[PCE->clientData] = player;
-	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 
 		//Gather Actors Information and send
-		NetworkMessageConverter *NMC = new NetworkMessageConverter();
-		std::set<Actor*> actors = this->zActorManager->GetActors();
+		NetworkMessageConverter NMC;
+		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		std::string message;
 
 		for (auto it = actors.begin(); it != actors.end(); it++)
 		{
-			
-
-			message =  NMC->Convert(MESSAGE_TYPE_NEW_ACTOR, (*it)->GetID());
-			message += NMC->Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
-			message += NMC->Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
-			message += NMC->Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
-			message += NMC->Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
+			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (*it)->GetID());
+			message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
+			message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
+			message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
+			message += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetModel());
 
 			PCE->clientData->Send(message);
 		}
-		
-		message = NMC->Convert(MESSAGE_TYPE_SELF_ID, PCE->clientData->GetClientID());
-		PCE->clientData->Send(message);
-		delete NMC;
 
+		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, PCE->clientData->GetClientID());
+		PCE->clientData->Send(message);
 	}
-	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )	{
+	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
+	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
 	}
 	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )

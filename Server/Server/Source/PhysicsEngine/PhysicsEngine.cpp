@@ -13,9 +13,9 @@ PhysicsEngine::~PhysicsEngine()
 		delete this->objects.getAndRemove(0);
 }
 
-PhysicsObject* PhysicsEngine::CreatePhysicsObject(string path, Vector3 pos)
+PhysicsObject* PhysicsEngine::CreatePhysicsObject(const std::string& path, Vector3 pos)
 {
-	PhysicsObject* obj = new PhysicsObject(this, pos);
+	PhysicsObject* obj = new PhysicsObject(this, path, pos);
 
 	if(!obj->LoadFromFile(path))
 	{

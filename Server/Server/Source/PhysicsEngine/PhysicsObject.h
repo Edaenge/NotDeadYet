@@ -50,11 +50,11 @@ private:
 	float inverseMass;
 
 	BoundingSphere bs;
-
+	std::string zModel;
 	void RecreateWorldMatrix();
 
 public:
-	PhysicsObject(PhysicsEngine* engine, const Vector3& position = Vector3(0, 0, 0));
+	PhysicsObject(PhysicsEngine* engine, const std::string& model, const Vector3& position = Vector3(0, 0, 0));
 	virtual ~PhysicsObject();
 
 	// Access Physics Engine
@@ -103,4 +103,5 @@ public:
 
 	BoundingSphere GetBoundingSphere() const { return this->bs; }
 	void SetBoundingSphere(BoundingSphere bs) { this->bs = bs; }
+	const std::string& GetModel() const;
 };

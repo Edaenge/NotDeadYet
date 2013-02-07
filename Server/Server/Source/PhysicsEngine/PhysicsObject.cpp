@@ -21,9 +21,10 @@ Vector4 QuatMult(Vector4 quat1, Vector4 quat2)
 	return newQuat;
 };
 
-PhysicsObject::PhysicsObject(PhysicsEngine* engine, const Vector3& position) : 
+PhysicsObject::PhysicsObject(PhysicsEngine* engine, const std::string& model, const Vector3& position) : 
 	zEngine(engine),
-	pos(position)
+	pos(position),
+	zModel(model)
 {
 	this->pos = position;
 	this->forceAccum = Vector3(0,0,0);
@@ -293,4 +294,9 @@ void PhysicsObject::Integrate( float dt )
 
 	// Clear the forces.
 	ClearAccumulator();
+}
+
+const std::string& PhysicsObject::GetModel() const
+{
+	return zModel;
 }
