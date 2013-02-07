@@ -1,6 +1,19 @@
 #include "Actor.h"
 
-long Actor::zNextAID = 500;
+static long NextActorID = 0;
+
+Actor::Actor() :
+	zID(++NextActorID),
+	zPhysicsObject(0)
+{
+}
+
+Actor::~Actor()
+{
+	ActorDeleteEvent ADE;
+	ADE.zActor = this;
+	NotifyObservers(&ADE);
+}
 
 void Actor::SetPosition( const Vector3& pos )
 {
@@ -60,4 +73,18 @@ void Actor::SetDir( const Vector3& dir )
 	ActorScaleEvent ASE;
 	ASE.zActor = this;
 	NotifyObservers(&ASE);
+}
+
+void Actor::SetPhysicsObject( PhysicsObject* object )
+{
+	zPhysicsObject = object;
+}
+
+const std::string& Actor::GetModel() const
+{
+	if ( zPhysicsObject )
+	{
+		zPhysicsObject->GetModel();
+	}
+	return "";
 }

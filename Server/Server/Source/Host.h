@@ -45,6 +45,8 @@ public:
 	/*! Checks if the server is alive.*/
 	bool IsAlive() const;
 
+	// Returns Number of active connections
+	unsigned int GetNumClients() const;
 private:
 	/*! Handles new incoming connections.*/
 	void HandleNewConnection( MaloW::ClientChannel* CC );
@@ -66,8 +68,8 @@ private:
 	void ReadMessages(); 
 	/*! */
 	void PingClients();
-	void Message(MaloW::ClientChannel* cc, std::string msg);
 
+	void Message(MaloW::ClientChannel* cc, std::string msg);
 private:
 	ServerListener* zServerListener;
 	

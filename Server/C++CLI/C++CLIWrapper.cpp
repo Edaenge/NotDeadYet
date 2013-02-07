@@ -10,10 +10,9 @@ namespace System { namespace Windows { namespace Interop
 		zServer = new ServerEngineWrapper();
 	}
 
-	CppCLI::~CppCLI()
+	CppCLI::!CppCLI()
 	{
-		if(zServer)
-			delete zServer;
+		if(zServer)	delete zServer;
 	}
 
 	String^ CppCLI::Init(int port, int nrOfPlayers, String^ gameMode, String^ mapName)
@@ -35,9 +34,9 @@ namespace System { namespace Windows { namespace Interop
 		return returnText;
 	}
 
-	int CppCLI::GetNrOfPlayers()
+	unsigned int CppCLI::GetNumClients()
 	{
-		return zServer->GetNrOfPlayers();
+		return zServer->GetNumClients();
 	}
 
 	bool CppCLI::StartHost()

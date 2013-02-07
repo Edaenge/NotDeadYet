@@ -3,7 +3,7 @@
 ProjectileActor::ProjectileActor(Actor* shooter, PhysicsObject* pObj) :
 	zShooter(shooter)
 {
-	this->zPhysicsObject = pObj;
+	this->SetPhysicsObject(pObj);
 }
 
 ProjectileActor::~ProjectileActor()

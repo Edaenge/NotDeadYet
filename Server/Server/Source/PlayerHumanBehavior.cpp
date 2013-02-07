@@ -1,13 +1,15 @@
+#include <World/World.h>
 #include "PlayerHumanBehavior.h"
 #include "Player.h"
+#include "Actor.h"
 
-const int MAX_VELOCITY = 2.95f;
-const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
+const int MAX_VELOCITY = 30;const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 const float ELASTICITY = 0.5f;
 const float ACCELERATION = 2.0f;
 const float PLAYERHEIGHT = 1.7f;
 
-PlayerHumanBehavior::PlayerHumanBehavior( Actor* actor, World* world, Player* player ) : PlayerBehavior(actor, world, player)
+PlayerHumanBehavior::PlayerHumanBehavior( Actor* actor, World* world, Player* player ) : 
+	PlayerBehavior(actor, world, player)
 {
 
 }
@@ -27,7 +29,7 @@ bool PlayerHumanBehavior::Update( float dt )
 
 	//Get Directions
 	Vector3 currentPlayerDir = this->zActor->GetDir();
-	Vector3 currentPlayerUp = this->zActor->GetUpVector();
+	Vector3 currentPlayerUp = Vector3(0.0f, 1.0f, 0.0f);
 	currentPlayerDir.y = 0; // Need a vector that is horizontal to X and Z
 	currentPlayerDir.Normalize();
 	Vector3 currentPlayerRight = currentPlayerUp.GetCrossProduct(currentPlayerDir);

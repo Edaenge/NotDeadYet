@@ -4,33 +4,23 @@
 #include "Array.h"
 #include "Matrix.h"
 #include "MaloW.h"
-#include "MaloWFileDebug.h"
 #include "ObjLoader.h"
 #include "BoundingSphere.h"
-#include <assert.h>
 
 class PhysicsEngine;
-
-#ifndef __ABSOLUTE_MAX__
-#define REAL_MAX DBL_MAX
-#endif
 
 struct Vertex
 {
 	Vector3 pos;
 	Vector3 normal;
 
-	Vertex(Vector3 _pos, Vector3 _norm)
+	explicit Vertex(const Vector3& pos = Vector3(0.0f, 0.0f, 0.0f), const Vector3& norm = Vector3(0.0f, 0.0f, 0.0f)) : 
+		pos(pos),
+		normal(norm)
 	{
-		pos = _pos;
-		normal = _norm;
 	}
-	Vertex()
-	{
-		pos = Vector3(0, 0, 0);
-		normal = Vector3(0, 0, 0);
-	}
-	Vertex(const Vertex* origObj)
+
+	explicit Vertex(const Vertex* origObj)
 	{
 		pos = origObj->pos;
 		normal = origObj->normal;
@@ -60,11 +50,11 @@ private:
 	float inverseMass;
 
 	BoundingSphere bs;
-
+	std::string zModel;
 	void RecreateWorldMatrix();
 
 public:
-	PhysicsObject(PhysicsEngine* engine, const Vector3& position = Vector3(0, 0, 0));
+	PhysicsObject(PhysicsEngine* engine, const std::string& model, const Vector3& position = Vector3(0, 0, 0));
 	virtual ~PhysicsObject();
 
 	// Access Physics Engine
@@ -113,4 +103,5 @@ public:
 
 	BoundingSphere GetBoundingSphere() const { return this->bs; }
 	void SetBoundingSphere(BoundingSphere bs) { this->bs = bs; }
+	const std::string& GetModel() const;
 };

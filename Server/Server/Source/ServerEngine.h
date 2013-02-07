@@ -22,7 +22,7 @@ public:
 	void ShutDownHost();
 
 	bool IsRunning() const;
-	int GetNrOfPlayers() const;
+	unsigned int GetNumClients() const;
 
 
 private:

@@ -1,21 +1,28 @@
 #pragma once
 
-#include "World/World.h"
-#include "Actor.h"
+#include <Observer.h>
 
-class Behavior
+class World;
+class Actor;
+class WorldAnchor;
+
+class Behavior : public Observer
 {
-public:
-	Behavior(Actor* actor, World* world);
-	virtual ~Behavior(){};
-
-	Actor* GetActor() const { return zActor; }
-	World* GetWorld() const { return zWorld; }
-
-	virtual bool Update(float dt) = 0;
-
 protected:
 	Actor* zActor;
 	World* zWorld;
 	WorldAnchor* zAnchor;
+
+public:
+	Behavior(Actor* actor, World* world);
+	virtual ~Behavior();
+
+	Actor* GetActor() const { return zActor; }
+	World* GetWorld() const { return zWorld; }
+
+	// Returns true to indicate when it wants to get deleted
+	virtual bool Update(float dt);
+
+	// Handles The Anchor Update From ActorMovedEvent
+	virtual void OnEvent(Event* e);
 };

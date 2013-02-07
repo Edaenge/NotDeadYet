@@ -3,29 +3,24 @@
 
 BioActor::BioActor() : Actor()
 {
-	InitValues();
+	this->zState = STATE_IDLE;
+	this->zVelocity = V_WALK_SPEED;
+
+	this->zAlive = true;
+	this->zHealthMax = 100;
+	this->zHealth = zHealthMax;
+	this->zHealthChanged = true;
+
+	this->zStaminaMax = 100;
+	this->zStamina = zStaminaMax;
+	this->zStaminaCof = 0.10f;
+	this->zStaminaChanged = true;
 }
 
 BioActor::~BioActor()
 {
 }
 
-void BioActor::InitValues()
-{
-	this->zState = STATE_IDLE;
-	this->zVelocity = V_WALK_SPEED;
-	this->zActorModel = "none";
-
-	this->zAlive = true;
-	this->zHealthMax = 100;
-	this->zHealth = zHealthMax;
-	this->zHealthChanged = true;
-	
-	this->zStaminaMax = 100;
-	this->zStamina = zStaminaMax;
-	this->zStaminaCof = 0.10f;
-	this->zStaminaChanged = true;
-}
 
 bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
 {

@@ -257,7 +257,9 @@
     <ClInclude Include="Source\PlayerHumanBehavior.h">
       <Filter>Source\Behavior</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ItemActor.h" />
+    <ClInclude Include="Source\ItemActor.h">
+      <Filter>Source</Filter>
+    </ClInclude>
     <ClInclude Include="Source\PlayerGhostBehavior.h">
       <Filter>Source\Behavior</Filter>
     </ClInclude>

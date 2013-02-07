@@ -6,20 +6,16 @@
 #pragma once
 
 #include "Actor.h"
-#include "RangedWeapon.h"
-#include "MeleeWeapon.h"
-#include "Projectile.h"
-#include "Food.h"
-#include "Container.h"
-#include "Material.h"
+
+class Item;
 
 class ItemActor : public Actor
 {
+	Item* zItem;
 public:
-	ItemActor(Item* item, const std::string& model, const Vector3& position);
+
+	ItemActor(Item* item);
 	virtual ~ItemActor();
 
-	Item* GetItem() const {return this->zItem;}
-private:
-	Item* zItem;
+	inline Item* GetItem() const { return this->zItem; }
 };
