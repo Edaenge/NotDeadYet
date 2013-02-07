@@ -178,7 +178,7 @@ public:
 	/*! Converts parameters to correctly formated strings sent between client and server.*/
 	std::string Convert(const unsigned int ID);
 	std::string Convert(const unsigned int ID, const float fp);
-	std::string Convert(const unsigned int ID, const std::string word);
+	std::string Convert(const unsigned int ID, const std::string& word);
 	std::string Convert(const unsigned int ID, const Vector3& vec);
 	std::string Convert(const unsigned int ID, const Vector4& vec);
 	
