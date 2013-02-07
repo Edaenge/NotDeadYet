@@ -54,7 +54,7 @@
     <ClCompile Include="Source\SoundEngine\SoundSong.cpp" />
     <ClCompile Include="Source\SoundReader.cpp" />
     <ClCompile Include="Source\Sounds.cpp" />
-    <ClCompile Include="Source\WorldObjectManager.cpp" />
+    <ClCompile Include="Source\ClientActorManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Client.h" />
@@ -86,7 +86,7 @@
     <ClInclude Include="Source\SoundReader.h" />
     <ClInclude Include="Source\Sounds.h" />
     <ClInclude Include="Source\Actor.h" />
-    <ClInclude Include="Source\WorldObjectManager.h" />
+    <ClInclude Include="Source\ClientActorManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FB7EE0D5-90C1-4BBD-8828-F5A39BE7D296}</ProjectGuid>

@@ -105,7 +105,7 @@ bool Inventory::AddItem(Item* item)
 	return false;
 }
 
-Item* Inventory::SearchAndGetItem(long ID) const
+Item* Inventory::SearchAndGetItem(unsigned int ID) const
 {
 	int position = this->Search(ID);
 
@@ -121,7 +121,7 @@ Item* Inventory::GetItem(const unsigned int index) const
 	return 0;
 }
 
-int Inventory::Search(const long ID) const
+int Inventory::Search(const unsigned int ID) const
 {
 	for (unsigned int i = 0; i < this->zItems.size(); i++)
 	{
@@ -135,7 +135,7 @@ int Inventory::Search(const long ID) const
 	return -1;
 }
 
-bool Inventory::RemoveItemStack(const long ID, const unsigned int numberOfStacks)
+bool Inventory::RemoveItemStack(const unsigned int ID, const unsigned int numberOfStacks)
 {
 	int index = this->Search(ID);
 	if (index == -1)
@@ -224,7 +224,7 @@ Item* Inventory::SearchAndGetItemFromType(const int Type, const int SubType)
 	return NULL;
 }
 
-Item* Inventory::EraseItem(const long ID)
+Item* Inventory::EraseItem(const unsigned int ID)
 {
 	int index = this->Search(ID);
 

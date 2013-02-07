@@ -18,13 +18,13 @@ static const enum M_MATERIAL_ITEM_SUB_TYPE
 class Material : public Item
 {
 public:
-	Material(const long id, const unsigned int itemType, const unsigned int itemSubType, const unsigned int craftingType, const int stacksRequiredToCraft);
+	Material(const unsigned int id, const unsigned int itemType, const unsigned int itemSubType, const unsigned int craftingType, const unsigned int stacksRequiredToCraft);
 	Material(const Material& other);
 	Material(const Material* other);
 	virtual ~Material();
 
-	int GetCraftingType() const {return this->zCraftingType;}
-	int GetRequiredStackToCraft() const {return this->zRequiredStackToCraft;}
+	unsigned int GetCraftingType() const {return this->zCraftingType;}
+	unsigned int GetRequiredStackToCraft() const {return this->zRequiredStackToCraft;}
 
 	void SetCraftingType(const int TYPE) {this->zCraftingType = TYPE;}
 	void SetRequiredStackToCraft(const int size) {this->zRequiredStackToCraft = size;}
@@ -34,6 +34,6 @@ public:
 	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
 
 private:
-	int zCraftingType;
-	int zRequiredStackToCraft;
+	unsigned int zCraftingType;
+	unsigned int zRequiredStackToCraft;
 };

@@ -28,7 +28,7 @@ MeleeWeapon::MeleeWeapon(const MeleeWeapon* other)
 	this->zItemDescription = other->zItemDescription;
 }
 
-MeleeWeapon::MeleeWeapon(const long ID, const unsigned int itemType, const int itemSubType, 
+MeleeWeapon::MeleeWeapon(const unsigned int ID, const unsigned int itemType, const int itemSubType, 
 						 const float damage, const float range) 
 						 : Weapon(ID, itemType, itemSubType, damage, range)
 {

@@ -33,7 +33,7 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 
 	for(auto it = this->zUpdateSet.begin(); it != this->zUpdateSet.end(); it++)
 	{
-		msg = nmc.Convert(MESSAGE_TYPE_UPDATE_ACTOR, (*it)->GetID());
+		msg = nmc.Convert(MESSAGE_TYPE_UPDATE_ACTOR, (float)(*it)->GetID());
 		msg += nmc.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
 		msg += nmc.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
 		msg += nmc.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());

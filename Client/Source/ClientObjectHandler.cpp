@@ -79,7 +79,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 			this->zCreated = true;
 			//filename = "Media/Models/Ball.obj";
 			scale *= 0.1f;
-			this->zEng->GetCamera()->SetPosition(position + Vector3(0, 1.7, 0));
+			this->zEng->GetCamera()->SetPosition(position + Vector3(0.0f, 1.7f, 0.0f));
 		}
 	}
 	if (Messages::FileWrite())
@@ -277,33 +277,33 @@ bool Client::RemoveActor(const unsigned int ID)
 //
 //	return true;
 //}
-
-void Client::HandleDeadPlayerMessage(const int ID)
-{
-	if (ID == -1)
-		return;
-
-	int index = this->zObjectManager->SearchForActor(ID);
-
-	//Check if object was found in the array
-	if(index == -1)
-		return;
-
-	if(this->zID == ID)
-	{
-		this->zCreated = false;
-	}
-
-	iMesh* mesh = this->zObjectManager->GetActor(index)->GetMesh();
-
-	if(mesh)
-	{
-		this->zEng->DeleteMesh(mesh);
-	}
-	if(!this->zObjectManager->RemoveActor(index))
-	{
-		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString((float)ID));
-	}
-	if(Messages::FileWrite())
-		Messages::Debug("Player Died and was removed");
-}
+//
+//void Client::HandleDeadPlayerMessage(const unsigned int ID)
+//{
+//	if (ID == -1)
+//		return;
+//
+//	int index = this->zObjectManager->SearchForActor(ID);
+//
+//	//Check if object was found in the array
+//	if(index == -1)
+//		return;
+//
+//	if(this->zID == ID)
+//	{
+//		this->zCreated = false;
+//	}
+//
+//	iMesh* mesh = this->zObjectManager->GetActor(index)->GetMesh();
+//
+//	if(mesh)
+//	{
+//		this->zEng->DeleteMesh(mesh);
+//	}
+//	if(!this->zObjectManager->RemoveActor(index))
+//	{
+//		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString((float)ID));
+//	}
+//	if(Messages::FileWrite())
+//		Messages::Debug("Player Died and was removed");
+//}

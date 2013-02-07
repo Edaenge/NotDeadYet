@@ -164,7 +164,7 @@ void Client::Init()
 
 	this->zEng = GetGraphics();
 
-	this->zObjectManager = new WorldObjectManager();
+	this->zObjectManager = new ClientActorManager();
 	this->zGuiManager = new GuiManager(this->zEng);
 	this->zPlayerInventory = new Inventory();
 
@@ -202,16 +202,6 @@ void Client::Life()
 		if (this->stayAlive)
 		{
 			this->ReadMessages();
-
-			/*if (this->zTimeSinceLastPing > TIMEOUT_VALUE * 2.0f)
-			{
-				this->CloseConnection("Timeout");
-			}
-			else if (this->zTimeSinceLastPing > TIMEOUT_VALUE)
-			{
-				MaloW::Debug("Timeout From Server!");
-				// Print a Timeout Message to Client
-			}*/
 		}
 
 		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
@@ -842,25 +832,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		this->Ping();
 	}
-	////Player
-	//else if(msg.find(M_UPDATE_PLAYER.c_str()) == 0)
-	//{ 
-	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_PLAYER, msgArray[0]);
-	//	this->UpdateActor(msgArray, id);
-	//}
-	////Animal
-	//else if(msg.find(M_UPDATE_ANIMAL.c_str()) == 0)
-	//{
-	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ANIMAL, msgArray[0]);
-	//	this->UpdateActor(msgArray, id);
-	//}
-	////Static Object
-	//else if(msg.find(M_UPDATE_STATIC_OBJECT.c_str()) == 0)
-	//{
-	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_STATIC_OBJECT, msgArray[0]);
-	//	this->UpdateActor(msgArray, id);
-	//}
-
 	//WorldObjects
 	else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
 	{
@@ -949,7 +920,9 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	else if(msg.find(M_SELF_ID.c_str()) == 0)
 	{
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
-
+	}
+	else if(msg.find(M_CONNECTED.c_str()) == 0)
+	{
 		Vector3 camDir = this->zEng->GetCamera()->GetForward();
 		Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
 

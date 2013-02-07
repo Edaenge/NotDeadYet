@@ -63,9 +63,6 @@
     <ClCompile Include="Source\Sounds.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\WorldObjectManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\KeyUtil\KeyConverter.cpp">
       <Filter>Source\KeyUtil</Filter>
     </ClCompile>
@@ -114,6 +111,9 @@
     <ClCompile Include="Source\GUI\ChangeSetEvent.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ClientActorManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\SoundEngine\fmod.h">
@@ -150,9 +150,6 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\Sounds.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\WorldObjectManager.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\KeyUtil\Keybinds.h">
@@ -205,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="Source\Actor.h">
       <Filter>Source\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ClientActorManager.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

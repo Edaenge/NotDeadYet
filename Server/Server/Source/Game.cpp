@@ -84,7 +84,7 @@ void Game::OnEvent( Event* e )
 
 		for (auto it = actors.begin(); it != actors.end(); it++)
 		{
-			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (*it)->GetID());
+			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (float)(*it)->GetID());
 			message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
 			message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
 			message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());

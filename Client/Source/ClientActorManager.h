@@ -87,11 +87,11 @@ static const enum INTERPOLATION_TYPES
 	IT_DECELERATION
 };
 
-class WorldObjectManager
+class ClientActorManager
 {
 public:
-	WorldObjectManager();
-	virtual ~WorldObjectManager();
+	ClientActorManager();
+	virtual ~ClientActorManager();
 
 	/*! Interpolates all the Objects towards their final Position*/
 	void UpdateObjects(float deltaTime);

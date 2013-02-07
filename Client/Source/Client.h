@@ -10,7 +10,7 @@
 #include <Inventory.h>
 #include "KeyHandler.h"
 #include "NetworkMessageConverter.h"
-#include "WorldObjectManager.h"
+#include "ClientActorManager.h"
 #include "GuiManager.h"
 #include <World/WorldRenderer.h>
 
@@ -175,7 +175,7 @@ private:
 	GraphicsEngine* zEng;
 	GuiManager* zGuiManager;
 	ServerChannel* zServerChannel;
-	WorldObjectManager* zObjectManager;
+	ClientActorManager* zObjectManager;
 	NetworkMessageConverter zMsgHandler;
 	Inventory* zPlayerInventory;
 
