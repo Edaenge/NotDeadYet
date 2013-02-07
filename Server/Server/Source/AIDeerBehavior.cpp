@@ -8,6 +8,5 @@ AIDeerBehavior::AIDeerBehavior( Actor* actor, World* world ) : Behavior(actor, w
 
 bool AIDeerBehavior::Update( float dt )
 {
-
 	return true;
 }

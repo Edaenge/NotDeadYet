@@ -1,5 +1,7 @@
 #pragma once
+
 #include "PlayerBehavior.h"
+
 
 class PlayerWolfBehavior : public PlayerBehavior
 {

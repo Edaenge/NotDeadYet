@@ -57,7 +57,7 @@ void Host::Life()
 
 	static float waitTimer = 0.0f;
 	
-	this->zGameStarted = false;
+	this->zGameStarted = true;
 	while(this->stayAlive)
 	{
 		Update();
@@ -66,24 +66,11 @@ void Host::Life()
 		if(this->zGameStarted)
 		{
 			PingClients();
+			zGame->Update(this->zDeltaTime);
 		}
 		else
 		{
-			/*int clientsReady = 0;
-			for(int i = 0; i < this->zClients.size(); i++)
-			{
-				if(this->zClients.at(i)->GetReady()) clientsReady++;
-			}
-			if(clientsReady >= this->zClients.size() && this->zClients.size())
-			{
-				this->zGameStarted = true;
-				this->SendStartMessage();
-			}*/
-			/*if (this->zClients.size() >= this->zMinClients)
-			{
-				this->zGameStarted = true;
-				this->SendStartMessage();
-			}*/
+			
 		}
 	
 		Sleep(5);
@@ -92,8 +79,6 @@ void Host::Life()
 
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients,  const std::string& gameModeName, const std::string& mapName)
 {
-	//Todo add map + game mode to parameters
-	std::string path = "3x3.map";
 	GameMode* gameMode = NULL;
 
 	if (gameModeName.find("FFA") == 0 )
@@ -106,7 +91,7 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	}
 
 	ActorSynchronizer* actorSync = new ActorSynchronizer();
-	this->zGame = new Game(actorSync, gameMode, mapName + ".map");
+	this->zGame = new Game(actorSync, gameMode, mapName);
 	this->AddObserver(this->zGame);
 
 	try
@@ -136,7 +121,12 @@ void Host::SendToAllClients(const std::string& message)
 
 bool Host::HasClients() const
 {
-	return false;
+	return !_clients.empty();
+}
+
+unsigned int Host::GetNumClients() const
+{
+	return _clients.size();
 }
 
 void Host::ReadMessages()
@@ -156,15 +146,16 @@ void Host::ReadMessages()
 	{
 		pe = PeekEvent();
 
-		if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(pe) )
-		{
-			HandleReceivedMessage(dynamic_cast<MaloW::ClientChannel*>(np->GetChannel()), np->GetMessage());
-		}
-		else if ( ClientConnectedEvent* CCE = dynamic_cast<ClientConnectedEvent*>(pe) )
+		if ( ClientConnectedEvent* CCE = dynamic_cast<ClientConnectedEvent*>(pe) )
 		{
 			// A Client Connected
 			HandleNewConnection(CCE->GetClientChannel());
 		}
+		else if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(pe) )
+		{
+			HandleReceivedMessage(dynamic_cast<MaloW::ClientChannel*>(np->GetChannel()), np->GetMessage());
+		}
+		
 		else if ( ClientDisconnectedEvent* CDE = dynamic_cast<ClientDisconnectedEvent*>(pe) )
 		{
 			HandleClientDisconnect(CDE->GetClientChannel());
@@ -194,7 +185,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		this->HandleClientUpdate(msgArray, cd);
 	}
 	//Handles key presses from client.
-	else if(msgArray[0].find(M_KEY_DOWN.c_str()))
+	else if(msgArray[0].find(M_KEY_DOWN.c_str()) == 0)
 	{
 		KeyDownEvent e;
 		int dKey = this->zMessageConverter.ConvertStringToInt(M_KEY_DOWN, msgArray[0]);
@@ -220,7 +211,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 
 	}
 	//Handles ready from client.
-	else if(msgArray[0].find(M_READY_PLAYER.c_str()))
+	else if(msgArray[0].find(M_READY_PLAYER.c_str()) == 0)
 	{
 		PlayerReadyEvent e;
 
@@ -228,7 +219,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		NotifyObservers(&e);
 	}
 	//Handle Item usage in Inventory
-	else if(msgArray[0].find(M_ITEM_USE.c_str()))
+	else if(msgArray[0].find(M_ITEM_USE.c_str()) == 0)
 	{
 		PlayerUseItemEvent e;
 		int _itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
@@ -255,7 +246,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		NotifyObservers(&e);
 	}
 	//Handles Equipped Weapon usage
-	else if(msgArray[0].find(M_WEAPON_USE.c_str()))
+	else if(msgArray[0].find(M_WEAPON_USE.c_str()) == 0)
 	{
 		PlayerUseEquippedWeaponEvent e;
 		int _itemID = this->zMessageConverter.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
@@ -265,7 +256,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		NotifyObservers(&e);
 	}
 	//Handles Pickup Object Requests from Client
-	else if(msgArray[0].find(M_PICKUP_ITEM.c_str()))
+	else if(msgArray[0].find(M_PICKUP_ITEM.c_str()) == 0)
 	{
 		PlayerPickupObjectEvent e;
 		int _objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
@@ -274,7 +265,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		NotifyObservers(&e);
 	}
 	//Handles loot item request
-	else if(msgArray[0].find(M_LOOT_ITEM.c_str()))
+	else if(msgArray[0].find(M_LOOT_ITEM.c_str()) == 0)
 	{
 		HandleLootRequest(msgArray, cd);
 	}
@@ -402,9 +393,10 @@ void Host::HandleClientDropped( MaloW::ClientChannel* channel )
 void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 {
 	ClientData* cd = new ClientData(CC);
-	PlayerConnectedEvent e;
 	_clients[CC] = cd;
-	
+	CC->Start();
+
+	PlayerConnectedEvent e;
 	e.clientData = cd;
 	NotifyObservers(&e);
 }

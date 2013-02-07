@@ -25,7 +25,7 @@ public:
 	void ShutdownHost() const;
 
 	bool IsRunning() const;
-	int GetNrOfPlayers() const;
+	unsigned int GetNumClients() const;
 
 };
 

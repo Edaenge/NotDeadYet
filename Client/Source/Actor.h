@@ -40,6 +40,7 @@ public:
 	void SetScale(const Vector3& scale) {this->zMesh->SetScale(scale);}
 	inline void SetRotation(const Vector4& rot) 
 	{
+		this->zMesh->ResetRotation();
 		this->zMesh->SetQuaternion(rot);
 	}
 	/*! Returns the object ID*/

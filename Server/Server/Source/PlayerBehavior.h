@@ -1,5 +1,7 @@
 #pragma once
+
 #include "Behavior.h"
+#include <Vector.h>
 
 class Player;
 

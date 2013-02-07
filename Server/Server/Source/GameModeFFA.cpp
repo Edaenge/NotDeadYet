@@ -2,7 +2,7 @@
 
 void GameModeFFA::OnEvent( Event* e )
 {
-	throw std::exception("The method or operation is not implemented.");
+	//throw std::exception("The method or operation is not implemented.");
 }
 
 GameModeFFA::GameModeFFA()

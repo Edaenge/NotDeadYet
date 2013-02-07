@@ -5,11 +5,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #pragma once
 
-#include "AI.h"
 #include "BioActor.h"
-#include <fstream>
-#include <time.h>
-#include <World/World.h>
 
 enum Behaviour
 {
@@ -44,9 +40,9 @@ struct Target //Supposed to represent an entity near the animal, like a player, 
 class AnimalActor : public BioActor
 {
 public:
-	AnimalActor(bool genID = true);
+	AnimalActor();
 	virtual ~AnimalActor();
-
+	/*
 	virtual void Update(float deltaTime) = 0;
 	virtual void UpdateForAnimal(float deltaTime) = 0;
 	virtual void UpdateForPlayer(float deltaTime) = 0;
@@ -86,10 +82,11 @@ public:
 	void		SetType(Type theType);
 
 	void		SetWorldPointer(World* theWorld);
+	/*
 
 	/*! Returns Pos, Rot, Scale, Stamina, Health, State.*/
 	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
-
+	/*
 protected:
 	Vector3		ExaminePathfindingArea();
 
@@ -163,14 +160,7 @@ private:
 	float		zLastDistanceCheck;
 	
 	int			zCurrentNrOfTargets;
-	
-
-	
-
-	
-
-	
-
+	*/
 };
 
 

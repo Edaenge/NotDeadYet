@@ -1,4 +1,6 @@
 #include "PhysicsEngine.h"
+#include "MaloWFileDebug.h"
+
 
 PhysicsEngine::PhysicsEngine()
 {
@@ -11,9 +13,9 @@ PhysicsEngine::~PhysicsEngine()
 		delete this->objects.getAndRemove(0);
 }
 
-PhysicsObject* PhysicsEngine::CreatePhysicsObject(string path, Vector3 pos)
+PhysicsObject* PhysicsEngine::CreatePhysicsObject(const std::string& path, Vector3 pos)
 {
-	PhysicsObject* obj = new PhysicsObject(this, pos);
+	PhysicsObject* obj = new PhysicsObject(this, path, pos);
 
 	if(!obj->LoadFromFile(path))
 	{
@@ -427,7 +429,7 @@ bool PhysicsEngine::DoCollisionRayVsTriangle(Vector3 rayOrigin, Vector3 rayDirec
 	if(v < 0.0f || u + v > 1.0f)
 		return false;
 
-	float t = f * (e2.GetDotProduct(q));
+	// float t = f * (e2.GetDotProduct(q));
 
 	Vector3 collPos;
 	float w = 1 - (u + v);

@@ -50,7 +50,7 @@ public:
 	PhysicsEngine();
 	virtual ~PhysicsEngine();
 
-	PhysicsObject* CreatePhysicsObject(string path, Vector3 pos = Vector3(0, 0, 0));
+	PhysicsObject* CreatePhysicsObject(const std::string& path, Vector3 pos = Vector3(0.0f, 0.0f, 0.0f));
 	void DeletePhysicsObject(PhysicsObject* obj);
 
 	// Functions

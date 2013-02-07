@@ -860,6 +860,16 @@
           <operation Id="b46a0cfd-36ae-49f6-8cf5-489f38db343c" name="+ virtual bool update(float dt) = 0" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="f6b5af09-ac40-4798-8140-f6bbb4f54b29" />
           </operation>
+          <operation Id="3e5c4ecd-52cd-44f9-9605-e89b02ff3fe8" name="OnEvent" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="2afd5616-1efa-4171-b3ba-587e9530cef5" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="80315c1d-520b-4fcf-b9ac-bbc2ac0ddd68" name="Event* e" direction="In" isUnique="false">
+                  <elementDefinition Id="4032c311-c6e0-46a3-b5da-1f2b86a2178a" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
         </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>

@@ -1,4 +1,7 @@
 #include "PhysicsObject.h"
+#include <limits>
+#include <assert.h>
+
 
 Vector4 QuatMult(Vector4 quat1, Vector4 quat2)
 {	
@@ -18,9 +21,10 @@ Vector4 QuatMult(Vector4 quat1, Vector4 quat2)
 	return newQuat;
 };
 
-PhysicsObject::PhysicsObject(PhysicsEngine* engine, const Vector3& position) : 
+PhysicsObject::PhysicsObject(PhysicsEngine* engine, const std::string& model, const Vector3& position) : 
 	zEngine(engine),
-	pos(position)
+	pos(position),
+	zModel(model)
 {
 	this->pos = position;
 	this->forceAccum = Vector3(0,0,0);
@@ -254,11 +258,11 @@ float PhysicsObject::GetMass() const
 {
 	if(inverseMass == 0)
 	{
-		return REAL_MAX;
+		return std::numeric_limits<float>::infinity();
 	}
 	else
 	{
-		return ((float)1.0)/inverseMass;
+		return ((float)1.0f)/inverseMass;
 	}
 }
 
@@ -290,4 +294,9 @@ void PhysicsObject::Integrate( float dt )
 
 	// Clear the forces.
 	ClearAccumulator();
+}
+
+const std::string& PhysicsObject::GetModel() const
+{
+	return zModel;
 }
