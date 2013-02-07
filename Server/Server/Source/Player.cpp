@@ -11,7 +11,6 @@ Player::Player( ClientData* client ) :
 
 Player::~Player()
 {
-
 }
 
 void Player::Kick()

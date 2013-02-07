@@ -17,12 +17,12 @@ namespace MaloW
 
 	public:
 		// Send Message
-		bool Send(const std::string& msg) throw(...);
+		virtual bool Send(const std::string& msg) throw(...);
 
 		// Try Sending A message, does not throw when failing
 		virtual bool TrySend(const std::string& msg);
 
 		// Disconnects the channel.
-		void Disconnect();
+		virtual void Disconnect();
 	};
 }

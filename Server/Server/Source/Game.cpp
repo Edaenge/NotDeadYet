@@ -30,6 +30,8 @@ Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldF
 Game::~Game()
 {
 	if ( zWorld ) delete zWorld, zWorld = 0;
+
+	SAFE_DELETE(zActorManager);
 }
 
 bool Game::Update( float dt )
@@ -69,15 +71,7 @@ void Game::OnEvent( Event* e )
 		// Create Player
 		Player* player = new Player(PCE->clientData);
 		zPlayers[PCE->clientData] = player;
-
-		// Create Player Actor
-		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/scale.obj");
-		Actor* actor = new PlayerActor(player, pObject);
-		actor->SetPosition(Vector3(50, 0, 50));
-		zActorManager->AddActor(actor);
-
-		// Apply Default Player Behavior
-		SetPlayerBehavior(player, new PlayerHumanBehavior(actor, zWorld, player));	}
+	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
@@ -91,7 +85,7 @@ void Game::OnEvent( Event* e )
 		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(zPlayers[CDE->clientData]->GetBehavior()))
 			dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
 	}
-	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
+	else if ( PlayerKickEvent* PDCE = dynamic_cast<PlayerKickEvent*>(e) )
 	{
 		// Delete Player Behavior
 		auto playerIterator = zPlayers.find(PDCE->clientData);
@@ -105,10 +99,17 @@ void Game::OnEvent( Event* e )
 			zBehaviors.insert(aiWolf);
 		}
 
+		//Kick it
+		PDCE->clientData->Kick();
+
 		// Delete Player
 		auto i = zPlayers.find(PDCE->clientData);
 		delete i->second;
 		zPlayers.erase(i);
+	}
+	else if ( PlayerPickupObjectEvent* PPOE = dynamic_cast<PlayerPickupObjectEvent*>(e))
+	{
+		
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
@@ -142,6 +143,17 @@ void Game::OnEvent( Event* e )
 			delete i->second;
 			zWorldActors.erase(i);
 		}
+	}
+	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
+	{
+		// Create Player Actor
+		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
+		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
+		actor->SetPosition(Vector3(50, 0, 50));
+		actor->SetActorModel(UDE->playerModel);
+		zActorManager->AddActor(actor);
+		// Apply Default Player Behavior
+		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));	
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{

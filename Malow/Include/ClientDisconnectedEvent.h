@@ -4,7 +4,7 @@
 #include "ClientChannel.h"
 
 /*
-This class is used when a client connects to the server.
+This class is used when a client disconnects from the server.
 This class is not responsible for deallocation of ClientChannel.
 */
 class ClientDisconnectedEvent : public MaloW::ProcessEvent

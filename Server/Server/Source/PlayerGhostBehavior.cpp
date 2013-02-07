@@ -1,24 +1,21 @@
-#include "PlayerDeerBehavior.h"
+#include "PlayerGhostBehavior.h"
 #include "Player.h"
 
-const int MAX_VELOCITY = 3.95f;
-const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
-const float ELASTICITY = 0.5f;
-const float ACCELERATION = 1.0f;
-const float PLAYERHEIGHT = 1.2f;
+const int MAX_VELOCITY = 5.0f;
+const float ACCELERATION = 5.0f;
+const float PLAYERHEIGHT = 0.5f;
 
-PlayerDeerBehavior::PlayerDeerBehavior( Actor* actor, World* world, Player* player) : PlayerBehavior(actor, world, player)
+PlayerGhostBehavior::PlayerGhostBehavior( Actor* actor, World* world, Player* player ) : PlayerBehavior(actor, world, player)
 {
 
 }
 
-PlayerDeerBehavior::~PlayerDeerBehavior()
+PlayerGhostBehavior::~PlayerGhostBehavior()
 {
 
 }
 
-
-bool PlayerDeerBehavior::Update( float dt )
+bool PlayerGhostBehavior::Update( float dt )
 {
 	KeyStates keyStates = this->zPlayer->GetKeys();
 	Vector3 newPlayerPos;
@@ -29,7 +26,6 @@ bool PlayerDeerBehavior::Update( float dt )
 	//Get Directions
 	Vector3 currentPlayerDir = this->zActor->GetDir();
 	Vector3 currentPlayerUp = this->zActor->GetUpVector();
-	currentPlayerDir.y = 0; // Need a vector that is horizontal to X and Z
 	currentPlayerDir.Normalize();
 	Vector3 currentPlayerRight = currentPlayerUp.GetCrossProduct(currentPlayerDir);
 	currentPlayerRight.Normalize();
@@ -40,10 +36,9 @@ bool PlayerDeerBehavior::Update( float dt )
 		keyStates.GetKeyState(KEY_BACKWARD));
 	moveDir += currentPlayerRight * (float)(keyStates.GetKeyState(KEY_LEFT) - 
 		keyStates.GetKeyState(KEY_RIGHT));
-	moveDir.Normalize();
 	moveDir *= 10.0f;
 
-	this->zVelocity += (moveDir + GRAVITY) * dt;
+	this->zVelocity += moveDir * dt;
 
 	if(this->zVelocity.GetLength() > MAX_VELOCITY)
 	{
@@ -56,8 +51,7 @@ bool PlayerDeerBehavior::Update( float dt )
 	float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ()) + PLAYERHEIGHT;
 	if(newGroundHeight > newPlayerPos.y)
 	{
-		Vector3 newGroundNormal = zWorld->CalcNormalAt(newPlayerPos.GetXZ());
-		this->zVelocity = newGroundNormal * this->zVelocity.GetLength() * ELASTICITY;
+		newPlayerPos.y = newGroundHeight;
 	}
 	this->zActor->SetPosition(newPlayerPos);
 	this->zAnchor->position = newPlayerPos.GetXZ();

@@ -1,7 +1,6 @@
 #include "WolfActor.h"
 
-WolfActor::WolfActor(PhysicsObject* pObj, bool genID, bool isPlayerControlled): AnimalActor(genID)
-{
+WolfActor::WolfActor(PhysicsObject* pObj, bool genID /*= true*/, bool isPlayerControlled /*= false*/) : AnimalActor(genID){
 	this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitWolf();
 	this->zPhysicsObject = pObj;
