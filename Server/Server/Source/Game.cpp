@@ -90,7 +90,7 @@ void Game::OnEvent( Event* e )
 			PCE->clientData->Send(message);
 		}
 		
-		message = NMC->Convert(MESSAGE_TYPE_ITEM_ID, PCE->clientData->GetClientID());
+		message = NMC->Convert(MESSAGE_TYPE_SELF_ID, PCE->clientData->GetClientID());
 		PCE->clientData->Send(message);
 		delete NMC;
 
