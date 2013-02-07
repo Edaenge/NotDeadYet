@@ -26,7 +26,7 @@ Food::Food(const Food* other)
 	this->zItemDescription = other->zItemDescription;
 }
 
-Food::Food(const long ID, const unsigned int Type, const unsigned int SubType, const float hunger)
+Food::Food(const unsigned int ID, const unsigned int Type, const unsigned int SubType, const float hunger)
 	: Item(ID, Type, SubType)
 {
 		this->zHunger = hunger;

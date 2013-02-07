@@ -1,8 +1,8 @@
 #include "CircularListGui.h"
 #include <Safe.h>
 
-static const int PICONEXPOS = 60.0f;
-static const int PICONEYPOS = 60.0f;
+static const int PICONEXPOS = 60;
+static const int PICONEYPOS = 60;
 
 CircularListGui::CircularListGui() 
 	: GuiElement()

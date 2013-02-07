@@ -33,7 +33,7 @@ public:
 	Inventory(const unsigned int inventorySize);
 	virtual ~Inventory();
 	/*! Search for the Item in and returns its position*/
-	int Search(const long ID) const;
+	int Search(const unsigned int ID) const;
 	/*! Adds an item to the array*/
 	bool AddItem(Item* item);
 	/*! Returns the item at the position */
@@ -41,7 +41,7 @@ public:
 	/*! Returns the Items*/
 	std::vector<Item*> GetItems() const;
 	/*! Search for the item and returns it if found or NULL if not found*/
-	Item* SearchAndGetItem(const long ID) const;
+	Item* SearchAndGetItem(const unsigned int ID) const;
 	/*! Deletes the item*/
 	bool RemoveItem(const unsigned int index);
 	bool RemoveItem(Item* item);
@@ -54,12 +54,12 @@ public:
 	/*! Returns amount of Items the player has in the inventory with itemType = TYPE*/
 	int SearchForItemType(const unsigned int TYPE);
 	/*! Removes a stack from Item*/
-	bool RemoveItemStack(const long ID, const unsigned int numberOfStacks = 1);
+	bool RemoveItemStack(const unsigned int ID, const unsigned int numberOfStacks = 1);
 	Item* SearchAndGetItemFromType(const int Type, const int SubType);
 	/*! Returns Item and removes it from inventory
 		Doesn't delete the Item.
 	*/
-	Item* EraseItem(const long ID);
+	Item* EraseItem(const unsigned int ID);
 
 	//Equipment
 	/*! Equips Weapon*/

@@ -562,6 +562,7 @@ bool Client::HandleUnEquipItem(const unsigned int ItemID, const int Slot)
 		MaloW::Debug("Wrong Slot type, Item is Null in slot: " + MaloW::convertNrToString((float)Slot));
 		return false;
 	}
+	return false;
 }
 
 void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
@@ -685,7 +686,7 @@ void Client::HandleRemoveInventoryItem(const unsigned int ID)
 	}
 }
 
-void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned unsigned int ID)
+void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int ID)
 {
 	std::string itemName = "Unknown";
 	std::string itemDescription = "<UNKNOWN DESCRIPTION>";

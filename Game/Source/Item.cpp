@@ -11,7 +11,7 @@ Item::Item()
 	this->zItemDescription = "none";
 }
 
-Item::Item(const long ID, const unsigned int itemType, const unsigned int itemSubType)
+Item::Item(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType)
 {
 	this->zStacks = 1;
 	this->zID = ID;

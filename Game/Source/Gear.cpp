@@ -1,6 +1,6 @@
 #include "Gear.h"
 
-Gear::Gear( const long ID, const unsigned int Type, const unsigned int SubType )
+Gear::Gear( const unsigned int ID, const unsigned int Type, const unsigned int SubType )
 	: Item(ID, Type, SubType)
 {
 	this->zStacking = false;

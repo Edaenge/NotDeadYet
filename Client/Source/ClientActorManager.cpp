@@ -1,14 +1,15 @@
-#include "WorldObjectManager.h"
+#include "ClientActorManager.h"
 #include "Safe.h"
+#include "Graphics.h"
 
 #define PI 3.14159265358979323846f
 
-WorldObjectManager::WorldObjectManager()
+ClientActorManager::ClientActorManager()
 {
 	zInterpolationVelocity = 500.0f;
 }
 
-WorldObjectManager::~WorldObjectManager()
+ClientActorManager::~ClientActorManager()
 {
 	for(auto x = this->zActors.begin(); x < this->zActors.end(); x++)
 	{
@@ -16,19 +17,23 @@ WorldObjectManager::~WorldObjectManager()
 	}
 }
 
-Actor* WorldObjectManager::SearchAndGetActor(const unsigned int ID)
+Actor* ClientActorManager::SearchAndGetActor(const unsigned int ID)
 {
 	int position = this->SearchForActor(ID);
 	return this->zActors[position];
 }
 
-void WorldObjectManager::UpdateObjects( float deltaTime )
+void ClientActorManager::UpdateObjects( float deltaTime, unsigned int ignoreID)
 {
 	float t = GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
 
 	for (auto it_Update = this->zUpdates.begin(); it_Update < this->zUpdates.end(); it_Update++)
 	{
+		
 		Actor* actor = this->SearchAndGetActor((*it_Update)->GetID());
+
+		if((*it_Update)->GetID() == ignoreID)
+			GetGraphics()->GetCamera()->SetPosition(actor->GetPosition());
 
 		if (actor)
 		{
@@ -58,7 +63,7 @@ void WorldObjectManager::UpdateObjects( float deltaTime )
 	}
 }
 
-Actor* WorldObjectManager::GetActor( const int Index )
+Actor* ClientActorManager::GetActor( const int Index )
 {
 	if ((unsigned int)Index < this->zActors.size())
 		return this->zActors[Index];
@@ -66,7 +71,7 @@ Actor* WorldObjectManager::GetActor( const int Index )
 	return NULL;
 }
 
-int WorldObjectManager::SearchForActor( const unsigned int ID )
+int ClientActorManager::SearchForActor( const unsigned int ID )
 {
 	for (unsigned int i = 0; i < this->zActors.size(); i++)
 	{
@@ -78,7 +83,7 @@ int WorldObjectManager::SearchForActor( const unsigned int ID )
 	return -1;
 }
 
-bool WorldObjectManager::RemoveActor( const int Index )
+bool ClientActorManager::RemoveActor( const int Index )
 {
 	if ((unsigned int)Index < this->zActors.size())
 	{
@@ -89,7 +94,7 @@ bool WorldObjectManager::RemoveActor( const int Index )
 	}
 }
 
-bool WorldObjectManager::AddActor(Actor* actor)
+bool ClientActorManager::AddActor(Actor* actor)
 {
 	if (actor)
 	{
@@ -99,12 +104,12 @@ bool WorldObjectManager::AddActor(Actor* actor)
 	return false;
 }
 
-void WorldObjectManager::AddUpdate( Updates* update )
+void ClientActorManager::AddUpdate( Updates* update )
 {
 	this->zUpdates.push_back(update);
 }
 
-int WorldObjectManager::SearchForUpdate( const unsigned int ID )
+int ClientActorManager::SearchForUpdate( const unsigned int ID )
 {
 	for (unsigned int i = 0; i < this->zUpdates.size(); i++)
 	{
@@ -116,7 +121,7 @@ int WorldObjectManager::SearchForUpdate( const unsigned int ID )
 	return -1;
 }
 
-Updates* WorldObjectManager::GetUpdate( const int Index )
+Updates* ClientActorManager::GetUpdate( const int Index )
 {
 	if ((unsigned int)Index < this->zUpdates.size())
 		return this->zUpdates[Index];
@@ -124,7 +129,7 @@ Updates* WorldObjectManager::GetUpdate( const int Index )
 	return NULL;
 }
 
-float WorldObjectManager::GetInterpolationType(const float deltaTime, const unsigned int type)
+float ClientActorManager::GetInterpolationType(const float deltaTime, const unsigned int type)
 {
 	float t;
 	switch (type)
@@ -152,7 +157,7 @@ float WorldObjectManager::GetInterpolationType(const float deltaTime, const unsi
 	return t;
 }
 
-Vector3 WorldObjectManager::InterpolatePosition(const Vector3& currentPosition, const Vector3& newPosition, float t )
+Vector3 ClientActorManager::InterpolatePosition(const Vector3& currentPosition, const Vector3& newPosition, float t )
 {
 	float oldlength = (currentPosition - newPosition).GetLength();
 
@@ -166,7 +171,7 @@ Vector3 WorldObjectManager::InterpolatePosition(const Vector3& currentPosition, 
 	return returnPosition;
 }
 
-Vector4 WorldObjectManager::InterpolateRotation( const Vector4& currentRotation, const Vector4& newRotation, float t )
+Vector4 ClientActorManager::InterpolateRotation( const Vector4& currentRotation, const Vector4& newRotation, float t )
 {
 	float oldlength = (currentRotation - newRotation).GetLength();
 

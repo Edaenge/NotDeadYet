@@ -134,7 +134,6 @@ void MainMenu::Run()
 
 		Vector2 mousePos;
 		GUIEvent* retEvent = NULL;
-		bool mousePressed = false;
 		while(run)
 		{
 			eng->Update();

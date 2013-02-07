@@ -85,7 +85,6 @@ void Game::OnEvent( Event* e )
 
 		message = NMC.Convert(MESSAGE_TYPE_CONNECTED);
 		PCE->clientData->Send(message);
-
 		// Sends the world name
 		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorldFile);
 		PCE->clientData->Send(message);
@@ -178,7 +177,7 @@ void Game::OnEvent( Event* e )
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		for (auto it = actors.begin(); it != actors.end(); it++)
 		{
-			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (*it)->GetID());
+			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (float)(*it)->GetID());
 			message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
 			message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
 			message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
@@ -187,7 +186,7 @@ void Game::OnEvent( Event* e )
 			PCE->clientData->Send(message);
 		}
 		//Tells the client which Actor he owns.
-		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, actor->GetID());
+		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)actor->GetID());
 		PCE->clientData->Send(message);
 
 	}

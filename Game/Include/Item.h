@@ -44,10 +44,10 @@ class Item
 {
 public:
 	Item();
-	Item(const long ID, const unsigned int itemType, const unsigned int itemSubType);
+	Item(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType);
 	virtual ~Item(){}
 	/*! Returns Item ID*/
-	inline int GetID() const {return this->zID;}
+	inline unsigned int GetID() const {return this->zID;}
 	/*! Returns the Item Weight*/
 	inline unsigned int GetWeight() const {return this->zWeight;}
 	/*! Returns the Item Description*/
@@ -64,7 +64,7 @@ public:
 
 	void SetIconPath(const std::string& path) {this->zIconPath = path;}
 	/*! Sets the Item ID*/
-	void SetItemID(const long id) {this->zID = id;}
+	void SetItemID(const unsigned int id) {this->zID = id;}
 	/*! Sets the Item Weight*/
 	void SetItemWeight(const unsigned int weight) {this->zWeight = weight;}
 	/*! Sets the Item Name*/
@@ -83,8 +83,8 @@ public:
 	virtual bool Use() = 0;
 	virtual std::string ToMessageString(NetworkMessageConverter* NMC);  
 protected:
-	int zStacks;
-	long zID;
+	unsigned int zStacks;
+	unsigned int zID;
 	int zWeight;
 	std::string zItemName;
 	unsigned int zItemType;
