@@ -42,10 +42,10 @@ Client::Client()
 	
 	this->zMsgHandler = NetworkMessageConverter();
 
-	this->zWorld = 0;
-	this->zWorldRenderer = 0;
-	this->zAnchor = 0;
-	this->zCrossHair = 0;
+	this->zWorld = NULL;
+	this->zWorldRenderer = NULL;
+	this->zAnchor = NULL;
+	this->zCrossHair = NULL;
 }
 
 void Client::Connect(const std::string &IPAddress, const unsigned int &port)
@@ -105,21 +105,6 @@ float Client::Update()
 
 void Client::InitGraphics()
 {
-	this->zEng->CreateSkyBox("Media/skymap.dds");
-	this->zEng->GetCamera()->SetPosition( Vector3(54, 20, 44) );
-	this->zEng->GetCamera()->LookAt( Vector3(50, 0, 50) );
-	
-	LoadEntList("Entities.txt");
-
-	if ( zWorld ) delete zWorld, zWorld=0;
-	this->zWorld = new World(this, "3x3.map");
-	this->zWorldRenderer = new WorldRenderer(zWorld, GetGraphics());
-
-
-	this->zAnchor = this->zWorld->CreateAnchor();
-	this->zAnchor->position = Vector2(54, 44);
-	this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
-
 	int windowWidth = GetGraphics()->GetEngineParameters().WindowWidth;
 	int windowHeight = GetGraphics()->GetEngineParameters().WindowHeight;	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
@@ -916,7 +901,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 	}
-	/*else if(msg.find(M_CONNECTED.c_str()) == 0)
+	else if(msg.find(M_CONNECTED.c_str()) == 0)
 	{
 		Vector3 camDir = this->zEng->GetCamera()->GetForward();
 		Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
@@ -928,7 +913,31 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, camUp);
 
 		this->zServerChannel->Send(serverMessage);
-	}*/
+	}
+	else if(msg.find(M_LOAD_MAP.c_str()) == 0)
+	{
+		std::string mapName = this->zMsgHandler.ConvertStringToSubstring(M_LOAD_MAP, msgArray[0]);
+
+		this->zEng->CreateSkyBox("Media/skymap.dds");
+		
+		LoadEntList("Entities.txt");
+
+		if ( zWorld ) delete zWorld, zWorld=0;
+		this->zWorld = new World(this, mapName);
+		this->zWorldRenderer = new WorldRenderer(zWorld, this->zEng);
+
+		float x = (this->zWorld->GetNumSectorsWidth() * 32.0f) / 2;
+		float z = (this->zWorld->GetNumSectorsHeight() * 32.0f) / 2;
+
+		Vector2 center = Vector2(x, z);
+		
+		this->zEng->GetCamera()->SetPosition( Vector3(center.x, 20, center.y) );
+		this->zEng->GetCamera()->LookAt( Vector3(center.x, 0, center.y) );
+
+		this->zAnchor = this->zWorld->CreateAnchor();
+		this->zAnchor->position = center;
+		this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
+	}
 	else if(msg.find(M_ERROR_MESSAGE.c_str()) == 0)
 	{
 		std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_ERROR_MESSAGE, msgArray[0]);

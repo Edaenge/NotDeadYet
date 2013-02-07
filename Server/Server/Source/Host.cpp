@@ -65,7 +65,7 @@ void Host::Life()
 
 		if(this->zGameStarted)
 		{
-			PingClients();
+			//PingClients();
 			zGame->Update(this->zDeltaTime);
 		}
 		else
@@ -80,7 +80,7 @@ void Host::Life()
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients,  const std::string& gameModeName, const std::string& mapName)
 {
 	GameMode* gameMode = NULL;
-
+	this->zMaxClients = maxClients;
 	if (gameModeName.find("FFA") == 0 )
 	{
 		gameMode = new GameModeFFA();
@@ -155,14 +155,13 @@ void Host::ReadMessages()
 		{
 			HandleReceivedMessage(dynamic_cast<MaloW::ClientChannel*>(np->GetChannel()), np->GetMessage());
 		}
-		
 		else if ( ClientDisconnectedEvent* CDE = dynamic_cast<ClientDisconnectedEvent*>(pe) )
 		{
 			HandleClientDisconnect(CDE->GetClientChannel());
 		}
-		else if ( ClientDroppedEvent* CDE = dynamic_cast<ClientDroppedEvent*>(pe) )
+		else if ( ClientDroppedEvent* CDES = dynamic_cast<ClientDroppedEvent*>(pe) )
 		{
-			HandleClientDropped(CCE->GetClientChannel());
+			HandleClientDropped(CDES->GetClientChannel());
 		}
 		// Unhandled Message
 		SAFE_DELETE(pe);
@@ -377,8 +376,6 @@ void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 
 	it = _clients.find(channel);
 	SAFE_DELETE( _clients.at(channel));
-	SAFE_DELETE(channel);
-	
 	_clients.erase(it);
 }
 
@@ -425,7 +422,9 @@ void Host::HandleClientUpdate( const std::vector<std::string> &msgArray, ClientD
 			rot = this->zMessageConverter.ConvertStringToQuaternion(M_ROTATION, (*it));
 		}
 		else
+		{
 			MaloW::Debug("Unknown message in HandleClientUpdate.");
+		}
 	}
 
 	ClientDataEvent e;
@@ -473,33 +472,24 @@ void Host::HandleLootRequest( const std::vector<std::string> &msgArray, ClientDa
 void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData* cd )
 {
 	UserDataEvent e;
-	std::string uModel;
-	Vector3 uDir;
-	Vector3 uUp;
+	e.clientData = cd;
 
 	for (auto it_m = msgArray.begin() + 1; it_m < msgArray.end(); it_m++)
 	{
-		char key[512];
-		sscanf_s((*it_m).c_str(), "%s ", &key, sizeof(key));
-
-		if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
+		if(it_m->find(M_MESH_MODEL) == 0)
 		{
-			uModel = this->zMessageConverter.ConvertStringToSubstring(M_MESH_MODEL, (*it_m));
+			e.playerModel = this->zMessageConverter.ConvertStringToSubstring(M_MESH_MODEL, (*it_m));
 		}
-		else if(strcmp(key, M_DIRECTION.c_str()) == 0)
+		else if(it_m->find(M_DIRECTION) == 0)
 		{
-			uDir = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it_m));
+			e.direction = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it_m));
 		}
-		else if(strcmp(key, M_UP.c_str()) == 0)
+		else if(it_m->find(M_UP) == 0)
 		{
-			uUp = this->zMessageConverter.ConvertStringToVector(M_UP, (*it_m));
+			e.upVector = this->zMessageConverter.ConvertStringToVector(M_UP, (*it_m));
 		}
 	}
 
-	e.upVector = uUp;
-	e.direction = uDir;
-	e.playerModel = uModel;
-	e.clientData = cd;
 	NotifyObservers(&e);
 }
 
