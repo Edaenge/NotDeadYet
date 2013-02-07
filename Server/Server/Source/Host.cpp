@@ -163,10 +163,6 @@ void Host::ReadMessages()
 		{
 			HandleClientDisconnect(CDE->GetClientChannel());
 		}
-		else if ( ClientDroppedEvent* CDES = dynamic_cast<ClientDroppedEvent*>(pe) )
-		{
-			HandleClientDropped(CDES->GetClientChannel());
-		}
 		// Unhandled Message
 		SAFE_DELETE(pe);
 	}
@@ -376,19 +372,10 @@ bool Host::IsAlive() const
 
 void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 {
-	std::map<MaloW::ClientChannel*, ClientData*>::iterator it;
-
-	it = zClients.find(channel);
-	SAFE_DELETE( zClients.at(channel));
-	zClients.erase(it);
-}
-
-void Host::HandleClientDropped( MaloW::ClientChannel* channel )
-{
-	PlayerKickEvent e;
-	e.clientData = zClients.at(channel);
-
+	PlayerDisconnectedEvent e;
+	auto i = zClients.find(channel);
 	NotifyObservers(&e);
+	SAFE_DELETE(i->second);
 }
 
 void Host::HandleNewConnection( MaloW::ClientChannel* CC )
