@@ -380,7 +380,7 @@ void Client::CheckMovementKeys()
 	pressed = this->CheckKey(KEY_DUCK);
 }
 
-void Client::SendUseItemMessage(const long ID)
+void Client::SendUseItemMessage(const unsigned int ID)
 {
 	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 	this->zServerChannel->Send(msg);
@@ -522,14 +522,14 @@ void Client::HandleKeyboardInput()
 				std::vector<Gui_Item_Data> gui_Item_Datas;
 				if (collisionObjects.size() > 0)
 				{
-					if (collisionObjects[0].type == OBJECT_TYPE_DYNAMIC_OBJECT || collisionObjects[0].type == OBJECT_TYPE_STATIC_OBJECT)
-					{
+					//if (collisionObjects[0].type == OBJECT_TYPE_DYNAMIC_OBJECT || collisionObjects[0].type == OBJECT_TYPE_STATIC_OBJECT)
+					//{
 						this->SendPickupItemMessage(collisionObjects[0].gid.zID);
-					}
-					else if (collisionObjects[0].type == OBJECT_TYPE_DEAD_PLAYER)
-					{
-						this->SendLootItemMessage(collisionObjects[0].owner, collisionObjects[0].gid.zID, collisionObjects[0].gid.zType);
-					}
+					//}
+					//else if (collisionObjects[0].type == OBJECT_TYPE_DEAD_PLAYER)
+					//{
+					//	this->SendLootItemMessage(collisionObjects[0].owner, collisionObjects[0].gid.zID, collisionObjects[0].gid.zType);
+					//}
 					for (auto x = collisionObjects.begin(); x < collisionObjects.end(); x++)
 					{
 						gui_Item_Datas.push_back((*x).gid);
@@ -845,48 +845,48 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	////Player
 	//else if(msg.find(M_UPDATE_PLAYER.c_str()) == 0)
 	//{ 
-	//	long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_PLAYER, msgArray[0]);
+	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_PLAYER, msgArray[0]);
 	//	this->UpdateActor(msgArray, id);
 	//}
 	////Animal
 	//else if(msg.find(M_UPDATE_ANIMAL.c_str()) == 0)
 	//{
-	//	long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ANIMAL, msgArray[0]);
+	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ANIMAL, msgArray[0]);
 	//	this->UpdateActor(msgArray, id);
 	//}
 	////Static Object
 	//else if(msg.find(M_UPDATE_STATIC_OBJECT.c_str()) == 0)
 	//{
-	//	long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_STATIC_OBJECT, msgArray[0]);
+	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_STATIC_OBJECT, msgArray[0]);
 	//	this->UpdateActor(msgArray, id);
 	//}
 
 	//WorldObjects
 	else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
 		this->UpdateActor(msgArray, id);
 	}
 	else if(msg.find(M_NEW_ACTOR.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
 		this->AddActor(msgArray, id);
 	}
 	//WorldObjects
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
 		this->UpdateActor(msgArray, id);
 	}
 	//WorldObjects
 	else if(msg.find(M_DEAD_ACTOR.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
 		//this->UpdateActor(msgArray, id);
 	}
 	else if(msg.find(M_EQUIP_ITEM.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
 		int slot = -1;
 		if (msgArray.size() > 1)
 		{
@@ -900,12 +900,12 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msg.find(M_ITEM_USE.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
 		this->HandleUseItem(id);
 	}
 	else if(msg.find(M_REMOVE_EQUIPMENT.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_EQUIPMENT, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_EQUIPMENT, msgArray[0]);
 		int slot = -1;
 		if (msgArray.size() > 1)
 		{
@@ -919,7 +919,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msg.find(M_UNEQUIP_ITEM.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
 		int slot = -1;
 		if (msgArray.size() > 1)
 		{
@@ -933,35 +933,18 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msg.find(M_ADD_INVENTORY_ITEM.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_ADD_INVENTORY_ITEM, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ADD_INVENTORY_ITEM, msgArray[0]);
 		this->HandleAddInventoryItem(msgArray, id);
 	}
 	else if(msg.find(M_REMOVE_INVENTORY_ITEM.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_INVENTORY_ITEM, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_INVENTORY_ITEM, msgArray[0]);
 		this->HandleRemoveInventoryItem(id);
 	}
 	else if(msg.find(M_WEAPON_USE.c_str()) == 0)
 	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
 		this->HandleWeaponUse(id);
-	}
-	else if(msg.find(M_DEAD_PLAYER_REMOVE_ITEM.c_str()) == 0)
-	{
-		long id = this->zMsgHandler.ConvertStringToInt(M_DEAD_PLAYER_REMOVE_ITEM, msgArray[0]);
-		int type = -1;
-		long itemID = -1;
-		if (msgArray.size() > 2)
-		{
-			itemID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, msgArray[1]);
-			type = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
-
-			this->HandeRemoveDeadPlayerItem(id, itemID, type);
-		}
-		else
-		{
-			MaloW::Debug("Msg array size is to short size: " + MaloW::convertNrToString((float)msgArray.size()) + " Expected size 3");
-		}
 	}
 	else if(msg.find(M_SELF_ID.c_str()) == 0)
 	{
