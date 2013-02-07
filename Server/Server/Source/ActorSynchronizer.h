@@ -4,12 +4,13 @@
 /* After that you can send update info to clients.						*/
 /************************************************************************/
 
-#include "BioActor.h"
 #include "Observer.h"
 #include "ClientData.h"
 #include "NetworkMessageConverter.h"
 
 #include <set>
+
+class Actor;
 
 class ActorSynchronizer : public Observer
 {

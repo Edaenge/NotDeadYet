@@ -141,7 +141,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\Bin\$(Configuration)</OutDir>
+    <OutDir>$(ProjectDir)\Bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)</IntDir>
     <IncludePath>$(SolutionDir)\External\FMOD\Include\;$(SolutionDir)\External\NDYGFX\Include\;$(SolutionDir)\External\VLD\Include;$(SolutionDir)\Malow\Include\;$(SolutionDir)\Game\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\External\FMOD\Lib\x86;$(SolutionDir)\External\NDYGFX\lib\;$(SolutionDir)\External\VLD\lib\Win32\;$(SolutionDir)\Game\bin\Debug\;$(SolutionDir)\Malow\bin\Debug\;$(LibraryPath)</LibraryPath>
@@ -159,7 +159,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)\Bin\$(Configuration)</OutDir>
+    <OutDir>$(ProjectDir)\Bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)</IntDir>
     <ExecutablePath>..\Source\External\D3D\Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)\External\FMOD\Include\;$(SolutionDir)\External\NDYGFX\Include\;$(SolutionDir)\External\VLD\Include;$(SolutionDir)\Malow\Include\;$(SolutionDir)\Game\Include\;$(IncludePath)</IncludePath>

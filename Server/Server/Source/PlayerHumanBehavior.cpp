@@ -21,9 +21,12 @@ PlayerHumanBehavior::~PlayerHumanBehavior()
 
 bool PlayerHumanBehavior::Update( float dt )
 {
+	if ( PlayerBehavior::Update(dt) )
+		return true;
+
 	KeyStates keyStates = this->zPlayer->GetKeys();
 	Vector3 newPlayerPos;
-	Vector3 moveDir = Vector3(0,0,0);
+	Vector3 moveDir = Vector3(0.0f, 0.0f, 0.0f);
 
 	Vector3 currentPlayerPos = this->zActor->GetPosition();
 
@@ -39,8 +42,10 @@ bool PlayerHumanBehavior::Update( float dt )
 	// Calc the movement vector
 	moveDir += currentPlayerDir * (float)(keyStates.GetKeyState(KEY_FORWARD) - //if KEY_BACKWARD then currentPlayerDir inverse 
 		keyStates.GetKeyState(KEY_BACKWARD));
-	moveDir += currentPlayerRight * (float)(keyStates.GetKeyState(KEY_LEFT) - 
-		keyStates.GetKeyState(KEY_RIGHT));
+
+	moveDir += currentPlayerRight * (float)(keyStates.GetKeyState(KEY_RIGHT) - 
+		keyStates.GetKeyState(KEY_LEFT));
+
 	moveDir.Normalize();
 	moveDir *= 10.0f;
 
@@ -52,19 +57,20 @@ bool PlayerHumanBehavior::Update( float dt )
 		this->zVelocity *= MAX_VELOCITY;
 	}
 
-	newPlayerPos = currentPlayerPos + this->zVelocity * dt;
-
-	float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ()) + PLAYERHEIGHT;
-	if(newGroundHeight > newPlayerPos.y)
+	float newGroundHeight = zWorld->CalcHeightAtWorldPos(currentPlayerPos.GetXZ()) + PLAYERHEIGHT;
+	if( newGroundHeight > currentPlayerPos.y )
 	{
-		Vector3 newGroundNormal = zWorld->CalcNormalAt(newPlayerPos.GetXZ());
+		Vector3 newGroundNormal = zWorld->CalcNormalAt(currentPlayerPos.GetXZ());
 		this->zVelocity = newGroundNormal * this->zVelocity.GetLength() * ELASTICITY;
 	}
-	this->zActor->SetPosition(newPlayerPos);
+
+	currentPlayerPos += this->zVelocity * dt;
+
+	this->zActor->SetPosition(currentPlayerPos);
 	this->zAnchor->position = newPlayerPos.GetXZ();
 	this->zAnchor->radius = SIGHTRADIUS;
 
-	return true;
+	return false;
 }
 
 

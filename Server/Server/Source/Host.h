@@ -12,7 +12,8 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "Game.h"
 #include "GameModeFFA.h"
 #include "GameEvents.h"
-#include "ActorSynchronizer.h"
+
+class ActorSynchronizer;
 
 #if defined(DEBUG) || defined(_DEBUG)
 #include <vld.h>
@@ -21,22 +22,45 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 class Host : public MaloW::Process, public Observed
 {
+	ServerListener* zServerListener;
+
+	NetworkMessageConverter zMessageConverter;
+
+	unsigned int zMaxClients;
+	unsigned int zMinClients;
+	int zPort;
+	bool zGameStarted;
+	INT64 zStartime;
+	float zSecsPerCnt;
+	float zDeltaTime;
+	float zTimeOut;
+	float zPingMessageInterval;
+
+	std::map<MaloW::ClientChannel*, ClientData*> zClients;
+	Game* zGame;
+	ActorSynchronizer* zSynchronizer;
 public:
 	Host();
 	virtual ~Host();
 	/*! Creates a Server locally
 	returns a code that describes error or success*/
 	const char* InitHost(const unsigned int &port, const unsigned int &maxClients, const std::string& gameMode, const std::string& mapName);
+	
 	/*! Main loop for this thread*/
 	void Life();
+
 	/*! Checks if the server have players connected.*/
 	bool HasClients() const;
+
 	/*! Returns the port*/
 	inline int GetPort() const{return this->zPort;}
+
 	/*! Notifies all clients, the server is shutting down.*/
 	void BroadCastServerShutdown();
+
 	/*! Pings the clients.*/
 	//void PingClients();
+
 	/*! Updates the server clock.*/
 	float Update();
 	/*! */
@@ -47,6 +71,9 @@ public:
 
 	// Returns Number of active connections
 	unsigned int GetNumClients() const;
+
+	// Synchronize Clients
+	void SynchronizeAll();
 private:
 	/*! Handles new incoming connections.*/
 	void HandleNewConnection( MaloW::ClientChannel* CC );
@@ -69,22 +96,4 @@ private:
 	/*! */
 	void PingClients();
 
-	void Message(MaloW::ClientChannel* cc, std::string msg);
-private:
-	ServerListener* zServerListener;
-	
-	NetworkMessageConverter zMessageConverter;
-
-	unsigned int zMaxClients;
-	unsigned int zMinClients;
-	int zPort;
-	bool zGameStarted;
-	INT64 zStartime;
-	float zSecsPerCnt;
-	float zDeltaTime;
-	float zTimeOut;
-	float zPingMessageInterval;
-
-	std::map<MaloW::ClientChannel*, ClientData*> _clients;
-	Game* zGame;
 };

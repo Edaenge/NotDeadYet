@@ -3,11 +3,13 @@
 #include "ClientConnectedEvent.h"
 #include "ClientDisconnectedEvent.h"
 #include "ClientDroppedEvent.h"
+#include "ActorSynchronizer.h"
 
 // 50 updates per sec
 static const float UPDATE_DELAY = 0.020f;
 
-Host::Host()
+Host::Host() :
+	zSynchronizer(0)
 {
 	MaloW::ClearDebug();
 	Messages::ClearDebug();
@@ -67,6 +69,8 @@ void Host::Life()
 		{
 			//PingClients();
 			zGame->Update(this->zDeltaTime);
+			
+			SynchronizeAll();
 		}
 		else
 		{
@@ -90,8 +94,8 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 		gameMode = new GameModeFFA();
 	}
 
-	ActorSynchronizer* actorSync = new ActorSynchronizer();
-	this->zGame = new Game(actorSync, gameMode, mapName);
+	zSynchronizer = new ActorSynchronizer();
+	this->zGame = new Game(zSynchronizer, gameMode, mapName);
 	this->AddObserver(this->zGame);
 
 	try
@@ -113,7 +117,7 @@ void Host::SendToAllClients(const std::string& message)
 	if(!HasClients())
 		return;
 
-	for (auto it = _clients.begin(); it != _clients.end(); it++)
+	for (auto it = zClients.begin(); it != zClients.end(); it++)
 	{
 		it->first->Send(message);
 	}
@@ -121,12 +125,12 @@ void Host::SendToAllClients(const std::string& message)
 
 bool Host::HasClients() const
 {
-	return !_clients.empty();
+	return !zClients.empty();
 }
 
 unsigned int Host::GetNumClients() const
 {
-	return _clients.size();
+	return zClients.size();
 }
 
 void Host::ReadMessages()
@@ -173,7 +177,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	
 	std::vector<std::string> msgArray;
 	msgArray = this->zMessageConverter.SplitMessage(message); 
-	ClientData* cd = this->_clients.at(cc);
+	ClientData* cd = zClients[cc];
 	
 	// Empty Array
 	if ( msgArray.size() == 0 ) return;
@@ -310,7 +314,7 @@ void Host::PingClients()
 	ClientData* cd; 
 	MaloW::ClientChannel* ch;
 
-	for(auto it = _clients.begin(); it != _clients.end(); it++)
+	for(auto it = zClients.begin(); it != zClients.end(); it++)
 	{
 		cd = it->second;
 		ch = it->first;
@@ -374,15 +378,15 @@ void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 {
 	std::map<MaloW::ClientChannel*, ClientData*>::iterator it;
 
-	it = _clients.find(channel);
-	SAFE_DELETE( _clients.at(channel));
-	_clients.erase(it);
+	it = zClients.find(channel);
+	SAFE_DELETE( zClients.at(channel));
+	zClients.erase(it);
 }
 
 void Host::HandleClientDropped( MaloW::ClientChannel* channel )
 {
 	PlayerKickEvent e;
-	e.clientData = _clients.at(channel);
+	e.clientData = zClients.at(channel);
 
 	NotifyObservers(&e);
 }
@@ -390,7 +394,7 @@ void Host::HandleClientDropped( MaloW::ClientChannel* channel )
 void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 {
 	ClientData* cd = new ClientData(CC);
-	_clients[CC] = cd;
+	zClients[CC] = cd;
 	CC->Start();
 
 	PlayerConnectedEvent e;
@@ -398,11 +402,10 @@ void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 	NotifyObservers(&e);
 }
 
-void Host::HandleClientUpdate( const std::vector<std::string> &msgArray, ClientData* cd)
+void Host::HandleClientUpdate(const std::vector<std::string> &msgArray, ClientData* cd)
 {
-	Vector3 dir;
-	Vector3 up;
-	Vector4 rot;
+	ClientDataEvent e;
+	e.clientData = cd;
 
 	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
@@ -411,27 +414,21 @@ void Host::HandleClientUpdate( const std::vector<std::string> &msgArray, ClientD
 
 		if(strcmp(key, M_DIRECTION.c_str()) == 0)
 		{
-			dir = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it));
+			e.direction = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it));
 		}
 		else if(strcmp(key, M_UP.c_str()) == 0)
 		{
-			up = this->zMessageConverter.ConvertStringToVector(M_UP, (*it));
+			e.upVector = this->zMessageConverter.ConvertStringToVector(M_UP, (*it));
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
-			rot = this->zMessageConverter.ConvertStringToQuaternion(M_ROTATION, (*it));
+			e.rotation = this->zMessageConverter.ConvertStringToQuaternion(M_ROTATION, (*it));
 		}
 		else
 		{
 			MaloW::Debug("Unknown message in HandleClientUpdate.");
 		}
 	}
-
-	ClientDataEvent e;
-	e.direction = dir;
-	e.rotation = rot;
-	e.upVector = up;
-	e.clientData = cd;
 
 	NotifyObservers(&e);
 
@@ -493,8 +490,13 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 	NotifyObservers(&e);
 }
 
-void Host::Message(MaloW::ClientChannel* cc, std::string msg)
+void Host::SynchronizeAll()
 {
+	for( auto i = zClients.begin(); i != zClients.end(); ++i )
+	{
+		zSynchronizer->SendUpdatesTo(i->second);
+	}
 
+	zSynchronizer->ClearAll();
 }
 

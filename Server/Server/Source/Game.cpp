@@ -166,8 +166,15 @@ void Game::OnEvent( Event* e )
 		// Create Player Actor
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
-		actor->SetPosition(Vector3(50.0f, 0.0f, 50.0f));
 		zActorManager->AddActor(actor);
+
+		// Start Position
+		Vector3 center;
+		center.x = zWorld->GetWorldCenter().x;
+		center.y = 1.7f;
+		center.z = zWorld->GetWorldCenter().y;
+		actor->SetPosition(center);
+
 		// Apply Default Player Behavior
 		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));
 
@@ -190,7 +197,6 @@ void Game::OnEvent( Event* e )
 
 			UDE->clientData->Send(message);
 		}
-
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{

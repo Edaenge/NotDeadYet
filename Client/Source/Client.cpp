@@ -88,17 +88,21 @@ float Client::Update()
 	this->zGuiManager->Update(this->zDeltaTime);
 
 	// Anchors with the world to decide what to render.
-	if(zWorld && zAnchor)
-	{
-		Vector2 cameraPos = this->zEng->GetCamera()->GetPosition().GetXZ();
-
-		this->zAnchor->position = cameraPos;
-		this->zEng->SetSceneAmbientLight(this->zWorld->GetAmbientAtWorldPos(cameraPos));
-
-		this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
-	}
 	if(zWorld)
+	{
+		if (zAnchor)
+		{
+			Vector2 cameraPos = this->zEng->GetCamera()->GetPosition().GetXZ();
+
+			this->zAnchor->position = cameraPos;
+			this->zEng->SetSceneAmbientLight(this->zWorld->GetAmbientAtWorldPos(cameraPos));
+
+			this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
+		}
+
 		this->zWorld->Update();
+		if ( zWorldRenderer ) zWorldRenderer->Update();
+	}		
 
 	return this->zDeltaTime;
 }
@@ -167,7 +171,7 @@ void Client::Life()
 		this->Update();
 
 		this->HandleKeyboardInput();
-		if(this->zCreated && this->zGameStarted)
+		if(this->zCreated)
 		{
 			this->zSendUpdateDelayTimer += this->zDeltaTime;
 			this->zTimeSinceLastPing += this->zDeltaTime;
@@ -243,7 +247,7 @@ void Client::SendClientUpdate()
 		rot = player->GetRotation();
 	}
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_CLIENT_DATA);
-	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_FRAME_TIME, this->zFrameTime);
+	//msg += this->zMsgHandler.Convert(MESSAGE_TYPE_FRAME_TIME, this->zFrameTime);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, dir);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, up);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ROTATION, rot);

@@ -20,19 +20,20 @@ ClientActorManager::~ClientActorManager()
 Actor* ClientActorManager::SearchAndGetActor(const unsigned int ID)
 {
 	int position = this->SearchForActor(ID);
+	if ( position < 0 ) return 0;
 	return this->zActors[position];
 }
 
-void ClientActorManager::UpdateObjects( float deltaTime, unsigned int ignoreID)
+void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 {
 	float t = GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
 
-	for (auto it_Update = this->zUpdates.begin(); it_Update < this->zUpdates.end(); it_Update++)
+	auto it_Update = this->zUpdates.begin();
+	while( it_Update != this->zUpdates.end() )
 	{
-		
 		Actor* actor = this->SearchAndGetActor((*it_Update)->GetID());
 
-		if((*it_Update)->GetID() == ignoreID)
+		if((*it_Update)->GetID() == clientID)
 			GetGraphics()->GetCamera()->SetPosition(actor->GetPosition());
 
 		if (actor)
@@ -54,10 +55,14 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int ignoreID)
 				actor->SetState((*it_Update)->GetState());
 				(*it_Update)->SetStateChange(false);
 			}
+			
 			if (!(*it_Update)->HasPositionChanged() && !(*it_Update)->HasRotationChanged() && !(*it_Update)->HasStateChanged())
 			{
-				this->zUpdates.erase(it_Update);
-				it_Update--;
+				it_Update = zUpdates.erase(it_Update);
+			}
+			else
+			{
+				++it_Update;
 			}
 		}
 	}

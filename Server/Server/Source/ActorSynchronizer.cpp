@@ -1,4 +1,6 @@
 #include "ActorSynchronizer.h"
+#include "Actor.h"
+
 
 ActorSynchronizer::ActorSynchronizer()
 {
@@ -18,11 +20,11 @@ void ActorSynchronizer::OnEvent( Event* e )
 	}
 	else if ( ActorRotationEvent* URE = dynamic_cast<ActorRotationEvent*>(e) )
 	{
-		zUpdateSet.insert(UPE->zActor);
+		zUpdateSet.insert(URE->zActor);
 	}
 	else if ( ActorScaleEvent* USE = dynamic_cast<ActorScaleEvent*>(e) )
 	{
-		zUpdateSet.insert(UPE->zActor);
+		zUpdateSet.insert(USE->zActor);
 	}
 }
 
