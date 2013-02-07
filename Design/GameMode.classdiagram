@@ -595,6 +595,22 @@
             </relationshipOwnedElementsInternal>
             <elementDefinition Id="bda44d7f-a1bc-4a13-a091-7013a8ed6f0e" />
           </association>
+          <association Id="5f55984f-f57f-4025-afc6-d9b570c6ad34" isDerived="false" sourceEndRoleName="Inventory : Observed" targetEndRoleName="Item" isLeaf="false" isAbstract="false">
+            <classMoniker Id="8b4fc52b-9099-470b-a460-7fbdfbc8351f" LastKnownName="Item" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="cab545b6-1f26-461d-b713-15214e80bac4" name="Inventory : Observed" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="375de962-79db-4e6f-b38c-861ad8b374f2" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="6889e759-49db-4894-b79a-865c07012b49" name="Item" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="b116ae44-7c8d-4905-a0d7-e9c256e4bfa8" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="25ff5580-e333-4e79-bf9b-dd80eb9a4e04" />
+          </association>
         </targetEnds>
       </class>
     </logicalClassDesignerModelHasTypes>
@@ -1118,6 +1134,24 @@
             <elementDefinition Id="72694dbd-8cf2-4469-8624-510e3a4f9e4e" />
           </generalization>
         </generalsInternal>
+        <targetEnds>
+          <association Id="168db212-cbb6-4080-80cc-84b89beecb09" isDerived="false" sourceEndRoleName="ItemActor" targetEndRoleName="Item" isLeaf="false" isAbstract="false">
+            <classMoniker Id="8b4fc52b-9099-470b-a460-7fbdfbc8351f" LastKnownName="Item" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="265f5b05-30c0-49f4-a427-147497d654ca" name="ItemActor" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="07ac77f6-7e8b-4e38-be3c-2575a635dd17" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="a938fc9e-857d-4340-8ab3-c7df53bfbad9" name="Item" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="d79787a2-edf7-42ff-80b8-da57cdefa908" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="c6672876-8068-4885-98f1-507e017492ea" />
+          </association>
+        </targetEnds>
         <ownedAttributesInternal>
           <property Id="c9e22fb0-ea9f-4319-bef8-b5e7d3f2b748" name="Item*" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="219f432c-745b-4b46-9d12-d0e882261a83" />
@@ -1148,6 +1182,11 @@
             </ownedParameters>
           </operation>
         </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="8b4fc52b-9099-470b-a460-7fbdfbc8351f" name="Item" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="12fb912c-fdc3-4a31-961a-6669e71e4897" />
       </class>
     </logicalClassDesignerModelHasTypes>
   </packagedElements>
