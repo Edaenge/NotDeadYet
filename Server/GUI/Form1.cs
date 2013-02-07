@@ -68,7 +68,7 @@ namespace GUI
             int players;
             bool isNr = false;
             String gameMode = "FFA";
-            String mapName = this.map_combobox.GetItemText(this.map_combobox.SelectedItem);
+            String mapName = "Media/Maps/" + this.map_combobox.GetItemText(this.map_combobox.SelectedItem);
 
             String str_port = textBox_Port.Text.Trim();
             String str_players =textBox_Players.Text.Trim();
@@ -191,7 +191,7 @@ namespace GUI
         private void Form1_Load(object sender, EventArgs e)
         {
             DirectoryInfo taskDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
-            FileInfo[] files = taskDirectory.GetFiles("*.map");
+            FileInfo[] files = taskDirectory.GetFiles("Media/Maps/*.map");
 
             this.map_combobox.Enabled = false;
 
