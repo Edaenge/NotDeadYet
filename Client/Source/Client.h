@@ -116,11 +116,11 @@ private:
 	//			  		//
 	//////////////////////
 	//Temporary Code
-	bool UpdateActor(const std::vector<std::string>& msgArray, const long ID);
-	bool RemoveActor(const long ID);
+	bool UpdateActor(const std::vector<std::string>& msgArray, const unsigned int ID);
+	bool RemoveActor(const unsigned int ID);
 
 	/*! Adds A Player Object.*/
-	bool AddActor(const std::vector<std::string>& msgArray, const long ID);
+	bool AddActor(const std::vector<std::string>& msgArray, const unsigned int ID);
 	
 
 	void HandleDeadPlayerMessage(const int ID);
@@ -130,29 +130,28 @@ private:
 	//			  		//
 	//////////////////////
 
-	bool CreateItemFromMessage( std::vector<std::string> msgArray, int& Index, Item*& item, const long ID);
-	void SendLootItemMessage(const long ID, const long ItemID, const int TYPE);
-	void SendPickupItemMessage(const long ID);
-	void SendDropItemMessage(const long ID);
-	void SendUseItemMessage(const long ID);
-	void HandleRemoveInventoryItem(const long ID);
-	void HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned long id);
+	bool CreateItemFromMessage( std::vector<std::string> msgArray, int& Index, Item*& item, const unsigned int ID);
+	void SendLootItemMessage(const unsigned int ID, const unsigned int ItemID, const int TYPE);
+	void SendPickupItemMessage(const unsigned int ID);
+	void SendDropItemMessage(const unsigned int ID);
+	void SendUseItemMessage(const unsigned int ID);
+	void HandleRemoveInventoryItem(const unsigned int ID);
+	void HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id);
 	/*! Uses the Selected Item*/
-	void HandleUseItem(const long ID);
+	void HandleUseItem(const unsigned int ID);
 	void DisplayMessageToClient(const std::string& msg);
-	void HandleEquipItem(const long ItemID, const int Slot);
-	bool HandleUnEquipItem(const long ItemID, const int Slot);
-	void SendUnEquipItem(const long ID, const int Slot);
-	void HandleRemoveEquipment(const long ItemID, const int Slot);
-	void HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, const int type);
-	void HandleWeaponUse(const long ID);
+	void HandleEquipItem(const unsigned int ItemID, const int Slot);
+	bool HandleUnEquipItem(const unsigned int ItemID, const int Slot);
+	void SendUnEquipItem(const unsigned int ID, const int Slot);
+	void HandleRemoveEquipment(const unsigned int ItemID, const int Slot);
+	void HandleWeaponUse(const unsigned int ID);
 
 protected:
 	virtual void onEvent(Event* e);
 
 private:
 	/*! Current Client ID*/
-	unsigned long zID;
+	unsigned int zID;
 	int	zPort;
 
 	INT64 zStartime;
