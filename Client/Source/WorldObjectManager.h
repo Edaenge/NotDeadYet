@@ -10,6 +10,13 @@
 class Updates
 {
 public:
+	Updates()
+	{
+		this->zID = 0;
+		this->zStateChange = false;
+		this->zPositionChange = false;
+		this->zRotationChange = false;
+	}
 	Updates(const unsigned int ID) 
 	{
 		this->zID = ID;
@@ -22,6 +29,10 @@ public:
 	Vector3 GetPosition() const {return this->zNextPosition;}
 	Vector4 GetRotation() const {return this->zRotation;}
 	unsigned int GetState() const {return this->zState;}
+
+	bool HasPositionChanged() const {return this->zPositionChange;}
+	bool HasRotationChanged() const {return this->zRotationChange;}
+	bool HasStateChanged() const {return this->zStateChange;}
 
 	void SetPosition(Vector3 position) 
 	{
@@ -52,12 +63,9 @@ public:
 
 		return this->zRotationChange;
 	}
-	bool CompareState(const float state)
+	void SetStateChange(bool value)
 	{
-		if (this->zState == state)
-			this->zStateChange = false;
-
-		return this->zStateChange;
+		this->zStateChange = value;
 	}
 private:
 	unsigned int zID;
@@ -68,6 +76,15 @@ private:
 	bool zStateChange;
 	bool zPositionChange;
 	bool zRotationChange;
+};
+
+static const enum INTERPOLATION_TYPES
+{
+	IT_LINEAR,
+	IT_COSINE,
+	IT_ACCELERATION,
+	IT_SMOOTH_STEP,
+	IT_DECELERATION
 };
 
 class WorldObjectManager
@@ -84,8 +101,23 @@ public:
 	Actor* GetActor(const int Index);
 	bool RemoveActor(const int Index);
 	int SearchForActor(const unsigned int ID);
-	void AddUpdate(Updates update);
+	void AddUpdate(Updates* update);
+
+	int SearchForUpdate(const unsigned int ID);
+	Updates* GetUpdate(const int index);
+	Vector4 InterpolateRotation(const Vector4& currentRotation, const Vector4& newRotation, float t);
+	Vector3 InterpolatePosition(const Vector3& currentPosition, const Vector3& newPosition, float t);
+	/*! Returns time Value depending on type
+	IT_LINEAR,
+	IT_COSINE,
+	IT_ACCELERATION,
+	IT_SMOOTH_STEP,
+	IT_DECELERATION
+	*/
+	float GetInterpolationType(const float deltaTime, const unsigned int type);
+	
 private:
 	std::vector<Actor*> zActors;
-	std::vector<Updates> zUpdates;
+	std::vector<Updates*> zUpdates;
+	float zInterpolationVelocity;
 };
