@@ -84,6 +84,7 @@
     <ClInclude Include="Include\ClientChannel.h" />
     <ClInclude Include="Include\ClientConnectedEvent.h" />
     <ClInclude Include="Include\ClientDisconnectedEvent.h" />
+    <ClInclude Include="Include\ClientDroppedEvent.h" />
     <ClInclude Include="Include\DisconnectedEvent.h" />
     <ClInclude Include="Include\FileReader.h" />
     <ClInclude Include="Include\List.h" />

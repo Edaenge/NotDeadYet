@@ -92,5 +92,8 @@
     <ClInclude Include="Include\NetworkChannel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\ClientDroppedEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
