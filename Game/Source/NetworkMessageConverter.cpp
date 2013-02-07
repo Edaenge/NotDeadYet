@@ -8,9 +8,14 @@ NetworkMessageConverter::NetworkMessageConverter()
 NetworkMessageConverter::~NetworkMessageConverter()
 {
 }
-std::string NetworkMessageConverter::Convert(const unsigned int ID, const float x, const float y, const float z)
+std::string NetworkMessageConverter::Convert(const unsigned int ID, const Vector3& vec)
 {
 	std::stringstream ss;
+
+	float x,y,z;
+	x = vec.x; 
+	y = vec.y;
+	z = vec.z;
 
 	switch (ID)
 	{
@@ -33,9 +38,15 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 
 	return ss.str();
 }
-std::string NetworkMessageConverter::Convert(const unsigned int ID, const float x, const float y, const float z, const float w)
+std::string NetworkMessageConverter::Convert(const unsigned int ID, const Vector4& vec)
 {
 	std::stringstream ss;
+
+	float x,y,z,w;
+	x = vec.x; 
+	y = vec.y;
+	z = vec.z;
+	w = vec.w;
 
 	switch (ID)
 	{
@@ -103,6 +114,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_DEAD_ACTOR:
 		ss << M_DEAD_ACTOR;
 		break;
+	case MESSAGE_TYPE_NEW_ACTOR:
+		ss << M_NEW_ACTOR;
+		break;
 	//case MESSAGE_TYPE_UPDATE_PLAYER:
 	//	ss << M_UPDATE_PLAYER;
 	//	break;
@@ -127,24 +141,24 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_KEY_UP:
 		ss << M_KEY_UP;
 		break;
-	case MESSAGE_TYPE_FRAME_TIME:
-		ss << M_FRAME_TIME;
+// 	case MESSAGE_TYPE_FRAME_TIME:
+// 		ss << M_FRAME_TIME;
 		break;
 	case MESSAGE_TYPE_STATE:
 		ss << M_STATE;
 		break;
-	case MESSAGE_TYPE_NEW_PLAYER:
-		ss << M_NEW_PLAYER;
-		break;
-	case MESSAGE_TYPE_NEW_STATIC_OBJECT:
-		ss << M_NEW_STATIC_OBJECT;
-		break;
-	case MESSAGE_TYPE_NEW_DYNAMIC_OBJECT:
-		ss << M_NEW_DYNAMIC_OBJECT;
-		break;
-	case MESSAGE_TYPE_NEW_ANIMAL:
-		ss << M_NEW_ANIMAL;
-		break;
+// 	case MESSAGE_TYPE_NEW_PLAYER:
+// 		ss << M_NEW_PLAYER;
+// 		break;
+// 	case MESSAGE_TYPE_NEW_STATIC_OBJECT:
+// 		ss << M_NEW_STATIC_OBJECT;
+// 		break;
+// 	case MESSAGE_TYPE_NEW_DYNAMIC_OBJECT:
+// 		ss << M_NEW_DYNAMIC_OBJECT;
+// 		break;
+// 	case MESSAGE_TYPE_NEW_ANIMAL:
+// 		ss << M_NEW_ANIMAL;
+// 		break;
 	case MESSAGE_TYPE_PICKUP_ITEM:
 		ss << M_PICKUP_ITEM;
 		break;
@@ -277,12 +291,12 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_SELF_ID:
 		ss << M_SELF_ID;
 		break;
-	case MESSAGE_TYPE_IMPORTANT_MESSAGE:
-		ss << M_IMPORTANT_MESSAGE;
-		break;
-	case MESSAGE_TYPE_ACKNOWLEDGE:
-		ss << M_ACKNOWLEDGE_MESSAGE;
-		break;
+// 	case MESSAGE_TYPE_IMPORTANT_MESSAGE:
+// 		ss << M_IMPORTANT_MESSAGE;
+// 		break;
+// 	case MESSAGE_TYPE_ACKNOWLEDGE:
+// 		ss << M_ACKNOWLEDGE_MESSAGE;
+// 		break;
 	default:
 		return "";
 		break;

@@ -72,14 +72,29 @@ void Game::OnEvent( Event* e )
 		Player* player = new Player(PCE->clientData);
 		zPlayers[PCE->clientData] = player;
 
-		// Create Player Actor
-		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/scale.obj");
-		Actor* actor = new PlayerActor(player, pObject);
-		actor->SetPosition(Vector3(50, 0, 50));
-		zActorManager->AddActor(actor);
+		//Gather Actors Information and send
+		NetworkMessageConverter *NMC = new NetworkMessageConverter();
+		std::set<Actor*> actors = this->zActorManager->GetActors();
+		std::string message;
 
-		// Apply Default Player Behavior
-		SetPlayerBehavior(player, new PlayerHumanBehavior(actor, zWorld, player));	}
+		for (auto it = actors.begin(); it != actors.end(); it++)
+		{
+			
+
+			message =  NMC->Convert(MESSAGE_TYPE_NEW_ACTOR, (*it)->GetID());
+			message += NMC->Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
+			message += NMC->Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
+			message += NMC->Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
+			message += NMC->Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetActorModel());
+
+			PCE->clientData->Send(message);
+		}
+		
+		message = NMC->Convert(MESSAGE_TYPE_ITEM_ID, PCE->clientData->GetClientID());
+		PCE->clientData->Send(message);
+		delete NMC;
+
+	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);

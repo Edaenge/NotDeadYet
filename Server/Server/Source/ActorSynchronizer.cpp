@@ -30,22 +30,15 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 {
 	NetworkMessageConverter nmc;
 	std::string msg;
-	Vector3 pos;
-	Vector4 rot;
-	Vector3 scale;
 
 	for(auto it = this->zUpdateSet.begin(); it != this->zUpdateSet.end(); it++)
 	{
-		pos = (*it)->GetPosition();
-		rot = (*it)->GetRotation();
-		scale = (*it)->GetScale();
-
 		msg = nmc.Convert(MESSAGE_TYPE_UPDATE_ACTOR, (*it)->GetID());
-		msg += nmc.Convert(MESSAGE_TYPE_POSITION, pos.x, pos.y, pos.z);
-		msg += nmc.Convert(MESSAGE_TYPE_ROTATION, rot.x, rot.y, rot.z, rot.w);
-		msg += nmc.Convert(MESSAGE_TYPE_SCALE, scale.x, scale.y, scale.z);
+		msg += nmc.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
+		msg += nmc.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
+		msg += nmc.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
 
-		cd->SendMessage(msg);
+		cd->Send(msg);
 	}
 }
 

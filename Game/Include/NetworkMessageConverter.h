@@ -22,8 +22,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_SERVER_FULL,
 	MESSAGE_TYPE_SERVER_SHUTDOWN,
 	MESSAGE_TYPE_ERROR_MESSAGE,
-	MESSAGE_TYPE_IMPORTANT_MESSAGE,
-	MESSAGE_TYPE_ACKNOWLEDGE,
+	//MESSAGE_TYPE_IMPORTANT_MESSAGE,
+	// MESSAGE_TYPE_ACKNOWLEDGE,
 	//MESSAGE_TYPE_UPDATE_PLAYER,
 	//MESSAGE_TYPE_DEAD_PLAYER,
 	//MESSAGE_TYPE_UPDATE_ACTOR,
@@ -31,10 +31,11 @@ enum MESSAGE_TYPE
 	//MESSAGE_TYPE_UPDATE_DYNAMIC_OBJECT,
 	//MESSAGE_TYPE_UPDATE_ANIMAL,
 	//MESSAGE_TYPE_DEAD_ANIMAL,
-	MESSAGE_TYPE_NEW_PLAYER,
-	MESSAGE_TYPE_NEW_STATIC_OBJECT,
-	MESSAGE_TYPE_NEW_DYNAMIC_OBJECT,
-	MESSAGE_TYPE_NEW_ANIMAL,
+	MESSAGE_TYPE_NEW_ACTOR,
+	/*MESSAGE_TYPE_NEW_PLAYER,*/
+// 	MESSAGE_TYPE_NEW_STATIC_OBJECT,
+// 	MESSAGE_TYPE_NEW_DYNAMIC_OBJECT,
+// 	MESSAGE_TYPE_NEW_ANIMAL,
 	MESSAGE_TYPE_KEY_DOWN,
 	MESSAGE_TYPE_KEY_UP,
 	MESSAGE_TYPE_PING,
@@ -45,7 +46,7 @@ enum MESSAGE_TYPE
 	//MESSAGE_TYPE_REMOVE_DYNAMIC_OBJECT,
 	//MESSAGE_TYPE_REMOVE_ANIMAL,
 	MESSAGE_TYPE_USER_DATA,
-	MESSAGE_TYPE_FRAME_TIME,
+	/*MESSAGE_TYPE_FRAME_TIME,*/
 	MESSAGE_TYPE_CLIENT_DATA,
 	MESSAGE_TYPE_PICKUP_ITEM,
 	MESSAGE_TYPE_LOOT_ITEM,
@@ -102,6 +103,7 @@ enum MESSAGE_TYPE
 static const std::string M_UPDATE_ACTOR				= "UA";
 static const std::string M_REMOVE_ACTOR				= "RA";
 static const std::string M_DEAD_ACTOR				= "DA";
+static const std::string M_NEW_ACTOR				= "NA";
 //Data Messages
 static const std::string M_POSITION					= "P";
 static const std::string M_ROTATION					= "R";
@@ -113,7 +115,7 @@ static const std::string M_SCALE					= "SC";
 static const std::string M_HUNGER					= "HU";
 static const std::string M_HEALTH					= "HE";
 static const std::string M_HYDRATION				= "HY";
-static const std::string M_FRAME_TIME				= "FT";
+/*static const std::string M_FRAME_TIME				= "FT";*/
 static const std::string M_STAMINA					= "STAM";
 static const std::string M_STATE					= "STAT";
 static const std::string M_ITEM_TYPE				= "IT";
@@ -146,10 +148,10 @@ static const std::string M_FETCH_INVENTORY			= "FI";
 static const std::string M_ADD_INVENTORY_ITEM		= "AII";
 static const std::string M_REMOVE_INVENTORY_ITEM	= "RII";
 //Animal Messages
-static const std::string M_NEW_ANIMAL				= "NA";
+/*static const std::string M_NEW_ANIMAL				= "NA";*/
 //static const std::string M_REMOVE_ANIMAL			= "RA";
 //static const std::string M_UPDATE_ANIMAL			= "UA";
-static const std::string M_DEAD_ANIMAL				= "DA";
+/*static const std::string M_DEAD_ANIMAL				= "DA";*/
 //static const std::string M_ADD_DEAD_ANIMAL_OBJECT	= "ADAO";
 static const std::string M_ADD_DEAD_ANIMAL_ITEM		= "ADAI";
 static const std::string M_DEAD_ANIMAL_REMOVE_ITEM	= "DARI";
@@ -172,7 +174,7 @@ static const std::string M_IMPORTANT_MESSAGE		= "IM";
 static const std::string M_ACKNOWLEDGE_MESSAGE		= "ACK";
 //Player Messages
 static const std::string M_CLIENT_DATA				= "CD";
-static const std::string M_NEW_PLAYER				= "NP";
+/*static const std::string M_NEW_PLAYER				= "NP";*/
 //static const std::string M_UPDATE_PLAYER			= "UP";
 //static const std::string M_REMOVE_PLAYER			= "RP";
 static const std::string M_DEAD_PLAYER				= "DP";
@@ -215,8 +217,8 @@ public:
 	std::string Convert(const unsigned int ID);
 	std::string Convert(const unsigned int ID, const float fp);
 	std::string Convert(const unsigned int ID, const std::string word);
-	std::string Convert(const unsigned int ID, const float x, const float y, const float z);
-	std::string Convert(const unsigned int ID, const float x, const float y, const float z, const float w);
+	std::string Convert(const unsigned int ID, const Vector3& vec);
+	std::string Convert(const unsigned int ID, const Vector4& vec);
 	
 	std::string CombineMessage(const std::vector<std::string>& msgArray);
 	std::vector<std::string> SplitMessage(const std::string& msg);
