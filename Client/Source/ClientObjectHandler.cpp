@@ -101,8 +101,13 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 
 bool Client::UpdateActor(const std::vector<std::string>& msgArray, const unsigned int ID)
 {
-	Updates update = Updates(ID);
-
+	int index = this->zObjectManager->SearchForUpdate(ID);
+	Updates* update = NULL;
+	if (index != -1)
+		update = this->zObjectManager->GetUpdate(index);
+	else
+		update = new Updates(ID);
+	
 	char key[512];
 	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
@@ -111,25 +116,26 @@ bool Client::UpdateActor(const std::vector<std::string>& msgArray, const unsigne
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
 			Vector3 position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			update.SetPosition(position);
+			update->SetPosition(position);
 		}
 		else if(strcmp(key, M_ROTATION.c_str()) == 0)
 		{
 			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
-			update.SetRotation(rotation);
+			update->SetRotation(rotation);
 		}
 		else if(strcmp(key, M_STATE.c_str()) == 0)
 		{
 			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
-			update.SetState(state);
+			update->SetState(state);
 		}
 		else
 		{
 			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in UpdatePlayerObjects");
 		}
 	}
-
-	this->zObjectManager->AddUpdate(update);
+	if (index == -1)
+		this->zObjectManager->AddUpdate(update);
+	
 	return true;
 }
 
