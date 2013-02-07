@@ -102,7 +102,7 @@ void Game::OnEvent( Event* e )
 		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(zPlayers[CDE->clientData]->GetBehavior()))
 			dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
 	}
-	else if ( PlayerKickEvent* PDCE = dynamic_cast<PlayerKickEvent*>(e) )
+	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
 		// Delete Player Behavior
 		auto playerIterator = zPlayers.find(PDCE->clientData);
@@ -115,9 +115,6 @@ void Game::OnEvent( Event* e )
 			SetPlayerBehavior(playerIterator->second, 0);
 			zBehaviors.insert(aiWolf);
 		}
-
-		//Kick it
-		PDCE->clientData->Kick();
 
 		// Delete Player
 		auto i = zPlayers.find(PDCE->clientData);

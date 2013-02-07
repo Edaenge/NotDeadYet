@@ -59,8 +59,6 @@ private:
 	*/
 	void HandleClientDisconnect( MaloW::ClientChannel* channel );
 	/*! */
-	void HandleClientDropped( MaloW::ClientChannel* channel );
-	/*! */
 	void HandleLootRequest(const std::vector<std::string> &msgArray, ClientData* cd);
 	/*! */
 	void HandleUserData(const std::vector<std::string> &msgArray, ClientData* cd);

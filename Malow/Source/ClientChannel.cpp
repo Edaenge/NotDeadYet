@@ -2,7 +2,6 @@
 #include "Winsock.h"
 #include "ClientDisconnectedEvent.h"
 #include "NetworkException.h"
-#include "ClientDroppedEvent.h"
 
 using namespace MaloW;
 
@@ -37,7 +36,7 @@ void ClientChannel::Life()
 	}
 	catch(...)
 	{
-		zNotifier->PutEvent(new ClientDroppedEvent(this));
+		zNotifier->PutEvent(new ClientDisconnectedEvent(this));
 	}
 }
 
@@ -55,6 +54,4 @@ void ClientChannel::CloseSpecific()
 void MaloW::ClientChannel::Disconnect()
 {
 	NetworkChannel::Disconnect();
-	
-	this->zNotifier->PutEvent(new ClientDisconnectedEvent(this));
 }
