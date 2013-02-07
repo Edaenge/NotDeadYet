@@ -194,7 +194,7 @@ void Client::Life()
 				this->SendClientUpdate();
 			}
 
-			this->UpdateCameraPos();
+			//this->UpdateCameraPos(); // Will manage the local model later.
 
 			this->UpdateActors();
 		}
@@ -305,11 +305,12 @@ void Client::UpdateCameraPos()
 	iMesh* playerMesh = object->GetMesh();
 
 	playerMesh->ResetRotation();
-	playerMesh->RotateAxis(around, angle);}
+	playerMesh->RotateAxis(around, angle);
+}
 
 void Client::UpdateActors()
 {
-	this->zObjectManager->UpdateObjects(this->zDeltaTime);
+	this->zObjectManager->UpdateObjects(this->zDeltaTime, this->zID);
 }
 
 bool Client::IsAlive()
@@ -849,12 +850,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
 		this->UpdateActor(msgArray, id);
 	}
-	//WorldObjects
-	else if(msg.find(M_DEAD_ACTOR.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
-		//this->UpdateActor(msgArray, id);
-	}
 	else if(msg.find(M_EQUIP_ITEM.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
@@ -921,7 +916,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 	}
-	else if(msg.find(M_CONNECTED.c_str()) == 0)
+	/*else if(msg.find(M_CONNECTED.c_str()) == 0)
 	{
 		Vector3 camDir = this->zEng->GetCamera()->GetForward();
 		Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
@@ -933,7 +928,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, camUp);
 
 		this->zServerChannel->Send(serverMessage);
-	}
+	}*/
 	else if(msg.find(M_ERROR_MESSAGE.c_str()) == 0)
 	{
 		std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_ERROR_MESSAGE, msgArray[0]);

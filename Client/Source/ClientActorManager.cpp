@@ -1,5 +1,6 @@
 #include "ClientActorManager.h"
 #include "Safe.h"
+#include "Graphics.h"
 
 #define PI 3.14159265358979323846f
 
@@ -22,13 +23,17 @@ Actor* ClientActorManager::SearchAndGetActor(const unsigned int ID)
 	return this->zActors[position];
 }
 
-void ClientActorManager::UpdateObjects( float deltaTime )
+void ClientActorManager::UpdateObjects( float deltaTime, unsigned int ignoreID)
 {
 	float t = GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
 
 	for (auto it_Update = this->zUpdates.begin(); it_Update < this->zUpdates.end(); it_Update++)
 	{
+		
 		Actor* actor = this->SearchAndGetActor((*it_Update)->GetID());
+
+		if((*it_Update)->GetID() == ignoreID)
+			GetGraphics()->GetCamera()->SetPosition(actor->GetPosition());
 
 		if (actor)
 		{

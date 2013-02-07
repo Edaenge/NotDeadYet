@@ -51,10 +51,9 @@ bool InventorySlotGui::RemoveFromRenderer(GraphicsEngine* ge)
 	return false;
 }
 
-bool InventorySlotGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
+bool InventorySlotGui::CheckCollision(float mouseX, float mouseY)
 {
 	Vector2 dimension = this->GetDimension();
-	bool bCollision = false;
 	if (!((mouseX < this->zX || mouseX > (this->zX + dimension.x)) || (mouseY < this->zY || mouseY > (this->zY + dimension.y))))
 	{
 		return true;

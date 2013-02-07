@@ -18,7 +18,6 @@ InventoryGui::InventoryGui()
 InventoryGui::InventoryGui(float x, float y, float width, float height, std::string textureName) 
 	: GuiElement(x, y, width, height, textureName)
 {
-	float windowWidth = (float)(GetGraphics()->GetEngineParameters().WindowWidth);
 	float windowHeight = (float)(GetGraphics()->GetEngineParameters().WindowHeight);
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 
@@ -197,7 +196,7 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 		{
 			if ((*x))
 			{
-				bCollision = (*x)->CheckCollision(mouseX, mouseY, mousePressed, ge);
+				bCollision = (*x)->CheckCollision(mouseX, mouseY);
 				if (bCollision)
 				{
 					if(mousePressed)
@@ -215,7 +214,7 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 		{
 			if ((*x))
 			{
-				bCollision = (*x)->CheckCollision(mouseX, mouseY, mousePressed, ge);
+				bCollision = (*x)->CheckCollision(mouseX, mouseY);
 				if (bCollision)
 				{
 					if(mousePressed)
