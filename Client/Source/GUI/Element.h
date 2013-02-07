@@ -10,6 +10,7 @@
 #include <string>
 #include "GUIEvent.h"
 #include "NoEvent.h"
+#include "ChangeTextAndMenuEvent.h"
 #include "GraphicsEngine.h"
 
 using namespace std;

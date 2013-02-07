@@ -114,6 +114,9 @@
     <ClCompile Include="Source\ClientActorManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GUI\ChangeTextAndMenuEvent.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\SoundEngine\fmod.h">
@@ -205,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="Source\ClientActorManager.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\ChangeTextAndMenuEvent.h">
+      <Filter>Source\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
