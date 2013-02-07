@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "Actor.h"
 
-const int MAX_VELOCITY = 3.95f;
+const float MAX_VELOCITY = 3.95f;
 const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 const float ELASTICITY = 0.5f;
 const float ACCELERATION = 1.0f;

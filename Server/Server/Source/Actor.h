@@ -63,13 +63,15 @@ public:
 */
 class Actor : public Observed
 {
+	Vector3 zPos;
+	Vector4 zRot;
+	Vector3 zDir;
+	Vector3 zScale;
+
 	long zID;
 	PhysicsObject* zPhysicsObject;
 
-	// Vector3 zUp;
-	// std::string zActorModel;
-	// std::string zActorObjectName;
-	// unsigned int zActorType;
+public:
 	Actor();
 	virtual ~Actor();
 	

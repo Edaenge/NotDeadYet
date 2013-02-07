@@ -15,9 +15,12 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 /*This class is used to save player information such as position and states.
   This information is sent to clients.
 */
-class PlayerActor : public BioActor, public Observed
+class PlayerActor : public BioActor
 {
 	Vector3 zInitialDirection;
+	Inventory* zInventory;
+	ObjectManager* zObjManager;	
+	Player* zPlayer;
 
 public:
 	PlayerActor(Player* player, PhysicsObject* pObj);
@@ -59,7 +62,6 @@ public:
 	//inline void SetLatency(const float latency){this->zLatency = latency;}
 	/*! Returns Pos, Rot, Scale, Stamina, Health, State, Hunger, Hydration.*/
 	//virtual std::string ToMessageString(NetworkMessageConverter* NMC);
-private:
 	//void InitValues();
 
 private:
@@ -75,10 +77,6 @@ private:
 	bool zHungerChanged;
 	
 	KeyStates zKeyStates;*/
-
-	Inventory* zInventory;
-
-	ObjectManager* zObjManager;	Player* zPlayer;
 };
 
 //class PlayerUpdatedEvent : public Event

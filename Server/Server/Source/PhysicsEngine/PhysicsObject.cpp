@@ -1,4 +1,7 @@
 #include "PhysicsObject.h"
+#include <limits>
+#include <assert.h>
+
 
 Vector4 QuatMult(Vector4 quat1, Vector4 quat2)
 {	
@@ -254,11 +257,11 @@ float PhysicsObject::GetMass() const
 {
 	if(inverseMass == 0)
 	{
-		return REAL_MAX;
+		return std::numeric_limits<float>::infinity();
 	}
 	else
 	{
-		return ((float)1.0)/inverseMass;
+		return ((float)1.0f)/inverseMass;
 	}
 }
 

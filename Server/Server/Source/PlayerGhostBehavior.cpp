@@ -1,7 +1,9 @@
+#include <World/World.h>
 #include "PlayerGhostBehavior.h"
 #include "Player.h"
+#include "Actor.h"
 
-const int MAX_VELOCITY = 5.0f;
+const float MAX_VELOCITY = 5.0f;
 const float ACCELERATION = 5.0f;
 const float PLAYERHEIGHT = 0.5f;
 
@@ -25,7 +27,7 @@ bool PlayerGhostBehavior::Update( float dt )
 
 	//Get Directions
 	Vector3 currentPlayerDir = this->zActor->GetDir();
-	Vector3 currentPlayerUp = this->zActor->GetUpVector();
+	Vector3 currentPlayerUp = Vector3(0.0f, 1.0f, 0.0f);
 	currentPlayerDir.Normalize();
 	Vector3 currentPlayerRight = currentPlayerUp.GetCrossProduct(currentPlayerDir);
 	currentPlayerRight.Normalize();
@@ -34,8 +36,10 @@ bool PlayerGhostBehavior::Update( float dt )
 	// Calc the movement vector
 	moveDir += currentPlayerDir * (float)(keyStates.GetKeyState(KEY_FORWARD) - //if KEY_BACKWARD then currentPlayerDir inverse 
 		keyStates.GetKeyState(KEY_BACKWARD));
+
 	moveDir += currentPlayerRight * (float)(keyStates.GetKeyState(KEY_LEFT) - 
 		keyStates.GetKeyState(KEY_RIGHT));
+
 	moveDir *= 10.0f;
 
 	this->zVelocity += moveDir * dt;
@@ -54,8 +58,6 @@ bool PlayerGhostBehavior::Update( float dt )
 		newPlayerPos.y = newGroundHeight;
 	}
 	this->zActor->SetPosition(newPlayerPos);
-	this->zAnchor->position = newPlayerPos.GetXZ();
-	this->zAnchor->radius = SIGHTRADIUS;
 
 	return true;
 }

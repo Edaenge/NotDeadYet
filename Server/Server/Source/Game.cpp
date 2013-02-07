@@ -148,8 +148,7 @@ void Game::OnEvent( Event* e )
 		// Create Player Actor
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
-		actor->SetPosition(Vector3(50, 0, 50));
-		actor->SetActorModel(UDE->playerModel);
+		actor->SetPosition(Vector3(50.0f, 0.0f, 50.0f));
 		zActorManager->AddActor(actor);
 		// Apply Default Player Behavior
 		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));	
