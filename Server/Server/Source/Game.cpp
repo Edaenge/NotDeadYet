@@ -94,8 +94,7 @@ void Game::OnEvent( Event* e )
 		PCE->clientData->Send(message);
 		delete NMC;
 
-	}
-	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
+	}	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
 	}
@@ -166,6 +165,17 @@ void Game::OnEvent( Event* e )
 			delete i->second;
 			zWorldActors.erase(i);
 		}
+	}
+	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
+	{
+		// Create Player Actor
+		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
+		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
+		actor->SetPosition(Vector3(50, 0, 50));
+		actor->SetActorModel(UDE->playerModel);
+		zActorManager->AddActor(actor);
+		// Apply Default Player Behavior
+		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));	
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{

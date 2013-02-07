@@ -1,10 +1,9 @@
 #include "WolfActor.h"
 
-WolfActor::WolfActor(bool genID /*= true*/, bool isPlayerControlled /*= false*/) : AnimalActor(genID)
-{
+WolfActor::WolfActor(PhysicsObject* pObj, bool genID /*= true*/, bool isPlayerControlled /*= false*/) : AnimalActor(genID){
 	this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitWolf();
-	
+	this->zPhysicsObject = pObj;
 }
 
 WolfActor::~WolfActor()

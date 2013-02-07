@@ -8,25 +8,6 @@ WorldObjectManager::WorldObjectManager()
 
 WorldObjectManager::~WorldObjectManager()
 {
-	for(auto x = this->zPlayerObjects.begin(); x < this->zPlayerObjects.end(); x++)
-	{
-		SAFE_DELETE((*x));
-	}
-
-	for(auto x = this->zAnimalObjects.begin(); x < this->zAnimalObjects.end(); x++)
-	{
-		SAFE_DELETE((*x));
-	}
-
-	for(auto x = this->zStaticObjects.begin(); x < this->zStaticObjects.end(); x++)
-	{
-		SAFE_DELETE((*x));
-	}
-
-	for(auto x = this->zDynamicObjects.begin(); x < this->zDynamicObjects.end(); x++)
-	{
-		SAFE_DELETE((*x));
-	}
 	for(auto x = this->zActors.begin(); x < this->zActors.end(); x++)
 	{
 		SAFE_DELETE((*x));
@@ -347,7 +328,7 @@ DeadPlayerObject* WorldObjectManager::SearchAndGetDeadPlayerObject(const long ID
 	return this->zDeadPlayerObjects[position];
 }
 */
-WorldObject* WorldObjectManager::SearchAndGetActor(const long ID)
+Actor* WorldObjectManager::SearchAndGetActor(const long ID)
 {
 	int position = this->SearchForActor(ID);
 	return this->zActors[position];
@@ -355,23 +336,13 @@ WorldObject* WorldObjectManager::SearchAndGetActor(const long ID)
 
 void WorldObjectManager::UpdateObjects( float deltaTime )
 {
-	for (auto x = this->zPlayerObjects.begin(); x < this->zPlayerObjects.end(); x++)
+	for (auto x = this->zUpdates.begin(); x < this->zUpdates.end(); x++)
 	{
-		(*x)->Update(deltaTime);
-	}
-
-	for (auto x = this->zAnimalObjects.begin(); x < this->zAnimalObjects.end(); x++)
-	{
-		(*x)->Update(deltaTime);
-	}
-
-	for (auto x = this->zDynamicObjects.begin(); x < this->zDynamicObjects.end(); x++)
-	{
-		(*x)->Update(deltaTime);
+		this->SearchAndGetActor((*x).GetID());
 	}
 }
 
-WorldObject* WorldObjectManager::GetActor( const int Index )
+Actor* WorldObjectManager::GetActor( const int Index )
 {
 	if ((unsigned int)Index < this->zActors.size())
 		return this->zActors[Index];
@@ -395,14 +366,14 @@ bool WorldObjectManager::RemoveActor( const int Index )
 {
 	if ((unsigned int)Index < this->zActors.size())
 	{
-		WorldObject* worldObject = this->zActors[Index];
+		Actor* worldObject = this->zActors[Index];
 		this->zActors.erase(this->zActors.begin() + Index);
 		SAFE_DELETE(worldObject);
 		return true;
 	}
 }
 
-bool WorldObjectManager::AddActor(WorldObject* actor)
+bool WorldObjectManager::AddActor(Actor* actor)
 {
 	if (actor)
 	{
@@ -410,4 +381,9 @@ bool WorldObjectManager::AddActor(WorldObject* actor)
 		return true;
 	}
 	return false;
+}
+
+bool WorldObjectManager::AddUpdate(Updates update)
+{
+	this->zUpdates.push_back(update);
 }

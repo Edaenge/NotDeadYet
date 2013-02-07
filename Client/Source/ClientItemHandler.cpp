@@ -949,35 +949,3 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		SAFE_DELETE(item);
 	}
 }
-
-void Client::HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, const int type)
-{
-	DeadPlayerObject* dpo = dynamic_cast<DeadPlayerObject*>(this->zObjectManager->SearchAndGetActor(ObjID));
-
-	if (!dpo)
-	{
-		MaloW::Debug("Couldnt find Dead Player Object in Client::HandeRemoveDeadPlayerItem");
-		return;
-	}
-
-	std::vector<Item*> items = dpo->GetItems();
-
-	for (auto it = items.begin(); it < items.end(); it++)
-	{
-		if ((*it)->GetID() == ItemID)
-		{
-			if ((*it)->GetItemType() == (unsigned int)type)
-			{
-				Item* temp = (*it);
-				items.erase(it);
-				SAFE_DELETE(temp);
-				dpo->SetItems(items);
-
-				return;
-			}
-			MaloW::Debug("Item Type isn't the same as the One send from Server");
-			return;
-		}
-	}
-	MaloW::Debug("Couldnt find the Item in Client::HandeRemoveDeadPlayerItem");
-}

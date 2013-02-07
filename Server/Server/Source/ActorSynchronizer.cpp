@@ -14,15 +14,18 @@ void ActorSynchronizer::OnEvent( Event* e )
 {
 	if ( ActorPositionEvent* UPE = dynamic_cast<ActorPositionEvent*>(e) )
 	{
-		zUpdateSet.insert(UPE->zActor);
+		auto it = zUpdateSet.find(UPE->zActor);
+		(*it)->SetPosition(UPE->zActor->GetPosition());
 	}
 	else if ( ActorRotationEvent* URE = dynamic_cast<ActorRotationEvent*>(e) )
 	{
-		zUpdateSet.insert(UPE->zActor);
+		auto it = zUpdateSet.find(UPE->zActor);
+		(*it)->SetRotation(UPE->zActor->GetRotation());
 	}
 	else if ( ActorScaleEvent* USE = dynamic_cast<ActorScaleEvent*>(e) )
 	{
-		zUpdateSet.insert(UPE->zActor);
+		auto it = zUpdateSet.find(UPE->zActor);
+		(*it)->SetScale(UPE->zActor->GetScale());
 	}
 }
 

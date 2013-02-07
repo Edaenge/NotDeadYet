@@ -1,15 +1,15 @@
 #include "PlayerActor.h"
 #include "ClientServerMessages.h"
 
-PlayerActor::PlayerActor( Player* player )
+PlayerActor::PlayerActor(Player* player, PhysicsObject* pObject)
 {
+	this->zPhysicsObject = pObject;
 	this->zPlayer = player;
 	InitValues();
 }
 
 void PlayerActor::InitValues()
 {
-	this->zObjManager = NULL;
 	this->zFrameTime = 0.0f;
 	this->zLatency = 0.0f;
 	this->zHunger = 100.0f;
@@ -111,165 +111,165 @@ void PlayerActor::Update(float deltaTime)
 
 }
 
-bool PlayerActor::PickUpObject(StaticObjectActor* object)
-{
-	Item* item					= NULL; 
-
-	int itemType = object->GetActorType(); 
-	if (itemType == ACTOR_TYPE_STATIC_OBJECT_FOOD)
-	{
-		FoodObject* fo = dynamic_cast<FoodObject*>(object);
-		if(fo)
-		{
-			item = new Food(fo->GetID(), fo->GetType(), fo->GetSubType(), fo->GetHunger());
-
-			item->SetStacking(true);
-			item->SetItemWeight(fo->GetWeight());
-			item->SetIconPath(fo->GetIconPath());
-			item->SetStackSize(fo->GetStackSize());
-			item->SetItemName(fo->GetActorObjectName());
-			item->SetItemDescription(fo->GetDescription());
-
-			if(!this->zInventory->AddItem(item))
-			{
-				SAFE_DELETE(item);
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	if (itemType == ACTOR_TYPE_STATIC_OBJECT_WEAPON)
-	{
-		WeaponObject* wo = dynamic_cast<WeaponObject*>(object);
-		if(wo)
-		{
-			switch (wo->GetType())
-			{
-			case ITEM_TYPE_WEAPON_MELEE:
-				item = new MeleeWeapon(wo->GetID(), wo->GetType(), wo->GetSubType(), wo->GetDamage(), wo->GetRange());
-				item->SetStacking(false);
-				item->SetItemWeight(wo->GetWeight());
-				item->SetIconPath(wo->GetIconPath());
-				item->SetStackSize(wo->GetStackSize());
-				item->SetItemName(wo->GetActorObjectName());
-				item->SetItemDescription(wo->GetDescription());
-				break;
-			case ITEM_TYPE_WEAPON_RANGED:
-				item = new RangedWeapon(wo->GetID(), wo->GetType(), wo->GetSubType(), wo->GetDamage(), wo->GetRange());
-				item->SetStacking(false);
-				item->SetItemWeight(wo->GetWeight());
-				item->SetIconPath(wo->GetIconPath());
-				item->SetStackSize(wo->GetStackSize());
-				item->SetItemName(wo->GetActorObjectName());
-				item->SetItemDescription(wo->GetDescription());
-				break;
-			default:
-				//Return
-				return false;
-				break;
-			}
-
-			if(!this->zInventory->AddItem(item))
-			{
-				SAFE_DELETE(item);
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	if (itemType == ACTOR_TYPE_STATIC_OBJECT_CONTAINER)
-	{
-		ContainerObject* co = dynamic_cast<ContainerObject*>(object);
-		if(co)
-		{
-			item = new Container(co->GetID(), co->GetType(), co->GetSubType(), co->GetMaxUses(), co->GetCurrentUses());
-
-			item->SetStacking(false);
-			item->SetItemWeight(co->GetWeight());
-			item->SetIconPath(co->GetIconPath());
-			item->SetStackSize(co->GetStackSize());
-			item->SetItemName(co->GetActorObjectName());
-			item->SetItemDescription(co->GetDescription());
-
-			if(!this->zInventory->AddItem(item))
-			{
-				SAFE_DELETE(item);
-				return false;
-			}
-
-			return true;
-		}
-	}
-	
-	//if (itemType == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
-	//{
-	//	StaticProjectileObject* spo = dynamic_cast<StaticProjectileObject*>(object);
-	//	if(spo)
-	//	{
-	//		item = new Projectile(spo->GetID(), spo->GetType(), spo->GetSubType(), spo->GetSpeed(), spo->GetDamage());
-
-	//		item->SetStacking(true);
-	//		item->SetItemWeight(spo->GetWeight());
-	//		item->SetIconPath(spo->GetIconPath());
-	//		item->SetStackSize(spo->GetStackSize());
-	//		item->SetItemName(spo->GetActorObjectName());
-	//		item->SetItemDescription(spo->GetDescription());
-
-	//		if(!this->zInventory->AddItem(item))
-	//		{
-	//			SAFE_DELETE(item);
-	//			return false;
-	//		}
-	//		return true;
-	//	}
-	//	return false;
-	//}
-	
-	if (itemType == ACTOR_TYPE_STATIC_OBJECT_MATERIAL)
-	{
-		MaterialObject*	mo = dynamic_cast<MaterialObject*>(object);
-		if(mo)
-		{
-			item = new Material(mo->GetID(), mo->GetType(), mo->GetSubType(), mo->GetCraftingType(), mo->GetRequiredStackToCraft());
-
-			item->SetStacking(true);
-			item->SetItemWeight(mo->GetWeight());
-			item->SetIconPath(mo->GetIconPath());
-			item->SetStackSize(mo->GetStackSize());
-			item->SetItemName(mo->GetActorObjectName());
-			item->SetItemDescription(mo->GetDescription());
-
-			if(!this->zInventory->AddItem(item))
-			{
-				SAFE_DELETE(item);
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
-	return false;
-}
-
-bool PlayerActor::DropObject(const long ID)
-{
-	Item* item = this->zInventory->SearchAndGetItem(ID);
-
-	if(!item)
-	{
-		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString((float)ID));
-		return false;
-	}
-	this->zInventory->RemoveItem(item);
-	if (Messages::FileWrite())	
-		Messages::Debug("Removed successes: " + MaloW::convertNrToString((float)ID));
-
-	return true;
-}
+//bool PlayerActor::PickUpObject(StaticObjectActor* object)
+//{
+//	Item* item					= NULL; 
+//
+//	int itemType = object->GetActorType(); 
+//	if (itemType == ACTOR_TYPE_STATIC_OBJECT_FOOD)
+//	{
+//		FoodObject* fo = dynamic_cast<FoodObject*>(object);
+//		if(fo)
+//		{
+//			item = new Food(fo->GetID(), fo->GetType(), fo->GetSubType(), fo->GetHunger());
+//
+//			item->SetStacking(true);
+//			item->SetItemWeight(fo->GetWeight());
+//			item->SetIconPath(fo->GetIconPath());
+//			item->SetStackSize(fo->GetStackSize());
+//			item->SetItemName(fo->GetActorObjectName());
+//			item->SetItemDescription(fo->GetDescription());
+//
+//			if(!this->zInventory->AddItem(item))
+//			{
+//				SAFE_DELETE(item);
+//				return false;
+//			}
+//			return true;
+//		}
+//		return false;
+//	}
+//
+//	if (itemType == ACTOR_TYPE_STATIC_OBJECT_WEAPON)
+//	{
+//		WeaponObject* wo = dynamic_cast<WeaponObject*>(object);
+//		if(wo)
+//		{
+//			switch (wo->GetType())
+//			{
+//			case ITEM_TYPE_WEAPON_MELEE:
+//				item = new MeleeWeapon(wo->GetID(), wo->GetType(), wo->GetSubType(), wo->GetDamage(), wo->GetRange());
+//				item->SetStacking(false);
+//				item->SetItemWeight(wo->GetWeight());
+//				item->SetIconPath(wo->GetIconPath());
+//				item->SetStackSize(wo->GetStackSize());
+//				item->SetItemName(wo->GetActorObjectName());
+//				item->SetItemDescription(wo->GetDescription());
+//				break;
+//			case ITEM_TYPE_WEAPON_RANGED:
+//				item = new RangedWeapon(wo->GetID(), wo->GetType(), wo->GetSubType(), wo->GetDamage(), wo->GetRange());
+//				item->SetStacking(false);
+//				item->SetItemWeight(wo->GetWeight());
+//				item->SetIconPath(wo->GetIconPath());
+//				item->SetStackSize(wo->GetStackSize());
+//				item->SetItemName(wo->GetActorObjectName());
+//				item->SetItemDescription(wo->GetDescription());
+//				break;
+//			default:
+//				//Return
+//				return false;
+//				break;
+//			}
+//
+//			if(!this->zInventory->AddItem(item))
+//			{
+//				SAFE_DELETE(item);
+//				return false;
+//			}
+//			return true;
+//		}
+//		return false;
+//	}
+//	
+//	if (itemType == ACTOR_TYPE_STATIC_OBJECT_CONTAINER)
+//	{
+//		ContainerObject* co = dynamic_cast<ContainerObject*>(object);
+//		if(co)
+//		{
+//			item = new Container(co->GetID(), co->GetType(), co->GetSubType(), co->GetMaxUses(), co->GetCurrentUses());
+//
+//			item->SetStacking(false);
+//			item->SetItemWeight(co->GetWeight());
+//			item->SetIconPath(co->GetIconPath());
+//			item->SetStackSize(co->GetStackSize());
+//			item->SetItemName(co->GetActorObjectName());
+//			item->SetItemDescription(co->GetDescription());
+//
+//			if(!this->zInventory->AddItem(item))
+//			{
+//				SAFE_DELETE(item);
+//				return false;
+//			}
+//
+//			return true;
+//		}
+//	}
+//	
+//	//if (itemType == ACTOR_TYPE_STATIC_OBJECT_PROJECTILE)
+//	//{
+//	//	StaticProjectileObject* spo = dynamic_cast<StaticProjectileObject*>(object);
+//	//	if(spo)
+//	//	{
+//	//		item = new Projectile(spo->GetID(), spo->GetType(), spo->GetSubType(), spo->GetSpeed(), spo->GetDamage());
+//
+//	//		item->SetStacking(true);
+//	//		item->SetItemWeight(spo->GetWeight());
+//	//		item->SetIconPath(spo->GetIconPath());
+//	//		item->SetStackSize(spo->GetStackSize());
+//	//		item->SetItemName(spo->GetActorObjectName());
+//	//		item->SetItemDescription(spo->GetDescription());
+//
+//	//		if(!this->zInventory->AddItem(item))
+//	//		{
+//	//			SAFE_DELETE(item);
+//	//			return false;
+//	//		}
+//	//		return true;
+//	//	}
+//	//	return false;
+//	//}
+//	
+//	if (itemType == ACTOR_TYPE_STATIC_OBJECT_MATERIAL)
+//	{
+//		MaterialObject*	mo = dynamic_cast<MaterialObject*>(object);
+//		if(mo)
+//		{
+//			item = new Material(mo->GetID(), mo->GetType(), mo->GetSubType(), mo->GetCraftingType(), mo->GetRequiredStackToCraft());
+//
+//			item->SetStacking(true);
+//			item->SetItemWeight(mo->GetWeight());
+//			item->SetIconPath(mo->GetIconPath());
+//			item->SetStackSize(mo->GetStackSize());
+//			item->SetItemName(mo->GetActorObjectName());
+//			item->SetItemDescription(mo->GetDescription());
+//
+//			if(!this->zInventory->AddItem(item))
+//			{
+//				SAFE_DELETE(item);
+//				return false;
+//			}
+//			return true;
+//		}
+//		return false;
+//	}
+//	return false;
+//}
+//
+//bool PlayerActor::DropObject(const long ID)
+//{
+//	Item* item = this->zInventory->SearchAndGetItem(ID);
+//
+//	if(!item)
+//	{
+//		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString((float)ID));
+//		return false;
+//	}
+//	this->zInventory->RemoveItem(item);
+//	if (Messages::FileWrite())	
+//		Messages::Debug("Removed successes: " + MaloW::convertNrToString((float)ID));
+//
+//	return true;
+//}
 
 void PlayerActor::Drink(float hydration)
 {

@@ -25,12 +25,9 @@
     <ResourceCompile Include="NotDeadYet.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\AnimalObject.cpp" />
     <ClCompile Include="Source\Client.cpp" />
     <ClCompile Include="Source\ClientItemHandler.cpp" />
     <ClCompile Include="Source\ClientObjectHandler.cpp" />
-    <ClCompile Include="Source\DeadPlayerObject.cpp" />
-    <ClCompile Include="Source\DynamicObject.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\GuiManager.cpp" />
     <ClCompile Include="Source\GUI\ChangeSetEvent.cpp" />
@@ -51,22 +48,16 @@
     <ClCompile Include="Source\KeyUtil\KeyHandler.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\MainMenu.cpp" />
-    <ClCompile Include="Source\MovingObject.cpp" />
-    <ClCompile Include="Source\PlayerObject.cpp" />
     <ClCompile Include="Source\SoundEngine\SoundEffect.cpp" />
     <ClCompile Include="Source\SoundEngine\SoundEngine.cpp" />
     <ClCompile Include="Source\SoundEngine\SoundHandler.cpp" />
     <ClCompile Include="Source\SoundEngine\SoundSong.cpp" />
     <ClCompile Include="Source\SoundReader.cpp" />
     <ClCompile Include="Source\Sounds.cpp" />
-    <ClCompile Include="Source\StaticObject.cpp" />
     <ClCompile Include="Source\WorldObjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\AnimalObject.h" />
     <ClInclude Include="Source\Client.h" />
-    <ClInclude Include="Source\DeadPlayerObject.h" />
-    <ClInclude Include="Source\DynamicObject.h" />
     <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\GuiManager.h" />
     <ClInclude Include="Source\GUI\ChangeSetEvent.h" />
@@ -86,9 +77,7 @@
     <ClInclude Include="Source\KeyUtil\KeyConverter.h" />
     <ClInclude Include="Source\KeyUtil\KeyHandler.h" />
     <ClInclude Include="Source\MainMenu.h" />
-    <ClInclude Include="Source\MovingObject.h" />
     <ClInclude Include="Source\OrganicObject.h" />
-    <ClInclude Include="Source\PlayerObject.h" />
     <ClInclude Include="Source\SoundEngine\fmod.h" />
     <ClInclude Include="Source\SoundEngine\SoundEffect.h" />
     <ClInclude Include="Source\SoundEngine\SoundEngine.h" />
@@ -96,8 +85,7 @@
     <ClInclude Include="Source\SoundEngine\SoundSong.h" />
     <ClInclude Include="Source\SoundReader.h" />
     <ClInclude Include="Source\Sounds.h" />
-    <ClInclude Include="Source\StaticObject.h" />
-    <ClInclude Include="Source\WorldObject.h" />
+    <ClInclude Include="Source\Actor.h" />
     <ClInclude Include="Source\WorldObjectManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

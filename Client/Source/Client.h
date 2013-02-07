@@ -22,7 +22,7 @@ struct Looting_Data
 	{
 		owner = -1;
 		gid = Gui_Item_Data();
-		type = OBJECT_TYPE_STATIC_OBJECT;
+		//type = OBJECT_TYPE_STATIC_OBJECT;
 	}
 	int owner;
 	Gui_Item_Data gid;
@@ -99,7 +99,7 @@ private:
 	//////////////////////
 
 	/*! Updates The Positions*/
-	void UpdateWorldObjects();
+	void UpdateActors();
 	/*! Updates the camera position to follow the mesh.*/
 	void UpdateCameraPos();
 	/*! Updates The Clock and returns the DeltaTime*/
@@ -112,39 +112,16 @@ private:
 
 	//////////////////////
 	//					//
-	//	   Objects		//
+	//	   Actors		//
 	//			  		//
 	//////////////////////
-
-	/*! Updates A Static Object.*/
-	bool UpdateStaticObjects(const std::vector<std::string>& msgArray, StaticObject* StaticObjectPointer);
-	/*! Updates An Animal Object.*/
-	bool UpdateAnimalObjects(const std::vector<std::string>& msgArray, AnimalObject* AnimalObjectPointer);
-	/*! Updates A Dynamic Object.*/
-	bool UpdateDynamicObjects(const std::vector<std::string>& msgArray, DynamicObject* DynamicObjectPointer);
-	/*! Updates A Player Object.*/
-	bool UpdatePlayerObjects(const std::vector<std::string>& msgArray, PlayerObject* PlayerObjectPointer);
-
-	/*! Removes A Player Objec.t*/
-	bool RemovePlayerObject(const long ID);
-	/*! Removes An Animal Object.*/
-	bool RemoveAnimalObject(const long ID);
-	/*! Removes A Static Object.*/
-	bool RemoveStaticObject(const long ID);
-	/*! Removes A Dynamic Object.*/
-	bool RemoveDynamicObject(const long ID);
+	//Temporary Code
+	bool UpdateActor(const std::vector<std::string>& msgArray, const long ID);
 	bool RemoveActor(const long ID);
 
 	/*! Adds A Player Object.*/
-	bool AddNewPlayerObject(const std::vector<std::string>& msgArray, const long ID);
-	/*! Adds a Dead Player Object.*/
-	bool AddNewDeadPlayerObject(const std::vector<std::string>& msgArray, const long ID);
-	/*! Adds An Animal Object.*/
-	bool AddNewAnimalObject(const std::vector<std::string>& msgArray, const long ID);
-	/*! Adds A Static Object.*/
-	bool AddNewStaticObject(const std::vector<std::string>& msgArray, const long ID);
-	/*! Adds A Dynamic Object.*/
-	bool AddNewDynamicObject(const std::vector<std::string>& msgArray, const long ID);
+	bool AddActor(const std::vector<std::string>& msgArray, const long ID);
+	
 
 	void HandleDeadPlayerMessage(const int ID);
 	//////////////////////
@@ -170,16 +147,12 @@ private:
 	void HandeRemoveDeadPlayerItem(const long ObjID, const long ItemID, const int type);
 	void HandleWeaponUse(const long ID);
 
-
-	//Temporary Code
-	bool UpdateActor(const std::vector<std::string>& msgArray, const long ID);
-
 protected:
 	virtual void onEvent(Event* e);
 
 private:
 	/*! Current Client ID*/
-	long zID;
+	unsigned long zID;
 	int	zPort;
 
 	INT64 zStartime;
