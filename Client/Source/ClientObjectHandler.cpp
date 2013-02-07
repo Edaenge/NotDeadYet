@@ -1,7 +1,7 @@
 #include "Client.h"
 #include <ClientServerMessages.h>
 
-bool Client::AddActor(const std::vector<std::string>& msgArray, const long ID)
+bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned int ID)
 {
 	int index = this->zObjectManager->SearchForActor(ID);
 
@@ -133,7 +133,7 @@ bool Client::UpdateActor(const std::vector<std::string>& msgArray, const unsigne
 	return true;
 }
 
-bool Client::RemoveActor(const long ID)
+bool Client::RemoveActor(const unsigned int ID)
 {
 	if (ID == -1)
 		return false;
@@ -165,7 +165,7 @@ bool Client::RemoveActor(const long ID)
 	return true;
 }
 //
-//bool Client::RemovePlayerObject(const long ID)
+//bool Client::RemovePlayerObject(const unsigned int ID)
 //{
 //	if (ID == -1)
 //		return false;
@@ -194,7 +194,7 @@ bool Client::RemoveActor(const long ID)
 //	return true;
 //}
 //
-//bool Client::RemoveAnimalObject(const long ID)
+//bool Client::RemoveAnimalObject(const unsigned int ID)
 //{
 //	if (ID == -1)
 //		return false;
@@ -219,7 +219,7 @@ bool Client::RemoveActor(const long ID)
 //	return true;
 //}
 //
-//bool Client::RemoveStaticObject(const long ID)
+//bool Client::RemoveStaticObject(const unsigned int ID)
 //{
 //	if (ID == -1)
 //		return false;
@@ -247,7 +247,7 @@ bool Client::RemoveActor(const long ID)
 //	return true;
 //}
 //
-//bool Client::RemoveDynamicObject(const long ID)
+//bool Client::RemoveDynamicObject(const unsigned int ID)
 //{
 //	if (ID == -1)
 //		return false;

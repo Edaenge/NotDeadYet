@@ -38,4 +38,3 @@ void GhostActor::Update( float deltaTime )
 
 	this->zPosition += movement;
 }
-*/

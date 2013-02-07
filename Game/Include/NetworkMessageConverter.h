@@ -175,8 +175,8 @@ public:
 	std::string Convert(const unsigned int ID);
 	std::string Convert(const unsigned int ID, const float fp);
 	std::string Convert(const unsigned int ID, const std::string word);
-	std::string Convert(const unsigned int ID, const float x, const float y, const float z);
-	std::string Convert(const unsigned int ID, const float x, const float y, const float z, const float w);
+	std::string Convert(const unsigned int ID, const Vector3& vec);
+	std::string Convert(const unsigned int ID, const Vector4& vec);
 	
 	std::string CombineMessage(const std::vector<std::string>& msgArray);
 	std::vector<std::string> SplitMessage(const std::string& msg);

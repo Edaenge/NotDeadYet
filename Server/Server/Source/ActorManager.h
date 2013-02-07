@@ -14,4 +14,5 @@ public:
 	ActorManager( ActorSynchronizer* syncher );
 	void AddActor( Actor* actor );
 	void RemoveActor( Actor* actor );
+	std::set<Actor*>& GetActors() {return this->zActors;}
 };
