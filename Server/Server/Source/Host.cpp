@@ -65,7 +65,7 @@ void Host::Life()
 
 		if(this->zGameStarted)
 		{
-			PingClients();
+			//PingClients();
 			zGame->Update(this->zDeltaTime);
 		}
 		else
@@ -159,9 +159,9 @@ void Host::ReadMessages()
 		{
 			HandleClientDisconnect(CDE->GetClientChannel());
 		}
-		else if ( ClientDroppedEvent* CDE = dynamic_cast<ClientDroppedEvent*>(pe) )
+		else if ( ClientDroppedEvent* CDES = dynamic_cast<ClientDroppedEvent*>(pe) )
 		{
-			HandleClientDropped(CCE->GetClientChannel());
+			HandleClientDropped(CDES->GetClientChannel());
 		}
 		// Unhandled Message
 		SAFE_DELETE(pe);
@@ -376,8 +376,6 @@ void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 
 	it = _clients.find(channel);
 	SAFE_DELETE( _clients.at(channel));
-	SAFE_DELETE(channel);
-	
 	_clients.erase(it);
 }
 

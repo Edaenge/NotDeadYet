@@ -171,9 +171,14 @@ void Game::OnEvent( Event* e )
 		// Apply Default Player Behavior
 		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));
 
-		//Gather Actors Information and send to client
+		//Tells the client which Actor he owns.
 		std::string message;
 		NetworkMessageConverter NMC;
+
+		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)actor->GetID());
+		UDE->clientData->Send(message);
+
+		//Gather Actors Information and send to client
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		for (auto it = actors.begin(); it != actors.end(); it++)
 		{
@@ -183,11 +188,8 @@ void Game::OnEvent( Event* e )
 			message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
 			message += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetModel());
 
-			PCE->clientData->Send(message);
+			UDE->clientData->Send(message);
 		}
-		//Tells the client which Actor he owns.
-		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)actor->GetID());
-		PCE->clientData->Send(message);
 
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
