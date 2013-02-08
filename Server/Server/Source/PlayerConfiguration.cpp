@@ -174,7 +174,7 @@ bool PlayerConfiguration::SetValuesFromFile()
 		//Scale of regenerating health
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zRegenerationScale = numberFromFile;
 
 		//Regeneration at good hunger
@@ -186,7 +186,7 @@ bool PlayerConfiguration::SetValuesFromFile()
 		//Regeneration at good hydration
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zRegenerationHydrationAddition = numberFromFile;
 
 		//Regeneration at good stamina
