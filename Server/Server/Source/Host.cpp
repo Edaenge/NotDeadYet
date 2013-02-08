@@ -67,16 +67,17 @@ void Host::Life()
 		Update();
 		ReadMessages();
 
-		if(zGame->Update(this->zDeltaTime))
+		if ( !zGame )
 		{
-			//PingClients();
-			
+
+		}
+		else if(zGame->Update(this->zDeltaTime))
+		{			
 			SynchronizeAll();
 		}
 		else
 		{
-			this->Restart(this->zGameMode, this->zMapName);
-		}
+			Restart(zGameMode, zMapName);		}
 	
 		Sleep(5);
 	}
@@ -86,9 +87,8 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 {
 	FreePhysics();
 	PhysicsInit();
+
 	this->zMaxClients = maxClients;
-	this->zGameMode = gameModeName;
-	this->zMapName = mapName;
 
 	Restart(gameModeName, mapName);
 
@@ -488,6 +488,10 @@ void Host::SynchronizeAll()
 // TODO: Create GameMode Here
 void Host::Restart( const std::string& gameMode, const std::string& map )
 {
+	// Update
+	this->zGameMode = gameMode;
+	this->zMapName = map;
+
 	if ( zSynchronizer ) zSynchronizer->ClearAll();
 	if ( !zSynchronizer ) zSynchronizer = new ActorSynchronizer();
 
