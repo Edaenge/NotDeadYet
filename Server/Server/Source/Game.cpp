@@ -13,15 +13,17 @@
 #include "Physics.h"
 
 
-Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile )
+Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile, int maxNrOfPlayer )
 {
+	zMaxNrOfPlayers = maxNrOfPlayer;
+
 	if (mode.find("FFA") == 0 )
 	{
-		zGameMode = new GameModeFFA(this);
+		zGameMode = new GameModeFFA(this, 10);
 	}
 	else
 	{
-		zGameMode = new GameModeFFA(this);
+		zGameMode = new GameModeFFA(this, 10);
 	}
 	// Load Entities
 	LoadEntList("Entities.txt");
@@ -97,6 +99,11 @@ void Game::OnEvent( Event* e )
 		// Sends the world name
 		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorld->GetFileName());
 		PCE->clientData->Send(message);
+
+		//Send event to game so it knows what players there are.
+		PlayerAddEvent* PAE = new PlayerAddEvent();
+		PAE->player = player;
+		NotifyObservers(PAE);
 	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
@@ -125,8 +132,13 @@ void Game::OnEvent( Event* e )
 			zBehaviors.insert(aiWolf);
 		}
 
-		// Delete Player
+		// Delete Player and notify GameMode
 		auto i = zPlayers.find(PDCE->clientData);
+
+		PlayerRemoveEvent* PRE = new PlayerRemoveEvent();
+		PRE->player = i->second;
+		NotifyObservers(PRE);
+
 		delete i->second;
 		zPlayers.erase(i);
 	}
@@ -269,6 +281,28 @@ Vector3 Game::CalcPlayerSpawnPoint(int maxPoints, Vector2 center)
 
 	float x = center.x + radius * cos(angle);
 	float z = center.y + radius * sin(angle);
+	float y = 0.0f;
+
+	if ( x >= 0.0f && z >= 0.0f && x < zWorld->GetWorldSize().x && z < zWorld->GetWorldSize().y )
+	{
+		y = this->zWorld->CalcHeightAtWorldPos(Vector2(x, z));
+	}
+
+	return Vector3(x, y, z);
+}
+
+Vector3 Game::CalcPlayerSpawnPoint(int nr)
+{
+	int point = nr;
+
+	static const float PI = 3.14159265358979323846f;
+	static const float radius = 20.0f;
+	float slice  = 2 * PI / this->zMaxNrOfPlayers;
+
+	float angle = slice * point;
+
+	float x = zWorld->GetWorldCenter().x + radius * cos(angle);
+	float z = zWorld->GetWorldCenter().y + radius * sin(angle);
 	float y = 0.0f;
 
 	if ( x >= 0.0f && z >= 0.0f && x < zWorld->GetWorldSize().x && z < zWorld->GetWorldSize().y )
