@@ -9,7 +9,8 @@
 static const float UPDATE_DELAY = 0.020f;
 
 Host::Host() :
-	zSynchronizer(0)
+	zSynchronizer(0),
+	zGame(0)
 {
 	MaloW::ClearDebug();
 	Messages::ClearDebug();
@@ -85,19 +86,19 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 {
 	this->zMaxClients = maxClients;
 
-	zSynchronizer = new ActorSynchronizer();
-	this->zGame = new Game(zSynchronizer, gameModeName, mapName, maxClients);
-	this->AddObserver(this->zGame);
+	Restart(gameModeName, mapName);
 
-	try
+	if ( !zServerListener )
 	{
-		if ( zServerListener ) delete zServerListener;
-		zServerListener = new ServerListener(this, port);
-		zServerListener->Start();
-	}
-	catch(const char *str)
-	{
-		return str;
+		try
+		{
+			zServerListener = new ServerListener(this, port);
+			zServerListener->Start();
+		}
+		catch(const char *str)
+		{
+			return str;
+		}
 	}
 
 	return 0;
@@ -365,11 +366,10 @@ void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 {
 	PlayerDisconnectedEvent e;
 	auto i = zClients.find(channel);
-
 	e.clientData = i->second;
-
 	NotifyObservers(&e);
-	SAFE_DELETE(i->second);
+	delete i->second;
+	zClients.erase(i);
 }
 
 void Host::HandleNewConnection( MaloW::ClientChannel* CC )
@@ -479,5 +479,39 @@ void Host::SynchronizeAll()
 	}
 
 	zSynchronizer->ClearAll();
+}
+
+// TODO: Create GameMode Here
+void Host::Restart( const std::string& gameMode, const std::string& map )
+{
+	if ( zSynchronizer ) zSynchronizer->ClearAll();
+	if ( !zSynchronizer ) zSynchronizer = new ActorSynchronizer();
+
+	if ( zGame )
+	{
+		// Fake Disconnects
+		for( auto i = zClients.begin(); i != zClients.end(); ++i )
+		{
+			PlayerDisconnectedEvent PDE;
+			PDE.clientData = i->second;
+			zGame->OnEvent(&PDE);
+		}
+
+		// Delete Game
+		this->RemoveObserver(zGame);
+		delete zGame;
+	}
+
+	// Start New
+	zGame = new Game(zSynchronizer, gameMode, map);
+	this->AddObserver(zGame);
+
+	// Fake Connects
+	for( auto i = zClients.begin(); i != zClients.end(); ++i )
+	{
+		PlayerConnectedEvent PCE;
+		PCE.clientData = i->second;
+		zGame->OnEvent(&PCE);
+	}
 }
 

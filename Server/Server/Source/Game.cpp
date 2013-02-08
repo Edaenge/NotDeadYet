@@ -13,10 +13,8 @@
 #include "Physics.h"
 
 
-Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile, int maxNrOfPlayer )
+Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile )
 {
-	zMaxNrOfPlayers = maxNrOfPlayer;
-
 	if (mode.find("FFA") == 0 )
 	{
 		zGameMode = new GameModeFFA(this, 10);
@@ -57,9 +55,9 @@ Game::~Game()
 	}
 	zPlayers.clear();
 
-	SAFE_DELETE(zGameMode);
-	SAFE_DELETE(zWorld);
-	SAFE_DELETE(zActorManager);
+	if ( zGameMode ) delete zGameMode;
+	if ( zWorld ) delete zWorld;
+	if ( zActorManager ) delete zActorManager;
 }
 
 bool Game::Update( float dt )

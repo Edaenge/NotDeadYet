@@ -4,10 +4,11 @@ struct Damage
 {
 	float slashing;
 	float blunt;
-	
+	float fallingDamage;
+
 	float GetTotal() const
 	{
-		return slashing + blunt;
+		return slashing + blunt + fallingDamage;
 	}
 
 	float GetBleedFactor() const

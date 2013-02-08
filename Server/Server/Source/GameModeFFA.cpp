@@ -38,7 +38,7 @@ void GameModeFFA::OnEvent( Event* e )
 			if(!pa->IsAlive())
 			{
 				// Set new spawn pos
-				int maxPlayers = zGame->GetMaxNrOfPlayers();
+				int maxPlayers = zPlayers.size();
 				int rand = 1 + std::rand()%maxPlayers;
 				pa->SetPosition(zGame->CalcPlayerSpawnPoint(rand));
 

@@ -32,7 +32,7 @@ class Game : public Observer, public Observed
 	int zMaxNrOfPlayers;
 
 public:
-	Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile, int maxNrOfPlayers);
+	Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
 	virtual ~Game();
 
 	// Returns false if game has finished
@@ -46,8 +46,6 @@ public:
 
 	Vector3 CalcPlayerSpawnPoint(int MaxPoints, Vector2 center);
 	Vector3 CalcPlayerSpawnPoint(int nr);
-
-	int GetMaxNrOfPlayers(){ return this->zMaxNrOfPlayers; }
 	
 private:
 	PhysicsEngine* zPhysicsEngine;
