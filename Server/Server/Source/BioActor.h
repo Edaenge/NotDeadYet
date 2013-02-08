@@ -57,6 +57,11 @@ public:
 	float GetStamina() const {return this->zStamina;}
 	float GetHealth() const {return this->zHealth;}
 	Vector3 GetDirection() const {return this->zDirection;}
+	float GetStaminaMax() const {return this->zStaminaMax;}
+	float GetStaminaCof() const {return this->zStaminaCof;}
+	float GetHealthMax() const {return this->zHealthMax;}
+
+	bool  IsBleeding() const {return this->zBleeding;}
 
 	/*! Sets the player state.
 		Enum is defined in AnimationStates.h.
@@ -68,6 +73,14 @@ public:
 	void SetDirection(const Vector3& dir) {this->zDirection = dir;}
 	/*! Returns Pos, Rot, Scale, Stamina, Health, State.*/
 	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
+	void SetStaminaMax(const float max) {this->zStaminaMax = max;}
+	void SetStaminaCof(const float cof) {this->zStaminaCof = cof;}
+
+	void SetBleeding(const bool isBleeding) {this->zBleeding = isBleeding;}
+
+	void StaminaHasChanged() {this->zStaminaChanged = true;}
+	void HealthHasChanged() {this->zHealthChanged = true;}
+
 
 protected:
 	int		zState;
@@ -79,6 +92,8 @@ protected:
 	float	zStamina;
 	float	zStaminaMax;
 	float	zStaminaCof;
+
+	bool	zBleeding;
 
 	bool	zStaminaChanged;
 	bool	zHealthChanged;
