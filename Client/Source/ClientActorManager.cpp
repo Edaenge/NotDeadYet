@@ -108,6 +108,7 @@ bool ClientActorManager::RemoveActor( const int Index )
 		SAFE_DELETE(worldObject);
 		return true;
 	}
+	return false;
 }
 
 bool ClientActorManager::AddActor(Actor* actor)

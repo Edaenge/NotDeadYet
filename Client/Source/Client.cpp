@@ -976,7 +976,7 @@ void Client::CloseConnection(const std::string& reason)
 {
 	MaloW::Debug("Client Shutdown: " + reason);
 	//Todo Skriv ut vilket reason som gavs
-	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, this->zID));
+	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID));
 	this->zServerChannel->Close();
 	this->Close();
 }
