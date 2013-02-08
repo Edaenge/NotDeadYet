@@ -67,6 +67,10 @@ public:
 	{
 		this->zStateChange = value;
 	}
+	void SetRotationChanged(bool value)
+	{
+		this->zRotationChange = value;
+	}
 private:
 	unsigned int zID;
 	Vector3 zNextPosition;

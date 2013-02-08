@@ -31,8 +31,6 @@ Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldF
 	this->zPhysicsEngine = GetPhysics();
 	// Actor Manager
 	zActorManager = new ActorManager(syncher);
-	//Temp
-	zWorldFile = worldFile;
 }
 
 Game::~Game()
@@ -89,7 +87,7 @@ void Game::OnEvent( Event* e )
 		message = NMC.Convert(MESSAGE_TYPE_CONNECTED);
 		PCE->clientData->Send(message);
 		// Sends the world name
-		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorldFile);
+		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorld->GetFileName());
 		PCE->clientData->Send(message);
 	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
@@ -174,8 +172,8 @@ void Game::OnEvent( Event* e )
 		// Start Position
 		Vector3 center;
 		center.x = zWorld->GetWorldCenter().x;
-		center.y = 1.7f;
 		center.z = zWorld->GetWorldCenter().y;
+		center.y = zWorld->CalcHeightAtWorldPos(Vector2(center.x, center.z));
 		actor->SetPosition(center);
 
 		// Apply Default Player Behavior
