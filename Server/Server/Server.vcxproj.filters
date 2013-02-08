@@ -135,6 +135,9 @@
     <ClCompile Include="Source\PlayerGhostBehavior.cpp">
       <Filter>Source\Behavior</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PlayerConfiguration.cpp">
+      <Filter>Source\Behavior</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -261,6 +264,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerGhostBehavior.h">
+      <Filter>Source\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerConfiguration.h">
       <Filter>Source\Behavior</Filter>
     </ClInclude>
   </ItemGroup>

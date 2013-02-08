@@ -1,5 +1,5 @@
 #include "Game.h"
-#include "GameMode.h"
+#include "GameModeFFA.h"
 #include "Behavior.h"
 #include <world/World.h>
 #include "GameEvents.h"
@@ -13,8 +13,18 @@
 #include "Physics.h"
 
 
-Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
+Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile, int maxNrOfPlayer )
 {
+	zMaxNrOfPlayers = maxNrOfPlayer;
+
+	if (mode.find("FFA") == 0 )
+	{
+		zGameMode = new GameModeFFA(this, 10);
+	}
+	else
+	{
+		zGameMode = new GameModeFFA(this, 10);
+	}
 	// Load Entities
 	LoadEntList("Entities.txt");
 
@@ -88,6 +98,9 @@ void Game::OnEvent( Event* e )
 		// Create Player
 		Player* player = new Player(PCE->clientData);
 		zPlayers[PCE->clientData] = player;
+		
+		//Lets gamemode observe players.
+		player->AddObserver(this->zGameMode);
 
 		//Tells the client it has been connected.
 		NetworkMessageConverter NMC;
@@ -98,6 +111,11 @@ void Game::OnEvent( Event* e )
 		// Sends the world name
 		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorld->GetFileName());
 		PCE->clientData->Send(message);
+
+		//Send event to game so it knows what players there are.
+		PlayerAddEvent* PAE = new PlayerAddEvent();
+		PAE->player = player;
+		NotifyObservers(PAE);
 	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
@@ -126,14 +144,39 @@ void Game::OnEvent( Event* e )
 			zBehaviors.insert(aiWolf);
 		}
 
-		// Delete Player
+		// Delete Player and notify GameMode
 		auto i = zPlayers.find(PDCE->clientData);
+
+		PlayerRemoveEvent* PRE = new PlayerRemoveEvent();
+		PRE->player = i->second;
+		NotifyObservers(PRE);
+
 		delete i->second;
 		zPlayers.erase(i);
 	}
-	else if ( PlayerPickupObjectEvent* PPOE = dynamic_cast<PlayerPickupObjectEvent*>(e))
+	else if ( PlayerPickupObjectEvent* PPOE = dynamic_cast<PlayerPickupObjectEvent*>(e) )
 	{
 		
+	}
+	else if ( PlayerDropItemEvent* PDIE = dynamic_cast<PlayerDropItemEvent*>(e) )
+	{
+
+	}
+	else if ( PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e) )
+	{
+
+	}
+	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
+	{
+
+	}
+	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
+	{
+
+	}
+	else if (PlayerUnEquipItemEvent* PUEIE = dynamic_cast<PlayerUnEquipItemEvent*>(e) )
+	{
+
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
@@ -158,6 +201,8 @@ void Game::OnEvent( Event* e )
 		WorldActor* actor = new WorldActor();
 		zWorldActors[ELE->entity] = actor;
 		zActorManager->AddActor(actor);
+
+		actor->AddObserver(this->zGameMode);
 	}
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
@@ -174,12 +219,14 @@ void Game::OnEvent( Event* e )
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zActorManager->AddActor(actor);
+		actor->AddObserver(this->zGameMode);
 
 		// Start Position
 		Vector3 center;
 		center.x = zWorld->GetWorldCenter().x;
 		center.z = zWorld->GetWorldCenter().y;
-		center.y = zWorld->CalcHeightAtWorldPos(Vector2(center.x, center.z));
+		
+		this->CalcPlayerSpawnPoint(32, center.GetXZ());
 		actor->SetPosition(center);
 
 		// Apply Default Player Behavior
@@ -188,8 +235,10 @@ void Game::OnEvent( Event* e )
 		//Tells the client which Actor he owns.
 		std::string message;
 		NetworkMessageConverter NMC;
+		unsigned int selfID ;
 
-		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)actor->GetID());
+		selfID = actor->GetID();
+		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)selfID);
 		UDE->clientData->Send(message);
 
 		//Gather Actors Information and send to client
@@ -202,8 +251,10 @@ void Game::OnEvent( Event* e )
 			message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
 			message += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetModel());
 
+			//Sends this Actor to the new player
 			UDE->clientData->Send(message);
 		}
+
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
@@ -230,3 +281,46 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	player->zBehavior = behavior;
 }
 
+Vector3 Game::CalcPlayerSpawnPoint(int maxPoints, Vector2 center)
+{
+	int point = this->zPlayers.size();
+
+	static const float PI = 3.14159265358979323846f;
+	static const float radius = 20.0f;
+	float slice  = 2 * PI / maxPoints;
+
+	float angle = slice * point;
+
+	float x = center.x + radius * cos(angle);
+	float z = center.y + radius * sin(angle);
+	float y = 0.0f;
+
+	if ( x >= 0.0f && z >= 0.0f && x < zWorld->GetWorldSize().x && z < zWorld->GetWorldSize().y )
+	{
+		y = this->zWorld->CalcHeightAtWorldPos(Vector2(x, z));
+	}
+
+	return Vector3(x, y, z);
+}
+
+Vector3 Game::CalcPlayerSpawnPoint(int nr)
+{
+	int point = nr;
+
+	static const float PI = 3.14159265358979323846f;
+	static const float radius = 20.0f;
+	float slice  = 2 * PI / this->zMaxNrOfPlayers;
+
+	float angle = slice * point;
+
+	float x = zWorld->GetWorldCenter().x + radius * cos(angle);
+	float z = zWorld->GetWorldCenter().y + radius * sin(angle);
+	float y = 0.0f;
+
+	if ( x >= 0.0f && z >= 0.0f && x < zWorld->GetWorldSize().x && z < zWorld->GetWorldSize().y )
+	{
+		y = this->zWorld->CalcHeightAtWorldPos(Vector2(x, z));
+	}
+
+	return Vector3(x, y, z);
+}

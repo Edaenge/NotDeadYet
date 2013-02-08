@@ -7,6 +7,12 @@ PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) :
 	this->zPlayer = player;
 	SetPhysicsObject(physObj);
 	/*InitValues();*/
+
+	this->zFullness = 100.0f;
+	this->zHydration = 100.0f;
+
+	this->zHungerChanged = true;
+	this->zHydrationChanged = true;
 }
 //
 //void PlayerActor::InitValues()
@@ -312,3 +318,23 @@ return false;*/
 //
 //	return msg;
 //}
+
+float PlayerActor::GetFullness()
+{
+	return this->zFullness;
+}
+
+float PlayerActor::GetHydration()
+{
+	return this->zHydration;
+}
+
+void PlayerActor::SetFullness(float fullness)
+{
+	this->zFullness = fullness;
+}
+
+void PlayerActor::SetHydration(float hydration)
+{
+	this->zHydration = hydration;
+}

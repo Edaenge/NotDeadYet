@@ -10,4 +10,6 @@ public:
 	virtual ~PlayerHumanBehavior();
 
 	virtual bool Update(float dt);
+	void PhysicalConditionCalculator(float dt); //The function in which health, stamina, hunger and thirst is slightly changed in relation to each other. Includes health regeneration
+
 };

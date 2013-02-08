@@ -1,7 +1,7 @@
 #include "ClientActorManager.h"
 #include "Safe.h"
 #include "Graphics.h"
-
+#include "Sounds.h"
 #define PI 3.14159265358979323846f
 
 ClientActorManager::ClientActorManager()
@@ -38,10 +38,12 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			if ((*it_Update)->HasPositionChanged())
 			{
 				Vector3 position = this->InterpolatePosition(actor->GetPosition(), (*it_Update)->GetPosition(), t);
-				actor->SetPosition(position);
 				if((*it_Update)->GetID() == clientID)
+				{
+					GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);
 					GetGraphics()->GetCamera()->SetPosition(position + Vector3(0.0f, 2.0f, 0.0f));
-
+				}
+				actor->SetPosition(position);
 				(*it_Update)->ComparePosition(position);
 			}
 			if((*it_Update)->GetID() != clientID)
@@ -65,7 +67,9 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			
 			if (!(*it_Update)->HasPositionChanged() && !(*it_Update)->HasRotationChanged() && !(*it_Update)->HasStateChanged())
 			{
+				Updates* temp = (*it_Update); 
 				it_Update = zUpdates.erase(it_Update);
+				SAFE_DELETE(temp);
 			}
 			else
 			{

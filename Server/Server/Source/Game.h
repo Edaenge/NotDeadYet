@@ -29,8 +29,10 @@ class Game : public Observer, public Observed
 
 	std::set<Behavior*> zBehaviors;
 
+	int zMaxNrOfPlayers;
+
 public:
-	Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile);
+	Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile, int maxNrOfPlayers);
 	virtual ~Game();
 
 	// Returns false if game has finished
@@ -42,6 +44,11 @@ public:
 	// Sets The Behavior Of Player
 	void SetPlayerBehavior( Player* player, PlayerBehavior* behavior );
 
+	Vector3 CalcPlayerSpawnPoint(int MaxPoints, Vector2 center);
+	Vector3 CalcPlayerSpawnPoint(int nr);
+
+	int GetMaxNrOfPlayers(){ return this->zMaxNrOfPlayers; }
+	
 private:
 	PhysicsEngine* zPhysicsEngine;
 };

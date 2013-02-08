@@ -6,6 +6,7 @@
 #include <World/EntityList.h>
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
+#include "Sounds.h"
 using namespace MaloW;
 
 // Timeout_value = 10 sek
@@ -46,6 +47,10 @@ Client::Client()
 	this->zWorldRenderer = NULL;
 	this->zAnchor = NULL;
 	this->zCrossHair = NULL;
+	SoundsInit();
+
+	GetSounds()->LoadSoundIntoSystem("Media/Sound/Walk.wav", true);
+	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", true);
 }
 
 void Client::Connect(const std::string &IPAddress, const unsigned int &port)
@@ -107,17 +112,36 @@ float Client::Update()
 	return this->zDeltaTime;
 }
 
-void Client::InitGraphics()
+void Client::InitGraphics(const std::string& mapName)
 {
+	this->zEng->CreateSkyBox("Media/skymap.dds");
+
+	LoadEntList("Entities.txt");
+
+	if ( zWorld ) delete zWorld, zWorld=0;
+	this->zWorld = new World(this, mapName);
+	this->zWorldRenderer = new WorldRenderer(zWorld, this->zEng);
+
+	float x = this->zWorld->GetWorldCenter().x;
+	float z = this->zWorld->GetWorldCenter().y;
+
+	Vector2 center = Vector2(x, z);
+
+	this->zEng->GetCamera()->SetPosition( Vector3(center.x, 20, center.y) );
+	this->zEng->GetCamera()->LookAt( Vector3(center.x, 0, center.y) );
+
+	this->zAnchor = this->zWorld->CreateAnchor();
+	this->zAnchor->position = center;
+	this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
+
 	int windowWidth = GetGraphics()->GetEngineParameters().WindowWidth;
 	int windowHeight = GetGraphics()->GetEngineParameters().WindowHeight;	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 	float length = ((25.0f / 1024.0f) * dx);
-	float x = offSet + (0.5f * dx) - length * 0.5f;
-	float y = (windowHeight / 2.0f) - length * 0.5f;
+	float xPos = offSet + (0.5f * dx) - length * 0.5f;
+	float yPos = (windowHeight / 2.0f) - length * 0.5f;
 
-	this->zCrossHair = this->zEng->CreateImage(Vector2(x, y), Vector2(length, length), "Media/Icons/cross.png");
-
+	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 
 	const char* object[] = {
 		"Media/Models/ArmyRation_v01.obj", 
@@ -136,7 +160,8 @@ void Client::InitGraphics()
 		"Media/Models/StoneItem_01_v01.obj",
 		"Media/Models/Tree_01.ani",
 		"Media/Models/WaterGrass_02.ani",
-		"Media/Models/Veins_01_v03_r.obj"};
+		"Media/Models/Veins_01_v03_r.obj",
+		"Media/Models/Scale.ani"};
 
 	this->zEng->PreLoadResources(17, object);
 	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
@@ -156,8 +181,6 @@ void Client::Init()
 	this->zObjectManager = new ClientActorManager();
 	this->zGuiManager = new GuiManager(this->zEng);
 	this->zPlayerInventory = new Inventory();
-
-	this->InitGraphics();
 }
 
 void Client::Life()
@@ -668,7 +691,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Graphical error Terrain at " << std::endl;
+			ss << "Graphical Terrain error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
 			ss << std::endl;
@@ -686,7 +709,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Graphical error Object at " << std::endl;
+			ss << "Graphical Object error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
 			ss << std::endl;
@@ -722,7 +745,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Player movement Shouldn't be blocked at " << std::endl;
+			ss << "Player movement Should be blocked at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
 			ss << std::endl;
@@ -740,7 +763,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "AI Is Blocked but shouldn't at " << std::endl;
+			ss << "AI Is Blocked but shouldn't be at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
 			ss << std::endl;
@@ -758,7 +781,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "AI shouldn't be blocked at " << std::endl;
+			ss << "AI should be blocked at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
 			ss << "" <<std::endl;
@@ -922,25 +945,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		std::string mapName = this->zMsgHandler.ConvertStringToSubstring(M_LOAD_MAP, msgArray[0]);
 
-		this->zEng->CreateSkyBox("Media/skymap.dds");
-		
-		LoadEntList("Entities.txt");
-
-		if ( zWorld ) delete zWorld, zWorld=0;
-		this->zWorld = new World(this, mapName);
-		this->zWorldRenderer = new WorldRenderer(zWorld, this->zEng);
-
-		float x = (this->zWorld->GetNumSectorsWidth() * 32.0f) / 2;
-		float z = (this->zWorld->GetNumSectorsHeight() * 32.0f) / 2;
-
-		Vector2 center = Vector2(x, z);
-		
-		this->zEng->GetCamera()->SetPosition( Vector3(center.x, 20, center.y) );
-		this->zEng->GetCamera()->LookAt( Vector3(center.x, 0, center.y) );
-
-		this->zAnchor = this->zWorld->CreateAnchor();
-		this->zAnchor->position = center;
-		this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
+		this->InitGraphics(mapName);
 	}
 	else if(msg.find(M_ERROR_MESSAGE.c_str()) == 0)
 	{
