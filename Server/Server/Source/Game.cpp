@@ -173,7 +173,8 @@ void Game::OnEvent( Event* e )
 		Vector3 center;
 		center.x = zWorld->GetWorldCenter().x;
 		center.z = zWorld->GetWorldCenter().y;
-		center.y = zWorld->CalcHeightAtWorldPos(Vector2(center.x, center.z));
+		
+		this->CalcPlayerSpawnPoint(32, center.GetXZ());
 		actor->SetPosition(center);
 
 		// Apply Default Player Behavior
@@ -224,3 +225,24 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	player->zBehavior = behavior;
 }
 
+Vector3 Game::CalcPlayerSpawnPoint(int maxPoints, Vector2 center)
+{
+	int point = this->zPlayers.size();
+
+	static const float PI = 3.14159265358979323846f;
+	static const float radius = 20.0f;
+	float slice  = 2 * PI / maxPoints;
+
+	float angle = slice * point;
+
+	float x = center.x + radius * cos(angle);
+	float z = center.y + radius * sin(angle);
+	float y = 0.0f;
+
+	if ( x >= 0.0f && z >= 0.0f && x < zWorld->GetWorldSize().x && z < zWorld->GetWorldSize().y )
+	{
+		y = this->zWorld->CalcHeightAtWorldPos(Vector2(x, z));
+	}
+
+	return Vector3(x, y, z);
+}
