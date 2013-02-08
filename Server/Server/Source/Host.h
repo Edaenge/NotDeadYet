@@ -7,7 +7,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "Process.h"
 #include "ServerListener.h"
-#include "ActorHandler.h"
 #include "ClientData.h"
 #include "Game.h"
 #include "GameModeFFA.h"
@@ -35,6 +34,8 @@ class Host : public MaloW::Process, public Observed
 	float zDeltaTime;
 	float zTimeOut;
 	float zPingMessageInterval;
+	std::string zGameMode;
+	std::string zMapName;
 
 	std::map<MaloW::ClientChannel*, ClientData*> zClients;
 	Game* zGame;

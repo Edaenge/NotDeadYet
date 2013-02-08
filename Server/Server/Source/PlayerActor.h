@@ -19,7 +19,6 @@ class PlayerActor : public BioActor
 {
 	Vector3 zInitialDirection;
 	Inventory* zInventory;
-	ObjectManager* zObjManager;	
 	Player* zPlayer;
 
 public:

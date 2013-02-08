@@ -30,7 +30,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Models/scale.obj";
+	this->zMeshID = "Media/Models/temp_guy.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -161,9 +161,9 @@ void Client::InitGraphics(const std::string& mapName)
 		"Media/Models/Tree_01.ani",
 		"Media/Models/WaterGrass_02.ani",
 		"Media/Models/Veins_01_v03_r.obj",
-		"Media/Models/Scale.ani"};
+		"Media/Models/temp_guy.obj"};
 
-	this->zEng->PreLoadResources(17, object);
+	this->zEng->PreLoadResources(18, object);
 	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
 }
 
@@ -206,7 +206,7 @@ void Client::Life()
 				this->SendClientUpdate();
 			}
 
-			//this->UpdateCameraPos(); // Will manage the local model later.
+			this->UpdateMeshRotation(); // Will manage the local model later.
 
 			this->UpdateActors();
 		}
@@ -286,15 +286,12 @@ void Client::SendAck(unsigned int IM_ID)
 	this->zServerChannel->Send(msg);
 }
 
-void Client::UpdateCameraPos()
+void Client::UpdateMeshRotation()
 {
-	Actor* player = dynamic_cast<Actor*>(this->zObjectManager->SearchAndGetActor(this->zID));
-	if (player)
+	Actor* player = this->zObjectManager->SearchAndGetActor(this->zID);
+	if (!player)
 	{
-		Vector3 position = player->GetPosition();
-
-		position.y += 1.7f;
-		this->zEng->GetCamera()->SetPosition(position);
+		return;
 	}
 
 	//Rotate Mesh
@@ -313,8 +310,8 @@ void Client::UpdateCameraPos()
 
 	if(camDir.x > 0.0f)
 		angle *= -1;
-	Actor* object = this->zObjectManager->GetActor(this->zID);
-	iMesh* playerMesh = object->GetMesh();
+
+	iMesh* playerMesh = player->GetMesh();
 
 	playerMesh->ResetRotation();
 	playerMesh->RotateAxis(around, angle);
@@ -979,6 +976,7 @@ void Client::CloseConnection(const std::string& reason)
 {
 	MaloW::Debug("Client Shutdown: " + reason);
 	//Todo Skriv ut vilket reason som gavs
+	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID));
 	this->zServerChannel->Close();
 	this->Close();
 }

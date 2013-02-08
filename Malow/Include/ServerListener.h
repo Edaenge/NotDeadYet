@@ -20,7 +20,7 @@ private:
 	SOCKET zListenSocket;
 	unsigned int zPort;
 
-	bool Accept( SOCKET &newConnection );
+	bool Accept( SOCKET &newConnection, sockaddr_in &client );
 protected:
 	virtual void Life();
 

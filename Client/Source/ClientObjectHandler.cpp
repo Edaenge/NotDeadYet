@@ -128,6 +128,10 @@ bool Client::UpdateActor(const std::vector<std::string>& msgArray, const unsigne
 			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
 			update->SetState(state);
 		}
+		else if(strcmp(key, M_SCALE.c_str()) == 0)
+		{
+			Vector3 scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
+		}
 		else
 		{
 			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in UpdatePlayerObjects");

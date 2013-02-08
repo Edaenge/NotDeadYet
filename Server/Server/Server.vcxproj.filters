@@ -81,9 +81,6 @@
     <ClCompile Include="Source\Actor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ActorHandler.cpp">
-      <Filter>Source\Handlers</Filter>
-    </ClCompile>
     <ClCompile Include="Source\ObjectManager.cpp">
       <Filter>Source\Handlers</Filter>
     </ClCompile>
@@ -202,9 +199,6 @@
     </ClInclude>
     <ClInclude Include="Source\Actor.h">
       <Filter>Source\Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ActorHandler.h">
-      <Filter>Source\Handlers</Filter>
     </ClInclude>
     <ClInclude Include="Source\ObjectManager.h">
       <Filter>Source\Handlers</Filter>
