@@ -31,8 +31,6 @@ Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldF
 	this->zPhysicsEngine = GetPhysics();
 	// Actor Manager
 	zActorManager = new ActorManager(syncher);
-	//Temp
-	zWorldFile = worldFile;
 }
 
 Game::~Game()
@@ -78,6 +76,9 @@ void Game::OnEvent( Event* e )
 		// Create Player
 		Player* player = new Player(PCE->clientData);
 		zPlayers[PCE->clientData] = player;
+		
+		//Lets gamemode observe players.
+		player->AddObserver(this->zGameMode);
 
 		//Tells the client it has been connected.
 		NetworkMessageConverter NMC;
@@ -86,7 +87,7 @@ void Game::OnEvent( Event* e )
 		message = NMC.Convert(MESSAGE_TYPE_CONNECTED);
 		PCE->clientData->Send(message);
 		// Sends the world name
-		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorldFile);
+		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorld->GetFileName());
 		PCE->clientData->Send(message);
 	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
@@ -148,6 +149,8 @@ void Game::OnEvent( Event* e )
 		WorldActor* actor = new WorldActor();
 		zWorldActors[ELE->entity] = actor;
 		zActorManager->AddActor(actor);
+
+		actor->AddObserver(this->zGameMode);
 	}
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
@@ -164,12 +167,13 @@ void Game::OnEvent( Event* e )
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zActorManager->AddActor(actor);
+		actor->AddObserver(this->zGameMode);
 
 		// Start Position
 		Vector3 center;
 		center.x = zWorld->GetWorldCenter().x;
-		center.y = 1.7f;
 		center.z = zWorld->GetWorldCenter().y;
+		center.y = zWorld->CalcHeightAtWorldPos(Vector2(center.x, center.z));
 		actor->SetPosition(center);
 
 		// Apply Default Player Behavior
