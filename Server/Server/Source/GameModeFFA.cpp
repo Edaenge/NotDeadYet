@@ -14,8 +14,8 @@ GameModeFFA::~GameModeFFA()
 
 void GameModeFFA::OnEvent( Event* e )
 {
-	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
+	/*if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
 	{
 
-	}
+	}*/
 }
