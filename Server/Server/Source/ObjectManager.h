@@ -1,21 +1,21 @@
-/*
-Made by Edänge Simon Datum(17/12/12 created) 
-for project Not Dead Yet at Blekinge tekniska högskola.
-*/
-
-#pragma once
-
-#include "FileReader.h"
-#include <vector>
-#include <Item.h>
-#include "ItemActor.h"
-
-/*This class reads and stores WordObjects.
-  The objects can be fetched by using enums from Item.h.
-*/
-class ObjectManager : public FileReader
-{
-public:
+///*
+//Made by Edänge Simon Datum(17/12/12 created) 
+//for project Not Dead Yet at Blekinge tekniska högskola.
+//*/
+//
+//#pragma once
+//
+//#include "FileReader.h"
+//#include <vector>
+//#include <Item.h>
+//#include "ItemActor.h"
+//
+///*This class reads and stores WordObjects.
+//  The objects can be fetched by using enums from Item.h.
+//*/
+//class ObjectManager : public FileReader
+//{
+//public:
 //	ObjectManager();
 //	virtual ~ObjectManager();
 //
@@ -59,4 +59,4 @@ public:
 //	std::vector<MaterialObject*> zMaterials;
 //	std::vector<ContainerObject*> zContainers;
 //	std::vector<ProjectileActor*> zStaticProjectiles;
-};
+//};

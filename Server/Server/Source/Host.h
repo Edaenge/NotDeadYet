@@ -7,7 +7,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "Process.h"
 #include "ServerListener.h"
-#include "ActorHandler.h"
 #include "ClientData.h"
 #include "Game.h"
 #include "GameModeFFA.h"

@@ -792,15 +792,6 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetIconPath(itemIconFilePath);
 		item->SetItemDescription(itemDescription);
 		break;
-	//case ITEM_TYPE_FOOD_WOLF_MEAT:
-	//	item = new Food(ID, itemType, itemSubType, hunger);
-	//	item->SetStacking(true);
-	//	item->SetItemName(itemName);
-	//	item->SetItemWeight(itemWeight);
-	//	item->SetStackSize(itemStackSize);
-	//	item->SetIconPath(itemIconFilePath);
-	//	item->SetItemDescription(itemDescription);
-	//	break;
 	case ITEM_TYPE_WEAPON_RANGED:
 		item = new RangedWeapon(ID, itemType, itemSubType, weaponDamage, weaponRange);
 		item->SetItemName(itemName);
@@ -809,15 +800,6 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetIconPath(itemIconFilePath);
 		item->SetItemDescription(itemDescription);
 		break;
-	//case ITEM_TYPE_WEAPON_RANGED_ROCK:
-	//	item = new RangedWeapon(ID, itemType, itemSubType, weaponDamage, weaponRange);
-	//	item->SetStacking(true);
-	//	item->SetItemName(itemName);
-	//	item->SetItemWeight(itemWeight);
-	//	item->SetStackSize(itemStackSize);
-	//	item->SetIconPath(itemIconFilePath);
-	//	item->SetItemDescription(itemDescription);
-	//	break;
 	case ITEM_TYPE_WEAPON_MELEE:
 		item = new MeleeWeapon(ID, itemType, itemSubType, weaponDamage, weaponRange);
 		item->SetStacking(false);
@@ -827,15 +809,6 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetIconPath(itemIconFilePath);
 		item->SetItemDescription(itemDescription);
 		break;
-	//case ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE:
-	//	item = new MeleeWeapon(ID, itemType, itemSubType, weaponDamage, weaponRange);
-	//	item->SetStacking(false);
-	//	item->SetItemName(itemName);
-	//	item->SetItemWeight(itemWeight);
-	//	item->SetStackSize(itemStackSize);
-	//	item->SetIconPath(itemIconFilePath);
-	//	item->SetItemDescription(itemDescription);
-	//	break;
 	case ITEM_TYPE_CONTAINER:
 		item = new Container(ID, itemType, itemSubType, maxUse, currUse);
 		item->SetStacking(false);
@@ -845,15 +818,6 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetIconPath(itemIconFilePath);
 		item->SetItemDescription(itemDescription);
 		break;
-	//case ITEM_TYPE_CONTAINER_WATER_BOTTLE:
-	//	item = new Container(ID, itemType, itemSubType, maxUse, currUse);
-	//	item->SetStacking(false);
-	//	item->SetItemName(itemName);
-	//	item->SetItemWeight(itemWeight);
-	//	item->SetStackSize(itemStackSize);
-	//	item->SetIconPath(itemIconFilePath);
-	//	item->SetItemDescription(itemDescription);
-	//	break;
 	case ITEM_TYPE_PROJECTILE:
 		item = new Projectile(ID, itemType, itemSubType, projectileVelocity, projectileDamage);
 		item->SetStacking(true);
@@ -872,33 +836,6 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetIconPath(itemIconFilePath);
 		item->SetItemDescription(itemDescription);
 		break;
-	//case ITEM_TYPE_MATERIAL_MEDIUM_STICK:
-	//	item = new Material(ID, itemType, itemSubType, craftingType, stacksRequired);
-	//	item->SetStacking(true);
-	//	item->SetItemName(itemName);
-	//	item->SetItemWeight(itemWeight);
-	//	item->SetStackSize(itemStackSize);
-	//	item->SetIconPath(itemIconFilePath);
-	//	item->SetItemDescription(itemDescription);
-	//	break;
-	//case ITEM_TYPE_MATERIAL_THREAD:
-	//	item = new Material(ID, itemType, itemSubType, craftingType, stacksRequired);
-	//	item->SetStacking(true);
-	//	item->SetItemName(itemName);
-	//	item->SetItemWeight(itemWeight);
-	//	item->SetStackSize(itemStackSize);
-	//	item->SetIconPath(itemIconFilePath);
-	//	item->SetItemDescription(itemDescription);
-	//	break;
-	//case ITEM_TYPE_MATERIAL_LARGE_STICK:
-	//	item = new Material(ID, itemType, craftingType, stacksRequired);
-	//	item->SetStacking(true);
-	//	item->SetItemName(itemName);
-	//	item->SetItemWeight(itemWeight);
-	//	item->SetStackSize(itemStackSize);
-	//	item->SetIconPath(itemIconFilePath);
-	//	item->SetItemDescription(itemDescription);
-	//	break;
 	case ITEM_TYPE_GEAR:
 		item = new Gear(ID, itemSubType, itemType);
 		item->SetItemName(itemName);
@@ -907,29 +844,6 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetIconPath(itemIconFilePath);
 		item->SetItemDescription(itemDescription);
 		break;
-	//case ITEM_TYPE_GEAR_CHEST:
-	//	item = new Gear(ID, itemType);
-	//	item->SetItemName(itemName);
-	//	item->SetItemWeight(itemWeight);
-	//	item->SetIconPath(itemIconFilePath);
-	//	item->SetItemDescription(itemDescription);
-	//	break;
-	//case ITEM_TYPE_GEAR_LEGS:
-	//	item = new Gear(ID, itemType);
-	//	item->SetItemName(itemName);
-	//	item->SetItemWeight(itemWeight);
-	//	item->SetStackSize(itemStackSize);
-	//	item->SetIconPath(itemIconFilePath);
-	//	item->SetItemDescription(itemDescription);
-	//	break;
-	//case ITEM_TYPE_GEAR_BOOTS:
-	//	item = new Gear(ID, itemType);
-	//	item->SetItemName(itemName);
-	//	item->SetItemWeight(itemWeight);
-	//	item->SetStackSize(itemStackSize);
-	//	item->SetIconPath(itemIconFilePath);
-	//	item->SetItemDescription(itemDescription);
-	//	break;
 	default:
 		MaloW::Debug("Items wasn't found in the switch case type: " + MaloW::convertNrToString((float)itemType));
 		break;
