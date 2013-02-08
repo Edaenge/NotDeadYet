@@ -230,7 +230,7 @@ void Client::Life()
 
 void Client::ReadMessages()
 {
-	static const unsigned int MAX_NR_OF_MESSAGES = 10;
+	static const unsigned int MAX_NR_OF_MESSAGES = 10000;
 
 	int nrOfMessages = this->GetEventQueueSize();
 	if (nrOfMessages == 0)
@@ -836,7 +836,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
 
-	Messages::Debug(msg);
+	//Messages::Debug(msg);
 
 	//Checks what type of message was sent
 	if(msg.find(M_PING.c_str()) == 0)
