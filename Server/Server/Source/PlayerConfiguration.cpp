@@ -48,151 +48,151 @@ bool PlayerConfiguration::SetValuesFromFile()
 		//Max level of fullness
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFullnessMax = numberFromFile;
 
 		//Hunger cof
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zHungerCof = numberFromFile;
 		
 		//Hunger sprinting cof
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zHungerSprintingCof = numberFromFile;
 
 		//Max hydration
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zHydrationMax = numberFromFile;
 
 		//Hydration cof
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zHydrationCof = numberFromFile;
 
 		//Hydration sprinting cof
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zHydrationSprintingCof = numberFromFile;
 
 		//Damage cof when you starve 
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zDamageAtStarvationCof = numberFromFile;
 
 		//Damage cof when you are too thirsty
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zDamageAtThirstCof = numberFromFile;
 
 		//Stamina decrease cof with hunger
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zStaminaDecreaseCofWithHunger = numberFromFile;
 
 		//Stamina decrease cof with hydration
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zStaminaDecreaseCofWithHydration = numberFromFile;
 
 		//Stamina decrease cof with bleeding
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zStaminaDecreaseWithBleedingCof = numberFromFile;
 
 		//Hunger decrease cof with bleeding
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zHungerDecreaseWithBleedingCof = numberFromFile;
 		
 		//Hydratopm decrease cof with bleeding
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zHydrationDecreaseWithBleedingCof = numberFromFile;
 
 		//Hunger for stamina cof
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zHungerForStaminaCof = numberFromFile;
 
 		//Hydration for stamina cof
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zHydrationForStaminaCof = numberFromFile;
 
 		//Upper hunger
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zUpperHunger= numberFromFile;
 
 		//Lower hunger
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zLowerHunger = numberFromFile;
 
 		//Upper hydration
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zUpperHydration = numberFromFile;
 
 		//Lower hydration
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zLowerHydration = numberFromFile;
 
 		//Upper Stamina
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zUpperStamina = numberFromFile;
 
 		//Lower Stamina
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zLowerStamina = numberFromFile;
 
 		//Scale of regenerating health
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zRegenerationScale = numberFromFile;
 
 		//Regeneration at good hunger
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zRegenerationHungerAddition = numberFromFile;
 
 		//Regeneration at good hydration
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zRegenerationHydrationAddition = numberFromFile;
 
 		//Regeneration at good stamina
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zRegenerationStaminaAddition = numberFromFile;
 
 		valuesRetrieved = true;

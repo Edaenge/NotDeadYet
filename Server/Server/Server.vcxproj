@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Actor.cpp" />
-    <ClCompile Include="Source\ActorHandler.cpp" />
     <ClCompile Include="Source\ActorManager.cpp" />
     <ClCompile Include="Source\ActorSynchronizer.cpp" />
     <ClCompile Include="Source\AI.cpp" />
@@ -61,7 +60,6 @@
   <ItemGroup>
     <ClInclude Include="Include\ServerEngineWrapper.h" />
     <ClInclude Include="Source\Actor.h" />
-    <ClInclude Include="Source\ActorHandler.h" />
     <ClInclude Include="Source\ActorManager.h" />
     <ClInclude Include="Source\ActorSynchronizer.h" />
     <ClInclude Include="Source\AI.h" />

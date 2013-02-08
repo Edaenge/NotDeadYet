@@ -41,7 +41,7 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				if((*it_Update)->GetID() == clientID)
 				{
 					GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);
-					GetGraphics()->GetCamera()->SetPosition(position + Vector3(0.0f, 2.0f, 0.0f));
+					GetGraphics()->GetCamera()->SetPosition(position + Vector3(0.0f, 3.0f, 0.0f));
 				}
 				actor->SetPosition(position);
 				(*it_Update)->ComparePosition(position);
@@ -108,6 +108,7 @@ bool ClientActorManager::RemoveActor( const int Index )
 		SAFE_DELETE(worldObject);
 		return true;
 	}
+	return false;
 }
 
 bool ClientActorManager::AddActor(Actor* actor)
