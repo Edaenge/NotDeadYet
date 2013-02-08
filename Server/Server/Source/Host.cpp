@@ -83,19 +83,10 @@ void Host::Life()
 
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients,  const std::string& gameModeName, const std::string& mapName)
 {
-	GameMode* gameMode = NULL;
 	this->zMaxClients = maxClients;
-	if (gameModeName.find("FFA") == 0 )
-	{
-		gameMode = new GameModeFFA();
-	}
-	else
-	{
-		gameMode = new GameModeFFA();
-	}
 
 	zSynchronizer = new ActorSynchronizer();
-	this->zGame = new Game(zSynchronizer, gameMode, mapName);
+	this->zGame = new Game(zSynchronizer, gameModeName, mapName);
 	this->AddObserver(this->zGame);
 
 	try

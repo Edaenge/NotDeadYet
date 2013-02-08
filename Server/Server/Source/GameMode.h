@@ -5,7 +5,9 @@
 class GameMode : public Observer
 {
 protected:
-	GameMode() {};
+	Game* zGame;
+
+	GameMode(Game* game) : zGame(game) {};
 	virtual ~GameMode() {};
 public:
 

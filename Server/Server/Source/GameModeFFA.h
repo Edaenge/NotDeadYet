@@ -6,7 +6,7 @@
 class GameModeFFA : public GameMode
 {
 public:
-	GameModeFFA();
+	GameModeFFA(Game* game);
 	virtual ~GameModeFFA();
 
 private:

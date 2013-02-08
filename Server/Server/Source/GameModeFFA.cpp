@@ -1,8 +1,9 @@
+#include "Game.h"
 #include "GameModeFFA.h"
-#include "Actor.h"
-#include "Player.h"
+#include "BioActor.h"
+#include "PlayerActor.h"
 
-GameModeFFA::GameModeFFA()
+GameModeFFA::GameModeFFA(Game* game) : GameMode(game)
 {
 
 }
@@ -14,8 +15,13 @@ GameModeFFA::~GameModeFFA()
 
 void GameModeFFA::OnEvent( Event* e )
 {
-	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
+	if ( BioActorTakeDamageEvent* ATD = dynamic_cast<BioActorTakeDamageEvent*>(e) )
 	{
-
+		if( PlayerActor* pa = dynamic_cast<PlayerActor*>(ATD->zActor) )
+		{
+			if(!pa->IsAlive())
+			{
+			}
+		}
 	}
 }

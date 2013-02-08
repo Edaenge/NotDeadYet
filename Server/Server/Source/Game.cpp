@@ -1,5 +1,5 @@
 #include "Game.h"
-#include "GameMode.h"
+#include "GameModeFFA.h"
 #include "Behavior.h"
 #include <world/World.h>
 #include "GameEvents.h"
@@ -13,8 +13,16 @@
 #include "Physics.h"
 
 
-Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile ) : zGameMode(mode)
+Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile )
 {
+	if (mode.find("FFA") == 0 )
+	{
+		zGameMode = new GameModeFFA(this);
+	}
+	else
+	{
+		zGameMode = new GameModeFFA(this);
+	}
 	// Load Entities
 	LoadEntList("Entities.txt");
 

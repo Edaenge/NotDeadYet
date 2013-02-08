@@ -32,7 +32,7 @@ class Game : public Observer, public Observed
 	std::set<Behavior*> zBehaviors;
 
 public:
-	Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldFile);
+	Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
 	virtual ~Game();
 
 	// Returns false if game has finished
