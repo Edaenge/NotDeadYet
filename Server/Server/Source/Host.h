@@ -34,6 +34,8 @@ class Host : public MaloW::Process, public Observed
 	float zDeltaTime;
 	float zTimeOut;
 	float zPingMessageInterval;
+	std::string zGameMode;
+	std::string zMapName;
 
 	std::map<MaloW::ClientChannel*, ClientData*> zClients;
 	Game* zGame;
@@ -70,6 +72,9 @@ public:
 
 	// Returns Number of active connections
 	unsigned int GetNumClients() const;
+
+	// Restart Game
+	void Restart( const std::string& gameMode, const std::string& map );
 
 	// Synchronize Clients
 	void SynchronizeAll();

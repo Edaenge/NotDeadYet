@@ -25,8 +25,6 @@ class Game : public Observer, public Observed
 	World* zWorld;
 
 	std::map<ClientData*, Player*> zPlayers;
-	std::map<Player*, Behavior*> zPlayerBehaviors;
-	std::map<Player*, KeyStates*> zKeyStates;
 	std::map<Entity*, WorldActor*> zWorldActors;
 
 	std::set<Behavior*> zBehaviors;
@@ -34,7 +32,7 @@ class Game : public Observer, public Observed
 	int zMaxNrOfPlayers;
 
 public:
-	Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile, int maxNrOfPlayers);
+	Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
 	virtual ~Game();
 
 	// Returns false if game has finished
@@ -48,8 +46,6 @@ public:
 
 	Vector3 CalcPlayerSpawnPoint(int MaxPoints, Vector2 center);
 	Vector3 CalcPlayerSpawnPoint(int nr);
-
-	int GetMaxNrOfPlayers(){ return this->zMaxNrOfPlayers; }
 	
 private:
 	PhysicsEngine* zPhysicsEngine;

@@ -14,7 +14,7 @@ ProjectileBehavior::ProjectileBehavior( Actor* actor, World* world ) : Behavior(
 bool ProjectileBehavior::Update( float dt )
 {
 	if(!zMoving)
-		return false;
+		return true;
 
 	Vector3 newPos;
 	Vector3 newDir;
@@ -61,5 +61,5 @@ bool ProjectileBehavior::Update( float dt )
 	// Impose drag.
 	this->zVelocity *= pow(zDamping, dt);
 
-	return true;
+	return false;
 }

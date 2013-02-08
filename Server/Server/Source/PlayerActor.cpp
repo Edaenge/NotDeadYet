@@ -4,6 +4,8 @@
 PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) :
 	zPlayer(player)
 {
+	this->zInventory = NULL;
+
 	this->zPlayer = player;
 	SetPhysicsObject(physObj);
 	/*InitValues();*/
