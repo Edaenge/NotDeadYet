@@ -57,7 +57,7 @@ private:
 	void Init();
 
 	/*! Initializes the graphic stuff*/
-	void InitGraphics();
+	void InitGraphics(const std::string& mapName);
 
 	//////////////////////
 	//					//

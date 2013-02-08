@@ -15,7 +15,7 @@ GameModeFFA::~GameModeFFA()
 
 void GameModeFFA::OnEvent( Event* e )
 {
-	if ( BioActorTakeDamageEvent* ATD = dynamic_cast<BioActorTakeDamageEvent*>(e) )
+	if( BioActorTakeDamageEvent* ATD = dynamic_cast<BioActorTakeDamageEvent*>(e) )
 	{
 		if( PlayerActor* pa = dynamic_cast<PlayerActor*>(ATD->zActor) )
 		{

@@ -130,9 +130,29 @@ void Game::OnEvent( Event* e )
 		delete i->second;
 		zPlayers.erase(i);
 	}
-	else if ( PlayerPickupObjectEvent* PPOE = dynamic_cast<PlayerPickupObjectEvent*>(e))
+	else if ( PlayerPickupObjectEvent* PPOE = dynamic_cast<PlayerPickupObjectEvent*>(e) )
 	{
 		
+	}
+	else if ( PlayerDropItemEvent* PDIE = dynamic_cast<PlayerDropItemEvent*>(e) )
+	{
+
+	}
+	else if ( PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e) )
+	{
+
+	}
+	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
+	{
+
+	}
+	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
+	{
+
+	}
+	else if (PlayerUnEquipItemEvent* PUEIE = dynamic_cast<PlayerUnEquipItemEvent*>(e) )
+	{
+
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
@@ -181,7 +201,8 @@ void Game::OnEvent( Event* e )
 		Vector3 center;
 		center.x = zWorld->GetWorldCenter().x;
 		center.z = zWorld->GetWorldCenter().y;
-		center.y = zWorld->CalcHeightAtWorldPos(Vector2(center.x, center.z));
+		
+		this->CalcPlayerSpawnPoint(32, center.GetXZ());
 		actor->SetPosition(center);
 
 		// Apply Default Player Behavior
@@ -190,8 +211,10 @@ void Game::OnEvent( Event* e )
 		//Tells the client which Actor he owns.
 		std::string message;
 		NetworkMessageConverter NMC;
+		unsigned int selfID ;
 
-		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)actor->GetID());
+		selfID = actor->GetID();
+		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)selfID);
 		UDE->clientData->Send(message);
 
 		//Gather Actors Information and send to client
@@ -204,8 +227,10 @@ void Game::OnEvent( Event* e )
 			message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
 			message += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetModel());
 
+			//Sends this Actor to the new player
 			UDE->clientData->Send(message);
 		}
+
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
@@ -232,3 +257,24 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	player->zBehavior = behavior;
 }
 
+Vector3 Game::CalcPlayerSpawnPoint(int maxPoints, Vector2 center)
+{
+	int point = this->zPlayers.size();
+
+	static const float PI = 3.14159265358979323846f;
+	static const float radius = 20.0f;
+	float slice  = 2 * PI / maxPoints;
+
+	float angle = slice * point;
+
+	float x = center.x + radius * cos(angle);
+	float z = center.y + radius * sin(angle);
+	float y = 0.0f;
+
+	if ( x >= 0.0f && z >= 0.0f && x < zWorld->GetWorldSize().x && z < zWorld->GetWorldSize().y )
+	{
+		y = this->zWorld->CalcHeightAtWorldPos(Vector2(x, z));
+	}
+
+	return Vector3(x, y, z);
+}
