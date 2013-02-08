@@ -75,7 +75,7 @@ void Host::Life()
 		}
 		else
 		{
-			this->InitHost(zPort, zMaxClients, zGameMode, zMapName);
+			this->Restart(this->zGameMode, this->zMapName);
 		}
 	
 		Sleep(5);
@@ -90,6 +90,7 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	this->zGameMode = gameModeName;
 	this->zMapName = mapName;
 
+	Restart(gameModeName, mapName);
 
 	if ( !zServerListener )
 	{
