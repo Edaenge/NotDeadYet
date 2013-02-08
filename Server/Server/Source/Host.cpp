@@ -490,8 +490,8 @@ void Host::SynchronizeAll()
 void Host::Restart( const std::string& gameMode, const std::string& map )
 {
 	// Update
-	this->zGameMode = gameMode;
-	this->zMapName = map;
+	zGameMode = gameMode;
+	zMapName = map;
 
 	if ( zSynchronizer ) zSynchronizer->ClearAll();
 	if ( !zSynchronizer ) zSynchronizer = new ActorSynchronizer();

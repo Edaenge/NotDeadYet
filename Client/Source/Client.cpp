@@ -49,8 +49,8 @@ Client::Client()
 	this->zCrossHair = NULL;
 	SoundsInit();
 
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Walk.wav", true);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", true);
+	GetSounds()->LoadSoundIntoSystem("Media/Sound/Walk.wav", false);
+	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
 }
 
 void Client::Connect(const std::string &IPAddress, const unsigned int &port)
@@ -219,7 +219,7 @@ void Client::Life()
 		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 		{
 			this->zGuiManager->ToggleIngameMenu();
-			this->CloseConnection("");
+			//this->CloseConnection("");
 		}
 
 		Sleep(5);
@@ -976,7 +976,7 @@ void Client::CloseConnection(const std::string& reason)
 {
 	MaloW::Debug("Client Shutdown: " + reason);
 	//Todo Skriv ut vilket reason som gavs
-	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID));
+	this->zServerChannel->TrySend(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID));
 	this->zServerChannel->Close();
 	this->Close();
 }
