@@ -4,6 +4,9 @@
 PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) :
 	zPlayer(player)
 {
+	this->zInventory = NULL;
+	this->zObjManager = NULL;
+
 	this->zPlayer = player;
 	SetPhysicsObject(physObj);
 	/*InitValues();*/
@@ -34,6 +37,7 @@ PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) :
 PlayerActor::~PlayerActor()
 {
 	SAFE_DELETE(this->zInventory);
+	SAFE_DELETE(this->zObjManager);
 }
 
 //void PlayerActor::Update(float deltaTime)

@@ -4,6 +4,7 @@
 #include "ClientDisconnectedEvent.h"
 #include "ClientDroppedEvent.h"
 #include "ActorSynchronizer.h"
+#include "Physics.h"
 
 // 50 updates per sec
 static const float UPDATE_DELAY = 0.020f;
@@ -65,16 +66,15 @@ void Host::Life()
 		Update();
 		ReadMessages();
 
-		if(this->zGameStarted)
+		if(zGame->Update(this->zDeltaTime))
 		{
 			//PingClients();
-			zGame->Update(this->zDeltaTime);
 			
 			SynchronizeAll();
 		}
 		else
 		{
-			
+			this->InitHost(zPort, zMaxClients, zGameMode, zMapName);
 		}
 	
 		Sleep(5);
@@ -83,16 +83,22 @@ void Host::Life()
 
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients,  const std::string& gameModeName, const std::string& mapName)
 {
+	FreePhysics();
+	PhysicsInit();
 	this->zMaxClients = maxClients;
+	this->zGameMode = gameModeName;
+	this->zMapName = mapName;
 
 	zSynchronizer = new ActorSynchronizer();
-	this->zGame = new Game(zSynchronizer, gameModeName, mapName, maxClients);
+	if( this->zGame ) delete this->zGame;
+		this->zGame = new Game(zSynchronizer, gameModeName, mapName, maxClients);
+
 	this->AddObserver(this->zGame);
 
 	try
 	{
 		if ( zServerListener ) delete zServerListener;
-		zServerListener = new ServerListener(this, port);
+			zServerListener = new ServerListener(this, port);
 		zServerListener->Start();
 	}
 	catch(const char *str)

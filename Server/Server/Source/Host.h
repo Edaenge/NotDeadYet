@@ -35,6 +35,8 @@ class Host : public MaloW::Process, public Observed
 	float zDeltaTime;
 	float zTimeOut;
 	float zPingMessageInterval;
+	std::string zGameMode;
+	std::string zMapName;
 
 	std::map<MaloW::ClientChannel*, ClientData*> zClients;
 	Game* zGame;
