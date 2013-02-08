@@ -807,6 +807,24 @@ void Client::HandleDebugInfo()
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
+	//Sound debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F8))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Sound Error at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
 	else if (this->zEng->GetKeyListener()->IsPressed(VK_DELETE))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -836,7 +854,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
 
-	Messages::Debug(msg);
+	if (Messages::MsgFileWrite())
+		Messages::Debug(msg);
 
 	//Checks what type of message was sent
 	if(msg.find(M_PING.c_str()) == 0)
