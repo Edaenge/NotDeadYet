@@ -161,10 +161,9 @@ void Client::InitGraphics(const std::string& mapName)
 		"Media/Models/Tree_01.ani",
 		"Media/Models/WaterGrass_02.ani",
 		"Media/Models/Veins_01_v03_r.obj",
-		"Media/Models/temp_guy.obj",
-		"Media/Models/Scale.ani"};
+		"Media/Models/temp_guy.obj"};
 
-	this->zEng->PreLoadResources(19, object);
+	this->zEng->PreLoadResources(18, object);
 	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
 }
 
