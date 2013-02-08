@@ -31,8 +31,6 @@ Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldF
 	this->zPhysicsEngine = GetPhysics();
 	// Actor Manager
 	zActorManager = new ActorManager(syncher);
-	//Temp
-	zWorldFile = worldFile;
 }
 
 Game::~Game()
@@ -86,7 +84,7 @@ void Game::OnEvent( Event* e )
 		message = NMC.Convert(MESSAGE_TYPE_CONNECTED);
 		PCE->clientData->Send(message);
 		// Sends the world name
-		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorldFile);
+		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorld->GetFileName());
 		PCE->clientData->Send(message);
 	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )

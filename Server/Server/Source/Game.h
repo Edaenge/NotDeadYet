@@ -46,5 +46,4 @@ public:
 
 private:
 	PhysicsEngine* zPhysicsEngine;
-	std::string zWorldFile;
 };
