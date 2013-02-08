@@ -67,7 +67,9 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			
 			if (!(*it_Update)->HasPositionChanged() && !(*it_Update)->HasRotationChanged() && !(*it_Update)->HasStateChanged())
 			{
+				Updates* temp = (*it_Update); 
 				it_Update = zUpdates.erase(it_Update);
+				SAFE_DELETE(temp);
 			}
 			else
 			{
