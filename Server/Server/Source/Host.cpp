@@ -90,8 +90,7 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	this->zMapName = mapName;
 
 	zSynchronizer = new ActorSynchronizer();
-	if( this->zGame ) delete this->zGame;
-		this->zGame = new Game(zSynchronizer, gameModeName, mapName, maxClients);
+	this->zGame = new Game(zSynchronizer, gameModeName, mapName, maxClients);
 
 	this->AddObserver(this->zGame);
 
