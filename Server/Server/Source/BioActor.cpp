@@ -28,6 +28,11 @@ bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
 	this->zHealth -= dmg.GetTotal();
 	this->zHealthChanged = true;
 
+	if(dmg.GetTotal() / this->zHealth > 0.20 && dmg.GetBleedFactor() > 0.6)
+	{
+		this->zBleeding = true;
+	}
+
 	if(this->zHealth <= 0.0f)
 	{
 		this->zHealth = 0.0f;

@@ -27,6 +27,15 @@ public:
 
 	virtual ~PlayerActor();
 
+	float GetFullness();
+	float GetHydration();
+
+	void SetFullness(float fullness);
+	void SetHydration(float hydration);
+
+	void HungerHasChanged() {this->zHungerChanged = true;}
+	void HydrationHasChanged() {this->zHydrationChanged = true;}
+
 	///*! Updates players pos, states etc.*/
 	//void Update(float deltaTime);
 	///*! Picks up an object and transform it to an item and adds it to the inventory.
@@ -65,6 +74,13 @@ public:
 	//void InitValues();
 
 private:
+
+	float	zFullness;
+	float	zHydration;
+	
+	bool	zHydrationChanged;
+	bool	zHungerChanged;
+
 	/*float	zLatency;
 	float	zFrameTime;
 

@@ -45,5 +45,7 @@ public:
 	void SetPlayerBehavior( Player* player, PlayerBehavior* behavior );
 
 private:
+	Vector3 CalcPlayerSpawnPoint(int MaxPoints, Vector2 center);
+private:
 	PhysicsEngine* zPhysicsEngine;
 };
