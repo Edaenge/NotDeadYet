@@ -81,7 +81,7 @@ bool PlayerHumanBehavior::Update( float dt )
 
 	if ( isOnGround )
 	{
-		zVelocity -= ( zVelocity * 0.3f ) * dt;
+		zVelocity -= ( zVelocity * 0.8f ) * dt;
 	}
 
 	// Gravity
