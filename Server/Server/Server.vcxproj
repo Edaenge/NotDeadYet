@@ -81,7 +81,6 @@
     <ClInclude Include="Source\PlayerGhostBehavior.h" />
     <ClInclude Include="Source\Host.h" />
     <ClInclude Include="Source\ItemActor.h" />
-    <ClInclude Include="Source\NetworkEvents.h" />
     <ClInclude Include="Source\ObjectCreator.h" />
     <ClInclude Include="Source\ObjectManager.h" />
     <ClInclude Include="Source\PhysicsEngine\BoundingSphere.h" />
