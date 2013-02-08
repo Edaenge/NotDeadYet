@@ -26,7 +26,9 @@ namespace MaloW
 	{
 	private:
 		MaloW::Process* zNotifier;
+		std::string zIP;
 		long zID;
+		
 
 		// Receive Message
 		//bool Receive(std::string& msg) {NetworkChannel::Receive(msg);} throw(...)
@@ -35,13 +37,15 @@ namespace MaloW
 		void CloseSpecific();
 
 	public:
-		ClientChannel(MaloW::Process* zNotifier, SOCKET hClient);
+		ClientChannel(MaloW::Process* zNotifier, SOCKET hClient, const std::string ip_adress);
 		virtual ~ClientChannel();
 
 		// Begin Process
 		void Life();
 
 		void Disconnect();
+
+		std::string const GetIP() const {return this->zIP;}
 	};
 }
 

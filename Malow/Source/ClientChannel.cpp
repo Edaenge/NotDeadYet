@@ -6,12 +6,13 @@
 using namespace MaloW;
 
 
-ClientChannel::ClientChannel(MaloW::Process* observerProcess, SOCKET sock) :
+ClientChannel::ClientChannel(MaloW::Process* observerProcess, SOCKET sock, const std::string ip_adress) :
 	zNotifier(observerProcess),
 	NetworkChannel(sock)
 {
 	static unsigned int id = 0;
 	this->zID = id++;
+	this->zIP = ip_adress;
 }
 
 ClientChannel::~ClientChannel()

@@ -41,11 +41,10 @@ ServerListener::~ServerListener()
 	if ( zListenSocket ) closesocket(zListenSocket);
 }
 
-bool ServerListener::Accept( SOCKET &newConnection )
+bool ServerListener::Accept( SOCKET &newConnection, sockaddr_in &client )
 {
-	sockaddr_in saClient = { 0 };
 	int nSALen = sizeof( sockaddr );
-	newConnection = accept(zListenSocket, (sockaddr*)&saClient, &nSALen);
+	newConnection = accept(zListenSocket, (sockaddr*)&client, &nSALen);
 	
 	if ( newConnection == SOCKET_ERROR )
 	{
@@ -58,7 +57,7 @@ bool ServerListener::Accept( SOCKET &newConnection )
 			return false;
 		}
 	}
-
+	
 	return true;
 }
 
@@ -67,8 +66,13 @@ void ServerListener::Life()
 	MaloW::Debug("ClientChannel Listener Started");
 
 	SOCKET newConnection;
-	while(this->stayAlive && Accept(newConnection))
+	sockaddr_in client = { 0 };
+
+	while(this->stayAlive && Accept(newConnection, client))
 	{
-		zObserver->PutEvent(new ClientConnectedEvent(new MaloW::ClientChannel(zObserver, newConnection)));
+		char *connected_ip = inet_ntoa(client.sin_addr);
+		std::string ip(connected_ip);
+
+		zObserver->PutEvent(new ClientConnectedEvent(new MaloW::ClientChannel(zObserver, newConnection, ip)));
 	}
 }
