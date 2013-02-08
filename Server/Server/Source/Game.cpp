@@ -34,9 +34,21 @@ Game::Game(ActorSynchronizer* syncher, GameMode* mode, const std::string& worldF
 }
 
 Game::~Game()
-{
-	if ( zWorld ) delete zWorld, zWorld = 0;
+{	
+	for( auto i = zBehaviors.begin(); i != zBehaviors.end(); ++i )
+	{
+		delete *i;
+	}
+	zBehaviors.clear();
 
+	for( auto i = zPlayers.begin(); i != zPlayers.end(); ++i )
+	{
+		delete i->second;
+	}
+	zPlayers.clear();
+
+	SAFE_DELETE(zGameMode);
+	SAFE_DELETE(zWorld);
 	SAFE_DELETE(zActorManager);
 }
 
