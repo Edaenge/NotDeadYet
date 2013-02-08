@@ -30,6 +30,9 @@ PlayerHumanBehavior::~PlayerHumanBehavior()
 
 bool PlayerHumanBehavior::Update( float dt )
 {
+	if ( !zPlayer )
+		return true;
+
 	if ( PlayerBehavior::Update(dt) )
 		return true;
 
@@ -76,6 +79,11 @@ bool PlayerHumanBehavior::Update( float dt )
 
 	}
 
+	if ( isOnGround )
+	{
+		zVelocity -= ( zVelocity * 0.8f ) * dt;
+	}
+
 	// Gravity
 	zVelocity += GRAVITY * dt;
 
@@ -93,11 +101,11 @@ bool PlayerHumanBehavior::Update( float dt )
 	try
 	{
 		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
-		if ( newPosition.y < groundHeight ) newPosition.y = groundHeight, zVelocity.y = 0.0f;
-		
-		// Apply Push
-		Vector3 norm = zWorld->CalcNormalAt(newPosition.GetXZ());
-		zVelocity += norm * dt;
+		if ( newPosition.y < groundHeight ) 
+		{
+			newPosition.y = groundHeight;
+			zVelocity.y = 0.0f;
+		}
 	}
 	catch(...)
 	{
