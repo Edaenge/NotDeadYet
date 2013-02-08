@@ -11,6 +11,6 @@ protected:
 	virtual ~GameMode() {};
 public:
 
-	bool Update(float) { return true; };
+	virtual bool Update(float) = 0;
 	virtual void OnEvent(Event* e) = 0;
 };

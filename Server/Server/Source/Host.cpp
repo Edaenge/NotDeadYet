@@ -86,7 +86,7 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	this->zMaxClients = maxClients;
 
 	zSynchronizer = new ActorSynchronizer();
-	this->zGame = new Game(zSynchronizer, gameModeName, mapName);
+	this->zGame = new Game(zSynchronizer, gameModeName, mapName, maxClients);
 	this->AddObserver(this->zGame);
 
 	try
