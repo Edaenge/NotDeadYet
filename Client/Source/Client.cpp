@@ -570,17 +570,18 @@ void Client::HandleKeyboardInput()
 					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
 
 					
-					Weapon* weapon = this->zPlayerInventory->GetRangedWeapon();
-
-					if (!weapon)
-					{
-						this->DisplayMessageToClient("No Weapon is Equipped");
-					}
-					else
-					{
-						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
-						this->zServerChannel->Send(msg);
-					}
+					//Weapon* weapon = this->zPlayerInventory->GetRangedWeapon();
+					//if (!weapon)
+					//{
+					//	this->DisplayMessageToClient("No Weapon is Equipped");
+					//}
+					//else
+					//{
+					//	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
+					//	this->zServerChannel->Send(msg);
+					//}
+					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, 0.0f);
+					this->zServerChannel->Send(msg);
 				}
 			}
 			else

@@ -5,13 +5,16 @@
 #include "GameEvents.h"
 #include "PlayerHumanBehavior.h"
 #include "PlayerWolfBehavior.h"
-#include "PlayerActor.h""
+#include "PlayerActor.h"
+#include "DeerActor.h"
+#include "WolfActor.h"
+#include "BearActor.h"
 #include "PlayerWolfBehavior.h"
 #include "AIWolfBehavior.h"
 #include "WorldActor.h"
 #include <World/EntityList.h>
 #include "Physics.h"
-
+#include "ClientServerMessages.h"
 
 Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile, int maxNrOfPlayer )
 {
@@ -152,11 +155,29 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e) )
 	{
-
+		
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
+		auto playerIterator = zPlayers.find(PDCE->clientData);
+		auto playerBehavior = playerIterator->second->GetBehavior();
 
+		Actor* actor = playerBehavior->GetActor();
+
+		PlayerActor* player = dynamic_cast<PlayerActor*>(actor);
+		if (player)
+		{
+			BioActor* damageTaker = dynamic_cast<BioActor*>(this->zActorManager->CheckCollisions(player));
+
+			if (actor)
+			{
+				Damage damage = Damage();
+				damage.blunt = 20.0f;
+				damageTaker->TakeDamage(damage, actor);
+				if (Messages::FileWrite())
+					Messages::Debug("Player " + MaloW::convertNrToString(actor->GetID()) + " Attacked player " + MaloW::convertNrToString(damageTaker->GetID()));
+			}
+		}
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{
