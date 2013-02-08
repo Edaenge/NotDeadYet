@@ -119,9 +119,29 @@ void Game::OnEvent( Event* e )
 		delete i->second;
 		zPlayers.erase(i);
 	}
-	else if ( PlayerPickupObjectEvent* PPOE = dynamic_cast<PlayerPickupObjectEvent*>(e))
+	else if ( PlayerPickupObjectEvent* PPOE = dynamic_cast<PlayerPickupObjectEvent*>(e) )
 	{
 		
+	}
+	else if ( PlayerDropItemEvent* PDIE = dynamic_cast<PlayerDropItemEvent*>(e) )
+	{
+
+	}
+	else if ( PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e) )
+	{
+
+	}
+	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
+	{
+
+	}
+	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
+	{
+
+	}
+	else if (PlayerUnEquipItemEvent* PUEIE = dynamic_cast<PlayerUnEquipItemEvent*>(e) )
+	{
+
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
@@ -176,8 +196,10 @@ void Game::OnEvent( Event* e )
 		//Tells the client which Actor he owns.
 		std::string message;
 		NetworkMessageConverter NMC;
+		unsigned int selfID ;
 
-		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)actor->GetID());
+		selfID = actor->GetID();
+		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)selfID);
 		UDE->clientData->Send(message);
 
 		//Gather Actors Information and send to client
@@ -190,8 +212,10 @@ void Game::OnEvent( Event* e )
 			message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
 			message += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetModel());
 
+			//Sends this Actor to the new player
 			UDE->clientData->Send(message);
 		}
+
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
