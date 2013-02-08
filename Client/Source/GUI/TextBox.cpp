@@ -133,10 +133,10 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 	{
 		string pushString = "";
 		const int NROFLETTERS = 27;
-		const int NROFSPECIAL = 11;
+		const int NROFSPECIAL = 12;
 		char keys[NROFLETTERS] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', ' '};
 		char KEYS[NROFLETTERS] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' '};
-		char specialChars[NROFSPECIAL] = {',', '.', ';', ':', '*', '?', '!', '<', '>', '-', '_'};
+		char specialChars[NROFSPECIAL] = {',', '.', ';', ':', '*', '?', '!', '<', '>', '-', '_', (char)VK_OEM_PERIOD};
 		char numbers[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 		/*Check if a char is pressed*/

@@ -77,8 +77,7 @@ void Host::Life()
 		}
 		else
 		{
-			Restart(zGameMode, zMapName);
-		}
+			Restart(zGameMode, zMapName);		}
 	
 		Sleep(5);
 	}

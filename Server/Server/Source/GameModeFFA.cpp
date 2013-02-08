@@ -22,6 +22,10 @@ bool GameModeFFA::Update( float dt )
 	{
 		if(zScoreBoard[(*it)] >= zKillLimit)
 		{
+			for(auto i = zPlayers.begin(); i != zPlayers.end(); i++)
+			{
+				MaloW::Debug("Kills: " + MaloW::convertNrToString(zScoreBoard[(*i)]));
+			}
 			return false;
 		}
 	}
