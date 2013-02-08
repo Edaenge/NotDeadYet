@@ -26,6 +26,15 @@ void ActorSynchronizer::OnEvent( Event* e )
 	{
 		zUpdateSet.insert(USE->zActor);
 	}
+	else if (ActorAdded* AD = dynamic_cast<ActorAdded*>(e))
+	{
+		zNewActorSet.insert(AD->zActor);
+	}
+	else if(ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e))
+	{
+		zRemoveActorSet.insert(AR->zActor);
+	}
+
 }
 
 void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
@@ -42,9 +51,46 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 
 		cd->Send(msg);
 	}
+
+	RegisterActor(cd);
+	RemoveActor(cd);
+
+}
+
+void ActorSynchronizer::RegisterActor( ClientData* cd )
+{
+	NetworkMessageConverter nmc;
+	std::string msg;
+
+	for(auto it = zNewActorSet.begin(); it != this->zNewActorSet.end(); it++)
+	{
+		msg = nmc.Convert(MESSAGE_TYPE_NEW_ACTOR, (float)(*it)->GetID());
+		msg += nmc.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
+		msg += nmc.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
+		msg += nmc.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
+		msg += nmc.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetModel());
+
+		cd->Send(msg);
+	}
+}
+
+void ActorSynchronizer::RemoveActor( ClientData* cd )
+{
+	NetworkMessageConverter nmc;
+	std::string msg;
+
+	for(auto it = zRemoveActorSet.begin(); it != this->zRemoveActorSet.end(); it++)
+	{
+		msg = nmc.Convert(MESSAGE_TYPE_REMOVE_ACTOR, (float)(*it)->GetID());
+
+		cd->Send(msg);
+	}
 }
 
 void ActorSynchronizer::ClearAll()
 {
 	this->zUpdateSet.clear();
+	this->zNewActorSet.clear();
+	this->zRemoveActorSet.clear();
 }
+

@@ -13,6 +13,15 @@ public:
 	ClientData* clientData;
 };
 
+/*Event when a player have been created in game.*/
+class PlayerAddEvent : public Event
+{
+public:
+	virtual ~PlayerAddEvent() {}
+
+	Player* player;
+};
+
 /*Event when a player has disconnected.*/
 class PlayerDisconnectedEvent : public Event
 {
@@ -21,7 +30,14 @@ public:
 
 	ClientData* clientData;
 };
+/*Event when a player have been removed in game.*/
+class PlayerRemoveEvent : public Event
+{
+public:
+	virtual ~PlayerRemoveEvent() {}
 
+	Player* player;
+};
 /*Event when a player has died.*/
 class PlayerDiedEvent : public Event
 {

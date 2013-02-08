@@ -2,6 +2,7 @@
 #include "ProjectileBehavior.h"
 #include "Actor.h"
 
+static const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 
 ProjectileBehavior::ProjectileBehavior( Actor* actor, World* world ) : Behavior(actor, world)
 {
