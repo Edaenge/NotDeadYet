@@ -101,7 +101,7 @@ private:
 	/*! Updates The Positions*/
 	void UpdateActors();
 	/*! Updates the camera position to follow the mesh.*/
-	void UpdateCameraPos();
+	void UpdateMeshRotation();
 	/*! Updates The Clock and returns the DeltaTime*/
 	float Update();
 

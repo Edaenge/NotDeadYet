@@ -283,7 +283,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	//Handles if client disconnects.
 	else if(msgArray[0].find(M_CONNECTION_CLOSED.c_str()) == 0)
 	{
-		//this->KickClient(ID);
+		HandleClientDisconnect(cc);
 	}
 	//Handles if not of the above.
 	else
@@ -371,6 +371,9 @@ void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 {
 	PlayerDisconnectedEvent e;
 	auto i = zClients.find(channel);
+
+	e.clientData = i->second;
+
 	NotifyObservers(&e);
 	SAFE_DELETE(i->second);
 }

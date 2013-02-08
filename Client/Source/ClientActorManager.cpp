@@ -41,7 +41,7 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				if((*it_Update)->GetID() == clientID)
 				{
 					GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);
-					GetGraphics()->GetCamera()->SetPosition(position + Vector3(0.0f, 2.0f, 0.0f));
+					GetGraphics()->GetCamera()->SetPosition(position + Vector3(0.0f, 3.0f, 0.0f));
 				}
 				actor->SetPosition(position);
 				(*it_Update)->ComparePosition(position);
@@ -67,7 +67,9 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			
 			if (!(*it_Update)->HasPositionChanged() && !(*it_Update)->HasRotationChanged() && !(*it_Update)->HasStateChanged())
 			{
+				Updates* temp = (*it_Update); 
 				it_Update = zUpdates.erase(it_Update);
+				SAFE_DELETE(temp);
 			}
 			else
 			{
