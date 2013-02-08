@@ -78,6 +78,9 @@ void Game::OnEvent( Event* e )
 		// Create Player
 		Player* player = new Player(PCE->clientData);
 		zPlayers[PCE->clientData] = player;
+		
+		//Lets gamemode observe players.
+		player->AddObserver(this->zGameMode);
 
 		//Tells the client it has been connected.
 		NetworkMessageConverter NMC;
@@ -148,6 +151,8 @@ void Game::OnEvent( Event* e )
 		WorldActor* actor = new WorldActor();
 		zWorldActors[ELE->entity] = actor;
 		zActorManager->AddActor(actor);
+
+		actor->AddObserver(this->zGameMode);
 	}
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
@@ -164,6 +169,7 @@ void Game::OnEvent( Event* e )
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zActorManager->AddActor(actor);
+		actor->AddObserver(this->zGameMode);
 
 		// Start Position
 		Vector3 center;

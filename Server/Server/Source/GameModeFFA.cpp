@@ -1,9 +1,6 @@
 #include "GameModeFFA.h"
-
-void GameModeFFA::OnEvent( Event* e )
-{
-	//throw std::exception("The method or operation is not implemented.");
-}
+#include "Actor.h"
+#include "Player.h"
 
 GameModeFFA::GameModeFFA()
 {
@@ -13,4 +10,12 @@ GameModeFFA::GameModeFFA()
 GameModeFFA::~GameModeFFA()
 {
 
+}
+
+void GameModeFFA::OnEvent( Event* e )
+{
+	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
+	{
+
+	}
 }
