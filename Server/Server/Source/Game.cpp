@@ -13,10 +13,8 @@
 #include "Physics.h"
 
 
-Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile, int maxNrOfPlayer )
+Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile )
 {
-	zMaxNrOfPlayers = maxNrOfPlayer;
-
 	if (mode.find("FFA") == 0 )
 	{
 		zGameMode = new GameModeFFA(this, 10);
@@ -44,10 +42,22 @@ Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worl
 }
 
 Game::~Game()
-{
-	if ( zWorld ) delete zWorld, zWorld = 0;
+{	
+	for( auto i = zBehaviors.begin(); i != zBehaviors.end(); ++i )
+	{
+		delete *i;
+	}
+	zBehaviors.clear();
 
-	SAFE_DELETE(zActorManager);
+	for( auto i = zPlayers.begin(); i != zPlayers.end(); ++i )
+	{
+		delete i->second;
+	}
+	zPlayers.clear();
+
+	if ( zGameMode ) delete zGameMode;
+	if ( zWorld ) delete zWorld;
+	if ( zActorManager ) delete zActorManager;
 }
 
 bool Game::Update( float dt )

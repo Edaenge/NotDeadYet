@@ -11,16 +11,23 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 class ClientData
 {
-public:
 	ClientData(MaloW::ClientChannel* cc);
 	virtual ~ClientData();
 
-	inline MaloW::ClientChannel* GetClient() const {return zClient;}
+	bool zPinged;
+	float zCurrentPingTime;
+	float zTotalPingTime;
+	float zMaxPingTime;
+	int zNrOfPings;
+	bool zReady;
+
+	MaloW::ClientChannel* zClient;
+public:
+
 	inline float GetCurrentPingTime() const {return zCurrentPingTime;}
 	inline float GetTotalPingTime() const {return zTotalPingTime;}
 	inline int GetNrOfPings() const {return zNrOfPings;}
 	inline bool GetReady(){ return zReady; }
-	inline unsigned int GetClientID() const {return this->zClient->getID();}
 	
 	inline void SetReady(bool ready){ zReady = ready; }
 	inline void SetPinged(const bool pinged) {zPinged = pinged;}
@@ -32,7 +39,7 @@ public:
 	/*! Sends a message to the client.*/
 	inline void Send(const std::string& msg)
 	{
-		zClient->TrySend(msg);
+		if ( zClient ) zClient->TrySend(msg);
 	}
 
 	/*! Handle the ping from client.*/
@@ -42,15 +49,5 @@ public:
 	/*! kicks the client.*/
 	void Kick();
 
-private:
-
-private:
-	bool zPinged;
-	float zCurrentPingTime;
-	float zTotalPingTime;
-	float zMaxPingTime;
-	int zNrOfPings;
-	bool zReady;
-
-	MaloW::ClientChannel* zClient;
+	friend class Host;
 };

@@ -5,10 +5,17 @@
 #include "PlayerActor.h"
 #include "PlayerConfiguration.h"
 
-const int MAX_VELOCITY = 30;const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
+const int MAX_VELOCITY = 30;
+const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 const float ELASTICITY = 0.5f;
-const float ACCELERATION = 2.0f;
+const float ACCELERATION = 10.0f;
 const float PLAYERHEIGHT = 1.7f;
+const float GROUNDFRICTION = 0.4f;
+const float AIRFRICTION = 0.95f;
+const float AIRDENSITY = 1.225f;
+const float DRAGCOOEFICIENT = 0.6f;
+const float HUMANSURFACEAREA = 1.0f;
+const float HUMANWEIGHT = 80.0f;
 
 PlayerHumanBehavior::PlayerHumanBehavior( Actor* actor, World* world, Player* player ) : 
 	PlayerBehavior(actor, world, player)
@@ -27,50 +34,77 @@ bool PlayerHumanBehavior::Update( float dt )
 		return true;
 
 	KeyStates keyStates = this->zPlayer->GetKeys();
-	Vector3 newPlayerPos;
-	Vector3 moveDir = Vector3(0.0f, 0.0f, 0.0f);
+	Vector3 curPosition = this->zActor->GetPosition();
 
-	Vector3 currentPlayerPos = this->zActor->GetPosition();
+	// Movement Keys
+	float forwardMovement = (float)(keyStates.GetKeyState(KEY_FORWARD) - keyStates.GetKeyState(KEY_BACKWARD));
+	float sideMovement = (float)(keyStates.GetKeyState(KEY_RIGHT) - keyStates.GetKeyState(KEY_LEFT));
 
-	//Get Directions
-	Vector3 currentPlayerDir = this->zActor->GetDir();
-	Vector3 currentPlayerUp = Vector3(0.0f, 1.0f, 0.0f);
-	currentPlayerDir.y = 0; // Need a vector that is horizontal to X and Z
-	currentPlayerDir.Normalize();
-	Vector3 currentPlayerRight = currentPlayerUp.GetCrossProduct(currentPlayerDir);
-	currentPlayerRight.Normalize();
-	Vector3 currentGroundNormal = this->zWorld->CalcNormalAt(currentPlayerPos.GetXZ());
-
-	// Calc the movement vector
-	moveDir += currentPlayerDir * (float)(keyStates.GetKeyState(KEY_FORWARD) - //if KEY_BACKWARD then currentPlayerDir inverse 
-		keyStates.GetKeyState(KEY_BACKWARD));
-
-	moveDir += currentPlayerRight * (float)(keyStates.GetKeyState(KEY_RIGHT) - 
-		keyStates.GetKeyState(KEY_LEFT));
-
-	moveDir.Normalize();
-	moveDir *= 10.0f;
-
-	this->zVelocity += (moveDir + GRAVITY) * dt;
-
-	if(this->zVelocity.GetLength() > MAX_VELOCITY)
+	if ( forwardMovement != 0.0f || sideMovement != 0.0f )
 	{
-		this->zVelocity.Normalize();
-		this->zVelocity *= MAX_VELOCITY;
+		Vector3 moveDir = Vector3(0.0f, 0.0f, 0.0f);
+
+		// Get Directions
+		Vector3 playerForwardVector = this->zActor->GetDir();
+		playerForwardVector.y = 0; // Need a vector that is horizontal to X and Z
+		playerForwardVector.Normalize();
+		Vector3 playerRightVector = Vector3(0.0f, 1.0f, 0.0f).GetCrossProduct(playerForwardVector);
+		playerRightVector.Normalize();
+
+		// Calc the movement vector
+		moveDir += playerForwardVector * forwardMovement;
+		moveDir += playerRightVector * sideMovement;
+		moveDir.Normalize();
+		moveDir *= ACCELERATION;
+
+		// Movement Velocity
+		zVelocity += moveDir * dt;
 	}
 
-	float newGroundHeight = zWorld->CalcHeightAtWorldPos(currentPlayerPos.GetXZ()) + PLAYERHEIGHT;
-	if( newGroundHeight > currentPlayerPos.y )
+	// Check Ground
+	bool isOnGround = false;
+	float heightAboveGround = 0.0f;
+
+	try
 	{
-		Vector3 newGroundNormal = zWorld->CalcNormalAt(currentPlayerPos.GetXZ());
-		this->zVelocity = newGroundNormal * this->zVelocity.GetLength() * ELASTICITY;
+		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
+		heightAboveGround = curPosition.y - groundHeight;
+		if( heightAboveGround <= 0.0f ) isOnGround = true;
+	}
+	catch(...)
+	{
+
 	}
 
-	currentPlayerPos += this->zVelocity * dt;
+	// Gravity
+	zVelocity += GRAVITY * dt;
 
-	this->zActor->SetPosition(currentPlayerPos);
-	this->zAnchor->position = newPlayerPos.GetXZ();
-	this->zAnchor->radius = SIGHTRADIUS;
+	// Air Resistance
+	Vector3 airResistance( pow(zVelocity.x, 2.0f), pow(zVelocity.y, 2.0f), pow(zVelocity.z, 2.0f) );
+	if ( zVelocity.x >= 0.0f ) airResistance.x *= -1.0;
+	if ( zVelocity.y >= 0.0f ) airResistance.y *= -1.0;
+	if ( zVelocity.z >= 0.0f ) airResistance.z *= -1.0;
+	airResistance *= 0.5f * AIRDENSITY * DRAGCOOEFICIENT * HUMANSURFACEAREA;
+	zVelocity -= airResistance / HUMANWEIGHT * dt;
+
+	// Apply Velocity
+	Vector3 newPosition = curPosition + zVelocity * dt;
+
+	try
+	{
+		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
+		if ( newPosition.y < groundHeight ) newPosition.y = groundHeight, zVelocity.y = 0.0f;
+		
+		// Apply Push
+		Vector3 norm = zWorld->CalcNormalAt(newPosition.GetXZ());
+		zVelocity += norm * dt;
+	}
+	catch(...)
+	{
+
+	}
+
+	this->zActor->SetPosition(newPosition);
 
 	PhysicalConditionCalculator(dt);
 

@@ -73,6 +73,9 @@ public:
 	// Returns Number of active connections
 	unsigned int GetNumClients() const;
 
+	// Restart Game
+	void Restart( const std::string& gameMode, const std::string& map );
+
 	// Synchronize Clients
 	void SynchronizeAll();
 private:
