@@ -33,22 +33,29 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 	{
 		Actor* actor = this->SearchAndGetActor((*it_Update)->GetID());
 
-		if((*it_Update)->GetID() == clientID)
-			GetGraphics()->GetCamera()->SetPosition(actor->GetPosition());
-
 		if (actor)
 		{
 			if ((*it_Update)->HasPositionChanged())
 			{
 				Vector3 position = this->InterpolatePosition(actor->GetPosition(), (*it_Update)->GetPosition(), t);
 				actor->SetPosition(position);
+				if((*it_Update)->GetID() == clientID)
+					GetGraphics()->GetCamera()->SetPosition(position + Vector3(0.0f, 2.0f, 0.0f));
+
 				(*it_Update)->ComparePosition(position);
 			}
-			if ((*it_Update)->HasRotationChanged())
+			if((*it_Update)->GetID() != clientID)
 			{
-				Vector4 rotation = this->InterpolateRotation(actor->GetRotation(), (*it_Update)->GetRotation(), t);
-				actor->SetRotation(rotation);
-				(*it_Update)->CompareRotation(rotation);
+				if ((*it_Update)->HasRotationChanged())
+				{
+					Vector4 rotation = this->InterpolateRotation(actor->GetRotation(), (*it_Update)->GetRotation(), t);
+					actor->SetRotation(rotation);
+					(*it_Update)->CompareRotation(rotation);
+				}
+			}
+			else
+			{
+				(*it_Update)->SetRotationChanged(false);
 			}
 			if ((*it_Update)->HasStateChanged())
 			{

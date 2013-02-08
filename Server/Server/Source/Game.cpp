@@ -168,8 +168,8 @@ void Game::OnEvent( Event* e )
 		// Start Position
 		Vector3 center;
 		center.x = zWorld->GetWorldCenter().x;
-		center.y = 1.7f;
 		center.z = zWorld->GetWorldCenter().y;
+		center.y = zWorld->CalcHeightAtWorldPos(Vector2(center.x, center.z));
 		actor->SetPosition(center);
 
 		// Apply Default Player Behavior
