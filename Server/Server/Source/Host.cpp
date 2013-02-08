@@ -103,10 +103,6 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 			return str;
 		}
 	}
-	catch(const char *str)
-	{
-		return str;
-	}
 
 	return 0;
 }
