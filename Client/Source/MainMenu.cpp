@@ -24,9 +24,9 @@ void MainMenu::Init()
 {
 	GraphicsEngine* eng = GetGraphics();
 
-	const iGraphicsEngineParams& GEP = GetGraphics()->GetEngineParameters();
-	int windowWidth = GEP.WindowWidth;
-	int windowHeight = GEP.WindowHeight;
+	const iGraphicsEngineParams* GEP = GetGraphics()->GetEngineParameters();
+	int windowWidth = GEP->windowWidth;
+	int windowHeight = GEP->windowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
@@ -162,78 +162,80 @@ void MainMenu::Run()
 		{
 			eng->Update();
 			mousePos = GetGraphics()->GetKeyListener()->GetMousePosition();
-
-			//Try to get an event from buttons, if no event from main set try second.
-			retEvent = zSets[this->zPrimarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
-			if(retEvent == NULL)
-				retEvent = zSets[this->zSecondarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
-
-			if(retEvent != NULL)
+			if(mousePos.x != -1 || mousePos.y != -1)
 			{
-				if(retEvent->GetEventMessage() == "ChangeSetEvent")
+				//Try to get an event from buttons, if no event from main set try second.
+				retEvent = zSets[this->zPrimarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
+				if(retEvent == NULL)
+					retEvent = zSets[this->zSecondarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
+
+				if(retEvent != NULL)
 				{
-					ChangeSetEvent* setEvent = (ChangeSetEvent*)retEvent;
-
-					this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet); // THIS IS ALWAYS DONE IN THIS FUNCTION!
-					zPrimarySet = (SET)setEvent->GetSet(); // THIS IS ALWAYS DONE IN THIS FUNCTION!
-
-					//Special Menu Things Are Done Below.
-					switch(setEvent->GetSet())
+					if(retEvent->GetEventMessage() == "ChangeSetEvent")
 					{
-					case NOMENU:
-						this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet);
+						ChangeSetEvent* setEvent = (ChangeSetEvent*)retEvent;
+
+						this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet); // THIS IS ALWAYS DONE IN THIS FUNCTION!
+						zPrimarySet = (SET)setEvent->GetSet(); // THIS IS ALWAYS DONE IN THIS FUNCTION!
+
+						//Special Menu Things Are Done Below.
+						switch(setEvent->GetSet())
+						{
+						case NOMENU:
+							this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet);
+
+							this->EnableMouse(false);
+
+							this->StartTestRun();
+
+							this->EnableMouse(true);
+
+							this->SwapMenus(MAINMENU, this->zSecondarySet);
+
+							break;
+						case MAINMENU:
+
+							break;
+						case FIND_SERVER:
+
+							break;
+						case OPTIONS:
+
+							break;
+						case QUIT:
+							run = false;
+							break;
+						default:
+
+							break;
+						}
+					}
+					else if(retEvent->GetEventMessage() == "ChangeTextAndMenuEvent")
+					{
+						ChangeTextAndMenuEvent* cEvent = (ChangeTextAndMenuEvent*)retEvent;
+
+						string temp = zSets[this->zPrimarySet].GetTextFromField(cEvent->GetTextBoxName());
+
+					
+
+						this->SwapMenus(NOMENU, NOMENU);
 
 						this->EnableMouse(false);
 
-						this->StartTestRun();
+						zGame->InitGameClient(temp, 11521);	
+						zGame->Run();
 
 						this->EnableMouse(true);
 
 						this->SwapMenus(MAINMENU, this->zSecondarySet);
-
-						break;
-					case MAINMENU:
-
-						break;
-					case FIND_SERVER:
-
-						break;
-					case OPTIONS:
-
-						break;
-					case QUIT:
-						run = false;
-						break;
-					default:
-
-						break;
 					}
 				}
-				else if(retEvent->GetEventMessage() == "ChangeTextAndMenuEvent")
+				else
 				{
-					ChangeTextAndMenuEvent* cEvent = (ChangeTextAndMenuEvent*)retEvent;
-
-					string temp = zSets[this->zPrimarySet].GetTextFromField(cEvent->GetTextBoxName());
-
-					
-
-					this->SwapMenus(NOMENU, NOMENU);
-
-					this->EnableMouse(false);
-
-					zGame->InitGameClient(temp, 11521);	
-					zGame->Run();
-
-					this->EnableMouse(true);
-
-					this->SwapMenus(MAINMENU, this->zSecondarySet);
+					//Returned no event
 				}
+				Sleep(50);
 			}
-			else
-			{
-				//Returned no event
-			}
-			Sleep(50);
 		}
 
 		

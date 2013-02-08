@@ -102,7 +102,7 @@ float Client::Update()
 			this->zAnchor->position = cameraPos;
 			this->zEng->SetSceneAmbientLight(this->zWorld->GetAmbientAtWorldPos(cameraPos));
 
-			this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
+			this->zAnchor->radius = this->zEng->GetEngineParameters()->FarClip;
 		}
 
 		this->zWorld->Update();
@@ -132,10 +132,11 @@ void Client::InitGraphics(const std::string& mapName)
 
 	this->zAnchor = this->zWorld->CreateAnchor();
 	this->zAnchor->position = center;
-	this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
+	this->zAnchor->radius = this->zEng->GetEngineParameters()->FarClip;
 
-	int windowWidth = GetGraphics()->GetEngineParameters().WindowWidth;
-	int windowHeight = GetGraphics()->GetEngineParameters().WindowHeight;	float dx = ((float)windowHeight * 4.0f) / 3.0f;
+	int windowWidth = this->zEng->GetEngineParameters()->windowWidth;
+	int windowHeight = this->zEng->GetEngineParameters()->windowHeight;	
+	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 	float length = ((25.0f / 1024.0f) * dx);
 	float xPos = offSet + (0.5f * dx) - length * 0.5f;
