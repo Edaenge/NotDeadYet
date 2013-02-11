@@ -30,8 +30,12 @@
     <ClCompile Include="Source\ClientObjectHandler.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\GuiManager.cpp" />
+    <ClCompile Include="Source\GUI\ChangeOptionEvent.cpp" />
+    <ClCompile Include="Source\GUI\ChangeResEvent.cpp" />
     <ClCompile Include="Source\GUI\ChangeSetEvent.cpp" />
+    <ClCompile Include="Source\GUI\CheckBox.cpp" />
     <ClCompile Include="Source\GUI\CircularListGui.cpp" />
+    <ClCompile Include="Source\GUI\DropDownList.cpp" />
     <ClCompile Include="Source\GUI\Element.cpp" />
     <ClCompile Include="Source\GUI\ChangeTextAndMenuEvent.cpp" />
     <ClCompile Include="Source\GUI\GuiElement.cpp" />
@@ -61,8 +65,12 @@
     <ClInclude Include="Source\Client.h" />
     <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\GuiManager.h" />
+    <ClInclude Include="Source\GUI\ChangeOptionEvent.h" />
+    <ClInclude Include="Source\GUI\ChangeResEvent.h" />
     <ClInclude Include="Source\GUI\ChangeSetEvent.h" />
+    <ClInclude Include="Source\GUI\CheckBox.h" />
     <ClInclude Include="Source\GUI\CircularListGui.h" />
+    <ClInclude Include="Source\GUI\DropDownList.h" />
     <ClInclude Include="Source\GUI\Element.h" />
     <ClInclude Include="Source\GUI\ChangeTextAndMenuEvent.h" />
     <ClInclude Include="Source\GUI\GuiElement.h" />
