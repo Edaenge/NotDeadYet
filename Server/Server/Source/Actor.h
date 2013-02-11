@@ -68,14 +68,14 @@ class Actor : public Observed
 	Vector3 zDir;
 	Vector3 zScale;
 
-	long zID;
+	unsigned int zID;
 	PhysicsObject* zPhysicsObject;
 
 public:
 	Actor();
 	virtual ~Actor();
 	
-	inline long GetID() const { return this->zID; }
+	inline unsigned int GetID() const { return this->zID; }
 
 	// Set Transformation Functions
 	void SetPosition(const Vector3& pos);

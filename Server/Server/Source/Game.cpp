@@ -9,6 +9,7 @@
 #include "DeerActor.h"
 #include "WolfActor.h"
 #include "BearActor.h"
+#include "ItemActor.h"
 #include "PlayerWolfBehavior.h"
 #include "AIWolfBehavior.h"
 #include "WorldActor.h"
@@ -155,6 +156,31 @@ void Game::OnEvent( Event* e )
 
 		delete i->second;
 		zPlayers.erase(i);
+	}
+	else if(PlayerLootObjectEvent* PLOE = dynamic_cast<PlayerLootObjectEvent*>(e))
+	{
+		std::set<Actor*> actors = this->zActorManager->GetActors();
+		std::vector<Item*> lootedItems;
+
+		for (auto it_actor = actors.begin(); it_actor != actors.end(); it_actor++)
+		{
+			for (auto it_ID = PLOE->actorID.begin(); it_ID != PLOE->actorID.end(); it_ID++)
+			{
+				if ((*it_ID) == (*it_actor)->GetID())
+				{
+					if (ItemActor* iActor = dynamic_cast<ItemActor*>(*it_actor))
+					{
+						lootedItems.push_back(iActor->GetItem());
+					}
+					else if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(*it_actor))
+					{
+						//Inventory* inv = pActor->GetInventory();
+					}
+
+				}
+			}
+		}
+
 	}
 	else if ( PlayerPickupObjectEvent* PPOE = dynamic_cast<PlayerPickupObjectEvent*>(e) )
 	{

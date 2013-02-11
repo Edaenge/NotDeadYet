@@ -263,6 +263,18 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.objID = _objID;
 		NotifyObservers(&e);
 	}
+	else if(msgArray[0].find(M_LOOT_OBJECT.c_str()) == 0)
+	{
+		PlayerLootObjectEvent e;
+		e.clientData = cd;
+		for (auto it = msgArray.begin(); it != msgArray.end(); it++)
+		{
+			unsigned int id = this->zMessageConverter.ConvertStringToInt(M_LOOT_OBJECT, (*it));
+
+			e.actorID.push_back(id);
+		}
+		NotifyObservers(&e);
+	}
 	//Handles loot item request
 	else if(msgArray[0].find(M_LOOT_ITEM.c_str()) == 0)
 	{

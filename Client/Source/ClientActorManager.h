@@ -103,6 +103,7 @@ public:
 	bool AddActor(Actor* actor);
 	Actor* SearchAndGetActor(const unsigned int ID);
 	Actor* GetActor(const int Index);
+	std::vector<Actor*> GetActors() const {return this->zActors;}
 	bool RemoveActor(const int Index);
 	int SearchForActor(const unsigned int ID);
 	void AddUpdate(Updates* update);

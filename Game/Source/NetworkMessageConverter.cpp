@@ -138,6 +138,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_LOOT_ITEM:
 		ss << M_LOOT_ITEM;
 		break;
+	case MESSAGE_TYPE_LOOT_OBJECT:
+		ss << M_LOOT_OBJECT;
+		break;
 	case MESSAGE_TYPE_DROP_ITEM:
 		ss << M_DROP_ITEM;
 		break;
@@ -309,10 +312,10 @@ Vector3 NetworkMessageConverter::ConvertStringToVector(const std::string& type, 
 }
 Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& type, const std::string& msg)
 {
-	float x;
-	float y;
-	float z;
-	float w;
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+	float w = 1.0f;
 	sscanf_s(msg.c_str(), (type + "%f %f %f %f").c_str(), &x, &y, &z, &w);
 
 	Vector4 quaternion = Vector4(x, y, z, w);
@@ -321,13 +324,13 @@ Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& ty
 }
 int NetworkMessageConverter::ConvertStringToInt(const std::string& type, const std::string& msg)
 {
-	int value;
+	int value = 0;
 	sscanf_s(msg.c_str(), (type + "%d").c_str(), &value);
 	return value;
 }
 float NetworkMessageConverter::ConvertStringToFloat(const std::string& type, const std::string& msg)
 {
-	float value;
+	float value = 0.0f;
 	sscanf_s(msg.c_str(), (type + "%f").c_str(), &value);
 	return value;
 }

@@ -106,7 +106,7 @@ private:
 	float Update();
 
 	/*! Checks Ray Vs Static/Dynamic Objects*/
-	std::vector<Looting_Data> RayVsWorld();
+	std::vector<unsigned int> RayVsWorld();
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
 	bool CheckCollision();
 
