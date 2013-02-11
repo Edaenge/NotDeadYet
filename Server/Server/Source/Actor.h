@@ -90,6 +90,6 @@ public:
 	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
 	inline const Vector3& GetDir() const { return zDir; }
-	const std::string& GetModel() const;
+	virtual const std::string& GetModel() const;
 	PhysicsObject* GetPhysicsObject() const {return this->zPhysicsObject;}
 };

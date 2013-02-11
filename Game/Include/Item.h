@@ -74,22 +74,28 @@ public:
 	void SetItemSubType(const unsigned int SubType) {this->zItemSubType = SubType;}
 	/*! Sets the Item Description*/
 	void SetItemDescription(const std::string& description) {this->zItemDescription = description;}
+	/*! Sets the mesh model*/
+	void SetModel(const std::string& model) {this->zMeshModel = model;}
 	/*! Sets the Item Stack Size.*/
 	void SetStackSize(const unsigned int size) {this->zStacks = size;}
+	void SetStacking(bool value) {this->zStacking = value;}
 	void IncreaseStackSize(const unsigned int size) {this->zStacks += size;}
 	void DecreaseStackSize(const unsigned int size) {this->zStacks -= size;}
+
 	bool GetStacking() const {return this->zStacking;}
-	void SetStacking(bool value) {this->zStacking = value;}
+	const std::string& GetModel() const {return this->zMeshModel;}
+
 	virtual bool Use() = 0;
 	virtual std::string ToMessageString(NetworkMessageConverter* NMC);  
 protected:
 	unsigned int zStacks;
 	unsigned int zID;
 	int zWeight;
-	std::string zItemName;
 	unsigned int zItemType;
 	unsigned int zItemSubType;
 	std::string zItemDescription;
 	std::string zIconPath;
+	std::string zItemName;
+	std::string zMeshModel;
 	bool zStacking;
 };
