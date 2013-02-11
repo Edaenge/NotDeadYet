@@ -24,9 +24,9 @@ void MainMenu::Init()
 {
 	GraphicsEngine* eng = GetGraphics();
 
-	const iGraphicsEngineParams* GEP = GetGraphics()->GetEngineParameters();
-	int windowWidth = GEP->windowWidth;
-	int windowHeight = GEP->windowHeight;
+	const iGraphicsEngineParams& GEP = GetGraphics()->GetEngineParameters();
+	int windowWidth = GEP.WindowWidth;
+	int windowHeight = GEP.WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
@@ -149,12 +149,12 @@ void MainMenu::Init()
 	zSets[OPTIONS].AddElement(temp);
 
 	//Shadow Quality Text
-	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (300.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/ShadowText.png", 
+	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (360.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/ShadowText.png", 
 		(175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp);
 
 	//FXAA Text
-	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (360.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/FXAAText.png", 
+	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (300.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/FXAAText.png", 
 		(175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp);
 
@@ -195,44 +195,44 @@ void MainMenu::Init()
 	dropdownlist->AddButton("Media/Menu/Options/169big.png", new ChangeResEvent(1920, 1080), "", "");
 	zSets[OPTIONS].AddElement(temp);
 
-	//TextBox Shadow
-	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (215.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters()->ShadowMapSettings), 
-		"ShadowQuality", 1.0f, 2, NR, 0, 9);
-	zSets[OPTIONS].AddElement(temp);
-
 	//CheckBox FXAA
 	bool checked = false;
-	if(GetGraphics()->GetEngineParameters()->FXAAQuality > 0)
+	if(GetGraphics()->GetEngineParameters().FXAAQuality > 0)
 		checked = true;
 
-	temp = new CheckBox(offSet + (195.0f / 1024.0f) * dx, (270.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/CheckBoxFrame.png", 
+	temp = new CheckBox(offSet + (195.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/CheckBoxFrame.png", 
 		(32.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, "Media/Menu/Options/CheckBoxCheck.png", checked, 
 		new ChangeOptionEvent("FXAA", "false"), "FXAACheckBox");
 	zSets[OPTIONS].AddElement(temp);
 
 	//TextBox View Distance
-	temp = new TextBox(offSet + (195.0f / 1024.0f) * dx, (275.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(50.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters()->ShadowMapSettings), 
-		"ViewDistance", 1.0f, 3, NR, 0, 9);
+	temp = new TextBox(offSet + (278.0f / 1024.0f) * dx, (410.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
+		"ViewDistance", 1, 3, NR, 0, 9);
+	zSets[OPTIONS].AddElement(temp);
+
+	//TextBox Shadow
+	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (352.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
+		"ShadowQuality", 1, 2, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Sound tech
 	//Master volume
-	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (175.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters()->ShadowMapSettings), 
+	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
 		"MasterVolume", 1.0f, 2, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Music Volume
-	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters()->ShadowMapSettings), 
+	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
 		"MusicVolume", 1.0f, 2, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Normal Volume
-	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (280.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters()->ShadowMapSettings), 
+	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
 		"NormalVolume", 1.0f, 2, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
@@ -347,7 +347,7 @@ void MainMenu::Run()
 						int i = NOMENU;
 						while(i =! LASTMENU)
 						{
-							zSets[i].Resize(GetGraphics()->GetEngineParameters()->windowWidth, GetGraphics()->GetEngineParameters()->windowHeight, windowWidth, windowHeight);
+							zSets[i].Resize(GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight, windowWidth, windowHeight);
 							i++;
 						}
 						GetGraphics()->ResizeGraphicsEngine(windowWidth, windowHeight);

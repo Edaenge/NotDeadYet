@@ -74,7 +74,6 @@ GUIEvent* GUISet::CheckCollision(float mouseX, float mouseY, bool mousePressed, 
 				break;
 			}
 		}
-		/*
 		else if(typeid(*this->mElements[i]) == typeid(DropDownList))
 		{
 			DropDownList* temp = (DropDownList*)this->mElements[i];
@@ -100,7 +99,7 @@ GUIEvent* GUISet::CheckCollision(float mouseX, float mouseY, bool mousePressed, 
 					break;
 				}
 			}
-		}*/
+		}
 	}
 	
 	return returnEvent;

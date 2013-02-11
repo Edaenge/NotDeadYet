@@ -131,7 +131,7 @@ private:
 	//////////////////////
 
 	bool CreateItemFromMessage( std::vector<std::string> msgArray, int& Index, Item*& item, const unsigned int ID);
-	void SendLootItemMessage(const unsigned int ID, const unsigned int ItemID, const int TYPE);
+	void SendLootItemMessage(const unsigned int ID, const unsigned int ItemID, const int Type, const int SubType);
 	void SendPickupItemMessage(const unsigned int ID);
 	void SendDropItemMessage(const unsigned int ID);
 	void SendUseItemMessage(const unsigned int ID);
@@ -175,7 +175,7 @@ private:
 	GraphicsEngine* zEng;
 	GuiManager* zGuiManager;
 	ServerChannel* zServerChannel;
-	ClientActorManager* zObjectManager;
+	ClientActorManager* zActorManager;
 	NetworkMessageConverter zMsgHandler;
 	Inventory* zPlayerInventory;
 

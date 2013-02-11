@@ -14,6 +14,17 @@ struct Menu_select_data
 	int zID;
 	int zType;
 };
+
+struct Looting_Gui_Data
+{
+	Looting_Gui_Data()
+	{
+		zGui_Data = Gui_Item_Data();
+		zActorID = 0;
+	}
+	Gui_Item_Data zGui_Data;
+	int zActorID;
+};
 class GuiManager
 {
 public:
@@ -28,7 +39,7 @@ public:
 	void UnEquipItem(const int ID, int stacks);
 	void ShowCircularItemGui();
 	void HideCircularItemGui();
-	void ShowLootingGui(std::vector<Gui_Item_Data> gui_Item_Data);
+	void ShowLootingGui(std::vector<Looting_Gui_Data> gui_Item_Data);
 	void HideLootingGui();
 	void ShowDeathGui();
 	void HideDeathGui();

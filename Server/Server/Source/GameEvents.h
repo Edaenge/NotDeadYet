@@ -84,9 +84,10 @@ public:
 
 	ClientData* clientData;
 
-	long objID;
-	long itemID;
-	int type;
+	unsigned int objID;
+	unsigned int itemID;
+	int itemType;
+	int subType;
 	
 };
 

@@ -3,7 +3,7 @@
 
 bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned int ID)
 {
-	int index = this->zObjectManager->SearchForActor(ID);
+	int index = this->zActorManager->SearchForActor(ID);
 
 	if (index != -1)
 	{
@@ -39,26 +39,6 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 		{
 			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
 		}
-		//else if(strcmp(key, M_HEALTH.c_str()) == 0)
-		//{
-		//	float health = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
-		//	playerObject->SetHealth(health);
-		//}
-		//else if(strcmp(key, M_HYDRATION.c_str()) == 0)
-		//{
-		//	float hydration = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
-		//	playerObject->SetHydration(hydration);
-		//}
-		//else if(strcmp(key, M_STAMINA.c_str()) == 0)
-		//{
-		//	float stamina = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
-		//	playerObject->SetStamina(stamina);
-		//}
-		//else if(strcmp(key, M_HUNGER.c_str()) == 0)
-		//{
-		//	float hunger = this->zMsgHandler.ConvertStringToInt(M_HEALTH, (*it));
-		//	playerObject->SetHunger(hunger);
-		//}
 		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
 		{
 			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
@@ -94,17 +74,17 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 	//Create player data
 	actor->SetStaticMesh(mesh);
 
-	this->zObjectManager->AddActor(actor);
+	this->zActorManager->AddActor(actor);
 
 	return true;
 }
 
 bool Client::UpdateActor(const std::vector<std::string>& msgArray, const unsigned int ID)
 {
-	int index = this->zObjectManager->SearchForUpdate(ID);
+	int index = this->zActorManager->SearchForUpdate(ID);
 	Updates* update = NULL;
 	if (index != -1)
-		update = this->zObjectManager->GetUpdate(index);
+		update = this->zActorManager->GetUpdate(index);
 	else
 		update = new Updates(ID);
 	
@@ -138,7 +118,7 @@ bool Client::UpdateActor(const std::vector<std::string>& msgArray, const unsigne
 		}
 	}
 	if (index == -1)
-		this->zObjectManager->AddUpdate(update);
+		this->zActorManager->AddUpdate(update);
 	
 	return true;
 }
@@ -148,7 +128,7 @@ bool Client::RemoveActor(const unsigned int ID)
 	if (ID == -1)
 		return false;
 
-	int index = this->zObjectManager->SearchForActor(ID);
+	int index = this->zActorManager->SearchForActor(ID);
 
 	//Check if object was found in the array
 	if(index == -1)
@@ -158,7 +138,7 @@ bool Client::RemoveActor(const unsigned int ID)
 	{
 		this->CloseConnection("Unknown reason possible Kicked");
 	}
-	Actor* object = this->zObjectManager->GetActor(index);
+	Actor* object = this->zActorManager->GetActor(index);
 	if (!object)
 		return false;
 
@@ -168,7 +148,7 @@ bool Client::RemoveActor(const unsigned int ID)
 	{
 		this->zEng->DeleteMesh(mesh);
 	}
-	if(!this->zObjectManager->RemoveActor(index))
+	if(!this->zActorManager->RemoveActor(index))
 	{
 		MaloW::Debug("Failed To Remove Actor with ID: " + MaloW::convertNrToString((float)ID));
 	}
