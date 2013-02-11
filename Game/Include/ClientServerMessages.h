@@ -5,7 +5,7 @@
 #include <Malow.h>
 
 static bool eraseFile = false;
-static bool writeToFile = true;
+static bool writeToFile = false;
 static bool msgWrites = false;
 
 namespace Messages
