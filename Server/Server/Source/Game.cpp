@@ -190,7 +190,7 @@ void Game::OnEvent( Event* e )
 					{
 						ID = iActor->GetID();
 						msg += iActor->GetItem()->ToMessageString(&NMC);
-						msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, ID);
+						msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
 					}
 					else if(AnimalActor* aActor = dynamic_cast<AnimalActor*>(*it_actor))
 					{
@@ -211,7 +211,7 @@ void Game::OnEvent( Event* e )
 										for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
 										{
 											msg += (*it_Item)->ToMessageString(&NMC);
-											msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, ID);
+											msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
 										}
 									}
 								}
@@ -229,7 +229,7 @@ void Game::OnEvent( Event* e )
 							for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
 							{
 								msg += (*it_Item)->ToMessageString(&NMC);
-								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, ID);
+								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
 							}
 						}
 					}

@@ -24,7 +24,7 @@ bool GameModeFFA::Update( float dt )
 		{
 			for(auto i = zPlayers.begin(); i != zPlayers.end(); i++)
 			{
-				MaloW::Debug("Kills: " + MaloW::convertNrToString(zScoreBoard[(*i)]));
+				MaloW::Debug("Kills: " + MaloW::convertNrToString((float)zScoreBoard[(*i)]));
 			}
 			return false;
 		}
@@ -56,7 +56,7 @@ void GameModeFFA::OnEvent( Event* e )
 			unsigned int ID = ATD->zDealer->GetID();
 			float damage = ATD->zDamage.GetTotal();
 			NetworkMessageConverter NMC;
-			std::string msg = NMC.Convert(MESSAGE_TYPE_ACTOR_TAKE_DAMAGE, ID);
+			std::string msg = NMC.Convert(MESSAGE_TYPE_ACTOR_TAKE_DAMAGE, (float)ID);
 			msg += NMC.Convert(MESSAGE_TYPE_HEALTH, damage);
 			ClientData* cd = pa->GetPlayer()->GetClientData();
 			cd->Send(msg);

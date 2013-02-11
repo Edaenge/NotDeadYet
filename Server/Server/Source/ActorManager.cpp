@@ -39,7 +39,7 @@ void ActorManager::RemoveActor( Actor* actor )
 
 Actor* ActorManager::CheckCollisions(Actor* player)
 {
-	Actor* collision;
+	Actor* collision = NULL;
 	PhysicsCollisionData data;
 	float leastDistance = 2.0f;
 	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
@@ -62,7 +62,7 @@ Actor* ActorManager::CheckCollisions(Actor* player)
 	return collision;
 }
 
-Actor* ActorManager::SearchAndGetActor( const unsigned int ID ) const
+Actor* ActorManager::GetActor( const unsigned int ID ) const
 {
 	for(auto it_Actor = this->zActors.begin(); it_Actor != this->zActors.end(); it_Actor++)
 	{
@@ -71,4 +71,5 @@ Actor* ActorManager::SearchAndGetActor( const unsigned int ID ) const
 			return (*it_Actor);
 		}
 	}
+	return NULL;
 }
