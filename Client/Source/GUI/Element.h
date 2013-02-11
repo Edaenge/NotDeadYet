@@ -13,6 +13,8 @@
 #include "ChangeTextAndMenuEvent.h"
 #include "GraphicsEngine.h"
 #include "ChangeResEvent.h"
+#include "ChangeOptionEvent.h"
+#include "ChangeSetEvent.h"
 
 using namespace std;
 

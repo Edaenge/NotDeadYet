@@ -16,8 +16,8 @@
 #include "GUIPicture.h"
 #include "TextBox.h"
 #include "DropDownList.h"
+#include "CheckBox.h"
 
-#include "ChangeSetEvent.h"
 
 enum SET{
 	NOMENU,

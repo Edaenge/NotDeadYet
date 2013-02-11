@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphicsEngine.h"
+#include "Graphics.h"
 #include "Element.h"
 
 class GUIPicture : public Element
