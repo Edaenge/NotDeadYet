@@ -48,7 +48,7 @@ void MainMenu::Init()
 	zSets[MAINMENU].AddElement(temp);
 
 	//FIND SERVER
-	temp = new GUIPicture(0, (59.0f / 768.0f) * windowHeight, 1, "Media/Menu/FindServer/FindServer_BG.png", offSet + (1024.0f / 1024.0f) * dx, (650.0f / 768.0f) * windowHeight);
+	temp = new GUIPicture(offSet, (59.0f / 768.0f) * windowHeight, 1, "Media/Menu/FindServer/FindServer_BG.png", (1024.0f / 1024.0f) * dx, (650.0f / 768.0f) * windowHeight);
 	zSets[FIND_SERVER].AddElement(temp);
 
 	temp = new SimpleButton(offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1, "Media/Menu/FindServer/Back.png", 
@@ -93,16 +93,6 @@ void MainMenu::Init()
 		(89.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
 	zSets[FIND_SERVER].AddElement(temp);
 
-	//OPTIONS
-	temp = new GUIPicture(50, 50, 1, "Media/Icons/Options.png", windowWidth * (0.66f), windowHeight * (0.66f));
-	zSets[OPTIONS].AddElement(temp);
-
-	temp = new TextBox(100, 100, 1, "Media/Icons/MainMenu.png", 100, 50, "12", "SoundVolume", 1, 2, TEXTBOX::NR);
-	zSets[OPTIONS].AddElement(temp);
-
-	temp = new SimpleButton(70, 500, 1, "Media/Icons/Options.png", 100, 25, new ChangeSetEvent(MAINMENU), "Media/Icons/Quit.png", "Media/Icons/FindServer.png", 70, 500, 100, 25);
-	zSets[OPTIONS].AddElement(temp);
-
 	//Get IP
 	float AdressX = (offSet + (512.0f / 1024.0f) * dx) - (((200.0f / 1024.0f) * dx) / 2);
 	float AdressY = ((384.0f / 768.0f) * windowHeight) - (((100.0f / 768.0f) * windowHeight) / 2);
@@ -127,14 +117,70 @@ void MainMenu::Init()
 		, AdressY + (78.0f / 768.0f) * windowHeight, (75.0f / 1024.0f) * dx, (20.0f / 768.0f) * windowHeight);
 	zSets[GETIPADRESS].AddElement(temp);
 
+	//Options Menu
+
+	//Graphics Column
+	temp = new GUIPicture(offSet, (59.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/OptionsBG.png", (1024.0f / 1024.0f) * dx, (650.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp); 
+	
+	//Option Text
+	temp = new GUIPicture(offSet + (40.0f / 1024.0f) * windowWidth, (130.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/OptionsText.png", (175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp); 
+	
+	//Graphics Text
+	temp = new GUIPicture(offSet + (100.0f / 1024.0f) * windowWidth, (210.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/GraphicsText.png", (175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+	//Resolution Text
+	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * windowWidth, (240.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/ResolutionText.png", (175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+	//Shadow Quality Text
+	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * windowWidth, (300.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/ShadowText.png", (175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+	//FXAA Text
+	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * windowWidth, (360.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/FXAAText.png", (175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+	//View Distance Text
+	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * windowWidth, (420.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/ViewdistanceText.png", (175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+	// Sound Column
+	//Sound Text
+	temp = new GUIPicture(offSet + (500.0f / 1024.0f) * windowWidth, (210.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/SoundText.png", (175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+	//Mastervolume Text
+	temp = new GUIPicture(offSet + (520.0f / 1024.0f) * windowWidth, (240.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/MastervolumeText.png", (175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+	//Musicvolume Text
+	temp = new GUIPicture(offSet + (520.0f / 1024.0f) * windowWidth, (300.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/MusicvolumeText.png", (175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+	//Normalvolume Text
+	temp = new GUIPicture(offSet + (520.0f / 1024.0f) * windowWidth, (360.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/NormalvolumeText.png", (175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+	// Tech stuff
+	//DropDown list
+	temp = new DropDownList(offSet + (240.0f / 1024.0f) * windowWidth, (235.0f / 768.0f) * windowHeight, 1, "Media/Menu/Options/DropDownBG.png", (170.0f / 1024.0f) * windowWidth, (32.0f / 768.0f) * windowHeight, "ResolutionMenu");
+	DropDownList* dropdownlist = (DropDownList*)temp;
+	dropdownlist->AddButton("Media/Menu/Options/169small.png", new ChangeResEvent(1280, 720), "", "");
+	dropdownlist->AddButton("Media/Menu/Options/169medium.png", new ChangeResEvent(1600, 900), "", "");
+	dropdownlist->AddButton("Media/Menu/Options/169big.png", new ChangeResEvent(1920, 1080), "", "");
+	zSets[OPTIONS].AddElement(temp);
+
 	this->zPrimarySet = MAINMENU;
 	this->zSecondarySet = NOMENU;
 }
 
 void MainMenu::StartTestRun()
 {
-	zGame->InitGameClient("194.47.150.16", 11521);
-	//zGame->InitGameClient("127.0.0.1", 11521);	
+	//zGame->InitGameClient("194.47.150.16", 11521);
+	zGame->InitGameClient("127.0.0.1", 11521);	
 	zGame->Run();
 }
 
@@ -222,12 +268,16 @@ void MainMenu::Run()
 
 						this->EnableMouse(false);
 
-						zGame->InitGameClient(temp, 11521);	
+						zGame->InitGameClient(temp, 11521);	 // Save to connect IP
 						zGame->Run();
 
 						this->EnableMouse(true);
 
 						this->SwapMenus(MAINMENU, this->zSecondarySet);
+					}
+					else if(retEvent->GetEventMessage() == "ChangeOptionEvent")
+					{
+
 					}
 				}
 				else

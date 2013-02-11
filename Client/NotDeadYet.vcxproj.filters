@@ -117,6 +117,12 @@
     <ClCompile Include="Source\GUI\ChangeTextAndMenuEvent.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GUI\DropDownList.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\ChangeResEvent.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\SoundEngine\fmod.h">
@@ -210,6 +216,12 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUI\ChangeTextAndMenuEvent.h">
+      <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\DropDownList.h">
+      <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\ChangeResEvent.h">
       <Filter>Source\GUI</Filter>
     </ClInclude>
   </ItemGroup>

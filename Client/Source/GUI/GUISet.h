@@ -15,6 +15,7 @@
 #include "SimpleButton.h"
 #include "GUIPicture.h"
 #include "TextBox.h"
+#include "DropDownList.h"
 
 #include "ChangeSetEvent.h"
 

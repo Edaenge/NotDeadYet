@@ -12,6 +12,7 @@
 #include "NoEvent.h"
 #include "ChangeTextAndMenuEvent.h"
 #include "GraphicsEngine.h"
+#include "ChangeResEvent.h"
 
 using namespace std;
 
