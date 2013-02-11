@@ -102,4 +102,6 @@ protected:
 
 	Vector3 zPreviousPos;
 	Vector3 zDirection;
+
+	Inventory* zInventory;
 };

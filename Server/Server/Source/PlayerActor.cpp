@@ -1,11 +1,10 @@
 #include "PlayerActor.h"
 #include "ClientServerMessages.h"
+#include "MaloWFileDebug.h"
 
 PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) :
 	zPlayer(player)
 {
-	this->zInventory = NULL;
-
 	this->zPlayer = player;
 	SetPhysicsObject(physObj);
 	/*InitValues();*/
@@ -36,6 +35,22 @@ PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) :
 PlayerActor::~PlayerActor()
 {
 	SAFE_DELETE(this->zInventory);
+}
+
+Item* PlayerActor::DropItem(const long ID)
+{
+	Item* item = this->zInventory->SearchAndGetItem(ID);
+
+	if(!item)
+	{
+		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString((float)ID));
+		return NULL;
+	}
+	this->zInventory->RemoveItem(item);
+	if (Messages::FileWrite())	
+		Messages::Debug("Removed successes: " + MaloW::convertNrToString((float)ID));
+
+	return item;
 }
 
 //void PlayerActor::Update(float deltaTime)
@@ -265,21 +280,6 @@ return false;
 return false;*/
 //}
 //
-//bool PlayerActor::DropObject(const long ID)
-//{
-//	Item* item = this->zInventory->SearchAndGetItem(ID);
-//
-//	if(!item)
-//	{
-//		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString((float)ID));
-//		return false;
-//	}
-//	this->zInventory->RemoveItem(item);
-//	if (Messages::FileWrite())	
-//		Messages::Debug("Removed successes: " + MaloW::convertNrToString((float)ID));
-//
-//	return true;
-//}
 //
 //void PlayerActor::Drink(float hydration)
 //{

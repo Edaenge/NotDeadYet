@@ -24,7 +24,7 @@ void ActorManager::RemoveActor( Actor* actor )
 {
 	this->zActors.erase(actor);
 
-	ActorRemoved e;
+		ActorRemoved e;
 	e.zActor = actor;
 	NotifyObservers(&e);
 }
