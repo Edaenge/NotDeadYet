@@ -24,9 +24,9 @@ void MainMenu::Init()
 {
 	GraphicsEngine* eng = GetGraphics();
 
-	const iGraphicsEngineParams* GEP = GetGraphics()->GetEngineParameters();
-	int windowWidth = GEP->windowWidth;
-	int windowHeight = GEP->windowHeight;
+	const iGraphicsEngineParams& GEP = GetGraphics()->GetEngineParameters();
+	int windowWidth = GEP.WindowWidth;
+	int windowHeight = GEP.WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
@@ -183,12 +183,12 @@ void MainMenu::Init()
 	zSets[OPTIONS].AddElement(temp);
 
 	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (215.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters()->ShadowMapSettings), 
+		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
 		"ShadowQuality", 1, 2, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 	bool checked = false;
-	if(GetGraphics()->GetEngineParameters()->FXAAQuality > 0)
+	if(GetGraphics()->GetEngineParameters().FXAAQuality > 0)
 		checked = true;
 
 	temp = new CheckBox(offSet + (195.0f / 1024.0f) * dx, (270.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/CheckBoxFrame.png", 
@@ -197,7 +197,7 @@ void MainMenu::Init()
 	zSets[OPTIONS].AddElement(temp);
 
 	temp = new TextBox(offSet + (195.0f / 1024.0f) * dx, (275.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters()->ShadowMapSettings), 
+		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
 		"ViewDistance", 1, 3, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 

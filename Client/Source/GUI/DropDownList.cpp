@@ -10,7 +10,7 @@ DropDownList::DropDownList() : Element()
 DropDownList::DropDownList(float x, float y, float z, string textureName, float width, float height, string name) 
 	: Element(x, y, z, textureName, width, height)
 {
-	int windowHeight = GetGraphics()->GetEngineParameters()->windowHeight;
+	int windowHeight = GetGraphics()->GetEngineParameters().WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 
 	this->mActiveWidth = (32.0f / 1024.0f) * dx;

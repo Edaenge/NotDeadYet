@@ -48,8 +48,8 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 	this->zLootingGuiShowTimer = 0.0f;
 	this->zInventoryGuiShowTimer = 0.0f;
 
-	float windowWidth = (float)(ge->GetEngineParameters()->windowWidth);
-	float windowHeight = (float)(ge->GetEngineParameters()->windowHeight);
+	float windowWidth = (float)(ge->GetEngineParameters().WindowWidth);
+	float windowHeight = (float)(ge->GetEngineParameters().WindowHeight);
 
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
