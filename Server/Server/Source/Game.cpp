@@ -50,7 +50,10 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	RangedWeapon* rWpn = new RangedWeapon(200, ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW, 10, 2);
 	rWpn->SetModel("Media/Models/Bow_v01.obj");
 	rWpn->SetIconPath("Media/Icons/Bow_Icon_Temp.png");
+	rWpn->SetItemWeight(2);
 	ItemActor* actor = new ItemActor(rWpn);
+	actor->SetPosition(Vector3(50, 0, 50));
+	actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 	this->zActorManager->AddActor(actor);
 }
 

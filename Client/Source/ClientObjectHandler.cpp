@@ -88,39 +88,48 @@ bool Client::UpdateActor(const std::vector<std::string>& msgArray, const unsigne
 	else
 		update = new Updates(ID);
 	
-	char key[512];
-	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
+	Actor* actor = this->zActorManager->SearchAndGetActor(ID);
+	if (actor)
 	{
-		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
+		char key[512];
+		for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
+		{
+			sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
 
-		if(strcmp(key, M_POSITION.c_str()) == 0)
-		{
-			Vector3 position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-			update->SetPosition(position);
+			if(strcmp(key, M_POSITION.c_str()) == 0)
+			{
+				Vector3 position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
+				update->SetPosition(position);
+			}
+			else if(strcmp(key, M_ROTATION.c_str()) == 0)
+			{
+				if (ID != this->zID)
+				{
+					Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
+					actor->SetRotation(rotation);
+				}
+			}
+			else if(strcmp(key, M_STATE.c_str()) == 0)
+			{
+				int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
+				actor->SetState(state);
+			}
+			else if(strcmp(key, M_SCALE.c_str()) == 0)
+			{
+				Vector3 scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
+				actor->SetScale(scale);
+			}
+			else
+			{
+				MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in UpdatePlayerObjects");
+			}
 		}
-		else if(strcmp(key, M_ROTATION.c_str()) == 0)
-		{
-			Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
-			update->SetRotation(rotation);
-		}
-		else if(strcmp(key, M_STATE.c_str()) == 0)
-		{
-			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
-			update->SetState(state);
-		}
-		else if(strcmp(key, M_SCALE.c_str()) == 0)
-		{
-			Vector3 scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
-		}
-		else
-		{
-			MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in UpdatePlayerObjects");
-		}
+		if (index == -1)
+			this->zActorManager->AddUpdate(update);
+
+		return true;
 	}
-	if (index == -1)
-		this->zActorManager->AddUpdate(update);
-	
-	return true;
+	return false;
 }
 
 bool Client::RemoveActor(const unsigned int ID)
