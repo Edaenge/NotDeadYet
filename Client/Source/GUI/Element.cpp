@@ -43,3 +43,25 @@ bool Element::RemoveFromRenderer(GraphicsEngine* ge)
 
 	return true;
 }
+
+void Element::Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight)
+{
+	float dx = ((float)windowHeight * 4.0f) / 3.0f;
+	float oldDx = ((float)oldWindowHeight * 4.0f) / 3.0f;
+	float oldOffSet = (float)(oldWindowWidth - oldDx) / 2.0f;
+	float offSet = (float)(windowWidth - dx) / 2.0f;
+
+	this->mX = offSet + ((this->mX - oldOffSet) / oldDx) * dx;
+	this->mY = (this->mY / oldWindowHeight) * windowHeight;
+
+
+	this->mWidth = (this->mWidth / oldDx) * dx;
+	this->mHeight = (this->mHeight / oldWindowHeight) * windowHeight;
+
+	if(this->mImage)
+	{
+		this->mImage->SetPosition(Vector2(this->mX, this->mY));
+		this->mImage->SetDimensions(Vector2(this->mWidth, this->mHeight));
+	}
+
+}

@@ -74,7 +74,6 @@ GUIEvent* GUISet::CheckCollision(float mouseX, float mouseY, bool mousePressed, 
 				break;
 			}
 		}
-		/*
 		else if(typeid(*this->mElements[i]) == typeid(DropDownList))
 		{
 			DropDownList* temp = (DropDownList*)this->mElements[i];
@@ -100,7 +99,7 @@ GUIEvent* GUISet::CheckCollision(float mouseX, float mouseY, bool mousePressed, 
 					break;
 				}
 			}
-		}*/
+		}
 	}
 	
 	return returnEvent;
@@ -123,8 +122,14 @@ string GUISet::GetTextFromField(string textBox)
 		}
 	}
 	return "";
-}/*
-GUIEvent* GUISet::GetEventFromDropDown(string dropDownMenu)
+}
+
+ void GUISet::Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight)
+ {
+	 //TODO: Implement this
+ }
+ /*
+ GUIEvent* GUISet::GetEventFromDropDown(string dropDownMenu)
 {
 	for(int i = 0; i < this->mNrOfElements; i++)
 	{

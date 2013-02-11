@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphicsEngine.h"
+#include "Graphics.h"
 #include "Element.h"
 
 class GUIPicture : public Element
@@ -16,5 +16,7 @@ public:
 	virtual bool AddToRenderer(GraphicsEngine* ge);
 	/*! Removes the element from the renderer*/
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
+
+	void Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight);
 
 };

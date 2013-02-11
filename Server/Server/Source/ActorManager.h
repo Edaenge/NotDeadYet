@@ -15,5 +15,5 @@ public:
 	void AddActor( Actor* actor );
 	void RemoveActor( Actor* actor );
 	std::set<Actor*>& GetActors() {return this->zActors;}
-	Actor* CheckCollisions(Actor* player, float& range);
-};
+	Actor* GetActor(const unsigned int Index) const;
+	Actor* CheckCollisions(Actor* player, float& range);};

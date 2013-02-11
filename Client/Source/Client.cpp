@@ -35,7 +35,7 @@ Client::Client()
 
 	this->zEng = NULL;
 	this->zGuiManager = NULL;
-	this->zObjectManager = NULL;
+	this->zActorManager = NULL;
 	this->zServerChannel = NULL;
 	this->zPlayerInventory = NULL;
 	this->zKeyInfo = KeyHandler();
@@ -67,7 +67,7 @@ Client::~Client()
 	this->WaitUntillDone();
 
 	SAFE_DELETE(this->zGuiManager);
-	SAFE_DELETE(this->zObjectManager);
+	SAFE_DELETE(this->zActorManager);
 	SAFE_DELETE(this->zServerChannel);
 	SAFE_DELETE(this->zPlayerInventory);
 
@@ -102,7 +102,7 @@ float Client::Update()
 			this->zAnchor->position = cameraPos;
 			this->zEng->SetSceneAmbientLight(this->zWorld->GetAmbientAtWorldPos(cameraPos));
 
-			this->zAnchor->radius = this->zEng->GetEngineParameters()->FarClip;
+			this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
 		}
 
 		this->zWorld->Update();
@@ -122,20 +122,17 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zWorld = new World(this, mapName);
 	this->zWorldRenderer = new WorldRenderer(zWorld, this->zEng);
 
-	float x = this->zWorld->GetWorldCenter().x;
-	float z = this->zWorld->GetWorldCenter().y;
-
-	Vector2 center = Vector2(x, z);
+	Vector2 center = this->zWorld->GetWorldCenter();
 
 	this->zEng->GetCamera()->SetPosition( Vector3(center.x, 20, center.y) );
 	this->zEng->GetCamera()->LookAt( Vector3(center.x, 0, center.y) );
 
 	this->zAnchor = this->zWorld->CreateAnchor();
 	this->zAnchor->position = center;
-	this->zAnchor->radius = this->zEng->GetEngineParameters()->FarClip;
+	this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
 
-	int windowWidth = this->zEng->GetEngineParameters()->windowWidth;
-	int windowHeight = this->zEng->GetEngineParameters()->windowHeight;	
+	int windowWidth = this->zEng->GetEngineParameters().WindowWidth;
+	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;	
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 	float length = ((25.0f / 1024.0f) * dx);
@@ -179,7 +176,7 @@ void Client::Init()
 
 	this->zEng = GetGraphics();
 
-	this->zObjectManager = new ClientActorManager();
+	this->zActorManager = new ClientActorManager();
 	this->zGuiManager = new GuiManager(this->zEng);
 	this->zPlayerInventory = new Inventory();
 }
@@ -264,7 +261,7 @@ void Client::SendClientUpdate()
 	Vector3 up = this->zEng->GetCamera()->GetUpVector();
 	Vector4 rot = Vector4(0, 0, 0, 0);
 
-	Actor* player = this->zObjectManager->SearchAndGetActor(this->zID);
+	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
 	
 	if (player)
 	{
@@ -289,7 +286,7 @@ void Client::SendAck(unsigned int IM_ID)
 
 void Client::UpdateMeshRotation()
 {
-	Actor* player = this->zObjectManager->SearchAndGetActor(this->zID);
+	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
 	if (!player)
 	{
 		return;
@@ -320,7 +317,7 @@ void Client::UpdateMeshRotation()
 
 void Client::UpdateActors()
 {
-	this->zObjectManager->UpdateObjects(this->zDeltaTime, this->zID);
+	this->zActorManager->UpdateObjects(this->zDeltaTime, this->zID);
 }
 
 bool Client::IsAlive()
@@ -1002,10 +999,11 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		MaloW::Debug("C: " + msg);
 	}
 }
+
 bool Client::HandleTakeDamage( const std::vector<std::string>& msgArray, const unsigned int ID, float damageTaken )
 {
-	Actor* actor = this->zObjectManager->SearchAndGetActor(ID);
-	Actor* player = this->zObjectManager->SearchAndGetActor(this->zID);
+	Actor* actor = this->zActorManager->SearchAndGetActor(ID);
+	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
 
 	if (!actor || !player)
 	{
@@ -1036,7 +1034,7 @@ std::vector<unsigned int> Client::RayVsWorld()
 	CollisionData data;
 	std::vector<unsigned int> Collisions;
 	//Static objects
-	std::vector<Actor*> actors = this->zObjectManager->GetActors();
+	std::vector<Actor*> actors = this->zActorManager->GetActors();
 	iMesh* mesh = NULL;
 	for(auto it = actors.begin(); it < actors.end(); it++)
 	{
@@ -1111,42 +1109,49 @@ void Client::onEvent(Event* e)
 
 void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 {
-	std::vector<Gui_Item_Data> guiData;
+	std::vector<Looting_Gui_Data> guiData;
 	for (auto it_Item_Data = msgArray.begin(); it_Item_Data != msgArray.end(); it_Item_Data++)
 	{
-		Gui_Item_Data gid = Gui_Item_Data();
+		Looting_Gui_Data lgd = Looting_Gui_Data();
 		if((*it_Item_Data).find(M_ITEM_ID.c_str()) == 0)
 		{
-			gid.zID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, (*it_Item_Data));
+			lgd.zGui_Data.zID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_TYPE.c_str()) == 0)
 		{
-			gid.zType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it_Item_Data));
+			lgd.zGui_Data.zType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_SUB_TYPE.c_str()) == 0)
+		{
+			lgd.zGui_Data.zSubType = this->zMsgHandler.ConvertStringToInt(M_ITEM_SUB_TYPE, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_DESCRIPTION.c_str()) == 0)
 		{
-			gid.zDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it_Item_Data));
+			lgd.zGui_Data.zDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_NAME.c_str()) == 0)
 		{
-			gid.zName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it_Item_Data));
+			lgd.zGui_Data.zName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_WEIGHT.c_str()) == 0)
 		{
-			gid.zWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it_Item_Data));
+			lgd.zGui_Data.zWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_STACK_SIZE.c_str()) == 0)
 		{
-			gid.zStacks = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, (*it_Item_Data));
+			lgd.zGui_Data.zStacks = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_ICON_PATH.c_str()) == 0)
 		{
-			gid.zFilePath = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it_Item_Data));
+			lgd.zGui_Data.zFilePath = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_FINISHED.c_str()) == 0)
 		{
-			guiData.push_back(gid);
+			lgd.zActorID = this->zMsgHandler.ConvertStringToInt(M_ITEM_FINISHED, (*it_Item_Data));
+			
+			guiData.push_back(lgd);
 		}
 	}
+	this->SendLootItemMessage(guiData[0].zActorID, guiData[0].zGui_Data.zID, guiData[0].zGui_Data.zType, guiData[0].zGui_Data.zSubType);
 	this->zGuiManager->ShowLootingGui(guiData);
 }

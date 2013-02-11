@@ -13,42 +13,41 @@ public:
 	Updates()
 	{
 		this->zID = 0;
-		this->zStateChange = false;
 		this->zPositionChange = false;
-		this->zRotationChange = false;
+		//this->zRotationChange = false;
 	}
 	Updates(const unsigned int ID) 
 	{
 		this->zID = ID;
-		this->zStateChange = false;
+		//this->zStateChange = false;
 		this->zPositionChange = false;
-		this->zRotationChange = false;
+		//this->zRotationChange = false;
 	}
 
 	unsigned int GetID() const {return this->zID;}
 	Vector3 GetPosition() const {return this->zNextPosition;}
-	Vector4 GetRotation() const {return this->zRotation;}
-	unsigned int GetState() const {return this->zState;}
+	//Vector4 GetRotation() const {return this->zRotation;}
+	//unsigned int GetState() const {return this->zState;}
 
 	bool HasPositionChanged() const {return this->zPositionChange;}
-	bool HasRotationChanged() const {return this->zRotationChange;}
-	bool HasStateChanged() const {return this->zStateChange;}
+	//bool HasRotationChanged() const {return this->zRotationChange;}
+	//bool HasStateChanged() const {return this->zStateChange;}
 
 	void SetPosition(Vector3 position) 
 	{
 		this->zNextPosition = position;
 		this->zPositionChange = true;
 	}
-	void SetRotation(Vector4 rotation) 
-	{
-		this->zRotation = rotation;
-		this->zRotationChange = true;
-	}
-	void SetState(unsigned int state) 
-	{
-		this->zState = state;
-		this->zStateChange = true;
-	}
+	//void SetRotation(Vector4 rotation) 
+	//{
+	//	this->zRotation = rotation;
+	//	this->zRotationChange = true;
+	//}
+	//void SetState(unsigned int state) 
+	//{
+	//	this->zState = state;
+	//	this->zStateChange = true;
+	//}
 	bool ComparePosition(const Vector3& position)
 	{
 		if ((this->zNextPosition - position).GetLength() < 0.5f)
@@ -56,30 +55,30 @@ public:
 
 		return this->zPositionChange;
 	}
-	bool CompareRotation(const Vector4& rotation)
-	{
-		if ((this->zRotation - rotation).GetLength() < 0.5f)
-			this->zRotationChange = false;
+	//bool CompareRotation(const Vector4& rotation)
+	//{
+	//	if ((this->zRotation - rotation).GetLength() < 0.5f)
+	//		this->zRotationChange = false;
 
-		return this->zRotationChange;
-	}
-	void SetStateChange(bool value)
-	{
-		this->zStateChange = value;
-	}
-	void SetRotationChanged(bool value)
-	{
-		this->zRotationChange = value;
-	}
+	//	return this->zRotationChange;
+	//}
+	//void SetStateChange(bool value)
+	//{
+	//	this->zStateChange = value;
+	//}
+	//void SetRotationChanged(bool value)
+	//{
+	//	this->zRotationChange = value;
+	//}
 private:
 	unsigned int zID;
 	Vector3 zNextPosition;
-	Vector4 zRotation;
-	unsigned int zState;
+	//Vector4 zRotation;
+	//unsigned int zState;
 
-	bool zStateChange;
+	//bool zStateChange;
 	bool zPositionChange;
-	bool zRotationChange;
+	//bool zRotationChange;
 };
 
 static const enum INTERPOLATION_TYPES

@@ -254,15 +254,14 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.itemID = _itemID;
 		NotifyObservers(&e);
 	}
-	//Handles Pickup Object Requests from Client
-	else if(msgArray[0].find(M_PICKUP_ITEM.c_str()) == 0)
-	{
-		PlayerPickupObjectEvent e;
-		int _objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
-
-		e.objID = _objID;
-		NotifyObservers(&e);
-	}
+	////Handles Pickup Object Requests from Client
+	//else if(msgArray[0].find(M_PICKUP_ITEM.c_str()) == 0)
+	//{
+	//	PlayerPickupObjectEvent e;
+	//	int _objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
+	//	e.objID = _objID;
+	//	NotifyObservers(&e);
+	//}
 	else if(msgArray[0].find(M_LOOT_OBJECT.c_str()) == 0)
 	{
 		PlayerLootObjectEvent e;
@@ -445,20 +444,22 @@ void Host::HandleClientUpdate(const std::vector<std::string> &msgArray, ClientDa
 void Host::HandleLootRequest( const std::vector<std::string> &msgArray, ClientData* cd )
 {
 	PlayerLootItemEvent e;
-	long _objID = -1;
+	unsigned int _objID = 0;
+	unsigned int _itemID = 0;
 	int _type = -1;
-	long _itemID = -1;
-
-	if (msgArray.size() > 2)
+	int _subType = -1;
+	if (msgArray.size() > 3)
 	{
 		
 		_objID = this->zMessageConverter.ConvertStringToInt(M_LOOT_ITEM, msgArray[0]);
 		_itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_ID, msgArray[1]);
 		_type = this->zMessageConverter.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
-
+		_subType = this->zMessageConverter.ConvertStringToInt(M_ITEM_SUB_TYPE, msgArray[3]);
 		e.clientData = cd;
 		e.itemID = _itemID;
 		e.objID = _objID;
+		e.itemType = _type;
+		e.subType = _subType;
 		NotifyObservers(&e);
 	}
 	else

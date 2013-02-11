@@ -13,6 +13,10 @@
 #include "ChangeTextAndMenuEvent.h"
 #include "GraphicsEngine.h"
 #include "ChangeResEvent.h"
+#include "ChangeOptionEvent.h"
+#include "ChangeSetEvent.h"
+
+#include "Graphics.h"
 
 using namespace std;
 
@@ -71,4 +75,6 @@ public:
 	virtual bool AddToRenderer(GraphicsEngine* ge);
 	/*! Removes the element from the renderer*/
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
+
+	void Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight);
 };
