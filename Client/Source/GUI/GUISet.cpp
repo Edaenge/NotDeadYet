@@ -123,8 +123,14 @@ string GUISet::GetTextFromField(string textBox)
 		}
 	}
 	return "";
-}/*
-GUIEvent* GUISet::GetEventFromDropDown(string dropDownMenu)
+}
+
+ void GUISet::Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight)
+ {
+	 //TODO: Implement this
+ }
+ /*
+ GUIEvent* GUISet::GetEventFromDropDown(string dropDownMenu)
 {
 	for(int i = 0; i < this->mNrOfElements; i++)
 	{
