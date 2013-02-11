@@ -77,17 +77,15 @@ void Host::Life()
 		}
 		else
 		{
-			Restart(zGameMode, zMapName);		}
+			Restart(zGameMode, zMapName);		
+		}
 	
-		Sleep(5);
+		// Sleep(5);
 	}
 }
 
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients,  const std::string& gameModeName, const std::string& mapName)
 {
-	FreePhysics();
-	PhysicsInit();
-
 	this->zMaxClients = maxClients;
 
 	Restart(gameModeName, mapName);
@@ -131,8 +129,7 @@ unsigned int Host::GetNumClients() const
 
 void Host::ReadMessages()
 {
-	
-	static unsigned int MAX_MESSAGES_TO_READ = 10;
+	static unsigned int MAX_MESSAGES_TO_READ = 10000;
 	unsigned int nrOfMessages = this->GetEventQueueSize();
 
 	// No new messages
@@ -508,10 +505,12 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
 		// Delete Game
 		this->RemoveObserver(zGame);
 		delete zGame;
+		FreePhysics();
 	}
 
 	// Start New
-	zGame = new Game(zSynchronizer, gameMode, map);
+	PhysicsInit();
+	zGame = new Game(GetPhysics(), zSynchronizer, gameMode, map);
 	this->AddObserver(zGame);
 
 	// Fake Connects

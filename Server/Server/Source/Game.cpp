@@ -16,7 +16,8 @@
 #include "Physics.h"
 #include "ClientServerMessages.h"
 
-Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile )
+Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
+	zPhysicsEngine(phys)
 {
 	if (mode.find("FFA") == 0 )
 	{
@@ -26,6 +27,7 @@ Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worl
 	{
 		zGameMode = new GameModeFFA(this, 10);
 	}
+
 	// Load Entities
 	LoadEntList("Entities.txt");
 
@@ -38,8 +40,6 @@ Game::Game(ActorSynchronizer* syncher, std::string mode, const std::string& worl
 	else
 		zWorld = new World(this, 10, 10);  // Handle Error.
 
-	PhysicsInit();
-	this->zPhysicsEngine = GetPhysics();
 	// Actor Manager
 	zActorManager = new ActorManager(syncher);
 }
@@ -109,14 +109,15 @@ void Game::OnEvent( Event* e )
 
 		message = NMC.Convert(MESSAGE_TYPE_CONNECTED);
 		PCE->clientData->Send(message);
+
 		// Sends the world name
 		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorld->GetFileName());
 		PCE->clientData->Send(message);
 
-		//Send event to game so it knows what players there are.
-		PlayerAddEvent* PAE = new PlayerAddEvent();
-		PAE->player = player;
-		NotifyObservers(PAE);
+		// Send event to game so it knows what players there are.
+		// PlayerAddEvent* PAE = new PlayerAddEvent();
+		// PAE->player = player;
+		// NotifyObservers(PAE);
 	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
@@ -148,9 +149,9 @@ void Game::OnEvent( Event* e )
 		// Delete Player and notify GameMode
 		auto i = zPlayers.find(PDCE->clientData);
 
-		PlayerRemoveEvent* PRE = new PlayerRemoveEvent();
+		/*PlayerRemoveEvent* PRE = new PlayerRemoveEvent();
 		PRE->player = i->second;
-		NotifyObservers(PRE);
+		NotifyObservers(PRE);*/
 
 		delete i->second;
 		zPlayers.erase(i);
@@ -169,7 +170,7 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
-		auto playerIterator = zPlayers.find(PDCE->clientData);
+		/*auto playerIterator = zPlayers.find(PUEWE->clientData);
 		auto playerBehavior = playerIterator->second->GetBehavior();
 
 		Actor* actor = playerBehavior->GetActor();
@@ -177,17 +178,17 @@ void Game::OnEvent( Event* e )
 		PlayerActor* player = dynamic_cast<PlayerActor*>(actor);
 		if (player)
 		{
-			BioActor* damageTaker = dynamic_cast<BioActor*>(this->zActorManager->CheckCollisions(player));
+		BioActor* damageTaker = dynamic_cast<BioActor*>(this->zActorManager->CheckCollisions(player));
 
-			if (actor)
-			{
-				Damage damage = Damage();
-				damage.blunt = 20.0f;
-				damageTaker->TakeDamage(damage, actor);
-				if (Messages::FileWrite())
-					Messages::Debug("Player " + MaloW::convertNrToString(actor->GetID()) + " Attacked player " + MaloW::convertNrToString(damageTaker->GetID()));
-			}
+		if (actor)
+		{
+		Damage damage = Damage();
+		damage.blunt = 20.0f;
+		damageTaker->TakeDamage(damage, actor);
+		if (Messages::FileWrite())
+		Messages::Debug("Player " + MaloW::convertNrToString(actor->GetID()) + " Attacked player " + MaloW::convertNrToString(damageTaker->GetID()));
 		}
+		}*/
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{
@@ -199,29 +200,29 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
-		auto i = zWorldActors.find(EUE->entity);
-		if ( i != zWorldActors.end() )
-		{
-			i->second->SetPosition(EUE->entity->GetPosition());
-			// TODO: Rotation
-			i->second->SetScale(EUE->entity->GetScale());
-		}
+		//auto i = zWorldActors.find(EUE->entity);
+		//if ( i != zWorldActors.end() )
+		//{
+		//	i->second->SetPosition(EUE->entity->GetPosition());
+		//	// TODO: Rotation
+		//	i->second->SetScale(EUE->entity->GetScale());
+		//}
 	}
 	else if ( EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e) )
 	{
-		PhysicsObject* phys = 0;
-		
-		if ( GetEntBlockRadius(ELE->entity->GetType()) > 0.0f )
-		{
-			phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(ELE->entity->GetType()), ELE->entity->GetPosition());
-		}
+		//PhysicsObject* phys = 0;
+		//
+		//if ( GetEntBlockRadius(ELE->entity->GetType()) > 0.0f )
+		//{
+		//	phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(ELE->entity->GetType()), ELE->entity->GetPosition());
+		//}
 
-		// Create Physics Object
-		WorldActor* actor = new WorldActor();
-		zWorldActors[ELE->entity] = actor;
-		zActorManager->AddActor(actor);
+		//// Create Physics Object
+		//WorldActor* actor = new WorldActor();
+		//zWorldActors[ELE->entity] = actor;
+		//zActorManager->AddActor(actor);
 
-		actor->AddObserver(this->zGameMode);
+		//actor->AddObserver(this->zGameMode);
 	}
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
@@ -235,7 +236,7 @@ void Game::OnEvent( Event* e )
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
 	{
 		// Create Player Actor
-		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
+		PhysicsObject* pObject = 0; //this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zActorManager->AddActor(actor);
 		actor->AddObserver(this->zGameMode);
@@ -254,7 +255,7 @@ void Game::OnEvent( Event* e )
 		//Tells the client which Actor he owns.
 		std::string message;
 		NetworkMessageConverter NMC;
-		unsigned int selfID ;
+		unsigned int selfID;
 
 		selfID = actor->GetID();
 		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)selfID);

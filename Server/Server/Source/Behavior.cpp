@@ -20,6 +20,7 @@ Behavior::Behavior( Actor* actor, World* world ) :
 
 Behavior::~Behavior()
 {
+	if ( zAnchor && zWorld ) zWorld->DeleteAnchor(zAnchor);
 	zActor->RemoveObserver(this);
 }
 
@@ -31,6 +32,7 @@ void Behavior::OnEvent(Event* e)
 	}
 	else if ( ActorDeleteEvent* ADE = dynamic_cast<ActorDeleteEvent*>(e) )
 	{
+		zWorld->DeleteAnchor(zAnchor);
 		zActor = 0;
 	}
 }

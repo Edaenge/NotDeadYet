@@ -220,7 +220,7 @@ void Client::Life()
 		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 		{
 			this->zGuiManager->ToggleIngameMenu();
-			//this->CloseConnection("");
+			this->CloseConnection("");
 		}
 
 		Sleep(5);
@@ -232,7 +232,6 @@ void Client::Life()
 void Client::ReadMessages()
 {
 	static const unsigned int MAX_NR_OF_MESSAGES = 10000;
-
 	int nrOfMessages = this->GetEventQueueSize();
 	if (nrOfMessages == 0)
 		return;
