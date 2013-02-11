@@ -73,7 +73,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE,
 	MESSAGE_TYPE_START_GAME,
 	MESSAGE_TYPE_PLAYER_READY,
-	MESSAGE_TYPE_ITEM_SUB_TYPE
+	MESSAGE_TYPE_ITEM_SUB_TYPE,
+	MESSAGE_TYPE_ITEM_FINISHED
 };
 
 static const std::string M_UPDATE_ACTOR				= "UA";
@@ -126,6 +127,7 @@ static const std::string M_ADD_INVENTORY_ITEM		= "AII";
 static const std::string M_REMOVE_INVENTORY_ITEM	= "RII";
 static const std::string M_LOOT_OBJECT				= "LO";
 static const std::string M_LOOT_OBJECT_RESPONSE		= "LOR";
+static const std::string M_ITEM_FINISHED			= "IF";
 //Animal Messages
 static const std::string M_ADD_DEAD_ANIMAL_ITEM		= "ADAI";
 static const std::string M_DEAD_ANIMAL_REMOVE_ITEM	= "DARI";

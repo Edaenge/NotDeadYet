@@ -885,6 +885,10 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
 		this->UpdateActor(msgArray, id);
 	}
+	else if (msg.find(M_LOOT_OBJECT_RESPONSE.c_str()) == 0)
+	{
+		this->HandleDisplayLootData(msgArray);
+	}
 	else if(msg.find(M_EQUIP_ITEM.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
@@ -1013,6 +1017,7 @@ bool Client::HandleTakeDamage( const std::vector<std::string>& msgArray, const u
 
 
 }
+
 void Client::CloseConnection(const std::string& reason)
 {
 	MaloW::Debug("Client Shutdown: " + reason);
@@ -1101,4 +1106,46 @@ void Client::onEvent(Event* e)
 		if ( zAnchor ) zWorld->DeleteAnchor( zAnchor );
 		if ( zWorld ) zWorld = 0;
 	}
+}
+
+void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
+{
+	std::vector<Gui_Item_Data> guiData;
+	for (auto it_Item_Data = msgArray.begin(); it_Item_Data != msgArray.end(); it_Item_Data++)
+	{
+		Gui_Item_Data gid = Gui_Item_Data();
+		if((*it_Item_Data).find(M_ITEM_ID.c_str()) == 0)
+		{
+			gid.zID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_TYPE.c_str()) == 0)
+		{
+			gid.zType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_DESCRIPTION.c_str()) == 0)
+		{
+			gid.zDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_NAME.c_str()) == 0)
+		{
+			gid.zName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_WEIGHT.c_str()) == 0)
+		{
+			gid.zWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_STACK_SIZE.c_str()) == 0)
+		{
+			gid.zStacks = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_ICON_PATH.c_str()) == 0)
+		{
+			gid.zFilePath = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_FINISHED.c_str()) == 0)
+		{
+			guiData.push_back(gid);
+		}
+	}
+	this->zGuiManager->ShowLootingGui(guiData);
 }

@@ -145,7 +145,7 @@ private:
 	void SendUnEquipItem(const unsigned int ID, const int Slot);
 	void HandleRemoveEquipment(const unsigned int ItemID, const int Slot);
 	void HandleWeaponUse(const unsigned int ID);
-
+	void HandleDisplayLootData(std::vector<std::string> msgArray);
 protected:
 	virtual void onEvent(Event* e);
 
