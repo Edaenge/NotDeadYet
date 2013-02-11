@@ -34,7 +34,6 @@ void ActorSynchronizer::OnEvent( Event* e )
 	{
 		zRemoveActorSet.insert(AR->zActor);
 	}
-
 }
 
 void ActorSynchronizer::SendUpdatesTo( ClientData* cd )

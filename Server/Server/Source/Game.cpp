@@ -9,6 +9,7 @@
 #include "DeerActor.h"
 #include "WolfActor.h"
 #include "BearActor.h"
+#include "ItemActor.h"
 #include "PlayerWolfBehavior.h"
 #include "AIWolfBehavior.h"
 #include "WorldActor.h"
@@ -157,6 +158,93 @@ void Game::OnEvent( Event* e )
 		delete i->second;
 		zPlayers.erase(i);
 	}
+	else if(PlayerLootObjectEvent* PLOE = dynamic_cast<PlayerLootObjectEvent*>(e))
+	{
+		std::set<Actor*> actors = this->zActorManager->GetActors();
+		std::vector<Item*> lootedItems;
+
+		auto playerIterator = this->zPlayers.find(PLOE->clientData);
+		auto playerBehavior = playerIterator->second->GetBehavior();
+		Actor* actor = playerBehavior->GetActor();
+		for (auto it_actor = actors.begin(); it_actor != actors.end(); it_actor++)
+		{
+			for (auto it_ID = PLOE->actorID.begin(); it_ID != PLOE->actorID.end(); it_ID++)
+			{
+				if ((*it_ID) == (*it_actor)->GetID())
+				{
+					if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 4.0f)
+						continue;
+					
+					if (ItemActor* iActor = dynamic_cast<ItemActor*>(*it_actor))
+					{
+						lootedItems.push_back(iActor->GetItem());
+					}
+					else if(AnimalActor* aActor = dynamic_cast<AnimalActor*>(*it_actor))
+					{
+						if (PlayerActor* player = dynamic_cast<PlayerActor*>(actor))
+						{
+							if (!aActor->IsAlive())
+							{
+								if (Inventory* playerInventory = player->GetInventory())
+								{
+									Item* item = playerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE, ITEM_SUB_TYPE_POCKET_KNIFE);
+
+									if (item)
+									{
+										Inventory* inv = aActor->GetInventory();
+
+										std::vector<Item*> items = inv->GetItems();
+										for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+										{
+											lootedItems.push_back((*it_Item));
+										}
+									}
+								}
+							}
+						}
+					}
+					else if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(*it_actor))
+					{
+						if (!pActor->IsAlive())
+						{
+							Inventory* inv = pActor->GetInventory();
+
+							std::vector<Item*> items = inv->GetItems();
+							for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+							{
+								lootedItems.push_back((*it_Item));
+							}
+							Item* item = inv->GetRangedWeapon();
+							if (item)
+							{
+								lootedItems.push_back(item);
+							}
+							item = inv->GetMeleeWeapon();
+							if (item)
+							{
+								lootedItems.push_back(item);
+							}
+							item = inv->GetProjectile();
+							if (item)
+							{
+								lootedItems.push_back(item);
+							}
+						}
+					}
+				}
+			}
+		}
+		if (lootedItems.size() > 0)
+		{
+			NetworkMessageConverter NMC;
+			std::string msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE);
+			for (auto x = lootedItems.begin(); x < lootedItems.end(); x++)
+			{
+				msg += (*x)->ToMessageString(&NMC); 	
+			}
+			PLOE->clientData->Send(msg);
+		}
+	}
 	else if ( PlayerPickupObjectEvent* PPOE = dynamic_cast<PlayerPickupObjectEvent*>(e) )
 	{
 		
@@ -268,7 +356,7 @@ void Game::OnEvent( Event* e )
 		center.x = zWorld->GetWorldCenter().x;
 		center.z = zWorld->GetWorldCenter().y;
 		
-		this->CalcPlayerSpawnPoint(32, center.GetXZ());
+		center = this->CalcPlayerSpawnPoint(32, center.GetXZ());
 		actor->SetPosition(center);
 
 		// Apply Default Player Behavior

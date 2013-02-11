@@ -385,6 +385,16 @@
               </operationHasOwnedParameters>
             </ownedParameters>
           </operation>
+          <operation Id="9bc550c8-2f1e-4bef-a4e3-96fd13e7d348" name="CheckCollisions" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="499a5705-242d-4802-a531-7b0ac72b2e57" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="eb1a250f-56c4-4005-8f27-5f2b45bc86cf" name="Actor*" direction="In" isUnique="false">
+                  <elementDefinition Id="eafb4caa-e1bb-47ea-a656-2be58524f2ba" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
         </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
@@ -500,6 +510,12 @@
           </operation>
           <operation Id="c83288a6-96de-41ef-a239-c641789f212a" name="GetKeys" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
             <elementDefinition Id="47faa892-69f4-46bd-9dc4-8f83b7e0458b" />
+          </operation>
+          <operation Id="5a887f6e-e7e6-4817-8f3f-876e2ca17721" name="GetClientData" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="4859c0f6-4481-43f0-a19d-dec6a74d4558" />
+          </operation>
+          <operation Id="bdb107d9-53bd-48fe-8173-6a7ae84943f1" name="GetBehavior" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="9f919f5e-92ff-4a12-bdad-3ee728eca66c" />
           </operation>
         </ownedOperationsInternal>
       </class>
@@ -1095,6 +1111,21 @@
             <elementDefinition Id="94e48e6a-7642-4880-8d36-a6d0ea210828" />
           </association>
         </targetEnds>
+        <ownedOperationsInternal>
+          <operation Id="f3f80eef-3af2-4136-8a13-02794b0a4737" name="ClearAll" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="986dd3fe-81d6-4de7-8346-9f6a77d12909" />
+          </operation>
+          <operation Id="63f1d46c-e386-49a3-b65c-d8e658d8edea" name="SendUpdatesTo" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="e4d4f178-0bad-400c-bd0e-90f6d6f87e16" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="4699d29e-de79-454f-8353-75fa13c12925" name="ClientData*" direction="In" isUnique="false">
+                  <elementDefinition Id="023bcb35-ef4c-4ea9-9d8f-85d236a9b2f5" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </logicalClassDesignerModelHasTypes>
     <packageHasNamedElement>

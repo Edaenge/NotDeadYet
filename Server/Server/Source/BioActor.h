@@ -35,7 +35,7 @@ public:
 
 	/*! Returns false if player cannot sprint, due to stamina.*/
 	virtual bool Sprint(float dt);
-
+	/*! Returns false if player is dead.*/
 	virtual bool IsAlive() const;
 
 	/*! Rewinds to previous position.*/
@@ -81,7 +81,7 @@ public:
 	void StaminaHasChanged() {this->zStaminaChanged = true;}
 	void HealthHasChanged() {this->zHealthChanged = true;}
 
-
+	Inventory* GetInventory() const {return this->zInventory;}
 protected:
 	int		zState;
 	float	zVelocity;

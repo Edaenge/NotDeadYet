@@ -33,6 +33,8 @@ public:
 	// Returns The Current Behavior Of Player
 	Behavior* GetBehavior() const { return zBehavior; }
 
+	//Returns Client Data
+	ClientData* GetClientData() const {return this->zClient;}
 private:
 	friend class Game;
 };
