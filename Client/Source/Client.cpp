@@ -122,10 +122,7 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zWorld = new World(this, mapName);
 	this->zWorldRenderer = new WorldRenderer(zWorld, this->zEng);
 
-	float x = this->zWorld->GetWorldCenter().x;
-	float z = this->zWorld->GetWorldCenter().y;
-
-	Vector2 center = Vector2(x, z);
+	Vector2 center = this->zWorld->GetWorldCenter();
 
 	this->zEng->GetCamera()->SetPosition( Vector3(center.x, 20, center.y) );
 	this->zEng->GetCamera()->LookAt( Vector3(center.x, 0, center.y) );
