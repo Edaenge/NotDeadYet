@@ -18,7 +18,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 class PlayerActor : public BioActor
 {
 	Vector3 zInitialDirection;
-	Inventory* zInventory;
 	Player* zPlayer;
 
 public:
@@ -37,6 +36,9 @@ public:
 
 	Player* GetPlayer(){ return this->zPlayer; }
 
+	/*! */
+	Item* DropItem(const long ID);
+
 	///*! Updates players pos, states etc.*/
 	//void Update(float deltaTime);
 	///*! Picks up an object and transform it to an item and adds it to the inventory.
@@ -44,8 +46,6 @@ public:
 	//	This function DO NOT deallocates the Actor object.
 	//*/
 	//bool PickUpObject(StaticObjectActor* object);
-	///*! */
-	//bool DropObject(const long ID);
 	///*! Adds a message string with health,stamina,hunger, hydration to mess.
 	//    This function checks if the data has changed since last update.
 	//	If it has changed, we need to send it to the client.

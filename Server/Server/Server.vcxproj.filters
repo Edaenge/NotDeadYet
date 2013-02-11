@@ -10,9 +10,6 @@
     <Filter Include="Include">
       <UniqueIdentifier>{ac0db977-4857-4b3e-bffd-f8d23bb19406}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Behavior">
-      <UniqueIdentifier>{89d052e5-f5c9-4937-bc7c-e0d8f27606de}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Actors">
       <UniqueIdentifier>{50a47ee4-51e7-49bf-b61f-129906fa7671}</UniqueIdentifier>
     </Filter>
@@ -21,6 +18,9 @@
     </Filter>
     <Filter Include="Source\Handlers">
       <UniqueIdentifier>{2d91f24d-3e37-49b2-80e5-94f5c85ed464}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Actors\Behavior">
+      <UniqueIdentifier>{89d052e5-f5c9-4937-bc7c-e0d8f27606de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -85,25 +85,25 @@
       <Filter>Source\Handlers</Filter>
     </ClCompile>
     <ClCompile Include="Source\PlayerBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\PlayerWolfBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\ProjectileBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\Behavior.cpp">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\PlayerDeerBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\AIDeerBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\AIWolfBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\ActorSynchronizer.cpp">
       <Filter>Source</Filter>
@@ -124,16 +124,16 @@
       <Filter>Source\Handlers</Filter>
     </ClCompile>
     <ClCompile Include="Source\PlayerHumanBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\ItemActor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
     <ClCompile Include="Source\PlayerGhostBehavior.cpp">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\PlayerConfiguration.cpp">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -204,25 +204,25 @@
       <Filter>Source\Handlers</Filter>
     </ClInclude>
     <ClInclude Include="Source\AIDeerBehavior.h">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\AIWolfBehavior.h">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerWolfBehavior.h">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\ProjectileBehavior.h">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerBehavior.h">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Behavior.h">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerDeerBehavior.h">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\ActorSynchronizer.h">
       <Filter>Source</Filter>
@@ -249,16 +249,16 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerHumanBehavior.h">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\ItemActor.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerGhostBehavior.h">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerConfiguration.h">
-      <Filter>Source\Behavior</Filter>
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

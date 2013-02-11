@@ -162,6 +162,24 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerDropItemEvent* PDIE = dynamic_cast<PlayerDropItemEvent*>(e) )
 	{
+		Actor* actor  = NULL;
+		PlayerActor* pActor = NULL;
+		Item* item = NULL;
+
+		auto i = this->zPlayers.find(PDIE->clientData);
+
+		actor = i->second->GetBehavior()->GetActor();
+		pActor = dynamic_cast<PlayerActor*>(actor);
+
+		if(!pActor)
+			return;
+		
+		item = pActor->DropItem(PDIE->itemID);
+
+		if(!item)
+			return;
+
+
 
 	}
 	else if ( PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e) )
