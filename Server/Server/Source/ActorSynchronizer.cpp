@@ -42,6 +42,8 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 	NetworkMessageConverter nmc;
 	std::string msg;
 
+	RegisterActor(cd);
+
 	for(auto it = this->zUpdateSet.begin(); it != this->zUpdateSet.end(); it++)
 	{
 		msg = nmc.Convert(MESSAGE_TYPE_UPDATE_ACTOR, (float)(*it)->GetID());
@@ -52,9 +54,7 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 		cd->Send(msg);
 	}
 
-	RegisterActor(cd);
 	RemoveActor(cd);
-
 }
 
 void ActorSynchronizer::RegisterActor( ClientData* cd )

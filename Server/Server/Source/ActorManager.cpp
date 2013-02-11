@@ -12,20 +12,19 @@ ActorManager::ActorManager( ActorSynchronizer* syncher ) :
 
 void ActorManager::AddActor( Actor* actor )
 {
-	ActorAdded e;
-
 	actor->AddObserver(this->zSynch);
 	zActors.insert(actor);
 
+	ActorAdded e;
 	e.zActor = actor;
-	NotifyObservers(&e);;
+	NotifyObservers(&e);
 }
 
 void ActorManager::RemoveActor( Actor* actor )
 {
-	ActorRemoved e;
 	this->zActors.erase(actor);
 
+	ActorRemoved e;
 	e.zActor = actor;
 	NotifyObservers(&e);
 }

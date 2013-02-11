@@ -32,7 +32,7 @@ class Game : public Observer, public Observed
 	int zMaxNrOfPlayers;
 
 public:
-	Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
+	Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
 	virtual ~Game();
 
 	// Returns false if game has finished

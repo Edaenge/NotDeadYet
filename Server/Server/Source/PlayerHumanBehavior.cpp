@@ -88,7 +88,11 @@ bool PlayerHumanBehavior::Update( float dt )
 	zVelocity += GRAVITY * dt;
 
 	// Air Resistance
-	Vector3 airResistance( pow(zVelocity.x, 2.0f), pow(zVelocity.y, 2.0f), pow(zVelocity.z, 2.0f) );
+	Vector3 airResistance(0.0f, 0.0f, 0.0f);
+	if ( zVelocity.x != 0.0f ) airResistance.x = powf(zVelocity.x, 2.0f);
+	if ( zVelocity.y != 0.0f ) airResistance.y = powf(zVelocity.y, 2.0f);
+	if ( zVelocity.z != 0.0f ) airResistance.z = powf(zVelocity.z, 2.0f);
+
 	if ( zVelocity.x >= 0.0f ) airResistance.x *= -1.0;
 	if ( zVelocity.y >= 0.0f ) airResistance.y *= -1.0;
 	if ( zVelocity.z >= 0.0f ) airResistance.z *= -1.0;
@@ -101,7 +105,7 @@ bool PlayerHumanBehavior::Update( float dt )
 	try
 	{
 		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
-		if ( newPosition.y < groundHeight ) 
+		if ( newPosition.y < groundHeight )
 		{
 			newPosition.y = groundHeight;
 			zVelocity.y = 0.0f;
@@ -112,7 +116,21 @@ bool PlayerHumanBehavior::Update( float dt )
 
 	}
 
-	this->zActor->SetPosition(newPosition);
+	if ( zWorld->IsInside(newPosition.GetXZ()) )
+	{
+		zActor->SetPosition(newPosition);
+	}
+	else
+	{
+		zVelocity = Vector3(0.0f, 0.0f, 0.0f);
+
+		// Move To Center
+		Vector3 center;
+		center.x = zWorld->GetWorldCenter().x;
+		center.z = zWorld->GetWorldCenter().y;
+		center.y = zWorld->CalcHeightAtWorldPos(Vector2(center.x, center.z));
+		zActor->SetPosition(center);
+	}
 
 	PhysicalConditionCalculator(dt);
 
@@ -125,10 +143,9 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 	//BioActor* bActor = dynamic_cast<BioActor*>(this->zActor);
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActor);
 
-	std::stringstream tester; 
-	tester<<"Fullness: "<<pActor->GetFullness()<<"   "<<"Hydration: "<<pActor->GetHydration()<<"    "<<"Stamina: "<<pActor->GetStamina()<<"    "<<"Health: "<<pActor->GetHealth()<<std::endl;
-
-	OutputDebugString(tester.str().c_str());
+	// std::stringstream tester; 
+	// tester<<"Fullness: "<<pActor->GetFullness()<<"   "<<"Hydration: "<<pActor->GetHydration()<<"    "<<"Stamina: "<<pActor->GetStamina()<<"    "<<"Health: "<<pActor->GetHealth()<<std::endl;
+	// OutputDebugString(tester.str().c_str());
 
 
 	float regeneratedHealth = 0;
