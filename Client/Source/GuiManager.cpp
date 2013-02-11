@@ -171,7 +171,7 @@ void GuiManager::HideCircularItemGui()
 	}
 }
 
-void GuiManager::ShowLootingGui(std::vector<Gui_Item_Data> gui_Item_Data)
+void GuiManager::ShowLootingGui(std::vector<Looting_Gui_Data> looting_gui_Data)
 {
 	if(!this->zLooting)
 	{

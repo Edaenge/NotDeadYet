@@ -61,3 +61,14 @@ Actor* ActorManager::CheckCollisions(Actor* player)
 	}
 	return collision;
 }
+
+Actor* ActorManager::SearchAndGetActor( const unsigned int ID ) const
+{
+	for(auto it_Actor = this->zActors.begin(); it_Actor != this->zActors.end(); it_Actor++)
+	{
+		if((*it_Actor)->GetID() == ID)
+		{
+			return (*it_Actor);
+		}
+	}
+}

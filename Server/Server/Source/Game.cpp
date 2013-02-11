@@ -44,6 +44,14 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 
 	// Actor Manager
 	zActorManager = new ActorManager(syncher);
+
+
+	//Testing
+	RangedWeapon* rWpn = new RangedWeapon(200, ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW, 10, 2);
+	rWpn->SetModel("Media/Models/Bow_v01.obj");
+	rWpn->SetIconPath("Media/Icons/Bow_Icon_Temp.png");
+	ItemActor* actor = new ItemActor(rWpn);
+	this->zActorManager->AddActor(actor);
 }
 
 Game::~Game()
@@ -166,6 +174,9 @@ void Game::OnEvent( Event* e )
 		auto playerIterator = this->zPlayers.find(PLOE->clientData);
 		auto playerBehavior = playerIterator->second->GetBehavior();
 		Actor* actor = playerBehavior->GetActor();
+		NetworkMessageConverter NMC;
+		std::string msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE);
+		unsigned int ID = 0;
 		for (auto it_actor = actors.begin(); it_actor != actors.end(); it_actor++)
 		{
 			for (auto it_ID = PLOE->actorID.begin(); it_ID != PLOE->actorID.end(); it_ID++)
@@ -177,13 +188,15 @@ void Game::OnEvent( Event* e )
 					
 					if (ItemActor* iActor = dynamic_cast<ItemActor*>(*it_actor))
 					{
-						lootedItems.push_back(iActor->GetItem());
+						ID = iActor->GetID();
+						msg += iActor->GetItem()->ToMessageString(&NMC);
+						msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, ID);
 					}
 					else if(AnimalActor* aActor = dynamic_cast<AnimalActor*>(*it_actor))
 					{
-						if (PlayerActor* player = dynamic_cast<PlayerActor*>(actor))
+						if (!aActor->IsAlive())
 						{
-							if (!aActor->IsAlive())
+							if (PlayerActor* player = dynamic_cast<PlayerActor*>(actor))
 							{
 								if (Inventory* playerInventory = player->GetInventory())
 								{
@@ -192,11 +205,13 @@ void Game::OnEvent( Event* e )
 									if (item)
 									{
 										Inventory* inv = aActor->GetInventory();
+										ID = aActor->GetID();
 
 										std::vector<Item*> items = inv->GetItems();
 										for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
 										{
-											lootedItems.push_back((*it_Item));
+											msg += (*it_Item)->ToMessageString(&NMC);
+											msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, ID);
 										}
 									}
 								}
@@ -208,45 +223,103 @@ void Game::OnEvent( Event* e )
 						if (!pActor->IsAlive())
 						{
 							Inventory* inv = pActor->GetInventory();
+							ID = pActor->GetID();
 
 							std::vector<Item*> items = inv->GetItems();
 							for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
 							{
-								lootedItems.push_back((*it_Item));
-							}
-							Item* item = inv->GetRangedWeapon();
-							if (item)
-							{
-								lootedItems.push_back(item);
-							}
-							item = inv->GetMeleeWeapon();
-							if (item)
-							{
-								lootedItems.push_back(item);
-							}
-							item = inv->GetProjectile();
-							if (item)
-							{
-								lootedItems.push_back(item);
+								msg += (*it_Item)->ToMessageString(&NMC);
+								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, ID);
 							}
 						}
 					}
 				}
 			}
 		}
-		if (lootedItems.size() > 0)
-		{
-			NetworkMessageConverter NMC;
-			std::string msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE);
-			for (auto x = lootedItems.begin(); x < lootedItems.end(); x++)
-			{
-				msg += (*x)->ToMessageString(&NMC); 	
-			}
-			PLOE->clientData->Send(msg);
-		}
+		PLOE->clientData->Send(msg);
 	}
-	else if ( PlayerPickupObjectEvent* PPOE = dynamic_cast<PlayerPickupObjectEvent*>(e) )
+	else if ( PlayerLootItemEvent* PLIE = dynamic_cast<PlayerLootItemEvent*>(e) )
 	{
+		Actor* actor = this->zActorManager->GetActor(PLIE->objID);
+		Item* item = NULL;
+		NetworkMessageConverter NMC;
+		if (ItemActor* iActor = dynamic_cast<ItemActor*>(actor))
+		{
+			item = iActor->GetItem();
+
+			if (item)
+			{
+				std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+				if (item->GetID() == PLIE->itemID && item->GetItemType() == PLIE->itemType && item->GetItemSubType() == PLIE->subType)
+				{
+					if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
+					{
+						msg += rWpn->ToMessageString(&NMC);
+					}
+					else if (MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item))
+					{
+						msg += mWpn->ToMessageString(&NMC);
+					}
+					else if (Projectile* projectile = dynamic_cast<Projectile*>(item))
+					{
+						msg += projectile->ToMessageString(&NMC);
+					}
+					else if (Food* food = dynamic_cast<Food*>(item))
+					{
+						msg += food->ToMessageString(&NMC);
+					}
+					else if (Material* material = dynamic_cast<Material*>(item))
+					{
+						msg += material->ToMessageString(&NMC);
+					}
+					else if (Container* container = dynamic_cast<Container*>(item))
+					{
+						msg += container->ToMessageString(&NMC);
+					}
+					PLIE->clientData->Send(msg);
+				}
+			}
+		}
+		else if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
+		{
+			Inventory* inv = bActor->GetInventory();
+			if (inv)
+			{
+				item = inv->SearchAndGetItem(PLIE->itemID);
+				if(item)
+				{
+					std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+					if (item->GetItemType() == PLIE->itemType && item->GetItemSubType() == PLIE->subType)
+					{
+						if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
+						{
+							msg += rWpn->ToMessageString(&NMC);
+						}
+						else if (MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item))
+						{
+							msg += mWpn->ToMessageString(&NMC);
+						}
+						else if (Projectile* projectile = dynamic_cast<Projectile*>(item))
+						{
+							msg += projectile->ToMessageString(&NMC);
+						}
+						else if (Food* food = dynamic_cast<Food*>(item))
+						{
+							msg += food->ToMessageString(&NMC);
+						}
+						else if (Material* material = dynamic_cast<Material*>(item))
+						{
+							msg += material->ToMessageString(&NMC);
+						}
+						else if (Container* container = dynamic_cast<Container*>(item))
+						{
+							msg += container->ToMessageString(&NMC);
+						}
+						PLIE->clientData->Send(msg);
+					}
+				}
+			}
+		}
 		
 	}
 	else if ( PlayerDropItemEvent* PDIE = dynamic_cast<PlayerDropItemEvent*>(e) )

@@ -86,7 +86,8 @@ public:
 
 	long objID;
 	long itemID;
-	int type;
+	int itemType;
+	int subType;
 	
 };
 
