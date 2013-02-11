@@ -18,15 +18,15 @@ InventoryGui::InventoryGui()
 InventoryGui::InventoryGui(float x, float y, float width, float height, std::string textureName) 
 	: GuiElement(x, y, width, height, textureName)
 {
-	float windowHeight = (float)(GetGraphics()->GetEngineParameters().WindowHeight);
+	float windowHeight = (float)(GetGraphics()->GetEngineParameters()->windowHeight);
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 
 	float startOffsetX = (XOFFSETINV / 1024.0f) * dx;
-	float startOffsetY = (YOFFSETINV / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight;
+	float startOffsetY = (YOFFSETINV / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
 	this->zSlotImageWidth = (SLOTIMAGEWIDTH / 1024.0f) * dx;
-	this->zSlotImageHeight = (SLOTIMAGEHEIGHT / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight;
+	this->zSlotImageHeight = (SLOTIMAGEHEIGHT / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
 	float paddingX = (PADDING / 1024.0f) * dx;
-	float paddingY = (PADDING / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight;
+	float paddingY = (PADDING / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
 	float xTemp = this->zX + startOffsetX;
 	float yTemp = this->zY + startOffsetY;
 	zSlotPositions[0] = Vector2(xTemp, yTemp);
@@ -46,7 +46,7 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 
 		zSlotPositions[i] = Vector2(xTemp, yTemp);
 	}
-	startOffsetY = (YOFFSETEQ / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight;
+	startOffsetY = (YOFFSETEQ / 768.0f) * GetGraphics()->GetEngineParameters()->windowHeight;
 	xTemp = this->zX + (EQXPOS[0] / 1024.0f) * dx;
 	zWeaponSlots[0] = Vector2(xTemp, this->zY + startOffsetY);
 

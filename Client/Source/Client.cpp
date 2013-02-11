@@ -102,7 +102,7 @@ float Client::Update()
 			this->zAnchor->position = cameraPos;
 			this->zEng->SetSceneAmbientLight(this->zWorld->GetAmbientAtWorldPos(cameraPos));
 
-			this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
+			this->zAnchor->radius = this->zEng->GetEngineParameters()->FarClip;
 		}
 
 		this->zWorld->Update();
@@ -132,10 +132,11 @@ void Client::InitGraphics(const std::string& mapName)
 
 	this->zAnchor = this->zWorld->CreateAnchor();
 	this->zAnchor->position = center;
-	this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
+	this->zAnchor->radius = this->zEng->GetEngineParameters()->FarClip;
 
-	int windowWidth = GetGraphics()->GetEngineParameters().WindowWidth;
-	int windowHeight = GetGraphics()->GetEngineParameters().WindowHeight;	float dx = ((float)windowHeight * 4.0f) / 3.0f;
+	int windowWidth = this->zEng->GetEngineParameters()->windowWidth;
+	int windowHeight = this->zEng->GetEngineParameters()->windowHeight;	
+	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 	float length = ((25.0f / 1024.0f) * dx);
 	float xPos = offSet + (0.5f * dx) - length * 0.5f;
@@ -219,7 +220,7 @@ void Client::Life()
 		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 		{
 			this->zGuiManager->ToggleIngameMenu();
-			//this->CloseConnection("");
+			this->CloseConnection("");
 		}
 
 		Sleep(5);
@@ -230,7 +231,7 @@ void Client::Life()
 
 void Client::ReadMessages()
 {
-	static const unsigned int MAX_NR_OF_MESSAGES = 10;
+	static const unsigned int MAX_NR_OF_MESSAGES = 1000;
 
 	int nrOfMessages = this->GetEventQueueSize();
 	if (nrOfMessages == 0)
@@ -807,6 +808,24 @@ void Client::HandleDebugInfo()
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
+	//Sound debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F8))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Sound Error at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
 	else if (this->zEng->GetKeyListener()->IsPressed(VK_DELETE))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -836,7 +855,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
 
-	Messages::Debug(msg);
+	if (Messages::MsgFileWrite())
+		Messages::Debug(msg);
 
 	//Checks what type of message was sent
 	if(msg.find(M_PING.c_str()) == 0)
