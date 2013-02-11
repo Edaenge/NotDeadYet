@@ -216,18 +216,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_STAMINA:
 		ss << M_STAMINA;
 		break;
-	case MESSAGE_TYPE_DEAD_ANIMAL_ADD_ITEM:
-		ss << M_ADD_DEAD_ANIMAL_ITEM;
-		break;
-	case MESSAGE_TYPE_DEAD_ANIMAL_REMOVE_ITEM:
-		ss << M_DEAD_ANIMAL_REMOVE_ITEM;
-		break;
-	case MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM:
-		ss << M_DEAD_PLAYER_ADD_ITEM;
-		break;
-	case MESSAGE_TYPE_DEAD_PLAYER_REMOVE_ITEM:
-		ss << M_DEAD_PLAYER_REMOVE_ITEM;
-		break;
 	case MESSAGE_TYPE_CONNECTION_CLOSED:
 		ss << M_CONNECTION_CLOSED;
 		break;
@@ -258,12 +246,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	case MESSAGE_TYPE_PING:
 		ss << M_PING;
 		break;
-	case MESSAGE_TYPE_DEAD_ANIMAL_ITEM_FINISHED:
-		ss << M_DEAD_ANIMAL_ITEM_FINISHED;
-		break;
-	case MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED:
-		ss << M_DEAD_PLAYER_ITEM_FINISHED;
-		break;;
 	case MESSAGE_TYPE_SERVER_FULL:
 		ss << M_SERVER_FULL;
 		break;
