@@ -13,6 +13,7 @@
 #include "PlayerWolfBehavior.h"
 #include "AIWolfBehavior.h"
 #include "WorldActor.h"
+#include "ItemActor.h"
 #include <World/EntityList.h>
 #include "Physics.h"
 #include "ClientServerMessages.h"
@@ -263,11 +264,14 @@ void Game::OnEvent( Event* e )
 			return;
 		
 		item = pActor->DropItem(PDIE->itemID);
-
+		
 		if(!item)
 			return;
-
-
+ 
+		actor = NULL;
+		actor = new ItemActor(item);
+		actor->SetPosition(pActor->GetPosition());
+		this->zActorManager->AddActor(actor);
 
 	}
 	else if ( PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e) )

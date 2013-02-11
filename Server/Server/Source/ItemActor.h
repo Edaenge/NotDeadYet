@@ -6,16 +6,19 @@
 #pragma once
 
 #include "Actor.h"
-
-class Item;
+#include "Item.h"
 
 class ItemActor : public Actor
 {
-	Item* zItem;
 public:
 
 	ItemActor(Item* item);
 	virtual ~ItemActor();
 
 	inline Item* GetItem() const { return this->zItem; }
+	virtual const std::string& GetModel() const;
+
+private:
+	Item* zItem;
+
 };
