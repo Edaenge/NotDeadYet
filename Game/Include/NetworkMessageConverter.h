@@ -68,16 +68,6 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_PROJECTILE_VELOCITY,
 	MESSAGE_TYPE_MATERIAL_STACKS_REQUIRED,
 	MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE,
-	MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM,
-	MESSAGE_TYPE_DEAD_ANIMAL_ADD_ITEM,
-	MESSAGE_TYPE_DEAD_PLAYER_REMOVE_ITEM,
-	MESSAGE_TYPE_DEAD_ANIMAL_REMOVE_ITEM,
-	//MESSAGE_TYPE_ADD_DEAD_PLAYER_OBJECT,
-	//MESSAGE_TYPE_ADD_DEAD_ANIMAL_OBJECT,
-	//MESSAGE_TYPE_REMOVE_DEAD_PLAYER_OBJECT,
-	//MESSAGE_TYPE_REMOVE_DEAD_ANIMAL_OBJECT,
-	MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED,
-	MESSAGE_TYPE_DEAD_ANIMAL_ITEM_FINISHED,
 	MESSAGE_TYPE_START_GAME,
 	MESSAGE_TYPE_PLAYER_READY,
 	MESSAGE_TYPE_ITEM_SUB_TYPE
@@ -130,6 +120,7 @@ static const std::string M_LOOT_ITEM				= "LI";
 static const std::string M_DROP_ITEM				= "DI";
 static const std::string M_ADD_INVENTORY_ITEM		= "AII";
 static const std::string M_REMOVE_INVENTORY_ITEM	= "RII";
+static const std::string M_LOOT_OBJECT				= "LO";
 //Animal Messages
 static const std::string M_ADD_DEAD_ANIMAL_ITEM		= "ADAI";
 static const std::string M_DEAD_ANIMAL_REMOVE_ITEM	= "DARI";
@@ -152,10 +143,6 @@ static const std::string M_ACKNOWLEDGE_MESSAGE		= "ACK";
 //Player Messages
 static const std::string M_CLIENT_DATA				= "CD";
 static const std::string M_NEW_ACTOR				= "NP";
-static const std::string M_DEAD_PLAYER_ADD_ITEM		= "DPAI";
-static const std::string M_DEAD_PLAYER_REMOVE_ITEM	= "DPRI";
-static const std::string M_ADD_DEAD_PLAYER_OBJECT	= "ADPO";
-static const std::string M_DEAD_PLAYER_ITEM_FINISHED= "DPIF";
 static const std::string M_READY_PLAYER				= "PRM";
 //Confirmation Message
 static const std::string M_SELF_ID					= "SELF";

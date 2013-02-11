@@ -60,7 +60,7 @@ void Host::Life()
 	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
 
 	static float waitTimer = 0.0f;
-	
+
 	this->zGameStarted = true;
 	while(this->stayAlive)
 	{
@@ -72,8 +72,15 @@ void Host::Life()
 
 		}
 		else if(zGame->Update(this->zDeltaTime))
-		{			
-			SynchronizeAll();
+		{
+			waitTimer += zDeltaTime;
+			
+			if (waitTimer >= UPDATE_DELAY)
+			{
+				SynchronizeAll();
+				
+				waitTimer = 0.0f;
+			}
 		}
 		else
 		{
@@ -474,6 +481,7 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 
 void Host::SynchronizeAll()
 {
+	
 	for( auto i = zClients.begin(); i != zClients.end(); ++i )
 	{
 		zSynchronizer->SendUpdatesTo(i->second);
@@ -521,4 +529,3 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
 		zGame->OnEvent(&PCE);
 	}
 }
-

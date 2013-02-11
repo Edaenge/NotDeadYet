@@ -133,8 +133,13 @@ void MainMenu::Init()
 
 void MainMenu::StartTestRun()
 {
+<<<<<<< HEAD
 	zGame->InitGameClient("194.47.150.12", 11521);
 	//zGame->InitGameClient("127.0.0.1", 11521);	
+=======
+	//zGame->InitGameClient("194.47.150.16", 11521);
+	zGame->InitGameClient("127.0.0.1", 11521);	
+>>>>>>> 15cd09946bad7f2e85b30fc8634aca8b768d5154
 	zGame->Run();
 }
 
