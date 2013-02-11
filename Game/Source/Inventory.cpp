@@ -355,13 +355,15 @@ void Inventory::UnEquipRangedWeapon()
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Weapon");
 
-	if(zPrimaryEquip == zRangedWeapon)
+	Item* item = dynamic_cast<RangedWeapon*>(zProjectile);
+
+	if(zPrimaryEquip == item)
 	{
 		zPrimaryEquip = NULL;
 		zPrimaryEquip = zSecondaryEquip;
 		zSecondaryEquip = NULL;
 	}
-	else
+	else if(zSecondaryEquip == item)
 	{
 		zSecondaryEquip = NULL;
 	}
@@ -374,13 +376,15 @@ void Inventory::UnEquipMeleeWeapon()
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Weapon");
 
-	if(zPrimaryEquip == zMeleeWeapon)
+	Item* item = dynamic_cast<MeleeWeapon*>(zProjectile);
+
+	if(zPrimaryEquip == item)
 	{
 		zPrimaryEquip = NULL;
 		zPrimaryEquip = zSecondaryEquip;
 		zSecondaryEquip = NULL;
 	}
-	else
+	else if(zSecondaryEquip == item)
 	{
 		zSecondaryEquip = NULL;
 	}
@@ -393,13 +397,15 @@ void Inventory::UnEquipProjectile()
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Projectile");
 
-	if(zPrimaryEquip == zProjectile)
+	Item* item = dynamic_cast<Projectile*>(zProjectile);
+
+	if(zPrimaryEquip == item)
 	{
 		zPrimaryEquip = NULL;
 		zPrimaryEquip = zSecondaryEquip;
 		zSecondaryEquip = NULL;
 	}
-	else
+	else if(zSecondaryEquip == item)
 	{
 		zSecondaryEquip = NULL;
 	}

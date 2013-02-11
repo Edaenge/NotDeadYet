@@ -4,8 +4,10 @@
 #include <world/World.h>
 #include "GameEvents.h"
 #include "PlayerHumanBehavior.h"
+#include "ProjectileBehavior.h"
 #include "PlayerWolfBehavior.h"
 #include "PlayerActor.h"
+#include "ProjectileActor.h"
 #include "DeerActor.h"
 #include "WolfActor.h"
 #include "BearActor.h"
@@ -280,25 +282,91 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
-		/*auto playerIterator = zPlayers.find(PUEWE->clientData);
-		auto playerBehavior = playerIterator->second->GetBehavior();
+		Actor* actor = NULL;
+		PlayerActor* pActor = NULL;
+		Inventory* inventory = NULL;
+		Item* item = NULL;
+		auto playerIterator = zPlayers.find(PUEWE->clientData);
 
-		Actor* actor = playerBehavior->GetActor();
-
-		PlayerActor* player = dynamic_cast<PlayerActor*>(actor);
-		if (player)
+		actor = playerIterator->second->GetBehavior()->GetActor();
+		
+		if (!(pActor = dynamic_cast<PlayerActor*>(actor)))
 		{
-		BioActor* damageTaker = dynamic_cast<BioActor*>(this->zActorManager->CheckCollisions(player));
-
-		if (actor)
-		{
-		Damage damage = Damage();
-		damage.blunt = 20.0f;
-		damageTaker->TakeDamage(damage, actor);
-		if (Messages::FileWrite())
-		Messages::Debug("Player " + MaloW::convertNrToString(actor->GetID()) + " Attacked player " + MaloW::convertNrToString(damageTaker->GetID()));
+			MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
+			return;
 		}
-		}*/
+		if(!(inventory = pActor->GetInventory()))
+		{
+			MaloW::Debug("Inventory is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
+			return;
+		}
+		if (!(item = inventory->SearchAndGetItem(PUEWE->itemID)))
+		{
+			MaloW::Debug("Item is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
+			return;
+		}
+
+		RangedWeapon* ranged = NULL;
+		MeleeWeapon* meele = NULL;
+		Projectile* proj = NULL;
+		NetworkMessageConverter NMC;
+
+		if(ranged = dynamic_cast<RangedWeapon*>(item))
+		{
+			//Check if arrows are equipped
+			Projectile* arrow = inventory->GetProjectile();
+			if(arrow->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+			{
+				//create projectileActor
+				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
+				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
+				ProjectileBehavior* projBehavior= new ProjectileBehavior(projActor, this->zWorld);
+				Damage damage;
+
+				//Sets damage
+				damage.piercing = ranged->GetDamage() + arrow->GetDamage();
+				projActor->SetDamage(damage);
+
+				this->zActorManager->AddActor(projActor);
+				this->zBehaviors.insert(projBehavior);
+				//Decrease stack
+				arrow->Use();
+				if (arrow->GetStackSize() <= 0)
+				{
+					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
+					msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_AMMO);
+					PUEWE->clientData->Send(msg);
+					SAFE_DELETE(arrow);
+					inventory->UnEquipProjectile();
+				}
+				//Send feedback message
+				PUEWE->clientData->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)pActor->GetID()));
+			}
+		}
+		else if(proj = dynamic_cast<Projectile*>(item))
+		{
+			//TODO: Implement rocks
+		}
+		else if(meele = dynamic_cast<MeleeWeapon*>(item))
+		{
+			float range = 0.f; 
+			BioActor* victim = NULL;
+
+			//Check Collisions
+			range = meele->GetRange();
+			victim = dynamic_cast<BioActor* >(this->zActorManager->CheckCollisions(pActor, range));
+
+			if(victim)
+			{
+				Damage dmg;
+
+				if(meele->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+					dmg.slashing = meele->GetDamage();
+				
+				victim->TakeDamage(dmg, pActor);
+			}
+		}
+
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{

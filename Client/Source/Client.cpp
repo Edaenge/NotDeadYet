@@ -645,7 +645,7 @@ void Client::HandleWeaponEquips()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE, ITEM_SUB_TYPE_AXE);
+			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE, ITEM_SUB_TYPE_MACHETE);
 			if (item)
 			{
 				SendUseItemMessage(item->GetID());
