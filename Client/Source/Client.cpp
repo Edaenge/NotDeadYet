@@ -859,7 +859,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		this->Ping();
 	}
-	//WorldObjects
+	//Actors
 	else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
@@ -870,7 +870,16 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
 		this->AddActor(msgArray, id);
 	}
-	//WorldObjects
+	else if (msg.find(M_ACTOR_TAKE_DAMAGE.c_str()) == 0)
+	{
+		if (msgArray.size() > 1)
+		{
+			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TAKE_DAMAGE, msgArray[0]);
+			float damageTaken = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, msgArray[1]);
+			this->HandleTakeDamage(msgArray, id, damageTaken);
+		}
+	}
+	//Actors
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
@@ -988,7 +997,22 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		MaloW::Debug("C: " + msg);
 	}
 }
+bool Client::HandleTakeDamage( const std::vector<std::string>& msgArray, const unsigned int ID, float damageTaken )
+{
+	Actor* actor = this->zObjectManager->SearchAndGetActor(ID);
+	Actor* player = this->zObjectManager->SearchAndGetActor(this->zID);
 
+	if (!actor || !player)
+	{
+		MaloW::Debug("Failed to find Attacker in Client::HandleTakeDamage");
+		return false;
+	}
+
+	Vector3 positionAttacker = actor->GetPosition();
+	Vector3 postionPlayer = player->GetPosition();
+
+
+}
 void Client::CloseConnection(const std::string& reason)
 {
 	MaloW::Debug("Client Shutdown: " + reason);

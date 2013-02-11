@@ -53,6 +53,13 @@ void GameModeFFA::OnEvent( Event* e )
 					else if( dpa == pa )
 						zScoreBoard[pa->GetPlayer()]--;
 			}
+			unsigned int ID = ATD->zDealer->GetID();
+			float damage = ATD->zDamage.GetTotal();
+			NetworkMessageConverter NMC;
+			std::string msg = NMC.Convert(MESSAGE_TYPE_ACTOR_TAKE_DAMAGE, ID);
+			msg += NMC.Convert(MESSAGE_TYPE_HEALTH, damage);
+			ClientData* cd = pa->GetPlayer()->GetClientData();
+			cd->Send(msg);
 		}
 	}
 	else if( PlayerAddEvent* PAE = dynamic_cast<PlayerAddEvent*>(e) )

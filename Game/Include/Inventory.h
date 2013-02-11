@@ -52,7 +52,7 @@ public:
 	/*! Returns the Inventory Capacity == Max Weight allowed*/
 	int GetInventoryCapacity() const;
 	/*! Returns amount of Items the player has in the inventory with itemType = TYPE*/
-	int SearchForItemType(const unsigned int TYPE);
+	int SearchForItemType(const int Type, const int SubType);
 	/*! Removes a stack from Item*/
 	bool RemoveItemStack(const unsigned int ID, const unsigned int numberOfStacks = 1);
 	Item* SearchAndGetItemFromType(const int Type, const int SubType);

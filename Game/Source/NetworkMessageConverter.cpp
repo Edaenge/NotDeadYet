@@ -249,6 +249,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	case MESSAGE_TYPE_PING:
 		ss << M_PING;
 		break;
+	case MESSAGE_TYPE_LOOT_OBJECT_RESPONSE:
+		ss << M_LOOT_OBJECT_RESPONSE;
+		break;
 	case MESSAGE_TYPE_SERVER_FULL:
 		ss << M_SERVER_FULL;
 		break;

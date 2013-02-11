@@ -41,7 +41,9 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_PICKUP_ITEM,
 	MESSAGE_TYPE_LOOT_ITEM,
 	MESSAGE_TYPE_LOOT_OBJECT,
+	MESSAGE_TYPE_LOOT_OBJECT_RESPONSE,
 	MESSAGE_TYPE_DROP_ITEM,
+	MESSAGE_TYPE_ACTOR_TAKE_DAMAGE,
 	MESSAGE_TYPE_HEALTH,
 	MESSAGE_TYPE_HUNGER,
 	MESSAGE_TYPE_HYDRATION,
@@ -77,6 +79,7 @@ enum MESSAGE_TYPE
 static const std::string M_UPDATE_ACTOR				= "UA";
 static const std::string M_REMOVE_ACTOR				= "RA";
 static const std::string M_DEAD_ACTOR				= "DA";
+static const std::string M_ACTOR_TAKE_DAMAGE		= "ATD";
 //Data Messages
 static const std::string M_LOAD_MAP					= "LM";
 static const std::string M_CONNECTED				= "CON";
@@ -122,6 +125,7 @@ static const std::string M_DROP_ITEM				= "DI";
 static const std::string M_ADD_INVENTORY_ITEM		= "AII";
 static const std::string M_REMOVE_INVENTORY_ITEM	= "RII";
 static const std::string M_LOOT_OBJECT				= "LO";
+static const std::string M_LOOT_OBJECT_RESPONSE		= "LOR";
 //Animal Messages
 static const std::string M_ADD_DEAD_ANIMAL_ITEM		= "ADAI";
 static const std::string M_DEAD_ANIMAL_REMOVE_ITEM	= "DARI";
