@@ -152,9 +152,6 @@
     <ClInclude Include="Source\MainMenu.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\OrganicObject.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SoundReader.h">
       <Filter>Source</Filter>
     </ClInclude>

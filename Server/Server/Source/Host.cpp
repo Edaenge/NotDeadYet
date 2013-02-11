@@ -60,7 +60,7 @@ void Host::Life()
 	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
 
 	static float waitTimer = 0.0f;
-	
+
 	this->zGameStarted = true;
 	while(this->stayAlive)
 	{
@@ -72,8 +72,15 @@ void Host::Life()
 
 		}
 		else if(zGame->Update(this->zDeltaTime))
-		{			
-			SynchronizeAll();
+		{
+			waitTimer += zDeltaTime;
+			
+			if (waitTimer >= UPDATE_DELAY)
+			{
+				SynchronizeAll();
+				
+				waitTimer = 0.0f;
+			}
 		}
 		else
 		{
@@ -254,6 +261,18 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		int _objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
 
 		e.objID = _objID;
+		NotifyObservers(&e);
+	}
+	else if(msgArray[0].find(M_LOOT_OBJECT.c_str()) == 0)
+	{
+		PlayerLootObjectEvent e;
+		e.clientData = cd;
+		for (auto it = msgArray.begin(); it != msgArray.end(); it++)
+		{
+			unsigned int id = this->zMessageConverter.ConvertStringToInt(M_LOOT_OBJECT, (*it));
+
+			e.actorID.push_back(id);
+		}
 		NotifyObservers(&e);
 	}
 	//Handles loot item request
@@ -474,6 +493,7 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 
 void Host::SynchronizeAll()
 {
+	
 	for( auto i = zClients.begin(); i != zClients.end(); ++i )
 	{
 		zSynchronizer->SendUpdatesTo(i->second);
@@ -521,4 +541,3 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
 		zGame->OnEvent(&PCE);
 	}
 }
-

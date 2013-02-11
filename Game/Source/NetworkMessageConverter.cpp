@@ -138,6 +138,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_LOOT_ITEM:
 		ss << M_LOOT_ITEM;
 		break;
+	case MESSAGE_TYPE_LOOT_OBJECT:
+		ss << M_LOOT_OBJECT;
+		break;
 	case MESSAGE_TYPE_DROP_ITEM:
 		ss << M_DROP_ITEM;
 		break;
@@ -216,18 +219,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_STAMINA:
 		ss << M_STAMINA;
 		break;
-	case MESSAGE_TYPE_DEAD_ANIMAL_ADD_ITEM:
-		ss << M_ADD_DEAD_ANIMAL_ITEM;
-		break;
-	case MESSAGE_TYPE_DEAD_ANIMAL_REMOVE_ITEM:
-		ss << M_DEAD_ANIMAL_REMOVE_ITEM;
-		break;
-	case MESSAGE_TYPE_DEAD_PLAYER_ADD_ITEM:
-		ss << M_DEAD_PLAYER_ADD_ITEM;
-		break;
-	case MESSAGE_TYPE_DEAD_PLAYER_REMOVE_ITEM:
-		ss << M_DEAD_PLAYER_REMOVE_ITEM;
-		break;
 	case MESSAGE_TYPE_CONNECTION_CLOSED:
 		ss << M_CONNECTION_CLOSED;
 		break;
@@ -258,12 +249,12 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	case MESSAGE_TYPE_PING:
 		ss << M_PING;
 		break;
-	case MESSAGE_TYPE_DEAD_ANIMAL_ITEM_FINISHED:
-		ss << M_DEAD_ANIMAL_ITEM_FINISHED;
+	case MESSAGE_TYPE_ITEM_FINISHED:
+		ss << M_ITEM_FINISHED;
 		break;
-	case MESSAGE_TYPE_DEAD_PLAYER_ITEM_FINISHED:
-		ss << M_DEAD_PLAYER_ITEM_FINISHED;
-		break;;
+	case MESSAGE_TYPE_LOOT_OBJECT_RESPONSE:
+		ss << M_LOOT_OBJECT_RESPONSE;
+		break;
 	case MESSAGE_TYPE_SERVER_FULL:
 		ss << M_SERVER_FULL;
 		break;
@@ -327,10 +318,10 @@ Vector3 NetworkMessageConverter::ConvertStringToVector(const std::string& type, 
 }
 Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& type, const std::string& msg)
 {
-	float x;
-	float y;
-	float z;
-	float w;
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+	float w = 1.0f;
 	sscanf_s(msg.c_str(), (type + "%f %f %f %f").c_str(), &x, &y, &z, &w);
 
 	Vector4 quaternion = Vector4(x, y, z, w);
@@ -339,13 +330,13 @@ Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& ty
 }
 int NetworkMessageConverter::ConvertStringToInt(const std::string& type, const std::string& msg)
 {
-	int value;
+	int value = 0;
 	sscanf_s(msg.c_str(), (type + "%d").c_str(), &value);
 	return value;
 }
 float NetworkMessageConverter::ConvertStringToFloat(const std::string& type, const std::string& msg)
 {
-	float value;
+	float value = 0.0f;
 	sscanf_s(msg.c_str(), (type + "%f").c_str(), &value);
 	return value;
 }

@@ -232,8 +232,7 @@ void Client::Life()
 
 void Client::ReadMessages()
 {
-	static const unsigned int MAX_NR_OF_MESSAGES = 1000;
-
+	static const unsigned int MAX_NR_OF_MESSAGES = 10000;
 	int nrOfMessages = this->GetEventQueueSize();
 	if (nrOfMessages == 0)
 		return;
@@ -450,7 +449,7 @@ void Client::HandleKeyboardInput()
 		}
 	}
 	//UnEquip Ranged Weapon
-	if (this->zEng->GetKeyListener()->IsPressed('R'))
+	else if (this->zEng->GetKeyListener()->IsPressed('R'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
@@ -520,24 +519,21 @@ void Client::HandleKeyboardInput()
 		{
 			if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
 			{
-				std::vector<Looting_Data> collisionObjects = this->RayVsWorld();
-				std::vector<Gui_Item_Data> gui_Item_Datas;
+				std::vector<unsigned int> collisionObjects = this->RayVsWorld();
 				if (collisionObjects.size() > 0)
 				{
-					//if (collisionObjects[0].type == OBJECT_TYPE_DYNAMIC_OBJECT || collisionObjects[0].type == OBJECT_TYPE_STATIC_OBJECT)
-					//{
-						this->SendPickupItemMessage(collisionObjects[0].gid.zID);
-					//}
-					//else if (collisionObjects[0].type == OBJECT_TYPE_DEAD_PLAYER)
-					//{
-					//	this->SendLootItemMessage(collisionObjects[0].owner, collisionObjects[0].gid.zID, collisionObjects[0].gid.zType);
-					//}
-					for (auto x = collisionObjects.begin(); x < collisionObjects.end(); x++)
+					std::string msg =  "";
+					for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
 					{
-						gui_Item_Datas.push_back((*x).gid);
+						msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (*it));
 					}
+					this->zServerChannel->Send(msg);
+					//for (auto x = collisionObjects.begin(); x < collisionObjects.end(); x++)
+					//{
+					//	gui_Item_Datas.push_back((*x).gid);
+					//}
 				}
-				this->zGuiManager->ShowLootingGui(gui_Item_Datas);
+				//this->zGuiManager->ShowLootingGui(gui_Item_Datas);
 				this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
 			}
 		}
@@ -864,7 +860,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		this->Ping();
 	}
-	//WorldObjects
+	//Actors
 	else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
@@ -875,11 +871,24 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
 		this->AddActor(msgArray, id);
 	}
-	//WorldObjects
+	else if (msg.find(M_ACTOR_TAKE_DAMAGE.c_str()) == 0)
+	{
+		if (msgArray.size() > 1)
+		{
+			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TAKE_DAMAGE, msgArray[0]);
+			float damageTaken = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, msgArray[1]);
+			this->HandleTakeDamage(msgArray, id, damageTaken);
+		}
+	}
+	//Actors
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
 		this->UpdateActor(msgArray, id);
+	}
+	else if (msg.find(M_LOOT_OBJECT_RESPONSE.c_str()) == 0)
+	{
+		this->HandleDisplayLootData(msgArray);
 	}
 	else if(msg.find(M_EQUIP_ITEM.c_str()) == 0)
 	{
@@ -993,6 +1002,22 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		MaloW::Debug("C: " + msg);
 	}
 }
+bool Client::HandleTakeDamage( const std::vector<std::string>& msgArray, const unsigned int ID, float damageTaken )
+{
+	Actor* actor = this->zObjectManager->SearchAndGetActor(ID);
+	Actor* player = this->zObjectManager->SearchAndGetActor(this->zID);
+
+	if (!actor || !player)
+	{
+		MaloW::Debug("Failed to find Attacker in Client::HandleTakeDamage");
+		return false;
+	}
+
+	Vector3 positionAttacker = actor->GetPosition();
+	Vector3 postionPlayer = player->GetPosition();
+
+
+}
 
 void Client::CloseConnection(const std::string& reason)
 {
@@ -1003,17 +1028,17 @@ void Client::CloseConnection(const std::string& reason)
 	this->Close();
 }
 
-std::vector<Looting_Data> Client::RayVsWorld()
+std::vector<unsigned int> Client::RayVsWorld()
 {
 	Vector3 origin = this->zEng->GetCamera()->GetPosition();
 	Vector3 camForward = this->zEng->GetCamera()->GetForward();
 
 	CollisionData data;
-	std::vector<Looting_Data> Collisions;
+	std::vector<unsigned int> Collisions;
 	//Static objects
-	/*std::vector<StaticObject*> staticObjects = this->zObjectManager->GetStaticObjects();
+	std::vector<Actor*> actors = this->zObjectManager->GetActors();
 	iMesh* mesh = NULL;
-	for(auto it = staticObjects.begin(); it < staticObjects.end(); it++)
+	for(auto it = actors.begin(); it < actors.end(); it++)
 	{
 		mesh = (*it)->GetMesh();
 		if (!mesh)
@@ -1025,74 +1050,18 @@ std::vector<Looting_Data> Client::RayVsWorld()
 
 		if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
 		{
-			Looting_Data ld;
+			/*Looting_Data ld;
 			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), 
-				(*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription(), (*it)->GetType());
+			(*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription(), (*it)->GetType());
 
 			ld.owner = gui_Data.zID;
 			ld.gid = gui_Data;
-			ld.type = OBJECT_TYPE_DYNAMIC_OBJECT;
+			ld.type = OBJECT_TYPE_DYNAMIC_OBJECT;*/
 
-			Collisions.push_back(ld);
-		}
-	}
-	//Dynamic objects
-	std::vector<DynamicObject*> dynamicObjects = this->zObjectManager->GetDynamicObjects();
-	for(auto it = dynamicObjects.begin(); it < dynamicObjects.end(); it++)
-	{
-		mesh = (*it)->GetMesh();
-		if (!mesh)
-		{
-			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
-			continue;
-		}
-		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
-
-		if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
-		{
-			Looting_Data ld;
-			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), 
-				(*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription(), (*it)->GetType());
-
-			ld.owner = gui_Data.zID;
-			ld.gid = gui_Data;
-			ld.type = OBJECT_TYPE_DYNAMIC_OBJECT;
-
-			Collisions.push_back(ld);
+			Collisions.push_back((*it)->GetID());
 		}
 	}
 
-	std::vector<DeadPlayerObject*> deadPlayerObjects = this->zObjectManager->GetDeadPlayerObjects();
-	for (auto it = deadPlayerObjects.begin(); it < deadPlayerObjects.end(); it++)
-	{
-		mesh = (*it)->GetMesh();
-		if (!mesh)
-		{
-			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
-			continue;
-		}
-
-		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
-
-		if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
-		{
-			std::vector<Item*> items = (*it)->GetItems();
-			for (auto x = items.begin(); x < items.end(); x++)
-			{
-				Looting_Data ld;
-				Gui_Item_Data gui_Data = Gui_Item_Data((*x)->GetID(), (*x)->GetWeight(), (*x)->GetStackSize(), 
-					(*x)->GetItemName(), (*x)->GetIconPath(), (*x)->GetItemDescription(), (*x)->GetItemType());
-
-				ld.owner = (*it)->GetID();
-				ld.gid = gui_Data;
-				ld.type = OBJECT_TYPE_DEAD_PLAYER;
-
-				Collisions.push_back(ld);
-			}
-			
-		}
-	}
-	*/
 	return Collisions;
 }
 
@@ -1138,4 +1107,46 @@ void Client::onEvent(Event* e)
 		if ( zAnchor ) zWorld->DeleteAnchor( zAnchor );
 		if ( zWorld ) zWorld = 0;
 	}
+}
+
+void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
+{
+	std::vector<Gui_Item_Data> guiData;
+	for (auto it_Item_Data = msgArray.begin(); it_Item_Data != msgArray.end(); it_Item_Data++)
+	{
+		Gui_Item_Data gid = Gui_Item_Data();
+		if((*it_Item_Data).find(M_ITEM_ID.c_str()) == 0)
+		{
+			gid.zID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_TYPE.c_str()) == 0)
+		{
+			gid.zType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_DESCRIPTION.c_str()) == 0)
+		{
+			gid.zDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_NAME.c_str()) == 0)
+		{
+			gid.zName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_WEIGHT.c_str()) == 0)
+		{
+			gid.zWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_STACK_SIZE.c_str()) == 0)
+		{
+			gid.zStacks = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_ICON_PATH.c_str()) == 0)
+		{
+			gid.zFilePath = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it_Item_Data));
+		}
+		else if((*it_Item_Data).find(M_ITEM_FINISHED.c_str()) == 0)
+		{
+			guiData.push_back(gid);
+		}
+	}
+	this->zGuiManager->ShowLootingGui(guiData);
 }

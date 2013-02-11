@@ -3,7 +3,7 @@
 
 BioActor::BioActor() : Actor()
 {
-	
+	zInventory = new Inventory();
 	this->zState = STATE_IDLE;
 	this->zVelocity = V_WALK_SPEED;
 
@@ -20,6 +20,7 @@ BioActor::BioActor() : Actor()
 
 BioActor::~BioActor()
 {
+	SAFE_DELETE(zInventory);
 }
 
 

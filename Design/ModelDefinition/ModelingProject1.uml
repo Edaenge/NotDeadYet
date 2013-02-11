@@ -2469,6 +2469,24 @@
               </operationHasOwnedParameters>
             </ownedParameters>
           </operation>
+          <operation
+            Id="499a5705-242d-4802-a531-7b0ac72b2e57"
+            name="CheckCollisions"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="eafb4caa-e1bb-47ea-a656-2be58524f2ba"
+                  name="Actor*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
         </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
@@ -2723,6 +2741,22 @@
           <operation
             Id="47faa892-69f4-46bd-9dc4-8f83b7e0458b"
             name="GetKeys"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="4859c0f6-4481-43f0-a19d-dec6a74d4558"
+            name="GetClientData"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="9f919f5e-92ff-4a12-bdad-3ee728eca66c"
+            name="GetBehavior"
             isLeaf="false"
             isStatic="false"
             isAbstract="false"
@@ -4366,6 +4400,34 @@
             </relationshipOwnedElementsInternal>
           </association>
         </targetEnds>
+        <ownedOperationsInternal>
+          <operation
+            Id="986dd3fe-81d6-4de7-8346-9f6a77d12909"
+            name="ClearAll"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+          <operation
+            Id="e4d4f178-0bad-400c-bd0e-90f6d6f87e16"
+            name="SendUpdatesTo"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false">
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter
+                  Id="023bcb35-ef4c-4ea9-9d8f-85d236a9b2f5"
+                  name="ClientData*"
+                  direction="In"
+                  isUnique="false" />
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
       </class>
     </packageHasNamedElement>
     <packageHasNamedElement>

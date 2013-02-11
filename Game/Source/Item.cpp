@@ -9,6 +9,7 @@ Item::Item()
 	this->zIconPath = "none";
 	this->zItemType = 0;
 	this->zItemDescription = "none";
+	this->zMeshModel = "none";
 }
 
 Item::Item(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType)
@@ -18,16 +19,18 @@ Item::Item(const unsigned int ID, const unsigned int itemType, const unsigned in
 	this->zStacks = 1;
 	this->zWeight = 0;
 	this->zItemType = itemType;
-	this->zItemName = "Unknown";
-	this->zIconPath = "Unknown";
+	this->zItemName = "none";
+	this->zIconPath = "none";
 	this->zItemSubType = itemSubType;
-	this->zItemDescription = "Unknown";
+	this->zItemDescription = "none";
+
 }
 std::string Item::ToMessageString(NetworkMessageConverter* NMC)
 {
 	std::string msg;
 
-	msg = NMC->Convert(MESSAGE_TYPE_ITEM_TYPE, (float)this->zItemType);
+	msg = NMC->Convert(MESSAGE_TYPE_ITEM_ID, (float)this->zID);
+	msg += NMC->Convert(MESSAGE_TYPE_ITEM_TYPE, (float)this->zItemType);
 	msg += NMC->Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, this->zItemDescription);
 	msg += NMC->Convert(MESSAGE_TYPE_ITEM_NAME, this->zItemName);
 	msg += NMC->Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float) this->zWeight);

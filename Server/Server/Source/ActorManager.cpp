@@ -3,6 +3,7 @@
 #include "ActorSynchronizer.h"
 #include "Physics.h"
 #include "BioActor.h"
+#include "WorldActor.h"
 
 ActorManager::ActorManager( ActorSynchronizer* syncher ) : 
 	zSynch(syncher)
@@ -15,14 +16,21 @@ void ActorManager::AddActor( Actor* actor )
 	actor->AddObserver(this->zSynch);
 	zActors.insert(actor);
 
+	if(WorldActor* WA = dynamic_cast<WorldActor*>(actor))
+		return;
+
 	ActorAdded e;
 	e.zActor = actor;
 	NotifyObservers(&e);
+	
 }
 
 void ActorManager::RemoveActor( Actor* actor )
 {
 	this->zActors.erase(actor);
+
+	if(WorldActor* WA = dynamic_cast<WorldActor*>(actor))
+		return;
 
 	ActorRemoved e;
 	e.zActor = actor;

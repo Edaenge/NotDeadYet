@@ -106,7 +106,7 @@ private:
 	float Update();
 
 	/*! Checks Ray Vs Static/Dynamic Objects*/
-	std::vector<Looting_Data> RayVsWorld();
+	std::vector<unsigned int> RayVsWorld();
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
 	bool CheckCollision();
 
@@ -118,7 +118,7 @@ private:
 	//Temporary Code
 	bool UpdateActor(const std::vector<std::string>& msgArray, const unsigned int ID);
 	bool RemoveActor(const unsigned int ID);
-
+	bool HandleTakeDamage(const std::vector<std::string>& msgArray, const unsigned int ID, float damageTaken);
 	/*! Adds A Player Object.*/
 	bool AddActor(const std::vector<std::string>& msgArray, const unsigned int ID);
 	
@@ -145,7 +145,7 @@ private:
 	void SendUnEquipItem(const unsigned int ID, const int Slot);
 	void HandleRemoveEquipment(const unsigned int ItemID, const int Slot);
 	void HandleWeaponUse(const unsigned int ID);
-
+	void HandleDisplayLootData(std::vector<std::string> msgArray);
 protected:
 	virtual void onEvent(Event* e);
 
@@ -185,4 +185,10 @@ private:
 	iImage* zCrossHair;
 	
 	bool zGameStarted;
+
+	//Player Data
+	float zHealth;
+	float zStamina;
+	float zHunger;
+	float zHydration;
 };
