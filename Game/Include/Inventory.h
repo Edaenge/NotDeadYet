@@ -76,6 +76,13 @@ public:
 	void UnEquipRangedWeapon();
 	void UnEquipMeleeWeapon();
 
+	/*! Returns the primary equipped item.*/
+	Item* GetPrimaryEquip() const {return this->zPrimaryEquip;}
+	Item* GetSecondaryEquip() const {return this->zSecondaryEquip;}
+	/*! */
+	void SetPrimaryEquip(unsigned int ID); 
+	void SetSecondaryEquip(unsigned int ID);
+
 	bool EquipGear(const unsigned int type, Gear* item);
 	Gear* GetGear(const unsigned int type);
 	void UnEquipGear(const unsigned int type);
@@ -93,6 +100,8 @@ private:
 	unsigned int zWeightTotal;
 
 	//Equipment Variables
+	Item* zPrimaryEquip;
+	Item* zSecondaryEquip;
 	Projectile* zProjectile;
 	RangedWeapon* zRangedWeapon;
 	MeleeWeapon* zMeleeWeapon;

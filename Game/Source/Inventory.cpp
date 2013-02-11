@@ -22,6 +22,9 @@ Inventory::Inventory()
 	this->zRangedWeapon = NULL;
 	this->zMeleeWeapon = NULL;
 	this->zProjectile = NULL;
+	this->zPrimaryEquip = NULL;
+	this->zSecondaryEquip = NULL;
+
 	for (unsigned int i = 0; i < GEAR_SLOTS; i++)
 	{
 		this->zGear.push_back(NULL);
@@ -41,6 +44,12 @@ Inventory::Inventory(const unsigned int inventorySize)
 		this->zInventorySlotBlocked.push_back(false);
 	}
 	this->zSlotsAvailable = this->zInventoryCap;
+
+	this->zRangedWeapon = NULL;
+	this->zMeleeWeapon = NULL;
+	this->zProjectile = NULL;
+	this->zPrimaryEquip = NULL;
+	this->zSecondaryEquip = NULL;
 }
 
 Inventory::~Inventory()
@@ -252,11 +261,56 @@ Item* Inventory::EraseItem(const unsigned int ID)
 void Inventory::EquipRangedWeapon(RangedWeapon* weapon)
 {
 	this->zRangedWeapon = weapon;
+
+	if(!this->zPrimaryEquip)
+		zPrimaryEquip = weapon;
+	else
+		zSecondaryEquip = weapon;
 }
 
 void Inventory::EquipMeleeWeapon(MeleeWeapon* weapon)
 {
 	this->zMeleeWeapon = weapon;
+
+	if(!this->zPrimaryEquip)
+		zPrimaryEquip = weapon;
+	else
+		zSecondaryEquip = weapon;
+}
+
+void Inventory::EquipProjectile(Projectile* projectile)
+{
+	if (!projectile)
+		return;
+
+	if (this->zProjectile)
+	{
+		if (Messages::FileWrite())
+			Messages::Debug("Equipped projectile");
+
+		if (this->zProjectile->GetItemType() == projectile->GetItemType())
+		{
+			int totalStacks = this->zProjectile->GetStackSize() + projectile->GetStackSize();
+			this->zProjectile->SetStackSize(totalStacks);
+		}
+		else
+		{
+			this->zProjectile = projectile;
+		}
+	}
+	else
+	{
+		this->zProjectile = projectile;
+	}
+
+	if(projectile->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+		return;
+
+	if(!zPrimaryEquip)
+		this->zPrimaryEquip = projectile;
+	if(!zSecondaryEquip)
+		this->zSecondaryEquip = projectile;
+
 }
 
 bool Inventory::EquipGear(const unsigned int type, Gear* item)
@@ -301,6 +355,17 @@ void Inventory::UnEquipRangedWeapon()
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Weapon");
 
+	if(zPrimaryEquip == zRangedWeapon)
+	{
+		zPrimaryEquip = NULL;
+		zPrimaryEquip = zSecondaryEquip;
+		zSecondaryEquip = NULL;
+	}
+	else
+	{
+		zSecondaryEquip = NULL;
+	}
+
 	this->zRangedWeapon = NULL;
 }
 
@@ -309,34 +374,18 @@ void Inventory::UnEquipMeleeWeapon()
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Weapon");
 
-	this->zMeleeWeapon = NULL;
-}
-
-void Inventory::EquipProjectile(Projectile* projectile)
-{
-	if (!projectile)
-		return;
-
-	if (this->zProjectile)
+	if(zPrimaryEquip == zMeleeWeapon)
 	{
-		if (Messages::FileWrite())
-			Messages::Debug("Equipped projectile");
-
-		if (this->zProjectile->GetItemType() == projectile->GetItemType())
-		{
-			int totalStacks = this->zProjectile->GetStackSize() + projectile->GetStackSize();
-			this->zProjectile->SetStackSize(totalStacks);
-		}
-		else
-		{
-			this->zProjectile = projectile;
-		}
+		zPrimaryEquip = NULL;
+		zPrimaryEquip = zSecondaryEquip;
+		zSecondaryEquip = NULL;
 	}
 	else
 	{
-		this->zProjectile = projectile;
+		zSecondaryEquip = NULL;
 	}
 
+	this->zMeleeWeapon = NULL;
 }
 
 void Inventory::UnEquipProjectile()
@@ -344,9 +393,47 @@ void Inventory::UnEquipProjectile()
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Projectile");
 
+	if(zPrimaryEquip == zProjectile)
+	{
+		zPrimaryEquip = NULL;
+		zPrimaryEquip = zSecondaryEquip;
+		zSecondaryEquip = NULL;
+	}
+	else
+	{
+		zSecondaryEquip = NULL;
+	}
+
 	this->zProjectile = NULL;
 }
+
 Projectile* Inventory::GetProjectile()
 {
 	return this->zProjectile;
+}
+
+void Inventory::SetPrimaryEquip( unsigned int ID )
+{
+	Item* item = SearchAndGetItem(ID);
+
+	if(!item)
+	{
+		MaloW::Debug("Cannot find item in SetPrimaryEquip.");
+		return;
+	}
+
+	this->zPrimaryEquip = item;
+}
+
+void Inventory::SetSecondaryEquip( unsigned int ID )
+{
+	Item* item = SearchAndGetItem(ID);
+
+	if(!item)
+	{
+		MaloW::Debug("Cannot find item in SetPrimaryEquip.");
+		return;
+	}
+
+	this->zSecondaryEquip = item;
 }
