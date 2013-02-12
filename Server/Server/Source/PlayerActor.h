@@ -6,7 +6,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "BioActor.h"
-#include "ObjectManager.h"
 #include "KeyValues.h"
 #include "KeyStates.h"
 #include "Player.h"
