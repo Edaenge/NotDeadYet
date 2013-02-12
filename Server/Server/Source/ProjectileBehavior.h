@@ -15,4 +15,6 @@ public:
 
 	bool Update(float dt);
 	bool IsMoving() {return this->zMoving;}
+	/*! Stops the movement.*/
+	inline void Stop(){zMoving = false;}
 };
