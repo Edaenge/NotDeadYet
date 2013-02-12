@@ -40,7 +40,7 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				Vector3 position = this->InterpolatePosition(actor->GetPosition(), (*it_Update)->GetPosition(), t);
 				if((*it_Update)->GetID() == clientID)
 				{
-					if ( rand()%10000 == 0 ) GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);
+					/*if ( rand()%10000 == 0 ) GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);*/
 					GetGraphics()->GetCamera()->SetPosition(position + Vector3(0.0f, 2.0f, 0.0f));
 				}
 				actor->SetPosition(position);
