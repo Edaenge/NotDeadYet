@@ -20,13 +20,10 @@ RangedWeapon::~RangedWeapon()
 RangedWeapon::RangedWeapon(const RangedWeapon& other)
 {
 	if (other.zID == 0)
-	{
 		this->GenerateID();
-	}
 	else
-	{
 		this->zID = other.zID;
-	}
+
 	this->zRange = other.zRange;
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;

@@ -22,7 +22,11 @@ Container::~Container()
 
 Container::Container(const Container& other)
 {
-	this->zID = other.zID;
+	if (other.zID == 0)
+		this->GenerateID();
+	else
+		this->zID = other.zID;
+
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
 	this->zMaxUses = other.zMaxUses;
