@@ -186,7 +186,7 @@ GUIEvent* DropDownList::GetEventFromTop()
 	return NULL;
 }
 
-void DropDownList::Resize( int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight )
+void DropDownList::Resize( float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight )
 {
 	Element::Resize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
 

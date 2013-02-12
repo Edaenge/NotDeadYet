@@ -22,6 +22,9 @@
     <Filter Include="Source\Actors">
       <UniqueIdentifier>{c7831163-bdbb-467e-9176-9ee7fbcb7646}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\GUI\Events">
+      <UniqueIdentifier>{ff6b4179-7f8a-479f-938e-9cb49c14f9b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\SoundEngine\SoundEffect.cpp">
@@ -84,9 +87,6 @@
     <ClCompile Include="Source\GUI\GuiElement.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUI\GUIEvent.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GUI\GUIPicture.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
@@ -99,35 +99,41 @@
     <ClCompile Include="Source\GUI\InventorySlotGui.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUI\NoEvent.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GUI\SimpleButton.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
     <ClCompile Include="Source\GUI\TextBox.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUI\ChangeSetEvent.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\ClientActorManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUI\ChangeTextAndMenuEvent.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GUI\DropDownList.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GUI\ChangeResEvent.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
     <ClCompile Include="Source\GUI\CheckBox.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
     <ClCompile Include="Source\GUI\ChangeOptionEvent.cpp">
-      <Filter>Source\GUI</Filter>
+      <Filter>Source\GUI\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\ChangeResEvent.cpp">
+      <Filter>Source\GUI\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\ChangeSetEvent.cpp">
+      <Filter>Source\GUI\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\ChangeTextAndMenuEvent.cpp">
+      <Filter>Source\GUI\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\GUIEvent.cpp">
+      <Filter>Source\GUI\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\NoEvent.cpp">
+      <Filter>Source\GUI\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\ApplyOptionsAndChangeSetEvent.cpp">
+      <Filter>Source\GUI\Events</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -176,9 +182,6 @@
     <ClInclude Include="Source\KeyUtil\KeyBindConfig.h">
       <Filter>Source\KeyUtil</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUI\ChangeSetEvent.h">
-      <Filter>Source\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="Source\GUI\CircularListGui.h">
       <Filter>Source\GUI</Filter>
     </ClInclude>
@@ -186,9 +189,6 @@
       <Filter>Source\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUI\GuiElement.h">
-      <Filter>Source\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GUI\GUIEvent.h">
       <Filter>Source\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUI\GUIPicture.h">
@@ -203,9 +203,6 @@
     <ClInclude Include="Source\GUI\InventorySlotGui.h">
       <Filter>Source\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUI\NoEvent.h">
-      <Filter>Source\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="Source\GUI\SimpleButton.h">
       <Filter>Source\GUI</Filter>
     </ClInclude>
@@ -218,20 +215,32 @@
     <ClInclude Include="Source\ClientActorManager.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GUI\ChangeTextAndMenuEvent.h">
-      <Filter>Source\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="Source\GUI\DropDownList.h">
-      <Filter>Source\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GUI\ChangeResEvent.h">
       <Filter>Source\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUI\CheckBox.h">
       <Filter>Source\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUI\ChangeOptionEvent.h">
-      <Filter>Source\GUI</Filter>
+      <Filter>Source\GUI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\ChangeResEvent.h">
+      <Filter>Source\GUI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\ChangeSetEvent.h">
+      <Filter>Source\GUI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\ChangeTextAndMenuEvent.h">
+      <Filter>Source\GUI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\GUIEvent.h">
+      <Filter>Source\GUI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\NoEvent.h">
+      <Filter>Source\GUI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\ApplyOptionsAndChangeSetEvent.h">
+      <Filter>Source\GUI\Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -127,7 +127,7 @@ void CheckBox::SetChecked(bool checked)
 	}
 }
 
-void CheckBox::Resize( int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight )
+void CheckBox::Resize( float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight )
 {
 	Element::Resize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
 
@@ -138,7 +138,6 @@ void CheckBox::Resize( int oldWindowWidth, int oldWindowHeight, int windowWidth,
 
 	this->mActiveX = offSet + ((this->mActiveX - oldOffSet) / oldDx) * dx;
 	this->mActiveY = (this->mActiveY / oldWindowHeight) * windowHeight;
-
 
 	this->mActiveWidth = (this->mActiveWidth / oldDx) * dx;
 	this->mActiveHeight = (this->mActiveHeight / oldWindowHeight) * windowHeight;

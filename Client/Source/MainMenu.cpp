@@ -24,7 +24,7 @@ void MainMenu::Init()
 {
 	GraphicsEngine* eng = GetGraphics();
 
-	const iGraphicsEngineParams& GEP = GetGraphics()->GetEngineParameters();
+	iGraphicsEngineParams& GEP = GetGraphics()->GetEngineParameters();
 	int windowWidth = GEP.WindowWidth;
 	int windowHeight = GEP.WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
@@ -207,14 +207,14 @@ void MainMenu::Init()
 
 	//TextBox View Distance
 	temp = new TextBox(offSet + (278.0f / 1024.0f) * dx, (410.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
+		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().FarClip), 
 		"ViewDistance", 1, 3, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 	//TextBox Shadow
 	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (352.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
 		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
-		"ShadowQuality", 1, 2, NR, 0, 9);
+		"ShadowQuality", 1, 1, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Sound tech
@@ -235,6 +235,22 @@ void MainMenu::Init()
 		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
 		"NormalVolume", 1.0f, 2, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
+
+
+	//Buttons options menu
+	//Back
+	temp = new SimpleButton(offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/FindServer/Back.png", 
+		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ChangeSetEvent(MAINMENU), "", "", 
+		offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
+		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+	temp = new SimpleButton(offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Apply.png", 
+		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ApplyOptionsAndChangeSetEvent(MAINMENU), "", "", 
+		offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
+		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
 
 	this->zPrimarySet = MAINMENU;
 	this->zSecondarySet = NOMENU;
@@ -271,6 +287,8 @@ void MainMenu::Run()
 		{
 			eng->Update();
 			mousePos = GetGraphics()->GetKeyListener()->GetMousePosition();
+			int lol = GetGraphics()->GetEngineParameters().WindowWidth;
+			int temp = GetGraphics()->GetEngineParameters().WindowHeight;
 			if(mousePos.x != -1 || mousePos.y != -1)
 			{
 				//Try to get an event from buttons, if no event from main set try second.
@@ -342,16 +360,34 @@ void MainMenu::Run()
 					{
 						ChangeResEvent* cEvent = (ChangeResEvent*)retEvent;
 
-						int windowWidth = cEvent->GetWidth();
-						int windowHeight = cEvent->GetHeight();
+						float windowWidth = (float)cEvent->GetWidth();
+						float windowHeight = (float)cEvent->GetHeight();
 						int i = NOMENU;
-						int endMenu = LASTMENU+1;
-						while(i != endMenu)
+						while(i != LASTMENU)
 						{
 							zSets[i].Resize(GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight, windowWidth, windowHeight);
 							i++;
 						}
 						GetGraphics()->ResizeGraphicsEngine(windowWidth, windowHeight);
+					}
+					else if(retEvent->GetEventMessage() == "ApplyOptionsAndChangeSetEvent")
+					{
+						GraphicsEngine* ge = GetGraphics();
+						iGraphicsEngineParams& GEP = ge->GetEngineParameters();
+
+						ApplyOptionsAndChangeSetEvent* cEvent = (ApplyOptionsAndChangeSetEvent*)retEvent;
+
+						std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");
+						//ge->ChangeShadowQuality(MaloW::convertStringToInt("ShadowQuality"));
+
+						CheckBox* cbTemp = this->zSets[this->zPrimarySet].GetCheckBox("FXAACheckBox");
+						if(cbTemp != NULL)
+						{
+							if(cbTemp->GetOn())
+								GEP.FXAAQuality = 4;
+							if(!cbTemp->GetOn())
+								GEP.FXAAQuality = 0;
+						}
 					}
 				}
 				else
