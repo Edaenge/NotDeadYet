@@ -20,13 +20,18 @@ Food::~Food()
 
 Food::Food(const Food& other)
 {
-	this->zID = other.zID;
+	if (other.zID == 0)
+		this->GenerateID();
+	else
+		this->zID = other.zID;
+
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
 	this->zHunger = other.zHunger;
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
 }
@@ -40,6 +45,7 @@ Food::Food(const Food* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
 }

@@ -13,9 +13,6 @@
     <Filter Include="Source\Actors">
       <UniqueIdentifier>{50a47ee4-51e7-49bf-b61f-129906fa7671}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Objects">
-      <UniqueIdentifier>{c6201ae5-5d7c-4255-94f3-9c71df5a41a7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Handlers">
       <UniqueIdentifier>{2d91f24d-3e37-49b2-80e5-94f5c85ed464}</UniqueIdentifier>
     </Filter>

@@ -22,13 +22,18 @@ Container::~Container()
 
 Container::Container(const Container& other)
 {
-	this->zID = other.zID;
+	if (other.zID == 0)
+		this->GenerateID();
+	else
+		this->zID = other.zID;
+
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
 	this->zMaxUses = other.zMaxUses;
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zUsesRemaining = other.zUsesRemaining;
 	this->zItemDescription = other.zItemDescription;
@@ -43,6 +48,7 @@ Container::Container(const Container* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zUsesRemaining = other->zUsesRemaining;
 	this->zItemDescription = other->zItemDescription;
