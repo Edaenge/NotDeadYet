@@ -411,6 +411,8 @@ void Game::OnEvent( Event* e )
 		actor = new ItemActor(item);
 		actor->SetPosition(pActor->GetPosition());
 		this->zActorManager->AddActor(actor);
+		NetworkMessageConverter NMC;
+		PDIE->clientData->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
 
 	}
 	else if (PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e))
