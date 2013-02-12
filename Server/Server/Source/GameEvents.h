@@ -86,8 +86,8 @@ public:
 
 	unsigned int objID;
 	unsigned int itemID;
-	int itemType;
-	int subType;
+	unsigned int itemType;
+	unsigned int subType;
 	
 };
 

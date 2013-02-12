@@ -1038,26 +1038,30 @@ std::vector<unsigned int> Client::RayVsWorld()
 	iMesh* mesh = NULL;
 	for(auto it = actors.begin(); it < actors.end(); it++)
 	{
-		mesh = (*it)->GetMesh();
-		if (!mesh)
+		if ((*it)->GetID() != this->zID)
 		{
-			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
-			continue;
+			mesh = (*it)->GetMesh();
+			if (!mesh)
+			{
+				MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
+				continue;
+			}
+			data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
+
+			if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+			{
+				/*Looting_Data ld;
+				Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), 
+				(*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription(), (*it)->GetType());
+
+				ld.owner = gui_Data.zID;
+				ld.gid = gui_Data;
+				ld.type = OBJECT_TYPE_DYNAMIC_OBJECT;*/
+
+				Collisions.push_back((*it)->GetID());
+			}
 		}
-		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
-
-		if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
-		{
-			/*Looting_Data ld;
-			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), 
-			(*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription(), (*it)->GetType());
-
-			ld.owner = gui_Data.zID;
-			ld.gid = gui_Data;
-			ld.type = OBJECT_TYPE_DYNAMIC_OBJECT;*/
-
-			Collisions.push_back((*it)->GetID());
-		}
+		
 	}
 
 	return Collisions;
@@ -1152,6 +1156,7 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 			guiData.push_back(lgd);
 		}
 	}
+
 	this->SendLootItemMessage(guiData[0].zActorID, guiData[0].zGui_Data.zID, guiData[0].zGui_Data.zType, guiData[0].zGui_Data.zSubType);
 	this->zGuiManager->ShowLootingGui(guiData);
 }

@@ -1,5 +1,22 @@
 #include "MeleeWeapon.h"
 
+MeleeWeapon::MeleeWeapon(const unsigned int ID, const unsigned int itemType, const int itemSubType, 
+						 const float damage, const float range) 
+						 : Weapon(ID, itemType, itemSubType, damage, range)
+{
+
+}
+
+MeleeWeapon::MeleeWeapon() : Weapon()
+{
+
+}
+
+MeleeWeapon::~MeleeWeapon()
+{
+
+}
+
 MeleeWeapon::MeleeWeapon(const MeleeWeapon& other)
 {
 	this->zID = other.zID;
@@ -26,18 +43,6 @@ MeleeWeapon::MeleeWeapon(const MeleeWeapon* other)
 	this->zItemType = other->zItemType;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
-}
-
-MeleeWeapon::MeleeWeapon(const unsigned int ID, const unsigned int itemType, const int itemSubType, 
-						 const float damage, const float range) 
-						 : Weapon(ID, itemType, itemSubType, damage, range)
-{
-
-}
-
-MeleeWeapon::~MeleeWeapon()
-{
-
 }
 
 void MeleeWeapon::UseWeapon(float& range, float& damage)

@@ -33,6 +33,12 @@ Food::Food(const unsigned int ID, const unsigned int Type, const unsigned int Su
 		this->zStacking = true;
 }
 
+Food::Food() : Item()
+{
+	this->zHunger = 0;
+	this->zStacking = true;
+}
+
 Food::~Food()
 {
 

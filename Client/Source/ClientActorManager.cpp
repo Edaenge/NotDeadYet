@@ -178,12 +178,16 @@ Vector3 ClientActorManager::InterpolatePosition(const Vector3& currentPosition, 
 {
 	float oldlength = (currentPosition - newPosition).GetLength();
 
+	if (oldlength > 100.0f)
+		return newPosition;
+
 	Vector3 returnPosition = currentPosition + (newPosition - currentPosition) * t * zInterpolationVelocity;
 
 	float newLength = (returnPosition - newPosition).GetLength();
 
 	if (newLength > oldlength)
 		returnPosition = newPosition;
+
 
 	return returnPosition;
 }

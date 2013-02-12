@@ -20,6 +20,9 @@
 #include "Physics.h"
 #include "ClientServerMessages.h"
 
+//Temporary
+#include "ItemLookup.h"
+
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
 {
@@ -47,16 +50,22 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	// Actor Manager
 	zActorManager = new ActorManager(syncher);
 
-
+	InitItemLookup();
 	//Testing
-	RangedWeapon* rWpn = new RangedWeapon(200, ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW, 10, 2);
-	rWpn->SetModel("Media/Models/Bow_v01.obj");
-	rWpn->SetIconPath("Media/Icons/Bow_Icon_Temp.png");
-	rWpn->SetItemWeight(2);
-	ItemActor* actor = new ItemActor(rWpn);
-	actor->SetPosition(Vector3(50, 0, 50));
-	actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	this->zActorManager->AddActor(actor);
+
+	/*const RangedWeapon* temp_Bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
+
+	if (temp_Bow)
+	{
+		RangedWeapon* new_Bow = new RangedWeapon((*temp_Bow));
+
+		ItemActor* actor = new ItemActor(new_Bow);
+		actor->SetPosition(Vector3(50, 0, 50));
+		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		this->zActorManager->AddActor(actor);
+	}*/
+
+	
 }
 
 Game::~Game()
@@ -76,6 +85,8 @@ Game::~Game()
 	if ( zGameMode ) delete zGameMode;
 	if ( zWorld ) delete zWorld;
 	if ( zActorManager ) delete zActorManager;
+
+	FreeItemLookup();
 }
 
 bool Game::Update( float dt )
@@ -182,6 +193,7 @@ void Game::OnEvent( Event* e )
 		NetworkMessageConverter NMC;
 		std::string msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE);
 		unsigned int ID = 0;
+		bool bLooted = false;
 		//Loop through all actors.
 		for (auto it_actor = actors.begin(); it_actor != actors.end(); it_actor++)
 		{
@@ -201,6 +213,7 @@ void Game::OnEvent( Event* e )
 						ID = iActor->GetID();
 						msg += iActor->GetItem()->ToMessageString(&NMC);
 						msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+						bLooted = true;
 					}
 					//Check if the Actor is an PlayerActor
 					else if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(*it_actor))
@@ -216,6 +229,7 @@ void Game::OnEvent( Event* e )
 							{
 								msg += (*it_Item)->ToMessageString(&NMC);
 								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+								bLooted = true;
 							}
 						}
 					}
@@ -244,6 +258,7 @@ void Game::OnEvent( Event* e )
 										{
 											msg += (*it_Item)->ToMessageString(&NMC);
 											msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+											bLooted = true;
 										}
 									}
 								}
@@ -253,7 +268,8 @@ void Game::OnEvent( Event* e )
 				}
 			}
 		}
-		PLOE->clientData->Send(msg);
+		if (bLooted)
+			PLOE->clientData->Send(msg);
 	}
 	else if ( PlayerLootItemEvent* PLIE = dynamic_cast<PlayerLootItemEvent*>(e) )
 	{
@@ -295,6 +311,7 @@ void Game::OnEvent( Event* e )
 						msg += container->ToMessageString(&NMC);
 					}
 					PLIE->clientData->Send(msg);
+					this->zActorManager->RemoveActor(iActor);
 				}
 			}
 		}
@@ -335,6 +352,7 @@ void Game::OnEvent( Event* e )
 							msg += container->ToMessageString(&NMC);
 						}
 						PLIE->clientData->Send(msg);
+						this->zActorManager->RemoveActor(bActor);
 					}
 				}
 			}
@@ -366,9 +384,198 @@ void Game::OnEvent( Event* e )
 		this->zActorManager->AddActor(actor);
 
 	}
-	else if ( PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e) )
+	else if (PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e))
 	{
+		auto playerIterator = this->zPlayers.find(PUIE->clientData);
+		auto playerBehavior = playerIterator->second->GetBehavior();
+	
+		Actor* actor = playerBehavior->GetActor();
 		
+		if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
+		{
+			if (Inventory* inv = pActor->GetInventory())
+			{
+				NetworkMessageConverter NMC;
+				Item* item = inv->SearchAndGetItem(PUIE->itemID);
+				std::string msg;
+				if (item)
+				{
+					unsigned int ID = 0;
+					if (Food* food = dynamic_cast<Food*>(item))
+					{
+						int oldStack = food->GetStackSize();
+						ID = food->GetID();
+						if (food->Use())
+						{
+							//To do fix Values and stuff.
+							float value = food->GetHunger();
+
+							float fullness = pActor->GetFullness();
+							int stacks = food->GetStackSize() - oldStack;
+							
+							pActor->SetFullness(fullness + value);
+							pActor->HungerHasChanged();
+							
+							//Sending Message to client And removing stack from inventory.
+							inv->RemoveItemStack(ID, stacks);
+							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+
+							PUIE->clientData->Send(msg);
+						}
+						else
+						{
+							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Food_Stack_is_Empty");
+							PUIE->clientData->Send(msg);
+						}
+						if (food->GetStackSize() <= 0)
+						{
+							if(inv->RemoveItem(food));
+							{
+								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
+								PUIE->clientData->Send(msg);
+							}
+						}
+					}
+					else if (Container* container = dynamic_cast<Container*>(item))
+					{
+						float value = container->GetRemainingUses();
+
+						if (container->Use())
+						{
+							//To do fix values and stuff
+							float hydration = 2.0f + pActor->GetHydration();
+						
+							pActor->SetHydration(hydration);
+							ID = container->GetID();
+							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+							PUIE->clientData->Send(msg);
+						}
+						else
+						{
+							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Container_Stack_is_Empty");
+							PUIE->clientData->Send(msg);
+						}
+					}
+					else if(Material* material = dynamic_cast<Material*>(item))
+					{
+						if (material->GetItemSubType() == ITEM_SUB_TYPE_SMALL_STICK)
+						{
+							if (material->Use())
+							{
+								ID = material->GetID();
+								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+								PUIE->clientData->Send(msg);
+
+								//Creating a bow With default Values
+								const Projectile* temp_Arrow = GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
+
+								if (temp_Arrow)
+								{
+									Projectile* new_Arrow = new Projectile((*temp_Arrow));
+
+									if (inv->AddItem(new_Arrow))
+									{
+										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, new_Arrow->GetID());
+										msg += new_Arrow->ToMessageString(&NMC);
+										PUIE->clientData->Send(msg);
+									}
+								}
+							}
+							else
+							{
+								msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
+								PUIE->clientData->Send(msg);
+							}
+							if (material->GetStackSize() <= 0)
+							{
+								if (inv->RemoveItem(material))
+								{
+									ID = material->GetID();
+									msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
+									PUIE->clientData->Send(msg);
+								}
+							}
+						}
+						else if (material->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK)
+						{
+							if (Material* material_Thread = dynamic_cast<Material*>(inv->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL, ITEM_SUB_TYPE_THREAD)))
+							{
+								if (!material->IsUsable() || !material_Thread->IsUsable())
+								{
+									msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
+									PUIE->clientData->Send(msg);
+								}
+								else
+								{
+									material->Use();
+									ID = material->GetID();
+									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+									PUIE->clientData->Send(msg);
+
+									material_Thread->Use();
+									ID = material_Thread->GetID();
+									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+									PUIE->clientData->Send(msg);
+
+									//Creating a bow With default Values
+									const RangedWeapon* temp_bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
+
+									if (temp_bow)
+									{
+										RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
+
+										if (inv->AddItem(new_Bow))
+										{
+											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, new_Bow->GetID());
+											msg += new_Bow->ToMessageString(&NMC);
+											PUIE->clientData->Send(msg);
+										}
+									}
+								}
+							}
+						}
+						else if (material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)
+						{
+							if (Material* material_Medium_Stick = dynamic_cast<Material*>(inv->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL, ITEM_SUB_TYPE_THREAD)))
+							{
+								if (!material->IsUsable() || !material_Medium_Stick->IsUsable())
+								{
+									msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
+									PUIE->clientData->Send(msg);
+								}
+								else
+								{
+									material->Use();
+									ID = material->GetID();
+									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+									PUIE->clientData->Send(msg);
+
+									material_Medium_Stick->Use();
+									ID = material_Medium_Stick->GetID();
+									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+									PUIE->clientData->Send(msg);
+
+									//Creating a bow With default Values
+									const RangedWeapon* temp_bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
+
+									if (temp_bow)
+									{
+										RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
+
+										if (inv->AddItem(new_Bow))
+										{
+											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, new_Bow->GetID());
+											msg += new_Bow->ToMessageString(&NMC);
+											PUIE->clientData->Send(msg);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{

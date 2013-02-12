@@ -40,7 +40,7 @@ bool SoundReader::ReadFromFile()
 	while(!read.eof())
 	{
 		std::string line;
-		std::getline(read,line);
+		std::getline(read, line);
 
 		if(line.empty())
 			continue;

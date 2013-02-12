@@ -1,5 +1,25 @@
 #include "Material.h"
 
+Material::Material()
+{
+	this->zStacking = true;
+	this->zCraftingType = 10;
+	this->zRequiredStackToCraft = 50;
+}
+
+Material::Material(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType, 
+				   const unsigned int craftingType, const unsigned int stacksRequiredToCraft) : Item(ID, itemType, itemSubType)
+{
+	this->zStacking = true;
+	this->zCraftingType = craftingType;
+	this->zRequiredStackToCraft = stacksRequiredToCraft;
+}
+
+Material::~Material()
+{
+
+}
+
 Material::Material(const Material& other)
 {
 	this->zID = other.zID;
@@ -26,19 +46,6 @@ Material::Material(const Material* other)
 	this->zCraftingType = other->zCraftingType;
 	this->zItemDescription = other->zItemDescription;
 	this->zRequiredStackToCraft = other->zRequiredStackToCraft;
-}
-
-Material::Material(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType, 
-				   const unsigned int craftingType, const unsigned int stacksRequiredToCraft) : Item(ID, itemType, itemSubType)
-{
-	this->zStacking = true;
-	this->zCraftingType = craftingType;
-	this->zRequiredStackToCraft = stacksRequiredToCraft;
-}
-
-Material::~Material()
-{
-
 }
 
 bool Material::Use()

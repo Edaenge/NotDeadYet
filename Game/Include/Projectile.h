@@ -16,6 +16,7 @@ static const enum M_PROJECTILE_ITEM_SUB_TYPE
 class Projectile : public Item
 {
 public:
+	Projectile();
 	Projectile(const unsigned int id, const unsigned int itemType, const unsigned int itemSubType, float velocity, float damage);
 	Projectile(const Projectile& other);
 	Projectile(const Projectile* other);

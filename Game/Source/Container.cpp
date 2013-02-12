@@ -1,5 +1,12 @@
 #include "Container.h"
 
+Container::Container() : Item()
+{
+	this->zStacking = false;
+	this->zMaxUses = 0;
+	this->zUsesRemaining = 0;
+}
+
 Container::Container(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType,
 					 const int maxUse, const int currUse) : Item(ID, itemType, itemSubType)
 {
@@ -8,6 +15,10 @@ Container::Container(const unsigned int ID, const unsigned int itemType, const u
 	this->zUsesRemaining = currUse;
 }
 
+Container::~Container()
+{
+
+}
 Container::Container(const Container& other)
 {
 	this->zID = other.zID;
@@ -34,11 +45,6 @@ Container::Container(const Container* other)
 	this->zItemSubType = other->zItemSubType;
 	this->zUsesRemaining = other->zUsesRemaining;
 	this->zItemDescription = other->zItemDescription;
-}
-
-Container::~Container()
-{
-
 }
 
 bool Container::Use()

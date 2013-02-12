@@ -139,7 +139,6 @@ bool PlayerHumanBehavior::Update( float dt )
 
 void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 {
-	
 	//BioActor* bActor = dynamic_cast<BioActor*>(this->zActor);
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActor);
 
@@ -147,45 +146,48 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 	// tester<<"Fullness: "<<pActor->GetFullness()<<"   "<<"Hydration: "<<pActor->GetHydration()<<"    "<<"Stamina: "<<pActor->GetStamina()<<"    "<<"Health: "<<pActor->GetHealth()<<std::endl;
 	// OutputDebugString(tester.str().c_str());
 
-
 	float regeneratedHealth = 0;
 	
-
 	//Regaining stamina (if not running and not bleeding)
 	if(pActor->GetState() != STATE_RUNNING && pActor->GetStamina() < pActor->GetStaminaMax() && !pActor->IsBleeding())
 	{
 		float stamina = pActor->GetStamina();
-		pActor->SetStamina( stamina += dt * pActor->IsBleeding() );
-
+		if (pActor->IsBleeding())
+			pActor->SetStamina(stamina += dt * 1.0f);
+		
 		if(pActor->GetStamina() > pActor->GetStaminaMax())
-			pActor->SetStamina( pActor->GetStaminaMax() );
+			pActor->SetStamina(pActor->GetStaminaMax());
 
 		pActor->StaminaHasChanged();
 	}
 
 	if(pActor->GetState() == STATE_RUNNING)
 	{
-		float fullness, hydration;
-		fullness = pActor->GetFullness(); hydration = pActor->GetHydration();
-		
-		pActor->SetFullness(fullness -= dt * GetPlayerConfiguration().zHungerSprintingCof);
-		pActor->SetHydration(hydration -= dt * GetPlayerConfiguration().zHydrationSprintingCof);
-		
+		float fullness; 
+		float hydration;
+		fullness = pActor->GetFullness(); 
+		hydration = pActor->GetHydration();
+
+		fullness -= dt * GetPlayerConfiguration().zHungerSprintingCof;
+		hydration -= dt * GetPlayerConfiguration().zHydrationSprintingCof;
+		pActor->SetFullness(fullness);
+		pActor->SetHydration(hydration);
 	}
 	else
 	{
-		float fullness, hydration;
-		fullness = pActor->GetFullness(); hydration = pActor->GetHydration();
+		float fullness;
+		float hydration;
+		fullness = pActor->GetFullness(); 
+		hydration = pActor->GetHydration();
 
-		
-		pActor->SetFullness(fullness -= dt * GetPlayerConfiguration().zHungerCof);
-		pActor->SetHydration(hydration -= dt * GetPlayerConfiguration().zHydrationCof);
-
+		fullness -= dt * GetPlayerConfiguration().zHungerCof;
+		hydration -= dt * GetPlayerConfiguration().zHydrationCof;
+		pActor->SetFullness(fullness);
+		pActor->SetHydration(hydration);
 	}
 	
 	pActor->HungerHasChanged();
 	pActor->HydrationHasChanged();
-
 
 	if(pActor->IsBleeding())//Player is bleeding.
 	{
@@ -199,9 +201,12 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		float fullness = pActor->GetFullness();
 		float hydration = pActor->GetHydration();
 
-		pActor->SetStamina( stamina -=  dt * GetPlayerConfiguration().zStaminaDecreaseWithBleedingCof);
-		pActor->SetFullness( fullness -= dt * GetPlayerConfiguration().zHungerDecreaseWithBleedingCof);
-		pActor->SetHydration (hydration -= dt * GetPlayerConfiguration().zHydrationDecreaseWithBleedingCof);
+		stamina -=  dt * GetPlayerConfiguration().zStaminaDecreaseWithBleedingCof;
+		pActor->SetStamina(stamina);
+		fullness -= dt * GetPlayerConfiguration().zHungerDecreaseWithBleedingCof;
+		pActor->SetFullness(fullness);
+		hydration -= dt * GetPlayerConfiguration().zHydrationDecreaseWithBleedingCof;
+		pActor->SetHydration(hydration);
 		
 	}
 	
@@ -212,7 +217,8 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 	else if(pActor->GetFullness() / GetPlayerConfiguration().zFullnessMax < GetPlayerConfiguration().zLowerHunger) //The hunger is at a bad level
 	{
 		float stamina = pActor->GetStamina();
-		pActor->SetStamina( stamina -=  dt * GetPlayerConfiguration().zStaminaDecreaseCofWithHunger);
+		stamina -=  dt * GetPlayerConfiguration().zStaminaDecreaseCofWithHunger;
+		pActor->SetStamina(stamina);
 	}
 
 	if(pActor->GetHydration() / GetPlayerConfiguration().zHydrationMax > GetPlayerConfiguration().zUpperHydration && !pActor->IsBleeding()) //The thirst is at a good level
@@ -222,7 +228,8 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 	else if(pActor->GetHydration() / GetPlayerConfiguration().zHydrationMax < GetPlayerConfiguration().zLowerHydration) //The thirst is at a bad level.
 	{
 		float stamina = pActor->GetStamina();
-		pActor->SetStamina( stamina -=  dt * GetPlayerConfiguration().zStaminaDecreaseCofWithHydration);
+		stamina -=  dt * GetPlayerConfiguration().zStaminaDecreaseCofWithHydration;
+		pActor->SetStamina(stamina);
 	}
 
 	if(pActor->GetStamina() / pActor->GetStaminaMax() > GetPlayerConfiguration().zUpperStamina && !pActor->IsBleeding())
@@ -233,8 +240,10 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 	{
 		float fullness = pActor->GetFullness();
 		float hydration = pActor->GetHydration();
-		pActor->SetFullness(fullness -= dt * GetPlayerConfiguration().zHungerForStaminaCof );
-		pActor->SetHydration(hydration -= dt * GetPlayerConfiguration().zHydrationForStaminaCof );
+		fullness -= dt * GetPlayerConfiguration().zHungerForStaminaCof;
+		pActor->SetFullness(fullness);
+		hydration -= dt * GetPlayerConfiguration().zHydrationForStaminaCof;
+		pActor->SetHydration(hydration);
 	}
 
 	Damage hurting;
@@ -242,22 +251,20 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 	{
 		pActor->SetFullness(0.0f);
 		hurting.blunt = dt * GetPlayerConfiguration().zDamageAtStarvationCof;
-		pActor->TakeDamage(hurting,0);
+		pActor->TakeDamage(hurting, pActor);
 	}
 	if(pActor->GetHydration() < 0)
 	{
 		pActor->SetHydration(0.0f);
 		hurting.blunt = dt * GetPlayerConfiguration().zDamageAtThirstCof;
-		pActor->TakeDamage(hurting,0);
+		pActor->TakeDamage(hurting, pActor);
 	}
-
 
 	float health = pActor->GetHealth();
-	pActor->SetHealth( health += regeneratedHealth * dt / GetPlayerConfiguration().zRegenerationScale);  
+	health += regeneratedHealth * dt / GetPlayerConfiguration().zRegenerationScale;
+	pActor->SetHealth(health);  
 	if(pActor->GetHealth() > pActor->GetHealthMax())
 	{
-		pActor->SetHealth( pActor->GetHealthMax() ); 
+		pActor->SetHealth(pActor->GetHealthMax()); 
 	}
 }
-
-

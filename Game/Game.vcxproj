@@ -86,6 +86,7 @@
     <ClInclude Include="Include\Gear.h" />
     <ClInclude Include="Include\Inventory.h" />
     <ClInclude Include="Include\Item.h" />
+    <ClInclude Include="Include\ItemLookup.h" />
     <ClInclude Include="Include\KeyStates.h" />
     <ClInclude Include="Include\KeyValues.h" />
     <ClInclude Include="Include\Material.h" />
@@ -115,6 +116,7 @@
     <ClCompile Include="Source\Graphics.cpp" />
     <ClCompile Include="Source\Inventory.cpp" />
     <ClCompile Include="Source\Item.cpp" />
+    <ClCompile Include="Source\ItemLookup.cpp" />
     <ClCompile Include="Source\KeyStates.cpp" />
     <ClCompile Include="Source\Material.cpp" />
     <ClCompile Include="Source\MeleeWeapon.cpp" />
