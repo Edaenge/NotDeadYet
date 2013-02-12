@@ -37,22 +37,22 @@ void MainMenu::Init()
 	//MAINMENU
 	temp = new SimpleButton((50.0f / 768.0f) * dx, (600.0f / 768.0f) * windowHeight,  1.0f, "Media/Icons/MainMenu.png", 
 		(100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight, new ChangeSetEvent(NOMENU), "Media/Icons/Options.png", 
-		"Media/Icons/Quit.png", 50, 600, 100, 25);
+		"Media/Icons/Quit.png", (50.0f / 768.0f) * dx, (600.0f / 768.0f) * windowHeight, (100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
 	temp = new SimpleButton((50.0f / 768.0f) * dx, (635.0f / 768.0f) * windowHeight, 1.0f, "Media/Icons/Options.png", 
 		(100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight, new ChangeSetEvent(OPTIONS), "Media/Icons/FindServer.png", 
-		"Media/Icons/Quit.png", 50, 635, 100, 25);
+		"Media/Icons/Quit.png", (50.0f / 768.0f) * dx, (635.0f / 768.0f) * windowHeight, (100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
 	temp = new SimpleButton((50.0f / 768.0f) * dx, (670.0f / 768.0f) * windowHeight, 1.0f, "Media/Icons/FindServer.png", 
 		(100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight, new ChangeSetEvent(FIND_SERVER), "Media/Icons/Options.png", 
-		"Media/Icons/Quit.png", 50, 670, 100, 25);
+		"Media/Icons/Quit.png", (50.0f / 768.0f) * dx, (670.0f / 768.0f) * windowHeight, (100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
 	temp = new SimpleButton((50.0f / 768.0f) * dx, (700.0f / 768.0f) * windowHeight, 1.0f, "Media/Icons/Quit.png", 
 		(100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight, new ChangeSetEvent(QUIT), "Media/Icons/Options.png", 
-		"Media/Icons/Options.png", 50, 700, 100, 25);
+		"Media/Icons/Options.png", (50.0f / 768.0f) * dx, (700.0f / 768.0f) * windowHeight, (100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
 	//FIND SERVER
@@ -345,7 +345,8 @@ void MainMenu::Run()
 						int windowWidth = cEvent->GetWidth();
 						int windowHeight = cEvent->GetHeight();
 						int i = NOMENU;
-						while(i =! LASTMENU)
+						int endMenu = LASTMENU+1;
+						while(i != endMenu)
 						{
 							zSets[i].Resize(GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight, windowWidth, windowHeight);
 							i++;
