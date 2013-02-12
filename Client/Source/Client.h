@@ -185,6 +185,9 @@ private:
 	WorldAnchor* zAnchor;
 	iImage* zCrossHair;
 	
+	iImage* zDamageIndicator;
+	float	zDamageOpacity;
+	
 	bool zGameStarted;
 
 	//Player Data

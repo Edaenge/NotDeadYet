@@ -49,7 +49,7 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 
 	// Actor Manager
 	zActorManager = new ActorManager(syncher);
-	/*
+	
 	InitItemLookup();
 	//Testing
 
@@ -62,7 +62,7 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 		actor->SetPosition(Vector3(50, 0, 50));
 		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 		this->zActorManager->AddActor(actor);
-	}*/
+	}
 }
 
 Game::~Game()

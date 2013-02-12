@@ -47,8 +47,10 @@ Client::Client()
 	this->zWorldRenderer = NULL;
 	this->zAnchor = NULL;
 	this->zCrossHair = NULL;
+	this->zDamageIndicator = NULL;
+	this->zDamageOpacity = 0.0f;
 	SoundsInit();
-
+	
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Walk.wav", false);
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
 }
@@ -109,6 +111,22 @@ float Client::Update()
 		if ( zWorldRenderer ) zWorldRenderer->Update();
 	}		
 
+	this->zDamageOpacity -= this->zDeltaTime;
+	
+	if(this->zDamageIndicator != NULL)
+	{
+		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
+	}
+	
+	if(this->zDamageOpacity < 0.0f)
+	{
+		this->zDamageOpacity = 0.0f;
+		if(this->zDamageIndicator != NULL)
+		{
+			this->zEng->DeleteImage(this->zDamageIndicator);
+			this->zDamageIndicator = NULL;
+		}
+	}
 	return this->zDeltaTime;
 }
 
@@ -1009,16 +1027,111 @@ bool Client::HandleTakeDamage( const std::vector<std::string>& msgArray, const u
 	Actor* actor = this->zActorManager->SearchAndGetActor(ID);
 	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
 
-	if (!actor || !player)
+	Vector3 postionPlayer = player->GetPosition();
+
+	if (!actor && !player)
 	{
 		MaloW::Debug("Failed to find Attacker in Client::HandleTakeDamage");
 		return false;
 	}
 
-	Vector3 positionAttacker = actor->GetPosition();
-	Vector3 postionPlayer = player->GetPosition();
+	if(this->zDamageIndicator != NULL)
+	{
+		this->zEng->DeleteImage(this->zDamageIndicator);
+		this->zDamageIndicator = NULL;
+	}
 
+	//Make the effect visible based on severity of attack.
+	this->zDamageOpacity = damageTaken / 100;
+	if(this->zDamageOpacity > 0.7f)
+	{
+		this->zDamageOpacity = 0.7f;
+	}
+	if(this->zDamageOpacity < 0.2f)
+	{
+		this->zDamageOpacity = 0.2f;
+	}
+	
+	if(!actor)
+	{
+		//There is no attacker, so the damage must have come from a vague source (falling, hunger-pains, etc.)
+		this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/behindOrFront_Temp.png" );
+	}
+	else
+	{
+		Vector3 positionAttacker = actor->GetPosition();
+		
+		Vector3 aVector = positionAttacker - postionPlayer;
+		aVector.Normalize();
 
+		Vector3 aSecondVector = this->zEng->GetCamera()->GetForward();
+
+		float XZangleRadians;
+		float XYangleRadians;
+
+		XZangleRadians = atan2f(aSecondVector.z, aSecondVector.x) - atan2f(aVector.z, aVector.x);
+		XYangleRadians = atan2f(aSecondVector.y, aSecondVector.x) - atan2f(aVector.y, aVector.x);
+
+		float XZangleDegrees = XZangleRadians * 180/3.14;
+		float XYangleDegrees = XYangleRadians * 180/3.14;
+
+		//Needs testing!!!
+		if(abs(XZangleDegrees) < 50 && abs(XYangleDegrees) < 45 || 180 - abs(XZangleDegrees) < 45) 
+		{
+			//The damage is coming from the front and not too high or low. Or, it is coming from behind
+			//Display surroundingpicture
+			this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/behindOrFront_Temp.png" );
+		}
+		else //The damage is more specifically trackable.
+		{
+			if(XZangleDegrees < -50) //It's to the left. (needs testing)
+			{
+				if(XYangleDegrees > 25) //It's up to the left
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/highLeft_Temp.png" );
+
+				}
+				else if(XYangleDegrees < -25) //It's down to the left
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/lowLeft_Temp.png" );
+				}
+				else //It's directly to the left
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/left_Temp.png" );
+				}		
+			}
+			else if(XZangleDegrees > 50) //it's to the right (needs testing)
+			{
+				if(XYangleDegrees > 25) //It's up to the right
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/highRight_Temp.png" );
+				}
+				else if(XYangleDegrees < -25) //It's down to the right
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/lowRight_Temp.png" );
+				}
+				else //It's directly to the right
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/right_Temp.png" );
+				}
+			}
+			else //It's in front, but too high or low
+			{
+				if(XYangleDegrees > 45 ) //Up high.
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/up_Temp.png" );
+				}
+				else if(XYangleDegrees < -45) //Down low.
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/down_Temp.png" );
+				}
+			}
+		}
+	}
+	//Set the opacity
+	this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
+
+	GetSounds()->PlaySounds("Media/Sound/Breath.wav", postionPlayer);
 }
 
 void Client::CloseConnection(const std::string& reason)
