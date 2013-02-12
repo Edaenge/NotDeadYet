@@ -38,8 +38,6 @@
     <ClCompile Include="Source\PlayerGhostBehavior.cpp" />
     <ClCompile Include="Source\Host.cpp" />
     <ClCompile Include="Source\ItemActor.cpp" />
-    <ClCompile Include="Source\ObjectCreator.cpp" />
-    <ClCompile Include="Source\ObjectManager.cpp" />
     <ClCompile Include="Source\PhysicsEngine\ObjLoader.cpp" />
     <ClCompile Include="Source\PhysicsEngine\Physics.cpp" />
     <ClCompile Include="Source\PhysicsEngine\PhysicsEngine.cpp" />
@@ -81,8 +79,6 @@
     <ClInclude Include="Source\PlayerGhostBehavior.h" />
     <ClInclude Include="Source\Host.h" />
     <ClInclude Include="Source\ItemActor.h" />
-    <ClInclude Include="Source\ObjectCreator.h" />
-    <ClInclude Include="Source\ObjectManager.h" />
     <ClInclude Include="Source\PhysicsEngine\BoundingSphere.h" />
     <ClInclude Include="Source\PhysicsEngine\ObjLoader.h" />
     <ClInclude Include="Source\PhysicsEngine\Physics.h" />

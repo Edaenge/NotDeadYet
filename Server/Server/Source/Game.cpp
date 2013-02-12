@@ -53,12 +53,12 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	InitItemLookup();
 	//Testing
 
-	const RangedWeapon* temp_Bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
+	const Food* temp_Item = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BOW);
 
-	if (temp_Bow)
+	if (temp_Item)
 	{
-		RangedWeapon* new_Bow = new RangedWeapon((*temp_Bow));
-		ItemActor* actor = new ItemActor(new_Bow);
+		Food* new_Item = new Food((*temp_Item));
+		ItemActor* actor = new ItemActor(new_Item);
 		actor->SetPosition(Vector3(50, 0, 50));
 		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 		this->zActorManager->AddActor(actor);

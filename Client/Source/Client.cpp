@@ -1233,9 +1233,9 @@ void Client::onEvent(Event* e)
 void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 {
 	std::vector<Looting_Gui_Data> guiData;
-	for (auto it_Item_Data = msgArray.begin(); it_Item_Data != msgArray.end(); it_Item_Data++)
+	Looting_Gui_Data lgd = Looting_Gui_Data();
+	for (auto it_Item_Data = msgArray.begin() + 1; it_Item_Data != msgArray.end(); it_Item_Data++)
 	{
-		Looting_Gui_Data lgd = Looting_Gui_Data();
 		if((*it_Item_Data).find(M_ITEM_ID.c_str()) == 0)
 		{
 			lgd.zGui_Data.zID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, (*it_Item_Data));
