@@ -7,7 +7,6 @@ long Process::nextPID = 0;
 
 
 
-
 void DebugMtxInfo(DWORD res)
 {
 	if(res != WAIT_OBJECT_0)
@@ -53,7 +52,6 @@ Process::Process()
 
 	this->debug = false;
 	this->stayAlive = true;
-	this->WarningThresholdEventQueue = DEFAULT_WARNING_THRESHOLD_EVENTQUEUE_FULL;
 }
 
 void Process::Start()
@@ -212,11 +210,10 @@ void Process::PutEvent(ProcessEvent* ev, bool important)
 
 		this->EvQueue->Enqueue(ev);
 
-		if(queueSize > this->WarningThresholdEventQueue)
+		if(queueSize > 500)
 		{
 			MaloW::Debug("Warning, EventQueue of process " + MaloW::convertNrToString((float)this->id) + " has " + 
 				MaloW::convertNrToString((float)this->EvQueue->size()) + " unread events.");
-			this->WarningThresholdEventQueue *= 2;
 		}
 		if(this->state == WAITING)
 		{
@@ -231,7 +228,7 @@ void Process::PutEvent(ProcessEvent* ev, bool important)
 
 void Process::WaitUntillDone()
 {
-	while(this->state != FINISHED)
+	while(this->state != FINISHED && this->state != NOT_STARTED)
 		Sleep(1);
 }
 

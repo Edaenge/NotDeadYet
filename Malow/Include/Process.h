@@ -16,9 +16,6 @@ Implement the code you want your class to execute there.
 You must .start the object for it to start running the Life();
 */
 
-// Doubles every time the threshold is reached to avoid exessive error reporting.
-#define DEFAULT_WARNING_THRESHOLD_EVENTQUEUE_FULL 250
-
 namespace MaloW
 {
 	enum ProcessState
@@ -45,7 +42,6 @@ namespace MaloW
 		HANDLE ProcMtx;
 		
 		static long nextPID;
-		int WarningThresholdEventQueue;
 		long id;
 
 		bool debug;

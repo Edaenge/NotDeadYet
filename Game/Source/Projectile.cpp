@@ -22,11 +22,7 @@ Projectile::~Projectile()
 
 Projectile::Projectile(const Projectile& other)
 {
-	if (other.zID == 0)
-		this->GenerateID();
-	else
-		this->zID = other.zID;
-
+	this->zID = other.zID;
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
 	this->zDamage = other.zDamage;
@@ -40,6 +36,7 @@ Projectile::Projectile(const Projectile& other)
 
 Projectile::Projectile(const Projectile* other)
 {
+	this->zID = other->zID;
 	this->zStacks = other->zStacks;
 	this->zWeight = other->zWeight;
 	this->zDamage = other->zDamage;

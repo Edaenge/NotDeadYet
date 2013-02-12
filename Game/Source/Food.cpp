@@ -20,11 +20,7 @@ Food::~Food()
 
 Food::Food(const Food& other)
 {
-	if (other.zID == 0)
-		this->GenerateID();
-	else
-		this->zID = other.zID;
-
+	this->zID = other.zID;
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
 	this->zHunger = other.zHunger;
