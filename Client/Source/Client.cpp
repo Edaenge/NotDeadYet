@@ -400,27 +400,31 @@ void Client::HandleKeyboardInput()
 	if(zShowCursor)
 	{
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
+		Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
 
 		if (msd.zAction != -1)
 		{
 			if (msd.zID != -1)
 			{
-				if (msd.zAction == USE || msd.zAction == EQUIP)
+				if (msd.zAction == USE)
 				{
-					Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
-
 					if (item)
-					{
 						SendUseItemMessage(item->GetID());
-					}
+				}
+				else if(msd.zAction == EQUIP)
+				{
+					if(item)
+						SendEquipItem(msd.zID);
 				}
 				else if (msd.zAction == DROP)
 				{
-					this->SendDropItemMessage(msd.zID);
+					if(item)
+						this->SendDropItemMessage(msd.zID);
 				}
 				else if (msd.zAction == UNEQUIP)
 				{
-					this->SendUnEquipItem(msd.zID, (msd.zType));
+					if(item)
+						this->SendUnEquipItem(msd.zID, (msd.zType));
 				}
 			}
 		}

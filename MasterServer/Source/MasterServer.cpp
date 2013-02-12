@@ -44,11 +44,11 @@ void MasterServer::Life()
 
 		if (MaloW::NetworkPacket *packetEvent = dynamic_cast<MaloW::NetworkPacket*>(e))
 		{
-			MaloW::ClientChannel *channel = packetEvent->getChannel();
+			MaloW::ClientChannel *channel = packetEvent->GetChannel();
 			zChannelsMutex.lock();
 			channel = zChannels[channel->getID()];
 			zChannelsMutex.unlock();
-			HandleMessage(channel, packetEvent->getMessage());
+			HandleMessage(channel, packetEvent->GetMessage());
 		}
 		else if (ClientConnectedEvent *connectedEvent = dynamic_cast<ClientConnectedEvent*>(e))
 		{

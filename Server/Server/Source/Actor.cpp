@@ -1,6 +1,6 @@
 #include "Actor.h"
 
-static long NextActorID = 0;
+static unsigned int NextActorID = 0;
 
 Actor::Actor() :
 	zID(++NextActorID),

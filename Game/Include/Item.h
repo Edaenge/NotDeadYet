@@ -44,7 +44,7 @@ class Item
 {
 public:
 	Item();
-	Item(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType);
+	Item(const unsigned int itemType, const unsigned int itemSubType);
 	virtual ~Item(){}
 	/*! Returns Item ID*/
 	inline unsigned int GetID() const {return this->zID;}
@@ -98,4 +98,7 @@ protected:
 	std::string zItemName;
 	std::string zMeshModel;
 	bool zStacking;
+
+private:
+
 };

@@ -45,7 +45,8 @@ public:
 		Note that it may change if the player collides with an other Actor.
 	*/
 	virtual bool HasMoved();
-
+	/*! Kills the actor.*/
+	virtual void Kill();
 	/*! Adds a message string with health,stamina,hunger, hydration to mess.
 	    This function checks if the data has changed since last update.
 		If it has changed, we need to send it to the client.

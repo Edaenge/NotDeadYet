@@ -49,7 +49,7 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 
 
 	//Testing
-	RangedWeapon* rWpn = new RangedWeapon(200, ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW, 10, 2);
+	RangedWeapon* rWpn = new RangedWeapon(ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW, 10, 2);
 	rWpn->SetModel("Media/Models/Bow_v01.obj");
 	rWpn->SetIconPath("Media/Icons/Bow_Icon_Temp.png");
 	rWpn->SetItemWeight(2);
@@ -160,6 +160,11 @@ void Game::OnEvent( Event* e )
 			SetPlayerBehavior(playerIterator->second, 0);
 			zBehaviors.insert(aiWolf);
 		}
+		//Kills actor if human
+		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
+		{
+			dynamic_cast<BioActor*>(pHuman->GetActor())->Kill();
+		}
 
 		// Delete Player and notify GameMode
 		auto i = zPlayers.find(PDCE->clientData);
@@ -191,7 +196,7 @@ void Game::OnEvent( Event* e )
 				//Check if the ID is the same.
 				if ((*it_ID) == (*it_actor)->GetID())
 				{
-					//Check if the distance betweeen the actors are to far to be able to loot.
+					//Check if the distance between the actors are to far to be able to loot.
 					if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 4.0f)
 						continue;
 					
@@ -380,7 +385,7 @@ void Game::OnEvent( Event* e )
 
 		actor = playerIterator->second->GetBehavior()->GetActor();
 		
-		if (!(pActor = dynamic_cast<PlayerActor*>(actor)))
+		if ( !(pActor = dynamic_cast<PlayerActor*>(actor)) )
 		{
 			MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 			return;
@@ -439,7 +444,7 @@ void Game::OnEvent( Event* e )
 		}
 		else if(meele = dynamic_cast<MeleeWeapon*>(item))
 		{
-			float range = 0.f; 
+			float range = .0f; 
 			BioActor* victim = NULL;
 
 			//Check Collisions
@@ -460,11 +465,80 @@ void Game::OnEvent( Event* e )
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{
+		std::string msg;
+		unsigned int slot;
+
+		NetworkMessageConverter NMC;
+		Actor* actor = this->zPlayers[PEIE->clientData]->GetBehavior()->GetActor();
+		BioActor* pActor = dynamic_cast<PlayerActor*>(actor);
+		Inventory* inventory = pActor->GetInventory();
+		Item* item = inventory->SearchAndGetItem(PEIE->itemID);
+		
+		if(Projectile* proj = dynamic_cast<Projectile*>(item))
+		{
+			inventory->EquipProjectile(proj);
+			slot = EQUIPMENT_SLOT_AMMO;
+		}
+		else if(MeleeWeapon* meele = dynamic_cast<MeleeWeapon*>(item))
+		{
+			inventory->EquipMeleeWeapon(meele);
+			slot = EQUIPMENT_SLOT_MELEE_WEAPON;
+		}
+		else if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
+		{
+			inventory->EquipRangedWeapon(ranged);
+			slot = EQUIPMENT_SLOT_RANGED_WEAPON;
+		}
+		else
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Cannot_Equip_That_Item");
+			PEIE->clientData->Send(msg);
+			return;
+		}
+
+		msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)item->GetID());
+		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)slot);
+		PEIE->clientData->Send(msg);
 
 	}
 	else if (PlayerUnEquipItemEvent* PUEIE = dynamic_cast<PlayerUnEquipItemEvent*>(e) )
 	{
+		std::string msg;
+		NetworkMessageConverter NMC;
+		Actor* actor = this->zPlayers[PUEIE->clientData]->GetBehavior()->GetActor();
+		BioActor* pActor = dynamic_cast<BioActor*>(actor);
+		Inventory* inventory = pActor->GetInventory();
+		Item* item = inventory->SearchAndGetItem(PUEIE->itemID);
 
+		if(!item)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Item_Was_Not_Found");
+			PUEIE->clientData->Send(msg);
+			return;
+		}
+
+		if(PUEIE->eq_Slot == EQUIPMENT_SLOT_AMMO)
+		{
+			inventory->UnEquipProjectile();
+		}
+		else if(PUEIE->eq_Slot == EQUIPMENT_SLOT_MELEE_WEAPON)
+		{
+			inventory->UnEquipMeleeWeapon();
+		}
+		else if(PUEIE->eq_Slot == EQUIPMENT_SLOT_RANGED_WEAPON)
+		{
+			inventory->UnEquipRangedWeapon();
+		}
+		else
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Such_slot");
+			PUEIE->clientData->Send(msg);
+			return;
+		}
+
+		msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)PUEIE->itemID);
+		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)PUEIE->eq_Slot);
+		PUEIE->clientData->Send(msg);
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{

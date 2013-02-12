@@ -143,6 +143,7 @@ private:
 	void HandleEquipItem(const unsigned int ItemID, const int Slot);
 	bool HandleUnEquipItem(const unsigned int ItemID, const int Slot);
 	void SendUnEquipItem(const unsigned int ID, const int Slot);
+	void SendEquipItem(const unsigned int ID);
 	void HandleRemoveEquipment(const unsigned int ItemID, const int Slot);
 	void HandleWeaponUse(const unsigned int ID);
 	void HandleDisplayLootData(std::vector<std::string> msgArray);
