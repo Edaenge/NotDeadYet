@@ -1,6 +1,6 @@
 #include "Item.h"
 
-static unsigned int NextItemID = 0;
+static unsigned int NextItemID = 1;
 
 Item::Item() : 
 	zID(0)
