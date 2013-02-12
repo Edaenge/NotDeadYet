@@ -95,6 +95,7 @@ bool Game::Update( float dt )
 		if ( (*i)->Update(dt) )
 		{
 			i = zBehaviors.erase(i);
+			SAFE_DELETE(*i);
 		}
 		else
 		{
