@@ -26,8 +26,8 @@ Food::Food(const Food* other)
 	this->zItemDescription = other->zItemDescription;
 }
 
-Food::Food(const unsigned int ID, const unsigned int Type, const unsigned int SubType, const float hunger)
-	: Item(ID, Type, SubType)
+Food::Food(const unsigned int Type, const unsigned int SubType, const float hunger)
+	: Item(Type, SubType)
 {
 		this->zHunger = hunger;
 		this->zStacking = true;

@@ -28,8 +28,9 @@ Material::Material(const Material* other)
 	this->zRequiredStackToCraft = other->zRequiredStackToCraft;
 }
 
-Material::Material(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType, 
-				   const unsigned int craftingType, const unsigned int stacksRequiredToCraft) : Item(ID, itemType, itemSubType)
+Material::Material(const unsigned int itemType, const unsigned int itemSubType, 
+				   const unsigned int craftingType, const unsigned int stacksRequiredToCraft) : 
+					Item(itemType, itemSubType)
 {
 	this->zStacking = true;
 	this->zCraftingType = craftingType;

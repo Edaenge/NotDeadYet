@@ -1,8 +1,10 @@
 #include "Item.h"
 
-Item::Item()
+static unsigned int NextITemID = 0;
+
+Item::Item() : 
+	zID(NextITemID++)
 {
-	this->zID = -1;
 	this->zStacks = 1;
 	this->zWeight = 0;
 	this->zItemName = "none";
@@ -12,10 +14,10 @@ Item::Item()
 	this->zMeshModel = "none";
 }
 
-Item::Item(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType)
+Item::Item(const unsigned int itemType, const unsigned int itemSubType) : 
+	zID(NextITemID++)
 {
 	this->zStacks = 1;
-	this->zID = ID;
 	this->zStacks = 1;
 	this->zWeight = 0;
 	this->zItemType = itemType;

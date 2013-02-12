@@ -1,7 +1,8 @@
 #include "RangedWeapon.h"
 
-RangedWeapon::RangedWeapon(const unsigned int ID, const unsigned int itemType, const int itemSubType, 
-						   const float damage, const float range) : Weapon(ID, itemType, itemSubType, damage, range)
+RangedWeapon::RangedWeapon(const unsigned int itemType, const int itemSubType, 
+						   const float damage, const float range) : 
+								Weapon(itemType, itemSubType, damage, range)
 {
 	this->zStacking = false;
 }

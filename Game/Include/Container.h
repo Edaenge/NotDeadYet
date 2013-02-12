@@ -16,7 +16,7 @@ static const enum M_CONTAINER_ITEM_SUB_TYPE
 class Container : public Item
 {
 public:
-	Container(const unsigned int id, const unsigned int itemType, const unsigned int itemSubType,
+	Container(const unsigned int itemType, const unsigned int itemSubType,
 		const int maxUse, const int currUse);
 	Container(const Container& other);
 	Container(const Container* other);

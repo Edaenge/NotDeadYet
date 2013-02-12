@@ -49,7 +49,7 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 
 
 	//Testing
-	RangedWeapon* rWpn = new RangedWeapon(200, ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW, 10, 2);
+	RangedWeapon* rWpn = new RangedWeapon(ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW, 10, 2);
 	rWpn->SetModel("Media/Models/Bow_v01.obj");
 	rWpn->SetIconPath("Media/Icons/Bow_Icon_Temp.png");
 	rWpn->SetItemWeight(2);
