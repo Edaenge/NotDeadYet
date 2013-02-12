@@ -95,6 +95,8 @@ bool Game::Update( float dt )
 		if ( (*i)->Update(dt) )
 		{
 			i = zBehaviors.erase(i);
+			Behavior* temp = (*i);
+			SAFE_DELETE(temp);
 		}
 		else
 		{
@@ -108,6 +110,31 @@ bool Game::Update( float dt )
 	
 	// Update World
 	zWorld->Update();
+
+	// Collisions Projectiles Tests
+	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+	{
+		if(ProjectileActor* projActor = dynamic_cast<ProjectileActor*>((*i)->GetActor()))
+		{
+			Vector3 scale = projActor->GetScale();
+			float middle = (0.85f * max(max(scale.x, scale.y),scale.z)) / 2; //Hard coded
+
+			Actor* collide = this->zActorManager->CheckCollisions(projActor, middle); 
+
+			if(BioActor* victim = dynamic_cast<BioActor*>(collide))
+			{
+				if(ProjectileBehavior* projBehavior = dynamic_cast<ProjectileBehavior*>(*i))
+					projBehavior->Stop();
+				else
+				{
+					MaloW::Debug("Proj. collision detection failed.");
+					continue;
+				}
+
+				victim->TakeDamage(projActor->GetDamage(), projActor);
+			}
+		}
+	}
 
 	// Game Still Active
 	return true;
