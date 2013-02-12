@@ -43,7 +43,7 @@ void GameModeFFA::OnEvent( Event* e )
 			{
 				// Set new spawn pos
 				int maxPlayers = zPlayers.size();
-				int rand = 1 + std::rand()%maxPlayers;
+				int rand = 1 + (std::rand() % (maxPlayers+1));
 				pa->SetPosition(zGame->CalcPlayerSpawnPoint(rand));
 
 				//Add to scoreboard

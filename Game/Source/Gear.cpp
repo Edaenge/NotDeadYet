@@ -13,6 +13,7 @@ Gear::Gear(const Gear& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
 }
@@ -25,6 +26,7 @@ Gear::Gear(const Gear* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
 }

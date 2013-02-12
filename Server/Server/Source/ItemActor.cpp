@@ -17,4 +17,3 @@ const std::string& ItemActor::GetModel() const
 
 	return "none";
 }
-

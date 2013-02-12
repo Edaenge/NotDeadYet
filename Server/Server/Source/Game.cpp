@@ -420,7 +420,7 @@ void Game::OnEvent( Event* e )
 							
 							//Sending Message to client And removing stack from inventory.
 							inv->RemoveItemStack(ID, stacks);
-							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 
 							PUIE->clientData->Send(msg);
 						}
@@ -431,17 +431,15 @@ void Game::OnEvent( Event* e )
 						}
 						if (food->GetStackSize() <= 0)
 						{
-							if(inv->RemoveItem(food));
+							if(inv->RemoveItem(food))
 							{
-								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
+								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
 								PUIE->clientData->Send(msg);
 							}
 						}
 					}
 					else if (Container* container = dynamic_cast<Container*>(item))
 					{
-						float value = container->GetRemainingUses();
-
 						if (container->Use())
 						{
 							//To do fix values and stuff
@@ -449,7 +447,7 @@ void Game::OnEvent( Event* e )
 						
 							pActor->SetHydration(hydration);
 							ID = container->GetID();
-							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 							PUIE->clientData->Send(msg);
 						}
 						else
@@ -465,7 +463,7 @@ void Game::OnEvent( Event* e )
 							if (material->Use())
 							{
 								ID = material->GetID();
-								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 								PUIE->clientData->Send(msg);
 
 								//Creating a bow With default Values
@@ -477,7 +475,8 @@ void Game::OnEvent( Event* e )
 
 									if (inv->AddItem(new_Arrow))
 									{
-										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, new_Arrow->GetID());
+										ID = new_Arrow->GetID();
+										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)ID);
 										msg += new_Arrow->ToMessageString(&NMC);
 										PUIE->clientData->Send(msg);
 									}
@@ -493,7 +492,7 @@ void Game::OnEvent( Event* e )
 								if (inv->RemoveItem(material))
 								{
 									ID = material->GetID();
-									msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
+									msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
 									PUIE->clientData->Send(msg);
 								}
 							}
@@ -511,12 +510,12 @@ void Game::OnEvent( Event* e )
 								{
 									material->Use();
 									ID = material->GetID();
-									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 									PUIE->clientData->Send(msg);
 
 									material_Thread->Use();
 									ID = material_Thread->GetID();
-									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 									PUIE->clientData->Send(msg);
 
 									//Creating a bow With default Values
@@ -528,7 +527,8 @@ void Game::OnEvent( Event* e )
 
 										if (inv->AddItem(new_Bow))
 										{
-											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, new_Bow->GetID());
+											ID = new_Bow->GetID();
+											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)ID);
 											msg += new_Bow->ToMessageString(&NMC);
 											PUIE->clientData->Send(msg);
 										}
@@ -549,12 +549,12 @@ void Game::OnEvent( Event* e )
 								{
 									material->Use();
 									ID = material->GetID();
-									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 									PUIE->clientData->Send(msg);
 
 									material_Medium_Stick->Use();
 									ID = material_Medium_Stick->GetID();
-									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 									PUIE->clientData->Send(msg);
 
 									//Creating a bow With default Values
@@ -566,7 +566,8 @@ void Game::OnEvent( Event* e )
 
 										if (inv->AddItem(new_Bow))
 										{
-											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, new_Bow->GetID());
+											ID = new_Bow->GetID();
+											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)ID);
 											msg += new_Bow->ToMessageString(&NMC);
 											PUIE->clientData->Send(msg);
 										}

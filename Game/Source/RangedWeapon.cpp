@@ -31,6 +31,7 @@ RangedWeapon::RangedWeapon(const RangedWeapon& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
 }
@@ -45,6 +46,7 @@ RangedWeapon::RangedWeapon(const RangedWeapon* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
 }
