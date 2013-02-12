@@ -182,29 +182,56 @@ void Game::OnEvent( Event* e )
 		NetworkMessageConverter NMC;
 		std::string msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE);
 		unsigned int ID = 0;
+		//Loop through all actors.
 		for (auto it_actor = actors.begin(); it_actor != actors.end(); it_actor++)
 		{
+			//Loop through all ID's of all actors the client tried to loot.
 			for (auto it_ID = PLOE->actorID.begin(); it_ID != PLOE->actorID.end(); it_ID++)
 			{
+				//Check if the ID is the same.
 				if ((*it_ID) == (*it_actor)->GetID())
 				{
+					//Check if the distance betweeen the actors are to far to be able to loot.
 					if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 4.0f)
 						continue;
 					
+					//Check if the Actor is an ItemActor
 					if (ItemActor* iActor = dynamic_cast<ItemActor*>(*it_actor))
 					{
 						ID = iActor->GetID();
 						msg += iActor->GetItem()->ToMessageString(&NMC);
 						msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
 					}
+					//Check if the Actor is an PlayerActor
+					else if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(*it_actor))
+					{
+						//Check if the PlayerActor is Dead.
+						if (!pActor->IsAlive())
+						{
+							Inventory* inv = pActor->GetInventory();
+							ID = pActor->GetID();
+
+							std::vector<Item*> items = inv->GetItems();
+							for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+							{
+								msg += (*it_Item)->ToMessageString(&NMC);
+								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+							}
+						}
+					}
+					//Check if the Actor is an AnimalActor.
 					else if(AnimalActor* aActor = dynamic_cast<AnimalActor*>(*it_actor))
 					{
+						//Check if the AnimalActor is alive.
 						if (!aActor->IsAlive())
 						{
+							//Verify that a PlayerActor was trying to loot.
 							if (PlayerActor* player = dynamic_cast<PlayerActor*>(actor))
 							{
+								//Get the PlayerActors inventory.
 								if (Inventory* playerInventory = player->GetInventory())
 								{
+									//Check if the PlayerActor has a Pocket Knife to be able to loot Animals.
 									Item* item = playerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE, ITEM_SUB_TYPE_POCKET_KNIFE);
 
 									if (item)
@@ -223,21 +250,6 @@ void Game::OnEvent( Event* e )
 							}
 						}
 					}
-					else if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(*it_actor))
-					{
-						if (!pActor->IsAlive())
-						{
-							Inventory* inv = pActor->GetInventory();
-							ID = pActor->GetID();
-
-							std::vector<Item*> items = inv->GetItems();
-							for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
-							{
-								msg += (*it_Item)->ToMessageString(&NMC);
-								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
-							}
-						}
-					}
 				}
 			}
 		}
@@ -248,6 +260,7 @@ void Game::OnEvent( Event* e )
 		Actor* actor = this->zActorManager->GetActor(PLIE->objID);
 		Item* item = NULL;
 		NetworkMessageConverter NMC;
+		//Check if the Actor being looted is an ItemActor.
 		if (ItemActor* iActor = dynamic_cast<ItemActor*>(actor))
 		{
 			item = iActor->GetItem();
@@ -285,6 +298,7 @@ void Game::OnEvent( Event* e )
 				}
 			}
 		}
+		//Check if the Actor being looted is an BioActor.
 		else if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
 		{
 			Inventory* inv = bActor->GetInventory();
@@ -490,7 +504,7 @@ void Game::OnEvent( Event* e )
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
 	{
 		// Create Player Actor
-		PhysicsObject* pObject = 0; //this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
+		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zActorManager->AddActor(actor);
 		actor->AddObserver(this->zGameMode);
