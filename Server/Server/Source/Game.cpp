@@ -160,9 +160,10 @@ void Game::OnEvent( Event* e )
 			SetPlayerBehavior(playerIterator->second, 0);
 			zBehaviors.insert(aiWolf);
 		}
+		//Kills actor if human
 		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
 		{
-			dynamic_cast<PlayerActor*>(pHuman->GetActor())->Kill();
+			dynamic_cast<BioActor*>(pHuman->GetActor())->Kill();
 		}
 
 		// Delete Player and notify GameMode
@@ -195,7 +196,7 @@ void Game::OnEvent( Event* e )
 				//Check if the ID is the same.
 				if ((*it_ID) == (*it_actor)->GetID())
 				{
-					//Check if the distance betweeen the actors are to far to be able to loot.
+					//Check if the distance between the actors are to far to be able to loot.
 					if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 4.0f)
 						continue;
 					
@@ -443,7 +444,7 @@ void Game::OnEvent( Event* e )
 		}
 		else if(meele = dynamic_cast<MeleeWeapon*>(item))
 		{
-			float range = 0.f; 
+			float range = .0f; 
 			BioActor* victim = NULL;
 
 			//Check Collisions
