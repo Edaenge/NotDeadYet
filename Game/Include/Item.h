@@ -23,7 +23,7 @@ class Item
 {
 public:
 	Item();
-	Item(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType);
+	Item(const unsigned int itemType, const unsigned int itemSubType);
 	virtual ~Item(){}
 	/*! Returns Item ID*/
 	inline unsigned int GetID() const {return this->zID;}
@@ -65,7 +65,11 @@ public:
 	const std::string& GetModel() const {return this->zMeshModel;}
 
 	virtual bool Use() = 0;
-	virtual std::string ToMessageString(NetworkMessageConverter* NMC);  
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
+
+protected:
+	void GenerateID();
+
 protected:
 	unsigned int zStacks;
 	unsigned int zID;
@@ -77,4 +81,7 @@ protected:
 	std::string zItemName;
 	std::string zMeshModel;
 	bool zStacking;
+
+private:
+
 };

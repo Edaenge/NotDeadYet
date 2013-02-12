@@ -99,7 +99,7 @@ public:
 
 	ClientData* clientData;
 
-	long itemID;
+	unsigned int itemID;
 };
 
 /*Event when a player wants to equip an item.*/
@@ -110,7 +110,7 @@ public:
 
 	ClientData* clientData;
 
-	long itemID;
+	unsigned int itemID;
 };
 
 /*Event when a player wants to unequip an item.*/
@@ -121,7 +121,7 @@ public:
 
 	ClientData* clientData;
 
-	long itemID;
+	unsigned int itemID;
 	int eq_Slot;
 };
 
@@ -133,7 +133,7 @@ public:
 
 	ClientData* clientData;
 
-	long itemID;
+	unsigned int itemID;
 };
 
 /*Event when a player wants to use his equipped weapon.*/
@@ -143,7 +143,7 @@ public:
 	virtual ~PlayerUseEquippedWeaponEvent() {}
 
 	ClientData* clientData;
-	long itemID;
+	unsigned int itemID;
 };
 
 /*Event when a client sends an update to server.*/

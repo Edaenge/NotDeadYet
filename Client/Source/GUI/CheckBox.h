@@ -45,4 +45,5 @@ public:
 
 	GUIEvent* CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 
+	void Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight);
 };

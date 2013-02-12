@@ -198,3 +198,24 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 		}
 	}
  }
+
+ void TextBox::Resize( int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight )
+ {
+	 Element::Resize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
+
+	 float dx = ((float)windowHeight * 4.0f) / 3.0f;
+	 float oldDx = ((float)oldWindowHeight * 4.0f) / 3.0f;
+	 float oldOffSet = (float)(oldWindowWidth - oldDx) / 2.0f;
+	 float offSet = (float)(windowWidth - dx) / 2.0f;
+
+	 this->mActiveX = offSet + ((this->mActiveX - oldOffSet) / oldDx) * dx;
+	 this->mActiveY = (this->mActiveY / oldWindowHeight) * windowHeight;
+
+	 this->mActiveWidth = (this->mActiveWidth / oldDx) * dx;
+	 this->mActiveHeight = (this->mActiveHeight / oldWindowHeight) * windowHeight;
+
+	 if(this->mPointText)
+	 {
+		 this->mPointText->SetPosition(this->GetPositionD3D());
+	 }
+ }

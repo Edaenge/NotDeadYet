@@ -7,8 +7,8 @@ Container::Container() : Item()
 	this->zUsesRemaining = 0;
 }
 
-Container::Container(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType,
-					 const int maxUse, const int currUse) : Item(ID, itemType, itemSubType)
+Container::Container(const unsigned int itemType, const unsigned int itemSubType,
+					 const int maxUse, const int currUse) : Item(itemType, itemSubType)
 {
 	this->zStacking = false;
 	this->zMaxUses = maxUse;
@@ -19,6 +19,7 @@ Container::~Container()
 {
 
 }
+
 Container::Container(const Container& other)
 {
 	this->zID = other.zID;

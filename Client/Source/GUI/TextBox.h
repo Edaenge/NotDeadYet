@@ -55,4 +55,6 @@ public:
 	void SetText(string text){ this->mText = text; if(this->mPointText)this->mPointText->SetText(text.c_str()); }
 
 	void CheckString(GraphicsEngine* ge);
+
+	virtual void Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight);
 };

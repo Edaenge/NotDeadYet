@@ -1,8 +1,10 @@
 #include "Item.h"
 
-Item::Item()
+static unsigned int NextItemID = 0;
+
+Item::Item() : 
+	zID(0)
 {
-	this->zID = -1;
 	this->zStacks = 1;
 	this->zWeight = 0;
 	this->zItemName = "none";
@@ -12,10 +14,10 @@ Item::Item()
 	this->zMeshModel = "none";
 }
 
-Item::Item(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType)
+Item::Item(const unsigned int itemType, const unsigned int itemSubType) : 
+	zID(NextItemID++)
 {
 	this->zStacks = 1;
-	this->zID = ID;
 	this->zStacks = 1;
 	this->zWeight = 0;
 	this->zItemType = itemType;
@@ -38,4 +40,9 @@ std::string Item::ToMessageString(NetworkMessageConverter* NMC)
 	msg += NMC->Convert(MESSAGE_TYPE_ITEM_ICON_PATH, this->zIconPath);
 
 	return msg;
+}
+
+void Item::GenerateID()
+{
+	this->zID = NextItemID++;
 }

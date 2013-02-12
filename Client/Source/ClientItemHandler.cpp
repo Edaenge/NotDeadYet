@@ -646,6 +646,12 @@ void Client::SendUnEquipItem(const unsigned int ID, const int Slot)
 	this->zServerChannel->Send(msg);
 }
 
+void Client::SendEquipItem( const unsigned int ID )
+{
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)ID);
+	this->zServerChannel->Send(msg);
+}
+
 void Client::SendLootItemMessage(const unsigned int ID, const unsigned int ItemID, const int Type, const int SubType)
 {
 	std::string msg;
@@ -785,7 +791,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 	switch (itemType)
 	{
 	case ITEM_TYPE_FOOD:
-		item = new Food(ID, itemType, itemSubType, hunger);
+		item = new Food(itemType, itemSubType, hunger);
 		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
@@ -794,7 +800,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_WEAPON_RANGED:
-		item = new RangedWeapon(ID, itemType, itemSubType, weaponDamage, weaponRange);
+		item = new RangedWeapon(itemType, itemSubType, weaponDamage, weaponRange);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
@@ -802,7 +808,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_WEAPON_MELEE:
-		item = new MeleeWeapon(ID, itemType, itemSubType, weaponDamage, weaponRange);
+		item = new MeleeWeapon(itemType, itemSubType, weaponDamage, weaponRange);
 		item->SetStacking(false);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
@@ -811,7 +817,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_CONTAINER:
-		item = new Container(ID, itemType, itemSubType, maxUse, currUse);
+		item = new Container(itemType, itemSubType, maxUse, currUse);
 		item->SetStacking(false);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
@@ -820,7 +826,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_PROJECTILE:
-		item = new Projectile(ID, itemType, itemSubType, projectileVelocity, projectileDamage);
+		item = new Projectile(itemType, itemSubType, projectileVelocity, projectileDamage);
 		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
@@ -829,7 +835,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_MATERIAL:
-		item = new Material(ID, itemType, itemSubType, craftingType, stacksRequired);
+		item = new Material(itemType, itemSubType, craftingType, stacksRequired);
 		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
@@ -838,7 +844,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_GEAR:
-		item = new Gear(ID, itemSubType, itemType);
+		item = new Gear(itemSubType, itemType);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);

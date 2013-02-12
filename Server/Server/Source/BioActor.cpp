@@ -36,10 +36,23 @@ bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
 
 	if(this->zHealth <= 0.0f)
 	{
-		this->zHealth = 0.0f;
 		this->zAlive = false;
+		this->zHealth = 0.0f;
 	}
 
+	if(!zAlive)
+	{
+		//RotateMesh
+		Vector3 up = Vector3(0, 1, 0);
+		Vector3 forward = Vector3(0, 0, 1);
+		Vector3 around = up.GetCrossProduct(forward);
+		around.Normalize();
+		float angle = 3.14f * 0.5f;
+		
+		this->GetPhysicsObject()->SetQuaternion(Vector4(.0f,.0f,.0f,.1f));
+		this->SetRotation(around,angle);
+	}
+	
 	// Notify Damage
 	BioActorTakeDamageEvent BATD;
 	BATD.zActor = this;
@@ -48,6 +61,14 @@ bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
 	NotifyObservers(&BATD);
 
 	return this->zAlive;
+}
+
+void BioActor::Kill()
+{
+	Damage dmg;
+	dmg.fallingDamage = zHealth;
+
+	TakeDamage(dmg, NULL);
 }
 
 bool BioActor::IsAlive() const

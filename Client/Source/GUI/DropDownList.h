@@ -73,4 +73,6 @@ public:
 
 	/*! Removes all normal stuff from the renderer*/
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
+
+	void Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight);
 };

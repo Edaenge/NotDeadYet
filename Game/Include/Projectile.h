@@ -17,8 +17,7 @@ class Projectile : public Item
 {
 public:
 	Projectile();
-	Projectile(const unsigned int id, const unsigned int itemType, const unsigned int itemSubType, float velocity, float damage);
-	Projectile(const Projectile& other);
+	Projectile(const unsigned int itemType, const unsigned int itemSubType, float velocity, float damage);		Projectile(const Projectile& other);
 	Projectile(const Projectile* other);
 	virtual ~Projectile();
 

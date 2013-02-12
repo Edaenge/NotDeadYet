@@ -32,7 +32,14 @@ CheckBox::CheckBox(float x, float y, float z, string textureName, float width, f
 
 	this->mOn = on;
 	this->mCheckedTextureName = CheckedTextureName;
-	this->mCheckedImage = NULL;
+	if(this->mOn)
+	{
+		this->mCheckedImage = GetGraphics()->CreateImage(Vector2(x, y), this->GetDimension(), this->mCheckedTextureName.c_str());
+	}
+	else
+	{
+		this->mCheckedImage = NULL;
+	}
 }
 CheckBox::~CheckBox()
 {
@@ -62,7 +69,6 @@ bool CheckBox::RemoveFromRenderer(GraphicsEngine* ge)
 
 GUIEvent* CheckBox::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
 {
-	GUIEvent* returnEvent;
 	if(!((mouseX < this->mActiveX || mouseX > (this->mActiveX+this->mActiveWidth)) || (mouseY < this->mActiveY || mouseY > (this->mActiveY+this->mActiveHeight))))
 	{
 		if(!this->mPressed && mousePressed)
@@ -118,5 +124,28 @@ void CheckBox::SetChecked(bool checked)
 			GetGraphics()->DeleteImage(this->mCheckedImage);
 			this->mCheckedImage = NULL;
 		}
+	}
+}
+
+void CheckBox::Resize( int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight )
+{
+	Element::Resize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
+
+	float dx = ((float)windowHeight * 4.0f) / 3.0f;
+	float oldDx = ((float)oldWindowHeight * 4.0f) / 3.0f;
+	float oldOffSet = (float)(oldWindowWidth - oldDx) / 2.0f;
+	float offSet = (float)(windowWidth - dx) / 2.0f;
+
+	this->mActiveX = offSet + ((this->mActiveX - oldOffSet) / oldDx) * dx;
+	this->mActiveY = (this->mActiveY / oldWindowHeight) * windowHeight;
+
+
+	this->mActiveWidth = (this->mActiveWidth / oldDx) * dx;
+	this->mActiveHeight = (this->mActiveHeight / oldWindowHeight) * windowHeight;
+
+	if(this->mCheckedImage)
+	{
+		this->mCheckedImage->SetPosition(Element::GetPositionD3D());
+		this->mCheckedImage->SetDimensions(Element::GetDimension());
 	}
 }

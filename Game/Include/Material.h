@@ -19,7 +19,8 @@ class Material : public Item
 {
 public:
 	Material();
-	Material(const unsigned int id, const unsigned int itemType, const unsigned int itemSubType, const unsigned int craftingType, const unsigned int stacksRequiredToCraft);
+	Material(const unsigned int itemType, const unsigned int itemSubType, 
+			const unsigned int craftingType, const unsigned int stacksRequiredToCraft);	
 	Material(const Material& other);
 	Material(const Material* other);
 	virtual ~Material();

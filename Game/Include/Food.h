@@ -16,9 +16,9 @@ static const enum M_FOOD_ITEM_SUB_TYPE
 class Food : public Item
 {
 public:
-	Food();
-	Food(const unsigned int ID, const unsigned int Type, const unsigned int SubType, const float hunger);
-	Food(const Food& other);
+	Food();	
+	Food(const unsigned int Type, const unsigned int SubType, const float hunger);
+		Food(const Food& other);
 	Food(const Food* other);
 	virtual ~Food();
 	/*! Decreases Stacks by 1.*/

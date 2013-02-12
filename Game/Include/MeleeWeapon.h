@@ -11,7 +11,7 @@ class MeleeWeapon : public Weapon
 {
 public:
 	MeleeWeapon();
-	MeleeWeapon(const unsigned int ID, const unsigned int itemType, const int itemSubType, const float damage, const float range);
+	MeleeWeapon(const unsigned int itemType, const int itemSubType, const float damage, const float range);
 	MeleeWeapon(const MeleeWeapon& other);
 	MeleeWeapon(const MeleeWeapon* other);
 	virtual ~MeleeWeapon();
