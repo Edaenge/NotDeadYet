@@ -7,7 +7,7 @@
 
 GameModeFFA::GameModeFFA(Game* game, int killLimit) : GameMode(game)
 {
-	srand(time(0));
+	srand((unsigned int)time(0));
 	zKillLimit = killLimit;
 }
 

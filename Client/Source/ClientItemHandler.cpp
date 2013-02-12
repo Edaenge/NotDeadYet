@@ -646,6 +646,12 @@ void Client::SendUnEquipItem(const unsigned int ID, const int Slot)
 	this->zServerChannel->Send(msg);
 }
 
+void Client::SendEquipItem( const unsigned int ID )
+{
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)ID);
+	this->zServerChannel->Send(msg);
+}
+
 void Client::SendLootItemMessage(const unsigned int ID, const unsigned int ItemID, const int Type, const int SubType)
 {
 	std::string msg;
