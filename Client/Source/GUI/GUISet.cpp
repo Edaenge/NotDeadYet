@@ -124,7 +124,7 @@ string GUISet::GetTextFromField(string textBox)
 	return "";
 }
 
- void GUISet::Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight)
+ void GUISet::Resize(float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight)
  {
 	 for(int i = 0; i < this->mNrOfElements; i++)
 		this->mElements[i]->Resize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
@@ -144,7 +144,7 @@ string GUISet::GetTextFromField(string textBox)
 		}
 	}
 	return NULL;
-}
+}*/
 CheckBox* GUISet::GetCheckBox(string checkBox)
 {
 	for(int i = 0; i < this->mNrOfElements; i++)
@@ -159,7 +159,7 @@ CheckBox* GUISet::GetCheckBox(string checkBox)
 		}
 	}
 	return NULL;
-}
+}/*
 TextBox* GUISet::GetTextBox(string textBox)
 {
 	for(int i = 0; i < this->mNrOfElements; i++)

@@ -118,6 +118,7 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 			if(this->mPressed)
 			{
 				this->mPointText->DeleteFromEnd(strlen(this->mPointText->GetText()));
+				this->mText = "";
 				this->mPressed = false;
 				this->mFocused = true;
 				return;
@@ -153,6 +154,7 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 						pushString = KEYS[i];
 
 					this->mPointText->AppendText(pushString.c_str());
+					this->mText += pushString;
 					ge->GetKeyListener()->KeyUp(KEYS[i]);
 				}
 			}
@@ -168,6 +170,7 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 					pushString = numbers[i];
 
 					this->mPointText->AppendText(pushString.c_str());
+					this->mText += pushString;
 					ge->GetKeyListener()->KeyUp(numbers[i]);
 				}
 			}
@@ -183,6 +186,7 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 					pushString = specialChars[i];
 
 					this->mPointText->AppendText(pushString.c_str());
+					this->mText += pushString;
 					ge->GetKeyListener()->KeyUp(specialChars[i]);
 				}
 			}
@@ -194,12 +198,13 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 		if(ge->GetKeyListener()->IsPressed(VK_BACK))
 		{
 			this->mPointText->DeleteFromEnd(1);
+			this->mText += mText.substr(0, mText.length()-2);
 			ge->GetKeyListener()->KeyUp(VK_BACK);
 		}
 	}
  }
 
- void TextBox::Resize( int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight )
+ void TextBox::Resize( float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight )
  {
 	 Element::Resize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
 

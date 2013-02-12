@@ -903,7 +903,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
-		this->UpdateActor(msgArray, id);
+		this->RemoveActor(id);
 	}
 	else if (msg.find(M_LOOT_OBJECT_RESPONSE.c_str()) == 0)
 	{
