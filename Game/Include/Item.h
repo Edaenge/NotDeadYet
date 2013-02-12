@@ -7,28 +7,7 @@
 
 #include <string>
 #include "NetworkMessageConverter.h"
-/*
-static const enum M_ITEM_TYPE
-{
-	ITEM_TYPE_WEAPON_RANGED_BOW,
-	ITEM_TYPE_WEAPON_RANGED_ROCK,
-	ITEM_TYPE_WEAPON_MELEE_AXE,
-	ITEM_TYPE_WEAPON_MELEE_POCKET_KNIFE,
-	ITEM_TYPE_GEAR_HEAD,
-	ITEM_TYPE_GEAR_CHEST,
-	ITEM_TYPE_GEAR_LEGS,
-	ITEM_TYPE_GEAR_BOOTS,
-	ITEM_TYPE_CONTAINER_CANTEEN,
-	ITEM_TYPE_CONTAINER_WATER_BOTTLE,
-	ITEM_TYPE_FOOD_DEER_MEAT,
-	ITEM_TYPE_FOOD_WOLF_MEAT,
-	ITEM_TYPE_PROJECTILE_ARROW,
-	ITEM_TYPE_MATERIAL_SMALL_STICK,
-	ITEM_TYPE_MATERIAL_MEDIUM_STICK,
-	ITEM_TYPE_MATERIAL_LARGE_STICK,
-	ITEM_TYPE_MATERIAL_THREAD
-};
-*/
+
 static const enum M_ITEM_TYPE
 {
 	ITEM_TYPE_WEAPON_RANGED,
@@ -86,7 +65,11 @@ public:
 	const std::string& GetModel() const {return this->zMeshModel;}
 
 	virtual bool Use() = 0;
-	virtual std::string ToMessageString(NetworkMessageConverter* NMC);  
+	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
+
+protected:
+	void GenerateID();
+
 protected:
 	unsigned int zStacks;
 	unsigned int zID;

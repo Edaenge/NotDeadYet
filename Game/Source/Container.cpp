@@ -1,5 +1,12 @@
 #include "Container.h"
 
+Container::Container() : Item()
+{
+	this->zStacking = false;
+	this->zMaxUses = 0;
+	this->zUsesRemaining = 0;
+}
+
 Container::Container(const unsigned int itemType, const unsigned int itemSubType,
 					 const int maxUse, const int currUse) : Item(itemType, itemSubType)
 {
@@ -8,15 +15,25 @@ Container::Container(const unsigned int itemType, const unsigned int itemSubType
 	this->zUsesRemaining = currUse;
 }
 
+Container::~Container()
+{
+
+}
+
 Container::Container(const Container& other)
 {
-	this->zID = other.zID;
+	if (other.zID == 0)
+		this->GenerateID();
+	else
+		this->zID = other.zID;
+
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
 	this->zMaxUses = other.zMaxUses;
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zUsesRemaining = other.zUsesRemaining;
 	this->zItemDescription = other.zItemDescription;
@@ -31,14 +48,10 @@ Container::Container(const Container* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zUsesRemaining = other->zUsesRemaining;
 	this->zItemDescription = other->zItemDescription;
-}
-
-Container::~Container()
-{
-
 }
 
 bool Container::Use()

@@ -1,8 +1,29 @@
 #include "MeleeWeapon.h"
 
+MeleeWeapon::MeleeWeapon() : Weapon()
+{
+
+}
+
+MeleeWeapon::MeleeWeapon(const unsigned int itemType, const int itemSubType, 
+						 const float damage, const float range) 
+						 : Weapon(itemType, itemSubType, damage, range)
+{
+
+}
+
+MeleeWeapon::~MeleeWeapon()
+{
+
+}
+
 MeleeWeapon::MeleeWeapon(const MeleeWeapon& other)
 {
-	this->zID = other.zID;
+	if (other.zID == 0)
+		this->GenerateID();
+	else
+		this->zID = other.zID;
+
 	this->zRange = other.zRange;
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
@@ -26,18 +47,6 @@ MeleeWeapon::MeleeWeapon(const MeleeWeapon* other)
 	this->zItemType = other->zItemType;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
-}
-
-MeleeWeapon::MeleeWeapon(const unsigned int itemType, const int itemSubType, 
-						 const float damage, const float range) 
-						 : Weapon(itemType, itemSubType, damage, range)
-{
-
-}
-
-MeleeWeapon::~MeleeWeapon()
-{
-
 }
 
 void MeleeWeapon::UseWeapon(float& range, float& damage)

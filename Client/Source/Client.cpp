@@ -47,8 +47,10 @@ Client::Client()
 	this->zWorldRenderer = NULL;
 	this->zAnchor = NULL;
 	this->zCrossHair = NULL;
+	this->zDamageIndicator = NULL;
+	this->zDamageOpacity = 0.0f;
 	SoundsInit();
-
+	
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Walk.wav", false);
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
 }
@@ -109,6 +111,22 @@ float Client::Update()
 		if ( zWorldRenderer ) zWorldRenderer->Update();
 	}		
 
+	this->zDamageOpacity -= this->zDeltaTime;
+	
+	if(this->zDamageIndicator != NULL)
+	{
+		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
+	}
+	
+	if(this->zDamageOpacity < 0.0f)
+	{
+		this->zDamageOpacity = 0.0f;
+		if(this->zDamageIndicator != NULL)
+		{
+			this->zEng->DeleteImage(this->zDamageIndicator);
+			this->zDamageIndicator = NULL;
+		}
+	}
 	return this->zDeltaTime;
 }
 
@@ -878,14 +896,14 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		{
 			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TAKE_DAMAGE, msgArray[0]);
 			float damageTaken = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, msgArray[1]);
-			this->HandleTakeDamage(msgArray, id, damageTaken);
+			this->HandleTakeDamage(id, damageTaken);
 		}
 	}
 	//Actors
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
-		this->UpdateActor(msgArray, id);
+		this->RemoveActor(id);
 	}
 	else if (msg.find(M_LOOT_OBJECT_RESPONSE.c_str()) == 0)
 	{
@@ -1004,21 +1022,118 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 }
 
-bool Client::HandleTakeDamage( const std::vector<std::string>& msgArray, const unsigned int ID, float damageTaken )
+bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 {
 	Actor* actor = this->zActorManager->SearchAndGetActor(ID);
 	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
 
-	if (!actor || !player)
+	Vector3 postionPlayer = player->GetPosition();
+
+	if (!actor && !player)
 	{
 		MaloW::Debug("Failed to find Attacker in Client::HandleTakeDamage");
 		return false;
 	}
 
-	Vector3 positionAttacker = actor->GetPosition();
-	Vector3 postionPlayer = player->GetPosition();
+	if(this->zDamageIndicator != NULL)
+	{
+		this->zEng->DeleteImage(this->zDamageIndicator);
+		this->zDamageIndicator = NULL;
+	}
 
+	//Make the effect visible based on severity of attack.
+	this->zDamageOpacity = damageTaken / 100;
+	if(this->zDamageOpacity > 0.7f)
+	{
+		this->zDamageOpacity = 0.7f;
+	}
+	if(this->zDamageOpacity < 0.2f)
+	{
+		this->zDamageOpacity = 0.2f;
+	}
+	
+	if(!actor)
+	{
+		//There is no attacker, so the damage must have come from a vague source (falling, hunger-pains, etc.)
+		this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/behindOrFront_Temp.png" );
+	}
+	else
+	{
+		Vector3 positionAttacker = actor->GetPosition();
+		
+		Vector3 aVector = positionAttacker - postionPlayer;
+		aVector.Normalize();
 
+		Vector3 aSecondVector = this->zEng->GetCamera()->GetForward();
+
+		float XZangleRadians;
+		float XYangleRadians;
+
+		XZangleRadians = atan2f(aSecondVector.z, aSecondVector.x) - atan2f(aVector.z, aVector.x);
+		XYangleRadians = atan2f(aSecondVector.y, aSecondVector.x) - atan2f(aVector.y, aVector.x);
+
+		float XZangleDegrees = XZangleRadians * 180/3.14;
+		float XYangleDegrees = XYangleRadians * 180/3.14;
+
+		//Needs testing!!!
+		if(abs(XZangleDegrees) < 50 && abs(XYangleDegrees) < 45 || 180 - abs(XZangleDegrees) < 45) 
+		{
+			//The damage is coming from the front and not too high or low. Or, it is coming from behind
+			//Display surroundingpicture
+			this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/behindOrFront_Temp.png" );
+		}
+		else //The damage is more specifically trackable.
+		{
+			if(XZangleDegrees < -50) //It's to the left. (needs testing)
+			{
+				if(XYangleDegrees > 25) //It's up to the left
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/highLeft_Temp.png" );
+
+				}
+				else if(XYangleDegrees < -25) //It's down to the left
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/lowLeft_Temp.png" );
+				}
+				else //It's directly to the left
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/left_Temp.png" );
+				}		
+			}
+			else if(XZangleDegrees > 50) //it's to the right (needs testing)
+			{
+				if(XYangleDegrees > 25) //It's up to the right
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/highRight_Temp.png" );
+				}
+				else if(XYangleDegrees < -25) //It's down to the right
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/lowRight_Temp.png" );
+				}
+				else //It's directly to the right
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/right_Temp.png" );
+				}
+			}
+			else //It's in front, but too high or low
+			{
+				if(XYangleDegrees > 45 ) //Up high.
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/up_Temp.png" );
+				}
+				else if(XYangleDegrees < -45) //Down low.
+				{
+					this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowHeight, this->zEng->GetEngineParameters().WindowWidth),"Media/Icons/down_Temp.png" );
+				}
+			}
+		}
+	}
+	//Set the opacity
+	this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
+
+	GetSounds()->PlaySounds("Media/Sound/Breath.wav", postionPlayer);
+
+	return true;
 }
 
 void Client::CloseConnection(const std::string& reason)
@@ -1042,26 +1157,30 @@ std::vector<unsigned int> Client::RayVsWorld()
 	iMesh* mesh = NULL;
 	for(auto it = actors.begin(); it < actors.end(); it++)
 	{
-		mesh = (*it)->GetMesh();
-		if (!mesh)
+		if ((*it)->GetID() != this->zID)
 		{
-			MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
-			continue;
+			mesh = (*it)->GetMesh();
+			if (!mesh)
+			{
+				MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
+				continue;
+			}
+			data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
+
+			if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+			{
+				/*Looting_Data ld;
+				Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), 
+				(*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription(), (*it)->GetType());
+
+				ld.owner = gui_Data.zID;
+				ld.gid = gui_Data;
+				ld.type = OBJECT_TYPE_DYNAMIC_OBJECT;*/
+
+				Collisions.push_back((*it)->GetID());
+			}
 		}
-		data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
-
-		if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
-		{
-			/*Looting_Data ld;
-			Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), 
-			(*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription(), (*it)->GetType());
-
-			ld.owner = gui_Data.zID;
-			ld.gid = gui_Data;
-			ld.type = OBJECT_TYPE_DYNAMIC_OBJECT;*/
-
-			Collisions.push_back((*it)->GetID());
-		}
+		
 	}
 
 	return Collisions;
@@ -1114,9 +1233,9 @@ void Client::onEvent(Event* e)
 void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 {
 	std::vector<Looting_Gui_Data> guiData;
-	for (auto it_Item_Data = msgArray.begin(); it_Item_Data != msgArray.end(); it_Item_Data++)
+	Looting_Gui_Data lgd = Looting_Gui_Data();
+	for (auto it_Item_Data = msgArray.begin() + 1; it_Item_Data != msgArray.end(); it_Item_Data++)
 	{
-		Looting_Gui_Data lgd = Looting_Gui_Data();
 		if((*it_Item_Data).find(M_ITEM_ID.c_str()) == 0)
 		{
 			lgd.zGui_Data.zID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, (*it_Item_Data));
@@ -1156,6 +1275,7 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 			guiData.push_back(lgd);
 		}
 	}
+
 	this->SendLootItemMessage(guiData[0].zActorID, guiData[0].zGui_Data.zID, guiData[0].zGui_Data.zType, guiData[0].zGui_Data.zSubType);
 	this->zGuiManager->ShowLootingGui(guiData);
 }

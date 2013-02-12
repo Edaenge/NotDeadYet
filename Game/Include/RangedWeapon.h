@@ -10,8 +10,8 @@
 class RangedWeapon : public Weapon
 {
 public:
-	RangedWeapon(const unsigned int itemType, const int itemSubType, const float damage, const float range);
-	RangedWeapon(const RangedWeapon& other);
+	RangedWeapon();
+	RangedWeapon(const unsigned int itemType, const int itemSubType, const float damage, const float range);	RangedWeapon(const RangedWeapon& other);
 	RangedWeapon(const RangedWeapon* other);
 	virtual ~RangedWeapon();
 

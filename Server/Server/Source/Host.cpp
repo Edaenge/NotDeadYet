@@ -42,7 +42,6 @@ Host::~Host()
 
 	this->zServerListener->Close();
 	SAFE_DELETE(this->zServerListener);
-
 }
 
 void Host::Life()
@@ -446,8 +445,8 @@ void Host::HandleLootRequest( const std::vector<std::string> &msgArray, ClientDa
 	PlayerLootItemEvent e;
 	unsigned int _objID = 0;
 	unsigned int _itemID = 0;
-	int _type = -1;
-	int _subType = -1;
+	int _type = 20;
+	int _subType = 20;
 	if (msgArray.size() > 3)
 	{
 		
