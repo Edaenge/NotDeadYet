@@ -19,7 +19,11 @@ MeleeWeapon::~MeleeWeapon()
 
 MeleeWeapon::MeleeWeapon(const MeleeWeapon& other)
 {
-	this->zID = other.zID;
+	if (other.zID == 0)
+		this->GenerateID();
+	else
+		this->zID = other.zID;
+
 	this->zRange = other.zRange;
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
