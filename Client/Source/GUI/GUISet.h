@@ -25,7 +25,8 @@ enum SET{
 	FIND_SERVER,
 	OPTIONS,
 	GETIPADRESS,
-	QUIT
+	QUIT,
+	LASTMENU
 };
 
 
@@ -55,6 +56,8 @@ public:
 
 	/*! Returns the text that is stored in specific text field*/
 	string GetTextFromField(string textBox);
+
+	void Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight);
 
 	/*! Returs the event that is on the top of the Drop down menu*/
 	//GUIEvent* GetEventFromDropDown(string dropDownMenu);

@@ -37,11 +37,11 @@ void ActorManager::RemoveActor( Actor* actor )
 	NotifyObservers(&e);
 }
 
-Actor* ActorManager::CheckCollisions(Actor* player)
+Actor* ActorManager::CheckCollisions(Actor* player, float& range)
 {
 	Actor* collision = NULL;
 	PhysicsCollisionData data;
-	float leastDistance = 2.0f;
+
 	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
 		if ((*it) != player)
@@ -49,11 +49,11 @@ Actor* ActorManager::CheckCollisions(Actor* player)
 			PhysicsObject* pOtherObject = (*it)->GetPhysicsObject();
 			data = GetPhysics()->GetCollisionRayMesh(player->GetPosition(), player->GetDir(), pOtherObject);
 
-			if (data.collision && data.distance < leastDistance)
+			if (data.collision && data.distance < range)
 			{
 				if (BioActor* player = dynamic_cast<BioActor*>((*it)))
 				{
-					leastDistance = data.distance;
+					range = data.distance;
 					collision = (*it);
 				}
 			}
