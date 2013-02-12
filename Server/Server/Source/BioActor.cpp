@@ -68,7 +68,7 @@ void BioActor::Kill()
 	Damage dmg;
 	dmg.fallingDamage = zHealth;
 
-	TakeDamage(dmg, NULL);
+	TakeDamage(dmg, this);
 }
 
 bool BioActor::IsAlive() const

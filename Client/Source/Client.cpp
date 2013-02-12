@@ -30,7 +30,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Models/scale.obj";
+	this->zMeshID = "Media/Models/temp_guy.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -896,7 +896,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		{
 			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TAKE_DAMAGE, msgArray[0]);
 			float damageTaken = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, msgArray[1]);
-			this->HandleTakeDamage(msgArray, id, damageTaken);
+			this->HandleTakeDamage(id, damageTaken);
 		}
 	}
 	//Actors
@@ -1022,7 +1022,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 }
 
-bool Client::HandleTakeDamage( const std::vector<std::string>& msgArray, const unsigned int ID, float damageTaken )
+bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 {
 	Actor* actor = this->zActorManager->SearchAndGetActor(ID);
 	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
@@ -1132,6 +1132,8 @@ bool Client::HandleTakeDamage( const std::vector<std::string>& msgArray, const u
 	this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
 
 	GetSounds()->PlaySounds("Media/Sound/Breath.wav", postionPlayer);
+
+	return true;
 }
 
 void Client::CloseConnection(const std::string& reason)

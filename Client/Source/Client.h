@@ -118,7 +118,7 @@ private:
 	//Temporary Code
 	bool UpdateActor(const std::vector<std::string>& msgArray, const unsigned int ID);
 	bool RemoveActor(const unsigned int ID);
-	bool HandleTakeDamage(const std::vector<std::string>& msgArray, const unsigned int ID, float damageTaken);
+	bool HandleTakeDamage(const unsigned int ID, float damageTaken);
 	/*! Adds A Player Object.*/
 	bool AddActor(const std::vector<std::string>& msgArray, const unsigned int ID);
 	
