@@ -160,6 +160,10 @@ void Game::OnEvent( Event* e )
 			SetPlayerBehavior(playerIterator->second, 0);
 			zBehaviors.insert(aiWolf);
 		}
+		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
+		{
+			dynamic_cast<PlayerActor*>(pHuman->GetActor())->Kill();
+		}
 
 		// Delete Player and notify GameMode
 		auto i = zPlayers.find(PDCE->clientData);
