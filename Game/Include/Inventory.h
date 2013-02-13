@@ -87,7 +87,7 @@ public:
 	Gear* GetGear(const unsigned int type);
 	void UnEquipGear(const unsigned int type);
 
-	void SwapWeapon();
+	bool SwapWeapon();
 
 private:
 	/*! Array of items*/

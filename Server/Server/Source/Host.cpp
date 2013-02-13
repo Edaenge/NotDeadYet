@@ -216,6 +216,14 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.clientData = cd;
 		NotifyObservers(&e);
 	}
+	//Handles Swap weapon message
+	else if(msgArray[0].find(M_WEAPON_EQUIPMENT_SWAP.c_str()) == 0)
+	{
+		PlayerSwapEquippedWeaponsEvent e;
+
+		e.clientdData = cd;
+		NotifyObservers(&e);
+	}
 	//Handle Item usage in Inventory
 	else if(msgArray[0].find(M_ITEM_USE.c_str()) == 0)
 	{

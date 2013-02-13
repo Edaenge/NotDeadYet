@@ -564,6 +564,25 @@ void Client::HandleKeyboardInput()
 			}
 
 		}
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_SWAP_EQ)))
+		{
+			if (!this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
+			{
+				this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, true);
+
+				if(this->zPlayerInventory->SwapWeapon())
+				{
+					std::string msg;
+					msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_EQUIPMENT_SWAP);
+					this->zServerChannel->Send(msg);
+				}
+			}
+		}
+		else
+		{
+			if (this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
+				this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, false);
+		}
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
 		{
 			if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY))

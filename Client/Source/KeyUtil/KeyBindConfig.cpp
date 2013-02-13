@@ -20,6 +20,7 @@ static const std::string COMMAND_DUCK		= "C_DUCK";
 static const std::string COMMAND_INVENTORY	= "C_INVENTORY";
 static const std::string COMMAND_EQUIPMENT	= "C_EQUIPMENT";
 static const std::string COMMAND_READY		= "C_READY";
+static const std::string COMMAND_SWAP_EQ	= "C_SWAP_EQ";
 static const std::string COMMAND_NONE		= "C_NONE";
 
 
@@ -47,6 +48,7 @@ void KeyBindConfig::ReadBindings(char* bindings)
 
 void KeyBindConfig::CreateDefaultIni(char* bindings)
 {
+	//The enums are mapped with KEY_BINDINGS enums in KeyValues.h
 	char defaultBindings[] =
 	{
 		'W',
@@ -60,7 +62,8 @@ void KeyBindConfig::CreateDefaultIni(char* bindings)
 		VK_ESCAPE,
 		'B',
 		'C',
-		'F'
+		'F',
+		'Q'
 	};
 
 	memcpy(bindings, defaultBindings, sizeof(defaultBindings));
@@ -217,6 +220,11 @@ int KeyBindConfig::GetKeyValue(std::string CC)
 		return KEY_READY;
 	}
 
+	if(CC == COMMAND_SWAP_EQ)
+	{
+		return KEY_SWAP_EQ;
+	}
+
 	return -1;
 }
 
@@ -256,6 +264,12 @@ const std::string& KeyBindConfig::GetCommand(const int keyValue)
 		break;
 	case KEY_EQUIPMENT:
 		return COMMAND_EQUIPMENT;
+		break;
+	case KEY_READY:
+		return COMMAND_READY;
+		break;
+	case KEY_SWAP_EQ:
+		return COMMAND_SWAP_EQ;
 		break;
 	default:
 		return COMMAND_NONE;
