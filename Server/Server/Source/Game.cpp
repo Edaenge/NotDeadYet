@@ -51,10 +51,10 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	zActorManager = new ActorManager(syncher);
 	
 	InitItemLookup();
-	
+
+	this->zMaxNrOfPlayers = 32;
 	//DEBUG
 	SpawnItemsDebug();
-	this->zMaxNrOfPlayers = 32;
 }
 
 Game::~Game()

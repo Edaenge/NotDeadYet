@@ -579,8 +579,8 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	int itemWeight = 0;
 	int itemStackSize = 0;
 	unsigned int ID = 0;
-	unsigned int itemType = 0;
-	unsigned int itemSubType = 0;
+	unsigned int itemType = 10;
+	unsigned int itemSubType = 10;
 	float weaponDamage = 0.0f;
 	float weaponRange = 0.0f;
 	float projectileDamage = 0.0f;

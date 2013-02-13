@@ -6,9 +6,9 @@ RangedWeapon::RangedWeapon() : Weapon()
 	this->zStacks = 0;
 }
 
-RangedWeapon::RangedWeapon( const unsigned int ID, const unsigned int itemType, const int itemSubType, 
-						   const float damage, const float range ) 
-						   : Weapon(itemType, itemSubType, damage, range)
+RangedWeapon::RangedWeapon(const unsigned int ID, const unsigned int itemType, const int itemSubType, 
+						   const float damage, const float range) 
+						   : Weapon(ID, itemType, itemSubType, damage, range)
 {
 	this->zStacking = false;
 	this->zStacks = 0;
