@@ -6,7 +6,9 @@
 #include <World/EntityList.h>
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
+#include <Packets\ServerFramePacket.h>
 #include "Sounds.h"
+
 using namespace MaloW;
 
 // Timeout_value = 10 sek
@@ -155,7 +157,7 @@ void Client::InitGraphics(const std::string& mapName)
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 	float length = ((25.0f / 1024.0f) * dx);
 	float xPos = offSet + (0.5f * dx) - length * 0.5f;
-	float yPos = (windowHeight / 2.0f) - length * 0.5f;
+	float yPos = (windowHeight / 2.0f) - length * 0.5f; //Boom
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 
@@ -860,8 +862,51 @@ void Client::Ping()
 	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
 }
 
+void Client::HandleNetworkPacket( Packet* P )
+{
+	if ( ServerFramePacket* SFP = dynamic_cast<ServerFramePacket*>(P) )
+	{
+
+	}
+
+	delete P;
+}
+
 void Client::HandleNetworkMessage( const std::string& msg )
 {
+	if ( msg.find("PACKET") == 0 )
+	{
+		std::stringstream ss(msg);
+		ss.seekg(6);
+
+		// Packet Size
+		unsigned int packetTypeSize = 0;
+		ss.read( reinterpret_cast<char*>(&packetTypeSize), sizeof(unsigned int) );
+
+		// Packet Type
+		std::string type;
+		type.resize(packetTypeSize);
+		ss.read(&type[0], packetTypeSize); 
+
+		// TODO: Factory Pattern
+		Packet* packet = 0;
+
+		if ( type == "ServerFramePacket" )
+		{
+			packet = new ServerFramePacket();
+		}
+
+		if ( !packet ) throw("Unknown Packet Type");
+
+		// Deserialize
+		packet->Deserialize(ss);
+
+		// Handle
+		HandleNetworkPacket(packet);
+
+		return;
+	}
+
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
 
@@ -1207,7 +1252,7 @@ void Client::DisplayMessageToClient(const std::string& msg)
 	MaloW::Debug(msg);
 }
 
-void Client::onEvent(Event* e)
+void Client::OnEvent(Event* e)
 {
 	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
