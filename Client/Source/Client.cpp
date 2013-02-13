@@ -179,8 +179,8 @@ void Client::InitGraphics(const std::string& mapName)
 		"Media/Models/Veins_01_v03_r.obj",
 		"Media/Models/temp_guy.obj"};
 
-	this->zEng->PreLoadResources(18, object);
-	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
+	//this->zEng->PreLoadResources(18, object);
+	//this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
 }
 
 void Client::Init()
