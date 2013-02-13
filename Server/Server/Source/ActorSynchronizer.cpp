@@ -45,8 +45,7 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 	RegisterActor(cd);
 
 	ServerFramePacket frameData;
-	cd->Send(frameData);
-
+	
 	for(auto it = this->zUpdateSet.begin(); it != this->zUpdateSet.end(); it++)
 	{
 		frameData.newPositions[(*it)->GetID()] = (*it)->GetPosition();
@@ -60,6 +59,8 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 
 		cd->Send(msg);
 	}
+	
+	cd->Send(frameData);
 
 	RemoveActor(cd);
 }
