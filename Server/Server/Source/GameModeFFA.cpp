@@ -45,6 +45,8 @@ void GameModeFFA::OnEvent( Event* e )
 				int maxPlayers = zPlayers.size();
 				int rand = 1 + (std::rand() % (maxPlayers+1));
 				pa->SetPosition(zGame->CalcPlayerSpawnPoint(rand));
+				pa->SetHealth(pa->GetHealthMax());
+				pa->SetStamina(pa->GetStaminaMax());
 
 				//Add to scoreboard
 				if( PlayerActor* dpa = dynamic_cast<PlayerActor*>(ATD->zDealer) )
@@ -54,7 +56,8 @@ void GameModeFFA::OnEvent( Event* e )
 						zScoreBoard[pa->GetPlayer()]--;
 			}
 			unsigned int ID = ATD->zDealer->GetID();
-			float damage = ATD->zDamage.GetTotal();
+			float damage = ATD->zDamage->GetTotal();
+
 			NetworkMessageConverter NMC;
 			std::string msg = NMC.Convert(MESSAGE_TYPE_ACTOR_TAKE_DAMAGE, (float)ID);
 			msg += NMC.Convert(MESSAGE_TYPE_HEALTH, damage);
