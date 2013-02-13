@@ -30,6 +30,28 @@ void MainMenu::Init()
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
+	const char* object[] = {
+		"Media/Models/ArmyRation_v01.obj", 
+		"Media/Models/Arrow_v01.obj",
+		"Media/Models/Bigleaf_01.ani", 
+		"Media/Models/Bow_v01.obj",
+		"Media/Models/BranchesItem_01_v01.obj", 
+		"Media/Models/Bush_01.ani",
+		"Media/Models/Campfire_01_v01.obj",
+		"Media/Models/Fern_02.ani",
+		"Media/Models/GrassPlant_01.ani",
+		"Media/Models/Machete_v01.obj", 
+		"Media/Models/Pocketknife_v02.obj", 
+		"Media/Models/Stone_02_v01.obj",
+		"Media/Models/Stone_01_v02.obj",
+		"Media/Models/StoneItem_01_v01.obj",
+		"Media/Models/Tree_01.ani",
+		"Media/Models/WaterGrass_02.ani",
+		"Media/Models/Veins_01_v03_r.obj",
+		"Media/Models/temp_guy.obj"};
+
+	GetGraphics()->PreLoadResources(18, object);
+
 	eng->StartRendering();
 
 	Element* temp;

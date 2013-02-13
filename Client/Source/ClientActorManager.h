@@ -50,7 +50,7 @@ public:
 	//}
 	bool ComparePosition(const Vector3& position)
 	{
-		if ((this->zNextPosition - position).GetLength() < 0.5f)
+		if ((this->zNextPosition - position).GetLength() < 0.25f)
 			this->zPositionChange = false;
 
 		return this->zPositionChange;
@@ -107,6 +107,7 @@ public:
 	int SearchForActor(const unsigned int ID);
 	void AddUpdate(Updates* update);
 
+	Updates* SearchAndGetUpdate(const unsigned int ID);
 	int SearchForUpdate(const unsigned int ID);
 	Updates* GetUpdate(const int index);
 	Vector4 InterpolateRotation(const Vector4& currentRotation, const Vector4& newRotation, float t);

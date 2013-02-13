@@ -17,13 +17,6 @@ ClientActorManager::~ClientActorManager()
 	}
 }
 
-Actor* ClientActorManager::SearchAndGetActor(const unsigned int ID)
-{
-	int position = this->SearchForActor(ID);
-	if ( position < 0 ) return 0;
-	return this->zActors[position];
-}
-
 void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 {
 	float t = GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
@@ -87,6 +80,16 @@ Actor* ClientActorManager::GetActor( const int Index )
 	return NULL;
 }
 
+Actor* ClientActorManager::SearchAndGetActor(const unsigned int ID)
+{
+	int index = this->SearchForActor(ID);
+
+	if (index >= 0 && index < this->zActors.size()) 
+		return this->zActors[index];
+
+	return NULL;
+}
+
 int ClientActorManager::SearchForActor( const unsigned int ID )
 {
 	for (unsigned int i = 0; i < this->zActors.size(); i++)
@@ -136,6 +139,16 @@ int ClientActorManager::SearchForUpdate( const unsigned int ID )
 		}
 	}
 	return -1;
+}
+
+Updates* ClientActorManager::SearchAndGetUpdate(const unsigned int ID)
+{
+	int index = this->SearchForActor(ID);
+
+	if (index >= 0 && index < this->zUpdates.size()) 
+		return this->zUpdates[index];
+	
+	return NULL;
 }
 
 Updates* ClientActorManager::GetUpdate( const int Index )

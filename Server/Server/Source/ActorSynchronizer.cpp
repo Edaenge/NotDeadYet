@@ -52,12 +52,12 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 		frameData.newRotations[(*it)->GetID()] = (*it)->GetRotation();
 		frameData.newScales[(*it)->GetID()] = (*it)->GetScale();
 
-		msg = nmc.Convert(MESSAGE_TYPE_UPDATE_ACTOR, (float)(*it)->GetID());
-		msg += nmc.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
-		msg += nmc.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
-		msg += nmc.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
+		//msg = nmc.Convert(MESSAGE_TYPE_UPDATE_ACTOR, (float)(*it)->GetID());
+		//msg += nmc.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
+		//msg += nmc.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
+		//msg += nmc.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
 
-		cd->Send(msg);
+		//cd->Send(msg);
 	}
 	
 	cd->Send(frameData);

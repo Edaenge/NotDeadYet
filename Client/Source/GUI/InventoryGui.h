@@ -56,7 +56,8 @@ struct Selected_Item_ReturnData
 	int type;
 	int inventory;
 };
-enum EQUIPITEMTYPE{
+enum EQUIPITEMTYPE
+{
 	MELEE,
 	RANGED,
 	PROJECTILE

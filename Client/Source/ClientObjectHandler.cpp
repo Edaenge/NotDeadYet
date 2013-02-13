@@ -79,6 +79,53 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 	return true;
 }
 
+void Client::UpdateActors(ServerFramePacket* SFP)
+{
+	Updates* update = NULL;
+	Actor* actor = NULL;
+	unsigned int ID = 0;
+	Vector3 actorPosition;
+	for(auto positionIterator = SFP->newPositions.begin(); positionIterator != SFP->newPositions.end(); positionIterator++)
+	{
+		ID = positionIterator->first;
+		actorPosition = positionIterator->second;
+		actor = this->zActorManager->SearchAndGetActor(ID);
+
+		update = this->zActorManager->SearchAndGetUpdate(ID);
+		if (update)
+		{
+			update->SetPosition(actorPosition);
+		}
+		else
+		{
+			update = new Updates(ID);
+			update->SetPosition(actorPosition);
+			this->zActorManager->AddUpdate(update);
+		}
+
+	}
+	Vector4 actorRotation;
+	for(auto rotationIterator = SFP->newRotations.begin(); rotationIterator != SFP->newRotations.end(); rotationIterator++)
+	{
+		ID = rotationIterator->first;
+		actorRotation = rotationIterator->second;
+
+		actor = this->zActorManager->SearchAndGetActor(ID);
+		if (actor && ID != this->zID)
+			actor->SetRotation(actorRotation);
+	}
+	Vector3 actorScale;
+	for(auto scaleIterator = SFP->newScales.begin(); scaleIterator != SFP->newScales.end(); scaleIterator++)
+	{
+		ID = scaleIterator->first;
+		actorScale = scaleIterator->second;
+
+		actor = this->zActorManager->SearchAndGetActor(ID);
+		if (actor)
+			actor->SetScale(actorScale);
+	}
+}
+
 bool Client::UpdateActor(const std::vector<std::string>& msgArray, const unsigned int ID)
 {
 	int index = this->zActorManager->SearchForUpdate(ID);

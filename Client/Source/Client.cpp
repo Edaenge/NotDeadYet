@@ -6,7 +6,6 @@
 #include <World/EntityList.h>
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
-#include <Packets\ServerFramePacket.h>
 #include "Sounds.h"
 
 using namespace MaloW;
@@ -150,6 +149,7 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zAnchor = this->zWorld->CreateAnchor();
 	this->zAnchor->position = center;
 	this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
+	
 
 	int windowWidth = this->zEng->GetEngineParameters().WindowWidth;
 	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;	
@@ -161,27 +161,9 @@ void Client::InitGraphics(const std::string& mapName)
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 
-	const char* object[] = {
-		"Media/Models/ArmyRation_v01.obj", 
-		"Media/Models/Arrow_v01.obj",
-		"Media/Models/Bigleaf_01.ani", 
-		"Media/Models/Bow_v01.obj",
-		"Media/Models/BranchesItem_01_v01.obj", 
-		"Media/Models/Bush_01.ani",
-		"Media/Models/Campfire_01_v01.obj",
-		"Media/Models/Fern_02.ani",
-		"Media/Models/GrassPlant_01.ani",
-		"Media/Models/Machete_v01.obj", 
-		"Media/Models/Pocketknife_v02.obj", 
-		"Media/Models/Stone_02_v01.obj",
-		"Media/Models/Stone_01_v02.obj",
-		"Media/Models/StoneItem_01_v01.obj",
-		"Media/Models/Tree_01.ani",
-		"Media/Models/WaterGrass_02.ani",
-		"Media/Models/Veins_01_v03_r.obj",
-		"Media/Models/temp_guy.obj"};
+	this->zWorld->Update();
+	this->zWorldRenderer->Update();
 
-	this->zEng->PreLoadResources(18, object);
 	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
 }
 
@@ -838,6 +820,24 @@ void Client::HandleDebugInfo()
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
+	//Terrain Normals debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F9))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Terrain Normal Error at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
 	else if (this->zEng->GetKeyListener()->IsPressed(VK_DELETE))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -866,7 +866,7 @@ void Client::HandleNetworkPacket( Packet* P )
 {
 	if ( ServerFramePacket* SFP = dynamic_cast<ServerFramePacket*>(P) )
 	{
-
+		this->UpdateActors(SFP);	
 	}
 
 	delete P;
@@ -919,11 +919,11 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		this->Ping();
 	}
 	//Actors
-	else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
-		this->UpdateActor(msgArray, id);
-	}
+	//else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
+	//{
+	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
+	//	this->UpdateActor(msgArray, id);
+	//}
 	else if(msg.find(M_NEW_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
