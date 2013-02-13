@@ -30,7 +30,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Models/scale.ani";
+	this->zMeshID = "Media/Models/temp_guy.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -177,10 +177,9 @@ void Client::InitGraphics(const std::string& mapName)
 		"Media/Models/Tree_01.ani",
 		"Media/Models/WaterGrass_02.ani",
 		"Media/Models/Veins_01_v03_r.obj",
-		"Media/Models/temp_guy.obj",
-		"Scale.ani"};
+		"Media/Models/temp_guy.obj"};
 
-	this->zEng->PreLoadResources(19, object);
+	this->zEng->PreLoadResources(18, object);
 	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
 }
 
@@ -584,19 +583,16 @@ void Client::HandleKeyboardInput()
 				{
 					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
 
-					
-					//Weapon* weapon = this->zPlayerInventory->GetRangedWeapon();
-					//if (!weapon)
-					//{
-					//	this->DisplayMessageToClient("No Weapon is Equipped");
-					//}
-					//else
-					//{
-					//	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
-					//	this->zServerChannel->Send(msg);
-					//}
-					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, 0.0f);
-					this->zServerChannel->Send(msg);
+					Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
+					if (!primaryWeapon)
+					{
+						this->DisplayMessageToClient("No Weapon is Equipped");
+					}
+					else
+					{
+						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)primaryWeapon->GetID());
+						this->zServerChannel->Send(msg);
+					}
 				}
 			}
 			else

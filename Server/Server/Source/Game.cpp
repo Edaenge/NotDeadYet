@@ -860,15 +860,15 @@ void Game::OnEvent( Event* e )
 			return;
 		}
 
-		if(PUEIE->eq_Slot == EQUIPMENT_SLOT_AMMO)
+		if(PUEIE->eq_Slot == 2)
 		{
 			inventory->UnEquipProjectile();
 		}
-		else if(PUEIE->eq_Slot == EQUIPMENT_SLOT_MELEE_WEAPON)
+		else if(PUEIE->eq_Slot == 0)
 		{
 			inventory->UnEquipMeleeWeapon();
 		}
-		else if(PUEIE->eq_Slot == EQUIPMENT_SLOT_RANGED_WEAPON)
+		else if(PUEIE->eq_Slot == 1)
 		{
 			inventory->UnEquipRangedWeapon();
 		}
