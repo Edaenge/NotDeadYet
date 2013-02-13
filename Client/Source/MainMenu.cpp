@@ -369,7 +369,7 @@ void MainMenu::Run()
 					}
 					else if(retEvent->GetEventMessage() == "ChangeResEvent")
 					{
-						if(!this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn())
+						if(this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn())
 						{
 							ChangeResEvent* cEvent = (ChangeResEvent*)retEvent;
 
