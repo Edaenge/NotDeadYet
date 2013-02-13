@@ -394,9 +394,12 @@ void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 {
 	PlayerDisconnectedEvent e;
 	auto i = zClients.find(channel);
-	e.clientData = i->second;
+	ClientData* cd = i->second;
+	cd->Kick();
+	e.clientData = cd;
+
 	NotifyObservers(&e);
-	delete i->second;
+	delete cd, cd = NULL;
 	zClients.erase(i);
 }
 

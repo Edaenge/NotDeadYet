@@ -177,8 +177,8 @@ bool Game::Update( float dt )
 	{
 		if ( (*i)->Update(dt) )
 		{
-			i = zBehaviors.erase(i);
 			Behavior* temp = (*i);
+			i = zBehaviors.erase(i);
 			SAFE_DELETE(temp);
 		}
 		else
@@ -270,12 +270,11 @@ void Game::OnEvent( Event* e )
 		// Delete Player Behavior
 		auto playerIterator = zPlayers.find(PDCE->clientData);
 		auto playerBehavior = playerIterator->second->GetBehavior();
-
+		
 		// Create AI Behavior For Players That Disconnected
 		if ( PlayerWolfBehavior* playerWolf = dynamic_cast<PlayerWolfBehavior*>(playerBehavior) )
 		{
 			AIWolfBehavior* aiWolf = new AIWolfBehavior(playerWolf->GetActor(), zWorld);
-			SetPlayerBehavior(playerIterator->second, 0);
 			zBehaviors.insert(aiWolf);
 		}
 		//Kills actor if human
@@ -283,16 +282,16 @@ void Game::OnEvent( Event* e )
 		{
 			dynamic_cast<BioActor*>(pHuman->GetActor())->Kill();
 		}
-
-		// Delete Player and notify GameMode
-		auto i = zPlayers.find(PDCE->clientData);
+		
+		SetPlayerBehavior(playerIterator->second, 0);
 
 		/*PlayerRemoveEvent* PRE = new PlayerRemoveEvent();
 		PRE->player = i->second;
 		NotifyObservers(PRE);*/
 
-		delete i->second;
-		zPlayers.erase(i);
+		Player* temp = playerIterator->second;
+		delete temp, temp = NULL;
+		zPlayers.erase(playerIterator);
 	}
 	else if(PlayerLootObjectEvent* PLOE = dynamic_cast<PlayerLootObjectEvent*>(e))
 	{
@@ -948,6 +947,9 @@ void Game::OnEvent( Event* e )
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		for (auto it = actors.begin(); it != actors.end(); it++)
 		{
+			if(actor == (*it))
+				continue;
+
 			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (float)(*it)->GetID());
 			message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
 			message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());

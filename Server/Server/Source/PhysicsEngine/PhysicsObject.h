@@ -6,6 +6,7 @@
 #include "MaloW.h"
 #include "ObjLoader.h"
 #include "BoundingSphere.h"
+#include "PhysicsResourceManager.h"
 
 class PhysicsEngine;
 
@@ -30,6 +31,7 @@ struct Vertex
 class PhysicsObject
 {
 private:
+	string file; //identifier
 	PhysicsEngine* zEngine;
 
 	Vector3 velocity;

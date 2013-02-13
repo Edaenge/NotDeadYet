@@ -126,6 +126,12 @@
     <ClCompile Include="Source\PlayerConfiguration.cpp">
       <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PhysicsEngine\ObjectDataResource.cpp">
+      <Filter>Source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PhysicsEngine\PhysicsResourceManager.cpp">
+      <Filter>Source\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -244,6 +250,15 @@
     </ClInclude>
     <ClInclude Include="Source\ItemActor.h">
       <Filter>Source\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsEngine\ObjectDataResource.h">
+      <Filter>Source\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsEngine\PhysicsResourceManager.h">
+      <Filter>Source\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsEngine\ReferenceCounted.h">
+      <Filter>Source\Physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
