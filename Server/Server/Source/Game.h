@@ -44,6 +44,9 @@ public:
 	// Sets The Behavior Of Player
 	void SetPlayerBehavior( Player* player, PlayerBehavior* behavior );
 
+	//Test function, spawns items
+	void SpawnItemsDebug();
+
 	Vector3 CalcPlayerSpawnPoint(int MaxPoints, Vector2 center);
 	Vector3 CalcPlayerSpawnPoint(int nr);
 	

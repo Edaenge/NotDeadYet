@@ -12,6 +12,7 @@ class ActorManager : public Observed, public Observer
 
 public:
 	ActorManager( ActorSynchronizer* syncher );
+	virtual ~ActorManager();
 	void AddActor( Actor* actor );
 	void RemoveActor( Actor* actor );
 	std::set<Actor*>& GetActors() {return this->zActors;}
