@@ -32,14 +32,7 @@ CheckBox::CheckBox(float x, float y, float z, string textureName, float width, f
 
 	this->mOn = on;
 	this->mCheckedTextureName = CheckedTextureName;
-	if(this->mOn)
-	{
-		this->mCheckedImage = GetGraphics()->CreateImage(Vector2(x, y), this->GetDimension(), this->mCheckedTextureName.c_str());
-	}
-	else
-	{
-		this->mCheckedImage = NULL;
-	}
+	this->mCheckedImage = NULL;
 }
 CheckBox::~CheckBox()
 {
