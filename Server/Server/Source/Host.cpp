@@ -236,6 +236,16 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.itemID = _itemID;
 		NotifyObservers(&e);
 	}
+	//Handle Equip Item
+	else if (msgArray[0].find(M_EQUIP_ITEM.c_str()) == 0)
+	{
+		PlayerEquipItemEvent e;
+		int _itemID = this->zMessageConverter.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
+
+		e.itemID = _itemID;
+		e.clientData = cd;
+		NotifyObservers(&e);
+	}
 	//Handle UnEquip Item in Equipment
 	else if(msgArray[0].find(M_UNEQUIP_ITEM.c_str()) == 0)
 	{
@@ -250,7 +260,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 
 		e.eq_Slot = _eq_Slot;
 		e.itemID = _itemID;
-
+		e.clientData = cd;
 		NotifyObservers(&e);
 	}
 	//Handles Equipped Weapon usage
@@ -263,14 +273,6 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.itemID = _itemID;
 		NotifyObservers(&e);
 	}
-	////Handles Pickup Object Requests from Client
-	//else if(msgArray[0].find(M_PICKUP_ITEM.c_str()) == 0)
-	//{
-	//	PlayerPickupObjectEvent e;
-	//	int _objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
-	//	e.objID = _objID;
-	//	NotifyObservers(&e);
-	//}
 	else if(msgArray[0].find(M_LOOT_OBJECT.c_str()) == 0)
 	{
 		PlayerLootObjectEvent e;
