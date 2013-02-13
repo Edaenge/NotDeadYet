@@ -393,9 +393,9 @@ void MainMenu::Run()
 						ApplyOptionsAndChangeSetEvent* cEvent = (ApplyOptionsAndChangeSetEvent*)retEvent;
 
 						//Maximized
-						bool maximized = !this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn();
-						GEP.Maximized = maximized;
-						if(maximized == true)
+						bool maximized = this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn();
+						GEP.Maximized = !maximized;
+						if(maximized == false)
 						{
 							RECT desktop;
 							const HWND hDesktop = GetDesktopWindow();
@@ -414,8 +414,8 @@ void MainMenu::Run()
 						}
 						// Getting shadow
 						std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");
-						//ge->ChangeShadowQuality(MaloW::convertStringToInt(tbTemp));
-
+						ge->ChangeShadowQuality(MaloW::convertStringToInt(tbTemp));
+						GEP.ShadowMapSettings = MaloW::convertStringToInt(tbTemp);
 						//FXAA
 						CheckBox* cbTemp = this->zSets[this->zPrimarySet].GetCheckBox("FXAACheckBox");
 						if(cbTemp != NULL)
@@ -425,6 +425,10 @@ void MainMenu::Run()
 							if(!cbTemp->GetOn())
 								GEP.FXAAQuality = 0;
 						}
+
+						//View Distance
+						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ViewDistance");
+						GEP.FarClip = MaloW::convertStringToInt(tbTemp);
 
 						//Master Volume
 						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MasterVolume");
@@ -557,13 +561,8 @@ void MainMenu::AddResolutionsToDropBox( DropDownList* ddl )
 
 	float dx = (float)(width / height);
 
-	if(dx > 1.33f && dx < 1.34f)
-	{
-		ddl->AddButton("Media/Menu/Options/43small.png", new ChangeResEvent(800, 600), "", "");
-		ddl->AddButton("Media/Menu/Options/43medium.png", new ChangeResEvent(1024, 768), "", "");
-		ddl->AddButton("Media/Menu/Options/43big.png", new ChangeResEvent(1600, 1200), "", "");
-	}
-	else if(dx > 1.77f && dx < 1.78f)
+	
+	if(dx > 1.77f && dx < 1.78f)
 	{
 		ddl->AddButton("Media/Menu/Options/169small.png", new ChangeResEvent(1280, 720), "", "");
 		ddl->AddButton("Media/Menu/Options/169medium.png", new ChangeResEvent(1600, 900), "", "");
@@ -574,5 +573,11 @@ void MainMenu::AddResolutionsToDropBox( DropDownList* ddl )
 		ddl->AddButton("Media/Menu/Options/1610small.png", new ChangeResEvent(1280, 800), "", "");
 		ddl->AddButton("Media/Menu/Options/1610medium.png", new ChangeResEvent(1440, 900), "", "");
 		ddl->AddButton("Media/Menu/Options/1610big.png", new ChangeResEvent(1680, 1050), "", "");
+	}
+	else
+	{
+		ddl->AddButton("Media/Menu/Options/43small.png", new ChangeResEvent(800, 600), "", "");
+		ddl->AddButton("Media/Menu/Options/43medium.png", new ChangeResEvent(1024, 768), "", "");
+		ddl->AddButton("Media/Menu/Options/43big.png", new ChangeResEvent(1600, 1200), "", "");
 	}
 }
