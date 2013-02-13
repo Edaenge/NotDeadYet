@@ -928,6 +928,9 @@ void Game::OnEvent( Event* e )
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		for (auto it = actors.begin(); it != actors.end(); it++)
 		{
+			if(actor == (*it))
+				continue;
+
 			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (float)(*it)->GetID());
 			message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
 			message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
