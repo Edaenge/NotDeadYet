@@ -35,7 +35,8 @@ public:
 
 	Player* GetPlayer(){ return this->zPlayer; }
 
-	/*! */
+	/*! Returns The dropped item.
+	Doesn't deallocate Item.*/
 	Item* DropItem(const long ID);
 
 	///*! Updates players pos, states etc.*/

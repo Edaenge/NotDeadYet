@@ -7,6 +7,14 @@ Container::Container() : Item()
 	this->zUsesRemaining = 0;
 }
 
+Container::Container(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType, 
+					 const int maxUse, const int currUse) : Item(ID, itemType, itemSubType)
+{
+	this->zStacking = false;
+	this->zMaxUses = maxUse;
+	this->zUsesRemaining = currUse;
+}
+
 Container::Container(const unsigned int itemType, const unsigned int itemSubType,
 					 const int maxUse, const int currUse) : Item(itemType, itemSubType)
 {

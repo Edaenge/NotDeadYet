@@ -64,7 +64,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 	}
 	if (Messages::FileWrite())
 		Messages::Debug("Actor ID: " + MaloW::convertNrToString((float)ID) +" Added");
-	
+
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->ResetRotation();

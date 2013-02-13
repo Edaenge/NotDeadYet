@@ -179,8 +179,8 @@ void Client::InitGraphics(const std::string& mapName)
 		"Media/Models/Veins_01_v03_r.obj",
 		"Media/Models/temp_guy.obj"};
 
-	this->zEng->PreLoadResources(18, object);
-	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
+	//this->zEng->PreLoadResources(18, object);
+	//this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
 }
 
 void Client::Init()
@@ -410,20 +410,21 @@ void Client::HandleKeyboardInput()
 		return;
 	}
 
-	zShowCursor = this->zGuiManager->IsGuiOpen();
+	this->zShowCursor = this->zGuiManager->IsGuiOpen();
 
 	this->CheckMovementKeys();
 
-	Menu_select_data msd;
-	if(zShowCursor)
+	
+	if(this->zShowCursor)
 	{
+		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
-		Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
-
+		
 		if (msd.zAction != -1)
 		{
 			if (msd.zID != -1)
 			{
+				Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
 				if (msd.zAction == USE)
 				{
 					if (item)
@@ -958,8 +959,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msg.find(M_ADD_INVENTORY_ITEM.c_str()) == 0)
 	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ADD_INVENTORY_ITEM, msgArray[0]);
-		this->HandleAddInventoryItem(msgArray, id);
+		this->HandleAddInventoryItem(msgArray);
 	}
 	else if(msg.find(M_REMOVE_INVENTORY_ITEM.c_str()) == 0)
 	{

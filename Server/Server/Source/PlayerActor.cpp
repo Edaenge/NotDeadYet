@@ -34,7 +34,6 @@ PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) :
 
 PlayerActor::~PlayerActor()
 {
-	SAFE_DELETE(this->zInventory);
 }
 
 Item* PlayerActor::DropItem(const long ID)
@@ -46,7 +45,7 @@ Item* PlayerActor::DropItem(const long ID)
 		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString((float)ID));
 		return NULL;
 	}
-	this->zInventory->RemoveItem(item);
+	this->zInventory->EraseItem(item->GetID());
 	if (Messages::FileWrite())	
 		Messages::Debug("Removed successes: " + MaloW::convertNrToString((float)ID));
 

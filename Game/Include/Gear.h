@@ -18,6 +18,7 @@ static const enum M_GEAR_ITEM_SUB_TYPE
 class Gear : public Item
 {
 public:
+	Gear(const unsigned int ID, const unsigned int Type, const unsigned int SubType);
 	Gear(const unsigned int Type, const unsigned int SubType);
 	Gear(const Gear& other);
 	Gear(const Gear* other);

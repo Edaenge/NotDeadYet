@@ -5,6 +5,12 @@ MeleeWeapon::MeleeWeapon() : Weapon()
 
 }
 
+MeleeWeapon::MeleeWeapon( const unsigned int ID, const unsigned int itemType, const int itemSubType, const float damage, const float range )
+	: Weapon(ID, itemType, itemSubType, damage, range)
+{
+
+}
+
 MeleeWeapon::MeleeWeapon(const unsigned int itemType, const int itemSubType, 
 						 const float damage, const float range) 
 						 : Weapon(itemType, itemSubType, damage, range)
@@ -31,6 +37,7 @@ MeleeWeapon::MeleeWeapon(const MeleeWeapon& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
 }
@@ -45,6 +52,7 @@ MeleeWeapon::MeleeWeapon(const MeleeWeapon* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
 }
