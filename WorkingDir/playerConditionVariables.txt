@@ -1,10 +1,10 @@
 100    //zFullnessMax;
-0.1    //zHungerCof;
+4.0    //zHungerCof;
 0.2    //zHungerSprintingCof;
 100    //zHydrationMax;
 0.01   //zHydrationCof;
 0.04   //zHydrationSprintingCof;
-0.2    //zDamageAtStarvationCof;
+3.0    //zDamageAtStarvationCof;
 0.03   //zDamageAtThirstCof;	
 0.01   //zStaminaDecreaseCofWithHunger;
 0.02   //zStaminaDecreaseCofWithHydration;
