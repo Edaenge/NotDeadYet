@@ -11,6 +11,7 @@
 #include <set>
 
 class Actor;
+class ServerFramePacket;
 
 /*Events when a new actor has been added in ActorManager*/
 class ActorAdded : public Event
@@ -33,11 +34,12 @@ public:
 class ActorSynchronizer : public Observer
 {
 private:
+	ServerFramePacket* zFrameData;
+
 	std::set<Actor*> zUpdateSet;
 	std::set<Actor*> zNewActorSet;
-	std::set<Actor*> zRemoveActorSet;
+	std::set<unsigned int> zRemoveActorSet;
 
-private:
 	void RegisterActor(ClientData* cd);
 	void RemoveActor(ClientData* cd);
 

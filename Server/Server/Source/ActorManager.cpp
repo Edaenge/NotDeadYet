@@ -22,28 +22,22 @@ ActorManager::~ActorManager()
 
 void ActorManager::AddActor( Actor* actor )
 {
-	actor->AddObserver(this->zSynch);
 	zActors.insert(actor);
-
-	if(WorldActor* WA = dynamic_cast<WorldActor*>(actor))
-		return;
 
 	ActorAdded e;
 	e.zActor = actor;
 	NotifyObservers(&e);
-	
 }
 
 void ActorManager::RemoveActor( Actor* actor )
 {
 	this->zActors.erase(actor);
 
-	if(WorldActor* WA = dynamic_cast<WorldActor*>(actor))
-		return;
-
 	ActorRemoved e;
 	e.zActor = actor;
 	NotifyObservers(&e);
+
+	delete actor;
 }
 
 Actor* ActorManager::CheckCollisions( Actor* actor, float& range )

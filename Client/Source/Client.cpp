@@ -76,7 +76,8 @@ Client::~Client()
 	SAFE_DELETE(this->zPlayerInventory);
 
 	SAFE_DELETE(this->zWorld);
-	SAFE_DELETE(this->zCrossHair);
+	
+	if ( this->zCrossHair ) GetGraphics()->DeleteImage(zCrossHair);
 }
 
 float Client::Update()

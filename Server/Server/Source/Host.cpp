@@ -34,6 +34,8 @@ Host::Host() :
 
 Host::~Host()
 {
+	FreePhysics();
+
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 	
@@ -154,14 +156,15 @@ void Host::ReadMessages()
 			// A Client Connected
 			HandleNewConnection(CCE->GetClientChannel());
 		}
-		else if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(pe) )
+		else if ( MaloW::NetworkPacket* NP = dynamic_cast<MaloW::NetworkPacket*>(pe) )
 		{
-			HandleReceivedMessage(dynamic_cast<MaloW::ClientChannel*>(np->GetChannel()), np->GetMessage());
+			HandleReceivedMessage(dynamic_cast<MaloW::ClientChannel*>(NP->GetChannel()), NP->GetMessage());
 		}
 		else if ( ClientDisconnectedEvent* CDE = dynamic_cast<ClientDisconnectedEvent*>(pe) )
 		{
 			HandleClientDisconnect(CDE->GetClientChannel());
 		}
+
 		// Unhandled Message
 		SAFE_DELETE(pe);
 	}

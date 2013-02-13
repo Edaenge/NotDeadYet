@@ -45,6 +45,8 @@ void Sector::Reset()
 	zAmbient[1] = 0.0f;
 	zAmbient[2] = 0.0f;
 
+	ResetNormals();
+
 	SetEdited(false);
 }
 
@@ -103,7 +105,6 @@ void Sector::ModifyBlendingAt( const Vector2& pos, const BlendValues& val )
 		curValues[i+4] = zBlendMap2[ (scaledY * (SECTOR_BLEND_SIZE) + scaledX) * 4 + i ];
 	}
 
-	float total = 0.0f;
 	for( unsigned int x=0; x<SECTOR_BLEND_CHANNELS; ++x )
 	{
 		curValues[x] += val[x];
@@ -257,6 +258,27 @@ bool Sector::GetBlocking( const Vector2& pos ) const
 	return zAiGrid[ scaledY * SECTOR_AI_GRID_SIZE + scaledX ];
 }
 
+void Sector::SetNormalAt( const Vector2& pos, const Vector3& val )
+{
+	if ( pos.x < 0.0f || pos.x >= 1.0f || pos.y < 0.0f || pos.y >= 1.0f )
+		throw("Out Of Bounds!");
+
+	// Find pixel
+	float snapX = floor(pos.x * FSECTOR_NORMALS_SIZE) / FSECTOR_NORMALS_SIZE;
+	float snapY = floor(pos.y * FSECTOR_NORMALS_SIZE) / FSECTOR_NORMALS_SIZE;
+
+	unsigned int scaledX = (unsigned int)(snapX * FSECTOR_NORMALS_SIZE);
+	unsigned int scaledY = (unsigned int)(snapY * FSECTOR_NORMALS_SIZE);
+
+	// Set Values
+	for( unsigned int i=0; i<3; ++i )
+	{
+		zNormals[ (scaledY * SECTOR_NORMALS_SIZE + scaledX) * 3 + i ] = val[i];
+	}
+
+	SetEdited(true);
+}
+
 void Sector::ResetBlendMap2()
 {
 	for( unsigned int x=0; x<SECTOR_BLEND_SIZE*SECTOR_BLEND_SIZE; ++x )
@@ -266,6 +288,14 @@ void Sector::ResetBlendMap2()
 		zBlendMap2[x*4+2] = 0.0f;
 		zBlendMap2[x*4+3] = 0.0f;
 	}
+}
 
-	SetEdited(true);
+void Sector::ResetNormals()
+{
+	for( unsigned int x=0; x<SECTOR_NORMALS_SIZE*SECTOR_NORMALS_SIZE; ++x )
+	{
+		zNormals[x*3+0] = 0.0f;
+		zNormals[x*3+1] = 1.0f;
+		zNormals[x*3+2] = 0.0f;
+	}
 }

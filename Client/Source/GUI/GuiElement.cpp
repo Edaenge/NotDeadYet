@@ -27,7 +27,7 @@ GuiElement::GuiElement(float x, float y, float width, float height, std::string 
 
 GuiElement::~GuiElement()
 {
-	SAFE_DELETE(this->zGuiImage);
+	if ( this->zGuiImage ) throw("Image leaked!");
 }
 
 bool GuiElement::AddToRenderer(GraphicsEngine* ge)

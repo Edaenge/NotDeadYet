@@ -5,10 +5,9 @@
 #include "Sector.h"
 #include "Observer.h"
 #include "WorldFile.h"
-#include "Entity.h"
 #include "CircleAndRect.h"
 
-
+class Entity;
 class World;
 
 class WorldAnchor
@@ -32,7 +31,9 @@ public:
 class World : public Observed, public Observer
 {
 private:
+	// File
 	WorldFile* zFile;
+	bool zReadOnly;
 
 	// Sectors
 	Sector*** zSectors;
@@ -55,7 +56,7 @@ private:
 	std::set<WorldAnchor*> zAnchors;
 
 public:
-	World( Observer* observer, const std::string& fileName="" ) throw(...);
+	World( Observer* observer, const std::string& fileName="", bool readOnly=true ) throw(...);
 	World( Observer* observer, unsigned int nrOfSectorWidth, unsigned int nrOfSectorHeight);
 	virtual ~World();
 
@@ -101,6 +102,8 @@ public:
 
 	// Normals
 	Vector3 CalcNormalAt( const Vector2& worldPos ) throw(...);
+	void SetNormalAt( const Vector2& worldPos, const Vector3& val ) throw(...);
+	void GenerateSectorNormals( const Vector2UINT& sectorCoords );
 
 	// Modify Blend Functions
 	void ModifyBlendingAt( const Vector2& worldPos, const BlendValues& val );
