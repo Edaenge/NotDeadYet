@@ -13,6 +13,7 @@
 #include "ClientActorManager.h"
 #include "GuiManager.h"
 #include <World/WorldRenderer.h>
+#include <Packets/Packet.h>
 
 using namespace MaloW;
 
@@ -71,6 +72,8 @@ private:
 	void CloseConnection(const std::string& reason);
 	/*! Send Camera Info and Rotation to Server*/
 	void SendClientUpdate();
+	// Handle A Network Packet
+	void HandleNetworkPacket(Packet* P);
 	/*! Splits Network Message and detects what type was sent*/
 	void HandleNetworkMessage(const std::string& msg);
 	/*! Reads Messages from the server*/
@@ -148,7 +151,7 @@ private:
 	void HandleWeaponUse(const unsigned int ID);
 	void HandleDisplayLootData(std::vector<std::string> msgArray);
 protected:
-	virtual void onEvent(Event* e);
+	virtual void OnEvent(Event* e);
 
 private:
 	/*! Current Client ID*/

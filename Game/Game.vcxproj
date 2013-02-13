@@ -55,7 +55,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Include\;$(ProjectDir)\Include\World\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Include\;$(ProjectDir)\Include\World\;$(ProjectDir)\Include\Packets\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -92,6 +92,8 @@
     <ClInclude Include="Include\Material.h" />
     <ClInclude Include="Include\MeleeWeapon.h" />
     <ClInclude Include="Include\NetworkMessageConverter.h" />
+    <ClInclude Include="Include\Packets\Packet.h" />
+    <ClInclude Include="Include\Packets\ServerFramePacket.h" />
     <ClInclude Include="Include\Projectile.h" />
     <ClInclude Include="Include\RangedWeapon.h" />
     <ClInclude Include="Include\Weapon.h" />
@@ -121,6 +123,7 @@
     <ClCompile Include="Source\Material.cpp" />
     <ClCompile Include="Source\MeleeWeapon.cpp" />
     <ClCompile Include="Source\NetworkMessageConverter.cpp" />
+    <ClCompile Include="Source\Packets\ServerFramePacket.cpp" />
     <ClCompile Include="Source\Projectile.cpp" />
     <ClCompile Include="Source\RangedWeapon.cpp" />
     <ClCompile Include="Source\World\Entity.cpp" />
