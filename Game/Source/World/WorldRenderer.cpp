@@ -2,6 +2,8 @@
 #include "EntityList.h"
 #include "Entity.h"
 
+#undef min
+#undef max
 
 WorldRenderer::WorldRenderer( World* world, GraphicsEngine* graphics ) : 
 	zWorld(world),
