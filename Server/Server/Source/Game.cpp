@@ -51,18 +51,9 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	zActorManager = new ActorManager(syncher);
 	
 	InitItemLookup();
-	//Testing
-
-	const Food* temp_Item = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BOW);
-
-	if (temp_Item)
-	{
-		Food* new_Item = new Food((*temp_Item));
-		ItemActor* actor = new ItemActor(new_Item);
-		actor->SetPosition(Vector3(50, 0, 50));
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
+	
+	//DEBUG
+	SpawnItemsDebug();
 }
 
 Game::~Game()
@@ -84,6 +75,97 @@ Game::~Game()
 	if ( zActorManager ) delete zActorManager;
 
 	FreeItemLookup();
+}
+
+void Game::SpawnItemsDebug()
+{
+	//ITEMS
+	const Food*			temp_food		= GetItemLookup()->GetFood(ITEM_SUB_TYPE_BOW);
+	const RangedWeapon* temp_R_weapon	= GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
+	const Projectile*	temp_Arrow		= GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
+	const MeleeWeapon*	temp_M_weapon	= GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE);
+	const Material*		temp_material_S	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_SMALL_STICK);
+	const Material*		temp_material_M	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_MEDIUM_STICK);
+	const Material*		temp_material_T	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_THREAD);
+
+	unsigned int increment = 0;
+	//Food
+	if (temp_food)
+	{
+		Food* new_Item = new Food((*temp_food));
+		ItemActor* actor = new ItemActor(new_Item);
+		Vector3 center;
+		center = CalcPlayerSpawnPoint(increment++);
+		actor->SetPosition(center);
+		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		this->zActorManager->AddActor(actor);
+	}
+	//Weapon_ranged
+	if(temp_R_weapon)
+	{
+		RangedWeapon* new_item = new RangedWeapon((*temp_R_weapon));
+		ItemActor* actor = new ItemActor(new_item);
+		Vector3 center;
+		center = CalcPlayerSpawnPoint(increment++);
+		actor->SetPosition(center);
+		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		this->zActorManager->AddActor(actor);
+	}
+	//Arrows
+	if(temp_Arrow)
+	{
+		Projectile* new_item = new Projectile((*temp_Arrow));
+		ItemActor* actor = new ItemActor(new_item);
+		Vector3 center;
+		center = CalcPlayerSpawnPoint(increment++);
+		actor->SetPosition(center);
+		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		this->zActorManager->AddActor(actor);
+	}
+	//Melee_weap
+	if(temp_M_weapon)
+	{
+		MeleeWeapon* new_item = new MeleeWeapon((*temp_M_weapon));
+		ItemActor* actor = new ItemActor(new_item);
+		Vector3 center;
+		center = CalcPlayerSpawnPoint(increment++);
+		actor->SetPosition(center);
+		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		this->zActorManager->AddActor(actor);
+	}
+	//Small_stick
+	if(temp_material_S)
+	{
+		Material* new_item = new Material((*temp_material_S));
+		ItemActor* actor = new ItemActor(new_item);
+		Vector3 center;
+		center = CalcPlayerSpawnPoint(increment++);
+		actor->SetPosition(center);
+		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		this->zActorManager->AddActor(actor);
+	}
+	//Medium_stick
+	if(temp_material_M)
+	{
+		Material* new_item = new Material((*temp_material_M));
+		ItemActor* actor = new ItemActor(new_item);
+		Vector3 center;
+		center = CalcPlayerSpawnPoint(increment++);
+		actor->SetPosition(center);
+		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		this->zActorManager->AddActor(actor);
+	}
+	//Thread
+	if(temp_material_T)
+	{
+		Material* new_item = new Material((*temp_material_T));
+		ItemActor* actor = new ItemActor(new_item);
+		Vector3 center;
+		center = CalcPlayerSpawnPoint(increment++);
+		actor->SetPosition(center);
+		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		this->zActorManager->AddActor(actor);
+	}
 }
 
 bool Game::Update( float dt )
@@ -816,13 +898,10 @@ void Game::OnEvent( Event* e )
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zActorManager->AddActor(actor);
 		actor->AddObserver(this->zGameMode);
+		Vector3 center;
 
 		// Start Position
-		Vector3 center;
-		center.x = zWorld->GetWorldCenter().x;
-		center.z = zWorld->GetWorldCenter().y;
-		
-		center = this->CalcPlayerSpawnPoint(32, center.GetXZ());
+		center = this->CalcPlayerSpawnPoint(32, zWorld->GetWorldCenter());
 		actor->SetPosition(center);
 
 		// Apply Default Player Behavior
