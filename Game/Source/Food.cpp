@@ -1,15 +1,22 @@
 #include "Food.h"
 
-Food::Food(const unsigned int Type, const unsigned int SubType, const float hunger)
-	: Item(Type, SubType)
+Food::Food() : Item()
+{
+	this->zHunger = 0;
+	this->zStacking = true;
+}
+
+Food::Food(const unsigned int ID, const unsigned int Type, const unsigned int SubType, const float hunger)
+	: Item(ID, Type, SubType)
 {
 	this->zHunger = hunger;
 	this->zStacking = true;
 }
 
-Food::Food() : Item()
+Food::Food(const unsigned int Type, const unsigned int SubType, const float hunger)
+	: Item(Type, SubType)
 {
-	this->zHunger = 0;
+	this->zHunger = hunger;
 	this->zStacking = true;
 }
 

@@ -304,6 +304,12 @@ void Game::OnEvent( Event* e )
 	{
 		Actor* actor = this->zActorManager->GetActor(PLIE->objID);
 		Item* item = NULL;
+		
+		auto playerActor = this->zPlayers.find(PLIE->clientData);
+		auto* pBehaviour = playerActor->second->GetBehavior();
+		
+		PlayerActor* pActor = dynamic_cast<PlayerActor*>(pBehaviour->GetActor());
+
 		NetworkMessageConverter NMC;
 		//Check if the Actor being looted is an ItemActor.
 		if (ItemActor* iActor = dynamic_cast<ItemActor*>(actor))
@@ -339,6 +345,7 @@ void Game::OnEvent( Event* e )
 					{
 						msg += container->ToMessageString(&NMC);
 					}
+					pActor->GetInventory()->AddItem(item);
 					PLIE->clientData->Send(msg);
 					this->zActorManager->RemoveActor(iActor);
 				}
@@ -380,6 +387,7 @@ void Game::OnEvent( Event* e )
 						{
 							msg += container->ToMessageString(&NMC);
 						}
+						pActor->GetInventory()->AddItem(item);
 						PLIE->clientData->Send(msg);
 						this->zActorManager->RemoveActor(bActor);
 					}
@@ -409,8 +417,8 @@ void Game::OnEvent( Event* e )
  
 		actor = NULL;
 		actor = new ItemActor(item);
-		actor->SetPosition(pActor->GetPosition());
 		this->zActorManager->AddActor(actor);
+		actor->SetPosition(pActor->GetPosition());
 		NetworkMessageConverter NMC;
 		PDIE->clientData->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
 

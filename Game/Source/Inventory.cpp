@@ -355,17 +355,17 @@ void Inventory::UnEquipRangedWeapon()
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Weapon");
 
-	Item* item = dynamic_cast<RangedWeapon*>(zProjectile);
+	Item* item = dynamic_cast<RangedWeapon*>(this->zRangedWeapon);
 
 	if(zPrimaryEquip == item)
 	{
-		zPrimaryEquip = NULL;
-		zPrimaryEquip = zSecondaryEquip;
-		zSecondaryEquip = NULL;
+		this->zPrimaryEquip = NULL;
+		this->zPrimaryEquip = zSecondaryEquip;
+		this->zSecondaryEquip = NULL;
 	}
-	else if(zSecondaryEquip == item)
+	else if(this->zSecondaryEquip == item)
 	{
-		zSecondaryEquip = NULL;
+		this->zSecondaryEquip = NULL;
 	}
 
 	this->zRangedWeapon = NULL;
@@ -376,17 +376,17 @@ void Inventory::UnEquipMeleeWeapon()
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Weapon");
 
-	Item* item = dynamic_cast<MeleeWeapon*>(zProjectile);
+	Item* item = dynamic_cast<MeleeWeapon*>(this->zMeleeWeapon);
 
-	if(zPrimaryEquip == item)
+	if(this->zPrimaryEquip == item)
 	{
-		zPrimaryEquip = NULL;
-		zPrimaryEquip = zSecondaryEquip;
-		zSecondaryEquip = NULL;
+		this->zPrimaryEquip = NULL;
+		this->zPrimaryEquip = zSecondaryEquip;
+		this->zSecondaryEquip = NULL;
 	}
-	else if(zSecondaryEquip == item)
+	else if(this->zSecondaryEquip == item)
 	{
-		zSecondaryEquip = NULL;
+		this->zSecondaryEquip = NULL;
 	}
 
 	this->zMeleeWeapon = NULL;
@@ -397,17 +397,17 @@ void Inventory::UnEquipProjectile()
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Projectile");
 
-	Item* item = dynamic_cast<Projectile*>(zProjectile);
+	Item* item = dynamic_cast<Projectile*>(this->zProjectile);
 
-	if(zPrimaryEquip == item)
+	if(this->zPrimaryEquip == item)
 	{
-		zPrimaryEquip = NULL;
-		zPrimaryEquip = zSecondaryEquip;
-		zSecondaryEquip = NULL;
+		this->zPrimaryEquip = NULL;
+		this->zPrimaryEquip = zSecondaryEquip;
+		this->zSecondaryEquip = NULL;
 	}
-	else if(zSecondaryEquip == item)
+	else if(this->zSecondaryEquip == item)
 	{
-		zSecondaryEquip = NULL;
+		this->zSecondaryEquip = NULL;
 	}
 
 	this->zProjectile = NULL;
@@ -441,5 +441,13 @@ void Inventory::SetSecondaryEquip( unsigned int ID )
 		return;
 	}
 
+	this->zSecondaryEquip = item;
+}
+
+void Inventory::SwapWeapon()
+{
+	Item* item = this->zPrimaryEquip;
+
+	this->zPrimaryEquip = this->zSecondaryEquip;
 	this->zSecondaryEquip = item;
 }

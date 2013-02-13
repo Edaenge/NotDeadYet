@@ -19,6 +19,13 @@ class Weapon : public Item
 {
 public:
 	Weapon() {this->zDamage = 0; this->zRange = 0;}
+	Weapon(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType, 
+		const float damage, const float range)
+		: Item(ID, itemType, itemSubType)
+	{
+		this->zDamage = damage; 
+		this->zRange = range;
+	}
 	Weapon(const unsigned int itemType, const unsigned int itemSubType, 
 		const float damage, const float range)
 		: Item(itemType, itemSubType)

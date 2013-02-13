@@ -20,7 +20,7 @@ BioActor::BioActor() : Actor()
 
 BioActor::~BioActor()
 {
-	SAFE_DELETE(zInventory);
+	SAFE_DELETE(this->zInventory);
 }
 
 

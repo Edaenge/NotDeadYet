@@ -5,6 +5,12 @@ MeleeWeapon::MeleeWeapon() : Weapon()
 
 }
 
+MeleeWeapon::MeleeWeapon( const unsigned int ID, const unsigned int itemType, const int itemSubType, const float damage, const float range )
+	: Weapon(ID, itemType, itemSubType, damage, range)
+{
+
+}
+
 MeleeWeapon::MeleeWeapon(const unsigned int itemType, const int itemSubType, 
 						 const float damage, const float range) 
 						 : Weapon(itemType, itemSubType, damage, range)

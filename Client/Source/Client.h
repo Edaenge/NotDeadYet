@@ -136,7 +136,7 @@ private:
 	void SendDropItemMessage(const unsigned int ID);
 	void SendUseItemMessage(const unsigned int ID);
 	void HandleRemoveInventoryItem(const unsigned int ID);
-	void HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id);
+	void HandleAddInventoryItem(const std::vector<std::string>& msgArray);
 	/*! Uses the Selected Item*/
 	void HandleUseItem(const unsigned int ID);
 	void DisplayMessageToClient(const std::string& msg);

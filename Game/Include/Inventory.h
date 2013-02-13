@@ -87,6 +87,8 @@ public:
 	Gear* GetGear(const unsigned int type);
 	void UnEquipGear(const unsigned int type);
 
+	void SwapWeapon();
+
 private:
 	/*! Array of items*/
 	std::vector<Item*> zItems;
