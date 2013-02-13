@@ -151,7 +151,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)\Bin\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)\$(Configuration)</IntDir>
+    <IntDir>$(ProjectDir)\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)\External\FMOD\Include\;$(SolutionDir)\External\NDYGFX\Include\;$(SolutionDir)\External\VLD\Include;$(SolutionDir)\Malow\Include\;$(SolutionDir)\Game\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\External\FMOD\Lib\x86;$(SolutionDir)\External\NDYGFX\lib\;$(SolutionDir)\External\VLD\lib\Win32\;$(SolutionDir)\Game\bin\Debug\;$(SolutionDir)\Malow\bin\Debug\;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)</TargetName>

@@ -76,7 +76,8 @@ Client::~Client()
 	SAFE_DELETE(this->zPlayerInventory);
 
 	SAFE_DELETE(this->zWorld);
-	SAFE_DELETE(this->zCrossHair);
+	
+	if ( this->zCrossHair ) GetGraphics()->DeleteImage(zCrossHair);
 }
 
 float Client::Update()
@@ -936,6 +937,9 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	if(msg.find(M_PING.c_str()) == 0)
 	{
 		this->Ping();
+	}
+	else if (msg.find(M_HEALTH) == 0)
+	{
 	}
 	//Actors
 	else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)

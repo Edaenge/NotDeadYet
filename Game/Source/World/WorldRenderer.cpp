@@ -1,7 +1,9 @@
 #include "WorldRenderer.h"
 #include "EntityList.h"
+#include "Entity.h"
 
-
+#undef min
+#undef max
 
 WorldRenderer::WorldRenderer( World* world, GraphicsEngine* graphics ) : 
 	zWorld(world),
@@ -44,6 +46,7 @@ WorldRenderer::~WorldRenderer()
 	// Clean Entities
 	for( auto i = zEntities.begin(); i != zEntities.end(); ++i )
 	{
+		i->first->RemoveObserver(this);
 		zGraphics->DeleteMesh( i->second );
 	}
 
@@ -100,64 +103,36 @@ void WorldRenderer::OnEvent( Event* e )
 			u = (UPDATEENUM)(u | UPDATE_HEIGHTMAP);
 		}
 	}
+	else if ( SectorNormalChanged* SNC = dynamic_cast<SectorNormalChanged*>(e) )
+	{
+		if ( SNC->world == zWorld )
+		{
+			UPDATEENUM& u = zUpdatesRequired[ Vector2UINT(SNC->sectorx, SNC->sectory) ];
+			u = (UPDATEENUM)(u | UPDATE_HEIGHTMAP);
+		}
+	}
+	else if ( EntityChangedTypeEvent* ECTE = dynamic_cast<EntityChangedTypeEvent*>(e) )
+	{
+		SetEntityGraphics(ECTE->entity);
+	}
 	else if ( EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e) )
 	{
-		const std::string& model = GetEntModel(ELE->entity->GetType());
-		if ( model == "water" )
-		{
-			zEntities[ELE->entity] = zGraphics->CreateWaterPlane(ELE->entity->GetPosition(), "Media/WaterTexture.png");
-		}
+		CreateEntity(ELE->entity);
+	}
+	else if ( EntitySelectedEvent* ESE = dynamic_cast<EntitySelectedEvent*>(e) )
+	{
+		if(ESE->entity->GetSelected())
+			zEntities[ESE->entity]->SetSpecialColor(COLOR::RED_COLOR);
 		else
-		{
-			float billboardDistance = GetEntBillboardDistance(ELE->entity->GetType());
-
-			if ( billboardDistance > 0.0f )
-			{
-				zEntities[ELE->entity] = zGraphics->CreateMesh(
-					model.c_str(), 
-					ELE->entity->GetPosition(), 
-					GetEntBillboard(ELE->entity->GetType()).c_str(),
-					billboardDistance);
-
-			}
-			else
-			{
-				zEntities[ELE->entity] = zGraphics->CreateMesh(model.c_str(), ELE->entity->GetPosition());
-			}
-		}
-
-		zEntities[ELE->entity]->SetQuaternion(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-		zEntities[ELE->entity]->RotateAxis(Vector3(1.0f, 0.0f, 0.0f), ELE->entity->GetRotation().x * (3.1415f / 180.0f));
-		zEntities[ELE->entity]->RotateAxis(Vector3(0.0f, 1.0f, 0.0f), ELE->entity->GetRotation().y * (3.1415f / 180.0f));
-		zEntities[ELE->entity]->RotateAxis(Vector3(0.0f, 0.0f, 1.0f), ELE->entity->GetRotation().z * (3.1415f / 180.0f));
-
-		zEntities[ELE->entity]->Scale(ELE->entity->GetScale());
-		ELE->entity->AddObserver(this);
+			zEntities[ESE->entity]->SetSpecialColor(COLOR::NULL_COLOR);
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
-		Vector3 temp = EUE->entity->GetRotation();
-		zEntities[EUE->entity]->SetPosition(EUE->entity->GetPosition());
-
-		zEntities[EUE->entity]->SetQuaternion(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-		zEntities[EUE->entity]->RotateAxis(Vector3(1.0f, 0.0f, 0.0f), EUE->entity->GetRotation().x * (3.1415f / 180.0f));
-		zEntities[EUE->entity]->RotateAxis(Vector3(0.0f, 1.0f, 0.0f), EUE->entity->GetRotation().y * (3.1415f / 180.0f));
-		zEntities[EUE->entity]->RotateAxis(Vector3(0.0f, 0.0f, 1.0f), EUE->entity->GetRotation().z * (3.1415f / 180.0f));
-		
-		if(EUE->entity->GetSelected())
-			zEntities[EUE->entity]->SetSpecialColor(COLOR::RED_COLOR);
-		else
-			zEntities[EUE->entity]->SetSpecialColor(COLOR::NULL_COLOR);
-
-		zEntities[EUE->entity]->SetScale(EUE->entity->GetScale()*0.05f);
+		SetEntityTransformation(EUE->entity);
 	}
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
-		if ( ERE->world == zWorld )
-		{
-			zGraphics->DeleteMesh(zEntities[ERE->entity]);
-			zEntities.erase(ERE->entity);
-		}
+		DeleteEntity(ERE->entity);
 	}
 	else if ( SectorBlendMapChanged* SHMC = dynamic_cast<SectorBlendMapChanged*>(e) )
 	{
@@ -185,7 +160,6 @@ void WorldRenderer::OnEvent( Event* e )
 	}
 }
 
-
 float WorldRenderer::GetYPosFromHeightMap( float x, float y )
 {
 	if(zWorld == NULL)
@@ -204,12 +178,14 @@ float WorldRenderer::GetYPosFromHeightMap( float x, float y )
 	return std::numeric_limits<float>::infinity();
 }
 
-
 CollisionData WorldRenderer::Get3DRayCollisionDataWithGround()
 {
 	// Get Applicable Sectors
 	std::set< Vector2UINT > sectors;
-	zWorld->GetSectorsInCicle( zGraphics->GetCamera()->GetPosition().GetXZ(), 100.0f, sectors );
+	zWorld->GetSectorsInCicle( zGraphics->GetCamera()->GetPosition().GetXZ(), zGraphics->GetEngineParameters().FarClip, sectors );
+
+	CollisionData returnData;
+	returnData.distance = std::numeric_limits<float>::max();
 
 	// Check For Collision
 	for( auto i = sectors.begin(); i != sectors.end(); ++i )
@@ -221,17 +197,13 @@ CollisionData WorldRenderer::Get3DRayCollisionDataWithGround()
 			zGraphics->GetCamera()->Get3DPickingRay(), 
 			zTerrain[sectorIndex],
 			(float)SECTOR_WORLD_SIZE / (float)(SECTOR_HEIGHT_SIZE-1));
-
-		if(cd.collision)
-		{
-			return cd;
-		}
+		
+		if ( cd.collision && cd.distance < returnData.distance ) returnData = cd;
 	}
 
 	// Return default collision
-	return CollisionData();
+	return returnData;
 }
-
 
 Entity* WorldRenderer::Get3DRayCollisionWithMesh()
 {
@@ -243,7 +215,7 @@ Entity* WorldRenderer::Get3DRayCollisionWithMesh()
 	std::set<Entity*> closeEntities;
 	zWorld->GetEntitiesInCircle(Vector2(cam->GetPosition().x, cam->GetPosition().z), 200.0f, closeEntities);
 
-	float curDistance = 100000.0f;
+	float curDistance = std::numeric_limits<float>::max();
 	returnPointer = 0;
 
 	for( auto i = closeEntities.begin(); i != closeEntities.end(); ++i )
@@ -268,13 +240,17 @@ Entity* WorldRenderer::Get3DRayCollisionWithMesh()
 	return returnPointer;
 }
 
-
 void WorldRenderer::UpdateSectorHeightMap( const Vector2UINT& sectorCoords )
 {
 	if ( iTerrain* T = GetTerrain(sectorCoords) )
+	{
+		// Set Heightmap
 		T->SetHeightMap( zWorld->GetSector(sectorCoords)->GetHeightMap() );
-}
 
+		// Set Normals
+		T->SetNormals(zWorld->GetSector(sectorCoords)->GetNormals());
+	}
+}
 
 void WorldRenderer::UpdateSectorBlendMap( const Vector2UINT& sectorCoords )
 {
@@ -291,7 +267,6 @@ void WorldRenderer::UpdateSectorBlendMap( const Vector2UINT& sectorCoords )
 			&data[0] );
 	}
 }
-
 
 void WorldRenderer::UpdateSectorTextures( const Vector2UINT& sectorCoords )
 {
@@ -319,7 +294,7 @@ void WorldRenderer::Update()
 		if ( ( i->second & UPDATE_BLENDMAP ) == UPDATE_BLENDMAP )
 			UpdateSectorBlendMap(i->first);
 
-		if ( ( i->second & UPDATE_HEIGHTMAP ) == UPDATE_HEIGHTMAP )
+		if ( ( i->second & UPDATE_HEIGHTMAP ) )
 			UpdateSectorHeightMap(i->first);
 
 		if ( ( i->second & UPDATE_TEXTURES ) == UPDATE_TEXTURES )
@@ -396,5 +371,73 @@ void WorldRenderer::CreateTerrain( const Vector2UINT& sectorCoords )
 
 		UPDATEENUM& u = zUpdatesRequired[sectorCoords];
 		u = (UPDATEENUM)(u | UPDATE_ALL);
+	}
+}
+
+void WorldRenderer::CreateEntity( Entity* e )
+{
+	e->AddObserver(this);
+	SetEntityGraphics(e);
+}
+
+void WorldRenderer::SetEntityGraphics( Entity* e )
+{
+	// Delete Old Graphics
+	auto i = zEntities.find(e);
+	if ( i != zEntities.end() )
+	{
+		zGraphics->DeleteMesh(i->second);
+	}
+
+	// New Graphics
+	const std::string& model = GetEntModel(e->GetType());
+	if ( model == "water" )
+	{
+		zEntities[e] = zGraphics->CreateWaterPlane(e->GetPosition(), "Media/WaterTexture.png");
+	}
+	else
+	{
+		float billboardDistance = GetEntBillboardDistance(e->GetType());
+
+		if ( billboardDistance > 0.0f )
+		{
+			zEntities[e] = zGraphics->CreateMesh(
+				model.c_str(), 
+				e->GetPosition(), 
+				GetEntBillboard(e->GetType()).c_str(),
+				billboardDistance);
+		}
+		else
+		{
+			zEntities[e] = zGraphics->CreateMesh(model.c_str(), e->GetPosition());
+		}
+	}
+
+	SetEntityTransformation(e);
+}
+
+void WorldRenderer::SetEntityTransformation( Entity* e )
+{
+	auto i = zEntities.find(e);
+	if ( i != zEntities.end() )
+	{
+		i->second->SetPosition(e->GetPosition());
+		i->second->SetQuaternion(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+		i->second->RotateAxis(Vector3(1.0f, 0.0f, 0.0f), e->GetRotation().x * (3.1415f / 180.0f));
+		i->second->RotateAxis(Vector3(0.0f, 1.0f, 0.0f), e->GetRotation().y * (3.1415f / 180.0f));
+		i->second->RotateAxis(Vector3(0.0f, 0.0f, 1.0f), e->GetRotation().z * (3.1415f / 180.0f));
+		i->second->SetScale(e->GetScale()*0.05f);
+	}
+}
+
+void WorldRenderer::DeleteEntity( Entity* e )
+{
+	// Delete Old Graphics
+	auto i = zEntities.find(e);
+	if ( i != zEntities.end() )
+	{
+		e->RemoveObserver(this);
+		zGraphics->DeleteMesh(i->second);
+		zEntities.erase(i);
 	}
 }

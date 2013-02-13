@@ -14,8 +14,10 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 class BioActorTakeDamageEvent : public Event
 {
 public:
+	virtual ~BioActorTakeDamageEvent() {}
+
 	Actor* zActor;
-	Damage zDamage;
+	Damage* zDamage;
 	Actor* zDealer;
 };
 
@@ -31,7 +33,7 @@ public:
 	// virtual void Update(float deltaTime) = 0;
 
 	/*! Returns true if BioActor dies from the damage done.*/
-	virtual bool TakeDamage(const Damage& dmg, Actor* dealer);
+	virtual bool TakeDamage(Damage& dmg, Actor* dealer);
 
 	/*! Returns false if player cannot sprint, due to stamina.*/
 	virtual bool Sprint(float dt);

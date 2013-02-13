@@ -19,7 +19,7 @@ InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, 
 
 InventorySlotGui::~InventorySlotGui()
 {
-	SAFE_DELETE(this->zSlotImage);
+	if ( zSlotImage ) throw("Image Memory Leak!");
 }
 
 bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)

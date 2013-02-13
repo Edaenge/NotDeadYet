@@ -43,8 +43,12 @@ CircularListGui::CircularListGui(float x, float y, float width, float height, st
 CircularListGui::~CircularListGui()
 {
 	for(int i = 0; i < 4; i++)
+	{
 		if(this->zTextImages[i])
-			SAFE_DELETE(this->zTextImages[i]);
+		{
+			if ( this->zTextImages[i] ) throw("Image leaked!");
+		}
+	}
 }
 
 bool CircularListGui::AddToRenderer(GraphicsEngine* ge)

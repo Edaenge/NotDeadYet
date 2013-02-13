@@ -2,6 +2,8 @@
 #include "GameModeFFA.h"
 #include "Behavior.h"
 #include <world/World.h>
+#include <World/EntityList.h>
+#include <World/Entity.h>
 #include "GameEvents.h"
 #include "PlayerHumanBehavior.h"
 #include "ProjectileBehavior.h"
@@ -16,9 +18,9 @@
 #include "AIWolfBehavior.h"
 #include "WorldActor.h"
 #include "ItemActor.h"
-#include <World/EntityList.h>
 #include "Physics.h"
 #include "ClientServerMessages.h"
+
 
 //Temporary
 #include "ItemLookup.h"
