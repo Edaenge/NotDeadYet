@@ -11,6 +11,15 @@ ActorManager::ActorManager( ActorSynchronizer* syncher ) :
 	AddObserver(this->zSynch);
 }
 
+ActorManager::~ActorManager()
+{
+	for(auto it = this->zActors.begin(); it != this->zActors.end(); it++)
+	{
+		Actor* temp = (*it);
+		SAFE_DELETE(temp);
+	}
+}
+
 void ActorManager::AddActor( Actor* actor )
 {
 	actor->AddObserver(this->zSynch);

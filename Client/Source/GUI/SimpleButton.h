@@ -53,5 +53,5 @@ public:
 	/*! Check if the mouse is inside the active area and returns an event if it is*/
 	GUIEvent* CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 
-	void Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight);
+	void Resize(float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight);
 };

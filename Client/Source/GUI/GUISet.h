@@ -57,12 +57,12 @@ public:
 	/*! Returns the text that is stored in specific text field*/
 	string GetTextFromField(string textBox);
 
-	void Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight);
+	void Resize(float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight);
 
 	/*! Returs the event that is on the top of the Drop down menu*/
 	//GUIEvent* GetEventFromDropDown(string dropDownMenu);
 
-	//CheckBox* GetCheckBox(string checkBox);
+	CheckBox* GetCheckBox(string checkBox);
 
 	//TextBox* GetTextBox(string textBox);
 };

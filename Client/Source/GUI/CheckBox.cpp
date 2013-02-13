@@ -32,14 +32,7 @@ CheckBox::CheckBox(float x, float y, float z, string textureName, float width, f
 
 	this->mOn = on;
 	this->mCheckedTextureName = CheckedTextureName;
-	if(this->mOn)
-	{
-		this->mCheckedImage = GetGraphics()->CreateImage(Vector2(x, y), this->GetDimension(), this->mCheckedTextureName.c_str());
-	}
-	else
-	{
-		this->mCheckedImage = NULL;
-	}
+	this->mCheckedImage = NULL;
 }
 CheckBox::~CheckBox()
 {
@@ -127,7 +120,7 @@ void CheckBox::SetChecked(bool checked)
 	}
 }
 
-void CheckBox::Resize( int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight )
+void CheckBox::Resize( float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight )
 {
 	Element::Resize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
 
@@ -138,7 +131,6 @@ void CheckBox::Resize( int oldWindowWidth, int oldWindowHeight, int windowWidth,
 
 	this->mActiveX = offSet + ((this->mActiveX - oldOffSet) / oldDx) * dx;
 	this->mActiveY = (this->mActiveY / oldWindowHeight) * windowHeight;
-
 
 	this->mActiveWidth = (this->mActiveWidth / oldDx) * dx;
 	this->mActiveHeight = (this->mActiveHeight / oldWindowHeight) * windowHeight;

@@ -39,5 +39,5 @@ void Behavior::OnEvent(Event* e)
 
 bool Behavior::Update( float )
 {
-	return ( zActor == 0 );
+	return ( zActor == NULL );
 }

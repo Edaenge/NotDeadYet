@@ -30,6 +30,7 @@
     <ClCompile Include="Source\ClientObjectHandler.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\GuiManager.cpp" />
+    <ClCompile Include="Source\GUI\ApplyOptionsAndChangeSetEvent.cpp" />
     <ClCompile Include="Source\GUI\ChangeOptionEvent.cpp" />
     <ClCompile Include="Source\GUI\ChangeResEvent.cpp" />
     <ClCompile Include="Source\GUI\ChangeSetEvent.cpp" />
@@ -65,6 +66,7 @@
     <ClInclude Include="Source\Client.h" />
     <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\GuiManager.h" />
+    <ClInclude Include="Source\GUI\ApplyOptionsAndChangeSetEvent.h" />
     <ClInclude Include="Source\GUI\ChangeOptionEvent.h" />
     <ClInclude Include="Source\GUI\ChangeResEvent.h" />
     <ClInclude Include="Source\GUI\ChangeSetEvent.h" />

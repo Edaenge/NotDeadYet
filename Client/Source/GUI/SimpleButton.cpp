@@ -134,14 +134,14 @@ bool SimpleButton::RemoveFromRenderer(GraphicsEngine* ge)
 	return true;
 }
 
-void SimpleButton::Resize( int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight )
+void SimpleButton::Resize( float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight )
 {
 	Element::Resize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
 
-	float dx = ((float)windowHeight * 4.0f) / 3.0f;
-	float oldDx = ((float)oldWindowHeight * 4.0f) / 3.0f;
-	float oldOffSet = (float)(oldWindowWidth - oldDx) / 2.0f;
-	float offSet = (float)(windowWidth - dx) / 2.0f;
+	float dx = (windowHeight * 4.0f) / 3.0f;
+	float oldDx = (oldWindowHeight * 4.0f) / 3.0f;
+	float oldOffSet = (oldWindowWidth - oldDx) / 2.0f;
+	float offSet = (windowWidth - dx) / 2.0f;
 
 	this->mActiveX = offSet + ((this->mActiveX - oldOffSet) / oldDx) * dx;
 	this->mActiveY = (this->mActiveY / oldWindowHeight) * windowHeight;

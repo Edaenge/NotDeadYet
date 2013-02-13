@@ -948,7 +948,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
-		this->UpdateActor(msgArray, id);
+		this->RemoveActor(id);
 	}
 	else if (msg.find(M_LOOT_OBJECT_RESPONSE.c_str()) == 0)
 	{
@@ -1278,9 +1278,9 @@ void Client::OnEvent(Event* e)
 void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 {
 	std::vector<Looting_Gui_Data> guiData;
-	for (auto it_Item_Data = msgArray.begin(); it_Item_Data != msgArray.end(); it_Item_Data++)
+	Looting_Gui_Data lgd = Looting_Gui_Data();
+	for (auto it_Item_Data = msgArray.begin() + 1; it_Item_Data != msgArray.end(); it_Item_Data++)
 	{
-		Looting_Gui_Data lgd = Looting_Gui_Data();
 		if((*it_Item_Data).find(M_ITEM_ID.c_str()) == 0)
 		{
 			lgd.zGui_Data.zID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, (*it_Item_Data));

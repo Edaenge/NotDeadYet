@@ -98,6 +98,14 @@ void ActorSynchronizer::ClearAll()
 {
 	this->zUpdateSet.clear();
 	this->zNewActorSet.clear();
+	
+	//Deletes Actors
+	auto i = this->zRemoveActorSet.begin();
+	for(; i != this->zRemoveActorSet.end(); i++)
+	{
+		Actor* temp = (*i);
+		SAFE_DELETE(temp);
+	}
 	this->zRemoveActorSet.clear();
 }
 

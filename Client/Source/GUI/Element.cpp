@@ -44,7 +44,7 @@ bool Element::RemoveFromRenderer(GraphicsEngine* ge)
 	return true;
 }
 
-void Element::Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight)
+void Element::Resize(float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight)
 {
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float oldDx = ((float)oldWindowHeight * 4.0f) / 3.0f;

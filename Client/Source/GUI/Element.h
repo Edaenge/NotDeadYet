@@ -15,6 +15,7 @@
 #include "ChangeResEvent.h"
 #include "ChangeOptionEvent.h"
 #include "ChangeSetEvent.h"
+#include "ApplyOptionsAndChangeSetEvent.h"
 
 #include "Graphics.h"
 
@@ -76,5 +77,5 @@ public:
 	/*! Removes the element from the renderer*/
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
-	virtual void Resize(int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight);
+	virtual void Resize(float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight);
 };
