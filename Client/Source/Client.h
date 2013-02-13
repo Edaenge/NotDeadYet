@@ -135,6 +135,7 @@ private:
 	void SendPickupItemMessage(const unsigned int ID);
 	void SendDropItemMessage(const unsigned int ID);
 	void SendUseItemMessage(const unsigned int ID);
+	void SendCraftItemMessage(const unsigned int ID);
 	void HandleRemoveInventoryItem(const unsigned int ID);
 	void HandleAddInventoryItem(const std::vector<std::string>& msgArray);
 	/*! Uses the Selected Item*/

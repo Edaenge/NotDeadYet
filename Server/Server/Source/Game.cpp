@@ -576,7 +576,28 @@ void Game::OnEvent( Event* e )
 							PUIE->clientData->Send(msg);
 						}
 					}
-					else if(Material* material = dynamic_cast<Material*>(item))
+				}
+			}
+		}
+	}
+	else if (PlayerCraftItemEvent* PCIE = dynamic_cast<PlayerCraftItemEvent*>(e))
+	{
+		auto playerIterator = this->zPlayers.find(PCIE->clientData);
+		auto playerBehavior = playerIterator->second->GetBehavior();
+
+		Actor* actor = playerBehavior->GetActor();
+
+		if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
+		{
+			if (Inventory* inv = pActor->GetInventory())
+			{
+				NetworkMessageConverter NMC;
+				Item* item = inv->SearchAndGetItem(PCIE->itemID);
+				std::string msg;
+				if (item)
+				{
+					unsigned int ID = 0;
+					if(Material* material = dynamic_cast<Material*>(item))
 					{
 						if (material->GetItemSubType() == ITEM_SUB_TYPE_SMALL_STICK)
 						{
@@ -584,7 +605,7 @@ void Game::OnEvent( Event* e )
 							{
 								ID = material->GetID();
 								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-								PUIE->clientData->Send(msg);
+								PCIE->clientData->Send(msg);
 
 								//Creating a bow With default Values
 								const Projectile* temp_Arrow = GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
@@ -596,16 +617,16 @@ void Game::OnEvent( Event* e )
 									if (inv->AddItem(new_Arrow))
 									{
 										ID = new_Arrow->GetID();
-										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)ID);
+										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 										msg += new_Arrow->ToMessageString(&NMC);
-										PUIE->clientData->Send(msg);
+										PCIE->clientData->Send(msg);
 									}
 								}
 							}
 							else
 							{
 								msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
-								PUIE->clientData->Send(msg);
+								PCIE->clientData->Send(msg);
 							}
 							if (material->GetStackSize() <= 0)
 							{
@@ -613,7 +634,7 @@ void Game::OnEvent( Event* e )
 								{
 									ID = material->GetID();
 									msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
-									PUIE->clientData->Send(msg);
+									PCIE->clientData->Send(msg);
 								}
 							}
 						}
@@ -624,19 +645,19 @@ void Game::OnEvent( Event* e )
 								if (!material->IsUsable() || !material_Thread->IsUsable())
 								{
 									msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
-									PUIE->clientData->Send(msg);
+									PCIE->clientData->Send(msg);
 								}
 								else
 								{
 									material->Use();
 									ID = material->GetID();
 									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-									PUIE->clientData->Send(msg);
+									PCIE->clientData->Send(msg);
 
 									material_Thread->Use();
 									ID = material_Thread->GetID();
 									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-									PUIE->clientData->Send(msg);
+									PCIE->clientData->Send(msg);
 
 									//Creating a bow With default Values
 									const RangedWeapon* temp_bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
@@ -647,10 +668,9 @@ void Game::OnEvent( Event* e )
 
 										if (inv->AddItem(new_Bow))
 										{
-											ID = new_Bow->GetID();
-											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)ID);
+											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 											msg += new_Bow->ToMessageString(&NMC);
-											PUIE->clientData->Send(msg);
+											PCIE->clientData->Send(msg);
 										}
 									}
 								}
@@ -663,19 +683,19 @@ void Game::OnEvent( Event* e )
 								if (!material->IsUsable() || !material_Medium_Stick->IsUsable())
 								{
 									msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
-									PUIE->clientData->Send(msg);
+									PCIE->clientData->Send(msg);
 								}
 								else
 								{
 									material->Use();
 									ID = material->GetID();
 									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-									PUIE->clientData->Send(msg);
+									PCIE->clientData->Send(msg);
 
 									material_Medium_Stick->Use();
 									ID = material_Medium_Stick->GetID();
 									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-									PUIE->clientData->Send(msg);
+									PCIE->clientData->Send(msg);
 
 									//Creating a bow With default Values
 									const RangedWeapon* temp_bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
@@ -686,10 +706,9 @@ void Game::OnEvent( Event* e )
 
 										if (inv->AddItem(new_Bow))
 										{
-											ID = new_Bow->GetID();
-											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM, (float)ID);
+											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 											msg += new_Bow->ToMessageString(&NMC);
-											PUIE->clientData->Send(msg);
+											PCIE->clientData->Send(msg);
 										}
 									}
 								}

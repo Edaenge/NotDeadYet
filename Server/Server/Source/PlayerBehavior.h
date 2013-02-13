@@ -13,7 +13,6 @@ public:
 	PlayerBehavior(Actor* actor, World* world, Player* player);
 	virtual	~PlayerBehavior();
 
-
 	bool ProcessClientData(Vector3 direction, Vector4 rotation);
 
 protected:

@@ -30,7 +30,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Models/temp_guy.obj";
+	this->zMeshID = "Media/Models/scale.ani";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -177,10 +177,11 @@ void Client::InitGraphics(const std::string& mapName)
 		"Media/Models/Tree_01.ani",
 		"Media/Models/WaterGrass_02.ani",
 		"Media/Models/Veins_01_v03_r.obj",
-		"Media/Models/temp_guy.obj"};
+		"Media/Models/temp_guy.obj",
+		"Scale.ani"};
 
-	//this->zEng->PreLoadResources(18, object);
-	//this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
+	this->zEng->PreLoadResources(19, object);
+	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
 }
 
 void Client::Init()
@@ -396,12 +397,6 @@ void Client::CheckMovementKeys()
 	pressed = this->CheckKey(KEY_DUCK);
 }
 
-void Client::SendUseItemMessage(const unsigned int ID)
-{
-	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-	this->zServerChannel->Send(msg);
-}
-
 void Client::HandleKeyboardInput()
 {
 	if (this->zCreated && this->zGameStarted)
@@ -414,7 +409,6 @@ void Client::HandleKeyboardInput()
 
 	this->CheckMovementKeys();
 
-	
 	if(this->zShowCursor)
 	{
 		Menu_select_data msd;
@@ -429,6 +423,11 @@ void Client::HandleKeyboardInput()
 				{
 					if (item)
 						SendUseItemMessage(item->GetID());
+				}
+				if (msd.zAction == CRAFT)
+				{
+					if (item)
+						SendCraftItemMessage(item->GetID());
 				}
 				else if(msd.zAction == EQUIP)
 				{
@@ -456,7 +455,6 @@ void Client::HandleKeyboardInput()
 		{
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
 			
-
 			Item* item = this->zPlayerInventory->GetMeleeWeapon();
 			if (item)
 			{
@@ -475,7 +473,6 @@ void Client::HandleKeyboardInput()
 		{
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
 			
-
 			Item* item = this->zPlayerInventory->GetRangedWeapon();
 			if (item)
 			{

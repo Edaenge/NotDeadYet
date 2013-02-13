@@ -55,6 +55,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_EQUIPMENT_SLOT,
 	MESSAGE_TYPE_REMOVE_EQUIPMENT,
 	MESSAGE_TYPE_ITEM_USE,
+	MESSAGE_TYPE_ITEM_CRAFT,
 	MESSAGE_TYPE_ITEM_NAME,
 	MESSAGE_TYPE_ITEM_DESCRIPTION,
 	MESSAGE_TYPE_ITEM_ICON_PATH,
@@ -105,6 +106,7 @@ static const std::string M_ITEM_DESCRIPTION			= "IDE";
 static const std::string M_ITEM_ICON_PATH			= "IIP";
 static const std::string M_ITEM_WEIGHT				= "IW";
 static const std::string M_ITEM_USE					= "IU";
+static const std::string M_ITEM_CRAFT				= "IC";
 static const std::string M_ITEM_STACK_SIZE			= "ISS";
 static const std::string M_WEAPON_DAMAGE			= "WD";
 static const std::string M_WEAPON_RANGE				= "WR";

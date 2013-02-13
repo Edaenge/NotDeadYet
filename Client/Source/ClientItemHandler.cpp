@@ -92,7 +92,7 @@ void Client::HandleUseItem(const unsigned int ID)
 
 		if (!material)
 		{
-			MaloW::Debug("dynamic cast Failed in Host::UseItem (Food)");
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Material)");
 			return;
 		}
 		if (Messages::FileWrite())
@@ -541,12 +541,15 @@ void Client::SendLootItemMessage(const unsigned int ID, const unsigned int ItemI
 	this->zServerChannel->Send(msg);
 }
 
-void Client::SendPickupItemMessage(const unsigned int ID)
+void Client::SendCraftItemMessage( const unsigned int ID )
 {
-	std::string msg;
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_CRAFT, (float)ID);
+	this->zServerChannel->Send(msg);
+}
 
-	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PICKUP_ITEM, (float)ID);
-
+void Client::SendUseItemMessage(const unsigned int ID)
+{
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 	this->zServerChannel->Send(msg);
 }
 
