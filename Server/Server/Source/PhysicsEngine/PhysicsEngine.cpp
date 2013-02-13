@@ -11,6 +11,8 @@ PhysicsEngine::~PhysicsEngine()
 {
 	while(this->objects.size() != 0)
 		delete this->objects.getAndRemove(0);
+
+	FreePhysicsResourceManager();
 }
 
 PhysicsObject* PhysicsEngine::CreatePhysicsObject(const std::string& path, Vector3 pos)
