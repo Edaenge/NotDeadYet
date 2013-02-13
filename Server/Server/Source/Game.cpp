@@ -54,6 +54,7 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	
 	//DEBUG
 	SpawnItemsDebug();
+	this->zMaxNrOfPlayers = 32;
 }
 
 Game::~Game()
