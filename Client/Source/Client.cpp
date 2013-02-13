@@ -919,6 +919,9 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		this->Ping();
 	}
+	else if (msg.find(M_HEALTH) == 0)
+	{
+	}
 	//Actors
 	else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
 	{
