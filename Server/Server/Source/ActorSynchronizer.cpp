@@ -1,5 +1,6 @@
 #include "ActorSynchronizer.h"
 #include "Actor.h"
+#include <Packets\ServerFramePacket.h>
 
 
 ActorSynchronizer::ActorSynchronizer()
@@ -43,8 +44,14 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 
 	RegisterActor(cd);
 
+	ServerFramePacket frameData;
+	
 	for(auto it = this->zUpdateSet.begin(); it != this->zUpdateSet.end(); it++)
 	{
+		frameData.newPositions[(*it)->GetID()] = (*it)->GetPosition();
+		frameData.newRotations[(*it)->GetID()] = (*it)->GetRotation();
+		frameData.newScales[(*it)->GetID()] = (*it)->GetScale();
+
 		msg = nmc.Convert(MESSAGE_TYPE_UPDATE_ACTOR, (float)(*it)->GetID());
 		msg += nmc.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
 		msg += nmc.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
@@ -52,6 +59,8 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 
 		cd->Send(msg);
 	}
+	
+	cd->Send(frameData);
 
 	RemoveActor(cd);
 }

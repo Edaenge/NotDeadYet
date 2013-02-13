@@ -6,7 +6,9 @@
 #include <World/EntityList.h>
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
+#include <Packets\ServerFramePacket.h>
 #include "Sounds.h"
+
 using namespace MaloW;
 
 // Timeout_value = 10 sek
@@ -30,7 +32,7 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Models/scale.ani";
+	this->zMeshID = "Media/Models/temp_guy.obj";
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -155,7 +157,7 @@ void Client::InitGraphics(const std::string& mapName)
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 	float length = ((25.0f / 1024.0f) * dx);
 	float xPos = offSet + (0.5f * dx) - length * 0.5f;
-	float yPos = (windowHeight / 2.0f) - length * 0.5f;
+	float yPos = (windowHeight / 2.0f) - length * 0.5f; //Boom
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 
@@ -177,10 +179,9 @@ void Client::InitGraphics(const std::string& mapName)
 		"Media/Models/Tree_01.ani",
 		"Media/Models/WaterGrass_02.ani",
 		"Media/Models/Veins_01_v03_r.obj",
-		"Media/Models/temp_guy.obj",
-		"Scale.ani"};
+		"Media/Models/temp_guy.obj"};
 
-	this->zEng->PreLoadResources(19, object);
+	this->zEng->PreLoadResources(18, object);
 	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
 }
 
@@ -584,19 +585,16 @@ void Client::HandleKeyboardInput()
 				{
 					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
 
-					
-					//Weapon* weapon = this->zPlayerInventory->GetRangedWeapon();
-					//if (!weapon)
-					//{
-					//	this->DisplayMessageToClient("No Weapon is Equipped");
-					//}
-					//else
-					//{
-					//	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
-					//	this->zServerChannel->Send(msg);
-					//}
-					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, 0.0f);
-					this->zServerChannel->Send(msg);
+					Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
+					if (!primaryWeapon)
+					{
+						this->DisplayMessageToClient("No Weapon is Equipped");
+					}
+					else
+					{
+						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)primaryWeapon->GetID());
+						this->zServerChannel->Send(msg);
+					}
 				}
 			}
 			else
@@ -864,8 +862,51 @@ void Client::Ping()
 	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
 }
 
+void Client::HandleNetworkPacket( Packet* P )
+{
+	if ( ServerFramePacket* SFP = dynamic_cast<ServerFramePacket*>(P) )
+	{
+
+	}
+
+	delete P;
+}
+
 void Client::HandleNetworkMessage( const std::string& msg )
 {
+	if ( msg.find("PACKET") == 0 )
+	{
+		std::stringstream ss(msg);
+		ss.seekg(6);
+
+		// Packet Size
+		unsigned int packetTypeSize = 0;
+		ss.read( reinterpret_cast<char*>(&packetTypeSize), sizeof(unsigned int) );
+
+		// Packet Type
+		std::string type;
+		type.resize(packetTypeSize);
+		ss.read(&type[0], packetTypeSize); 
+
+		// TODO: Factory Pattern
+		Packet* packet = 0;
+
+		if ( type == "ServerFramePacket" )
+		{
+			packet = new ServerFramePacket();
+		}
+
+		if ( !packet ) throw("Unknown Packet Type");
+
+		// Deserialize
+		packet->Deserialize(ss);
+
+		// Handle
+		HandleNetworkPacket(packet);
+
+		return;
+	}
+
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
 
@@ -1211,7 +1252,7 @@ void Client::DisplayMessageToClient(const std::string& msg)
 	MaloW::Debug(msg);
 }
 
-void Client::onEvent(Event* e)
+void Client::OnEvent(Event* e)
 {
 	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{

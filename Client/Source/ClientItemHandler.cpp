@@ -153,31 +153,6 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 		
 		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
-	{
-		if (Slot != EQUIPMENT_SLOT_RANGED_WEAPON)
-		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon: " + MaloW::convertNrToString(EQUIPMENT_SLOT_RANGED_WEAPON) + " != Slot: " + MaloW::convertNrToString((float)Slot));
-			return;
-		}
-
-		RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item);
-		if (!rWpn)
-		{
-			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Rock)");
-			return;
-		}
-
-		this->zPlayerInventory->EquipRangedWeapon(rWpn);
-
-		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetStackSize(), 
-			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType(), rWpn->GetItemSubType());
-
-		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
-		this->zGuiManager->EquipItem(RANGED, gid);
-		
-		return;
-	}
 	if (item->GetItemType() == ITEM_TYPE_PROJECTILE)
 	{
 		if (Slot != EQUIPMENT_SLOT_AMMO)
@@ -232,7 +207,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 	{
 		if (Slot != EQUIPMENT_SLOT_MELEE_WEAPON)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon: " + MaloW::convertNrToString(EQUIPMENT_SLOT_RANGED_WEAPON) + " != Slot: " + MaloW::convertNrToString((float)Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Weapon: " + MaloW::convertNrToString(EQUIPMENT_SLOT_MELEE_WEAPON) + " != Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 
@@ -564,14 +539,18 @@ void Client::SendDropItemMessage(const unsigned int ID)
 
 void Client::HandleRemoveInventoryItem(const unsigned int ID)
 {
-	int index = this->zPlayerInventory->Search(ID);
-	int stackSize = this->zPlayerInventory->GetItem(index)->GetStackSize();
-	if(this->zPlayerInventory->RemoveItem(index))
+	Item* item = this->zPlayerInventory->SearchAndGetItem(ID);
+	if (item)
 	{
-		this->zGuiManager->RemoveInventoryItemFromGui(ID, stackSize);
-		if (Messages::FileWrite())
-			Messages::Debug("Item Removed on Client");
+		int stackSize = item->GetStackSize();
+		if(this->zPlayerInventory->RemoveItem(item))
+		{
+			this->zGuiManager->RemoveInventoryItemFromGui(ID, stackSize);
+			if (Messages::FileWrite())
+				Messages::Debug("Item Removed on Client");
+		}
 	}
+	
 }
 
 void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
