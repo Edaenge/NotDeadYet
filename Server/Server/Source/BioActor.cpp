@@ -49,7 +49,7 @@ bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
 		around.Normalize();
 		float angle = 3.14f * 0.5f;
 		
-		this->GetPhysicsObject()->SetQuaternion(Vector4(.0f,.0f,.0f,.1f));
+		this->GetPhysicsObject()->SetQuaternion(Vector4(.0f,.0f,.0f,1.0f));
 		this->SetRotation(around,angle);
 	}
 	
