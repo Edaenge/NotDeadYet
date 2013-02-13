@@ -1,10 +1,18 @@
 #include "Gear.h"
 
+
+Gear::Gear( const unsigned int ID, const unsigned int Type, const unsigned int SubType )
+	: Item(ID, Type, SubType)
+{
+	this->zStacking = false;
+}
+
 Gear::Gear(const unsigned int Type, const unsigned int SubType )
 	: Item(Type, SubType)
 {
 	this->zStacking = false;
 }
+
 Gear::Gear(const Gear& other)
 {
 	this->zID = other.zID;

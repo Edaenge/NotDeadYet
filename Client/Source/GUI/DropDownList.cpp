@@ -26,6 +26,8 @@ DropDownList::DropDownList(float x, float y, float z, string textureName, float 
 	this->mMaxNrOfElements = 10;
 	this->mNrOfElements = 0;
 	this->mElements = new Element*[mMaxNrOfElements];
+	for(int i = 0; i < this->mMaxNrOfElements; i++)
+		this->mElements[i] = NULL;
 	
 }
 DropDownList::~DropDownList()

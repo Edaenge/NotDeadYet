@@ -23,6 +23,7 @@ class Item
 {
 public:
 	Item();
+	Item(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType);
 	Item(const unsigned int itemType, const unsigned int itemSubType);
 	virtual ~Item(){}
 	/*! Returns Item ID*/

@@ -398,12 +398,6 @@ void Client::CheckMovementKeys()
 	pressed = this->CheckKey(KEY_DUCK);
 }
 
-void Client::SendUseItemMessage(const unsigned int ID)
-{
-	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-	this->zServerChannel->Send(msg);
-}
-
 void Client::HandleKeyboardInput()
 {
 	if (this->zCreated && this->zGameStarted)
@@ -412,24 +406,29 @@ void Client::HandleKeyboardInput()
 		return;
 	}
 
-	zShowCursor = this->zGuiManager->IsGuiOpen();
+	this->zShowCursor = this->zGuiManager->IsGuiOpen();
 
 	this->CheckMovementKeys();
 
-	Menu_select_data msd;
-	if(zShowCursor)
+	if(this->zShowCursor)
 	{
+		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
-		Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
-
+		
 		if (msd.zAction != -1)
 		{
 			if (msd.zID != -1)
 			{
+				Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
 				if (msd.zAction == USE)
 				{
 					if (item)
 						SendUseItemMessage(item->GetID());
+				}
+				if (msd.zAction == CRAFT)
+				{
+					if (item)
+						SendCraftItemMessage(item->GetID());
 				}
 				else if(msd.zAction == EQUIP)
 				{
@@ -457,7 +456,6 @@ void Client::HandleKeyboardInput()
 		{
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
 			
-
 			Item* item = this->zPlayerInventory->GetMeleeWeapon();
 			if (item)
 			{
@@ -476,7 +474,6 @@ void Client::HandleKeyboardInput()
 		{
 			this->zKeyInfo.SetKeyState(KEY_TEST, true);
 			
-
 			Item* item = this->zPlayerInventory->GetRangedWeapon();
 			if (item)
 			{
@@ -588,19 +585,16 @@ void Client::HandleKeyboardInput()
 				{
 					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
 
-					
-					//Weapon* weapon = this->zPlayerInventory->GetRangedWeapon();
-					//if (!weapon)
-					//{
-					//	this->DisplayMessageToClient("No Weapon is Equipped");
-					//}
-					//else
-					//{
-					//	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
-					//	this->zServerChannel->Send(msg);
-					//}
-					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, 0.0f);
-					this->zServerChannel->Send(msg);
+					Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
+					if (!primaryWeapon)
+					{
+						this->DisplayMessageToClient("No Weapon is Equipped");
+					}
+					else
+					{
+						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)primaryWeapon->GetID());
+						this->zServerChannel->Send(msg);
+					}
 				}
 			}
 			else
@@ -1003,8 +997,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msg.find(M_ADD_INVENTORY_ITEM.c_str()) == 0)
 	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ADD_INVENTORY_ITEM, msgArray[0]);
-		this->HandleAddInventoryItem(msgArray, id);
+		this->HandleAddInventoryItem(msgArray);
 	}
 	else if(msg.find(M_REMOVE_INVENTORY_ITEM.c_str()) == 0)
 	{

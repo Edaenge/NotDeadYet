@@ -56,17 +56,6 @@ public:
 	ClientData* clientData;
 };
 
-/*Event when a player wants to pickup an item*/
-class PlayerPickupObjectEvent : public Event
-{
-public:
-	virtual ~PlayerPickupObjectEvent() {}
-	
-	ClientData* clientData;
-
-	long objID;
-};
-
 class PlayerLootObjectEvent : public Event
 {
 public:
@@ -130,6 +119,16 @@ class PlayerUseItemEvent : public Event
 {
 public:
 	virtual ~PlayerUseItemEvent() {}
+
+	ClientData* clientData;
+
+	unsigned int itemID;
+};
+
+class PlayerCraftItemEvent : public Event
+{
+public:
+	virtual ~PlayerCraftItemEvent() {}
 
 	ClientData* clientData;
 

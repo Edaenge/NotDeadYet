@@ -26,6 +26,7 @@ PhysicsObject::PhysicsObject(PhysicsEngine* engine, const std::string& model, co
 	pos(position),
 	zModel(model)
 {
+	this->file = "";
 	this->pos = position;
 	this->forceAccum = Vector3(0,0,0);
 	this->damping = 0.0f;
@@ -42,6 +43,8 @@ PhysicsObject::~PhysicsObject()
 		delete [] this->mesh;
 	if(this->indicies)
 		delete [] this->indicies;
+
+	GetPhysicsResourceManager()->UnloadObjectDataResource(this->file.c_str());
 }
 
 void PhysicsObject::SetQuaternion( const Vector4& quat )
@@ -152,6 +155,7 @@ inline void DoMinMax(Vector3& min, Vector3& max, Vector3 v)
 
 bool PhysicsObject::LoadFromFile( string file )
 {
+	this->file = file;
 	// if substr of the last 4 = .obj do this:    - else load other format / print error
 	if(file.substr(file.length()-4) == ".ani")
 	{
@@ -175,11 +179,8 @@ bool PhysicsObject::LoadFromFile( string file )
 		file = pathfolder + line;
 		anifile.close();
 	}
-
-
-
-	ObjLoader oj;
-	ObjData* od = oj.LoadObjFile(file);
+	
+	ObjData* od = GetPhysicsResourceManager()->LoadObjectDataResourceFromFile(this->file.c_str())->GetObjectDataPointer();
 
 	if(od)
 	{
@@ -223,7 +224,6 @@ bool PhysicsObject::LoadFromFile( string file )
 		delete tempverts;
 		this->SetVerts(verts);
 		
-		delete od;
 		this->SetBoundingSphere(BoundingSphere(min, max));
 		return true;
 	}
