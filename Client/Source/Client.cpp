@@ -249,7 +249,7 @@ void Client::ReadMessages()
 			}
 			else if ( DisconnectedEvent* np = dynamic_cast<DisconnectedEvent*>(ev) )
 			{
-				CloseConnection("Unknown");
+				CloseConnection("Disconnected");
 			}
 
 			SAFE_DELETE(ev);
@@ -264,7 +264,7 @@ void Client::SendClientUpdate()
 	Vector3 up = this->zEng->GetCamera()->GetUpVector();
 	Vector4 rot = Vector4(0, 0, 0, 0);
 
-	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
+	Actor* player = this->zActorManager->GetActor(this->zID);
 	
 	if (player)
 	{
@@ -289,7 +289,7 @@ void Client::SendAck(unsigned int IM_ID)
 
 void Client::UpdateMeshRotation()
 {
-	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
+	Actor* player = this->zActorManager->GetActor(this->zID);
 	if (!player)
 	{
 		return;
@@ -829,6 +829,7 @@ void Client::HandleNetworkPacket( Packet* P )
 	}
 
 	delete P;
+	P = NULL;
 }
 
 void Client::HandleNetworkMessage( const std::string& msg )
@@ -1024,8 +1025,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 {
-	Actor* actor = this->zActorManager->SearchAndGetActor(ID);
-	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
+	Actor* actor = this->zActorManager->GetActor(ID);
+	Actor* player = this->zActorManager->GetActor(this->zID);
 
 	Vector3 postionPlayer = player->GetPosition();
 
@@ -1153,31 +1154,26 @@ std::vector<unsigned int> Client::RayVsWorld()
 	CollisionData data;
 	std::vector<unsigned int> Collisions;
 	//Static objects
-	std::vector<Actor*> actors = this->zActorManager->GetActors();
+	std::map<unsigned int, Actor*> actors = this->zActorManager->GetActors();
 	iMesh* mesh = NULL;
-	for(auto it = actors.begin(); it < actors.end(); it++)
+	for(auto it = actors.begin(); it != actors.end(); it++)
 	{
-		if ((*it)->GetID() != this->zID)
+		Actor* actor = it->second;
+		unsigned int ID = it->first;
+		if (ID != this->zID)
 		{
-			mesh = (*it)->GetMesh();
+			mesh = actor->GetMesh();
 			if (!mesh)
 			{
 				MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 				continue;
 			}
+
 			data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
 
 			if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
 			{
-				/*Looting_Data ld;
-				Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), 
-				(*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription(), (*it)->GetType());
-
-				ld.owner = gui_Data.zID;
-				ld.gid = gui_Data;
-				ld.type = OBJECT_TYPE_DYNAMIC_OBJECT;*/
-
-				Collisions.push_back((*it)->GetID());
+				Collisions.push_back(ID);
 			}
 		}
 		

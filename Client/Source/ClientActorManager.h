@@ -6,6 +6,7 @@
 
 #include "Actor.h"
 #include <vector>
+#include <map>
 
 class Updates
 {
@@ -100,16 +101,13 @@ public:
 	void UpdateObjects(float deltaTime, unsigned int ignoreID);
 
 	bool AddActor(Actor* actor);
-	Actor* SearchAndGetActor(const unsigned int ID);
-	Actor* GetActor(const int Index);
-	std::vector<Actor*> GetActors() const {return this->zActors;}
-	bool RemoveActor(const int Index);
-	int SearchForActor(const unsigned int ID);
-	void AddUpdate(Updates* update);
+	Actor* GetActor(unsigned int ID);
+	std::map<unsigned int, Actor*> GetActors();
+	void RemoveActor(const unsigned int ID);
 
-	Updates* SearchAndGetUpdate(const unsigned int ID);
-	int SearchForUpdate(const unsigned int ID);
-	Updates* GetUpdate(const int index);
+	void AddUpdate(Updates* update);
+	Updates* GetUpdate(const int ID);
+
 	Vector4 InterpolateRotation(const Vector4& currentRotation, const Vector4& newRotation, float t);
 	Vector3 InterpolatePosition(const Vector3& currentPosition, const Vector3& newPosition, float t);
 	/*! Returns time Value depending on type
@@ -122,7 +120,7 @@ public:
 	float GetInterpolationType(const float deltaTime, const unsigned int type);
 	
 private:
-	std::vector<Actor*> zActors;
-	std::vector<Updates*> zUpdates;
+	std::map<unsigned int, Actor*> zActors;
+	std::map<unsigned int, Updates*> zUpdates;
 	float zInterpolationVelocity;
 };

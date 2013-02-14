@@ -3,9 +3,9 @@
 
 bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned int ID)
 {
-	int index = this->zActorManager->SearchForActor(ID);
+	Actor* testActor = this->zActorManager->GetActor(ID);
 
-	if (index != -1)
+	if (testActor)
 	{
 		MaloW::Debug("Cant create a new Player Object. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
 		return false;
@@ -89,9 +89,9 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 	{
 		ID = positionIterator->first;
 		actorPosition = positionIterator->second;
-		actor = this->zActorManager->SearchAndGetActor(ID);
+		actor = this->zActorManager->GetActor(ID);
 
-		update = this->zActorManager->SearchAndGetUpdate(ID);
+		update = this->zActorManager->GetUpdate(ID);
 		if (update)
 		{
 			update->SetPosition(actorPosition);
@@ -110,7 +110,7 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		ID = rotationIterator->first;
 		actorRotation = rotationIterator->second;
 
-		actor = this->zActorManager->SearchAndGetActor(ID);
+		actor = this->zActorManager->GetActor(ID);
 		if (actor && ID != this->zID)
 			actor->SetRotation(actorRotation);
 	}
@@ -120,7 +120,7 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		ID = scaleIterator->first;
 		actorScale = scaleIterator->second;
 
-		actor = this->zActorManager->SearchAndGetActor(ID);
+		actor = this->zActorManager->GetActor(ID);
 		if (actor)
 			actor->SetScale(actorScale);
 	}
@@ -131,30 +131,26 @@ bool Client::RemoveActor(const unsigned int ID)
 	if (ID == -1)
 		return false;
 
-	int index = this->zActorManager->SearchForActor(ID);
+	Actor* actor = this->zActorManager->GetActor(ID);
 
 	//Check if object was found in the array
-	if(index == -1)
+	if(!actor)
 		return false;
 
 	if(this->zID == ID)
 	{
 		this->CloseConnection("Unknown reason possible Kicked");
 	}
-	Actor* object = this->zActorManager->GetActor(index);
-	if (!object)
-		return false;
 
-	iMesh* mesh = object->GetMesh();
+	iMesh* mesh = actor->GetMesh();
 
 	if(mesh)
 	{
 		this->zEng->DeleteMesh(mesh);
 	}
-	if(!this->zActorManager->RemoveActor(index))
-	{
-		MaloW::Debug("Failed To Remove Actor with ID: " + MaloW::convertNrToString((float)ID));
-	}
+
+	this->zActorManager->RemoveActor(ID);
+
 	return true;
 }
 //
