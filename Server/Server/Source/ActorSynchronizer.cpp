@@ -19,17 +19,14 @@ void ActorSynchronizer::OnEvent( Event* e )
 	if (ActorPositionEvent* UPE = dynamic_cast<ActorPositionEvent*>(e))
 	{
 		zFrameData->newPositions[UPE->zActor->GetID()] = UPE->zActor->GetPosition();
-		zUpdateSet.insert(UPE->zActor);
 	}
 	else if (ActorRotationEvent* URE = dynamic_cast<ActorRotationEvent*>(e))
 	{
 		zFrameData->newRotations[URE->zActor->GetID()] = URE->zActor->GetRotation();
-		zUpdateSet.insert(URE->zActor);
 	}
 	else if (ActorScaleEvent* USE = dynamic_cast<ActorScaleEvent*>(e))
 	{
 		zFrameData->newScales[USE->zActor->GetID()] = USE->zActor->GetScale();
-		zUpdateSet.insert(USE->zActor);
 	}
 	else if (ActorAdded* AD = dynamic_cast<ActorAdded*>(e))
 	{
@@ -60,16 +57,6 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 	std::string msg;
 
 	RegisterActor(cd);
-	
-	for(auto it = this->zUpdateSet.begin(); it != this->zUpdateSet.end(); it++)
-	{
-		msg = nmc.Convert(MESSAGE_TYPE_UPDATE_ACTOR, (float)(*it)->GetID());
-		msg += nmc.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
-		msg += nmc.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
-		msg += nmc.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
-
-		cd->Send(msg);
-	}
 	
 	cd->Send(*zFrameData);
 

@@ -107,6 +107,7 @@ public:
 	int SearchForActor(const unsigned int ID);
 	void AddUpdate(Updates* update);
 
+	Updates* SearchAndGetUpdate(const unsigned int ID);
 	int SearchForUpdate(const unsigned int ID);
 	Updates* GetUpdate(const int index);
 	Vector4 InterpolateRotation(const Vector4& currentRotation, const Vector4& newRotation, float t);

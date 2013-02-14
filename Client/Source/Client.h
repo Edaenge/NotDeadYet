@@ -13,6 +13,7 @@
 #include "ClientActorManager.h"
 #include "GuiManager.h"
 #include <World/WorldRenderer.h>
+#include <Packets/ServerFramePacket.h>
 #include <Packets/Packet.h>
 
 using namespace MaloW;
@@ -119,6 +120,7 @@ private:
 	//			  		//
 	//////////////////////
 	//Temporary Code
+	void UpdateActors(ServerFramePacket* SFP);
 	bool UpdateActor(const std::vector<std::string>& msgArray, const unsigned int ID);
 	bool RemoveActor(const unsigned int ID);
 	bool HandleTakeDamage(const unsigned int ID, float damageTaken);
