@@ -22,6 +22,9 @@ ActorManager::~ActorManager()
 
 void ActorManager::AddActor( Actor* actor )
 {
+	if(!actor)
+		return;
+
 	zActors.insert(actor);
 
 	ActorAdded e;
@@ -31,6 +34,9 @@ void ActorManager::AddActor( Actor* actor )
 
 void ActorManager::RemoveActor( Actor* actor )
 {
+	if(!actor)
+		return;
+
 	this->zActors.erase(actor);
 
 	ActorRemoved e;
@@ -42,6 +48,9 @@ void ActorManager::RemoveActor( Actor* actor )
 
 Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 {
+	if(!actor)
+		return NULL;
+
 	Actor* collide = NULL;
 	PhysicsCollisionData data;
 	float rangeWithin = range;
