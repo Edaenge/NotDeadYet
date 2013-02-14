@@ -111,6 +111,32 @@ void Client::HandleUseItem(const unsigned int ID)
 
 		this->zGuiManager->RemoveInventoryItemFromGui(material->GetID(), stacks);
 	}
+	if (item->GetItemType() == ITEM_TYPE_BANDAGE)
+	{
+		Bandage* bandage = dynamic_cast<Bandage*>(item);
+
+		if (!bandage)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Bandage)");
+			return;
+		}
+
+		int oldStacks = bandage->GetStackSize();
+		if (!bandage->Use())
+		{
+			MaloW::Debug("Stack is Empty");
+			return;
+		}
+		
+		int newStacks = bandage->GetStackSize();
+
+		int stacks = oldStacks - newStacks;
+		this->zPlayerInventory->RemoveItemStack(bandage->GetID(), stacks);
+
+		this->zGuiManager->RemoveInventoryItemFromGui(bandage->GetID(), stacks);
+		MaloW::Debug("Bandaging");
+		return;
+	}
 }
 
 void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
@@ -480,9 +506,10 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 				if (Messages::FileWrite())
 					Messages::Debug("Ammo UnEquipped " + projectile->GetItemName() + " ID: " + MaloW::convertNrToString((float)projectile->GetID()));
 
-				delete projectile;
-				projectile = NULL;
+				this->zGuiManager->UnEquipItem(projectile->GetID(), projectile->GetStackSize());
 
+				this->zPlayerInventory->RemoveItem(projectile);
+					
 				this->zPlayerInventory->UnEquipProjectile();
 			}
 		}
@@ -710,6 +737,14 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		break;
 	case ITEM_TYPE_GEAR:
 		item = new Gear(ID, itemSubType, itemType);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
+		break;
+	case ITEM_TYPE_BANDAGE:
+		item = new Bandage(itemSubType, itemType);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);

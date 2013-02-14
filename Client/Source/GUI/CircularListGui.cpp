@@ -249,6 +249,10 @@ void CircularListGui::Adjust(int type, int inventory)
 		this->zOptions[0] = CRAFT;
 		this->zOptions[1] = DROP;
 		break;
+	case ITEM_TYPE_BANDAGE:
+		this->zOptions[0] = USE;
+		this->zOptions[1] = DROP;
+		break;
 	default:
 		break;
 	}

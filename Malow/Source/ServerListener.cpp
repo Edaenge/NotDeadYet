@@ -36,9 +36,10 @@ ServerListener::ServerListener( MaloW::Process *observer, const unsigned int &po
 
 ServerListener::~ServerListener()
 {
+	if ( zListenSocket ) closesocket(zListenSocket);
+
 	this->Close();
 	this->WaitUntillDone();
-	if ( zListenSocket ) closesocket(zListenSocket);
 }
 
 bool ServerListener::Accept( SOCKET &newConnection, sockaddr_in &client )
@@ -68,8 +69,9 @@ void ServerListener::Life()
 	SOCKET newConnection;
 	sockaddr_in client = { 0 };
 
-	while(this->stayAlive && Accept(newConnection, client))
+	while(this->stayAlive)
 	{
+		this->stayAlive = Accept(newConnection, client);
 		char *connected_ip = inet_ntoa(client.sin_addr);
 		std::string ip(connected_ip);
 

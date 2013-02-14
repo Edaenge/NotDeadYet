@@ -6,6 +6,7 @@
 #include "Container.h"
 #include "Material.h"
 #include "MeleeWeapon.h"
+#include "Bandage.h"
 #include "FileReader.h"
 
 #include <string>
@@ -25,6 +26,7 @@ public:
 	const Food* GetFood(const unsigned int SubType);
 	const Material* GetMaterial(const unsigned int SubType);
 	const Container* GetContainer(const unsigned int SubType);
+	const Bandage* GetBandage(const unsigned int SubType);
 	
 private:
 	bool ReadFromFile();
@@ -34,6 +36,7 @@ private:
 	bool InterpCommand(std::string command, std::string key, Container*& ct);
 	bool InterpCommand(std::string command, std::string key, Material*& ma);
 	bool InterpCommand(std::string command, std::string key, Projectile*& pa);
+	bool InterpCommand(std::string command, std::string key, Bandage*& ba);
 private:
 	std::vector<Item*> zItems;
 };

@@ -121,7 +121,6 @@ private:
 	//////////////////////
 	//Temporary Code
 	void UpdateActors(ServerFramePacket* SFP);
-	bool UpdateActor(const std::vector<std::string>& msgArray, const unsigned int ID);
 	bool RemoveActor(const unsigned int ID);
 	bool HandleTakeDamage(const unsigned int ID, float damageTaken);
 	/*! Adds A Player Object.*/
