@@ -2,7 +2,13 @@
 
 #include "Bandage.h"
 
-Bandage::Bandage()
+Bandage::Bandage() : Item()
+{
+	this->zStacking = true;
+}
+
+Bandage::Bandage(const unsigned int ID, const unsigned int Type, const unsigned int SubType)
+	: Item(ID, Type, SubType)
 {
 	this->zStacking = true;
 }
@@ -12,6 +18,12 @@ Bandage::Bandage( const unsigned int Type, const unsigned int SubType )
 {
 	this->zStacking = true;
 }
+
+Bandage::~Bandage()
+{
+
+}
+
 Bandage::Bandage(const Bandage& other)
 {
 	this->zID = other.zID;
@@ -34,11 +46,6 @@ Bandage::Bandage(const Bandage* other)
 	this->zItemType = other->zItemType;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
-}
-
-Bandage::~Bandage()
-{
-
 }
 
 bool Bandage::Use()

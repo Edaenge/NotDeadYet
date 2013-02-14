@@ -524,7 +524,6 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 
 void Host::SynchronizeAll()
 {
-	
 	for( auto i = zClients.begin(); i != zClients.end(); ++i )
 	{
 		zSynchronizer->SendUpdatesTo(i->second);
