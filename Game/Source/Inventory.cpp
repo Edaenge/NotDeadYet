@@ -61,10 +61,6 @@ Inventory::~Inventory()
 
 	}
 
-	SAFE_DELETE(this->zRangedWeapon);
-	SAFE_DELETE(this->zMeleeWeapon);
-	SAFE_DELETE(this->zProjectile);
-
 	for (auto x = this->zGear.begin(); x < this->zGear.end(); x++)
 	{
 		SAFE_DELETE((*x));

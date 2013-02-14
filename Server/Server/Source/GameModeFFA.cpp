@@ -39,7 +39,7 @@ void GameModeFFA::OnEvent( Event* e )
 	{
 		if( PlayerActor* pa = dynamic_cast<PlayerActor*>(ATD->zActor) )
 		{
-			if(!pa->IsAlive())
+			if(pa->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 			{
 				// Set new spawn pos
 				int maxPlayers = zPlayers.size();
@@ -47,6 +47,11 @@ void GameModeFFA::OnEvent( Event* e )
 				pa->SetPosition(zGame->CalcPlayerSpawnPoint(rand));
 				pa->SetHealth(pa->GetHealthMax());
 				pa->SetStamina(pa->GetStaminaMax());
+
+				ATD->zDamage->blunt = 0;
+				ATD->zDamage->fallingDamage = 0;
+				ATD->zDamage->piercing = 0;
+				ATD->zDamage->slashing = 0;
 
 				//Add to scoreboard
 				if( PlayerActor* dpa = dynamic_cast<PlayerActor*>(ATD->zDealer) )
