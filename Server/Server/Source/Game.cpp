@@ -834,6 +834,7 @@ void Game::OnEvent( Event* e )
 					msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_AMMO);
 					PUEWE->clientData->Send(msg);
 					inventory->RemoveItem(arrow);
+					inventory->UnEquipProjectile();
 				}
 				//Send feedback message
 				PUEWE->clientData->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));

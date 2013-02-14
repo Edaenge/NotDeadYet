@@ -4,7 +4,7 @@
 void Client::HandleWeaponUse(const unsigned int ID)
 {
 	Item* item = this->zPlayerInventory->GetPrimaryEquip();
-	int stack = 0;
+	unsigned int itemStackID = 0;
 
 	if(item->GetID() != ID)
 	{
@@ -16,18 +16,24 @@ void Client::HandleWeaponUse(const unsigned int ID)
 	{
 		if(proj->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
 		{
-			stack = proj->GetStackSize()-1;
-			proj->SetStackSize(stack);
+			proj->SetStackSize(proj->GetStackSize()-1);
+			itemStackID = proj->GetID();
 		}
+		else 
+			return;
 	}
 	else if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
 	{
 		proj = this->zPlayerInventory->GetProjectile();
-		stack = proj->GetStacking()-1;
-		proj->SetStacking(stack);
+
+		if(!proj)
+			return;
+
+		proj->SetStackSize(proj->GetStackSize()-1);
+		itemStackID = proj->GetID();
 	}
 
-	this->zGuiManager->RemoveInventoryItemFromGui(ID, stack);
+	this->zGuiManager->RemoveInventoryItemFromGui(itemStackID, 1);
 }
 
 void Client::HandleUseItem(const unsigned int ID)
@@ -165,7 +171,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		this->zPlayerInventory->EquipRangedWeapon(rWpn);
 
-		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetStackSize(), 
+		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), 0, 
 			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType(), rWpn->GetItemSubType());
 
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
@@ -240,7 +246,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		this->zPlayerInventory->EquipMeleeWeapon(mWpn);
 
-		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), mWpn->GetStackSize(), 
+		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), 0, 
 			mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType(), mWpn->GetItemSubType());
 
 		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID(), mWpn->GetStackSize());
