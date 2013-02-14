@@ -145,7 +145,7 @@ void Client::InitGraphics(const std::string& mapName)
 	Vector2 center = this->zWorld->GetWorldCenter();
 
 	this->zEng->GetCamera()->SetPosition( Vector3(center.x, 20, center.y) );
-	this->zEng->GetCamera()->LookAt( Vector3(center.x, 0, center.y) );
+	this->zEng->GetCamera()->LookAt( this->zEng->GetCamera()->GetPosition() + Vector3(1, 0, 0) );
 
 	this->zAnchor = this->zWorld->CreateAnchor();
 	this->zAnchor->position = center;
@@ -160,12 +160,15 @@ void Client::InitGraphics(const std::string& mapName)
 	float xPos = offSet + (0.5f * dx) - length * 0.5f;
 	float yPos = (windowHeight / 2.0f) - length * 0.5f; //Boom
 
-	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
-
 	this->zWorld->Update();
 	this->zWorldRenderer->Update();
+	
+	this->zEng->DeleteImage(this->zBlackImage);
+	this->zBlackImage = NULL;
 
-	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
+	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 1.0f, 0.2f);	//this->zEng->StartRendering();
+
+	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 }
 
 void Client::Init()
@@ -220,7 +223,6 @@ void Client::Life()
 		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 		{
 			//this->zGuiManager->ToggleIngameMenu();
-			this->stayAlive = false;
 			this->CloseConnection("");
 		}
 

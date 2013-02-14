@@ -47,6 +47,8 @@ public:
 	/*! Checks if Cursor should be Visible*/
 	bool GetCursorVisibility();
 
+	void SetBlackImage(iImage* image){ this->zBlackImage = image; }
+
 private:
 
 	//////////////////////
@@ -195,6 +197,8 @@ private:
 	float	zDamageOpacity;
 	
 	bool zGameStarted;
+
+	iImage* zBlackImage;
 
 	//Player Data
 	float zHealth;

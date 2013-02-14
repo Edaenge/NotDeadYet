@@ -50,6 +50,10 @@ void Game::InitGameClient(const std::string &IP, const unsigned int &port)
 	//Connects to a Host With the IP Address and port in the parameters
 	// TODO: RAII
 	this->zClient = new Client();
+	iImage* blackImage = GetGraphics()->CreateImage(Vector2(0,0), Vector2(GetGraphics()->GetEngineParameters().WindowWidth, 
+		GetGraphics()->GetEngineParameters().WindowHeight), "Media/LoadingScreen/FadeTexture.png");
+	this->zClient->SetBlackImage(blackImage);
+	blackImage = NULL;
 	this->zClient->Connect(IP, port);
 	this->zClient->Start();
 }
