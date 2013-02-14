@@ -57,10 +57,8 @@ void Client::HandleUseItem(const unsigned int ID)
 		}
 		MaloW::Debug("Drinking");
 		container->Use();
-
-		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_FOOD)
+	else if (item->GetItemType() == ITEM_TYPE_FOOD)
 	{
 		Food* food = dynamic_cast<Food*>(item);
 
@@ -83,9 +81,8 @@ void Client::HandleUseItem(const unsigned int ID)
 
 		this->zGuiManager->RemoveInventoryItemFromGui(food->GetID(), stacks);
 		MaloW::Debug("Eating");
-		return;
 	}
-	if (item->GetItemType() == ITEM_TYPE_MATERIAL)
+	else if (item->GetItemType() == ITEM_TYPE_MATERIAL)
 	{
 
 		Material* material = dynamic_cast<Material*>(item);
@@ -111,7 +108,7 @@ void Client::HandleUseItem(const unsigned int ID)
 
 		this->zGuiManager->RemoveInventoryItemFromGui(material->GetID(), stacks);
 	}
-	if (item->GetItemType() == ITEM_TYPE_BANDAGE)
+	else if (item->GetItemType() == ITEM_TYPE_BANDAGE)
 	{
 		Bandage* bandage = dynamic_cast<Bandage*>(item);
 
@@ -135,7 +132,6 @@ void Client::HandleUseItem(const unsigned int ID)
 
 		this->zGuiManager->RemoveInventoryItemFromGui(bandage->GetID(), stacks);
 		MaloW::Debug("Bandaging");
-		return;
 	}
 }
 
@@ -181,9 +177,9 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 	}
 	if (item->GetItemType() == ITEM_TYPE_PROJECTILE)
 	{
-		if (Slot != EQUIPMENT_SLOT_AMMO)
+		if (Slot != EQUIPMENT_SLOT_PROJECTILE)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not an Ammo: " + MaloW::convertNrToString(EQUIPMENT_SLOT_AMMO) + " != Slot: " + MaloW::convertNrToString((float)Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not an Ammo: " + MaloW::convertNrToString(EQUIPMENT_SLOT_PROJECTILE) + " != Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 
@@ -259,7 +255,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 bool Client::HandleUnEquipItem(const unsigned int ItemID, const int Slot)
 {
-	if (Slot == EQUIPMENT_SLOT_AMMO)
+	if (Slot == EQUIPMENT_SLOT_PROJECTILE)
 	{
 		Projectile* projectile = this->zPlayerInventory->GetProjectile();
 
@@ -495,7 +491,7 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 		return;
 	}
 
-	if (Slot == EQUIPMENT_SLOT_AMMO)
+	if (Slot == EQUIPMENT_SLOT_PROJECTILE)
 	{
 		Projectile* projectile = this->zPlayerInventory->GetProjectile();
 
@@ -744,7 +740,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_BANDAGE:
-		item = new Bandage(ID, itemSubType, itemType);
+		item = new Bandage(ID, itemType, itemSubType);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);

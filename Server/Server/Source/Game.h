@@ -46,12 +46,15 @@ public:
 	void SetPlayerBehavior( Player* player, PlayerBehavior* behavior );
 	/*! Converts an item to ItemActor*/
 	ItemActor* ConvertToItemActor(Behavior* behavior,  Actor*& oldActorOut);
-	//Test function, spawns items
-	void SpawnItemsDebug();
-
+	
 	Vector3 CalcPlayerSpawnPoint(int MaxPoints, Vector2 center);
 	Vector3 CalcPlayerSpawnPoint(int nr);
 	
+	ActorManager* GetActorManager() {return this->zActorManager;}
+	World* GetWorld() {return this->zWorld;}
+private:
+	//Test function, spawns items
+	void SpawnItemsDebug();
 private:
 	PhysicsEngine* zPhysicsEngine;
 };

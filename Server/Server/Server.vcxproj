@@ -33,6 +33,7 @@
     <ClCompile Include="Source\DeerActor.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\GameModeFFA.cpp" />
+    <ClCompile Include="Source\GameModeTest.cpp" />
     <ClCompile Include="Source\GhostActor.cpp" />
     <ClCompile Include="Source\PhysicsEngine\ObjectDataResource.cpp" />
     <ClCompile Include="Source\PhysicsEngine\PhysicsResourceManager.cpp" />
@@ -76,6 +77,7 @@
     <ClInclude Include="Source\GameEvents.h" />
     <ClInclude Include="Source\GameMode.h" />
     <ClInclude Include="Source\GameModeFFA.h" />
+    <ClInclude Include="Source\GameModeTest.h" />
     <ClInclude Include="Source\GhostActor.h" />
     <ClInclude Include="Source\PhysicsEngine\ObjectDataResource.h" />
     <ClInclude Include="Source\PhysicsEngine\PhysicsResourceManager.h" />

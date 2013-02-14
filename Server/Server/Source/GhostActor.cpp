@@ -1,7 +1,7 @@
 #include "GhostActor.h"
 
 GhostActor::GhostActor(Player* player) : 
-	zPlayer(player)
+	zPlayer(player), Actor()
 {
 }
 

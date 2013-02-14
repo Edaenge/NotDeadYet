@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Observer.h>
+#include "PlayerActor.h"
 
 class GameMode : public Observer
 {
@@ -14,4 +15,7 @@ public:
 
 	virtual bool Update(float) = 0;
 	virtual void OnEvent(Event* e) = 0;
+
+protected:
+	virtual void OnPlayerDeath(PlayerActor* pActor) = 0;
 };

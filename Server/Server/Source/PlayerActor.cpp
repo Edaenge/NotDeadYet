@@ -14,6 +14,9 @@ PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) :
 
 	this->zHungerChanged = true;
 	this->zHydrationChanged = true;
+
+	this->zFullnessMax = 100;
+	this->zHydrationMax = 100;
 }
 //
 //void PlayerActor::InitValues()

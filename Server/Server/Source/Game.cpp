@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "GameModeFFA.h"
+#include "GameModeTest.h"
 #include "Behavior.h"
 #include <world/World.h>
 #include <World/EntityList.h>
@@ -30,11 +31,15 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 {
 	if (mode.find("FFA") == 0 )
 	{
-		zGameMode = new GameModeFFA(this, 10);
+		zGameMode = new GameModeFFA(this);
+	}
+	else if (mode.find("TestMode") == 0)
+	{
+		zGameMode = new GameModeTest(this, 10);
 	}
 	else
 	{
-		zGameMode = new GameModeFFA(this, 10);
+		zGameMode = new GameModeFFA(this);
 	}
 
 	// Load Entities
@@ -750,7 +755,7 @@ void Game::OnEvent( Event* e )
 							
 							//Sending Message to client And removing stack from inventory.
 							inv->RemoveItemStack(ID, stacks);
-							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 
 							PUIE->clientData->Send(msg);
 						}
@@ -763,7 +768,7 @@ void Game::OnEvent( Event* e )
 						{
 							if(inv->RemoveItem(bandage));
 							{
-								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
+								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
 								PUIE->clientData->Send(msg);
 							}
 						}
@@ -810,33 +815,36 @@ void Game::OnEvent( Event* e )
 
 		if(ranged = dynamic_cast<RangedWeapon*>(item))
 		{
-			//Check if arrows are equipped
-			Projectile* arrow = inventory->GetProjectile();
-			if(arrow && arrow->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+			if (ranged->GetItemSubType() == ITEM_SUB_TYPE_BOW)
 			{
-				//create projectileActor
-				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
-				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
-				ProjectileArrowBehavior* projBehavior= new ProjectileArrowBehavior(projActor, this->zWorld);
-				Damage damage;
-
-				//Sets damage
-				damage.piercing = ranged->GetDamage() + arrow->GetDamage();
-				projActor->SetDamage(damage);
-
-				this->zActorManager->AddActor(projActor);
-				this->zBehaviors.insert(projBehavior);
-				//Decrease stack
-				arrow->Use();
-				if (arrow->GetStackSize() <= 0)
+				//Check if arrows are equipped
+				Projectile* arrow = inventory->GetProjectile();
+				if(arrow && arrow->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
 				{
-					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
-					msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_AMMO);
-					PUEWE->clientData->Send(msg);
-					inventory->RemoveItem(arrow);
+					//create projectileActor
+					PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
+					ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
+					ProjectileArrowBehavior* projBehavior= new ProjectileArrowBehavior(projActor, this->zWorld);
+					Damage damage;
+
+					//Sets damage
+					damage.piercing = ranged->GetDamage() + arrow->GetDamage();
+					projActor->SetDamage(damage);
+
+					this->zActorManager->AddActor(projActor);
+					this->zBehaviors.insert(projBehavior);
+					//Decrease stack
+					arrow->Use();
+					if (arrow->GetStackSize() <= 0)
+					{
+						std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
+						msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_PROJECTILE);
+						PUEWE->clientData->Send(msg);
+						inventory->RemoveItem(arrow);
+					}
+					//Send feedback message
+					PUEWE->clientData->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)pActor->GetID()));
 				}
-				//Send feedback message
-				PUEWE->clientData->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)pActor->GetID()));
 			}
 		}
 		else if(proj = dynamic_cast<Projectile*>(item))
@@ -845,7 +853,7 @@ void Game::OnEvent( Event* e )
 		}
 		else if(meele = dynamic_cast<MeleeWeapon*>(item))
 		{
-			float range = .0f; 
+			float range = 0.0f; 
 			BioActor* victim = NULL;
 
 			//Check Collisions
@@ -878,7 +886,7 @@ void Game::OnEvent( Event* e )
 		if(Projectile* proj = dynamic_cast<Projectile*>(item))
 		{
 			inventory->EquipProjectile(proj);
-			slot = EQUIPMENT_SLOT_AMMO;
+			slot = EQUIPMENT_SLOT_PROJECTILE;
 		}
 		else if(MeleeWeapon* meele = dynamic_cast<MeleeWeapon*>(item))
 		{
@@ -918,7 +926,7 @@ void Game::OnEvent( Event* e )
 			return;
 		}
 
-		if(PUEIE->eq_Slot == EQUIPMENT_SLOT_AMMO)
+		if(PUEIE->eq_Slot == EQUIPMENT_SLOT_PROJECTILE)
 		{
 			inventory->UnEquipProjectile();
 		}
@@ -1113,7 +1121,10 @@ ItemActor* Game::ConvertToItemActor(Behavior* behavior, Actor*& oldActorOut)
 	if(!item)
 		return NULL;
 
-	ItemActor* itemActor = new ItemActor(new Projectile((*item)));
+	Projectile* projectile = new Projectile((*item));
+	projectile->SetStackSize(1);
+
+	ItemActor* itemActor = new ItemActor(projectile);
 	itemActor->SetPosition(projActor->GetPosition());
 	itemActor->SetRotation(projActor->GetRotation());
 	itemActor->SetScale(projActor->GetScale());

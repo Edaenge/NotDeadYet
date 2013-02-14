@@ -222,7 +222,7 @@ void Client::Life()
 
 		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 		{
-			//this->zGuiManager->ToggleIngameMenu();
+			//To do Add In game Menu Instead of exiting client.
 			this->CloseConnection("");
 		}
 
@@ -901,6 +901,15 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TAKE_DAMAGE, msgArray[0]);
 			float damageTaken = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, msgArray[1]);
 			this->HandleTakeDamage(id, damageTaken);
+		}
+	}
+	else if (msg.find(M_DEAD_ACTOR.c_str()) == 0)
+	{
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TAKE_DAMAGE, msgArray[0]);
+
+		if (this->zID == id)
+		{
+			this->zCreated = false;
 		}
 	}
 	//Actors
