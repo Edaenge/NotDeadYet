@@ -5,6 +5,15 @@
 #include "Game.h"
 #include "GUI/GUISet.h"
 
+enum SET{
+	NOMENU,
+	MAINMENU,
+	FIND_SERVER,
+	OPTIONS,
+	GETIPADRESS,
+	QUIT,
+	LASTMENU
+};
 
 class MainMenu 
 {

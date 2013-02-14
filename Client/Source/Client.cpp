@@ -51,6 +51,8 @@ Client::Client()
 	this->zDamageIndicator = NULL;
 	this->zDamageOpacity = 0.0f;
 	
+	this->zIgm = new InGameMenu();
+
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Walk.wav", false);
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
 }
@@ -72,6 +74,8 @@ Client::~Client()
 	SAFE_DELETE(this->zActorManager);
 	SAFE_DELETE(this->zServerChannel);
 	SAFE_DELETE(this->zPlayerInventory);
+
+	SAFE_DELETE(this->zIgm);
 
 	SAFE_DELETE(this->zWorld);
 	
@@ -191,7 +195,7 @@ void Client::Life()
 	MaloW::Debug("Client Process Started");
 
 	this->Init();
-
+	bool showInGameMenu = false;
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->Update();
@@ -199,6 +203,11 @@ void Client::Life()
 		this->HandleKeyboardInput();
 		if(this->zCreated)
 		{
+			if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
+			{
+				this->zIgm->ToggleMenu();
+				showInGameMenu = true;
+			}
 			this->zSendUpdateDelayTimer += this->zDeltaTime;
 			this->zTimeSinceLastPing += this->zDeltaTime;
 
@@ -214,15 +223,25 @@ void Client::Life()
 			this->UpdateActors();
 		}
 
-		if (this->stayAlive)
-		{
-			this->ReadMessages();
-		}
+		this->ReadMessages();
 
-		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
+		if (showInGameMenu)
 		{
-			//this->zGuiManager->ToggleIngameMenu();
-			this->CloseConnection("");
+			zShowCursor = true;
+			int returnValue = this->zIgm->Run();
+			if(returnValue == IGQUIT)
+			{
+				this->stayAlive = false;
+				this->CloseConnection("");
+			}
+			else if(returnValue == IGRESUME)
+			{
+				showInGameMenu = false;
+				zShowCursor = false;
+				this->zEng->GetKeyListener()->SetMousePosition(
+					Vector2(this->zEng->GetEngineParameters().WindowWidth/2, 
+					this->zEng->GetEngineParameters().WindowHeight/2));
+			}
 		}
 
 		Sleep(5);
@@ -390,11 +409,9 @@ void Client::HandleKeyboardInput()
 		return;
 	}
 
-	this->zShowCursor = this->zGuiManager->IsGuiOpen();
-
 	this->CheckMovementKeys();
 
-	if(this->zShowCursor)
+	if(this->zGuiManager->IsGuiOpen())
 	{
 		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
@@ -510,6 +527,7 @@ void Client::HandleKeyboardInput()
 		{
 			if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
 			{
+				this->zShowCursor = !this->zShowCursor;
 				this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
 				this->zGuiManager->ToggleInventoryGui();
 			}
