@@ -117,8 +117,14 @@ void GameModeFFA::OnPlayerDeath(PlayerActor* pActor)
 	this->zGame->SetPlayerBehavior(player, pGhostBehavior);
 
 	ActorManager* aManager = this->zGame->GetActorManager();
-
-	cd->Send(NMC.Convert(MESSAGE_TYPE_SELF_ID, gActor->GetID()));
-
+	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, gActor->GetID());
+	/*	NONE = 0
+		HUMAN = 1
+		GHOST = 2
+		ANIMAL = 3
+	*/
+	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, (float)1);
+	cd->Send(msg);
+	
 	aManager->AddActor(gActor);
 }

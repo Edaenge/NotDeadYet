@@ -24,7 +24,7 @@ Client::Client()
 	this->zID = 0;
 	this->zIP = "";
 	this->zPort = 0;
-	this->zIsHuman = true;
+	this->zActorType = NONE;
 	this->zRunning = true;
 	this->zCreated = false;
 	this->zGameStarted = false;
@@ -409,70 +409,50 @@ void Client::HandleKeyboardInput()
 		return;
 	}
 
-	this->CheckMovementKeys();
+	if (this->zActorType != NONE)
+		this->CheckMovementKeys();
 
-	if(this->zGuiManager->IsGuiOpen())
+
+	if (this->zActorType == HUMAN)
 	{
-		Menu_select_data msd;
-		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
-		
-		if (msd.zAction != -1)
+		if(this->zGuiManager->IsGuiOpen())
 		{
-			if (msd.zID != -1)
+			Menu_select_data msd;
+			msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
+
+			if (msd.zAction != -1)
 			{
-				Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
-				if (msd.zAction == USE)
+				if (msd.zID != -1)
 				{
-					if (item)
-						SendUseItemMessage(item->GetID());
-				}
-				if (msd.zAction == CRAFT)
-				{
-					if (item)
-						SendCraftItemMessage(item->GetID());
-				}
-				else if(msd.zAction == EQUIP)
-				{
-					if(item)
-						SendEquipItem(msd.zID);
-				}
-				else if (msd.zAction == DROP)
-				{
-					if(item)
-						this->SendDropItemMessage(msd.zID);
-				}
-				else if (msd.zAction == UNEQUIP)
-				{
-					if(item)
-						this->SendUnEquipItem(msd.zID, (msd.zType));
+					Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
+					if (msd.zAction == USE)
+					{
+						if (item)
+							SendUseItemMessage(item->GetID());
+					}
+					if (msd.zAction == CRAFT)
+					{
+						if (item)
+							SendCraftItemMessage(item->GetID());
+					}
+					else if(msd.zAction == EQUIP)
+					{
+						if(item)
+							SendEquipItem(msd.zID);
+					}
+					else if (msd.zAction == DROP)
+					{
+						if(item)
+							this->SendDropItemMessage(msd.zID);
+					}
+					else if (msd.zAction == UNEQUIP)
+					{
+						if(item)
+							this->SendUnEquipItem(msd.zID, (msd.zType));
+					}
 				}
 			}
 		}
-	}
-
-	//UnEquip Melee Weapon
-	if(this->zEng->GetKeyListener()->IsPressed('F'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_READY))
-		{
-			this->zKeyInfo.SetKeyState(KEY_READY, true);
-
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAYER_READY);
-
-			this->zServerChannel->Send(msg);
-		}
-		
-	}
-	else
-	{
-		if(this->zKeyInfo.GetKeyState(KEY_READY))
-		{
-			this->zKeyInfo.SetKeyState(KEY_READY, false);
-		}
-	}
-	
-	if (this->zIsHuman)
-	{
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
 		{
 			if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
@@ -486,12 +466,7 @@ void Client::HandleKeyboardInput()
 						msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (*it));
 					}
 					this->zServerChannel->Send(msg);
-					//for (auto x = collisionObjects.begin(); x < collisionObjects.end(); x++)
-					//{
-					//	gui_Item_Datas.push_back((*x).gid);
-					//}
 				}
-				//this->zGuiManager->ShowLootingGui(gui_Item_Datas);
 				this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
 			}
 		}
@@ -565,6 +540,29 @@ void Client::HandleKeyboardInput()
 		}
 		this->HandleWeaponEquips();
 	}
+	
+
+	//Tell Server Client is Ready
+	if(this->zEng->GetKeyListener()->IsPressed('F'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_READY))
+		{
+			this->zKeyInfo.SetKeyState(KEY_READY, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAYER_READY);
+
+			this->zServerChannel->Send(msg);
+		}
+		
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_READY))
+		{
+			this->zKeyInfo.SetKeyState(KEY_READY, false);
+		}
+	}
+	
 	this->HandleDebugInfo();
 }
 //use to equip weapon with keyboard
@@ -1003,6 +1001,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	else if(msg.find(M_SELF_ID.c_str()) == 0)
 	{
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
+		this->zActorType = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TYPE, msgArray[1]);
 	}
 	else if(msg.find(M_CONNECTED.c_str()) == 0)
 	{
