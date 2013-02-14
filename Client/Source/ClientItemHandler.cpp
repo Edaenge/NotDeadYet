@@ -3,37 +3,37 @@
 
 void Client::HandleWeaponUse(const unsigned int ID)
 {
-	Weapon* weapon = this->zPlayerInventory->GetRangedWeapon();
-	if (!weapon)
-	{
-		MaloW::Debug("No Weapon Is Equipped");
+	Item* item = this->zPlayerInventory->GetPrimaryEquip();
+	unsigned int itemStackID = 0;
 
+	if(item->GetID() != ID)
+	{
+		MaloW::Debug("Item ID do not match in ClientItemHandler, HandleUseWeapon");
 		return;
 	}
-	if(weapon->GetID() == ID)
+
+	if (Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
-		if (weapon->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
+		if(proj->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
 		{
-			Projectile* arrow = this->zPlayerInventory->GetProjectile();
-
-			if (!arrow)
-			{
-				MaloW::Debug("No Ammo Is Equipped");
-				return;
-			}
-
-			arrow->Use();
-			this->zGuiManager->RemoveInventoryItemFromGui(arrow->GetID(), 1);
+			proj->SetStackSize(proj->GetStackSize()-1);
+			itemStackID = proj->GetID();
+		}
+		else 
 			return;
-		}
-		if (weapon->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
-		{
-			int newSize = weapon->GetStackSize() - 1;
-			weapon->SetStackSize(newSize);
-
-			this->zGuiManager->RemoveInventoryItemFromGui(weapon->GetID(), 1);
-		}
 	}
+	else if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
+	{
+		proj = this->zPlayerInventory->GetProjectile();
+
+		if(!proj)
+			return;
+
+		proj->SetStackSize(proj->GetStackSize()-1);
+		itemStackID = proj->GetID();
+	}
+
+	this->zGuiManager->RemoveInventoryItemFromGui(itemStackID, 1);
 }
 
 void Client::HandleUseItem(const unsigned int ID)
@@ -167,7 +167,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		this->zPlayerInventory->EquipRangedWeapon(rWpn);
 
-		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), rWpn->GetStackSize(), 
+		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), 0, 
 			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType(), rWpn->GetItemSubType());
 
 		this->zGuiManager->RemoveInventoryItemFromGui(rWpn->GetID(), rWpn->GetStackSize());
@@ -242,7 +242,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		this->zPlayerInventory->EquipMeleeWeapon(mWpn);
 
-		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), mWpn->GetStackSize(), 
+		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), 0, 
 			mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType(), mWpn->GetItemSubType());
 
 		this->zGuiManager->RemoveInventoryItemFromGui(mWpn->GetID(), mWpn->GetStackSize());

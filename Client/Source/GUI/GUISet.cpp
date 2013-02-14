@@ -159,7 +159,7 @@ CheckBox* GUISet::GetCheckBox(string checkBox)
 		}
 	}
 	return NULL;
-}/*
+}
 TextBox* GUISet::GetTextBox(string textBox)
 {
 	for(int i = 0; i < this->mNrOfElements; i++)
@@ -174,4 +174,4 @@ TextBox* GUISet::GetTextBox(string textBox)
 		}
 	}
 	return NULL;
-}*/
+}

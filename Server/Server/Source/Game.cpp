@@ -844,8 +844,10 @@ void Game::OnEvent( Event* e )
 					}
 					//Send feedback message
 					PUEWE->clientData->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)pActor->GetID()));
+					inventory->UnEquipProjectile();
 				}
-			}
+				//Send feedback message
+				PUEWE->clientData->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));			}
 		}
 		else if(proj = dynamic_cast<Projectile*>(item))
 		{
@@ -1101,7 +1103,7 @@ ItemActor* Game::ConvertToItemActor(Behavior* behavior, Actor*& oldActorOut)
 	int itemType = 0;
 	ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(behavior);
 
-	//Check what kind of projectile
+	//Check what kind of projectilé
 	if(projBehavior)
 		itemType = ITEM_SUB_TYPE_ARROW;
 	else if(false) //Else if stone
@@ -1120,7 +1122,6 @@ ItemActor* Game::ConvertToItemActor(Behavior* behavior, Actor*& oldActorOut)
 
 	if(!item)
 		return NULL;
-
 	Projectile* projectile = new Projectile((*item));
 	projectile->SetStackSize(1);
 

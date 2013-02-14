@@ -5,6 +5,15 @@
 #include "Game.h"
 #include "GUI/GUISet.h"
 
+enum SET{
+	NOMENU,
+	MAINMENU,
+	FIND_SERVER,
+	OPTIONS,
+	GETIPADRESS,
+	QUIT,
+	LASTMENU
+};
 
 class MainMenu 
 {
@@ -25,6 +34,8 @@ private:
 	void EnableMouse(bool value);
 
 	void AddResolutionsToDropBox(DropDownList* ddl);
+
+	void UpdateOptionsMenu();
 
 private:
 	GUISet*	zSets;
