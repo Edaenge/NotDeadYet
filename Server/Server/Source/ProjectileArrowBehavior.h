@@ -3,18 +3,21 @@
 #include "Behavior.h"
 #include <Vector.h>
 
-class ProjectileBehavior : public Behavior
+class ProjectileArrowBehavior : public Behavior
 {
 private:
 	Vector3 zVelocity;
 	float zDamping;
+	float zSpeed;
 	bool zMoving;
 
 public:
-	ProjectileBehavior(Actor* actor, World* world);
+	ProjectileArrowBehavior(Actor* actor, World* world);
 
 	bool Update(float dt);
 	bool IsMoving() {return this->zMoving;}
+	void SetSpeed(float speed) {this->zSpeed = speed;}
+	void SetDamping(float damping) {this->zDamping = damping;}
 	/*! Stops the movement.*/
 	inline void Stop(){zMoving = false;}
 };

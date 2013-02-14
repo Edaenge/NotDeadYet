@@ -17,6 +17,7 @@ class ActorSynchronizer;
 class KeyStates;
 class Entity;
 class WorldActor;
+class ItemActor;
 
 class Game : public Observer, public Observed
 {
@@ -43,7 +44,8 @@ public:
 
 	// Sets The Behavior Of Player
 	void SetPlayerBehavior( Player* player, PlayerBehavior* behavior );
-
+	/*! Converts an item to ItemActor*/
+	ItemActor* ConvertToItemActor(Behavior* behavior,  Actor*& oldActorOut);
 	//Test function, spawns items
 	void SpawnItemsDebug();
 
