@@ -79,8 +79,14 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			}
 			else
 			{
-				++it_Update;
+				it_Update++;
 			}
+		}
+		else
+		{
+			Updates* temp = update; 
+			it_Update = zUpdates.erase(it_Update);
+			SAFE_DELETE(temp);
 		}
 	}
 }

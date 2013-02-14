@@ -18,22 +18,6 @@
 
 using namespace MaloW;
 
-struct Looting_Data
-{
-	Looting_Data()
-	{
-		owner = -1;
-		gid = Gui_Item_Data();
-		//type = OBJECT_TYPE_STATIC_OBJECT;
-	}
-	int owner;
-	Gui_Item_Data gid;
-	/*
-		DYNAMIC, STATIC, DEAD_PLAYER
-	*/
-	int type;
-};
-
 class Client : public MaloW::Process, public Observer
 {
 public:

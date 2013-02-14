@@ -13,6 +13,7 @@ class Bandage : public Item
 {
 public:
 	Bandage();
+	Bandage(const unsigned int ID, const unsigned int Type, const unsigned int SubType);
 	Bandage(const unsigned int Type, const unsigned int SubType);
 	Bandage(const Bandage& other);
 	Bandage(const Bandage* other);
