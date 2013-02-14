@@ -6,11 +6,11 @@ static const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 
 ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world ) : Behavior(actor, world)
 {
-	this->zSpeed = 15.0f;
+	this->zSpeed = 30.0f;
 	this->zVelocity = actor->GetDir();// * zSpeed;
 	this->zDamping = 0.99f;
 	this->zMoving = true;
-	this->zLength = 16,396855;
+	this->zLength = 16.396855f;
 }
 
 bool ProjectileArrowBehavior::Update( float dt )
