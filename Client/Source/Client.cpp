@@ -50,7 +50,6 @@ Client::Client()
 	this->zCrossHair = NULL;
 	this->zDamageIndicator = NULL;
 	this->zDamageOpacity = 0.0f;
-	SoundsInit();
 	
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Walk.wav", false);
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);

@@ -26,6 +26,8 @@ private:
 
 	void AddResolutionsToDropBox(DropDownList* ddl);
 
+	void UpdateOptionsMenu();
+
 private:
 	GUISet*	zSets;
 	int		zNrOfSets;
