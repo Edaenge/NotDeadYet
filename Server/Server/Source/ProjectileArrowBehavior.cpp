@@ -1,17 +1,18 @@
 #include <World/World.h>
-#include "ProjectileBehavior.h"
+#include "ProjectileArrowBehavior.h"
 #include "Actor.h"
 
 static const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 
-ProjectileBehavior::ProjectileBehavior( Actor* actor, World* world ) : Behavior(actor, world)
+ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world ) : Behavior(actor, world)
 {
-	this->zVelocity = actor->GetDir();
+	this->zSpeed = 15.0f;
+	this->zVelocity = actor->GetDir();// * zSpeed;
 	this->zDamping = 0.99f;
 	this->zMoving = true;
 }
 
-bool ProjectileBehavior::Update( float dt )
+bool ProjectileArrowBehavior::Update( float dt )
 {
 	if(!zMoving)
 		return true;
@@ -21,7 +22,9 @@ bool ProjectileBehavior::Update( float dt )
 	
 	// Update linear position.
 	newPos =  this->zActor->GetPosition();
-	newPos += (zVelocity* dt);
+	zVelocity.Normalize();
+	zVelocity *=zSpeed;
+	newPos += (zVelocity * dt);
 	newDir = zVelocity;
 	newDir.Normalize();
 

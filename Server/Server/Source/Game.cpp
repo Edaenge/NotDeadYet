@@ -6,7 +6,7 @@
 #include <World/Entity.h>
 #include "GameEvents.h"
 #include "PlayerHumanBehavior.h"
-#include "ProjectileBehavior.h"
+#include "ProjectileArrowBehavior.h"
 #include "PlayerWolfBehavior.h"
 #include "PlayerActor.h"
 #include "ProjectileActor.h"
@@ -193,8 +193,14 @@ bool Game::Update( float dt )
 		if ( (*i)->Update(dt) )
 		{
 			Behavior* temp = (*i);
+			Actor* oldActor = NULL;
+			ItemActor* newActor = ConvertToItemActor(temp, oldActor);
+			
 			i = zBehaviors.erase(i);
 			SAFE_DELETE(temp);
+
+			this->zActorManager->RemoveActor(oldActor);
+			this->zActorManager->AddActor(newActor);
 		}
 		else
 		{
@@ -221,7 +227,7 @@ bool Game::Update( float dt )
 
 			if(BioActor* victim = dynamic_cast<BioActor*>(collide))
 			{
-				if(ProjectileBehavior* projBehavior = dynamic_cast<ProjectileBehavior*>(*i))
+				if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
 					projBehavior->Stop();
 				else
 				{
@@ -824,7 +830,7 @@ void Game::OnEvent( Event* e )
 				//create projectileActor
 				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
 				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
-				ProjectileBehavior* projBehavior= new ProjectileBehavior(projActor, this->zWorld);
+				ProjectileArrowBehavior* projBehavior= new ProjectileArrowBehavior(projActor, this->zWorld);
 				Damage damage;
 
 				//Sets damage
@@ -840,8 +846,7 @@ void Game::OnEvent( Event* e )
 					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
 					msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_AMMO);
 					PUEWE->clientData->Send(msg);
-					SAFE_DELETE(arrow);
-					inventory->UnEquipProjectile();
+					inventory->RemoveItem(arrow);
 				}
 				//Send feedback message
 				PUEWE->clientData->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)pActor->GetID()));
@@ -1094,4 +1099,39 @@ Vector3 Game::CalcPlayerSpawnPoint(int nr)
 	}
 
 	return Vector3(x, y, z);
+}
+
+ItemActor* Game::ConvertToItemActor(Behavior* behavior, Actor*& oldActorOut)
+{
+	int itemType = 0;
+	ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(behavior);
+
+	//Check what kind of projectile
+	if(projBehavior)
+		itemType = ITEM_SUB_TYPE_ARROW;
+	else if(false) //Else if stone
+		itemType = ITEM_SUB_TYPE_ROCK;
+	else
+		return NULL;
+	
+	//Fetch the actor
+	ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(projBehavior->GetActor());
+
+	if(!projActor)
+		return NULL;
+
+	//Get the item based on type
+	const Projectile* item = GetItemLookup()->GetProjectile(itemType);
+
+	if(!item)
+		return NULL;
+
+	ItemActor* itemActor = new ItemActor(new Projectile((*item)));
+	itemActor->SetPosition(projActor->GetPosition());
+	itemActor->SetRotation(projActor->GetRotation());
+	itemActor->SetScale(projActor->GetScale());
+	itemActor->SetDir(projActor->GetDir());
+	oldActorOut = projActor;
+
+	return itemActor;
 }

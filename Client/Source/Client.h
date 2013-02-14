@@ -18,22 +18,6 @@
 
 using namespace MaloW;
 
-struct Looting_Data
-{
-	Looting_Data()
-	{
-		owner = -1;
-		gid = Gui_Item_Data();
-		//type = OBJECT_TYPE_STATIC_OBJECT;
-	}
-	int owner;
-	Gui_Item_Data gid;
-	/*
-		DYNAMIC, STATIC, DEAD_PLAYER
-	*/
-	int type;
-};
-
 class Client : public MaloW::Process, public Observer
 {
 public:
@@ -46,6 +30,8 @@ public:
 	bool IsAlive();
 	/*! Checks if Cursor should be Visible*/
 	bool GetCursorVisibility();
+
+	void SetBlackImage(iImage* image){ this->zBlackImage = image; }
 
 private:
 
@@ -194,6 +180,8 @@ private:
 	float	zDamageOpacity;
 	
 	bool zGameStarted;
+
+	iImage* zBlackImage;
 
 	//Player Data
 	float zHealth;
