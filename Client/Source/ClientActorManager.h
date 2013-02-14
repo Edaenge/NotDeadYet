@@ -121,6 +121,7 @@ public:
 	
 private:
 	std::map<unsigned int, Actor*> zActors;
+	std::map<unsigned int, Actor*> zState;
 	std::map<unsigned int, Updates*> zUpdates;
 	float zInterpolationVelocity;
 };

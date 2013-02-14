@@ -480,9 +480,10 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 				if (Messages::FileWrite())
 					Messages::Debug("Ammo UnEquipped " + projectile->GetItemName() + " ID: " + MaloW::convertNrToString((float)projectile->GetID()));
 
-				delete projectile;
-				projectile = NULL;
+				this->zGuiManager->UnEquipItem(projectile->GetID(), projectile->GetStackSize());
 
+				this->zPlayerInventory->RemoveItem(projectile);
+					
 				this->zPlayerInventory->UnEquipProjectile();
 			}
 		}
