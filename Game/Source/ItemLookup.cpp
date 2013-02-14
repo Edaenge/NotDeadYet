@@ -31,6 +31,7 @@ static const std::string OBJECT_CONTAINER		=	"[Object.Container]";
 static const std::string OBJECT_GEAR			=	"[Object.Gear]";
 static const std::string OBJECT_PROJECTILE		=	"[Object.Projectile]";
 static const std::string OBJECT_MATERIAL		=	"[Object.Material]";
+static const std::string OBJECT_BANDAGE			=	"[Object.Bandage]";
 
 static const std::string END					=	"#END";
 static const std::string TYPE					=	"TYPE";
@@ -123,6 +124,18 @@ const Container* ItemLookup::GetContainer( const unsigned int SubType )
 		if ((*it)->GetItemType() == ITEM_TYPE_CONTAINER && (*it)->GetItemSubType() == SubType)
 		{
 			return dynamic_cast<Container*>((*it));
+		}
+	}
+	return NULL;
+}
+
+const Bandage* ItemLookup::GetBandage( const unsigned int SubType )
+{
+	for (auto it = this->zItems.begin(); it != this->zItems.end(); it++)
+	{
+		if ((*it)->GetItemType() == ITEM_TYPE_BANDAGE && (*it)->GetItemSubType() == SubType)
+		{
+			return dynamic_cast<Bandage*>((*it));
 		}
 	}
 	return NULL;
@@ -245,6 +258,22 @@ bool ItemLookup::ReadFromFile()
 			}
 	
 			this->zItems.push_back(ma);
+		}
+		else if(strcmp(key, OBJECT_BANDAGE.c_str()) == 0)
+		{
+			Bandage* ba = new Bandage();
+			while(!read.eof() && strcmp(command, END.c_str()) != 0)
+			{
+				std::getline(read, line);
+				TrimAndSet(line);
+	
+				sscanf_s(line.c_str(), "%s = %s" , &command, sizeof(command), &key, sizeof(key));
+	
+				if(command != END)
+					InterpCommand(command, key, ba);
+			}
+	
+			this->zItems.push_back(ba);
 		}
 	}
 	read.close();
@@ -552,6 +581,45 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Projectile*
 	else if(command == DAMAGE)
 	{
 		pa->SetDamage(MaloW::convertStringToFloat(key));
+	}
+
+	return true;
+}
+
+bool ItemLookup::InterpCommand(std::string command, std::string key, Bandage*& ba)
+{
+	if(key.empty())
+		return false;
+
+	std::transform(command.begin(), command.end(), command.begin(), ::toupper);
+
+	if(command == TYPE)
+	{
+		ba->SetItemType(MaloW::convertStringToInt(key));
+	}
+	else if(command == WEIGHT)
+	{
+		ba->SetItemWeight(MaloW::convertStringToInt(key));
+	}
+	else if(command == PATH)
+	{
+		ba->SetIconPath(key);
+	}
+	else if(command == DESCRIPTION)
+	{
+		ba->SetItemDescription(key);
+	}
+	else if(command == MODEL)
+	{
+		ba->SetModel(key);
+	}
+	else if(command == NAME)
+	{
+		ba->SetItemName(key);
+	}
+	else if(command == STACKS)
+	{
+		ba->SetStackSize(MaloW::convertStringToInt(key));
 	}
 
 	return true;

@@ -12,6 +12,7 @@
 #include "Food.h"
 #include "Container.h"
 #include "Material.h"
+#include "Bandage.h"
 #include <vector>
 #include "Observer.h"
 enum EQUIPMENT_SLOT

@@ -80,6 +80,7 @@
     <ClInclude Include="..\Client\Source\KeyUtil\Keybinds.h" />
     <ClInclude Include="..\Client\Source\KeyUtil\KeyConverter.h" />
     <ClInclude Include="..\Client\Source\KeyUtil\KeyHandler.h" />
+    <ClInclude Include="Include\Bandage.h" />
     <ClInclude Include="Include\ClientServerMessages.h" />
     <ClInclude Include="Include\Container.h" />
     <ClInclude Include="Include\Food.h" />
@@ -112,6 +113,7 @@
     <ClCompile Include="..\Client\Source\KeyUtil\Keybinds.cpp" />
     <ClCompile Include="..\Client\Source\KeyUtil\KeyConverter.cpp" />
     <ClCompile Include="..\Client\Source\KeyUtil\KeyHandler.cpp" />
+    <ClCompile Include="Source\Bandage.cpp" />
     <ClCompile Include="Source\Container.cpp" />
     <ClCompile Include="Source\Food.cpp" />
     <ClCompile Include="Source\Gear.cpp" />
