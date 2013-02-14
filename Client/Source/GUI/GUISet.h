@@ -64,5 +64,5 @@ public:
 
 	CheckBox* GetCheckBox(string checkBox);
 
-	//TextBox* GetTextBox(string textBox);
+	TextBox* GetTextBox(string textBox);
 };

@@ -3,37 +3,31 @@
 
 void Client::HandleWeaponUse(const unsigned int ID)
 {
-	Weapon* weapon = this->zPlayerInventory->GetRangedWeapon();
-	if (!weapon)
-	{
-		MaloW::Debug("No Weapon Is Equipped");
+	Item* item = this->zPlayerInventory->GetPrimaryEquip();
+	int stack = 0;
 
+	if(item->GetID() != ID)
+	{
+		MaloW::Debug("Item ID do not match in ClientItemHandler, HandleUseWeapon");
 		return;
 	}
-	if(weapon->GetID() == ID)
+
+	if (Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
-		if (weapon->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
+		if(proj->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
 		{
-			Projectile* arrow = this->zPlayerInventory->GetProjectile();
-
-			if (!arrow)
-			{
-				MaloW::Debug("No Ammo Is Equipped");
-				return;
-			}
-
-			arrow->Use();
-			this->zGuiManager->RemoveInventoryItemFromGui(arrow->GetID(), 1);
-			return;
-		}
-		if (weapon->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
-		{
-			int newSize = weapon->GetStackSize() - 1;
-			weapon->SetStackSize(newSize);
-
-			this->zGuiManager->RemoveInventoryItemFromGui(weapon->GetID(), 1);
+			stack = proj->GetStackSize()-1;
+			proj->SetStackSize(stack);
 		}
 	}
+	else if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
+	{
+		proj = this->zPlayerInventory->GetProjectile();
+		stack = proj->GetStacking()-1;
+		proj->SetStacking(stack);
+	}
+
+	this->zGuiManager->RemoveInventoryItemFromGui(ID, stack);
 }
 
 void Client::HandleUseItem(const unsigned int ID)
