@@ -10,6 +10,7 @@ ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world ) :
 	this->zVelocity = actor->GetDir();// * zSpeed;
 	this->zDamping = 0.99f;
 	this->zMoving = true;
+	this->zLength = 16,396855;
 }
 
 bool ProjectileArrowBehavior::Update( float dt )
@@ -48,9 +49,14 @@ bool ProjectileArrowBehavior::Update( float dt )
 	yValue = this->zWorld->CalcHeightAtWorldPos(newPos.GetXZ());
 
 	// If true, stop the projectile and return.
-	if(newPos.y <= yValue )
+	Vector3 scale = this->zActor->GetScale();
+	float middle = (zLength * max(max(scale.x, scale.y),scale.z)) / 2;
+	float yTip = newPos.y - middle;
+	if(yTip <= yValue )
 	{
-		newPos.y = yValue;
+		middle += yValue;
+		newPos.y = middle;
+
 		this->zActor->SetPosition(newPos);
 		this->zMoving = false;
 		

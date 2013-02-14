@@ -9,6 +9,7 @@ private:
 	Vector3 zVelocity;
 	float zDamping;
 	float zSpeed;
+	float zLength;
 	bool zMoving;
 
 public:
