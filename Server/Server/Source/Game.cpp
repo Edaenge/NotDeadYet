@@ -90,6 +90,7 @@ void Game::SpawnItemsDebug()
 	const Material*		temp_material_S	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_SMALL_STICK);
 	const Material*		temp_material_M	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_MEDIUM_STICK);
 	const Material*		temp_material_T	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_THREAD);
+	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE);
 
 	unsigned int increment = 0;
 	//Food
@@ -169,6 +170,18 @@ void Game::SpawnItemsDebug()
 		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 		this->zActorManager->AddActor(actor);
 	}
+	//Bandage
+	if(temp_bandage)
+	{
+		Bandage* new_item = new Bandage((*temp_bandage));
+		ItemActor* actor = new ItemActor(new_item);
+		Vector3 center;
+		center = CalcPlayerSpawnPoint(increment++);
+		actor->SetPosition(center);
+		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		this->zActorManager->AddActor(actor);
+	}
+
 }
 
 bool Game::Update( float dt )

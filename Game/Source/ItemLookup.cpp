@@ -597,6 +597,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Bandage*& b
 	{
 		ba->SetItemType(MaloW::convertStringToInt(key));
 	}
+	else if(command == SUBTYPE)
+	{
+		ba->SetItemSubType(MaloW::convertStringToInt(key));
+	}
 	else if(command == WEIGHT)
 	{
 		ba->SetItemWeight(MaloW::convertStringToInt(key));
