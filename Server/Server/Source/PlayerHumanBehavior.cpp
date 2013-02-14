@@ -142,9 +142,9 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 	//BioActor* bActor = dynamic_cast<BioActor*>(this->zActor);
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActor);
 
-	// std::stringstream tester; 
-	// tester<<"Fullness: "<<pActor->GetFullness()<<"   "<<"Hydration: "<<pActor->GetHydration()<<"    "<<"Stamina: "<<pActor->GetStamina()<<"    "<<"Health: "<<pActor->GetHealth()<<std::endl;
-	// OutputDebugString(tester.str().c_str());
+	 std::stringstream tester; 
+	 tester<<"Fullness: "<<pActor->GetFullness()<<"   "<<"Hydration: "<<pActor->GetHydration()<<"    "<<"Stamina: "<<pActor->GetStamina()<<"    "<<"Health: "<<pActor->GetHealth()<<std::endl;
+	 OutputDebugString(tester.str().c_str());
 
 	float regeneratedHealth = 0;
 	

@@ -113,6 +113,32 @@ void Client::HandleUseItem(const unsigned int ID)
 
 		this->zGuiManager->RemoveInventoryItemFromGui(material->GetID(), stacks);
 	}
+	if (item->GetItemType() == ITEM_TYPE_BANDAGE)
+	{
+		Bandage* bandage = dynamic_cast<Bandage*>(item);
+
+		if (!bandage)
+		{
+			MaloW::Debug("dynamic cast Failed in Host::UseItem (Bandage)");
+			return;
+		}
+
+		int oldStacks = bandage->GetStackSize();
+		if (!bandage->Use())
+		{
+			MaloW::Debug("Stack is Empty");
+			return;
+		}
+		
+		int newStacks = bandage->GetStackSize();
+
+		int stacks = oldStacks - newStacks;
+		this->zPlayerInventory->RemoveItemStack(bandage->GetID(), stacks);
+
+		this->zGuiManager->RemoveInventoryItemFromGui(bandage->GetID(), stacks);
+		MaloW::Debug("Bandaging");
+		return;
+	}
 }
 
 void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
@@ -845,6 +871,14 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray, co
 		break;
 	case ITEM_TYPE_GEAR:
 		item = new Gear(itemSubType, itemType);
+		item->SetItemName(itemName);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
+		break;
+	case ITEM_TYPE_BANDAGE:
+		item = new Bandage(itemSubType, itemType);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);

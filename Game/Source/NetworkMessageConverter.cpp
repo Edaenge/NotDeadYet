@@ -216,6 +216,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_HEALTH:
 		ss << M_HEALTH;
 		break;
+	case MESSAGE_TYPE_ACTOR_TAKE_DAMAGE:
+		ss << M_ACTOR_TAKE_DAMAGE;
+		break;
 	case MESSAGE_TYPE_STAMINA:
 		ss << M_STAMINA;
 		break;

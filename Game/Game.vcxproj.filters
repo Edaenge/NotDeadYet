@@ -101,6 +101,9 @@
     <ClInclude Include="Include\ItemLookup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Bandage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\World\Sector.cpp">
@@ -170,6 +173,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\ItemLookup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Bandage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

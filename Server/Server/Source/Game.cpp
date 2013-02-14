@@ -353,6 +353,10 @@ void Game::OnEvent( Event* e )
 						{
 							msg += container->ToMessageString(&NMC);
 						}
+						else if (Bandage* bandage = dynamic_cast<Bandage*>(item))
+						{
+							msg += bandage->ToMessageString(&NMC);
+						}
 						PLIE->clientData->Send(msg);
 						this->zActorManager->RemoveActor(bActor);
 					}
@@ -572,6 +576,37 @@ void Game::OnEvent( Event* e )
 										}
 									}
 								}
+							}
+						}
+					}
+					else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
+					{
+						int oldStack = bandage->GetStackSize();
+						ID = bandage->GetID();
+						if (bandage->Use())
+						{
+							int stacks = bandage->GetStackSize() - oldStack;
+							
+							pActor->SetBleeding(false);
+							
+							
+							//Sending Message to client And removing stack from inventory.
+							inv->RemoveItemStack(ID, stacks);
+							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+
+							PUIE->clientData->Send(msg);
+						}
+						else
+						{
+							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Bandage_Stack_is_Empty");
+							PUIE->clientData->Send(msg);
+						}
+						if (bandage->GetStackSize() <= 0)
+						{
+							if(inv->RemoveItem(bandage));
+							{
+								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
+								PUIE->clientData->Send(msg);
 							}
 						}
 					}
