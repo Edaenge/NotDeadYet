@@ -1,39 +1,53 @@
 #include "ActorSynchronizer.h"
 #include "Actor.h"
 #include <Packets\ServerFramePacket.h>
+#include "WorldActor.h"
 
 
-ActorSynchronizer::ActorSynchronizer()
+ActorSynchronizer::ActorSynchronizer() : 
+	zFrameData( new ServerFramePacket() )
 {
-
 }
 
 ActorSynchronizer::~ActorSynchronizer()
 {
-
+	if ( zFrameData ) delete zFrameData;
 }
 
 void ActorSynchronizer::OnEvent( Event* e )
 {
-	if ( ActorPositionEvent* UPE = dynamic_cast<ActorPositionEvent*>(e) )
+	if (ActorPositionEvent* UPE = dynamic_cast<ActorPositionEvent*>(e))
 	{
-		zUpdateSet.insert(UPE->zActor);
+		zFrameData->newPositions[UPE->zActor->GetID()] = UPE->zActor->GetPosition();
 	}
-	else if ( ActorRotationEvent* URE = dynamic_cast<ActorRotationEvent*>(e) )
+	else if (ActorRotationEvent* URE = dynamic_cast<ActorRotationEvent*>(e))
 	{
-		zUpdateSet.insert(URE->zActor);
+		zFrameData->newRotations[URE->zActor->GetID()] = URE->zActor->GetRotation();
 	}
-	else if ( ActorScaleEvent* USE = dynamic_cast<ActorScaleEvent*>(e) )
+	else if (ActorScaleEvent* USE = dynamic_cast<ActorScaleEvent*>(e))
 	{
-		zUpdateSet.insert(USE->zActor);
+		zFrameData->newScales[USE->zActor->GetID()] = USE->zActor->GetScale();
 	}
 	else if (ActorAdded* AD = dynamic_cast<ActorAdded*>(e))
 	{
+		// Do Not Synch World Actors
+		if( WorldActor* WA = dynamic_cast<WorldActor*>(AD->zActor) )
+			return;
+
+		AD->zActor->AddObserver(this);
 		zNewActorSet.insert(AD->zActor);
 	}
 	else if(ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e))
 	{
-		zRemoveActorSet.insert(AR->zActor);
+		// Do Not Synch World Actors
+		if( WorldActor* WA = dynamic_cast<WorldActor*>(AR->zActor) )
+			return;
+
+		AR->zActor->RemoveObserver(this);
+
+		// Entity Removed, Do Not Send Created Event
+		zNewActorSet.erase(AR->zActor);
+		zRemoveActorSet.insert(AR->zActor->GetID());
 	}
 }
 
@@ -43,24 +57,8 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 	std::string msg;
 
 	RegisterActor(cd);
-
-	ServerFramePacket frameData;
 	
-	for(auto it = this->zUpdateSet.begin(); it != this->zUpdateSet.end(); it++)
-	{
-		frameData.newPositions[(*it)->GetID()] = (*it)->GetPosition();
-		frameData.newRotations[(*it)->GetID()] = (*it)->GetRotation();
-		frameData.newScales[(*it)->GetID()] = (*it)->GetScale();
-
-		//msg = nmc.Convert(MESSAGE_TYPE_UPDATE_ACTOR, (float)(*it)->GetID());
-		//msg += nmc.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
-		//msg += nmc.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
-		//msg += nmc.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
-
-		//cd->Send(msg);
-	}
-	
-	cd->Send(frameData);
+	cd->Send(*zFrameData);
 
 	RemoveActor(cd);
 }
@@ -89,7 +87,7 @@ void ActorSynchronizer::RemoveActor( ClientData* cd )
 
 	for(auto it = zRemoveActorSet.begin(); it != this->zRemoveActorSet.end(); it++)
 	{
-		msg = nmc.Convert(MESSAGE_TYPE_REMOVE_ACTOR, (float)(*it)->GetID());
+		msg = nmc.Convert(MESSAGE_TYPE_REMOVE_ACTOR, *it);
 
 		cd->Send(msg);
 	}
@@ -97,16 +95,13 @@ void ActorSynchronizer::RemoveActor( ClientData* cd )
 
 void ActorSynchronizer::ClearAll()
 {
+	// Clear Frame Data
+	delete zFrameData;
+	zFrameData = new ServerFramePacket();
+
+	// Clear Sets
 	this->zUpdateSet.clear();
 	this->zNewActorSet.clear();
-	
-	//Deletes Actors
-	auto i = this->zRemoveActorSet.begin();
-	for(; i != this->zRemoveActorSet.end(); i++)
-	{
-		Actor* temp = (*i);
-		SAFE_DELETE(temp);
-	}
 	this->zRemoveActorSet.clear();
 }
 

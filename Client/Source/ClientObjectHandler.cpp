@@ -126,59 +126,6 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 	}
 }
 
-bool Client::UpdateActor(const std::vector<std::string>& msgArray, const unsigned int ID)
-{
-	int index = this->zActorManager->SearchForUpdate(ID);
-	Updates* update = NULL;
-	if (index != -1)
-		update = this->zActorManager->GetUpdate(index);
-	else
-		update = new Updates(ID);
-	
-	Actor* actor = this->zActorManager->SearchAndGetActor(ID);
-	if (actor)
-	{
-		char key[512];
-		for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
-		{
-			sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
-
-			if(strcmp(key, M_POSITION.c_str()) == 0)
-			{
-				Vector3 position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-				update->SetPosition(position);
-			}
-			else if(strcmp(key, M_ROTATION.c_str()) == 0)
-			{
-				if (ID != this->zID)
-				{
-					Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
-					actor->SetRotation(rotation);
-				}
-			}
-			else if(strcmp(key, M_STATE.c_str()) == 0)
-			{
-				int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
-				actor->SetState(state);
-			}
-			else if(strcmp(key, M_SCALE.c_str()) == 0)
-			{
-				Vector3 scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
-				actor->SetScale(scale);
-			}
-			else
-			{
-				MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in UpdatePlayerObjects");
-			}
-		}
-		if (index == -1)
-			this->zActorManager->AddUpdate(update);
-
-		return true;
-	}
-	return false;
-}
-
 bool Client::RemoveActor(const unsigned int ID)
 {
 	if (ID == -1)

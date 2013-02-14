@@ -24,8 +24,15 @@ BioActor::~BioActor()
 }
 
 
-bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
+bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 {
+	// Notify Damage
+	BioActorTakeDamageEvent BATD;
+	BATD.zActor = this;
+	BATD.zDamage = &dmg;
+	BATD.zDealer = dealer;
+	NotifyObservers(&BATD);
+
 	this->zHealth -= dmg.GetTotal();
 	this->zHealthChanged = true;
 
@@ -53,13 +60,6 @@ bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
 		this->SetRotation(around,angle);
 	}
 	
-	// Notify Damage
-	BioActorTakeDamageEvent BATD;
-	BATD.zActor = this;
-	BATD.zDamage = dmg;
-	BATD.zDealer = dealer;
-	NotifyObservers(&BATD);
-
 	return this->zAlive;
 }
 

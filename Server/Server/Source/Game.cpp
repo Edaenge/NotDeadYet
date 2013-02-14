@@ -2,6 +2,8 @@
 #include "GameModeFFA.h"
 #include "Behavior.h"
 #include <world/World.h>
+#include <World/EntityList.h>
+#include <World/Entity.h>
 #include "GameEvents.h"
 #include "PlayerHumanBehavior.h"
 #include "ProjectileBehavior.h"
@@ -16,9 +18,9 @@
 #include "AIWolfBehavior.h"
 #include "WorldActor.h"
 #include "ItemActor.h"
-#include <World/EntityList.h>
 #include "Physics.h"
 #include "ClientServerMessages.h"
+
 
 //Temporary
 #include "ItemLookup.h"
@@ -259,6 +261,16 @@ void Game::OnEvent( Event* e )
 	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )
 	{
 		zPlayers[KUE->clientData]->GetKeys().SetKeyState(KUE->key, false);
+	}
+	else if ( PlayerSwapEquippedWeaponsEvent* SEQWE = dynamic_cast<PlayerSwapEquippedWeaponsEvent*>(e) )
+	{
+		Actor* actor = this->zPlayers[SEQWE->clientdData]->GetBehavior()->GetActor();
+
+		if(BioActor* pActor = dynamic_cast<BioActor*>(actor))
+		{
+			Inventory* inv = pActor->GetInventory();
+			inv->SwapWeapon();
+		}
 	}
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
 	{
@@ -724,8 +736,8 @@ void Game::OnEvent( Event* e )
 		PlayerActor* pActor = NULL;
 		Inventory* inventory = NULL;
 		Item* item = NULL;
-		auto playerIterator = zPlayers.find(PUEWE->clientData);
 
+		auto playerIterator = zPlayers.find(PUEWE->clientData);
 		actor = playerIterator->second->GetBehavior()->GetActor();
 		
 		if ( !(pActor = dynamic_cast<PlayerActor*>(actor)) )
@@ -733,14 +745,19 @@ void Game::OnEvent( Event* e )
 			MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 			return;
 		}
-		if(!(inventory = pActor->GetInventory()))
+		if( !(inventory = pActor->GetInventory()) )
 		{
 			MaloW::Debug("Inventory is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 			return;
 		}
-		if (!(item = inventory->SearchAndGetItem(PUEWE->itemID)))
+		if ( !(item = inventory->GetPrimaryEquip()) )
 		{
 			MaloW::Debug("Item is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
+			return;
+		}
+		if( item->GetID() != PUEWE->itemID )
+		{
+			MaloW::Debug("Item ID do not match in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 			return;
 		}
 
@@ -753,7 +770,7 @@ void Game::OnEvent( Event* e )
 		{
 			//Check if arrows are equipped
 			Projectile* arrow = inventory->GetProjectile();
-			if(arrow->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+			if(arrow && arrow->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
 			{
 				//create projectileActor
 				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());

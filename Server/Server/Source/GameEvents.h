@@ -145,6 +145,15 @@ public:
 	unsigned int itemID;
 };
 
+/*Event when a player swaps his equipped weapons between primary and secondary.*/
+class PlayerSwapEquippedWeaponsEvent : public Event
+{
+public:
+	virtual ~PlayerSwapEquippedWeaponsEvent() {}
+
+	ClientData* clientdData;
+};
+
 /*Event when a client sends an update to server.*/
 class ClientDataEvent : public Event
 {

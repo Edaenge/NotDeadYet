@@ -16,9 +16,9 @@
 #include "Observer.h"
 enum EQUIPMENT_SLOT
 {
-	EQUIPMENT_SLOT_AMMO,
-	EQUIPMENT_SLOT_RANGED_WEAPON,
 	EQUIPMENT_SLOT_MELEE_WEAPON,
+	EQUIPMENT_SLOT_RANGED_WEAPON,
+	EQUIPMENT_SLOT_AMMO,
 	EQUIPMENT_SLOT_HEAD,
 	EQUIPMENT_SLOT_CHEST,
 	EQUIPMENT_SLOT_LEGS,
@@ -87,7 +87,7 @@ public:
 	Gear* GetGear(const unsigned int type);
 	void UnEquipGear(const unsigned int type);
 
-	void SwapWeapon();
+	bool SwapWeapon();
 
 private:
 	/*! Array of items*/

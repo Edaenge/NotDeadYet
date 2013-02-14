@@ -75,7 +75,8 @@ Client::~Client()
 	SAFE_DELETE(this->zPlayerInventory);
 
 	SAFE_DELETE(this->zWorld);
-	SAFE_DELETE(this->zCrossHair);
+	
+	if ( this->zCrossHair ) GetGraphics()->DeleteImage(zCrossHair);
 }
 
 float Client::Update()
@@ -432,67 +433,6 @@ void Client::HandleKeyboardInput()
 	}
 
 	//UnEquip Melee Weapon
-	if (this->zEng->GetKeyListener()->IsPressed('Q'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-			
-			Item* item = this->zPlayerInventory->GetMeleeWeapon();
-			if (item)
-			{
-				MaloW::Debug("Item UnEquipped " + item->GetItemName());
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
-				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_MELEE_WEAPON);
-
-				this->zServerChannel->Send(msg);
-			}
-		}
-	}
-	//UnEquip Ranged Weapon
-	else if (this->zEng->GetKeyListener()->IsPressed('R'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-			
-			Item* item = this->zPlayerInventory->GetRangedWeapon();
-			if (item)
-			{
-				MaloW::Debug("Item UnEquipped " + item->GetItemName());
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
-				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_RANGED_WEAPON);
-
-				this->zServerChannel->Send(msg);
-			}
-		}
-	}
-	//UnEquip Projectiles
-	else if (this->zEng->GetKeyListener()->IsPressed('E'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-
-			Item* item = this->zPlayerInventory->GetProjectile();
-			if (item)
-			{
-				MaloW::Debug("Item UnEquipped " + item->GetItemName());
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
-				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_AMMO);
-
-				this->zServerChannel->Send(msg);
-			}
-		}
-	}
-	else
-	{
-		if (this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, false);
-		}
-	}
-	
 	if(this->zEng->GetKeyListener()->IsPressed('F'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_READY))
@@ -545,6 +485,25 @@ void Client::HandleKeyboardInput()
 				this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
 			}
 
+		}
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_SWAP_EQ)))
+		{
+			if (!this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
+			{
+				this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, true);
+
+				if(this->zPlayerInventory->SwapWeapon())
+				{
+					std::string msg;
+					msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_EQUIPMENT_SWAP);
+					this->zServerChannel->Send(msg);
+				}
+			}
+		}
+		else
+		{
+			if (this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
+				this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, false);
 		}
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
 		{
@@ -917,6 +876,9 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	if(msg.find(M_PING.c_str()) == 0)
 	{
 		this->Ping();
+	}
+	else if (msg.find(M_HEALTH) == 0)
+	{
 	}
 	//Actors
 	//else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)

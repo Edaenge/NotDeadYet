@@ -20,7 +20,7 @@ ClientActorManager::~ClientActorManager()
 void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 {
 	float t = GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
-
+	static GraphicsEngine* gEng = GetGraphics();
 	auto it_Update = this->zUpdates.begin();
 	while( it_Update != this->zUpdates.end() )
 	{
@@ -30,13 +30,21 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 		{
 			if ((*it_Update)->HasPositionChanged())
 			{
-				Vector3 position = this->InterpolatePosition(actor->GetPosition(), (*it_Update)->GetPosition(), t);
+				Vector3 position;
 				if((*it_Update)->GetID() == clientID)
 				{
+					position = this->InterpolatePosition(actor->GetPosition(), (*it_Update)->GetPosition(), t);
 					//if ( rand()%10000 == 0 ) GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);
+					actor->SetPosition(position);
 					GetGraphics()->GetCamera()->SetPosition(position + Vector3(0.0f, 2.5f, 0.0f));
+					
 				}
-				actor->SetPosition(position);
+				else 
+				{
+					position = this->InterpolatePosition(actor->GetPosition(), (*it_Update)->GetPosition(), t);
+					actor->SetPosition(position);
+				}
+				
 				(*it_Update)->ComparePosition(position);
 			}
 			//if((*it_Update)->GetID() != clientID)
@@ -191,7 +199,7 @@ Vector3 ClientActorManager::InterpolatePosition(const Vector3& currentPosition, 
 {
 	float oldlength = (currentPosition - newPosition).GetLength();
 
-	if (oldlength > 100.0f)
+	if (oldlength > 200.0f)
 		return newPosition;
 
 	Vector3 returnPosition = currentPosition + (newPosition - currentPosition) * t * zInterpolationVelocity;

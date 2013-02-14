@@ -444,10 +444,18 @@ void Inventory::SetSecondaryEquip( unsigned int ID )
 	this->zSecondaryEquip = item;
 }
 
-void Inventory::SwapWeapon()
+bool Inventory::SwapWeapon()
 {
+	if (!this->zPrimaryEquip && !this->zSecondaryEquip)
+		return false;
+	else if(!this->zSecondaryEquip)
+		return false;
+
+	
 	Item* item = this->zPrimaryEquip;
 
 	this->zPrimaryEquip = this->zSecondaryEquip;
 	this->zSecondaryEquip = item;
+
+	return true;
 }

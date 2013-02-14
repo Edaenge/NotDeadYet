@@ -20,6 +20,7 @@ bool ProjectileBehavior::Update( float dt )
 	Vector3 newDir;
 	
 	// Update linear position.
+	newPos =  this->zActor->GetPosition();
 	newPos += (zVelocity* dt);
 	newDir = zVelocity;
 	newDir.Normalize();
@@ -41,7 +42,7 @@ bool ProjectileBehavior::Update( float dt )
 
 	//**Check if the projectile has hit the ground**
 	float yValue;
-	yValue = this->zWorld->CalcHeightAtWorldPos(newPos.GetXY());
+	yValue = this->zWorld->CalcHeightAtWorldPos(newPos.GetXZ());
 
 	// If true, stop the projectile and return.
 	if(newPos.y <= yValue )

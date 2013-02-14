@@ -34,6 +34,8 @@ Host::Host() :
 
 Host::~Host()
 {
+	FreePhysics();
+
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 	
@@ -154,14 +156,15 @@ void Host::ReadMessages()
 			// A Client Connected
 			HandleNewConnection(CCE->GetClientChannel());
 		}
-		else if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(pe) )
+		else if ( MaloW::NetworkPacket* NP = dynamic_cast<MaloW::NetworkPacket*>(pe) )
 		{
-			HandleReceivedMessage(dynamic_cast<MaloW::ClientChannel*>(np->GetChannel()), np->GetMessage());
+			HandleReceivedMessage(dynamic_cast<MaloW::ClientChannel*>(NP->GetChannel()), NP->GetMessage());
 		}
 		else if ( ClientDisconnectedEvent* CDE = dynamic_cast<ClientDisconnectedEvent*>(pe) )
 		{
 			HandleClientDisconnect(CDE->GetClientChannel());
 		}
+
 		// Unhandled Message
 		SAFE_DELETE(pe);
 	}
@@ -214,6 +217,14 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		PlayerReadyEvent e;
 
 		e.clientData = cd;
+		NotifyObservers(&e);
+	}
+	//Handles Swap weapon message
+	else if(msgArray[0].find(M_WEAPON_EQUIPMENT_SWAP.c_str()) == 0)
+	{
+		PlayerSwapEquippedWeaponsEvent e;
+
+		e.clientdData = cd;
 		NotifyObservers(&e);
 	}
 	//Handle Item usage in Inventory
