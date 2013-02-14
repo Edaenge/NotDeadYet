@@ -15,6 +15,7 @@
 #include <World/WorldRenderer.h>
 #include <Packets/ServerFramePacket.h>
 #include <Packets/Packet.h>
+#include "InGameMenu.h"
 
 using namespace MaloW;
 
@@ -182,6 +183,7 @@ private:
 	bool zGameStarted;
 
 	iImage* zBlackImage;
+	InGameMenu* zIgm;
 
 	//Player Data
 	float zHealth;

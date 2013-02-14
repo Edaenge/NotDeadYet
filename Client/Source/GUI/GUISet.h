@@ -19,17 +19,6 @@
 #include "CheckBox.h"
 
 
-enum SET{
-	NOMENU,
-	MAINMENU,
-	FIND_SERVER,
-	OPTIONS,
-	GETIPADRESS,
-	QUIT,
-	LASTMENU
-};
-
-
 class GUISet
 {
 private:

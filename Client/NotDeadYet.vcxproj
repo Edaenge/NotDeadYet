@@ -48,6 +48,7 @@
     <ClCompile Include="Source\GUI\NoEvent.cpp" />
     <ClCompile Include="Source\GUI\SimpleButton.cpp" />
     <ClCompile Include="Source\GUI\TextBox.cpp" />
+    <ClCompile Include="Source\InGameMenu.cpp" />
     <ClCompile Include="Source\KeyUtil\KeyBindConfig.cpp" />
     <ClCompile Include="Source\KeyUtil\Keybinds.cpp" />
     <ClCompile Include="Source\KeyUtil\KeyConverter.cpp" />
@@ -84,6 +85,7 @@
     <ClInclude Include="Source\GUI\NoEvent.h" />
     <ClInclude Include="Source\GUI\SimpleButton.h" />
     <ClInclude Include="Source\GUI\TextBox.h" />
+    <ClInclude Include="Source\InGameMenu.h" />
     <ClInclude Include="Source\KeyUtil\KeyBindConfig.h" />
     <ClInclude Include="Source\KeyUtil\Keybinds.h" />
     <ClInclude Include="Source\KeyUtil\KeyConverter.h" />
