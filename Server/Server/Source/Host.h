@@ -37,6 +37,7 @@ class Host : public MaloW::Process, public Observed
 	std::string zGameMode;
 	std::string zMapName;
 
+	std::set<MaloW::ClientChannel*> zClientChannels;
 	std::map<MaloW::ClientChannel*, ClientData*> zClients;
 	Game* zGame;
 	ActorSynchronizer* zSynchronizer;
