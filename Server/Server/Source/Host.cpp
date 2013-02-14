@@ -39,11 +39,14 @@ Host::~Host()
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 	
+	for( auto i = zClientChannels.begin(); i != zClientChannels.end(); ++i )
+	{
+		(*i)->Close();
+	}
+
+	SAFE_DELETE(this->zServerListener);
 	this->Close();
 	this->WaitUntillDone();
-
-	this->zServerListener->Close();
-	SAFE_DELETE(this->zServerListener);
 }
 
 void Host::Life()
@@ -418,6 +421,8 @@ void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 
 void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 {
+	zClientChannels.insert(CC);
+
 	ClientData* cd = new ClientData(CC);
 	zClients[CC] = cd;
 	CC->Start();
