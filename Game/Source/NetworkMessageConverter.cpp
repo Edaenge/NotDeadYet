@@ -225,11 +225,14 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_STAMINA:
 		ss << M_STAMINA;
 		break;
-	case MESSAGE_TYPE_CONNECTION_CLOSED:
-		ss << M_CONNECTION_CLOSED;
-		break;
 	case MESSAGE_TYPE_SELF_ID:
 		ss << M_SELF_ID;
+		break;
+	case MESSAGE_TYPE_ACTOR_TYPE:
+		ss << M_ACTOR_TYPE;
+		break;
+	case MESSAGE_TYPE_CONNECTION_CLOSED:
+		ss << M_CONNECTION_CLOSED;
 		break;
 	case MESSAGE_TYPE_IMPORTANT_MESSAGE:
 		ss << M_IMPORTANT_MESSAGE;
