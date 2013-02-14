@@ -34,15 +34,19 @@ Host::Host() :
 
 Host::~Host()
 {
+	FreePhysics();
+
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 	
+	for( auto i = zClientChannels.begin(); i != zClientChannels.end(); ++i )
+	{
+		(*i)->Close();
+	}
+
+	SAFE_DELETE(this->zServerListener);
 	this->Close();
 	this->WaitUntillDone();
-
-	this->zServerListener->Close();
-	SAFE_DELETE(this->zServerListener);
-
 }
 
 void Host::Life()
@@ -155,14 +159,15 @@ void Host::ReadMessages()
 			// A Client Connected
 			HandleNewConnection(CCE->GetClientChannel());
 		}
-		else if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(pe) )
+		else if ( MaloW::NetworkPacket* NP = dynamic_cast<MaloW::NetworkPacket*>(pe) )
 		{
-			HandleReceivedMessage(dynamic_cast<MaloW::ClientChannel*>(np->GetChannel()), np->GetMessage());
+			HandleReceivedMessage(dynamic_cast<MaloW::ClientChannel*>(NP->GetChannel()), NP->GetMessage());
 		}
 		else if ( ClientDisconnectedEvent* CDE = dynamic_cast<ClientDisconnectedEvent*>(pe) )
 		{
 			HandleClientDisconnect(CDE->GetClientChannel());
 		}
+
 		// Unhandled Message
 		SAFE_DELETE(pe);
 	}
@@ -217,6 +222,14 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.clientData = cd;
 		NotifyObservers(&e);
 	}
+	//Handles Swap weapon message
+	else if(msgArray[0].find(M_WEAPON_EQUIPMENT_SWAP.c_str()) == 0)
+	{
+		PlayerSwapEquippedWeaponsEvent e;
+
+		e.clientdData = cd;
+		NotifyObservers(&e);
+	}
 	//Handle Item usage in Inventory
 	else if(msgArray[0].find(M_ITEM_USE.c_str()) == 0)
 	{
@@ -225,6 +238,26 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 
 		e.clientData = cd;
 		e.itemID = _itemID;
+		NotifyObservers(&e);
+	}
+	//Handle Item crafting in Inventory
+	else if(msgArray[0].find(M_ITEM_CRAFT.c_str()) == 0)
+	{
+		PlayerCraftItemEvent e;
+		int _itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_CRAFT, msgArray[0]);
+
+		e.clientData = cd;
+		e.itemID = _itemID;
+		NotifyObservers(&e);
+	}
+	//Handle Equip Item
+	else if (msgArray[0].find(M_EQUIP_ITEM.c_str()) == 0)
+	{
+		PlayerEquipItemEvent e;
+		int _itemID = this->zMessageConverter.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
+
+		e.itemID = _itemID;
+		e.clientData = cd;
 		NotifyObservers(&e);
 	}
 	//Handle UnEquip Item in Equipment
@@ -241,7 +274,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 
 		e.eq_Slot = _eq_Slot;
 		e.itemID = _itemID;
-
+		e.clientData = cd;
 		NotifyObservers(&e);
 	}
 	//Handles Equipped Weapon usage
@@ -254,14 +287,6 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.itemID = _itemID;
 		NotifyObservers(&e);
 	}
-	////Handles Pickup Object Requests from Client
-	//else if(msgArray[0].find(M_PICKUP_ITEM.c_str()) == 0)
-	//{
-	//	PlayerPickupObjectEvent e;
-	//	int _objID = this->zMessageConverter.ConvertStringToInt(M_PICKUP_ITEM, msgArray[0]);
-	//	e.objID = _objID;
-	//	NotifyObservers(&e);
-	//}
 	else if(msgArray[0].find(M_LOOT_OBJECT.c_str()) == 0)
 	{
 		PlayerLootObjectEvent e;
@@ -385,14 +410,19 @@ void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 {
 	PlayerDisconnectedEvent e;
 	auto i = zClients.find(channel);
-	e.clientData = i->second;
+	ClientData* cd = i->second;
+	cd->Kick();
+	e.clientData = cd;
+
 	NotifyObservers(&e);
-	delete i->second;
+	delete cd, cd = NULL;
 	zClients.erase(i);
 }
 
 void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 {
+	zClientChannels.insert(CC);
+
 	ClientData* cd = new ClientData(CC);
 	zClients[CC] = cd;
 	CC->Start();

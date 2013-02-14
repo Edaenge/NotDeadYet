@@ -11,7 +11,7 @@ class InventorySlotGui : public GuiElement
 {
 public:
 	InventorySlotGui();
-	InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID, int Type, int Stacks);
+	InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID, int Type, int SubType, int Stacks);
 	virtual ~InventorySlotGui();
 
 	virtual bool AddToRenderer(GraphicsEngine* ge);
@@ -29,6 +29,7 @@ public:
 	int GetID(){ return this->zID; }
 
 	int GetType(){ return this->zType; }
+	int GetSubType(){return this->zSubType;}
 	int GetStacks(){ return this->zStacks; }
 
 	void SetStacks(int stacks) { this->zStacks = stacks; if(this->zStackText) this->zStackText->SetText(MaloW::convertNrToString((float)this->zStacks).c_str()); }
@@ -38,4 +39,5 @@ private:
 	int zID;
 	int zType;
 	int zStacks;
+	int zSubType;
 };

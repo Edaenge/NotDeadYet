@@ -79,7 +79,7 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 	{
 		for(unsigned int i = 0; i < this->zSlotGui.size(); i++)
 		{
-			if(this->zSlotGui.at(i)->GetType() == gid.zType)
+			if(this->zSlotGui.at(i)->GetType() == gid.zType && this->zSlotGui.at(i)->GetSubType() == gid.zSubType)
 			{
 				if(this->zSlotGui.at(i)->GetStacks() > 0)
 				{
@@ -91,7 +91,7 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 		}
 	}
 	InventorySlotGui* gui = new InventorySlotGui(zSlotPositions[size].x, zSlotPositions[size].y, zSlotImageWidth
-		, zSlotImageHeight, gid.zFilePath, gid.zID, gid.zType, gid.zStacks);
+		, zSlotImageHeight, gid.zFilePath, gid.zID, gid.zType, gid.zSubType, gid.zStacks);
 	this->zSlotGui.push_back(gui);
 
 	if(open)
@@ -296,8 +296,8 @@ void InventoryGui::EquipItem( int type, const Gui_Item_Data gid, bool guiOpen )
 			return;
 		}
 	}
-	InventorySlotGui* gui = new InventorySlotGui(zWeaponSlots[type].x, zWeaponSlots[type].y, zSlotImageWidth
-		, zSlotImageHeight, gid.zFilePath, gid.zID, type, gid.zStacks);
+	InventorySlotGui* gui = new InventorySlotGui(zWeaponSlots[type].x, zWeaponSlots[type].y, zSlotImageWidth, 
+		zSlotImageHeight, gid.zFilePath, gid.zID, type, gid.zSubType, gid.zStacks);
 
 	if(guiOpen)
 		gui->AddToRenderer(GetGraphics());

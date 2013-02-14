@@ -3,9 +3,9 @@
 
 bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned int ID)
 {
-	int index = this->zActorManager->SearchForActor(ID);
+	Actor* testActor = this->zActorManager->GetActor(ID);
 
-	if (index != -1)
+	if (testActor)
 	{
 		MaloW::Debug("Cant create a new Player Object. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
 		return false;
@@ -64,7 +64,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 	}
 	if (Messages::FileWrite())
 		Messages::Debug("Actor ID: " + MaloW::convertNrToString((float)ID) +" Added");
-	
+
 	//Creates a StaticMesh from the given Filename
 	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
 	mesh->ResetRotation();
@@ -79,57 +79,51 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 	return true;
 }
 
-bool Client::UpdateActor(const std::vector<std::string>& msgArray, const unsigned int ID)
+void Client::UpdateActors(ServerFramePacket* SFP)
 {
-	int index = this->zActorManager->SearchForUpdate(ID);
 	Updates* update = NULL;
-	if (index != -1)
-		update = this->zActorManager->GetUpdate(index);
-	else
-		update = new Updates(ID);
-	
-	Actor* actor = this->zActorManager->SearchAndGetActor(ID);
-	if (actor)
+	Actor* actor = NULL;
+	unsigned int ID = 0;
+	Vector3 actorPosition;
+	for(auto positionIterator = SFP->newPositions.begin(); positionIterator != SFP->newPositions.end(); positionIterator++)
 	{
-		char key[512];
-		for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
+		ID = positionIterator->first;
+		actorPosition = positionIterator->second;
+		actor = this->zActorManager->GetActor(ID);
+
+		update = this->zActorManager->GetUpdate(ID);
+		if (update)
 		{
-			sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
-
-			if(strcmp(key, M_POSITION.c_str()) == 0)
-			{
-				Vector3 position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-				update->SetPosition(position);
-			}
-			else if(strcmp(key, M_ROTATION.c_str()) == 0)
-			{
-				if (ID != this->zID)
-				{
-					Vector4 rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
-					actor->SetRotation(rotation);
-				}
-			}
-			else if(strcmp(key, M_STATE.c_str()) == 0)
-			{
-				int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
-				actor->SetState(state);
-			}
-			else if(strcmp(key, M_SCALE.c_str()) == 0)
-			{
-				Vector3 scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
-				actor->SetScale(scale);
-			}
-			else
-			{
-				MaloW::Debug("Client: Unknown Message Was sent from server - " + (*it) + " - in UpdatePlayerObjects");
-			}
+			update->SetPosition(actorPosition);
 		}
-		if (index == -1)
+		else
+		{
+			update = new Updates(ID);
+			update->SetPosition(actorPosition);
 			this->zActorManager->AddUpdate(update);
+		}
 
-		return true;
 	}
-	return false;
+	Vector4 actorRotation;
+	for(auto rotationIterator = SFP->newRotations.begin(); rotationIterator != SFP->newRotations.end(); rotationIterator++)
+	{
+		ID = rotationIterator->first;
+		actorRotation = rotationIterator->second;
+
+		actor = this->zActorManager->GetActor(ID);
+		if (actor && ID != this->zID)
+			actor->SetRotation(actorRotation);
+	}
+	Vector3 actorScale;
+	for(auto scaleIterator = SFP->newScales.begin(); scaleIterator != SFP->newScales.end(); scaleIterator++)
+	{
+		ID = scaleIterator->first;
+		actorScale = scaleIterator->second;
+
+		actor = this->zActorManager->GetActor(ID);
+		if (actor)
+			actor->SetScale(actorScale);
+	}
 }
 
 bool Client::RemoveActor(const unsigned int ID)
@@ -137,30 +131,26 @@ bool Client::RemoveActor(const unsigned int ID)
 	if (ID == -1)
 		return false;
 
-	int index = this->zActorManager->SearchForActor(ID);
+	Actor* actor = this->zActorManager->GetActor(ID);
 
 	//Check if object was found in the array
-	if(index == -1)
+	if(!actor)
 		return false;
 
 	if(this->zID == ID)
 	{
 		this->CloseConnection("Unknown reason possible Kicked");
 	}
-	Actor* object = this->zActorManager->GetActor(index);
-	if (!object)
-		return false;
 
-	iMesh* mesh = object->GetMesh();
+	iMesh* mesh = actor->GetMesh();
 
 	if(mesh)
 	{
 		this->zEng->DeleteMesh(mesh);
 	}
-	if(!this->zActorManager->RemoveActor(index))
-	{
-		MaloW::Debug("Failed To Remove Actor with ID: " + MaloW::convertNrToString((float)ID));
-	}
+
+	this->zActorManager->RemoveActor(ID);
+
 	return true;
 }
 //

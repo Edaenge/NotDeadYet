@@ -4,15 +4,25 @@
 #include "MaloWFileDebug.h"
 #include <sstream>
 #include <math.h>
+#include "Entity.h"
 
 
-World::World( Observer* observer, const std::string& fileName) throw(...) : 
+World::World( Observer* observer, const std::string& fileName, bool readOnly) throw(...) : 
 	Observed(observer),
 	zSectors(NULL), 
 	zNrOfSectorsWidth(0), 
-	zNrOfSectorsHeight(0)
+	zNrOfSectorsHeight(0),
+	zReadOnly(readOnly)
 {
-	zFile = new WorldFile(this, fileName, OPEN_EDIT);
+	if ( zReadOnly )
+	{
+		zFile = new WorldFile(this, fileName, OPEN_LOAD);
+	}
+	else
+	{
+		zFile = new WorldFile(this, fileName, OPEN_EDIT);
+	}
+
 	zFile->ReadHeader();
 }
 
@@ -20,7 +30,8 @@ World::World( Observer* observer, unsigned int nrOfSectorWidth, unsigned int nrO
 	Observed(observer),
 	zNrOfSectorsWidth(nrOfSectorWidth),
 	zNrOfSectorsHeight(nrOfSectorHeight),
-	zFile(0)
+	zFile(0),
+	zReadOnly(false)
 {
 	this->zSectors = new Sector**[this->zNrOfSectorsWidth];
 	for(unsigned int i = 0; i < this->zNrOfSectorsWidth; i++)
@@ -189,6 +200,7 @@ void World::SaveFile()
 							zFile->WriteAIGrid(zSectors[x][y]->GetAIGrid(), sectorIndex);
 							zFile->WriteBlendMap2(zSectors[x][y]->GetBlendMap2(), sectorIndex);
 							zFile->WriteTextureNames2(zSectors[x][y]->GetTextureNames2(), sectorIndex);
+							zFile->WriteNormals(zSectors[x][y]->GetNormals(), sectorIndex);
 
 							// Write Sector Header
 							WorldFileSectorHeader header;
@@ -285,7 +297,6 @@ void World::SaveFileAs( const std::string& fileName )
 
 			if ( !CopyFile( filePath.c_str(), fileName.c_str(), false ) )
 			{
-				int err = GetLastError();
 				throw("Failed Copy!");
 			}
 
@@ -387,12 +398,14 @@ Sector* World::GetSector( unsigned int x, unsigned int y ) throw(...)
 					s->SetTextureName(6, s->GetTextureName(2));
 					s->SetTextureName(7, s->GetTextureName(3));
 				}
+
+				if ( !zFile->ReadNormals(s->GetNormals(), y * GetNumSectorsWidth() + x) )
+				{
+					s->ResetNormals();
+				}
 			}
 			else
 			{
-				std::stringstream ss;
-				ss << "Failed Loading Header For Sector: (" << x << ", " << y << ")";
-				MaloW::Debug( ss.str() );
 				s->Reset();
 			}
 
@@ -411,7 +424,7 @@ Sector* World::GetSector( unsigned int x, unsigned int y ) throw(...)
 					ent->SetEdited(false);
 					zEntities.push_back(ent);
 					NotifyObservers( &EntityLoadedEvent(this,ent) );
-					NotifyObservers( &EntityUpdatedEvent(ent) );
+
 					counter++;
 				}
 				zLoadedEntityCount[zSectors[x][y]] = counter;
@@ -635,8 +648,8 @@ BlendValues World::GetBlendingAt( const Vector2& worldPos )
 
 	// Local Coordinates
 	Vector2 localPos;
-	localPos.x = fmod(worldPos.x, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
-	localPos.y = fmod(worldPos.y, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
+	localPos.x = fmod(worldPos.x, FSECTOR_WORLD_SIZE)/FSECTOR_WORLD_SIZE;
+	localPos.y = fmod(worldPos.y, FSECTOR_WORLD_SIZE)/FSECTOR_WORLD_SIZE;
 
 	// Snap Local Coordinates
 	Vector2 snapPos;
@@ -656,8 +669,8 @@ void World::SetBlendingAt( const Vector2& worldPos, const BlendValues& val )
 	unsigned int sectorX = (unsigned int)worldPos.x / SECTOR_WORLD_SIZE;
 	unsigned int sectorY = (unsigned int)worldPos.y / SECTOR_WORLD_SIZE;
 	Vector2 localPos;
-	localPos.x = fmod(worldPos.x, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
-	localPos.y = fmod(worldPos.y, SECTOR_WORLD_SIZE)/SECTOR_WORLD_SIZE;
+	localPos.x = fmod(worldPos.x, FSECTOR_WORLD_SIZE)/FSECTOR_WORLD_SIZE;
+	localPos.y = fmod(worldPos.y, FSECTOR_WORLD_SIZE)/FSECTOR_WORLD_SIZE;
 
 	// Snap Local Coordinates
 	Vector2 snapPos;
@@ -667,8 +680,8 @@ void World::SetBlendingAt( const Vector2& worldPos, const BlendValues& val )
 	GetSector(sectorX, sectorY)->SetBlendingAt(snapPos, val);
 
 	NotifyObservers(&SectorBlendMapChanged(this, 
-		worldPos.x / FSECTOR_WORLD_SIZE,
-		worldPos.y / FSECTOR_WORLD_SIZE,
+		sectorX,
+		sectorY,
 		localPos.x,
 		localPos.y ));
 	
@@ -733,7 +746,7 @@ void World::Update()
 			if ( !GetSector( i->x, i->y )->IsEdited() )
 			{
 				// Does Sector have edited entities?
-				Rect sectorRect(Vector2(i->x * SECTOR_WORLD_SIZE, i->y * SECTOR_WORLD_SIZE), Vector2(SECTOR_WORLD_SIZE, SECTOR_WORLD_SIZE));
+				Rect sectorRect(Vector2(i->x * FSECTOR_WORLD_SIZE, i->y * FSECTOR_WORLD_SIZE), Vector2(FSECTOR_WORLD_SIZE, FSECTOR_WORLD_SIZE));
 				std::set< Entity* > entitiesInArea;
 				bool unsavedEntities = false;
 
@@ -760,7 +773,7 @@ void World::Update()
 	for( auto i = sectorsToUnload.begin(); i != sectorsToUnload.end(); ++i )
 	{
 		// Delete Entities
-		Rect sectorRect(Vector2(i->x * SECTOR_WORLD_SIZE, i->y * SECTOR_WORLD_SIZE), Vector2(SECTOR_WORLD_SIZE, SECTOR_WORLD_SIZE));
+		Rect sectorRect(Vector2(i->x * FSECTOR_WORLD_SIZE, i->y * FSECTOR_WORLD_SIZE), Vector2(FSECTOR_WORLD_SIZE, FSECTOR_WORLD_SIZE));
 		std::set< Entity* > entitiesInArea;
 		GetEntitiesInRect(sectorRect, entitiesInArea);
 		for( auto e = entitiesInArea.begin(); e != entitiesInArea.end(); ++e )
@@ -925,17 +938,103 @@ Vector3 World::CalcNormalAt( const Vector2& worldPos ) throw(...)
 		worldPos.x < 0 ||
 		worldPos.y < 0 ) throw("Out Of Bounds!");
 
-	// Density
+	// Densityx
 	float density = FSECTOR_WORLD_SIZE / (FSECTOR_HEIGHT_SIZE - 1.0f);
 
-	Vector3 a(worldPos.x, GetHeightAt(worldPos), worldPos.y);
-	Vector3 b(worldPos.x+density, GetHeightAt(worldPos+Vector2(density, 0.0f)), worldPos.y);
-	Vector3 c(worldPos.x, GetHeightAt(worldPos+Vector2(0.0f, density)), worldPos.y+density);
-	Vector3 d(worldPos.x+density, GetHeightAt(worldPos+density), worldPos.y+density);
+	Vector3 vertices[4];
 
-	Vector3 normal = (c-b).GetCrossProduct(d-a);
+	vertices[0] = Vector3(worldPos.x, CalcHeightAtWorldPos(worldPos), worldPos.y);
+	vertices[1] = Vector3(worldPos.x+density, CalcHeightAtWorldPos(worldPos+Vector2(density, 0.0f)), worldPos.y);
+	vertices[2] = Vector3(worldPos.x+density, CalcHeightAtWorldPos(worldPos+density), worldPos.y+density);
+	vertices[3] = Vector3(worldPos.x, CalcHeightAtWorldPos(worldPos+Vector2(0.0f, density)), worldPos.y+density);
+	
+	Vector3 normal(0.0f, 0.0f, 0.0f);
+
+	for (int i=0; i<4; i++)
+	{
+		Vector3 first = vertices[(i+1)%4] - vertices[i];
+		Vector3 second = vertices[(i+3)%4] - vertices[i]; 
+		normal += second.GetCrossProduct(first);
+	}
 	normal.Normalize();
+
 	return normal;
+}
+
+void World::SetNormalAt( const Vector2& worldPos, const Vector3& val ) throw(...)
+{
+	unsigned int sectorX = (unsigned int)worldPos.x / SECTOR_WORLD_SIZE;
+	unsigned int sectorY = (unsigned int)worldPos.y / SECTOR_WORLD_SIZE;
+	Vector2 localPos;
+	localPos.x = fmod(worldPos.x, FSECTOR_WORLD_SIZE) / FSECTOR_WORLD_SIZE;
+	localPos.y = fmod(worldPos.y, FSECTOR_WORLD_SIZE) / FSECTOR_WORLD_SIZE;
+
+	// Snap Local Coordinates
+	Vector2 snapPos;
+	snapPos.x = floor(localPos.x * (FSECTOR_NORMALS_SIZE-1.0f)) / (FSECTOR_NORMALS_SIZE-1.0f);
+	snapPos.y = floor(localPos.y * (FSECTOR_NORMALS_SIZE-1.0f)) / (FSECTOR_NORMALS_SIZE-1.0f);
+
+	GetSector(sectorX, sectorY)->SetNormalAt(snapPos, val);
+
+	NotifyObservers(&SectorNormalChanged(this, 
+		sectorX,
+		sectorY,
+		localPos.x,
+		localPos.y ));
+	
+	// Overlap Left
+	if ( sectorX > 0 && snapPos.x == 0.0f )
+	{
+		float border = (float)(FSECTOR_NORMALS_SIZE-1)/(float)FSECTOR_NORMALS_SIZE;
+		GetSector(sectorX-1, sectorY)->SetNormalAt(Vector2(border, snapPos.y), val);
+		NotifyObservers( &SectorNormalChanged(this, sectorX-1, sectorY, border, snapPos.y) );
+	}
+
+	// Overlap Up
+	if ( sectorY > 0 && snapPos.y == 0.0f )
+	{
+		float border = (float)(FSECTOR_NORMALS_SIZE-1)/(float)FSECTOR_NORMALS_SIZE;
+		GetSector(sectorX, sectorY-1)->SetNormalAt(Vector2(snapPos.x, border), val);
+		NotifyObservers( &SectorNormalChanged(this, sectorX, sectorY-1, snapPos.x, border) );
+	}
+	
+	// Overlap Left Up Corner
+	if ( sectorY > 0 && snapPos.y == 0.0f && sectorX > 0 && snapPos.x == 0.0f )
+	{
+		float border = (float)(FSECTOR_NORMALS_SIZE-1)/(float)FSECTOR_NORMALS_SIZE;
+		GetSector(sectorX-1, sectorY-1)->SetNormalAt(Vector2(border, border), val);
+		NotifyObservers( &SectorNormalChanged(this, sectorX-1, sectorY-1, border, border) );
+	}
+}
+
+void World::GenerateSectorNormals( const Vector2UINT& sectorCoords )
+{
+	// Density
+	float density = FSECTOR_WORLD_SIZE / (FSECTOR_NORMALS_SIZE-1.0);
+
+	// Sector Cornera
+	Vector2 start;
+	start.x = (float)sectorCoords.x * FSECTOR_WORLD_SIZE;
+	start.y = (float)sectorCoords.y * FSECTOR_WORLD_SIZE;
+
+	Vector2 end;
+	end.x = (float)(sectorCoords.x+1) * FSECTOR_WORLD_SIZE;
+	end.y = (float)(sectorCoords.y+1) * FSECTOR_WORLD_SIZE;
+
+	Vector2 current;
+	for( current.x = start.x; current.x < end.x; current.x += density )
+	{
+		for( current.y = start.y; current.y < end.y; current.y += density )
+		{
+			try
+			{
+				SetNormalAt( current, CalcNormalAt(current) );
+			}
+			catch(...)
+			{
+			}
+		}
+	}
 }
 
 unsigned int World::GetAINodesInCircle( const Vector2& center, float radius, std::set<Vector2>& out ) const

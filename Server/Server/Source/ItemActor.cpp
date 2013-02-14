@@ -15,6 +15,7 @@ const std::string& ItemActor::GetModel() const
 	if(zItem)
 		return this->zItem->GetModel();
 
-	return "none";
-}
+	static const std::string emptyString = "";
 
+	return emptyString;
+}

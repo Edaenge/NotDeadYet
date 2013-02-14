@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PhysicsObject.h"
+#include "PhysicsResourceManager.h"
 #include <vector>
 
 struct PhysicsCollisionData

@@ -35,6 +35,7 @@ static const std::string OBJECT_BANDAGE			=	"[Object.Bandage]";
 
 static const std::string END					=	"#END";
 static const std::string TYPE					=	"TYPE";
+static const std::string SUBTYPE				=	"SUBTYPE";
 static const std::string WEIGHT					=	"WEIGHT";
 static const std::string PATH					=	"PATH";
 static const std::string DESCRIPTION			=	"DESCRIPTION";
@@ -291,6 +292,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, MeleeWeapon
 	{
 		wp->SetItemType(MaloW::convertStringToInt(key));
 	}
+	else if(command == SUBTYPE)
+	{
+		wp->SetItemSubType(MaloW::convertStringToInt(key));
+	}
 	else if(command == WEIGHT)
 	{
 		wp->SetItemWeight(MaloW::convertStringToInt(key));
@@ -340,6 +345,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, RangedWeapo
 	{
 		wp->SetItemType(MaloW::convertStringToInt(key));
 	}
+	else if(command == SUBTYPE)
+	{
+		wp->SetItemSubType(MaloW::convertStringToInt(key));
+	}
 	else if(command == WEIGHT)
 	{
 		wp->SetItemWeight(MaloW::convertStringToInt(key));
@@ -388,6 +397,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Food*& fd)
 	{
 		fd->SetItemType(MaloW::convertStringToInt(key));
 	}
+	else if(command == SUBTYPE)
+	{
+		fd->SetItemSubType(MaloW::convertStringToInt(key));
+	}
 	else if(command == WEIGHT)
 	{
 		fd->SetItemWeight(MaloW::convertStringToInt(key));
@@ -430,6 +443,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Container*&
 	if(command == TYPE)
 	{
 		ct->SetItemType(MaloW::convertStringToInt(key));
+	}
+	else if(command == SUBTYPE)
+	{
+		ct->SetItemSubType(MaloW::convertStringToInt(key));
 	}
 	else if(command == WEIGHT)
 	{
@@ -478,6 +495,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Material*& 
 	{
 		ma->SetItemType(MaloW::convertStringToInt(key));
 	}
+	else if(command == SUBTYPE)
+	{
+		ma->SetItemSubType(MaloW::convertStringToInt(key));
+	}
 	else if(command == WEIGHT)
 	{
 		ma->SetItemWeight(MaloW::convertStringToInt(key));
@@ -524,6 +545,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Projectile*
 	if(command == TYPE)
 	{
 		pa->SetItemType(MaloW::convertStringToInt(key));
+	}
+	else if(command == SUBTYPE)
+	{
+		pa->SetItemSubType(MaloW::convertStringToInt(key));
 	}
 	else if(command == WEIGHT)
 	{

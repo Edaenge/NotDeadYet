@@ -55,6 +55,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_EQUIPMENT_SLOT,
 	MESSAGE_TYPE_REMOVE_EQUIPMENT,
 	MESSAGE_TYPE_ITEM_USE,
+	MESSAGE_TYPE_ITEM_CRAFT,
 	MESSAGE_TYPE_ITEM_NAME,
 	MESSAGE_TYPE_ITEM_DESCRIPTION,
 	MESSAGE_TYPE_ITEM_ICON_PATH,
@@ -74,7 +75,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_START_GAME,
 	MESSAGE_TYPE_PLAYER_READY,
 	MESSAGE_TYPE_ITEM_SUB_TYPE,
-	MESSAGE_TYPE_ITEM_FINISHED
+	MESSAGE_TYPE_ITEM_FINISHED,
+	MESSAGE_TYPE_WEAPON_EQUIPMENT_SWAP
 };
 
 static const std::string M_UPDATE_ACTOR				= "UA";
@@ -105,6 +107,7 @@ static const std::string M_ITEM_DESCRIPTION			= "IDE";
 static const std::string M_ITEM_ICON_PATH			= "IIP";
 static const std::string M_ITEM_WEIGHT				= "IW";
 static const std::string M_ITEM_USE					= "IU";
+static const std::string M_ITEM_CRAFT				= "IC";
 static const std::string M_ITEM_STACK_SIZE			= "ISS";
 static const std::string M_WEAPON_DAMAGE			= "WD";
 static const std::string M_WEAPON_RANGE				= "WR";
@@ -128,6 +131,8 @@ static const std::string M_REMOVE_INVENTORY_ITEM	= "RII";
 static const std::string M_LOOT_OBJECT				= "LO";
 static const std::string M_LOOT_OBJECT_RESPONSE		= "LOR";
 static const std::string M_ITEM_FINISHED			= "IF";
+static const std::string M_WEAPON_EQUIPMENT_SWAP	= "WEQS";
+
 //Animal Messages
 static const std::string M_ADD_DEAD_ANIMAL_ITEM		= "ADAI";
 static const std::string M_DEAD_ANIMAL_REMOVE_ITEM	= "DARI";

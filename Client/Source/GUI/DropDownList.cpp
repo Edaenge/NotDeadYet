@@ -26,6 +26,8 @@ DropDownList::DropDownList(float x, float y, float z, string textureName, float 
 	this->mMaxNrOfElements = 10;
 	this->mNrOfElements = 0;
 	this->mElements = new Element*[mMaxNrOfElements];
+	for(int i = 0; i < this->mMaxNrOfElements; i++)
+		this->mElements[i] = NULL;
 	
 }
 DropDownList::~DropDownList()
@@ -186,7 +188,7 @@ GUIEvent* DropDownList::GetEventFromTop()
 	return NULL;
 }
 
-void DropDownList::Resize( int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight )
+void DropDownList::Resize( float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight )
 {
 	Element::Resize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
 

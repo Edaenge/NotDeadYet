@@ -6,7 +6,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "BioActor.h"
-#include "ObjectManager.h"
 #include "KeyValues.h"
 #include "KeyStates.h"
 #include "Player.h"
@@ -36,7 +35,8 @@ public:
 
 	Player* GetPlayer(){ return this->zPlayer; }
 
-	/*! */
+	/*! Returns The dropped item.
+	Doesn't deallocate Item.*/
 	Item* DropItem(const long ID);
 
 	///*! Updates players pos, states etc.*/

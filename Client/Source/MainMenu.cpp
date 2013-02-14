@@ -24,11 +24,33 @@ void MainMenu::Init()
 {
 	GraphicsEngine* eng = GetGraphics();
 
-	const iGraphicsEngineParams& GEP = GetGraphics()->GetEngineParameters();
-	int windowWidth = GEP.WindowWidth;
-	int windowHeight = GEP.WindowHeight;
+	iGraphicsEngineParams& GEP = GetGraphics()->GetEngineParameters();
+	float windowWidth = (float)GEP.WindowWidth;
+	float windowHeight = (float)GEP.WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
+
+	const char* object[] = {
+		"Media/Models/ArmyRation_v01.obj", 
+		"Media/Models/Arrow_v01.obj",
+		"Media/Models/Bigleaf_01.ani", 
+		"Media/Models/Bow_v01.obj",
+		"Media/Models/BranchesItem_01_v01.obj", 
+		"Media/Models/Bush_01.ani",
+		"Media/Models/Campfire_01_v01.obj",
+		"Media/Models/Fern_02.ani",
+		"Media/Models/GrassPlant_01.ani",
+		"Media/Models/Machete_v01.obj", 
+		"Media/Models/Pocketknife_v02.obj", 
+		"Media/Models/Stone_02_v01.obj",
+		"Media/Models/Stone_01_v02.obj",
+		"Media/Models/StoneItem_01_v01.obj",
+		"Media/Models/Tree_01.ani",
+		"Media/Models/WaterGrass_02.ani",
+		"Media/Models/Veins_01_v03_r.obj",
+		"Media/Models/temp_guy.obj"};
+
+	GetGraphics()->PreLoadResources(18, object);
 
 	eng->StartRendering();
 
@@ -143,23 +165,28 @@ void MainMenu::Init()
 		(175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp);
 
+	//WindowedText
+	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (240.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/WindowedText.png", 
+		(175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
 	//Resolution Text
-	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (240.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/ResolutionText.png", 
+	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (300.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/ResolutionText.png", 
 		(175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Shadow Quality Text
-	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (360.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/ShadowText.png", 
+	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (420.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/ShadowText.png", 
 		(175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp);
 
 	//FXAA Text
-	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (300.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/FXAAText.png", 
+	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (360.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/FXAAText.png", 
 		(175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp);
 
 	//View Distance Text
-	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (420.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/ViewdistanceText.png", 
+	temp = new GUIPicture(offSet + (120.0f / 1024.0f) * dx, (480.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/ViewdistanceText.png", 
 		(175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp);
 
@@ -187,12 +214,12 @@ void MainMenu::Init()
 	// Tech stuff
 	//Graphics
 	//DropDown list
-	temp = new DropDownList(offSet + (240.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/DropDownBG.png", 
+	temp = new DropDownList(offSet + (240.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/DropDownBG.png", 
 		(170.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, "ResolutionMenu");
 	DropDownList* dropdownlist = (DropDownList*)temp;
-	dropdownlist->AddButton("Media/Menu/Options/169small.png", new ChangeResEvent(1280, 720), "", "");
-	dropdownlist->AddButton("Media/Menu/Options/169medium.png", new ChangeResEvent(1600, 900), "", "");
-	dropdownlist->AddButton("Media/Menu/Options/169big.png", new ChangeResEvent(1920, 1080), "", "");
+
+	this->AddResolutionsToDropBox(dropdownlist);
+
 	zSets[OPTIONS].AddElement(temp);
 
 	//CheckBox FXAA
@@ -200,21 +227,29 @@ void MainMenu::Init()
 	if(GetGraphics()->GetEngineParameters().FXAAQuality > 0)
 		checked = true;
 
-	temp = new CheckBox(offSet + (195.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/CheckBoxFrame.png", 
+	temp = new CheckBox(offSet + (195.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/CheckBoxFrame.png", 
 		(32.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, "Media/Menu/Options/CheckBoxCheck.png", checked, 
 		new ChangeOptionEvent("FXAA", "false"), "FXAACheckBox");
 	zSets[OPTIONS].AddElement(temp);
 
+	//CheckBox Windowed
+	checked = !GetGraphics()->GetEngineParameters().Maximized;
+
+	temp = new CheckBox(offSet + (240.0f / 1024.0f) * dx, (233.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/CheckBoxFrame.png", 
+		(32.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, "Media/Menu/Options/CheckBoxCheck.png", checked, 
+		new ChangeOptionEvent("Windowed", "false"), "WindowedCheckBox");
+	zSets[OPTIONS].AddElement(temp);
+
 	//TextBox View Distance
-	temp = new TextBox(offSet + (278.0f / 1024.0f) * dx, (410.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
+	temp = new TextBox(offSet + (278.0f / 1024.0f) * dx, (470.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().FarClip), 
 		"ViewDistance", 1, 3, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 	//TextBox Shadow
-	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (352.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (412.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
 		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
-		"ShadowQuality", 1, 2, NR, 0, 9);
+		"ShadowQuality", 1, 1, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Sound tech
@@ -236,6 +271,22 @@ void MainMenu::Init()
 		"NormalVolume", 1.0f, 2, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
+
+	//Buttons options menu
+	//Back
+	temp = new SimpleButton(offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/FindServer/Back.png", 
+		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ChangeSetEvent(MAINMENU), "", "", 
+		offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
+		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+	temp = new SimpleButton(offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Apply.png", 
+		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ApplyOptionsAndChangeSetEvent(MAINMENU), "", "", 
+		offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
+		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
+
+
 	this->zPrimarySet = MAINMENU;
 	this->zSecondarySet = NOMENU;
 }
@@ -243,6 +294,7 @@ void MainMenu::Init()
 void MainMenu::StartTestRun()
 {
 	//zGame->InitGameClient("194.47.150.16", 11521);
+	//zGame->InitGameClient("194.47.150.12", 11521);
 	zGame->InitGameClient("127.0.0.1", 11521);	
 	zGame->Run();
 }
@@ -340,18 +392,83 @@ void MainMenu::Run()
 					}
 					else if(retEvent->GetEventMessage() == "ChangeResEvent")
 					{
-						ChangeResEvent* cEvent = (ChangeResEvent*)retEvent;
-
-						int windowWidth = cEvent->GetWidth();
-						int windowHeight = cEvent->GetHeight();
-						int i = NOMENU;
-						int endMenu = LASTMENU+1;
-						while(i != endMenu)
+						if(this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn())
 						{
-							zSets[i].Resize(GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight, windowWidth, windowHeight);
-							i++;
+							ChangeResEvent* cEvent = (ChangeResEvent*)retEvent;
+
+							float windowWidth = (float)cEvent->GetWidth();
+							float windowHeight = (float)cEvent->GetHeight();
+							int i = NOMENU;
+							while(i != LASTMENU)
+							{
+								zSets[i].Resize(GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight, windowWidth, windowHeight);
+								i++;
+							}
+							GetGraphics()->ResizeGraphicsEngine(windowWidth, windowHeight);
 						}
-						GetGraphics()->ResizeGraphicsEngine(windowWidth, windowHeight);
+
+					}
+					else if(retEvent->GetEventMessage() == "ApplyOptionsAndChangeSetEvent")
+					{
+						GraphicsEngine* ge = GetGraphics();
+						iGraphicsEngineParams& GEP = ge->GetEngineParameters();
+
+						ApplyOptionsAndChangeSetEvent* cEvent = (ApplyOptionsAndChangeSetEvent*)retEvent;
+
+						//Maximized
+						bool maximized = this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn();
+						GEP.Maximized = !maximized;
+						if(maximized == false)
+						{
+							RECT desktop;
+							const HWND hDesktop = GetDesktopWindow();
+							GetWindowRect(hDesktop, &desktop);
+							long float width = desktop.right;
+							long float height = desktop.bottom;
+
+							int i = NOMENU;
+							while(i != LASTMENU)
+							{
+								zSets[i].Resize(GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight, width, height);
+								i++;
+							}
+							GetGraphics()->ResizeGraphicsEngine(width, height);
+
+						}
+						// Getting shadow
+						std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");
+						ge->ChangeShadowQuality(MaloW::convertStringToInt(tbTemp));
+						GEP.ShadowMapSettings = MaloW::convertStringToInt(tbTemp);
+						//FXAA
+						CheckBox* cbTemp = this->zSets[this->zPrimarySet].GetCheckBox("FXAACheckBox");
+						if(cbTemp != NULL)
+						{
+							if(cbTemp->GetOn())
+								GEP.FXAAQuality = 4;
+							if(!cbTemp->GetOn())
+								GEP.FXAAQuality = 0;
+						}
+
+						//View Distance
+						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ViewDistance");
+						GEP.FarClip = MaloW::convertStringToInt(tbTemp);
+
+						//Master Volume
+						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MasterVolume");
+						//Set Master Volume
+
+						//Music Volume
+						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MusicVolume");
+						//Set Music Volume
+
+						//Normal Volume
+						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("NormalVolume");
+						//Set Normal Volume
+
+						GEP.SaveToFile("Config.cfg");
+
+						this->SwapMenus((SET)cEvent->GetSet(), NOMENU);
+						zPrimarySet = (SET)cEvent->GetSet();
 					}
 				}
 				else
@@ -455,4 +572,35 @@ void MainMenu::EnableMouse(bool value)
 		GetGraphics()->GetKeyListener()->SetCursorVisibility(false);
 	}
 	
+}
+
+void MainMenu::AddResolutionsToDropBox( DropDownList* ddl )
+{
+	RECT desktop;
+	const HWND hDesktop = GetDesktopWindow();
+	GetWindowRect(hDesktop, &desktop);
+	long float width = desktop.right;
+	long float height = desktop.bottom;
+
+	float dx = (float)(width / height);
+
+	
+	if(dx > 1.77f && dx < 1.78f)
+	{
+		ddl->AddButton("Media/Menu/Options/169small.png", new ChangeResEvent(1280, 720), "", "");
+		ddl->AddButton("Media/Menu/Options/169medium.png", new ChangeResEvent(1600, 900), "", "");
+		ddl->AddButton("Media/Menu/Options/169big.png", new ChangeResEvent(1920, 1080), "", "");
+	}
+	else if(dx > 1.59f && dx < 1.61f)
+	{
+		ddl->AddButton("Media/Menu/Options/1610small.png", new ChangeResEvent(1280, 800), "", "");
+		ddl->AddButton("Media/Menu/Options/1610medium.png", new ChangeResEvent(1440, 900), "", "");
+		ddl->AddButton("Media/Menu/Options/1610big.png", new ChangeResEvent(1680, 1050), "", "");
+	}
+	else
+	{
+		ddl->AddButton("Media/Menu/Options/43small.png", new ChangeResEvent(800, 600), "", "");
+		ddl->AddButton("Media/Menu/Options/43medium.png", new ChangeResEvent(1024, 768), "", "");
+		ddl->AddButton("Media/Menu/Options/43big.png", new ChangeResEvent(1600, 1200), "", "");
+	}
 }

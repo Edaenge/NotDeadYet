@@ -17,7 +17,7 @@ public:
 	Behavior(Actor* actor, World* world);
 	virtual ~Behavior();
 
-	Actor* GetActor() const { return zActor; }
+	inline Actor* GetActor() const { return zActor; }
 	World* GetWorld() const { return zWorld; }
 
 	// Returns true to indicate when it wants to get deleted

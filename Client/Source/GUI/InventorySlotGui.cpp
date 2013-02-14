@@ -6,7 +6,7 @@ InventorySlotGui::InventorySlotGui()
 	this->zSlotImage = NULL;
 }
 
-InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID, int Type, int Stacks)
+InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID, int Type, int SubType, int Stacks)
 	: GuiElement(x, y, width, height, textureName)
 {
 	this->zSlotImage = NULL;
@@ -14,11 +14,12 @@ InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, 
 	this->zID = ID;
 	this->zType = Type;
 	this->zStacks = Stacks;
+	this->zSubType = SubType;
 }
 
 InventorySlotGui::~InventorySlotGui()
 {
-	SAFE_DELETE(this->zSlotImage);
+	if ( zSlotImage ) throw("Image Memory Leak!");
 }
 
 bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)

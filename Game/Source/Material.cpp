@@ -16,6 +16,14 @@ Material::Material(const unsigned int itemType, const unsigned int itemSubType,
 	this->zRequiredStackToCraft = stacksRequiredToCraft;
 }
 
+Material::Material( const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType, const unsigned int craftingType, const unsigned int stacksRequiredToCraft )
+	: Item(ID, itemType, itemSubType)
+{
+	this->zStacking = true;
+	this->zCraftingType = craftingType;
+	this->zRequiredStackToCraft = stacksRequiredToCraft;
+}
+
 Material::~Material()
 {
 
@@ -23,12 +31,17 @@ Material::~Material()
 
 Material::Material(const Material& other)
 {
-	this->zID = other.zID;
+	if (other.zID == 0)
+		this->GenerateID();
+	else
+		this->zID = other.zID;
+
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zCraftingType = other.zCraftingType;
 	this->zItemDescription = other.zItemDescription;
@@ -43,6 +56,7 @@ Material::Material(const Material* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zCraftingType = other->zCraftingType;
 	this->zItemDescription = other->zItemDescription;

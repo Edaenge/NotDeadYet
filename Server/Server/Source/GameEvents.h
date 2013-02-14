@@ -56,17 +56,6 @@ public:
 	ClientData* clientData;
 };
 
-/*Event when a player wants to pickup an item*/
-class PlayerPickupObjectEvent : public Event
-{
-public:
-	virtual ~PlayerPickupObjectEvent() {}
-	
-	ClientData* clientData;
-
-	long objID;
-};
-
 class PlayerLootObjectEvent : public Event
 {
 public:
@@ -136,6 +125,16 @@ public:
 	unsigned int itemID;
 };
 
+class PlayerCraftItemEvent : public Event
+{
+public:
+	virtual ~PlayerCraftItemEvent() {}
+
+	ClientData* clientData;
+
+	unsigned int itemID;
+};
+
 /*Event when a player wants to use his equipped weapon.*/
 class PlayerUseEquippedWeaponEvent : public Event
 {
@@ -144,6 +143,15 @@ public:
 
 	ClientData* clientData;
 	unsigned int itemID;
+};
+
+/*Event when a player swaps his equipped weapons between primary and secondary.*/
+class PlayerSwapEquippedWeaponsEvent : public Event
+{
+public:
+	virtual ~PlayerSwapEquippedWeaponsEvent() {}
+
+	ClientData* clientdData;
 };
 
 /*Event when a client sends an update to server.*/

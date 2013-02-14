@@ -20,12 +20,19 @@ BioActor::BioActor() : Actor()
 
 BioActor::~BioActor()
 {
-	SAFE_DELETE(zInventory);
+	SAFE_DELETE(this->zInventory);
 }
 
 
-bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
+bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 {
+	// Notify Damage
+	BioActorTakeDamageEvent BATD;
+	BATD.zActor = this;
+	BATD.zDamage = &dmg;
+	BATD.zDealer = dealer;
+	NotifyObservers(&BATD);
+
 	this->zHealth -= dmg.GetTotal();
 	this->zHealthChanged = true;
 
@@ -49,17 +56,10 @@ bool BioActor::TakeDamage(const Damage& dmg, Actor* dealer)
 		around.Normalize();
 		float angle = 3.14f * 0.5f;
 		
-		this->GetPhysicsObject()->SetQuaternion(Vector4(.0f,.0f,.0f,.1f));
+		this->GetPhysicsObject()->SetQuaternion(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 		this->SetRotation(around,angle);
 	}
 	
-	// Notify Damage
-	BioActorTakeDamageEvent BATD;
-	BATD.zActor = this;
-	BATD.zDamage = dmg;
-	BATD.zDealer = dealer;
-	NotifyObservers(&BATD);
-
 	return this->zAlive;
 }
 
@@ -68,7 +68,7 @@ void BioActor::Kill()
 	Damage dmg;
 	dmg.fallingDamage = zHealth;
 
-	TakeDamage(dmg, NULL);
+	TakeDamage(dmg, this);
 }
 
 bool BioActor::IsAlive() const

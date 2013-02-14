@@ -1,6 +1,7 @@
 #pragma once
 
-static const int KEY_CAP = 17;
+//Should be increased if enums are added.
+static const int KEY_CAP = 18;
 
 enum KEY_BINDINGS
 {
@@ -20,5 +21,6 @@ enum KEY_BINDINGS
 	KEY_TEST,
 	KEY_EQUIP,
 	KEY_DEBUG_INFO,
-	KEY_READY
+	KEY_READY,
+	KEY_SWAP_EQ
 };

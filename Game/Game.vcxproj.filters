@@ -15,6 +15,12 @@
     <Filter Include="Header Files\World">
       <UniqueIdentifier>{3ae0a3bd-b76c-4fc4-82c6-cbe7082a447f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Packets">
+      <UniqueIdentifier>{670d44a1-a8df-49e5-8a73-bf365e742e58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Packets">
+      <UniqueIdentifier>{c7999bcf-e402-4eb0-8d98-00fa7307521c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\KeyStates.h">
@@ -101,8 +107,11 @@
     <ClInclude Include="Include\ItemLookup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Bandage.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Include\Packets\ServerFramePacket.h">
+      <Filter>Header Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Packets\Packet.h">
+      <Filter>Header Files\Packets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -175,8 +184,8 @@
     <ClCompile Include="Source\ItemLookup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Bandage.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Packets\ServerFramePacket.cpp">
+      <Filter>Source Files\Packets</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -11,40 +11,46 @@ ClientActorManager::ClientActorManager()
 
 ClientActorManager::~ClientActorManager()
 {
-	for(auto x = this->zActors.begin(); x < this->zActors.end(); x++)
+	for(auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
-		SAFE_DELETE((*x));
-	}
-}
+		Actor* temp = it->second;
 
-Actor* ClientActorManager::SearchAndGetActor(const unsigned int ID)
-{
-	int position = this->SearchForActor(ID);
-	if ( position < 0 ) return 0;
-	return this->zActors[position];
+		SAFE_DELETE(temp);
+
+		it = this->zActors.erase(it);
+	}
 }
 
 void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 {
 	float t = GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
-
+	static GraphicsEngine* gEng = GetGraphics();
 	auto it_Update = this->zUpdates.begin();
 	while( it_Update != this->zUpdates.end() )
 	{
-		Actor* actor = this->SearchAndGetActor((*it_Update)->GetID());
+		Updates* update = it_Update->second;
+		Actor* actor = this->GetActor(update->GetID());
 
 		if (actor)
 		{
-			if ((*it_Update)->HasPositionChanged())
+			if (update->HasPositionChanged())
 			{
-				Vector3 position = this->InterpolatePosition(actor->GetPosition(), (*it_Update)->GetPosition(), t);
-				if((*it_Update)->GetID() == clientID)
+				Vector3 position;
+				if(update->GetID() == clientID)
 				{
-					if ( rand()%10000 == 0 ) GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);
-					GetGraphics()->GetCamera()->SetPosition(position + Vector3(0.0f, 2.0f, 0.0f));
+					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
+					//if ( rand()%10000 == 0 ) GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);
+					actor->SetPosition(position);
+					GetGraphics()->GetCamera()->SetPosition(position + Vector3(0.0f, 2.5f, 0.0f));
+					
 				}
-				actor->SetPosition(position);
-				(*it_Update)->ComparePosition(position);
+				else 
+				{
+					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
+					actor->SetPosition(position);
+				}
+				
+				update->ComparePosition(position);
 			}
 			//if((*it_Update)->GetID() != clientID)
 			//{
@@ -65,9 +71,9 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			//	(*it_Update)->SetStateChange(false);
 			//}
 			
-			if (!(*it_Update)->HasPositionChanged() )//&& !(*it_Update)->HasRotationChanged() && !(*it_Update)->HasStateChanged())
+			if (!update->HasPositionChanged() )//&& !(*it_Update)->HasRotationChanged() && !(*it_Update)->HasStateChanged())
 			{
-				Updates* temp = (*it_Update); 
+				Updates* temp = update; 
 				it_Update = zUpdates.erase(it_Update);
 				SAFE_DELETE(temp);
 			}
@@ -79,43 +85,48 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 	}
 }
 
-Actor* ClientActorManager::GetActor( const int Index )
+std::map<unsigned int, Actor*> ClientActorManager::GetActors()
 {
-	if ((unsigned int)Index < this->zActors.size())
-		return this->zActors[Index];
+	return this->zActors;
+}
+
+Actor* ClientActorManager::GetActor( unsigned int ID )
+{
+	auto actorIterator = this->zActors.find(ID);
+
+	if (actorIterator != this->zActors.end())
+		return actorIterator->second;
 
 	return NULL;
 }
 
-int ClientActorManager::SearchForActor( const unsigned int ID )
+Updates* ClientActorManager::GetUpdate(const int ID)
 {
-	for (unsigned int i = 0; i < this->zActors.size(); i++)
-	{
-		if (this->zActors[i]->GetID() == ID)
-		{
-			return i;
-		}
-	}
-	return -1;
+	auto updateIterator = this->zUpdates.find(ID);
+
+	if (updateIterator != this->zUpdates.end())
+		return updateIterator->second;
+
+	return NULL;
+	
 }
 
-bool ClientActorManager::RemoveActor( const int Index )
+void ClientActorManager::RemoveActor( const unsigned int ID )
 {
-	if ((unsigned int)Index < this->zActors.size())
-	{
-		Actor* worldObject = this->zActors[Index];
-		this->zActors.erase(this->zActors.begin() + Index);
-		SAFE_DELETE(worldObject);
-		return true;
-	}
-	return false;
+	auto actorIterator = this->zActors.find(ID);
+
+	Actor* actor = actorIterator->second;
+
+	SAFE_DELETE(actor);
+
+	this->zActors.erase(actorIterator);
 }
 
 bool ClientActorManager::AddActor(Actor* actor)
 {
 	if (actor)
 	{
-		this->zActors.push_back(actor);
+		this->zActors[actor->GetID()] = actor;
 		return true;
 	}
 	return false;
@@ -123,27 +134,8 @@ bool ClientActorManager::AddActor(Actor* actor)
 
 void ClientActorManager::AddUpdate( Updates* update )
 {
-	this->zUpdates.push_back(update);
-}
-
-int ClientActorManager::SearchForUpdate( const unsigned int ID )
-{
-	for (unsigned int i = 0; i < this->zUpdates.size(); i++)
-	{
-		if (this->zUpdates[i]->GetID() == ID)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
-Updates* ClientActorManager::GetUpdate( const int Index )
-{
-	if ((unsigned int)Index < this->zUpdates.size())
-		return this->zUpdates[Index];
-
-	return NULL;
+	if (update)
+		this->zUpdates[update->GetID()] = update;
 }
 
 float ClientActorManager::GetInterpolationType(const float deltaTime, const unsigned int type)
@@ -178,7 +170,7 @@ Vector3 ClientActorManager::InterpolatePosition(const Vector3& currentPosition, 
 {
 	float oldlength = (currentPosition - newPosition).GetLength();
 
-	if (oldlength > 100.0f)
+	if (oldlength > 200.0f)
 		return newPosition;
 
 	Vector3 returnPosition = currentPosition + (newPosition - currentPosition) * t * zInterpolationVelocity;

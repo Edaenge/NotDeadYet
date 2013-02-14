@@ -11,55 +11,66 @@ ActorManager::ActorManager( ActorSynchronizer* syncher ) :
 	AddObserver(this->zSynch);
 }
 
+ActorManager::~ActorManager()
+{
+	for(auto it = this->zActors.begin(); it != this->zActors.end(); it++)
+	{
+		Actor* temp = (*it);
+		SAFE_DELETE(temp);
+	}
+}
+
 void ActorManager::AddActor( Actor* actor )
 {
-	actor->AddObserver(this->zSynch);
 	zActors.insert(actor);
-
-	if(WorldActor* WA = dynamic_cast<WorldActor*>(actor))
-		return;
 
 	ActorAdded e;
 	e.zActor = actor;
 	NotifyObservers(&e);
-	
 }
 
 void ActorManager::RemoveActor( Actor* actor )
 {
 	this->zActors.erase(actor);
 
-	if(WorldActor* WA = dynamic_cast<WorldActor*>(actor))
-		return;
-
 	ActorRemoved e;
 	e.zActor = actor;
 	NotifyObservers(&e);
+
+	delete actor;
 }
 
-Actor* ActorManager::CheckCollisions(Actor* player, float& range)
+Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 {
-	Actor* collision = NULL;
+	Actor* collide = NULL;
 	PhysicsCollisionData data;
+	float rangeWithin = range;
 
 	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
-		if ((*it) != player)
-		{
-			PhysicsObject* pOtherObject = (*it)->GetPhysicsObject();
-			data = GetPhysics()->GetCollisionRayMesh(player->GetPosition(), player->GetDir(), pOtherObject);
+		//If same, ignore
+		if((*it) == actor)
+			continue;
+		
+		//check length, ignore if too far.
+		Vector3 vec = actor->GetPosition() - (*it)->GetPosition();
+		if(vec.GetLength() > rangeWithin)
+			continue;
 
-			if (data.collision && data.distance < range)
+			if(BioActor* target = dynamic_cast<BioActor*>(*it))
 			{
-				if (BioActor* player = dynamic_cast<BioActor*>((*it)))
+				PhysicsObject* targetObject = target->GetPhysicsObject();
+				data = GetPhysics()->GetCollisionRayMesh(actor->GetPosition(), actor->GetDir(), targetObject);
+
+				if(data.collision && data.distance < range)
 				{
 					range = data.distance;
-					collision = (*it);
+					collide = (*it);
 				}
 			}
-		}
 	}
-	return collision;
+
+	return collide;
 }
 
 Actor* ActorManager::GetActor( const unsigned int ID ) const

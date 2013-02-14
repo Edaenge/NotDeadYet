@@ -7,6 +7,7 @@
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
 #include "Sounds.h"
+
 using namespace MaloW;
 
 // Timeout_value = 10 sek
@@ -74,7 +75,8 @@ Client::~Client()
 	SAFE_DELETE(this->zPlayerInventory);
 
 	SAFE_DELETE(this->zWorld);
-	SAFE_DELETE(this->zCrossHair);
+	
+	if ( this->zCrossHair ) GetGraphics()->DeleteImage(zCrossHair);
 }
 
 float Client::Update()
@@ -148,6 +150,7 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zAnchor = this->zWorld->CreateAnchor();
 	this->zAnchor->position = center;
 	this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
+	
 
 	int windowWidth = this->zEng->GetEngineParameters().WindowWidth;
 	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;	
@@ -155,31 +158,13 @@ void Client::InitGraphics(const std::string& mapName)
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 	float length = ((25.0f / 1024.0f) * dx);
 	float xPos = offSet + (0.5f * dx) - length * 0.5f;
-	float yPos = (windowHeight / 2.0f) - length * 0.5f;
+	float yPos = (windowHeight / 2.0f) - length * 0.5f; //Boom
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 
-	const char* object[] = {
-		"Media/Models/ArmyRation_v01.obj", 
-		"Media/Models/Arrow_v01.obj",
-		"Media/Models/Bigleaf_01.ani", 
-		"Media/Models/Bow_v01.obj",
-		"Media/Models/BranchesItem_01_v01.obj", 
-		"Media/Models/Bush_01.ani",
-		"Media/Models/Campfire_01_v01.obj",
-		"Media/Models/Fern_02.ani",
-		"Media/Models/GrassPlant_01.ani",
-		"Media/Models/Machete_v01.obj", 
-		"Media/Models/Pocketknife_v02.obj", 
-		"Media/Models/Stone_02_v01.obj",
-		"Media/Models/Stone_01_v02.obj",
-		"Media/Models/StoneItem_01_v01.obj",
-		"Media/Models/Tree_01.ani",
-		"Media/Models/WaterGrass_02.ani",
-		"Media/Models/Veins_01_v03_r.obj",
-		"Media/Models/temp_guy.obj"};
+	this->zWorld->Update();
+	this->zWorldRenderer->Update();
 
-	this->zEng->PreLoadResources(18, object);
 	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png");	//this->zEng->StartRendering();
 }
 
@@ -264,7 +249,7 @@ void Client::ReadMessages()
 			}
 			else if ( DisconnectedEvent* np = dynamic_cast<DisconnectedEvent*>(ev) )
 			{
-				CloseConnection("Unknown");
+				CloseConnection("Disconnected");
 			}
 
 			SAFE_DELETE(ev);
@@ -279,7 +264,7 @@ void Client::SendClientUpdate()
 	Vector3 up = this->zEng->GetCamera()->GetUpVector();
 	Vector4 rot = Vector4(0, 0, 0, 0);
 
-	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
+	Actor* player = this->zActorManager->GetActor(this->zID);
 	
 	if (player)
 	{
@@ -304,7 +289,7 @@ void Client::SendAck(unsigned int IM_ID)
 
 void Client::UpdateMeshRotation()
 {
-	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
+	Actor* player = this->zActorManager->GetActor(this->zID);
 	if (!player)
 	{
 		return;
@@ -396,12 +381,6 @@ void Client::CheckMovementKeys()
 	pressed = this->CheckKey(KEY_DUCK);
 }
 
-void Client::SendUseItemMessage(const unsigned int ID)
-{
-	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-	this->zServerChannel->Send(msg);
-}
-
 void Client::HandleKeyboardInput()
 {
 	if (this->zCreated && this->zGameStarted)
@@ -410,24 +389,29 @@ void Client::HandleKeyboardInput()
 		return;
 	}
 
-	zShowCursor = this->zGuiManager->IsGuiOpen();
+	this->zShowCursor = this->zGuiManager->IsGuiOpen();
 
 	this->CheckMovementKeys();
 
-	Menu_select_data msd;
-	if(zShowCursor)
+	if(this->zShowCursor)
 	{
+		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
-		Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
-
+		
 		if (msd.zAction != -1)
 		{
 			if (msd.zID != -1)
 			{
+				Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
 				if (msd.zAction == USE)
 				{
 					if (item)
 						SendUseItemMessage(item->GetID());
+				}
+				if (msd.zAction == CRAFT)
+				{
+					if (item)
+						SendCraftItemMessage(item->GetID());
 				}
 				else if(msd.zAction == EQUIP)
 				{
@@ -449,69 +433,6 @@ void Client::HandleKeyboardInput()
 	}
 
 	//UnEquip Melee Weapon
-	if (this->zEng->GetKeyListener()->IsPressed('Q'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-			
-
-			Item* item = this->zPlayerInventory->GetMeleeWeapon();
-			if (item)
-			{
-				MaloW::Debug("Item UnEquipped " + item->GetItemName());
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
-				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_MELEE_WEAPON);
-
-				this->zServerChannel->Send(msg);
-			}
-		}
-	}
-	//UnEquip Ranged Weapon
-	else if (this->zEng->GetKeyListener()->IsPressed('R'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-			
-
-			Item* item = this->zPlayerInventory->GetRangedWeapon();
-			if (item)
-			{
-				MaloW::Debug("Item UnEquipped " + item->GetItemName());
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
-				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_RANGED_WEAPON);
-
-				this->zServerChannel->Send(msg);
-			}
-		}
-	}
-	//UnEquip Projectiles
-	else if (this->zEng->GetKeyListener()->IsPressed('E'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-
-			Item* item = this->zPlayerInventory->GetProjectile();
-			if (item)
-			{
-				MaloW::Debug("Item UnEquipped " + item->GetItemName());
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)item->GetID());
-				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, EQUIPMENT_SLOT_AMMO);
-
-				this->zServerChannel->Send(msg);
-			}
-		}
-	}
-	else
-	{
-		if (this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, false);
-		}
-	}
-	
 	if(this->zEng->GetKeyListener()->IsPressed('F'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_READY))
@@ -565,6 +486,25 @@ void Client::HandleKeyboardInput()
 			}
 
 		}
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_SWAP_EQ)))
+		{
+			if (!this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
+			{
+				this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, true);
+
+				if(this->zPlayerInventory->SwapWeapon())
+				{
+					std::string msg;
+					msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_EQUIPMENT_SWAP);
+					this->zServerChannel->Send(msg);
+				}
+			}
+		}
+		else
+		{
+			if (this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
+				this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, false);
+		}
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
 		{
 			if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
@@ -586,19 +526,16 @@ void Client::HandleKeyboardInput()
 				{
 					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
 
-					
-					//Weapon* weapon = this->zPlayerInventory->GetRangedWeapon();
-					//if (!weapon)
-					//{
-					//	this->DisplayMessageToClient("No Weapon is Equipped");
-					//}
-					//else
-					//{
-					//	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)weapon->GetID());
-					//	this->zServerChannel->Send(msg);
-					//}
-					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, 0.0f);
-					this->zServerChannel->Send(msg);
+					Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
+					if (!primaryWeapon)
+					{
+						this->DisplayMessageToClient("No Weapon is Equipped");
+					}
+					else
+					{
+						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)primaryWeapon->GetID());
+						this->zServerChannel->Send(msg);
+					}
 				}
 			}
 			else
@@ -842,6 +779,24 @@ void Client::HandleDebugInfo()
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
+	//Terrain Normals debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F9))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Terrain Normal Error at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
 	else if (this->zEng->GetKeyListener()->IsPressed(VK_DELETE))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -866,8 +821,52 @@ void Client::Ping()
 	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
 }
 
+void Client::HandleNetworkPacket( Packet* P )
+{
+	if ( ServerFramePacket* SFP = dynamic_cast<ServerFramePacket*>(P) )
+	{
+		this->UpdateActors(SFP);	
+	}
+
+	delete P;
+	P = NULL;
+}
+
 void Client::HandleNetworkMessage( const std::string& msg )
 {
+	if ( msg.find("PACKET") == 0 )
+	{
+		std::stringstream ss(msg);
+		ss.seekg(6);
+
+		// Packet Size
+		unsigned int packetTypeSize = 0;
+		ss.read( reinterpret_cast<char*>(&packetTypeSize), sizeof(unsigned int) );
+
+		// Packet Type
+		std::string type;
+		type.resize(packetTypeSize);
+		ss.read(&type[0], packetTypeSize); 
+
+		// TODO: Factory Pattern
+		Packet* packet = 0;
+
+		if ( type == "ServerFramePacket" )
+		{
+			packet = new ServerFramePacket();
+		}
+
+		if ( !packet ) throw("Unknown Packet Type");
+
+		// Deserialize
+		packet->Deserialize(ss);
+
+		// Handle
+		HandleNetworkPacket(packet);
+
+		return;
+	}
+
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
 
@@ -879,12 +878,15 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		this->Ping();
 	}
-	//Actors
-	else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
+	else if (msg.find(M_HEALTH) == 0)
 	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
-		this->UpdateActor(msgArray, id);
 	}
+	//Actors
+	//else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
+	//{
+	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
+	//	this->UpdateActor(msgArray, id);
+	//}
 	else if(msg.find(M_NEW_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
@@ -896,14 +898,14 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		{
 			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TAKE_DAMAGE, msgArray[0]);
 			float damageTaken = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, msgArray[1]);
-			this->HandleTakeDamage(msgArray, id, damageTaken);
+			this->HandleTakeDamage(id, damageTaken);
 		}
 	}
 	//Actors
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
-		this->UpdateActor(msgArray, id);
+		this->RemoveActor(id);
 	}
 	else if (msg.find(M_LOOT_OBJECT_RESPONSE.c_str()) == 0)
 	{
@@ -958,8 +960,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msg.find(M_ADD_INVENTORY_ITEM.c_str()) == 0)
 	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ADD_INVENTORY_ITEM, msgArray[0]);
-		this->HandleAddInventoryItem(msgArray, id);
+		this->HandleAddInventoryItem(msgArray);
 	}
 	else if(msg.find(M_REMOVE_INVENTORY_ITEM.c_str()) == 0)
 	{
@@ -1022,10 +1023,10 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 }
 
-bool Client::HandleTakeDamage( const std::vector<std::string>& msgArray, const unsigned int ID, float damageTaken )
+bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 {
-	Actor* actor = this->zActorManager->SearchAndGetActor(ID);
-	Actor* player = this->zActorManager->SearchAndGetActor(this->zID);
+	Actor* actor = this->zActorManager->GetActor(ID);
+	Actor* player = this->zActorManager->GetActor(this->zID);
 
 	if (!actor && !player)
 	{
@@ -1132,7 +1133,8 @@ bool Client::HandleTakeDamage( const std::vector<std::string>& msgArray, const u
 
 			GetSounds()->PlaySounds("Media/Sound/Breath.wav", playerPos);
 	}
-	
+
+	return true;
 }
 
 void Client::CloseConnection(const std::string& reason)
@@ -1152,31 +1154,26 @@ std::vector<unsigned int> Client::RayVsWorld()
 	CollisionData data;
 	std::vector<unsigned int> Collisions;
 	//Static objects
-	std::vector<Actor*> actors = this->zActorManager->GetActors();
+	std::map<unsigned int, Actor*> actors = this->zActorManager->GetActors();
 	iMesh* mesh = NULL;
-	for(auto it = actors.begin(); it < actors.end(); it++)
+	for(auto it = actors.begin(); it != actors.end(); it++)
 	{
-		if ((*it)->GetID() != this->zID)
+		Actor* actor = it->second;
+		unsigned int ID = it->first;
+		if (ID != this->zID)
 		{
-			mesh = (*it)->GetMesh();
+			mesh = actor->GetMesh();
 			if (!mesh)
 			{
 				MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 				continue;
 			}
+
 			data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
 
 			if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
 			{
-				/*Looting_Data ld;
-				Gui_Item_Data gui_Data = Gui_Item_Data((*it)->GetID(), (*it)->GetWeight(), (*it)->GetStackSize(), 
-				(*it)->GetName(), (*it)->GetIconPath(), (*it)->GetDescription(), (*it)->GetType());
-
-				ld.owner = gui_Data.zID;
-				ld.gid = gui_Data;
-				ld.type = OBJECT_TYPE_DYNAMIC_OBJECT;*/
-
-				Collisions.push_back((*it)->GetID());
+				Collisions.push_back(ID);
 			}
 		}
 		
@@ -1213,7 +1210,7 @@ void Client::DisplayMessageToClient(const std::string& msg)
 	MaloW::Debug(msg);
 }
 
-void Client::onEvent(Event* e)
+void Client::OnEvent(Event* e)
 {
 	if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
@@ -1232,9 +1229,9 @@ void Client::onEvent(Event* e)
 void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 {
 	std::vector<Looting_Gui_Data> guiData;
-	for (auto it_Item_Data = msgArray.begin(); it_Item_Data != msgArray.end(); it_Item_Data++)
+	Looting_Gui_Data lgd = Looting_Gui_Data();
+	for (auto it_Item_Data = msgArray.begin() + 1; it_Item_Data != msgArray.end(); it_Item_Data++)
 	{
-		Looting_Gui_Data lgd = Looting_Gui_Data();
 		if((*it_Item_Data).find(M_ITEM_ID.c_str()) == 0)
 		{
 			lgd.zGui_Data.zID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, (*it_Item_Data));

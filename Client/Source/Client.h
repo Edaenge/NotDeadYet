@@ -13,6 +13,8 @@
 #include "ClientActorManager.h"
 #include "GuiManager.h"
 #include <World/WorldRenderer.h>
+#include <Packets/ServerFramePacket.h>
+#include <Packets/Packet.h>
 
 using namespace MaloW;
 
@@ -71,6 +73,8 @@ private:
 	void CloseConnection(const std::string& reason);
 	/*! Send Camera Info and Rotation to Server*/
 	void SendClientUpdate();
+	// Handle A Network Packet
+	void HandleNetworkPacket(Packet* P);
 	/*! Splits Network Message and detects what type was sent*/
 	void HandleNetworkMessage(const std::string& msg);
 	/*! Reads Messages from the server*/
@@ -116,9 +120,9 @@ private:
 	//			  		//
 	//////////////////////
 	//Temporary Code
-	bool UpdateActor(const std::vector<std::string>& msgArray, const unsigned int ID);
+	void UpdateActors(ServerFramePacket* SFP);
 	bool RemoveActor(const unsigned int ID);
-	bool HandleTakeDamage(const std::vector<std::string>& msgArray, const unsigned int ID, float damageTaken);
+	bool HandleTakeDamage(const unsigned int ID, float damageTaken);
 	/*! Adds A Player Object.*/
 	bool AddActor(const std::vector<std::string>& msgArray, const unsigned int ID);
 	
@@ -135,8 +139,9 @@ private:
 	void SendPickupItemMessage(const unsigned int ID);
 	void SendDropItemMessage(const unsigned int ID);
 	void SendUseItemMessage(const unsigned int ID);
+	void SendCraftItemMessage(const unsigned int ID);
 	void HandleRemoveInventoryItem(const unsigned int ID);
-	void HandleAddInventoryItem(const std::vector<std::string>& msgArray, const unsigned int id);
+	void HandleAddInventoryItem(const std::vector<std::string>& msgArray);
 	/*! Uses the Selected Item*/
 	void HandleUseItem(const unsigned int ID);
 	void DisplayMessageToClient(const std::string& msg);
@@ -148,7 +153,7 @@ private:
 	void HandleWeaponUse(const unsigned int ID);
 	void HandleDisplayLootData(std::vector<std::string> msgArray);
 protected:
-	virtual void onEvent(Event* e);
+	virtual void OnEvent(Event* e);
 
 private:
 	/*! Current Client ID*/

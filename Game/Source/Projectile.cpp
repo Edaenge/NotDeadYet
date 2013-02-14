@@ -7,8 +7,17 @@ Projectile::Projectile() : Item()
 	this->zVelocity = 0;
 }
 
-Projectile::Projectile(const unsigned int itemType, const unsigned int itemSubType, 
-					   float velocity, float damage) : Item(itemType, itemSubType)
+Projectile::Projectile(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType, 
+					   float velocity, float damage )
+					   : Item(ID, itemType, itemSubType)
+{
+	this->zStacking = true;
+	this->zDamage = damage;
+	this->zVelocity = velocity;
+}
+
+Projectile::Projectile(const unsigned int itemType, const unsigned int itemSubType, float velocity, float damage)
+	: Item(itemType, itemSubType)
 {
 	this->zStacking = true;
 	this->zDamage = damage;
@@ -22,7 +31,11 @@ Projectile::~Projectile()
 
 Projectile::Projectile(const Projectile& other)
 {
-	this->zID = other.zID;
+	if (other.zID == 0)
+		this->GenerateID();
+	else
+		this->zID = other.zID;
+
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
 	this->zDamage = other.zDamage;
@@ -30,6 +43,7 @@ Projectile::Projectile(const Projectile& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
 }
@@ -44,6 +58,7 @@ Projectile::Projectile(const Projectile* other)
 	this->zItemName = other->zItemName;
 	this->zIconPath = other->zIconPath;
 	this->zItemType = other->zItemType;
+	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
 }

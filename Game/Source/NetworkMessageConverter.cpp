@@ -177,6 +177,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_ITEM_USE:
 		ss << M_ITEM_USE;
 		break;
+	case MESSAGE_TYPE_ITEM_CRAFT:
+		ss << M_ITEM_CRAFT;
+		break;
 	case MESSAGE_TYPE_EQUIPMENT_SLOT:
 		ss << M_EQUIPMENT_SLOT;
 		break;
@@ -275,6 +278,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 		break;
 	case MESSAGE_TYPE_PLAYER_READY:
 		ss << M_READY_PLAYER;
+		break;
+	case MESSAGE_TYPE_WEAPON_EQUIPMENT_SWAP:
+		ss << M_WEAPON_EQUIPMENT_SWAP;
 		break;
 	default:
 		return "";

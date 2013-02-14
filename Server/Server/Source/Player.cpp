@@ -11,7 +11,8 @@ Player::Player( ClientData* client ) :
 
 Player::~Player()
 {
-	SAFE_DELETE(zBehavior);
+	zBehavior = NULL;
+	zClient = NULL;
 }
 
 void Player::Kick()

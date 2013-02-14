@@ -13,9 +13,6 @@
     <Filter Include="Source\Actors">
       <UniqueIdentifier>{50a47ee4-51e7-49bf-b61f-129906fa7671}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Objects">
-      <UniqueIdentifier>{c6201ae5-5d7c-4255-94f3-9c71df5a41a7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Handlers">
       <UniqueIdentifier>{2d91f24d-3e37-49b2-80e5-94f5c85ed464}</UniqueIdentifier>
     </Filter>
@@ -81,9 +78,6 @@
     <ClCompile Include="Source\Actor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ObjectManager.cpp">
-      <Filter>Source\Handlers</Filter>
-    </ClCompile>
     <ClCompile Include="Source\PlayerBehavior.cpp">
       <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
@@ -111,9 +105,6 @@
     <ClCompile Include="Source\GameModeFFA.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ObjectCreator.cpp">
-      <Filter>Source\Handlers</Filter>
-    </ClCompile>
     <ClCompile Include="Source\ProjectileActor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
@@ -134,6 +125,12 @@
     </ClCompile>
     <ClCompile Include="Source\PlayerConfiguration.cpp">
       <Filter>Source\Actors\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PhysicsEngine\ObjectDataResource.cpp">
+      <Filter>Source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PhysicsEngine\PhysicsResourceManager.cpp">
+      <Filter>Source\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -200,9 +197,6 @@
     <ClInclude Include="Source\Actor.h">
       <Filter>Source\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ObjectManager.h">
-      <Filter>Source\Handlers</Filter>
-    </ClInclude>
     <ClInclude Include="Source\AIDeerBehavior.h">
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
@@ -230,9 +224,6 @@
     <ClInclude Include="Source\GameModeFFA.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ObjectCreator.h">
-      <Filter>Source\Handlers</Filter>
-    </ClInclude>
     <ClInclude Include="Source\ProjectileActor.h">
       <Filter>Source\Actors</Filter>
     </ClInclude>
@@ -259,6 +250,15 @@
     </ClInclude>
     <ClInclude Include="Source\ItemActor.h">
       <Filter>Source\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsEngine\ObjectDataResource.h">
+      <Filter>Source\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsEngine\PhysicsResourceManager.h">
+      <Filter>Source\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhysicsEngine\ReferenceCounted.h">
+      <Filter>Source\Physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

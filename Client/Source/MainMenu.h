@@ -24,6 +24,8 @@ private:
 	void SwapMenus(SET primary, SET secondary);
 	void EnableMouse(bool value);
 
+	void AddResolutionsToDropBox(DropDownList* ddl);
+
 private:
 	GUISet*	zSets;
 	int		zNrOfSets;
