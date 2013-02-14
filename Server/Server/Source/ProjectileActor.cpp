@@ -8,7 +8,7 @@ ProjectileActor::ProjectileActor(Actor* owner, PhysicsObject* pObj) :
 	this->SetDir(owner->GetDir());
 
 	Vector3 pos = owner->GetPosition();
-	pos.y += 1.6f;
+	pos.y += 1.75f;
 	this->SetPosition(pos);
 }
 

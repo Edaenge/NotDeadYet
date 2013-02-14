@@ -84,9 +84,6 @@
     <ClCompile Include="Source\PlayerWolfBehavior.cpp">
       <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ProjectileBehavior.cpp">
-      <Filter>Source\Actors\Behavior</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Behavior.cpp">
       <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
@@ -131,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="Source\PhysicsEngine\PhysicsResourceManager.cpp">
       <Filter>Source\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ProjectileArrowBehavior.cpp">
+      <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -206,9 +206,6 @@
     <ClInclude Include="Source\PlayerWolfBehavior.h">
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ProjectileBehavior.h">
-      <Filter>Source\Actors\Behavior</Filter>
-    </ClInclude>
     <ClInclude Include="Source\PlayerBehavior.h">
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
@@ -259,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="Source\PhysicsEngine\ReferenceCounted.h">
       <Filter>Source\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ProjectileArrowBehavior.h">
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
