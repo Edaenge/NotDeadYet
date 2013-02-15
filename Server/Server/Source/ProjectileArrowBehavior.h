@@ -21,4 +21,5 @@ public:
 	void SetDamping(float damping) {this->zDamping = damping;}
 	/*! Stops the movement.*/
 	inline void Stop(){zMoving = false;}
+	inline float GetLenght() const {return zLength;}
 };
