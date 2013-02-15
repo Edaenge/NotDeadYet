@@ -114,24 +114,31 @@ void Game::SpawnItemsDebug()
 	//Weapon_ranged
 	if(temp_R_weapon)
 	{
-		RangedWeapon* new_item = new RangedWeapon((*temp_R_weapon));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
+		for (int i = 0; i < 9; i++)
+		{
+			RangedWeapon* new_item = new RangedWeapon((*temp_R_weapon));
+			ItemActor* actor = new ItemActor(new_item);
+			Vector3 center;
+			center = CalcPlayerSpawnPoint(increment++);
+			actor->SetPosition(center);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		
 	}
 	//Arrows
 	if(temp_Arrow)
 	{
-		Projectile* new_item = new Projectile((*temp_Arrow));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
+		for (int i = 0; i < 9; i++)
+		{
+			Projectile* new_item = new Projectile((*temp_Arrow));
+			ItemActor* actor = new ItemActor(new_item);
+			Vector3 center;
+			center = CalcPlayerSpawnPoint(increment++);
+			actor->SetPosition(center);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
 	}
 	//Melee_weap
 	if(temp_M_weapon)
