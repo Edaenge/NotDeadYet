@@ -111,7 +111,7 @@ void GameModeFFA::OnPlayerDeath(PlayerActor* pActor)
 	GhostActor* gActor = new GhostActor(player);
 	gActor->SetPosition(position);
 	gActor->SetDir(direction);
-
+	
 	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);
 
 	this->zGame->SetPlayerBehavior(player, pGhostBehavior);

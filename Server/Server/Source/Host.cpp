@@ -309,6 +309,13 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.itemID = _itemID;
 		NotifyObservers(&e);
 	}
+	else if(msgArray[0].find(M_ACTOR_KILL.c_str()) == 0)
+	{
+		PlayerKillEvent e;
+
+		e.clientData = cd;
+		NotifyObservers(&e);
+	}
 	//Handles user data from client. Used when the player is new.
 	else if(msgArray[0].find(M_USER_DATA.c_str()) == 0)
 	{

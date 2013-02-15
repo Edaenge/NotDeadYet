@@ -82,7 +82,8 @@ enum MESSAGE_TYPE
 		GHOST = 2
 		ANIMAL = 3
 	*/
-	MESSAGE_TYPE_ACTOR_TYPE
+	MESSAGE_TYPE_ACTOR_TYPE,
+	MESSAGE_TYPE_ACTOR_KILL
 };
 
 static const std::string M_UPDATE_ACTOR				= "UA";
@@ -90,6 +91,7 @@ static const std::string M_REMOVE_ACTOR				= "RA";
 static const std::string M_DEAD_ACTOR				= "DA";
 static const std::string M_ACTOR_TAKE_DAMAGE		= "ATD";
 static const std::string M_ACTOR_TYPE				= "AT";
+static const std::string M_ACTOR_KILL				= "AK";
 //Data Messages
 static const std::string M_LOAD_MAP					= "LM";
 static const std::string M_CONNECTED				= "CON";

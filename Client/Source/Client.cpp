@@ -179,6 +179,7 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);	//this->zEng->StartRendering();
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
+	this->zCrossHair->SetOpacity(0.5f);
 }
 
 void Client::Init()
@@ -395,10 +396,137 @@ void Client::CheckMovementKeys()
 	{
 		pressed = this->CheckKey(KEY_RIGHT);
 	}
+}
 
-	pressed = this->CheckKey(KEY_SPRINT);
+void Client::CheckPlayerSpecificKeys()
+{
+	if(this->zGuiManager->IsGuiOpen())
+	{
+		Menu_select_data msd;
+		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
 
-	pressed = this->CheckKey(KEY_DUCK);
+		if (msd.zAction != -1)
+		{
+			if (msd.zID != -1)
+			{
+				Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
+				if (msd.zAction == USE)
+				{
+					if (item)
+						SendUseItemMessage(item->GetID());
+				}
+				if (msd.zAction == CRAFT)
+				{
+					if (item)
+						SendCraftItemMessage(item->GetID());
+				}
+				else if(msd.zAction == EQUIP)
+				{
+					if(item)
+						SendEquipItem(msd.zID);
+				}
+				else if (msd.zAction == DROP)
+				{
+					if(item)
+						this->SendDropItemMessage(msd.zID);
+				}
+				else if (msd.zAction == UNEQUIP)
+				{
+					if(item)
+						this->SendUnEquipItem(msd.zID, (msd.zType));
+				}
+			}
+		}
+	}
+
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			std::vector<unsigned int> collisionObjects = this->RayVsWorld();
+			if (collisionObjects.size() > 0)
+			{
+				std::string msg =  "";
+				for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
+				{
+					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (*it));
+				}
+				this->zServerChannel->Send(msg);
+			}
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			this->zGuiManager->HideLootingGui();
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
+		}
+	}
+
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_SWAP_EQ)))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
+		{
+			this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, true);
+
+			if(this->zPlayerInventory->SwapWeapon())
+			{
+				std::string msg;
+				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_EQUIPMENT_SWAP);
+				this->zServerChannel->Send(msg);
+			}
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
+			this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, false);
+	}
+
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
+		{
+			this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
+			this->zShowCursor = !this->zShowCursor;
+			this->zGuiManager->ToggleInventoryGui();
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_INVENTORY))
+			this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
+	}
+
+	if (!this->zGuiManager->IsGuiOpen())
+	{
+		if (this->zEng->GetKeyListener()->IsClicked(1))
+		{
+			if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			{
+				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+
+				Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
+				if (!primaryWeapon)
+				{
+					this->DisplayMessageToClient("No Weapon is Equipped");
+				}
+				else
+				{
+					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)primaryWeapon->GetID());
+					this->zServerChannel->Send(msg);
+				}
+			}
+		}
+		else
+		{
+			if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
+		}
+	}
+	this->HandleWeaponEquips();
 }
 
 void Client::HandleKeyboardInput()
@@ -410,154 +538,63 @@ void Client::HandleKeyboardInput()
 	}
 
 	if (this->zActorType != NONE)
+	{
 		this->CheckMovementKeys();
-
+	}
 
 	if (this->zActorType == HUMAN)
 	{
-		if(this->zGuiManager->IsGuiOpen())
-		{
-			Menu_select_data msd;
-			msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
-
-			if (msd.zAction != -1)
-			{
-				if (msd.zID != -1)
-				{
-					Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
-					if (msd.zAction == USE)
-					{
-						if (item)
-							SendUseItemMessage(item->GetID());
-					}
-					if (msd.zAction == CRAFT)
-					{
-						if (item)
-							SendCraftItemMessage(item->GetID());
-					}
-					else if(msd.zAction == EQUIP)
-					{
-						if(item)
-							SendEquipItem(msd.zID);
-					}
-					else if (msd.zAction == DROP)
-					{
-						if(item)
-							this->SendDropItemMessage(msd.zID);
-					}
-					else if (msd.zAction == UNEQUIP)
-					{
-						if(item)
-							this->SendUnEquipItem(msd.zID, (msd.zType));
-					}
-				}
-			}
-		}
-		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
-			{
-				std::vector<unsigned int> collisionObjects = this->RayVsWorld();
-				if (collisionObjects.size() > 0)
-				{
-					std::string msg =  "";
-					for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
-					{
-						msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (*it));
-					}
-					this->zServerChannel->Send(msg);
-				}
-				this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
-			}
-		}
-		else
-		{
-			if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
-			{
-				this->zGuiManager->HideLootingGui();
-				this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
-			}
-
-		}
-		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_SWAP_EQ)))
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
-			{
-				this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, true);
-
-				if(this->zPlayerInventory->SwapWeapon())
-				{
-					std::string msg;
-					msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_EQUIPMENT_SWAP);
-					this->zServerChannel->Send(msg);
-				}
-			}
-		}
-		else
-		{
-			if (this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
-				this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, false);
-		}
-		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
-			{
-				this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
-				this->zShowCursor = !this->zShowCursor;
-				this->zGuiManager->ToggleInventoryGui();
-			}
-		}
-		else
-		{
-			if (this->zKeyInfo.GetKeyState(KEY_INVENTORY))
-				this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
-		}
-		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
-		{
-			if(!this->zKeyInfo.GetKeyState(KEY_MENU))
-			{
-				this->zKeyInfo.SetKeyState(KEY_MENU, true);
-				if(!this->zIgm->GetShow())
-				{
-					this->zIgm->ToggleMenu(); // Shows the menu and sets Show to true.
-					zShowCursor = true;
-				}
-			}
-		}
-		else
-		{
-			if(this->zKeyInfo.GetKeyState(KEY_MENU))
-				this->zKeyInfo.SetKeyState(KEY_MENU, false);
-		}
-		if (!this->zShowCursor)
-		{
-			if (this->zEng->GetKeyListener()->IsClicked(1))
-			{
-				if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
-				{
-					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
-
-					Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
-					if (!primaryWeapon)
-					{
-						this->DisplayMessageToClient("No Weapon is Equipped");
-					}
-					else
-					{
-						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)primaryWeapon->GetID());
-						this->zServerChannel->Send(msg);
-					}
-				}
-			}
-			else
-			{
-				if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
-					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
-			}
-		}
-		this->HandleWeaponEquips();
+		this->CheckPlayerSpecificKeys();
 	}
-	
+	if (this->zActorType == GHOST)
+	{
+		this->CheckKey(KEY_JUMP);
+	}
+
+	if (this->zActorType != GHOST)
+	{
+		this->CheckKey(KEY_SPRINT);
+
+		this->CheckKey(KEY_DUCK);
+
+		//Kill yourself button
+		if (this->zEng->GetKeyListener()->IsPressed('K'))
+		{
+			if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+			{
+				this->zKeyInfo.SetKeyState(KEY_TEST, true);
+
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACTOR_KILL);
+
+				this->zServerChannel->Send(msg);
+			}
+		}
+		else
+		{
+			if(this->zKeyInfo.GetKeyState(KEY_TEST))
+			{
+				this->zKeyInfo.SetKeyState(KEY_TEST, false);
+			}
+		}
+	}
+
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
+	{
+		if(!this->zKeyInfo.GetKeyState(KEY_MENU))
+		{
+			this->zKeyInfo.SetKeyState(KEY_MENU, true);
+			if(!this->zIgm->GetShow())
+			{
+				this->zIgm->ToggleMenu(); // Shows the menu and sets Show to true.
+				zShowCursor = true;
+			}
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_MENU))
+			this->zKeyInfo.SetKeyState(KEY_MENU, false);
+	}
 
 	//Tell Server Client is Ready
 	if(this->zEng->GetKeyListener()->IsPressed('F'))

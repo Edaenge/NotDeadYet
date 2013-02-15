@@ -36,8 +36,10 @@ bool PlayerGhostBehavior::Update( float dt )
 	moveDir += currentPlayerDir * (float)(keyStates.GetKeyState(KEY_FORWARD) - //if KEY_BACKWARD then currentPlayerDir inverse 
 		keyStates.GetKeyState(KEY_BACKWARD));
 
-	moveDir += currentPlayerRight * (float)(keyStates.GetKeyState(KEY_LEFT) - 
-		keyStates.GetKeyState(KEY_RIGHT));
+	moveDir += currentPlayerRight * (float)(keyStates.GetKeyState(KEY_RIGHT) - keyStates.GetKeyState(KEY_LEFT));
+
+	if (keyStates.GetKeyState(KEY_JUMP))
+		moveDir += currentPlayerUp;
 
 	moveDir *= 10.0f;
 
@@ -54,9 +56,9 @@ bool PlayerGhostBehavior::Update( float dt )
 	float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ());
 	if(newGroundHeight > newPlayerPos.y)
 	{
-		newPlayerPos.y = newGroundHeight;
+		//newPlayerPos.y = newGroundHeight;
 	}
 	this->zActor->SetPosition(newPlayerPos);
 
-	return true;
+	return false;
 }

@@ -203,3 +203,11 @@ public:
 
 	int key;
 };
+
+class PlayerKillEvent : public Event
+{
+public:
+	virtual ~PlayerKillEvent() {}
+
+	ClientData* clientData;
+};

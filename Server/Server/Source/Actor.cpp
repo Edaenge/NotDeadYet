@@ -86,6 +86,6 @@ const std::string& Actor::GetModel() const
 	if ( zPhysicsObject )
 		return zPhysicsObject->GetModel();
 
-	static const std::string none = "";
+	static const std::string none = "Media/Models/Ball.obj";
 	return none;
 }
