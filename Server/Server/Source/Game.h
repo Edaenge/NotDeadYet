@@ -55,6 +55,18 @@ public:
 private:
 	//Test function, spawns items
 	void SpawnItemsDebug();
+
+void HandleConnection(ClientData* cd);
+void HandleDisconnect(ClientData* cd);
+void HandleLootObject(ClientData* cd, std::vector<unsigned int>& actorID);
+void HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, 
+					unsigned int objID, unsigned int subType );
+void HandleDropItem(ClientData* cd, unsigned int objectID);
+void HandleUseItem(ClientData* cd, unsigned int itemID);
+void HandleUseWeapon(ClientData* cd, unsigned int itemID);
+void HandleCraftItem(ClientData* cd, unsigned int itemID);
+void HandleEquipItem(ClientData* cd, unsigned int itemID);
+void HandleUnEquipItem(ClientData* cd, unsigned int itemID, int eq_slot);
 private:
 	PhysicsEngine* zPhysicsEngine;
 	

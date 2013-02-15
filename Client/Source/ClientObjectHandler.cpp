@@ -62,7 +62,8 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 			auto stateOffsetsIterator = this->zStateCameraOffset.find(STATE_IDLE);
 			this->zMeshOffset = meshOffsetsIterator->second;
 
-			this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset + stateOffsetsIterator->second);
+			this->zActorManager->SetCameraOffset(this->zMeshOffset);
+			this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
 		}
 	}
 	if (Messages::FileWrite())
@@ -135,7 +136,12 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 
 		actor = this->zActorManager->GetActor(ID);
 		if (actor)
+		{
+			if (this->zID == ID)
+				this->UpdateCameraOffset(actorState);
+
 			actor->SetState(actorState);
+		}
 	}
 }
 

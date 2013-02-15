@@ -32,6 +32,9 @@ public:
 
 	void ToggleMenu();
 
+	bool GetShow(){ return this->zShow; }
+	void SetShow(bool set){ this->zShow = set; }
+
 private:
 	void Init();
 

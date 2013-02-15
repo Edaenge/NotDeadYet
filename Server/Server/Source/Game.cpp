@@ -29,7 +29,7 @@
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
 {
-	zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 2.5f, 0.0f);
+	zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 
 	if (mode.find("FFA") == 0 )
 	{
@@ -244,28 +244,7 @@ void Game::OnEvent( Event* e )
 
 	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
 	{
-		// Create Player
-		Player* player = new Player(PCE->clientData);
-		zPlayers[PCE->clientData] = player;
-		
-		//Lets gamemode observe players.
-		player->AddObserver(this->zGameMode);
-
-		//Tells the client it has been connected.
-		NetworkMessageConverter NMC;
-		std::string message;
-
-		message = NMC.Convert(MESSAGE_TYPE_CONNECTED);
-		PCE->clientData->Send(message);
-
-		// Sends the world name
-		message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorld->GetFileName());
-		PCE->clientData->Send(message);
-
-		// Send event to game so it knows what players there are.
-		// PlayerAddEvent* PAE = new PlayerAddEvent();
-		// PAE->player = player;
-		// NotifyObservers(PAE);
+		HandleConnection(PCE->clientData);
 	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
@@ -292,666 +271,39 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
-		// Delete Player Behavior
-		auto playerIterator = zPlayers.find(PDCE->clientData);
-		auto playerBehavior = playerIterator->second->GetBehavior();
-		
-		// Create AI Behavior For Players That Disconnected
-		if ( PlayerWolfBehavior* playerWolf = dynamic_cast<PlayerWolfBehavior*>(playerBehavior) )
-		{
-			AIWolfBehavior* aiWolf = new AIWolfBehavior(playerWolf->GetActor(), zWorld);
-			zBehaviors.insert(aiWolf);
-		}
-		//Kills actor if human
-		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
-		{
-			dynamic_cast<BioActor*>(pHuman->GetActor())->Kill();
-		}
-		
-		SetPlayerBehavior(playerIterator->second, 0);
-
-		/*PlayerRemoveEvent* PRE = new PlayerRemoveEvent();
-		PRE->player = i->second;
-		NotifyObservers(PRE);*/
-
-		Player* temp = playerIterator->second;
-		delete temp, temp = NULL;
-		zPlayers.erase(playerIterator);
+		HandleDisconnect(PDCE->clientData);
 	}
 	else if(PlayerLootObjectEvent* PLOE = dynamic_cast<PlayerLootObjectEvent*>(e))
 	{
-		std::set<Actor*> actors = this->zActorManager->GetActors();
-		std::vector<Item*> lootedItems;
-
-		auto playerIterator = this->zPlayers.find(PLOE->clientData);
-		auto playerBehavior = playerIterator->second->GetBehavior();
-		Actor* actor = playerBehavior->GetActor();
-		NetworkMessageConverter NMC;
-		std::string msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE);
-		unsigned int ID = 0;
-		bool bLooted = false;
-		//Loop through all actors.
-		for (auto it_actor = actors.begin(); it_actor != actors.end(); it_actor++)
-		{
-			//Loop through all ID's of all actors the client tried to loot.
-			for (auto it_ID = PLOE->actorID.begin(); it_ID != PLOE->actorID.end(); it_ID++)
-			{
-				//Check if the ID is the same.
-				if ((*it_ID) == (*it_actor)->GetID())
-				{
-					//Check if the distance between the actors are to far to be able to loot.
-					if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 4.0f)
-						continue;
-					
-					//Check if the Actor is an ItemActor
-					if (ItemActor* iActor = dynamic_cast<ItemActor*>(*it_actor))
-					{
-						ID = iActor->GetID();
-						msg += iActor->GetItem()->ToMessageString(&NMC);
-						msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
-						bLooted = true;
-					}
-					//Check if the Actor is an PlayerActor
-					else if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(*it_actor))
-					{
-						//Check if the PlayerActor is Dead.
-						if (!pActor->IsAlive())
-						{
-							Inventory* inv = pActor->GetInventory();
-							ID = pActor->GetID();
-
-							std::vector<Item*> items = inv->GetItems();
-							for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
-							{
-								msg += (*it_Item)->ToMessageString(&NMC);
-								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
-								bLooted = true;
-							}
-						}
-					}
-					//Check if the Actor is an AnimalActor.
-					else if(AnimalActor* aActor = dynamic_cast<AnimalActor*>(*it_actor))
-					{
-						//Check if the AnimalActor is alive.
-						if (!aActor->IsAlive())
-						{
-							//Verify that a PlayerActor was trying to loot.
-							if (PlayerActor* player = dynamic_cast<PlayerActor*>(actor))
-							{
-								//Get the PlayerActors inventory.
-								if (Inventory* playerInventory = player->GetInventory())
-								{
-									//Check if the PlayerActor has a Pocket Knife to be able to loot Animals.
-									Item* item = playerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE, ITEM_SUB_TYPE_POCKET_KNIFE);
-
-									if (item)
-									{
-										Inventory* inv = aActor->GetInventory();
-										ID = aActor->GetID();
-
-										std::vector<Item*> items = inv->GetItems();
-										for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
-										{
-											msg += (*it_Item)->ToMessageString(&NMC);
-											msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
-											bLooted = true;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		if (bLooted)
-			PLOE->clientData->Send(msg);
+		HandleLootObject(PLOE->clientData, PLOE->actorID);
 	}
 	else if ( PlayerLootItemEvent* PLIE = dynamic_cast<PlayerLootItemEvent*>(e) )
 	{
-		Actor* actor = this->zActorManager->GetActor(PLIE->objID);
-		Item* item = NULL;
-		
-		auto playerActor = this->zPlayers.find(PLIE->clientData);
-		auto* pBehaviour = playerActor->second->GetBehavior();
-		
-		PlayerActor* pActor = dynamic_cast<PlayerActor*>(pBehaviour->GetActor());
-
-		NetworkMessageConverter NMC;
-		//Check if the Actor being looted is an ItemActor.
-		if (ItemActor* iActor = dynamic_cast<ItemActor*>(actor))
-		{
-			item = iActor->GetItem();
-
-			if (item)
-			{
-				std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-				if (item->GetID() == PLIE->itemID && item->GetItemType() == PLIE->itemType && item->GetItemSubType() == PLIE->subType)
-				{
-					if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
-					{
-						msg += rWpn->ToMessageString(&NMC);
-					}
-					else if (MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item))
-					{
-						msg += mWpn->ToMessageString(&NMC);
-					}
-					else if (Projectile* projectile = dynamic_cast<Projectile*>(item))
-					{
-						msg += projectile->ToMessageString(&NMC);
-					}
-					else if (Food* food = dynamic_cast<Food*>(item))
-					{
-						msg += food->ToMessageString(&NMC);
-					}
-					else if (Material* material = dynamic_cast<Material*>(item))
-					{
-						msg += material->ToMessageString(&NMC);
-					}
-					else if (Container* container = dynamic_cast<Container*>(item))
-					{
-						msg += container->ToMessageString(&NMC);
-					}
-					pActor->GetInventory()->AddItem(item);
-					PLIE->clientData->Send(msg);
-					this->zActorManager->RemoveActor(iActor);
-				}
-			}
-		}
-		//Check if the Actor being looted is an BioActor.
-		else if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
-		{
-			Inventory* inv = bActor->GetInventory();
-			if (inv)
-			{
-				item = inv->SearchAndGetItem(PLIE->itemID);
-				if(item)
-				{
-					std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-					if (item->GetItemType() == PLIE->itemType && item->GetItemSubType() == PLIE->subType)
-					{
-						if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
-						{
-							msg += rWpn->ToMessageString(&NMC);
-						}
-						else if (MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item))
-						{
-							msg += mWpn->ToMessageString(&NMC);
-						}
-						else if (Projectile* projectile = dynamic_cast<Projectile*>(item))
-						{
-							msg += projectile->ToMessageString(&NMC);
-						}
-						else if (Food* food = dynamic_cast<Food*>(item))
-						{
-							msg += food->ToMessageString(&NMC);
-						}
-						else if (Material* material = dynamic_cast<Material*>(item))
-						{
-							msg += material->ToMessageString(&NMC);
-						}
-						else if (Container* container = dynamic_cast<Container*>(item))
-						{
-							msg += container->ToMessageString(&NMC);
-						}
-						else if (Bandage* bandage = dynamic_cast<Bandage*>(item))
-						{
-							msg += bandage->ToMessageString(&NMC);
-						}
-
-						pActor->GetInventory()->AddItem(item);
-						PLIE->clientData->Send(msg);
-						this->zActorManager->RemoveActor(bActor);
-					}
-				}
-			}
-		}
-		
+		HandleLootItem(PLIE->clientData, PLIE->itemID, PLIE->itemType, PLIE->objID, PLIE->subType);		
 	}
 	else if ( PlayerDropItemEvent* PDIE = dynamic_cast<PlayerDropItemEvent*>(e) )
 	{
-		Actor* actor  = NULL;
-		PlayerActor* pActor = NULL;
-		Item* item = NULL;
-
-		auto i = this->zPlayers.find(PDIE->clientData);
-
-		actor = i->second->GetBehavior()->GetActor();
-		pActor = dynamic_cast<PlayerActor*>(actor);
-
-		if(!pActor)
-			return;
-		
-		item = pActor->DropItem(PDIE->itemID);
-		
-		if(!item)
-			return;
- 
-		actor = NULL;
-		actor = new ItemActor(item);
-		this->zActorManager->AddActor(actor);
-		actor->SetPosition(pActor->GetPosition());
-		NetworkMessageConverter NMC;
-		PDIE->clientData->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
-
+		HandleDropItem(PDIE->clientData, PDIE->itemID);
 	}
 	else if (PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e))
 	{
-		auto playerIterator = this->zPlayers.find(PUIE->clientData);
-		auto playerBehavior = playerIterator->second->GetBehavior();
-	
-		Actor* actor = playerBehavior->GetActor();
-		
-		if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
-		{
-			if (Inventory* inv = pActor->GetInventory())
-			{
-				NetworkMessageConverter NMC;
-				Item* item = inv->SearchAndGetItem(PUIE->itemID);
-				std::string msg;
-				if (item)
-				{
-					unsigned int ID = 0;
-					if (Food* food = dynamic_cast<Food*>(item))
-					{
-						int oldStack = food->GetStackSize();
-						ID = food->GetID();
-						if (food->Use())
-						{
-							//To do fix Values and stuff.
-							float value = food->GetHunger();
-
-							float fullness = pActor->GetFullness();
-							int stacks = food->GetStackSize() - oldStack;
-							
-							pActor->SetFullness(fullness + value);
-							pActor->HungerHasChanged();
-							
-							//Sending Message to client And removing stack from inventory.
-							inv->RemoveItemStack(ID, stacks);
-							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-
-							PUIE->clientData->Send(msg);
-						}
-						else
-						{
-							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Food_Stack_is_Empty");
-							PUIE->clientData->Send(msg);
-						}
-						if (food->GetStackSize() <= 0)
-						{
-							if(inv->RemoveItem(food))
-							{
-								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
-								PUIE->clientData->Send(msg);
-							}
-						}
-					}
-					else if (Container* container = dynamic_cast<Container*>(item))
-					{
-						if (container->Use())
-						{
-							//To do fix values and stuff
-							float hydration = 2.0f + pActor->GetHydration();
-						
-							pActor->SetHydration(hydration);
-							ID = container->GetID();
-							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-							PUIE->clientData->Send(msg);
-						}
-						else
-						{
-							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Container_Stack_is_Empty");
-							PUIE->clientData->Send(msg);
-						}
-					}
-				}
-			}
-		}
+		HandleUseItem(PUIE->clientData, PUIE->itemID);
 	}
 	else if (PlayerCraftItemEvent* PCIE = dynamic_cast<PlayerCraftItemEvent*>(e))
 	{
-		auto playerIterator = this->zPlayers.find(PCIE->clientData);
-		auto playerBehavior = playerIterator->second->GetBehavior();
-
-		Actor* actor = playerBehavior->GetActor();
-
-		if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
-		{
-			if (Inventory* inv = pActor->GetInventory())
-			{
-				NetworkMessageConverter NMC;
-				Item* item = inv->SearchAndGetItem(PCIE->itemID);
-				std::string msg;
-				if (item)
-				{
-					unsigned int ID = 0;
-					if(Material* material = dynamic_cast<Material*>(item))
-					{
-						if (material->GetItemSubType() == ITEM_SUB_TYPE_SMALL_STICK)
-						{
-							if (material->Use())
-							{
-								ID = material->GetID();
-								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-								PCIE->clientData->Send(msg);
-
-								//Creating a bow With default Values
-								const Projectile* temp_Arrow = GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
-
-								if (temp_Arrow)
-								{
-									Projectile* new_Arrow = new Projectile((*temp_Arrow));
-
-									if (inv->AddItem(new_Arrow))
-									{
-										ID = new_Arrow->GetID();
-										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-										msg += new_Arrow->ToMessageString(&NMC);
-										PCIE->clientData->Send(msg);
-									}
-								}
-							}
-							else
-							{
-								msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
-								PCIE->clientData->Send(msg);
-							}
-							if (material->GetStackSize() <= 0)
-							{
-								if (inv->RemoveItem(material))
-								{
-									ID = material->GetID();
-									msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
-									PCIE->clientData->Send(msg);
-								}
-							}
-						}
-						else if (material->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK)
-						{
-							if (Material* material_Thread = dynamic_cast<Material*>(inv->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL, ITEM_SUB_TYPE_THREAD)))
-							{
-								if (!material->IsUsable() || !material_Thread->IsUsable())
-								{
-									msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
-									PCIE->clientData->Send(msg);
-								}
-								else
-								{
-									material->Use();
-									ID = material->GetID();
-									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-									PCIE->clientData->Send(msg);
-
-									material_Thread->Use();
-									ID = material_Thread->GetID();
-									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-									PCIE->clientData->Send(msg);
-
-									//Creating a bow With default Values
-									const RangedWeapon* temp_bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
-
-									if (temp_bow)
-									{
-										RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
-
-										if (inv->AddItem(new_Bow))
-										{
-											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-											msg += new_Bow->ToMessageString(&NMC);
-											PCIE->clientData->Send(msg);
-										}
-									}
-								}
-							}
-						}
-						else if (material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)
-						{
-							if (Material* material_Medium_Stick = dynamic_cast<Material*>(inv->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL, ITEM_SUB_TYPE_THREAD)))
-							{
-								if (!material->IsUsable() || !material_Medium_Stick->IsUsable())
-								{
-									msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
-									PCIE->clientData->Send(msg);
-								}
-								else
-								{
-									material->Use();
-									ID = material->GetID();
-									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-									PCIE->clientData->Send(msg);
-
-									material_Medium_Stick->Use();
-									ID = material_Medium_Stick->GetID();
-									msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-									PCIE->clientData->Send(msg);
-
-									//Creating a bow With default Values
-									const RangedWeapon* temp_bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
-
-									if (temp_bow)
-									{
-										RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
-
-										if (inv->AddItem(new_Bow))
-										{
-											msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-											msg += new_Bow->ToMessageString(&NMC);
-											PCIE->clientData->Send(msg);
-										}
-									}
-								}
-							}
-						}
-					}
-					else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
-					{
-						int oldStack = bandage->GetStackSize();
-						ID = bandage->GetID();
-						if (bandage->Use())
-						{
-							int stacks = bandage->GetStackSize() - oldStack;
-							
-							pActor->SetBleeding(false);
-							
-							
-							//Sending Message to client And removing stack from inventory.
-							inv->RemoveItemStack(ID, stacks);
-							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-
-							PUIE->clientData->Send(msg);
-						}
-						else
-						{
-							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Bandage_Stack_is_Empty");
-							PUIE->clientData->Send(msg);
-						}
-						if (bandage->GetStackSize() <= 0)
-						{
-							if(inv->RemoveItem(bandage));
-							{
-								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
-								PUIE->clientData->Send(msg);
-							}
-						}
-					}
-				}
-			}
-		}
+		HandleCraftItem(PCIE->clientData, PCIE->itemID);
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
-		Actor* actor = NULL;
-		PlayerActor* pActor = NULL;
-		Inventory* inventory = NULL;
-		Item* item = NULL;
-
-		auto playerIterator = zPlayers.find(PUEWE->clientData);
-		actor = playerIterator->second->GetBehavior()->GetActor();
-		
-		if ( !(pActor = dynamic_cast<PlayerActor*>(actor)) )
-		{
-			MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
-			return;
-		}
-		if( !(inventory = pActor->GetInventory()) )
-		{
-			MaloW::Debug("Inventory is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
-			return;
-		}
-		if ( !(item = inventory->GetPrimaryEquip()) )
-		{
-			MaloW::Debug("Item is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
-			return;
-		}
-		if( item->GetID() != PUEWE->itemID )
-		{
-			MaloW::Debug("Item ID do not match in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
-			return;
-		}
-
-		RangedWeapon* ranged = NULL;
-		MeleeWeapon* meele = NULL;
-		Projectile* proj = NULL;
-		NetworkMessageConverter NMC;
-
-		if(ranged = dynamic_cast<RangedWeapon*>(item))
-		{
-			if (ranged->GetItemSubType() == ITEM_SUB_TYPE_BOW)
-			{
-				//Check if arrows are equipped
-				Projectile* arrow = inventory->GetProjectile();
-				if(arrow && arrow->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
-				{
-					//create projectileActor
-					PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
-					ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
-					ProjectileArrowBehavior* projBehavior= new ProjectileArrowBehavior(projActor, this->zWorld);
-					Damage damage;
-
-					//Sets damage
-					damage.piercing = ranged->GetDamage() + arrow->GetDamage();
-					projActor->SetDamage(damage);
-
-					this->zActorManager->AddActor(projActor);
-					this->zBehaviors.insert(projBehavior);
-					//Decrease stack
-					arrow->Use();
-					if (arrow->GetStackSize() <= 0)
-					{
-						std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
-						msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_PROJECTILE);
-						PUEWE->clientData->Send(msg);
-						inventory->RemoveItem(arrow);
-						inventory->UnEquipProjectile();
-					}
-					//Send feedback message
-					PUEWE->clientData->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
-				}
-				//Send feedback message
-				PUEWE->clientData->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));			}
-		}
-		else if(proj = dynamic_cast<Projectile*>(item))
-		{
-			//TODO: Implement rocks
-		}
-		else if(meele = dynamic_cast<MeleeWeapon*>(item))
-		{
-			float range = 0.0f; 
-			BioActor* victim = NULL;
-
-			//Check Collisions
-			range = meele->GetRange();
-			victim = dynamic_cast<BioActor* >(this->zActorManager->CheckCollisions(pActor, range));
-
-			if(victim)
-			{
-				Damage dmg;
-
-				if(meele->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
-					dmg.slashing = meele->GetDamage();
-				
-				victim->TakeDamage(dmg, pActor);
-			}
-		}
-
+		HandleUseWeapon(PUEWE->clientData, PUEWE->itemID);
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{
-		std::string msg;
-		unsigned int slot;
-
-		NetworkMessageConverter NMC;
-		Actor* actor = this->zPlayers[PEIE->clientData]->GetBehavior()->GetActor();
-		BioActor* pActor = dynamic_cast<PlayerActor*>(actor);
-		Inventory* inventory = pActor->GetInventory();
-		Item* item = inventory->SearchAndGetItem(PEIE->itemID);
-		
-		if(Projectile* proj = dynamic_cast<Projectile*>(item))
-		{
-			inventory->EquipProjectile(proj);
-			slot = EQUIPMENT_SLOT_PROJECTILE;
-		}
-		else if(MeleeWeapon* meele = dynamic_cast<MeleeWeapon*>(item))
-		{
-			inventory->EquipMeleeWeapon(meele);
-			slot = EQUIPMENT_SLOT_MELEE_WEAPON;
-		}
-		else if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
-		{
-			inventory->EquipRangedWeapon(ranged);
-			slot = EQUIPMENT_SLOT_RANGED_WEAPON;
-		}
-		else
-		{
-			msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Cannot_Equip_That_Item");
-			PEIE->clientData->Send(msg);
-			return;
-		}
-
-		msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)item->GetID());
-		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)slot);
-		PEIE->clientData->Send(msg);
-
+		HandleEquipItem(PEIE->clientData, PEIE->itemID);
 	}
 	else if (PlayerUnEquipItemEvent* PUEIE = dynamic_cast<PlayerUnEquipItemEvent*>(e) )
 	{
-		std::string msg;
-		NetworkMessageConverter NMC;
-		Actor* actor = this->zPlayers[PUEIE->clientData]->GetBehavior()->GetActor();
-		BioActor* pActor = dynamic_cast<BioActor*>(actor);
-		Inventory* inventory = pActor->GetInventory();
-		Item* item = inventory->SearchAndGetItem(PUEIE->itemID);
-
-		if(!item)
-		{
-			msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Item_Was_Not_Found");
-			PUEIE->clientData->Send(msg);
-			return;
-		}
-
-		if(PUEIE->eq_Slot == EQUIPMENT_SLOT_PROJECTILE)
-		{
-			inventory->UnEquipProjectile();
-		}
-		else if(PUEIE->eq_Slot == EQUIPMENT_SLOT_MELEE_WEAPON)
-		{
-			inventory->UnEquipMeleeWeapon();
-		}
-		else if(PUEIE->eq_Slot == EQUIPMENT_SLOT_RANGED_WEAPON)
-		{
-			inventory->UnEquipRangedWeapon();
-		}
-		else
-		{
-			msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Such_slot");
-			PUEIE->clientData->Send(msg);
-			return;
-		}
-
-		msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)PUEIE->itemID);
-		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)PUEIE->eq_Slot);
-		PUEIE->clientData->Send(msg);
+		HandleUnEquipItem(PUEIE->clientData, PUEIE->itemID, PUEIE->eq_Slot);
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
@@ -1141,4 +493,698 @@ ItemActor* Game::ConvertToItemActor(Behavior* behavior, Actor*& oldActorOut)
 	oldActorOut = projActor;
 
 	return itemActor;
+}
+
+void Game::HandleConnection( ClientData* cd )
+{
+	// Create Player
+	Player* player = new Player(cd);
+	zPlayers[cd] = player;
+
+	//Lets gamemode observe players.
+	player->AddObserver(this->zGameMode);
+
+	//Tells the client it has been connected.
+	NetworkMessageConverter NMC;
+	std::string message;
+
+	message = NMC.Convert(MESSAGE_TYPE_CONNECTED);
+	cd->Send(message);
+
+	// Sends the world name
+	message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorld->GetFileName());
+	cd->Send(message);
+
+	// Send event to game so it knows what players there are.
+	// PlayerAddEvent* PAE = new PlayerAddEvent();
+	// PAE->player = player;
+	// NotifyObservers(PAE);
+}
+
+void Game::HandleDisconnect( ClientData* cd )
+{
+		// Delete Player Behavior
+		auto playerIterator = zPlayers.find(cd);
+		auto playerBehavior = playerIterator->second->GetBehavior();
+		
+		// Create AI Behavior For Players That Disconnected
+		if ( PlayerWolfBehavior* playerWolf = dynamic_cast<PlayerWolfBehavior*>(playerBehavior) )
+		{
+			AIWolfBehavior* aiWolf = new AIWolfBehavior(playerWolf->GetActor(), zWorld);
+			zBehaviors.insert(aiWolf);
+		}
+		//Kills actor if human
+		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
+		{
+			dynamic_cast<BioActor*>(pHuman->GetActor())->Kill();
+		}
+		
+		SetPlayerBehavior(playerIterator->second, 0);
+
+		/*PlayerRemoveEvent* PRE = new PlayerRemoveEvent();
+		PRE->player = i->second;
+		NotifyObservers(PRE);*/
+
+		Player* temp = playerIterator->second;
+		delete temp, temp = NULL;
+		zPlayers.erase(playerIterator);
+}
+
+void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID )
+{
+	std::set<Actor*> actors = this->zActorManager->GetActors();
+	std::vector<Item*> lootedItems;
+
+	auto playerIterator = this->zPlayers.find(cd);
+	auto playerBehavior = playerIterator->second->GetBehavior();
+	Actor* actor = playerBehavior->GetActor();
+	NetworkMessageConverter NMC;
+	std::string msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE);
+	unsigned int ID = 0;
+	bool bLooted = false;
+	//Loop through all actors.
+	for (auto it_actor = actors.begin(); it_actor != actors.end(); it_actor++)
+	{
+		//Loop through all ID's of all actors the client tried to loot.
+		for (auto it_ID = actorID.begin(); it_ID != actorID.end(); it_ID++)
+		{
+			//Check if the ID is the same.
+			if ((*it_ID) == (*it_actor)->GetID())
+			{
+				//Check if the distance between the actors are to far to be able to loot.
+				if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 4.0f)
+					continue;
+
+				//Check if the Actor is an ItemActor
+				if (ItemActor* iActor = dynamic_cast<ItemActor*>(*it_actor))
+				{
+					ID = iActor->GetID();
+					msg += iActor->GetItem()->ToMessageString(&NMC);
+					msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+					bLooted = true;
+				}
+				//Check if the Actor is an PlayerActor
+				else if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(*it_actor))
+				{
+					//Check if the PlayerActor is Dead.
+					if (!pActor->IsAlive())
+					{
+						Inventory* inv = pActor->GetInventory();
+						ID = pActor->GetID();
+
+						std::vector<Item*> items = inv->GetItems();
+						for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+						{
+							msg += (*it_Item)->ToMessageString(&NMC);
+							msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+							bLooted = true;
+						}
+					}
+				}
+				//Check if the Actor is an AnimalActor.
+				else if(AnimalActor* aActor = dynamic_cast<AnimalActor*>(*it_actor))
+				{
+					//Check if the AnimalActor is alive.
+					if (!aActor->IsAlive())
+					{
+						//Verify that a PlayerActor was trying to loot.
+						if (PlayerActor* player = dynamic_cast<PlayerActor*>(actor))
+						{
+							//Get the PlayerActors inventory.
+							if (Inventory* playerInventory = player->GetInventory())
+							{
+								//Check if the PlayerActor has a Pocket Knife to be able to loot Animals.
+								Item* item = playerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE, ITEM_SUB_TYPE_POCKET_KNIFE);
+
+								if (item)
+								{
+									Inventory* inv = aActor->GetInventory();
+									ID = aActor->GetID();
+
+									std::vector<Item*> items = inv->GetItems();
+									for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+									{
+										msg += (*it_Item)->ToMessageString(&NMC);
+										msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+										bLooted = true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	if (bLooted)
+		cd->Send(msg);
+}
+
+void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType )
+{
+	Actor* actor = this->zActorManager->GetActor(objID);
+	Item* item = NULL;
+
+	auto playerActor = this->zPlayers.find(cd);
+	auto* pBehaviour = playerActor->second->GetBehavior();
+
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(pBehaviour->GetActor());
+
+	NetworkMessageConverter NMC;
+	//Check if the Actor being looted is an ItemActor.
+	if (ItemActor* iActor = dynamic_cast<ItemActor*>(actor))
+	{
+		item = iActor->GetItem();
+
+		if (item)
+		{
+			std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+			if (item->GetID() == itemID && item->GetItemType() == itemType && item->GetItemSubType() == subType)
+			{
+				if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
+				{
+					msg += rWpn->ToMessageString(&NMC);
+				}
+				else if (MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item))
+				{
+					msg += mWpn->ToMessageString(&NMC);
+				}
+				else if (Projectile* projectile = dynamic_cast<Projectile*>(item))
+				{
+					msg += projectile->ToMessageString(&NMC);
+				}
+				else if (Food* food = dynamic_cast<Food*>(item))
+				{
+					msg += food->ToMessageString(&NMC);
+				}
+				else if (Material* material = dynamic_cast<Material*>(item))
+				{
+					msg += material->ToMessageString(&NMC);
+				}
+				else if (Container* container = dynamic_cast<Container*>(item))
+				{
+					msg += container->ToMessageString(&NMC);
+				}
+				pActor->GetInventory()->AddItem(item);
+				cd->Send(msg);
+				this->zActorManager->RemoveActor(iActor);
+			}
+		}
+	}
+	//Check if the Actor being looted is an BioActor.
+	else if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
+	{
+		Inventory* inv = bActor->GetInventory();
+		if (inv)
+		{
+			item = inv->SearchAndGetItem(itemID);
+			if(item)
+			{
+				std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+				if (item->GetItemType() == itemType && item->GetItemSubType() == subType)
+				{
+					if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
+					{
+						msg += rWpn->ToMessageString(&NMC);
+					}
+					else if (MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item))
+					{
+						msg += mWpn->ToMessageString(&NMC);
+					}
+					else if (Projectile* projectile = dynamic_cast<Projectile*>(item))
+					{
+						msg += projectile->ToMessageString(&NMC);
+					}
+					else if (Food* food = dynamic_cast<Food*>(item))
+					{
+						msg += food->ToMessageString(&NMC);
+					}
+					else if (Material* material = dynamic_cast<Material*>(item))
+					{
+						msg += material->ToMessageString(&NMC);
+					}
+					else if (Container* container = dynamic_cast<Container*>(item))
+					{
+						msg += container->ToMessageString(&NMC);
+					}
+					else if (Bandage* bandage = dynamic_cast<Bandage*>(item))
+					{
+						msg += bandage->ToMessageString(&NMC);
+					}
+
+					pActor->GetInventory()->AddItem(item);
+					cd->Send(msg);
+					this->zActorManager->RemoveActor(bActor);
+				}
+			}
+		}
+	}
+}
+
+void Game::HandleDropItem( ClientData* cd, unsigned int objectID )
+{
+	Actor* actor  = NULL;
+	PlayerActor* pActor = NULL;
+	Item* item = NULL;
+
+	auto i = this->zPlayers.find(cd);
+
+	actor = i->second->GetBehavior()->GetActor();
+	pActor = dynamic_cast<PlayerActor*>(actor);
+
+	if(!pActor)
+		return;
+
+	item = pActor->DropItem(objectID);
+
+	if(!item)
+		return;
+
+	actor = NULL;
+	actor = new ItemActor(item);
+	this->zActorManager->AddActor(actor);
+	actor->SetPosition(pActor->GetPosition());
+	NetworkMessageConverter NMC;
+	cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
+}
+
+void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
+{
+	auto playerIterator = this->zPlayers.find(cd);
+	auto playerBehavior = playerIterator->second->GetBehavior();
+
+	Actor* actor = playerBehavior->GetActor();
+
+	if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
+	{
+		if (Inventory* inv = pActor->GetInventory())
+		{
+			NetworkMessageConverter NMC;
+			Item* item = inv->SearchAndGetItem(itemID);
+			std::string msg;
+			if (item)
+			{
+				unsigned int ID = 0;
+				if (Food* food = dynamic_cast<Food*>(item))
+				{
+					int oldStack = food->GetStackSize();
+					ID = food->GetID();
+					if (food->Use())
+					{
+						//To do fix Values and stuff.
+						float value = food->GetHunger();
+
+						float fullness = pActor->GetFullness();
+						int stacks = food->GetStackSize() - oldStack;
+
+						pActor->SetFullness(fullness + value);
+						pActor->HungerHasChanged();
+
+						//Sending Message to client And removing stack from inventory.
+						inv->RemoveItemStack(ID, stacks);
+						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+
+						cd->Send(msg);
+					}
+					else
+					{
+						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Food_Stack_is_Empty");
+						cd->Send(msg);
+					}
+					if (food->GetStackSize() <= 0)
+					{
+						if(inv->RemoveItem(food))
+						{
+							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
+							cd->Send(msg);
+						}
+					}
+				}
+				else if (Container* container = dynamic_cast<Container*>(item))
+				{
+					if (container->Use())
+					{
+						//To do fix values and stuff
+						float hydration = 2.0f + pActor->GetHydration();
+
+						pActor->SetHydration(hydration);
+						ID = container->GetID();
+						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+						cd->Send(msg);
+					}
+					else
+					{
+						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Container_Stack_is_Empty");
+						cd->Send(msg);
+					}
+				}
+			}
+		}
+	}
+}
+
+void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
+{
+	Actor* actor = NULL;
+	PlayerActor* pActor = NULL;
+	Inventory* inventory = NULL;
+	Item* item = NULL;
+
+	auto playerIterator = zPlayers.find(cd);
+	actor = playerIterator->second->GetBehavior()->GetActor();
+
+	if ( !(pActor = dynamic_cast<PlayerActor*>(actor)) )
+	{
+		MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
+		return;
+	}
+	if( !(inventory = pActor->GetInventory()) )
+	{
+		MaloW::Debug("Inventory is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
+		return;
+	}
+	if ( !(item = inventory->GetPrimaryEquip()) )
+	{
+		MaloW::Debug("Item is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
+		return;
+	}
+	if( item->GetID() != itemID )
+	{
+		MaloW::Debug("Item ID do not match in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
+		return;
+	}
+
+	RangedWeapon* ranged = NULL;
+	MeleeWeapon* meele = NULL;
+	Projectile* proj = NULL;
+	NetworkMessageConverter NMC;
+
+	if(ranged = dynamic_cast<RangedWeapon*>(item))
+	{
+		if (ranged->GetItemSubType() == ITEM_SUB_TYPE_BOW)
+		{
+			//Check if arrows are equipped
+			Projectile* arrow = inventory->GetProjectile();
+			if(arrow && arrow->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+			{
+				//create projectileActor
+				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
+				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
+				ProjectileArrowBehavior* projBehavior= new ProjectileArrowBehavior(projActor, this->zWorld);
+				Damage damage;
+
+				//Sets damage
+				damage.piercing = ranged->GetDamage() + arrow->GetDamage();
+				projActor->SetDamage(damage);
+
+				this->zActorManager->AddActor(projActor);
+				this->zBehaviors.insert(projBehavior);
+				//Decrease stack
+				arrow->Use();
+				if (arrow->GetStackSize() <= 0)
+				{
+					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
+					msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_PROJECTILE);
+					cd->Send(msg);
+					inventory->RemoveItem(arrow);
+					inventory->UnEquipProjectile();
+				}
+				//Send feedback message
+				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
+			}
+			//Send feedback message
+			cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));			}
+	}
+	else if(proj = dynamic_cast<Projectile*>(item))
+	{
+		//TODO: Implement rocks
+	}
+	else if(meele = dynamic_cast<MeleeWeapon*>(item))
+	{
+		float range = 0.0f; 
+		BioActor* victim = NULL;
+
+		//Check Collisions
+		range = meele->GetRange();
+		victim = dynamic_cast<BioActor* >(this->zActorManager->CheckCollisions(pActor, range));
+
+		if(victim)
+		{
+			Damage dmg;
+
+			if(meele->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+				dmg.slashing = meele->GetDamage();
+
+			victim->TakeDamage(dmg, pActor);
+		}
+	}
+}
+
+void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
+{
+	auto playerIterator = this->zPlayers.find(cd);
+	auto playerBehavior = playerIterator->second->GetBehavior();
+
+	Actor* actor = playerBehavior->GetActor();
+
+	if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
+	{
+		if (Inventory* inv = pActor->GetInventory())
+		{
+			NetworkMessageConverter NMC;
+			Item* item = inv->SearchAndGetItem(itemID);
+			std::string msg;
+			if (item)
+			{
+				unsigned int ID = 0;
+				if(Material* material = dynamic_cast<Material*>(item))
+				{
+					if (material->GetItemSubType() == ITEM_SUB_TYPE_SMALL_STICK)
+					{
+						if (material->Use())
+						{
+							ID = material->GetID();
+							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+							cd->Send(msg);
+
+							//Creating a bow With default Values
+							const Projectile* temp_Arrow = GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
+
+							if (temp_Arrow)
+							{
+								Projectile* new_Arrow = new Projectile((*temp_Arrow));
+
+								if (inv->AddItem(new_Arrow))
+								{
+									ID = new_Arrow->GetID();
+									msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+									msg += new_Arrow->ToMessageString(&NMC);
+									cd->Send(msg);
+								}
+							}
+						}
+						else
+						{
+							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
+							cd->Send(msg);
+						}
+						if (material->GetStackSize() <= 0)
+						{
+							if (inv->RemoveItem(material))
+							{
+								ID = material->GetID();
+								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
+								cd->Send(msg);
+							}
+						}
+					}
+					else if (material->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK)
+					{
+						if (Material* material_Thread = dynamic_cast<Material*>(inv->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL, ITEM_SUB_TYPE_THREAD)))
+						{
+							if (!material->IsUsable() || !material_Thread->IsUsable())
+							{
+								msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
+								cd->Send(msg);
+							}
+							else
+							{
+								material->Use();
+								ID = material->GetID();
+								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+								cd->Send(msg);
+
+								material_Thread->Use();
+								ID = material_Thread->GetID();
+								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+								cd->Send(msg);
+
+								//Creating a bow With default Values
+								const RangedWeapon* temp_bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
+
+								if (temp_bow)
+								{
+									RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
+
+									if (inv->AddItem(new_Bow))
+									{
+										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+										msg += new_Bow->ToMessageString(&NMC);
+										cd->Send(msg);
+									}
+								}
+							}
+						}
+					}
+					else if (material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)
+					{
+						if (Material* material_Medium_Stick = dynamic_cast<Material*>(inv->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL, ITEM_SUB_TYPE_THREAD)))
+						{
+							if (!material->IsUsable() || !material_Medium_Stick->IsUsable())
+							{
+								msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
+								cd->Send(msg);
+							}
+							else
+							{
+								material->Use();
+								ID = material->GetID();
+								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+								cd->Send(msg);
+
+								material_Medium_Stick->Use();
+								ID = material_Medium_Stick->GetID();
+								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+								cd->Send(msg);
+
+								//Creating a bow With default Values
+								const RangedWeapon* temp_bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
+
+								if (temp_bow)
+								{
+									RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
+
+									if (inv->AddItem(new_Bow))
+									{
+										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+										msg += new_Bow->ToMessageString(&NMC);
+										cd->Send(msg);
+									}
+								}
+							}
+						}
+					}
+				}
+				else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
+				{
+					int oldStack = bandage->GetStackSize();
+					ID = bandage->GetID();
+					if (bandage->Use())
+					{
+						int stacks = bandage->GetStackSize() - oldStack;
+
+						pActor->SetBleeding(false);
+
+
+						//Sending Message to client And removing stack from inventory.
+						inv->RemoveItemStack(ID, stacks);
+						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+
+						cd->Send(msg);
+					}
+					else
+					{
+						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Bandage_Stack_is_Empty");
+						cd->Send(msg);
+					}
+					if (bandage->GetStackSize() <= 0)
+					{
+						if(inv->RemoveItem(bandage));
+						{
+							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
+							cd->Send(msg);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
+{
+	std::string msg;
+	unsigned int slot;
+
+	NetworkMessageConverter NMC;
+	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
+	BioActor* pActor = dynamic_cast<PlayerActor*>(actor);
+	Inventory* inventory = pActor->GetInventory();
+	Item* item = inventory->SearchAndGetItem(itemID);
+
+	if(Projectile* proj = dynamic_cast<Projectile*>(item))
+	{
+		inventory->EquipProjectile(proj);
+		slot = EQUIPMENT_SLOT_PROJECTILE;
+	}
+	else if(MeleeWeapon* meele = dynamic_cast<MeleeWeapon*>(item))
+	{
+		inventory->EquipMeleeWeapon(meele);
+		slot = EQUIPMENT_SLOT_MELEE_WEAPON;
+	}
+	else if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
+	{
+		inventory->EquipRangedWeapon(ranged);
+		slot = EQUIPMENT_SLOT_RANGED_WEAPON;
+	}
+	else
+	{
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Cannot_Equip_That_Item");
+		cd->Send(msg);
+		return;
+	}
+
+	msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)item->GetID());
+	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)slot);
+	cd->Send(msg);
+}
+
+void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
+{
+	std::string msg;
+	NetworkMessageConverter NMC;
+	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
+	BioActor* pActor = dynamic_cast<BioActor*>(actor);
+	Inventory* inventory = pActor->GetInventory();
+	Item* item = inventory->SearchAndGetItem(itemID);
+
+	if(!item)
+	{
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Item_Was_Not_Found");
+		cd->Send(msg);
+		return;
+	}
+
+	if(eq_slot == EQUIPMENT_SLOT_PROJECTILE)
+	{
+		inventory->UnEquipProjectile();
+	}
+	else if(eq_slot == EQUIPMENT_SLOT_MELEE_WEAPON)
+	{
+		inventory->UnEquipMeleeWeapon();
+	}
+	else if(eq_slot == EQUIPMENT_SLOT_RANGED_WEAPON)
+	{
+		inventory->UnEquipRangedWeapon();
+	}
+	else
+	{
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Such_slot");
+		cd->Send(msg);
+		return;
+	}
+
+	msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)itemID);
+	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)eq_slot);
+	cd->Send(msg);
 }

@@ -11,16 +11,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "Damage.h"
 #include "Inventory.h"
 
-/*! Animation states*/
-static const enum ACTOR_STATE
-{
-	ACTOR_STATE_NONE,
-	ACTOR_STATE_IDLE,
-	ACTOR_STATE_RUNNING,
-	ACTOR_STATE_WALK,
-	ACTOR_STATE_CROUCH
-};
-
 class BioActorTakeDamageEvent : public Event
 {
 public:

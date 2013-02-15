@@ -45,6 +45,7 @@ bool ProjectileArrowBehavior::Update( float dt )
 	this->zActor->SetDir(newDir);
 
 	//**Check if the projectile has hit the ground**
+
 	float yValue;
 	yValue = this->zWorld->CalcHeightAtWorldPos(newPos.GetXZ());
 

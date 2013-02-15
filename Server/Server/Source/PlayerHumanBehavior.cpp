@@ -5,11 +5,12 @@
 #include "PlayerActor.h"
 #include "PlayerConfiguration.h"
 
-const int MAX_VELOCITY = 30;
+const float MAX_VELOCITY_RUN = 2.95f;
+const float MAX_VELOCITY_SPRINT = 5.90f;
+const float MAX_VELOCITY_DUCK = 0.1f;
 const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 const float ELASTICITY = 0.5f;
-const float ACCELERATION = 10.0f;
-const float PLAYERHEIGHT = 1.7f;
+const float ACCELERATION = 10000.0f;
 const float GROUNDFRICTION = 0.4f;
 const float AIRFRICTION = 0.95f;
 const float AIRDENSITY = 1.225f;
@@ -81,8 +82,10 @@ bool PlayerHumanBehavior::Update( float dt )
 
 	if ( isOnGround )
 	{
-		zVelocity -= ( zVelocity * 0.8f ) * dt;
+		zVelocity -= ( zVelocity * 4.0f ) * dt;
 	}
+
+	BioActor* bActor = dynamic_cast<BioActor*>(zActor);
 
 	// Gravity
 	zVelocity += GRAVITY * dt;
@@ -115,7 +118,60 @@ bool PlayerHumanBehavior::Update( float dt )
 	{
 
 	}
+	// Check Max Speeds
+	if(keyStates.GetKeyState(KEY_DUCK))
+	{
+		if(this->zVelocity.GetLength() > MAX_VELOCITY_DUCK)
+		{
+			bActor->SetState(STATE_CROUCHING);
+			this->zVelocity.Normalize();
+			this->zVelocity *= MAX_VELOCITY_DUCK;
+		}
+		else if(this->zVelocity.GetLength() < MAX_VELOCITY_DUCK)
+		{
+			if( !keyStates.GetKeyState(KEY_FORWARD) && !keyStates.GetKeyState(KEY_BACKWARD) && !keyStates.GetKeyState(KEY_RIGHT) && !keyStates.GetKeyState(KEY_LEFT))
+			{
+				bActor->SetState(STATE_IDLE);
+				this->zVelocity = Vector3(0, 0, 0);
+			}
+		}
+	}
+	else if(!keyStates.GetKeyState(KEY_SPRINT))
+	{
+		if(this->zVelocity.GetLength() > MAX_VELOCITY_RUN)
+		{
+			bActor->SetState(STATE_WALKING);
+			this->zVelocity.Normalize();
+			this->zVelocity *= MAX_VELOCITY_RUN;
+		}
+		else if(this->zVelocity.GetLength() < MAX_VELOCITY_RUN/2)
+		{
+			if( !keyStates.GetKeyState(KEY_FORWARD) && !keyStates.GetKeyState(KEY_BACKWARD) && !keyStates.GetKeyState(KEY_RIGHT) && !keyStates.GetKeyState(KEY_LEFT))
+			{
+				bActor->SetState(STATE_IDLE);
+				this->zVelocity = Vector3(0, 0, 0);
+			}
+		}
+	}
+	else if(keyStates.GetKeyState(KEY_SPRINT))
+	{
+		if(this->zVelocity.GetLength() > MAX_VELOCITY_SPRINT)
+		{
+			bActor->SetState(STATE_RUNNING);
+			this->zVelocity.Normalize();
+			this->zVelocity *= MAX_VELOCITY_SPRINT;
+		}
+		else if(this->zVelocity.GetLength() < MAX_VELOCITY_SPRINT/2)
+		{
+			if( !keyStates.GetKeyState(KEY_FORWARD) && !keyStates.GetKeyState(KEY_BACKWARD) && !keyStates.GetKeyState(KEY_RIGHT) && !keyStates.GetKeyState(KEY_LEFT))
+			{
+				bActor->SetState(STATE_IDLE);
+				this->zVelocity = Vector3(0, 0, 0);
+			}
+		}
+	}
 
+	//Look so player isn't outside of World.
 	if ( zWorld->IsInside(newPosition.GetXZ()) )
 	{
 		zActor->SetPosition(newPosition);
@@ -124,7 +180,7 @@ bool PlayerHumanBehavior::Update( float dt )
 	{
 		zVelocity = Vector3(0.0f, 0.0f, 0.0f);
 
-		// Move To Center
+		// Move To Center of World
 		Vector3 center;
 		center.x = zWorld->GetWorldCenter().x;
 		center.z = zWorld->GetWorldCenter().y;

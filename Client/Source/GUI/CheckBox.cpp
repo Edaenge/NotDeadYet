@@ -44,8 +44,8 @@ bool CheckBox::AddToRenderer(GraphicsEngine* ge)
 	Element::AddToRenderer(ge);
 	if(this->mOn && this->mCheckedImage == NULL)
 	{
-		Vector2 temp = this->GetPositionD3D();
-		this->mCheckedImage = GetGraphics()->CreateImage(Vector2(temp.x, temp.y), this->GetDimension(), this->mCheckedTextureName.c_str());
+		Vector2 temp = this->GetPosition();
+		this->mCheckedImage = GetGraphics()->CreateImage(temp, this->GetDimension(), this->mCheckedTextureName.c_str());
 	}
 	return false;
 }
@@ -74,9 +74,9 @@ GUIEvent* CheckBox::CheckCollision(float mouseX, float mouseY, bool mousePressed
 			if(this->mOn == false)
 			{
 				this->mOn = true;
-				Vector2 temp = this->GetPositionD3D();
+				Vector2 temp = this->GetPosition();
 				if(this->mCheckedImage == NULL)
-					this->mCheckedImage = ge->CreateImage(Vector2(temp.x, temp.y), this->GetDimension(), this->mCheckedTextureName.c_str());
+					this->mCheckedImage = ge->CreateImage(temp, this->GetDimension(), this->mCheckedTextureName.c_str());
 
 				ChangeOptionEvent* newTempEvent = (ChangeOptionEvent*)this->mEvent;
 				newTempEvent->SetValue("true");
@@ -110,7 +110,7 @@ void CheckBox::SetChecked(bool checked)
 		this->mOn = checked;
 		if(this->mOn && this->mCheckedImage == NULL)
 		{
-			this->mCheckedImage = GetGraphics()->CreateImage(this->GetPositionD3D(), this->GetDimension(), this->mCheckedTextureName.c_str());
+			this->mCheckedImage = GetGraphics()->CreateImage(this->GetPosition(), this->GetDimension(), this->mCheckedTextureName.c_str());
 		}
 		else if(!this->mOn && this->mCheckedImage != NULL)
 		{
@@ -137,7 +137,7 @@ void CheckBox::Resize( float oldWindowWidth, float oldWindowHeight, float window
 
 	if(this->mCheckedImage)
 	{
-		this->mCheckedImage->SetPosition(Element::GetPositionD3D());
+		this->mCheckedImage->SetPosition(Element::GetPosition());
 		this->mCheckedImage->SetDimensions(Element::GetDimension());
 	}
 }

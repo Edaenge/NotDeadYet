@@ -42,15 +42,13 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
 					//if ( rand()%10000 == 0 ) GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);
 					actor->SetPosition(position);
-					GetGraphics()->GetCamera()->SetPosition(position + Vector3(0.0f, 2.5f, 0.0f));
-					
+					GetGraphics()->GetCamera()->SetPosition(position + this->zCameraOffset);
 				}
 				else 
 				{
 					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
 					actor->SetPosition(position);
 				}
-				
 				update->ComparePosition(position);
 			}
 			//if((*it_Update)->GetID() != clientID)
