@@ -8,14 +8,14 @@ MeleeWeapon::MeleeWeapon() : Weapon()
 MeleeWeapon::MeleeWeapon( const unsigned int ID, const unsigned int itemType, const int itemSubType, const float damage, const float range )
 	: Weapon(ID, itemType, itemSubType, damage, range)
 {
-
+	this->zStacking = false;
 }
 
 MeleeWeapon::MeleeWeapon(const unsigned int itemType, const int itemSubType, 
 						 const float damage, const float range) 
 						 : Weapon(itemType, itemSubType, damage, range)
 {
-
+	this->zStacking = false;
 }
 
 MeleeWeapon::~MeleeWeapon()
@@ -40,6 +40,7 @@ MeleeWeapon::MeleeWeapon(const MeleeWeapon& other)
 	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
+	this->zStacking = other.zStacking;
 }
 
 MeleeWeapon::MeleeWeapon(const MeleeWeapon* other)
@@ -55,6 +56,7 @@ MeleeWeapon::MeleeWeapon(const MeleeWeapon* other)
 	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
+	this->zStacking = other->zStacking;
 }
 
 void MeleeWeapon::UseWeapon(float& range, float& damage)

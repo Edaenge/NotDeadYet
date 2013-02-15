@@ -46,6 +46,7 @@ Projectile::Projectile(const Projectile& other)
 	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
+	this->zStacking = other.zStacking;
 }
 
 Projectile::Projectile(const Projectile* other)
@@ -61,6 +62,7 @@ Projectile::Projectile(const Projectile* other)
 	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
+	this->zStacking = other->zStacking;
 }
 
 bool Projectile::Use()

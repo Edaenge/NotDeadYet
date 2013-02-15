@@ -24,6 +24,7 @@ Gear::Gear(const Gear& other)
 	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
+	this->zStacking = other.zStacking;
 }
 
 Gear::Gear(const Gear* other)
@@ -37,6 +38,7 @@ Gear::Gear(const Gear* other)
 	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
+	this->zStacking = other->zStacking;
 }
 
 Gear::~Gear()

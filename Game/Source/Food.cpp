@@ -41,6 +41,7 @@ Food::Food(const Food& other)
 	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
+	this->zStacking = other.zStacking;
 }
 
 Food::Food(const Food* other)
@@ -55,6 +56,7 @@ Food::Food(const Food* other)
 	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
+	this->zStacking = other->zStacking;
 }
 
 bool Food::Use()
