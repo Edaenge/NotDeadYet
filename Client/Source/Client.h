@@ -109,6 +109,8 @@ private:
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
 	bool CheckCollision();
 
+	void UpdateCameraOffset(unsigned int state);
+
 	//////////////////////
 	//					//
 	//	   Actors		//
@@ -149,7 +151,7 @@ private:
 	void HandleDisplayLootData(std::vector<std::string> msgArray);
 protected:
 	virtual void OnEvent(Event* e);
-
+	
 private:
 	/*! Current Client ID*/
 	unsigned int zID;
@@ -198,4 +200,8 @@ private:
 	float zStamina;
 	float zHunger;
 	float zHydration;
+
+	Vector3 zMeshOffset;
+	std::map<std::string, Vector3> zMeshCameraOffsets;
+	std::map<unsigned int, Vector3> zStateCameraOffset;
 };

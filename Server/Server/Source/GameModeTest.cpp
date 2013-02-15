@@ -46,16 +46,16 @@ void GameModeTest::OnEvent( Event* e )
 				// Set new spawn pos
 				int maxPlayers = zPlayers.size();
 				int rand = 1 + (std::rand() % (maxPlayers+1));
-				pa->SetPosition(zGame->CalcPlayerSpawnPoint(rand));
-				pa->SetHealth(pa->GetHealthMax());
-				pa->SetStamina(pa->GetStaminaMax());
-				pa->SetFullness(pa->GetFullnessMax());
-				pa->SetHydration(pa->GetHydrationMax());
+				//pa->SetPosition(zGame->CalcPlayerSpawnPoint(rand));
+				//pa->SetHealth(pa->GetHealthMax());
+				//pa->SetStamina(pa->GetStaminaMax());
+				//pa->SetFullness(pa->GetFullnessMax());
+				//pa->SetHydration(pa->GetHydrationMax());
 
-				ATD->zDamage->blunt = 0;
-				ATD->zDamage->fallingDamage = 0;
-				ATD->zDamage->piercing = 0;
-				ATD->zDamage->slashing = 0;
+				//ATD->zDamage->blunt = 0;
+				//ATD->zDamage->fallingDamage = 0;
+				//ATD->zDamage->piercing = 0;
+				//ATD->zDamage->slashing = 0;
 
 				//Add to scoreboard
 				if( PlayerActor* dpa = dynamic_cast<PlayerActor*>(ATD->zDealer) )

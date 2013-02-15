@@ -6,19 +6,20 @@
 
 ClientActorManager::ClientActorManager()
 {
-	zInterpolationVelocity = 500.0f;
+	zInterpolationVelocity = 100.0f;
 }
 
 ClientActorManager::~ClientActorManager()
 {
 	for(auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
-		Actor* temp = it->second;
-
-		SAFE_DELETE(temp);
-
-		it = this->zActors.erase(it);
+		if(it->second)
+		{
+			delete it->second;
+			it->second = NULL;
+		}
 	}
+	this->zActors.clear();
 }
 
 void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )

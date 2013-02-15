@@ -54,6 +54,7 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 	Actor* collide = NULL;
 	PhysicsCollisionData data;
 	float rangeWithin = range;
+	Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
 
 	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
@@ -66,17 +67,22 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 		if(vec.GetLength() > rangeWithin)
 			continue;
 
-			if(BioActor* target = dynamic_cast<BioActor*>(*it))
+		
+		if(BioActor* target = dynamic_cast<BioActor*>(*it))
+		{
+			if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
 			{
-				PhysicsObject* targetObject = target->GetPhysicsObject();
-				data = GetPhysics()->GetCollisionRayMesh(actor->GetPosition(), actor->GetDir(), targetObject);
-
-				if(data.collision && data.distance < range)
-				{
-					range = data.distance;
-					collide = (*it);
-				}
+				offset = bActor->GetCameraOffset();
 			}
+			PhysicsObject* targetObject = target->GetPhysicsObject();
+			data = GetPhysics()->GetCollisionRayMeshBoundingOnly(actor->GetPosition() + offset, actor->GetDir(), targetObject);
+
+			if(data.collision && data.distance < range)
+			{
+				range = data.distance;
+				collide = (*it);
+			}
+		}
 	}
 
 	return collide;

@@ -35,6 +35,7 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 
 	this->zHealth -= dmg.GetTotal();
 	this->zHealthChanged = true;
+	MaloW::Debug("Damage Taken " + MaloW::convertNrToString(dmg.GetTotal()));
 
 	if(dmg.GetTotal() / this->zHealth > 0.20 && dmg.GetBleedFactor() > 0.6)
 	{
@@ -51,7 +52,9 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 	{
 		//RotateMesh
 		Vector3 up = Vector3(0, 1, 0);
-		Vector3 forward = Vector3(0, 0, 1);
+		Vector3 forward = this->GetDir();
+		forward.y = 0;
+		forward.Normalize();
 		Vector3 around = up.GetCrossProduct(forward);
 		around.Normalize();
 		float angle = 3.14f * 0.5f;
@@ -123,4 +126,13 @@ std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 	}
 
 	return msg;
+}
+
+void BioActor::SetState( const int state )
+{
+	this->zState = state;
+
+	BioActorStateEvent BASE;
+	BASE.zBioActor = this;
+	NotifyObservers(&BASE);
 }

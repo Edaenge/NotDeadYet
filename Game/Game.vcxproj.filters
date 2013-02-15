@@ -113,6 +113,12 @@
     <ClInclude Include="Include\Packets\Packet.h">
       <Filter>Header Files\Packets</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Bandage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\AnimationStates.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\World\Sector.cpp">
@@ -186,6 +192,9 @@
     </ClCompile>
     <ClCompile Include="Source\Packets\ServerFramePacket.cpp">
       <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Bandage.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 #include "ActorSynchronizer.h"
 #include "Actor.h"
+#include "BioActor.h"
 #include <Packets\ServerFramePacket.h>
 #include "WorldActor.h"
 
@@ -27,6 +28,10 @@ void ActorSynchronizer::OnEvent( Event* e )
 	else if (ActorScaleEvent* USE = dynamic_cast<ActorScaleEvent*>(e))
 	{
 		zFrameData->newScales[USE->zActor->GetID()] = USE->zActor->GetScale();
+	}
+	else if (BioActorStateEvent* BASE = dynamic_cast<BioActorStateEvent*>(e))
+	{
+		zFrameData->newStates[BASE->zBioActor->GetID()] = dynamic_cast<BioActor*>(BASE->zBioActor)->GetState();
 	}
 	else if (ActorAdded* AD = dynamic_cast<ActorAdded*>(e))
 	{

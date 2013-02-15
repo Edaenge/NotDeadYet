@@ -11,7 +11,8 @@ public:
 	std::map< unsigned int, Vector3 > newPositions;
 	std::map< unsigned int, Vector4 > newRotations;
 	std::map< unsigned int, Vector3 > newScales;
-	
+	std::map< unsigned int, unsigned int> newStates;
+
 	virtual bool Serialize( std::ostream& ss ) const
 	{
 		size_t num = newPositions.size();
@@ -38,6 +39,13 @@ public:
 			ss.write(reinterpret_cast<const char*>(&i->second.x), sizeof(i->second));
 		}
 
+		num = newStates.size();
+		ss.write(reinterpret_cast<const char*>(&num), sizeof(size_t));
+		for( auto i = newStates.begin(); i != newStates.end(); ++i )
+		{
+			ss.write(reinterpret_cast<const char*>(&i->first), sizeof(i->first));
+			ss.write(reinterpret_cast<const char*>(&i->second), sizeof(i->second));
+		}
 		return true;
 	}
 
@@ -71,6 +79,15 @@ public:
 			ss.read(reinterpret_cast<char*>(&key), sizeof(unsigned int));
 			ss.read(reinterpret_cast<char*>(&value), sizeof(Vector3));
 			newScales[key] = value;
+		}
+
+		ss.read(reinterpret_cast<char*>(&num), sizeof(size_t));
+		for( unsigned int i = 0; i != num; ++i )
+		{
+			unsigned int value;
+			ss.read(reinterpret_cast<char*>(&key), sizeof(unsigned int));
+			ss.read(reinterpret_cast<char*>(&value), sizeof(unsigned int));
+			newStates[key] = value;
 		}
 
 		return true;

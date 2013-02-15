@@ -57,4 +57,6 @@ private:
 	void SpawnItemsDebug();
 private:
 	PhysicsEngine* zPhysicsEngine;
+	
+	std::map<std::string, Vector3> zCameraOffset;
 };

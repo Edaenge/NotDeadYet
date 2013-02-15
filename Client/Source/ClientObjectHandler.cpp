@@ -57,9 +57,12 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 
 			this->zGuiManager = new GuiManager(this->zEng);
 			this->zCreated = true;
-			//filename = "Media/Models/Ball.obj";
-			//scale *= 2.1f;
-			this->zEng->GetCamera()->SetPosition(position + Vector3(0.0f, 1.7f, 0.0f));
+			
+			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(filename);
+			auto stateOffsetsIterator = this->zStateCameraOffset.find(STATE_IDLE);
+			this->zMeshOffset = meshOffsetsIterator->second;
+
+			this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset + stateOffsetsIterator->second);
 		}
 	}
 	if (Messages::FileWrite())
@@ -124,6 +127,16 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		if (actor)
 			actor->SetScale(actorScale);
 	}
+	unsigned int actorState;
+	for (auto stateIterator = SFP->newStates.begin(); stateIterator != SFP->newStates.end(); stateIterator++)
+	{
+		ID = stateIterator->first;
+		actorState = stateIterator->second;
+
+		actor = this->zActorManager->GetActor(ID);
+		if (actor)
+			actor->SetState(actorState);
+	}
 }
 
 bool Client::RemoveActor(const unsigned int ID)
@@ -153,140 +166,3 @@ bool Client::RemoveActor(const unsigned int ID)
 
 	return true;
 }
-//
-//bool Client::RemovePlayerObject(const unsigned int ID)
-//{
-//	if (ID == -1)
-//		return false;
-//
-//	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_PLAYER, ID);
-//
-//	//Check if object was found in the array
-//	if(index == -1)
-//		return false;
-//
-//	if(this->zID == ID)
-//	{
-//		this->CloseConnection("Unknown reason possible Kicked");
-//	}
-//
-//	iMesh* mesh = this->zObjectManager->GetPlayerObject(index)->GetMesh();
-//
-//	if(mesh)
-//	{
-//		this->zEng->DeleteMesh(mesh);
-//	}
-//	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_PLAYER, index))
-//	{
-//		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString((float)ID));
-//	}
-//	return true;
-//}
-//
-//bool Client::RemoveAnimalObject(const unsigned int ID)
-//{
-//	if (ID == -1)
-//		return false;
-//
-//	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_ANIMAL, ID);
-//
-//	//Check if object was found in the array
-//	if(index == -1)
-//		return false;
-//
-//	iMesh* mesh = this->zObjectManager->GetAnimalObject(index)->GetMesh();
-//
-//	if(mesh)
-//	{
-//		this->zEng->DeleteMesh(mesh);
-//	}
-//	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_ANIMAL, index))
-//	{
-//		MaloW::Debug("Failed To Remove Animal with ID: " + MaloW::convertNrToString((float)ID));
-//	}
-//
-//	return true;
-//}
-//
-//bool Client::RemoveStaticObject(const unsigned int ID)
-//{
-//	if (ID == -1)
-//		return false;
-//
-//	int index = this->zObjectManager->SearchForObject(OBJECT_TYPE_STATIC_OBJECT, ID);
-//
-//	//Check if object was found in the array
-//	if(index == -1)
-//		return false;
-//
-//	iMesh* mesh = this->zObjectManager->GetStaticObject(index)->GetMesh();
-//
-//	if(mesh)
-//	{
-//		this->zEng->DeleteMesh(mesh);
-//	}
-//	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_STATIC_OBJECT, index))
-//	{
-//		MaloW::Debug("Failed To Remove Static Object with ID: " + MaloW::convertNrToString((float)ID));
-//		return false;
-//	}
-//	if(Messages::FileWrite())
-//		Messages::Debug("Removed Static Object, Number of Objects remaining = " + MaloW::convertNrToString((float)this->zObjectManager->GetStaticObjects().size()));
-//
-//	return true;
-//}
-//
-//bool Client::RemoveDynamicObject(const unsigned int ID)
-//{
-//	if (ID == -1)
-//		return false;
-//
-//	int pos = this->zObjectManager->SearchForObject(OBJECT_TYPE_DYNAMIC_OBJECT, ID);
-//
-//	//Check if client was found in the array
-//	if(pos == -1)
-//		return false;
-//
-//	iMesh* mesh = this->zObjectManager->GetDynamicObject(pos)->GetMesh();
-//
-//	if(mesh)
-//	{
-//		this->zEng->DeleteMesh(mesh);
-//	}
-//	if(!this->zObjectManager->RemoveObject(OBJECT_TYPE_DYNAMIC_OBJECT, pos))
-//	{
-//		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString((float)ID));
-//	}
-//
-//	return true;
-//}
-//
-//void Client::HandleDeadPlayerMessage(const unsigned int ID)
-//{
-//	if (ID == -1)
-//		return;
-//
-//	int index = this->zObjectManager->SearchForActor(ID);
-//
-//	//Check if object was found in the array
-//	if(index == -1)
-//		return;
-//
-//	if(this->zID == ID)
-//	{
-//		this->zCreated = false;
-//	}
-//
-//	iMesh* mesh = this->zObjectManager->GetActor(index)->GetMesh();
-//
-//	if(mesh)
-//	{
-//		this->zEng->DeleteMesh(mesh);
-//	}
-//	if(!this->zObjectManager->RemoveActor(index))
-//	{
-//		MaloW::Debug("Failed To Remove Player with ID: " + MaloW::convertNrToString((float)ID));
-//	}
-//	if(Messages::FileWrite())
-//		Messages::Debug("Player Died and was removed");
-//}

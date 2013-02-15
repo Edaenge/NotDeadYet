@@ -5,14 +5,7 @@
 #pragma once
 
 #include "iMesh.h"
-
-static const enum ACTOR_STATE
-{
-	ACTOR_STATE_NONE,
-	ACTOR_STATE_IDLE,
-	ACTOR_STATE_RUNNING,
-	ACTOR_STATE_WALK
-};
+#include <AnimationStates.h>
 
 /*! Base class for World Objects*/
 class Actor
@@ -22,7 +15,7 @@ public:
 	{
 		this->zMesh = 0; 
 		this->zID = ID;
-		this->zState = ACTOR_STATE_NONE;
+		this->zState = STATE_NONE;
 	}
 	virtual ~Actor(){ if (this->zMesh){ this->zMesh = 0; } }
 

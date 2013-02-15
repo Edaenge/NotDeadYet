@@ -118,10 +118,13 @@ public:
 	IT_DECELERATION
 	*/
 	float GetInterpolationType(const float deltaTime, const unsigned int type);
-	
+	void SetCameraOffset(Vector3 offset) {this->zCameraOffset = offset;}
+	Vector3 GetCameraOffset() {return this->zCameraOffset;}
+
 private:
 	std::map<unsigned int, Actor*> zActors;
 	std::map<unsigned int, Actor*> zState;
 	std::map<unsigned int, Updates*> zUpdates;
 	float zInterpolationVelocity;
+	Vector3 zCameraOffset;
 };

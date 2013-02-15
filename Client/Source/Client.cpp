@@ -32,6 +32,13 @@ Client::Client()
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
 	this->zMeshID = "Media/Models/temp_guy.obj";
+
+	this->zMeshCameraOffsets["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
+	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
+	this->zStateCameraOffset[STATE_WALKING] = Vector3(0.0f, 0.0f, 0.0f);
+	this->zStateCameraOffset[STATE_CROUCHING] = Vector3(0.0f, 1.0f, 0.0f);
+
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = NULL;
@@ -1301,4 +1308,27 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 
 	this->SendLootItemMessage(guiData[0].zActorID, guiData[0].zGui_Data.zID, guiData[0].zGui_Data.zType, guiData[0].zGui_Data.zSubType);
 	this->zGuiManager->ShowLootingGui(guiData);
+}
+
+void Client::UpdateCameraOffset(unsigned int state)
+{
+	Vector3 position = this->zEng->GetCamera()->GetPosition();
+
+	if (state == STATE_CROUCHING)
+	{
+		auto cameraPos = this->zStateCameraOffset.find(state);
+
+		Vector3 offset = cameraPos->second;
+
+		position = offset;
+
+		this->zActorManager->SetCameraOffset(offset);
+	}
+	else
+	{
+		this->zActorManager->SetCameraOffset(this->zMeshOffset);
+		position = this->zMeshOffset;
+	}
+
+	this->zEng->GetCamera()->SetPosition(position);
 }

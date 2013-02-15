@@ -29,6 +29,8 @@
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
 {
+	zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 2.5f, 0.0f);
+
 	if (mode.find("FFA") == 0 )
 	{
 		zGameMode = new GameModeFFA(this);
@@ -998,6 +1000,10 @@ void Game::OnEvent( Event* e )
 		// Start Position
 		center = this->CalcPlayerSpawnPoint(32, zWorld->GetWorldCenter());
 		actor->SetPosition(center);
+
+		auto offsets = this->zCameraOffset.find(UDE->playerModel);
+
+		dynamic_cast<PlayerActor*>(actor)->SetCameraOffset(offsets->second);
 
 		// Apply Default Player Behavior
 		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));

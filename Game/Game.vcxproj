@@ -80,6 +80,7 @@
     <ClInclude Include="..\Client\Source\KeyUtil\Keybinds.h" />
     <ClInclude Include="..\Client\Source\KeyUtil\KeyConverter.h" />
     <ClInclude Include="..\Client\Source\KeyUtil\KeyHandler.h" />
+    <ClInclude Include="Include\AnimationStates.h" />
     <ClInclude Include="Include\Bandage.h" />
     <ClInclude Include="Include\ClientServerMessages.h" />
     <ClInclude Include="Include\Container.h" />

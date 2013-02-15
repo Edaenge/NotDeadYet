@@ -11,6 +11,16 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "Damage.h"
 #include "Inventory.h"
 
+/*! Animation states*/
+static const enum ACTOR_STATE
+{
+	ACTOR_STATE_NONE,
+	ACTOR_STATE_IDLE,
+	ACTOR_STATE_RUNNING,
+	ACTOR_STATE_WALK,
+	ACTOR_STATE_CROUCH
+};
+
 class BioActorTakeDamageEvent : public Event
 {
 public:
@@ -19,6 +29,14 @@ public:
 	Actor* zActor;
 	Damage* zDamage;
 	Actor* zDealer;
+};
+
+class BioActorStateEvent : public Event
+{
+public:
+	virtual ~BioActorStateEvent() {}
+
+	Actor* zBioActor;
 };
 
 /*This class is Abstract, this class is used to create living creatures such as humans, animals etc. */
@@ -69,7 +87,7 @@ public:
 	/*! Sets the player state.
 		Enum is defined in AnimationStates.h.
 	*/
-	void SetState(const int state) {this->zState = state;}
+	void SetState(const int state);
 	void SetVelocity(const float velocity) {this->zVelocity = velocity;}
 	void SetHealth(const float health) {this->zHealth = health; this->zHealthChanged = true;}
 	void SetStamina(const float stamina) {this->zStamina = stamina; this->zStaminaChanged = true;}
@@ -85,6 +103,10 @@ public:
 	void HealthHasChanged() {this->zHealthChanged = true;}
 
 	Inventory* GetInventory() const {return this->zInventory;}
+
+	Vector3 GetCameraOffset() {return this->zCameraOffset;}
+	void SetCameraOffset(Vector3 offset) {this->zCameraOffset = offset;}
+
 protected:
 	int		zState;
 	float	zVelocity;
@@ -105,6 +127,7 @@ protected:
 
 	Vector3 zPreviousPos;
 	Vector3 zDirection;
+	Vector3 zCameraOffset;
 
 	Inventory* zInventory;
 };
