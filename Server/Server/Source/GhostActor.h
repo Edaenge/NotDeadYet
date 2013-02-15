@@ -17,32 +17,12 @@ public:
 	GhostActor(Player* player);
 	virtual ~GhostActor();
 
-	//
-	//Vector3 GetPosition() {return this->zPosition;}
-	//Vector3 GetDirection() {return this->zDirection;}
-	///*! Gets the current key state. This function is used
-	//	to see which buttons are pressed right now.
-	//	Key is an enum defined in header KeyValues.
-	//*/
-	//inline bool GetkeyState(const unsigned int key)
-	//{return zKeyStates.GetKeyState(key);}
-
-	///* ! Sets key states.
-	//	This one is used to define which buttons are being pressed.
-	//	Key is an enum defined in header KeyValues.
-	//*/
-	//inline void SetKeyState(const unsigned int key, const bool value)
-	//{zKeyStates.SetKeyState(key,value);}
-
-	//void SetPosition(const Vector3& position) {this->zPosition = position;}
-	//void SetDirection(const Vector3& direction) {this->zDirection = direction;}
-	//void Update(float deltaTime);
+	Player* GetPlayer(){ return this->zPlayer; }
+	void SetPlayer(Player* player) {this->zPlayer = player;}
 private:
 	/*float zVelocity;
 	float maxHeight;*/
 	float zEnergy;
-	/*Vector3 zPosition;
-	Vector3 zDirection;
-	KeyStates zKeyStates;*/
+
 	Player* zPlayer;
 };

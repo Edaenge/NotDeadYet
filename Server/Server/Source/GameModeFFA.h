@@ -6,15 +6,16 @@
 class GameModeFFA : public GameMode
 {
 private:
-	int zKillLimit;
-	std::map<Player*, int> zScoreBoard;
+	//int zKillLimit;
+	//std::map<Player*, int> zScoreBoard;
 	std::set<Player*> zPlayers;
 public:
-	GameModeFFA(Game* game, int killLimit);
+	GameModeFFA(Game* game);
 	virtual ~GameModeFFA();
 
 	bool Update(float dt);
 
 private:
-	virtual void OnEvent( Event* e );	
+	virtual void OnEvent( Event* e );
+	void OnPlayerDeath(PlayerActor* pActor);
 };

@@ -22,51 +22,10 @@
 /NotDeadYet.v11.suo
 /NotDeadYet.sdf
 /NotDeadYet/NotDeadYet.aps
-/Dedicated Server/Code/Code.sdf
-/Dedicated Server/Code/GUI/obj
-/Dedicated Server/Obj
-/Dedicated Server/Bin/x86/C++CLI.exp
-/Dedicated Server/Bin/x86/C++CLI.ilk
-/Dedicated Server/Bin/x86/C++CLI.lib
-/Dedicated Server/Bin/x86/C++CLI.pdb
-/Dedicated Server/Bin/x86/GUI.exe
-/Dedicated Server/Bin/x86/GUI.exe.config
-/Dedicated Server/Bin/x86/GUI.pdb
-/Dedicated Server/Bin/x86/MaloWDebug.txt
-/Dedicated Server/Bin/x86/Server.dll
-/Dedicated Server/Bin/x86/Server.exp
-/Dedicated Server/Bin/x86/Server.ilk
-/Dedicated Server/Bin/x86/Server.lib
-/Dedicated Server/Bin/x86/Server.pdb
-/Dedicated Server/Code/Code.opensdf
-/Dedicated Server/Code/GUI/obj/Debug
-/Dedicated Server/Code/GUI/obj/Debug
-/Dedicated Server/Code/Code.sdf
-/Dedicated Server/Code/Code.v11.suo
-/Dedicated Server/Bin/x86/C++CLI.dll
 /WorkingDir/Config.cfg
 /WorkingDir/*.pdb
-/Dedicated Server/Bin/x86/ServerClientMessages.txt
 /WorkingDir/ServerClientMessages.txt
-/Dedicated Server/Bin/x64/*.dll
-/Dedicated Server/Bin/x64/C++CLI.dll.metagen
-/Dedicated Server/Bin/x64/*.exp
-/Dedicated Server/Bin/x64/*.ilk
-/Dedicated Server/Bin/x64/*.lib
-/Dedicated Server/Bin/x64/*.pdb
-/Dedicated Server/Bin/x64/*.exe
-/Dedicated Server/Bin/x64/*.config
-/Dedicated Server/Bin/x64/MaloWDebug.txt
-/Dedicated Server/Bin/x64/ServerClientMessages.txt
-/Dedicated Server/Code/C++CLI/ARM/Debug
-/WorkingDir/Media/Cache
-/WorkingDir/Media/Models/Cache
-/WorkingDir/Media/Models/Flag/Cache
-/Dedicated Server/Bin/x86/Media/Cache
-/Dedicated Server/Bin/x86/Media/Models/Cache
-/Dedicated Server/Bin/x86/Media/Models/Flag/Cache
 /WorkingDir/MapDebugData.txt
-/Dedicated Server/Code/Server.sdf
 /WorkingDir/Media/Thumbs.db
 /Malow/Bin
 /Malow/Debug
@@ -88,5 +47,5 @@
 /MasterServer/Bin
 /ModelingProject1/obj
 /ModelingProject1/bin
-/ARM
+/WorkingDir/Media/Models/Cache/*.MalEng
 /WorkingDir/Media/Models/Cache

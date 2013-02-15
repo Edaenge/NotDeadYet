@@ -24,7 +24,7 @@ Client::Client()
 	this->zID = 0;
 	this->zIP = "";
 	this->zPort = 0;
-	this->zIsHuman = true;
+	this->zActorType = NONE;
 	this->zRunning = true;
 	this->zCreated = false;
 	this->zGameStarted = false;
@@ -50,8 +50,9 @@ Client::Client()
 	this->zCrossHair = NULL;
 	this->zDamageIndicator = NULL;
 	this->zDamageOpacity = 0.0f;
-	SoundsInit();
 	
+	this->zIgm = new InGameMenu();
+
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Walk.wav", false);
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
 }
@@ -73,6 +74,8 @@ Client::~Client()
 	SAFE_DELETE(this->zActorManager);
 	SAFE_DELETE(this->zServerChannel);
 	SAFE_DELETE(this->zPlayerInventory);
+
+	SAFE_DELETE(this->zIgm);
 
 	SAFE_DELETE(this->zWorld);
 	
@@ -166,7 +169,7 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zEng->DeleteImage(this->zBlackImage);
 	this->zBlackImage = NULL;
 
-	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 1.0f, 0.2f);	//this->zEng->StartRendering();
+	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);	//this->zEng->StartRendering();
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 }
@@ -192,7 +195,6 @@ void Client::Life()
 	MaloW::Debug("Client Process Started");
 
 	this->Init();
-
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->Update();
@@ -215,15 +217,24 @@ void Client::Life()
 			this->UpdateActors();
 		}
 
-		if (this->stayAlive)
-		{
-			this->ReadMessages();
-		}
+		this->ReadMessages();
 
-		if (this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
+		if (this->zIgm->GetShow())
 		{
-			//this->zGuiManager->ToggleIngameMenu();
-			this->CloseConnection("");
+			int returnValue = this->zIgm->Run();
+			if(returnValue == IGQUIT)
+			{
+				this->stayAlive = false;
+				this->CloseConnection("");
+			}
+			else if(returnValue == IGRESUME)
+			{
+				this->zIgm->SetShow(false);
+				zShowCursor = false;
+				this->zEng->GetKeyListener()->SetMousePosition(
+					Vector2(this->zEng->GetEngineParameters().WindowWidth/2, 
+					this->zEng->GetEngineParameters().WindowHeight/2));
+			}
 		}
 
 		Sleep(5);
@@ -391,72 +402,50 @@ void Client::HandleKeyboardInput()
 		return;
 	}
 
-	this->zShowCursor = this->zGuiManager->IsGuiOpen();
+	if (this->zActorType != NONE)
+		this->CheckMovementKeys();
 
-	this->CheckMovementKeys();
 
-	if(this->zShowCursor)
+	if (this->zActorType == HUMAN)
 	{
-		Menu_select_data msd;
-		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
-		
-		if (msd.zAction != -1)
+		if(this->zGuiManager->IsGuiOpen())
 		{
-			if (msd.zID != -1)
+			Menu_select_data msd;
+			msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
+
+			if (msd.zAction != -1)
 			{
-				Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
-				if (msd.zAction == USE)
+				if (msd.zID != -1)
 				{
-					if (item)
-						SendUseItemMessage(item->GetID());
-				}
-				if (msd.zAction == CRAFT)
-				{
-					if (item)
-						SendCraftItemMessage(item->GetID());
-				}
-				else if(msd.zAction == EQUIP)
-				{
-					if(item)
-						SendEquipItem(msd.zID);
-				}
-				else if (msd.zAction == DROP)
-				{
-					if(item)
-						this->SendDropItemMessage(msd.zID);
-				}
-				else if (msd.zAction == UNEQUIP)
-				{
-					if(item)
-						this->SendUnEquipItem(msd.zID, (msd.zType));
+					Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
+					if (msd.zAction == USE)
+					{
+						if (item)
+							SendUseItemMessage(item->GetID());
+					}
+					if (msd.zAction == CRAFT)
+					{
+						if (item)
+							SendCraftItemMessage(item->GetID());
+					}
+					else if(msd.zAction == EQUIP)
+					{
+						if(item)
+							SendEquipItem(msd.zID);
+					}
+					else if (msd.zAction == DROP)
+					{
+						if(item)
+							this->SendDropItemMessage(msd.zID);
+					}
+					else if (msd.zAction == UNEQUIP)
+					{
+						if(item)
+							this->SendUnEquipItem(msd.zID, (msd.zType));
+					}
 				}
 			}
 		}
-	}
-
-	//UnEquip Melee Weapon
-	if(this->zEng->GetKeyListener()->IsPressed('F'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_READY))
-		{
-			this->zKeyInfo.SetKeyState(KEY_READY, true);
-
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAYER_READY);
-
-			this->zServerChannel->Send(msg);
-		}
-		
-	}
-	else
-	{
-		if(this->zKeyInfo.GetKeyState(KEY_READY))
-		{
-			this->zKeyInfo.SetKeyState(KEY_READY, false);
-		}
-	}
-	
-	if (this->zIsHuman)
-	{
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
 		{
 			if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
@@ -470,12 +459,7 @@ void Client::HandleKeyboardInput()
 						msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (*it));
 					}
 					this->zServerChannel->Send(msg);
-					//for (auto x = collisionObjects.begin(); x < collisionObjects.end(); x++)
-					//{
-					//	gui_Item_Datas.push_back((*x).gid);
-					//}
 				}
-				//this->zGuiManager->ShowLootingGui(gui_Item_Datas);
 				this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
 			}
 		}
@@ -512,6 +496,7 @@ void Client::HandleKeyboardInput()
 			if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
 			{
 				this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
+				this->zShowCursor = !this->zShowCursor;
 				this->zGuiManager->ToggleInventoryGui();
 			}
 		}
@@ -519,6 +504,23 @@ void Client::HandleKeyboardInput()
 		{
 			if (this->zKeyInfo.GetKeyState(KEY_INVENTORY))
 				this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
+		}
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
+		{
+			if(!this->zKeyInfo.GetKeyState(KEY_MENU))
+			{
+				this->zKeyInfo.SetKeyState(KEY_MENU, true);
+				if(!this->zIgm->GetShow())
+				{
+					this->zIgm->ToggleMenu(); // Shows the menu and sets Show to true.
+					zShowCursor = true;
+				}
+			}
+		}
+		else
+		{
+			if(this->zKeyInfo.GetKeyState(KEY_MENU))
+				this->zKeyInfo.SetKeyState(KEY_MENU, false);
 		}
 		if (!this->zShowCursor)
 		{
@@ -548,6 +550,29 @@ void Client::HandleKeyboardInput()
 		}
 		this->HandleWeaponEquips();
 	}
+	
+
+	//Tell Server Client is Ready
+	if(this->zEng->GetKeyListener()->IsPressed('F'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_READY))
+		{
+			this->zKeyInfo.SetKeyState(KEY_READY, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAYER_READY);
+
+			this->zServerChannel->Send(msg);
+		}
+		
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_READY))
+		{
+			this->zKeyInfo.SetKeyState(KEY_READY, false);
+		}
+	}
+	
 	this->HandleDebugInfo();
 }
 //use to equip weapon with keyboard
@@ -903,6 +928,15 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			this->HandleTakeDamage(id, damageTaken);
 		}
 	}
+	else if (msg.find(M_DEAD_ACTOR.c_str()) == 0)
+	{
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TAKE_DAMAGE, msgArray[0]);
+
+		if (this->zID == id)
+		{
+			this->zCreated = false;
+		}
+	}
 	//Actors
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
 	{
@@ -977,6 +1011,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	else if(msg.find(M_SELF_ID.c_str()) == 0)
 	{
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
+		this->zActorType = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TYPE, msgArray[1]);
 	}
 	else if(msg.find(M_CONNECTED.c_str()) == 0)
 	{

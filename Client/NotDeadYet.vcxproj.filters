@@ -135,6 +135,9 @@
     <ClCompile Include="Source\GUI\ApplyOptionsAndChangeSetEvent.cpp">
       <Filter>Source\GUI\Events</Filter>
     </ClCompile>
+    <ClCompile Include="Source\InGameMenu.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\SoundEngine\fmod.h">
@@ -241,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="Source\GUI\ApplyOptionsAndChangeSetEvent.h">
       <Filter>Source\GUI\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\InGameMenu.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

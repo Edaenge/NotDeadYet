@@ -19,17 +19,6 @@
 #include "CheckBox.h"
 
 
-enum SET{
-	NOMENU,
-	MAINMENU,
-	FIND_SERVER,
-	OPTIONS,
-	GETIPADRESS,
-	QUIT,
-	LASTMENU
-};
-
-
 class GUISet
 {
 private:
@@ -64,5 +53,5 @@ public:
 
 	CheckBox* GetCheckBox(string checkBox);
 
-	//TextBox* GetTextBox(string textBox);
+	TextBox* GetTextBox(string textBox);
 };

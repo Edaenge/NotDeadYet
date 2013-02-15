@@ -75,7 +75,7 @@ GUIEvent* SimpleButton::CheckCollision(float mouseX, float mouseY, bool mousePre
 				if(this->mPressedImage == NULL)
 				{
 					if(this->mTextureNamePressed != "")
-						this->mPressedImage = ge->CreateImage(this->GetPositionD3D(), this->GetDimension(), this->mTextureNamePressed.c_str()); 
+						this->mPressedImage = ge->CreateImage(this->GetPosition(), this->GetDimension(), this->mTextureNamePressed.c_str()); 
 				}
 
 				this->mHovered = false;
@@ -94,7 +94,7 @@ GUIEvent* SimpleButton::CheckCollision(float mouseX, float mouseY, bool mousePre
 				if(this->mHoveredImage == NULL)
 				{
 					if(this->mTextureNameHovered != "")
-						this->mHoveredImage = ge->CreateImage(this->GetPositionD3D(), this->GetDimension(), this->mTextureNameHovered.c_str());
+						this->mHoveredImage = ge->CreateImage(this->GetPosition(), this->GetDimension(), this->mTextureNameHovered.c_str());
 				}
 
 				this->mPressed = false;
@@ -111,7 +111,7 @@ GUIEvent* SimpleButton::CheckCollision(float mouseX, float mouseY, bool mousePre
 				if(this->mHoveredImage == NULL)
 				{
 					if(this->mTextureNameHovered != "")
-						this->mHoveredImage = ge->CreateImage(this->GetPositionD3D(), this->GetDimension(), this->mTextureNameHovered.c_str());
+						this->mHoveredImage = ge->CreateImage(this->GetPosition(), this->GetDimension(), this->mTextureNameHovered.c_str());
 				}
 			}
 		}
@@ -151,12 +151,12 @@ void SimpleButton::Resize( float oldWindowWidth, float oldWindowHeight, float wi
 
 	if(this->mHoveredImage)
 	{
-		this->mHoveredImage->SetPosition(this->GetPositionD3D());
+		this->mHoveredImage->SetPosition(this->GetPosition());
 		this->mHoveredImage->SetDimensions(this->GetDimension());
 	}
 	if(this->mPressedImage)
 	{
-		this->mPressedImage->SetPosition(this->GetPositionD3D());
+		this->mPressedImage->SetPosition(this->GetPosition());
 		this->mPressedImage->SetDimensions(this->GetDimension());
 	}
 }

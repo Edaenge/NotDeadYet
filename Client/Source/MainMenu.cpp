@@ -11,6 +11,8 @@ MainMenu::MainMenu()
 	this->zGame			= new Game();
 	this->zPrimarySet	= MAINMENU;
 	this->zSecondarySet = NOMENU;
+
+	SoundsInit();
 }
 
 MainMenu::~MainMenu()
@@ -24,9 +26,8 @@ void MainMenu::Init()
 {
 	GraphicsEngine* eng = GetGraphics();
 
-	iGraphicsEngineParams& GEP = GetGraphics()->GetEngineParameters();
-	float windowWidth = (float)GEP.WindowWidth;
-	float windowHeight = (float)GEP.WindowHeight;
+	float windowWidth = (float)eng->GetEngineParameters().WindowWidth;
+	float windowHeight = (float)eng->GetEngineParameters().WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
@@ -58,24 +59,24 @@ void MainMenu::Init()
 	Element* temp;
 
 	//MAINMENU
-	temp = new SimpleButton((50.0f / 768.0f) * dx, (600.0f / 768.0f) * windowHeight,  1.0f, "Media/Icons/MainMenu.png", 
-		(100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight, new ChangeSetEvent(NOMENU), "Media/Icons/Options.png", 
-		"Media/Icons/Quit.png", (50.0f / 768.0f) * dx, (600.0f / 768.0f) * windowHeight, (100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight);
+	temp = new SimpleButton((50.0f / 768.0f) * dx, (568.0f / 768.0f) * windowHeight,  1.0f, "Media/Menu/MainMenu/DevButton.png", 
+		(128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight, new ChangeSetEvent(NOMENU), "Media/Menu/MainMenu/DevButtonClick.png", 
+		"Media/Menu/MainMenu/DevButtonOver.png", (50.0f / 768.0f) * dx, (568.0f / 768.0f) * windowHeight, (128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
-	temp = new SimpleButton((50.0f / 768.0f) * dx, (635.0f / 768.0f) * windowHeight, 1.0f, "Media/Icons/Options.png", 
-		(100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight, new ChangeSetEvent(OPTIONS), "Media/Icons/FindServer.png", 
-		"Media/Icons/Quit.png", (50.0f / 768.0f) * dx, (635.0f / 768.0f) * windowHeight, (100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight);
+	temp = new SimpleButton((50.0f / 768.0f) * dx, (608.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Options.png", 
+		(128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight, new ChangeSetEvent(OPTIONS), "Media/Menu/MainMenu/OptionsClick.png", 
+		"Media/Menu/MainMenu/OptionsOver.png", (50.0f / 768.0f) * dx, (608.0f / 768.0f) * windowHeight, (128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
-	temp = new SimpleButton((50.0f / 768.0f) * dx, (670.0f / 768.0f) * windowHeight, 1.0f, "Media/Icons/FindServer.png", 
-		(100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight, new ChangeSetEvent(FIND_SERVER), "Media/Icons/Options.png", 
-		"Media/Icons/Quit.png", (50.0f / 768.0f) * dx, (670.0f / 768.0f) * windowHeight, (100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight);
+	temp = new SimpleButton((50.0f / 768.0f) * dx, (648.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/FindServers.png", 
+		(128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight, new ChangeSetEvent(FIND_SERVER), "Media/Menu/MainMenu/FindServersClick.png", 
+		"Media/Menu/MainMenu/FindServersOver.png", (50.0f / 768.0f) * dx, (648.0f / 768.0f) * windowHeight, (128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
-	temp = new SimpleButton((50.0f / 768.0f) * dx, (700.0f / 768.0f) * windowHeight, 1.0f, "Media/Icons/Quit.png", 
-		(100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight, new ChangeSetEvent(QUIT), "Media/Icons/Options.png", 
-		"Media/Icons/Options.png", (50.0f / 768.0f) * dx, (700.0f / 768.0f) * windowHeight, (100.0f / 768.0f) * dx, (25.0f / 768.0f) * windowHeight);
+	temp = new SimpleButton((50.0f / 768.0f) * dx, (688.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Quit.png", 
+		(128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight, new ChangeSetEvent(QUIT), "Media/Menu/MainMenu/QuitClick.png", 
+		"Media/Menu/MainMenu/QuitOver.png", (50.0f / 768.0f) * dx, (688.0f / 768.0f) * windowHeight, (128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
 	//FIND SERVER
@@ -243,33 +244,33 @@ void MainMenu::Init()
 
 	//TextBox View Distance
 	temp = new TextBox(offSet + (278.0f / 1024.0f) * dx, (470.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().FarClip), 
-		"ViewDistance", 1, 3, NR, 0, 9);
+		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString((float)GetGraphics()->GetEngineParameters().FarClip), 
+		"ViewDistance", 1.0f, 3, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 	//TextBox Shadow
 	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (412.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
-		"ShadowQuality", 1, 1, NR, 0, 9);
+		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString((float)GetGraphics()->GetEngineParameters().ShadowMapSettings), 
+		"ShadowQuality", 1.0f, 1, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Sound tech
 	//Master volume
 	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
-		"MasterVolume", 1.0f, 2, NR, 0, 9);
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
+		"MasterVolume", 1.0f, 2, NR);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Music Volume
 	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
-		"MusicVolume", 1.0f, 2, NR, 0, 9);
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
+		"MusicVolume", 1.0f, 2, NR);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Normal Volume
 	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetGraphics()->GetEngineParameters().ShadowMapSettings), 
-		"NormalVolume", 1.0f, 2, NR, 0, 9);
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
+		"NormalVolume", 1.0f, 2, NR);
 	zSets[OPTIONS].AddElement(temp);
 
 
@@ -296,6 +297,7 @@ void MainMenu::StartTestRun()
 {
 	//zGame->InitGameClient("194.47.150.16", 11521);
 	//zGame->InitGameClient("194.47.150.12", 11521);
+	//zGame->InitGameClient("80.78.216.201", 11521);
 	zGame->InitGameClient("127.0.0.1", 11521);	
 	zGame->Run();
 }
@@ -362,7 +364,7 @@ void MainMenu::Run()
 
 							break;
 						case OPTIONS:
-
+							UpdateOptionsMenu();
 							break;
 						case QUIT:
 							run = false;
@@ -402,10 +404,10 @@ void MainMenu::Run()
 							int i = NOMENU;
 							while(i != LASTMENU)
 							{
-								zSets[i].Resize(GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight, windowWidth, windowHeight);
+								zSets[i].Resize((float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight, windowWidth, windowHeight);
 								i++;
 							}
-							GetGraphics()->ResizeGraphicsEngine(windowWidth, windowHeight);
+							GetGraphics()->ResizeGraphicsEngine((int)windowWidth, (int)windowHeight);
 						}
 
 					}
@@ -424,16 +426,16 @@ void MainMenu::Run()
 							RECT desktop;
 							const HWND hDesktop = GetDesktopWindow();
 							GetWindowRect(hDesktop, &desktop);
-							long float width = desktop.right;
-							long float height = desktop.bottom;
+							float width = (float)desktop.right;
+							float height = (float)desktop.bottom;
 
 							int i = NOMENU;
 							while(i != LASTMENU)
 							{
-								zSets[i].Resize(GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight, width, height);
+								zSets[i].Resize((float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight, width, height);
 								i++;
 							}
-							GetGraphics()->ResizeGraphicsEngine(width, height);
+							GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
 
 						}
 						// Getting shadow
@@ -452,19 +454,22 @@ void MainMenu::Run()
 
 						//View Distance
 						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ViewDistance");
-						GEP.FarClip = MaloW::convertStringToInt(tbTemp);
+						GEP.FarClip = MaloW::convertStringToFloat(tbTemp);
 
 						//Master Volume
 						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MasterVolume");
-						//Set Master Volume
+						float temp = MaloW::convertStringToFloat(tbTemp) / 100;
+						GetSounds()->SetMasterVolume(temp);
 
 						//Music Volume
 						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MusicVolume");
-						//Set Music Volume
+						temp = MaloW::convertStringToFloat(tbTemp) / 100;
+						GetSounds()->SetMusicVolume(temp);
 
 						//Normal Volume
 						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("NormalVolume");
-						//Set Normal Volume
+						temp = MaloW::convertStringToFloat(tbTemp) / 100;
+						GetSounds()->SetSoundVolume(temp);
 
 						GEP.SaveToFile("Config.cfg");
 
@@ -580,8 +585,8 @@ void MainMenu::AddResolutionsToDropBox( DropDownList* ddl )
 	RECT desktop;
 	const HWND hDesktop = GetDesktopWindow();
 	GetWindowRect(hDesktop, &desktop);
-	long float width = desktop.right;
-	long float height = desktop.bottom;
+	float width = (float)desktop.right;
+	float height = (float)desktop.bottom;
 
 	float dx = (float)(width / height);
 
@@ -604,4 +609,28 @@ void MainMenu::AddResolutionsToDropBox( DropDownList* ddl )
 		ddl->AddButton("Media/Menu/Options/43medium.png", new ChangeResEvent(1024, 768), "", "");
 		ddl->AddButton("Media/Menu/Options/43big.png", new ChangeResEvent(1600, 1200), "", "");
 	}
+}
+
+void MainMenu::UpdateOptionsMenu()
+{
+	//Update the options menu cause values might have changed.
+
+	//Update maximized.
+	CheckBox* cbTemp = zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox");
+	cbTemp->SetChecked(!GetGraphics()->GetEngineParameters().Maximized);
+
+	//Update FXAA.
+	cbTemp = zSets[this->zPrimarySet].GetCheckBox("FXAACheckBox");
+	if(GetGraphics()->GetEngineParameters().FXAAQuality == 0)
+		cbTemp->SetChecked(false);
+	else
+		cbTemp->SetChecked(true);
+
+	//Update Shadow Quality.
+	TextBox* tbTemp = this->zSets[this->zPrimarySet].GetTextBox("ShadowQuality");
+	tbTemp->SetText(MaloW::convertNrToString((float)GetGraphics()->GetEngineParameters().ShadowMapSettings));
+
+	//Update View Distance.
+	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("ViewDistance");
+	tbTemp->SetText(MaloW::convertNrToString(GetGraphics()->GetEngineParameters().FarClip));
 }
