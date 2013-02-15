@@ -64,7 +64,7 @@ void GameModeTest::OnEvent( Event* e )
 					else if( dpa == pa )
 						zScoreBoard[pa->GetPlayer()]--;
 
-				//OnPlayerDeath(pa);
+				OnPlayerDeath(pa);
 			}
 			else
 			{
@@ -122,8 +122,10 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	this->zGame->SetPlayerBehavior(player, pHumanBehavior);
 
 	ActorManager* aManager = this->zGame->GetActorManager();
+	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, newPActor->GetID());
+	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 1);
 
-	cd->Send(NMC.Convert(MESSAGE_TYPE_SELF_ID, newPActor->GetID()));
+	cd->Send(msg);
 
 	aManager->AddActor(newPActor);
 }

@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "GameModeFFA.h"
-//#include "GameModeTest.h"
+#include "GameModeTest.h"
 #include "Behavior.h"
 #include <world/World.h>
 #include <World/EntityList.h>
@@ -35,7 +35,8 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	}
 	else if (mode.find("TestMode") == 0)
 	{
-		//zGameMode = new GameModeTest(this, 10);	}
+		zGameMode = new GameModeTest(this, 10);	
+	}
 	else
 	{
 		zGameMode = new GameModeFFA(this);
@@ -1008,12 +1009,8 @@ void Game::OnEvent( Event* e )
 
 		selfID = actor->GetID();
 		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)selfID);
-		/*	NONE,
-			HUMAN,
-			GHOST,
-			ANIMAL
-		*/
 		message += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, (float)1);
+
 		UDE->clientData->Send(message);
 
 		//Gather Actors Information and send to client
