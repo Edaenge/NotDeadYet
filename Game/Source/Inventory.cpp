@@ -260,8 +260,17 @@ void Inventory::EquipRangedWeapon(RangedWeapon* weapon)
 
 	if(!this->zPrimaryEquip)
 		zPrimaryEquip = weapon;
-	else
+	
+	else if(!this->zSecondaryEquip)
 		zSecondaryEquip = weapon;
+
+	else
+	{
+		if(zPrimaryEquip->GetItemSubType() == weapon->GetItemSubType())
+			zPrimaryEquip = weapon;
+		else if(zSecondaryEquip->GetItemSubType() == weapon->GetItemSubType())
+			zSecondaryEquip = weapon;
+	}
 }
 
 void Inventory::EquipMeleeWeapon(MeleeWeapon* weapon)
@@ -270,8 +279,17 @@ void Inventory::EquipMeleeWeapon(MeleeWeapon* weapon)
 
 	if(!this->zPrimaryEquip)
 		zPrimaryEquip = weapon;
-	else
+
+	else if(!this->zSecondaryEquip)
 		zSecondaryEquip = weapon;
+
+	else
+	{
+		if(zPrimaryEquip->GetItemSubType() == weapon->GetItemSubType())
+			zPrimaryEquip = weapon;
+		else if(zSecondaryEquip->GetItemSubType() == weapon->GetItemSubType())
+			zSecondaryEquip = weapon;
+	}
 }
 
 void Inventory::EquipProjectile(Projectile* projectile)
@@ -304,8 +322,19 @@ void Inventory::EquipProjectile(Projectile* projectile)
 
 	if(!zPrimaryEquip)
 		this->zPrimaryEquip = projectile;
-	if(!zSecondaryEquip)
+	
+	else if(!zSecondaryEquip)
 		this->zSecondaryEquip = projectile;
+
+	else
+	{
+		if(this->zPrimaryEquip->GetItemSubType() == projectile->GetItemSubType())
+			this->zPrimaryEquip = projectile;
+
+		else if (this->zSecondaryEquip->GetItemSubType() == projectile->GetItemSubType())
+			this->zSecondaryEquip = projectile;
+	}
+
 
 }
 
