@@ -97,6 +97,7 @@ void Game::SpawnItemsDebug()
 	const Material*		temp_material_S	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_SMALL_STICK);
 	const Material*		temp_material_M	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_MEDIUM_STICK);
 	const Material*		temp_material_T	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_THREAD);
+	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE);
 
 	unsigned int increment = 0;
 	//Food
@@ -176,6 +177,18 @@ void Game::SpawnItemsDebug()
 		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 		this->zActorManager->AddActor(actor);
 	}
+	//Bandage
+	if(temp_bandage)
+	{
+		Bandage* new_item = new Bandage((*temp_bandage));
+		ItemActor* actor = new ItemActor(new_item);
+		Vector3 center;
+		center = CalcPlayerSpawnPoint(increment++);
+		actor->SetPosition(center);
+		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		this->zActorManager->AddActor(actor);
+	}
+
 }
 
 bool Game::Update( float dt )
@@ -685,6 +698,10 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 				{
 					msg += container->ToMessageString(&NMC);
 				}
+				else if (Bandage* bandage = dynamic_cast<Bandage*>(item))
+				{
+					msg += bandage->ToMessageString(&NMC);
+				}
 				pActor->GetInventory()->AddItem(item);
 				cd->Send(msg);
 				this->zActorManager->RemoveActor(iActor);
@@ -838,6 +855,37 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 						cd->Send(msg);
 					}
 				}
+				else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
+				{
+					int oldStack = bandage->GetStackSize();
+					ID = bandage->GetID();
+					if (bandage->Use())
+					{
+						int stacks = bandage->GetStackSize() - oldStack;
+						
+						pActor->SetBleeding(false);
+						
+						
+						//Sending Message to client And removing stack from inventory.
+						inv->RemoveItemStack(ID, stacks);
+						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+
+						cd->Send(msg);
+					}
+					else
+					{
+						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Bandage_Stack_is_Empty");
+						cd->Send(msg);
+					}
+					if (bandage->GetStackSize() <= 0)
+					{
+						if(inv->RemoveItem(bandage));
+						{
+							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
+							cd->Send(msg);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -912,8 +960,9 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
 			}
-			//Send feedback message
-			cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));			}
+			else
+				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
+		}
 	}
 	else if(proj = dynamic_cast<Projectile*>(item))
 	{

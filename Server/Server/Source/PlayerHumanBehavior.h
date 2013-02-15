@@ -5,6 +5,8 @@ class PlayerHumanBehavior : public PlayerBehavior
 {
 private:
 
+	float zIntervalCounter;
+
 public:
 	PlayerHumanBehavior(Actor* actor, World* world, Player* player);
 	virtual ~PlayerHumanBehavior();

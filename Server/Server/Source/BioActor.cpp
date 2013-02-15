@@ -16,6 +16,8 @@ BioActor::BioActor() : Actor()
 	this->zStamina = zStaminaMax;
 	this->zStaminaCof = 0.10f;
 	this->zStaminaChanged = true;
+
+	this->zBleeding = false;
 }
 
 BioActor::~BioActor()

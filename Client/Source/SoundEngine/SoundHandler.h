@@ -91,6 +91,10 @@ public:
 	void		PlayMusic(char* filename); //The music integer is to see which music should be played.
 	void		StopMusic();	//Music loops, so we must be able to stop it.
 
+
+	float		GetSoundVolume();
+	float		GetMusicVolume();
+	float		GetMasterVolume();
 	void		SetSoundVolume(float volume);
 	void		SetMusicVolume(float volume);
 	void		SetMasterVolume(float volume);
