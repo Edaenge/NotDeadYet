@@ -16,8 +16,10 @@ void Client::HandleWeaponUse(const unsigned int ID)
 	{
 		if(proj->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
 		{
-			proj->SetStackSize(proj->GetStackSize()-1);
 			itemStackID = proj->GetID();
+
+			if( proj->Use() )
+				this->zGuiManager->RemoveInventoryItemFromGui(itemStackID, 1);
 		}
 		else 
 			return;
@@ -25,15 +27,16 @@ void Client::HandleWeaponUse(const unsigned int ID)
 	else if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
 	{
 		proj = this->zPlayerInventory->GetProjectile();
-
+		
 		if(!proj)
 			return;
 
-		proj->SetStackSize(proj->GetStackSize()-1);
 		itemStackID = proj->GetID();
+
+		if( proj->Use() )
+			this->zGuiManager->RemoveInventoryItemFromGui(itemStackID, 1);
 	}
 
-	this->zGuiManager->RemoveInventoryItemFromGui(itemStackID, 1);
 }
 
 void Client::HandleUseItem(const unsigned int ID)
