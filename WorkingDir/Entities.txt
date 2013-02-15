@@ -1,6 +1,6 @@
 Number:1
 Name:Scale
-Model:Media/Scale.obj
+Model:Media/Models/Scale.obj
 BlockRadius:0.5
 
 Number:2
@@ -85,7 +85,7 @@ BlockRadius:0.5
 
 Number:21
 Name:Water
-Model:Water
+Model:Media/Models/Stone_01_v02.obj
 
 Number:200
 Name:Deer Spawnpoint
