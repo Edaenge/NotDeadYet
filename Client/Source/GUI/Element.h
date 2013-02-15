@@ -46,8 +46,8 @@ public:
 	/*! Saves the position of the element in the parameters*/
 	void GetPosition(float& x, float& y, float& z){ x = this->mX; y = this->mY; z = this->mZ; }
 	/*! Returns the pos as a D3DXVECTOR2*/
-	Vector2 GetPositionD3D(){ return this->mImage->GetPosition(); }
-	void SetPositionD3D(Vector2 pos){ this->mImage->SetPosition(pos); this->mX = pos.x; this->mY = pos.y; }
+	Vector2 GetPosition(){ return this->mImage->GetPosition(); }
+	void SetPosition(Vector2 pos){ this->mImage->SetPosition(pos); this->mX = pos.x; this->mY = pos.y; }
 
 	/*! Sets the width of the element*/
 	void SetWidth(float width){ this->mWidth = width; }

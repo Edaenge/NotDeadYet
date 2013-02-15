@@ -5,7 +5,6 @@
 
 const float MAX_VELOCITY = 5.0f;
 const float ACCELERATION = 5.0f;
-const float PLAYERHEIGHT = 0.5f;
 
 PlayerGhostBehavior::PlayerGhostBehavior( Actor* actor, World* world, Player* player ) : PlayerBehavior(actor, world, player)
 {
@@ -52,7 +51,7 @@ bool PlayerGhostBehavior::Update( float dt )
 
 	newPlayerPos = currentPlayerPos + this->zVelocity * dt;
 
-	float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ()) + PLAYERHEIGHT;
+	float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ());
 	if(newGroundHeight > newPlayerPos.y)
 	{
 		newPlayerPos.y = newGroundHeight;

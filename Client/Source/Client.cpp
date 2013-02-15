@@ -169,7 +169,7 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zEng->DeleteImage(this->zBlackImage);
 	this->zBlackImage = NULL;
 
-	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 1.0f, 0.2f);	//this->zEng->StartRendering();
+	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);	//this->zEng->StartRendering();
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 }
@@ -195,7 +195,6 @@ void Client::Life()
 	MaloW::Debug("Client Process Started");
 
 	this->Init();
-	bool showInGameMenu = false;
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->Update();
@@ -203,11 +202,6 @@ void Client::Life()
 		this->HandleKeyboardInput();
 		if(this->zCreated)
 		{
-			if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
-			{
-				this->zIgm->ToggleMenu();
-				showInGameMenu = true;
-			}
 			this->zSendUpdateDelayTimer += this->zDeltaTime;
 			this->zTimeSinceLastPing += this->zDeltaTime;
 
@@ -225,9 +219,8 @@ void Client::Life()
 
 		this->ReadMessages();
 
-		if (showInGameMenu)
+		if (this->zIgm->GetShow())
 		{
-			zShowCursor = true;
 			int returnValue = this->zIgm->Run();
 			if(returnValue == IGQUIT)
 			{
@@ -236,7 +229,7 @@ void Client::Life()
 			}
 			else if(returnValue == IGRESUME)
 			{
-				showInGameMenu = false;
+				this->zIgm->SetShow(false);
 				zShowCursor = false;
 				this->zEng->GetKeyListener()->SetMousePosition(
 					Vector2(this->zEng->GetEngineParameters().WindowWidth/2, 
@@ -502,8 +495,8 @@ void Client::HandleKeyboardInput()
 		{
 			if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
 			{
-				this->zShowCursor = !this->zShowCursor;
 				this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
+				this->zShowCursor = !this->zShowCursor;
 				this->zGuiManager->ToggleInventoryGui();
 			}
 		}
@@ -511,6 +504,23 @@ void Client::HandleKeyboardInput()
 		{
 			if (this->zKeyInfo.GetKeyState(KEY_INVENTORY))
 				this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
+		}
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
+		{
+			if(!this->zKeyInfo.GetKeyState(KEY_MENU))
+			{
+				this->zKeyInfo.SetKeyState(KEY_MENU, true);
+				if(!this->zIgm->GetShow())
+				{
+					this->zIgm->ToggleMenu(); // Shows the menu and sets Show to true.
+					zShowCursor = true;
+				}
+			}
+		}
+		else
+		{
+			if(this->zKeyInfo.GetKeyState(KEY_MENU))
+				this->zKeyInfo.SetKeyState(KEY_MENU, false);
 		}
 		if (!this->zShowCursor)
 		{

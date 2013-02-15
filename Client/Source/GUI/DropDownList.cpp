@@ -95,8 +95,8 @@ GUIEvent* DropDownList::CheckCollision(float mouseX, float mouseY, bool mousePre
 					{
 						Vector2 firstElementPos = this->mElements[0]->GetImage()->GetPosition();
 						Vector2 newElementPos = this->mElements[i]->GetImage()->GetPosition();
-						this->mElements[0]->SetPositionD3D(newElementPos);
-						this->mElements[i]->SetPositionD3D(firstElementPos);
+						this->mElements[0]->SetPosition(newElementPos);
+						this->mElements[i]->SetPosition(firstElementPos);
 						Element* temp = this->mElements[0];
 						this->mElements[0] = this->mElements[i];
 						this->mElements[i] = temp;
@@ -120,8 +120,8 @@ GUIEvent* DropDownList::CheckCollision(float mouseX, float mouseY, bool mousePre
 					{
 						Vector2 firstElementPos = this->mElements[0]->GetImage()->GetPosition();
 						Vector2 newElementPos = this->mElements[i]->GetImage()->GetPosition();
-						this->mElements[0]->SetPositionD3D(newElementPos);
-						this->mElements[i]->SetPositionD3D(firstElementPos);
+						this->mElements[0]->SetPosition(newElementPos);
+						this->mElements[i]->SetPosition(firstElementPos);
 						SimpleButton* tempFirst = (SimpleButton*)this->mElements[0];
 						Vector2 firstElementActivePos = tempFirst->GetActivePos();
 						Vector2 newElementActivePos = temp->GetActivePos();
