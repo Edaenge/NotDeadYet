@@ -38,11 +38,6 @@ Host::~Host()
 
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
-	
-	for( auto i = zClientChannels.begin(); i != zClientChannels.end(); ++i )
-	{
-		(*i)->Close();
-	}
 
 	SAFE_DELETE(this->zServerListener);
 	this->Close();

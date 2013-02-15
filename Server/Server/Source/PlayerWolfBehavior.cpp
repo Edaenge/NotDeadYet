@@ -7,7 +7,6 @@
 const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 const float ELASTICITY = 0.5f;
 const float ACCELERATION = 1.0f;
-const float PLAYERHEIGHT = 1.0f;
 const float MAX_VELOCITY = 30.0f;
 
 PlayerWolfBehavior::PlayerWolfBehavior( Actor* actor, World* world, Player* player) : 
@@ -58,7 +57,7 @@ bool PlayerWolfBehavior::Update( float dt )
 
 	newPlayerPos = currentPlayerPos + this->zVelocity * dt;
 
-	float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ()) + PLAYERHEIGHT;
+	float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ());
 	if(newGroundHeight > newPlayerPos.y)
 	{
 		Vector3 newGroundNormal = zWorld->CalcNormalAt(newPlayerPos.GetXZ());

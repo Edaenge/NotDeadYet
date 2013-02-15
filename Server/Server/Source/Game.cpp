@@ -36,8 +36,7 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	else if (mode.find("TestMode") == 0)
 	{
 		zGameMode = new GameModeTest(this, 10);	
-	}
-	else
+	}	else
 	{
 		zGameMode = new GameModeFFA(this);
 	}

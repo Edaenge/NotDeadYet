@@ -66,7 +66,7 @@ TextBox::~TextBox()
 bool TextBox::AddToRenderer(GraphicsEngine* ge)
 {
 	Element::AddToRenderer(ge);
-	this->mPointText = ge->CreateText(this->mText.c_str(), Vector2(this->GetPositionD3D().x + 3.0f, this->GetPositionD3D().y-1.0f), mTextSize, "Media/Fonts/1");
+	this->mPointText = ge->CreateText(this->mText.c_str(), this->GetPosition() + Vector2(3.0f, -1.0f), mTextSize, "Media/Fonts/1");
 
 	return true;
 }
@@ -221,6 +221,6 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 
 	 if(this->mPointText)
 	 {
-		 this->mPointText->SetPosition(this->GetPositionD3D());
+		 this->mPointText->SetPosition(this->GetPosition());
 	 }
  }
