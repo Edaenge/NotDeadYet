@@ -727,6 +727,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 				std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 				if (item->GetItemType() == itemType && item->GetItemSubType() == subType)
 				{
+
 					if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
 					{
 						msg += rWpn->ToMessageString(&NMC);

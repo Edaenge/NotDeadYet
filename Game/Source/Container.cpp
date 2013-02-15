@@ -45,6 +45,7 @@ Container::Container(const Container& other)
 	this->zItemSubType = other.zItemSubType;
 	this->zUsesRemaining = other.zUsesRemaining;
 	this->zItemDescription = other.zItemDescription;
+	this->zStacking = other.zStacking;
 }
 
 Container::Container(const Container* other)
@@ -60,6 +61,7 @@ Container::Container(const Container* other)
 	this->zItemSubType = other->zItemSubType;
 	this->zUsesRemaining = other->zUsesRemaining;
 	this->zItemDescription = other->zItemDescription;
+	this->zStacking = other->zStacking;
 }
 
 bool Container::Use()

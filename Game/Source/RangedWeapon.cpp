@@ -45,6 +45,7 @@ RangedWeapon::RangedWeapon(const RangedWeapon& other)
 	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
+	this->zStacking = other.zStacking;
 }
 
 RangedWeapon::RangedWeapon(const RangedWeapon* other)
@@ -60,6 +61,7 @@ RangedWeapon::RangedWeapon(const RangedWeapon* other)
 	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
+	this->zStacking = other->zStacking;
 }
 
 void RangedWeapon::UseWeapon(float& range, float& damage)

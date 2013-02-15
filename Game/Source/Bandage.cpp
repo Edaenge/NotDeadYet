@@ -40,6 +40,7 @@ Bandage::Bandage(const Bandage& other)
 	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
+	this->zStacking = other.zStacking;
 }
 
 Bandage::Bandage(const Bandage* other)
@@ -53,6 +54,7 @@ Bandage::Bandage(const Bandage* other)
 	this->zMeshModel = other->zMeshModel;
 	this->zItemSubType = other->zItemSubType;
 	this->zItemDescription = other->zItemDescription;
+	this->zStacking = other->zStacking;
 }
 
 bool Bandage::Use()
