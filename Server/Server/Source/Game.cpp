@@ -905,8 +905,9 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
 			}
-			//Send feedback message
-			cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));			}
+			else
+				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
+		}
 	}
 	else if(proj = dynamic_cast<Projectile*>(item))
 	{
