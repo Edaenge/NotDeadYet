@@ -1,0 +1,27 @@
+Tar upp massa bows men kan bara equip på en av dem (första i listan?)
+
+
+Saker man tar upp finns inte i inventory (no clue why)
+
+
+
+Failed to add item Arrow_Of_Death ID: 19
+Failed to add item Arrow_Of_Death ID: 18
+Failed to add item Arrow_Of_Death ID: 17
+Failed to add item Arrow_Of_Death ID: 16
+Failed to add item Arrow_Of_Death ID: 15
+Failed to add item Arrow_Of_Death ID: 14
+Failed to add item Arrow_Of_Death ID: 13
+
+
+Tar upp en bow(1) -> equip, tar sedan upp en till (2) och droppar den första, kan då inte equipa (2),
+tar upp (1) igen och kan equipa den.
+
+
+Tar upp en skjuten pil och får flera, även reverse.
+
+
+Släpper random item, tar upp det men får det inte i inventory.
+
+
+

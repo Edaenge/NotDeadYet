@@ -83,6 +83,7 @@ private:
 	//			  		//
 	//////////////////////
 
+	void CheckPlayerSpecificKeys();
 	void CheckMovementKeys();
 	/*! Handle Keyboard Input */
 	void HandleKeyboardInput();
@@ -151,7 +152,7 @@ private:
 	void HandleDisplayLootData(std::vector<std::string> msgArray);
 protected:
 	virtual void OnEvent(Event* e);
-	
+
 private:
 	/*! Current Client ID*/
 	unsigned int zID;

@@ -286,8 +286,10 @@ void Game::OnEvent( Event* e )
 	}
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
 	{
-		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(zPlayers[CDE->clientData]->GetBehavior()))
-			dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
+		Player* player = zPlayers[CDE->clientData];
+		if (player)
+			if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(player->GetBehavior()))
+				dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
@@ -413,6 +415,17 @@ void Game::OnEvent( Event* e )
 	{
 
 	}
+	else if ( PlayerKillEvent* PKE = dynamic_cast<PlayerKillEvent*>(e) )
+	{
+		ClientData* cd = PKE->clientData;
+
+		Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
+
+		BioActor* bActor = dynamic_cast<BioActor*>(actor);
+
+		if (bActor)
+			bActor->Kill();
+	}
 
 	NotifyObservers(e);
 }
@@ -427,6 +440,7 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	{
 		zBehaviors.erase(curPlayerBehavior);
 		delete curPlayerBehavior;
+		curPlayerBehavior = NULL;
 	}
 
 	// Set New Behavior
