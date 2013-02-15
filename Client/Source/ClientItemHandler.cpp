@@ -744,7 +744,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_BANDAGE:
-		item = new Bandage(ID, itemSubType, itemType);
+		item = new Bandage(ID, itemType, itemSubType);
 		item->SetItemName(itemName);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);

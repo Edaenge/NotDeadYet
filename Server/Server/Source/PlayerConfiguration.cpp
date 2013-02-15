@@ -7,20 +7,20 @@ PlayerConfiguration::PlayerConfiguration()
 	{
 		//Values could not be retrieved from file, setting default values.
 		this->zFullnessMax = 100.0f;
-		this->zHungerCof = 0.01f;
-		this->zHungerSprintingCof = 0.02f;
+		this->zHungerCof = 0.1f;
+		this->zHungerSprintingCof = 0.3f;
 		this->zHydrationMax = 100.0f;
-		this->zHydrationCof = 0.01f;
-		this->zHydrationSprintingCof = 0.04f;
-		this->zDamageAtStarvationCof = 0.01f;
-		this->zDamageAtThirstCof = 0.03f;
-		this->zStaminaDecreaseCofWithHunger = 0.01f;
-		this->zStaminaDecreaseCofWithHydration = 0.02f;
-		this->zStaminaDecreaseWithBleedingCof = 0.02f;
-		this->zHungerDecreaseWithBleedingCof = 0.01f;
-		this->zHydrationDecreaseWithBleedingCof = 0.02f;
-		this->zHungerForStaminaCof = 0.03f;
-		this->zHydrationForStaminaCof = 0.05f;
+		this->zHydrationCof = 0.12f;
+		this->zHydrationSprintingCof = 0.60f;
+		this->zDamageAtStarvationCof = 0.1f;
+		this->zDamageAtThirstCof = 0.4f;
+		this->zStaminaDecreaseCofWithHunger = 0.6f;
+		this->zStaminaDecreaseCofWithHydration = 0.8f;
+		this->zStaminaDecreaseWithBleedingCof = 1.2f;
+		this->zHungerDecreaseWithBleedingCof = 0.2f;
+		this->zHydrationDecreaseWithBleedingCof = 0.3f;
+		this->zHungerForStaminaCof = 0.05f;
+		this->zHydrationForStaminaCof = 0.1f;
 		this->zUpperHunger = 0.7f;
 		this->zLowerHunger = 0.3f;
 		this->zUpperHydration = 0.8f;
@@ -28,9 +28,9 @@ PlayerConfiguration::PlayerConfiguration()
 		this->zUpperStamina = 0.8f;
 		this->zLowerStamina = 0.15f;
 		this->zRegenerationScale = 5.0f;
-		this->zRegenerationHungerAddition = 1.0f;
-		this->zRegenerationHydrationAddition = 0.4f;
-		this->zRegenerationStaminaAddition = 0.5f;
+		this->zRegenerationHungerAddition = 0.8f;
+		this->zRegenerationHydrationAddition = 0.25f;
+		this->zRegenerationStaminaAddition = 0.20f;
 
 	}
 }

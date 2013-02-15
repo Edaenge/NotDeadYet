@@ -640,6 +640,27 @@ void SoundHandler::StopMusic()
 //
 //}
 
+float SoundHandler::GetSoundVolume()
+{
+	float volume;
+	this->zSoundGroup->getVolume(&volume);
+	return volume;
+}
+
+float SoundHandler::GetMusicVolume()
+{
+	float volume;
+	this->zMusicGroup->getVolume(&volume);
+	return volume;
+}
+
+float SoundHandler::GetMasterVolume()
+{
+	float volume;
+	this->zMasterGroup->getVolume(&volume);
+	return volume;
+}
+
 void SoundHandler::SetSoundVolume(float volume)
 {
 	FMOD_RESULT result;
