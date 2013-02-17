@@ -606,7 +606,7 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 			if ((*it_ID) == (*it_actor)->GetID())
 			{
 				//Check if the distance between the actors are to far to be able to loot.
-				if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 4.0f)
+				if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 5.0f)
 					continue;
 
 				//Check if the Actor is an ItemActor
@@ -617,7 +617,7 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 					msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
 					bLooted = true;
 				}
-				//Check if the Actor is an PlayerActor
+				//Check if the Actor is a PlayerActor
 				else if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(*it_actor))
 				{
 					//Check if the PlayerActor is Dead.
@@ -729,7 +729,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 			}
 		}
 	}
-	//Check if the Actor being looted is an BioActor.
+	//Check if the Actor being looted is a BioActor.
 	else if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
 	{
 		Inventory* inv = bActor->GetInventory();
@@ -773,7 +773,6 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 
 					pActor->GetInventory()->AddItem(item);
 					cd->Send(msg);
-					this->zActorManager->RemoveActor(bActor);
 				}
 			}
 		}
@@ -814,8 +813,10 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 
 	Actor* actor = playerBehavior->GetActor();
 
+	//Check if the actor trying to use an item is a PlayerActor
 	if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
 	{
+		//Check if he has an inventory
 		if (Inventory* inv = pActor->GetInventory())
 		{
 			NetworkMessageConverter NMC;
@@ -879,17 +880,13 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 				}
 				else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
 				{
-					int oldStack = bandage->GetStackSize();
 					ID = bandage->GetID();
 					if (bandage->Use())
-					{
-						int stacks = bandage->GetStackSize() - oldStack;
-						
+					{				
 						pActor->SetBleeding(false);
 						
-						
 						//Sending Message to client And removing stack from inventory.
-						inv->RemoveItemStack(ID, stacks);
+						inv->RemoveItemStack(ID, 1);
 						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
 
 						cd->Send(msg);
@@ -1038,7 +1035,7 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 							cd->Send(msg);
 
-							//Creating a bow With default Values
+							//Create a bow With default Values
 							const Projectile* temp_Arrow = GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
 
 							if (temp_Arrow)
@@ -1047,7 +1044,6 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 
 								if (inv->AddItem(new_Arrow))
 								{
-									ID = new_Arrow->GetID();
 									msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 									msg += new_Arrow->ToMessageString(&NMC);
 									cd->Send(msg);
@@ -1128,7 +1124,7 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 								cd->Send(msg);
 
-								//Creating a bow With default Values
+								//Create a bow With default Values
 								const RangedWeapon* temp_bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
 
 								if (temp_bow)
@@ -1143,37 +1139,6 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 									}
 								}
 							}
-						}
-					}
-				}
-				else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
-				{
-					int oldStack = bandage->GetStackSize();
-					ID = bandage->GetID();
-					if (bandage->Use())
-					{
-						int stacks = bandage->GetStackSize() - oldStack;
-
-						pActor->SetBleeding(false);
-
-
-						//Sending Message to client And removing stack from inventory.
-						inv->RemoveItemStack(ID, stacks);
-						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-
-						cd->Send(msg);
-					}
-					else
-					{
-						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Bandage_Stack_is_Empty");
-						cd->Send(msg);
-					}
-					if (bandage->GetStackSize() <= 0)
-					{
-						if(inv->RemoveItem(bandage));
-						{
-							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
-							cd->Send(msg);
 						}
 					}
 				}

@@ -117,10 +117,12 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	newPActor->SetPosition(position);
 	newPActor->SetDir(direction);
 
+	//Create New Human Behavior
 	PlayerHumanBehavior* pHumanBehavior = new PlayerHumanBehavior(newPActor, this->zGame->GetWorld(), player);
 
 	this->zGame->SetPlayerBehavior(player, pHumanBehavior);
 
+	//Tell The Client his ID and Actor Type
 	ActorManager* aManager = this->zGame->GetActorManager();
 	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, newPActor->GetID());
 	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 1);
