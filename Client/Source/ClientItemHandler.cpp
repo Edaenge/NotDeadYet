@@ -20,7 +20,10 @@ void Client::HandleWeaponUse(const unsigned int ID)
 			Gui_Item_Data gid = Gui_Item_Data(proj->GetID(), proj->GetWeight(), 1, 
 				proj->GetItemName(), proj->GetIconPath(), proj->GetItemDescription(), proj->GetItemType(), proj->GetItemSubType());
 			if( proj->Use() )
+			{
+				this->zPlayerInventory->RemoveItemStack(proj->GetID(), 1);
 				this->zGuiManager->RemoveInventoryItemFromGui(gid);
+			}
 		}
 		else 
 			return;
@@ -82,11 +85,12 @@ void Client::HandleUseItem(const unsigned int ID)
 			MaloW::Debug("Stack is Empty");
 			return;
 		}
-
 		this->zPlayerInventory->RemoveItemStack(food->GetID(), 1);
+
 		Gui_Item_Data gid = Gui_Item_Data(food->GetID(), food->GetWeight(), 1, 
 			food->GetItemName(), food->GetIconPath(), food->GetItemDescription(), food->GetItemType(), food->GetItemSubType());
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
+
 		MaloW::Debug("Eating");
 	}
 	else if (item->GetItemType() == ITEM_TYPE_MATERIAL)

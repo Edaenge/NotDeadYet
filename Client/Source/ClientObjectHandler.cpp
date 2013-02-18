@@ -48,24 +48,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewPlayerObject");
 		}
 	}
-	if (!this->zCreated)
-	{
-		if (ID == this->zID)
-		{
-			if (this->zGuiManager)
-				SAFE_DELETE(this->zGuiManager);
-
-			this->zGuiManager = new GuiManager(this->zEng);
-			this->zCreated = true;
-			
-			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(filename);
-			auto stateOffsetsIterator = this->zStateCameraOffset.find(STATE_IDLE);
-			this->zMeshOffset = meshOffsetsIterator->second;
-
-			this->zActorManager->SetCameraOffset(this->zMeshOffset);
-			this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
-		}
-	}
+	
 	if (Messages::FileWrite())
 		Messages::Debug("Actor ID: " + MaloW::convertNrToString((float)ID) +" Added");
 
@@ -77,6 +60,26 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 
 	//Create player data
 	actor->SetStaticMesh(mesh);
+
+	if (!this->zCreated)
+	{
+		if (ID == this->zID)
+		{
+			if (this->zGuiManager)
+				SAFE_DELETE(this->zGuiManager);
+
+			this->zGuiManager = new GuiManager(this->zEng);
+			this->zCreated = true;
+
+			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(filename);
+			auto stateOffsetsIterator = this->zStateCameraOffset.find(STATE_IDLE);
+			this->zMeshOffset = meshOffsetsIterator->second;
+
+			this->zActorManager->SetCameraOffset(this->zMeshOffset);
+			//this->zEng->GetCamera()->SetMesh(mesh, Vector3());
+			this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
+		}
+	}
 
 	this->zActorManager->AddActor(actor);
 

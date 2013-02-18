@@ -136,7 +136,7 @@ void GuiManager::AddInventoryItemToGui(const Gui_Item_Data gid)
 
 void GuiManager::RemoveInventoryItemFromGui(const Gui_Item_Data gid)
 {
-	this->zInvGui->RemoveItemFromGui(gid);
+	this->zInvGui->RemoveItemFromGui(gid, this->zInventoryOpen, this->zEng);
 }
 
 void GuiManager::ShowCircularItemGui()

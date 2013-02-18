@@ -104,7 +104,7 @@ void Game::SpawnAnimalsDebug()
 {
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj", position);
+	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/Tree_02_v02_r.obj", position);
 	DeerActor* dActor = new DeerActor(deerPhysics);
 	dActor->SetPosition(position);
 	dActor->SetScale(Vector3(0.1f, 0.1f, 0.1f));
