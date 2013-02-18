@@ -507,7 +507,7 @@ void Client::CheckPlayerSpecificKeys()
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
+		if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY) && !this->zPam->GetShow())
 		{
 			this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
 			this->zShowCursor = !this->zShowCursor;
@@ -678,7 +678,7 @@ void Client::CheckKeyboardInput()
 		if(!this->zKeyInfo.GetKeyState(KEY_MENU))
 		{
 			this->zKeyInfo.SetKeyState(KEY_MENU, true);
-			if(!this->zIgm->GetShow() && !this->zPam->GetShow() && this->zActorType == HUMAN)
+			if(!this->zIgm->GetShow())
 			{
 				this->zIgm->ToggleMenu(); // Shows the menu and sets Show to true.
 				zShowCursor = true;
