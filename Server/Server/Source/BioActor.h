@@ -9,6 +9,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include <AnimationStates.h>
 #include <string>
 #include "Damage.h"
+#include "Player.h"
 #include "Inventory.h"
 
 class BioActorTakeDamageEvent : public Event
@@ -33,9 +34,9 @@ public:
 class BioActor : public Actor
 {
 public:
-	BioActor(const Vector3& startPos, const Vector4& rot);
 	BioActor();
-
+	BioActor(Player* player);
+	BioActor(const Vector3& startPos, const Vector4& rot);
 	virtual ~BioActor();
 
 	// virtual void Update(float deltaTime) = 0;
@@ -97,6 +98,9 @@ public:
 	Vector3 GetCameraOffset() {return this->zCameraOffset;}
 	void SetCameraOffset(Vector3 offset) {this->zCameraOffset = offset;}
 
+	Player* GetPlayer(){ return this->zPlayer; }
+	void SetPlayer(Player* player) {this->zPlayer = player;}
+
 protected:
 	int		zState;
 	float	zVelocity;
@@ -120,4 +124,6 @@ protected:
 	Vector3 zCameraOffset;
 
 	Inventory* zInventory;
+
+	Player* zPlayer;
 };

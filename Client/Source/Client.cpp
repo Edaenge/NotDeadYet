@@ -144,8 +144,6 @@ float Client::Update()
 
 void Client::InitGraphics(const std::string& mapName)
 {
-	this->zEng->CreateSkyBox("Media/skymap.dds");
-
 	LoadEntList("Entities.txt");
 
 	if ( zWorld ) delete zWorld, zWorld=0;
@@ -168,7 +166,7 @@ void Client::InitGraphics(const std::string& mapName)
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 	float length = ((25.0f / 1024.0f) * dx);
 	float xPos = offSet + (0.5f * dx) - length * 0.5f;
-	float yPos = (windowHeight / 2.0f) - length * 0.5f; //Boom
+	float yPos = (windowHeight / 2.0f) - length * 0.5f;
 
 	this->zWorld->Update();
 	this->zWorldRenderer->Update();
@@ -177,6 +175,9 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zBlackImage = NULL;
 
 	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);	//this->zEng->StartRendering();
+	
+	if (!this->zCrossHair)
+		this->zEng->DeleteImage(this->zCrossHair);
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 	this->zCrossHair->SetOpacity(0.5f);
@@ -196,6 +197,8 @@ void Client::Init()
 	this->zActorManager = new ClientActorManager();
 	this->zGuiManager = new GuiManager(this->zEng);
 	this->zPlayerInventory = new Inventory();
+
+	this->zEng->CreateSkyBox("Media/skymap.dds");
 }
 
 void Client::Life()
@@ -207,7 +210,7 @@ void Client::Life()
 	{
 		this->Update();
 
-		this->HandleKeyboardInput();
+		this->CheckKeyboardInput();
 		if(this->zCreated)
 		{
 			this->zSendUpdateDelayTimer += this->zDeltaTime;
@@ -529,7 +532,95 @@ void Client::CheckPlayerSpecificKeys()
 	this->HandleWeaponEquips();
 }
 
-void Client::HandleKeyboardInput()
+void Client::CheckGhostSpecificKeys()
+{
+	this->CheckKey(KEY_JUMP);
+
+	//Play as Deer
+	if (this->zEng->GetKeyListener()->IsPressed(VK_LCONTROL))
+	{
+		if (this->zEng->GetKeyListener()->IsPressed(VK_LMENU))
+		{
+			if (this->zEng->GetKeyListener()->IsPressed('D'))
+			{
+				if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
+				{
+					this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
+
+					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
+
+					this->zServerChannel->Send(msg);
+				}
+			}
+			//Play as Wolf
+			else if (this->zEng->GetKeyListener()->IsPressed('W'))
+			{
+				if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
+				{
+					this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
+
+					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 1);
+
+					this->zServerChannel->Send(msg);
+				}
+			}
+			//Play as Bear
+			else if (this->zEng->GetKeyListener()->IsPressed('B'))
+			{
+				if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
+				{
+					this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
+
+					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
+
+					this->zServerChannel->Send(msg);
+				}
+			}
+			else
+			{
+				if(this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
+					this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, false);
+			}
+		}
+		else
+		{
+			if(this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
+				this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, false);
+		}
+	}
+	else
+	{
+			if(this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
+				this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, false);
+	}
+}
+
+void Client::CheckNonGhostInput()
+{
+	this->CheckKey(KEY_SPRINT);
+
+	this->CheckKey(KEY_DUCK);
+
+	//Kill yourself button
+	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('K'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_KILL))
+		{
+			this->zKeyInfo.SetKeyState(KEY_KILL, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACTOR_KILL);
+
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_KILL))
+			this->zKeyInfo.SetKeyState(KEY_KILL, false);
+	}
+}
+
+void Client::CheckKeyboardInput()
 {
 	if (this->zCreated && this->zGameStarted)
 	{
@@ -548,34 +639,29 @@ void Client::HandleKeyboardInput()
 	}
 	if (this->zActorType == GHOST)
 	{
-		this->CheckKey(KEY_JUMP);
+		this->CheckGhostSpecificKeys();
 	}
 
 	if (this->zActorType != GHOST)
 	{
-		this->CheckKey(KEY_SPRINT);
+		this->CheckNonGhostInput();
+	}
 
-		this->CheckKey(KEY_DUCK);
-
-		//Kill yourself button
-		if (this->zEng->GetKeyListener()->IsPressed('K'))
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('R'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_RESTART))
 		{
-			if (!this->zKeyInfo.GetKeyState(KEY_TEST))
-			{
-				this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_RESTART, true);
 
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACTOR_KILL);
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_RESTART_GAME_REQUEST);
 
-				this->zServerChannel->Send(msg);
-			}
+			this->zServerChannel->Send(msg);
 		}
-		else
-		{
-			if(this->zKeyInfo.GetKeyState(KEY_TEST))
-			{
-				this->zKeyInfo.SetKeyState(KEY_TEST, false);
-			}
-		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_RESTART))
+			this->zKeyInfo.SetKeyState(KEY_RESTART, false);
 	}
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
@@ -612,13 +698,12 @@ void Client::HandleKeyboardInput()
 	else
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_READY))
-		{
 			this->zKeyInfo.SetKeyState(KEY_READY, false);
-		}
 	}
 	
 	this->HandleDebugInfo();
 }
+
 //use to equip weapon with keyboard
 void Client::HandleWeaponEquips()
 {

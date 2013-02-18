@@ -2,6 +2,7 @@
 
 #include "GameMode.h"
 
+class GhostActor;
 
 class GameModeFFA : public GameMode
 {
@@ -18,4 +19,5 @@ public:
 private:
 	virtual void OnEvent( Event* e );
 	void OnPlayerDeath(PlayerActor* pActor);
+	void SwapToAnimal(GhostActor* actor, unsigned int animalType);
 };

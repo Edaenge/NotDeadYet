@@ -83,10 +83,12 @@ private:
 	//			  		//
 	//////////////////////
 
+	void CheckGhostSpecificKeys();
+	void CheckNonGhostInput();
 	void CheckPlayerSpecificKeys();
 	void CheckMovementKeys();
 	/*! Handle Keyboard Input */
-	void HandleKeyboardInput();
+	void CheckKeyboardInput();
 	/*! Used to Equip weapons with Keyboard*/
 	void HandleWeaponEquips();
 	/*! Check if the key is pressed and potentially sends a message to the server*/

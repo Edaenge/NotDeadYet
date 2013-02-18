@@ -3,6 +3,29 @@
 
 BioActor::BioActor() : Actor()
 {
+	this->zPlayer = NULL;
+
+	zInventory = new Inventory();
+	this->zState = STATE_IDLE;
+	this->zVelocity = V_WALK_SPEED;
+
+	this->zAlive = true;
+	this->zHealthMax = 100;
+	this->zHealth = zHealthMax;
+	this->zHealthChanged = true;
+
+	this->zStaminaMax = 100;
+	this->zStamina = zStaminaMax;
+	this->zStaminaCof = 0.10f;
+	this->zStaminaChanged = true;
+
+	this->zBleeding = false;
+}
+
+BioActor::BioActor(Player* player) : Actor()
+{
+	this->zPlayer = player;
+
 	zInventory = new Inventory();
 	this->zState = STATE_IDLE;
 	this->zVelocity = V_WALK_SPEED;

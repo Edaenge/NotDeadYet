@@ -68,21 +68,33 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 
 Game::~Game()
 {	
-	for( auto i = zBehaviors.begin(); i != zBehaviors.end(); ++i )
+	for( auto i = this->zBehaviors.begin(); i != this->zBehaviors.end(); ++i )
 	{
 		delete *i;
 	}
-	zBehaviors.clear();
+	this->zBehaviors.clear();
 
-	for( auto i = zPlayers.begin(); i != zPlayers.end(); ++i )
+	for( auto i = this->zPlayers.begin(); i != this->zPlayers.end(); ++i )
 	{
 		delete i->second;
 	}
-	zPlayers.clear();
+	this->zPlayers.clear();
 
-	if ( zGameMode ) delete zGameMode;
-	if ( zWorld ) delete zWorld;
-	if ( zActorManager ) delete zActorManager;
+	if ( this->zGameMode )
+	{
+		delete this->zGameMode;
+		this->zGameMode = NULL;
+	}
+	if ( this->zWorld ) 
+	{
+		delete this->zWorld;
+		this->zWorld = NULL;
+	}
+	if ( this->zActorManager ) 
+	{
+		delete this->zActorManager;
+		this->zActorManager = NULL;
+	}
 
 	FreeItemLookup();
 }
@@ -326,6 +338,20 @@ void Game::OnEvent( Event* e )
 	else if (PlayerUnEquipItemEvent* PUEIE = dynamic_cast<PlayerUnEquipItemEvent*>(e) )
 	{
 		HandleUnEquipItem(PUEIE->clientData, PUEIE->itemID, PUEIE->eq_Slot);
+	}
+	else if(PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
+	{
+		auto playerIterator = this->zPlayers.find(PASE->clientData);
+		Player* player = playerIterator->second;
+		if (player)
+		{
+			Behavior* playerBehavior = player->GetBehavior();
+			if (playerBehavior)
+			{
+				PASE->zActor = playerBehavior->GetActor();
+				NotifyObservers(PASE);
+			}
+		}
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{

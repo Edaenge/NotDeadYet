@@ -204,10 +204,21 @@ public:
 	int key;
 };
 
+//Temporary events
 class PlayerKillEvent : public Event
 {
 public:
 	virtual ~PlayerKillEvent() {}
 
 	ClientData* clientData;
+};
+
+class PlayerAnimalSwapEvent : public Event
+{
+public:
+	virtual ~PlayerAnimalSwapEvent() {}
+
+	ClientData* clientData;
+	Actor* zActor;
+	int zAnimalType;
 };

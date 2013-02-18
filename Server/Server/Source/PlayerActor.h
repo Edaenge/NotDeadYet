@@ -6,9 +6,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "BioActor.h"
-#include "KeyValues.h"
-#include "KeyStates.h"
-#include "Player.h"
 #include <World/WorldEvents.h>
 
 /*This class is used to save player information such as position and states.
@@ -17,7 +14,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 class PlayerActor : public BioActor
 {
 	Vector3 zInitialDirection;
-	Player* zPlayer;
 
 public:
 	PlayerActor(Player* player, PhysicsObject* pObj);
@@ -36,8 +32,7 @@ public:
 	void HungerHasChanged() {this->zHungerChanged = true;}
 	void HydrationHasChanged() {this->zHydrationChanged = true;}
 
-	Player* GetPlayer(){ return this->zPlayer; }
-	void SetPlayer(Player* player) {this->zPlayer = player;}
+	
 	/*! Returns The dropped item.
 	Doesn't deallocate Item.*/
 	Item* DropItem(const long ID);

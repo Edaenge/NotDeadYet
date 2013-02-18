@@ -2869,6 +2869,45 @@
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
+          <association
+            Id="9e07f3f3-f01f-4ba4-80b8-f5e03a01f419"
+            isDerived="false"
+            sourceEndRoleName="BIOActor : Abstract, Observed"
+            targetEndRoleName="Player : Observed"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="606c071a-a447-46cb-af2f-d2e10efc0ba5"
+              LastKnownName="Player : Observed"
+              LastKnownLocation="ModelingProject1.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="c13e0812-def3-4433-9af4-0417fe15a5a8"
+                  name="BIOActor : Abstract, Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="3b5d77c2-70e5-48bb-929d-843a2abf6f8f"
+                  name="Player : Observed"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
         </targetEnds>
         <ownedAttributesInternal>
           <property
@@ -3044,47 +3083,6 @@
               LastKnownLocation="ModelingProject1.uml" />
           </generalization>
         </generalsInternal>
-        <targetEnds>
-          <association
-            Id="2a4cddc0-d3c5-4523-bd69-2193186097a2"
-            isDerived="false"
-            sourceEndRoleName="PlayerActor : BIOActor"
-            targetEndRoleName="Player : Observed"
-            isLeaf="false"
-            isAbstract="false">
-            <classMoniker
-              Id="606c071a-a447-46cb-af2f-d2e10efc0ba5"
-              LastKnownName="Player : Observed"
-              LastKnownLocation="ModelingProject1.uml" />
-            <relationshipOwnedElementsInternal>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="acad4a71-989f-4a7d-90d1-91f134490a04"
-                  name="PlayerActor : BIOActor"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="Shared"
-                  isComposite="false"
-                  isNavigableOwned="false" />
-              </associationHasOwnedEnds>
-              <associationHasOwnedEnds>
-                <memberEnd
-                  Id="b920b328-5ce3-42aa-9f83-3ce8111a7aaf"
-                  name="Player : Observed"
-                  isLeaf="false"
-                  isStatic="false"
-                  isReadOnly="false"
-                  isDerived="false"
-                  isDerivedUnion="false"
-                  aggregation="None"
-                  isComposite="false" />
-              </associationHasOwnedEnds>
-            </relationshipOwnedElementsInternal>
-          </association>
-        </targetEnds>
         <ownedAttributesInternal>
           <property
             Id="cad94121-4104-48d4-bea4-3b3d6beb7de5"

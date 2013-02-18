@@ -65,5 +65,5 @@ bool PlayerDeerBehavior::Update( float dt )
 	this->zAnchor->position = newPlayerPos.GetXZ();
 	this->zAnchor->radius = SIGHTRADIUS;
 
-	return true;
+	return false;
 }

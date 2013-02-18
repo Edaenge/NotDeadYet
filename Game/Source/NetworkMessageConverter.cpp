@@ -222,6 +222,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_ACTOR_TAKE_DAMAGE:
 		ss << M_ACTOR_TAKE_DAMAGE;
 		break;
+	case MESSAGE_TYPE_PLAY_AS_ANIMAL:
+		ss << M_PLAY_AS_ANIMAL;
+		break;
 	case MESSAGE_TYPE_STAMINA:
 		ss << M_STAMINA;
 		break;
@@ -266,6 +269,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 		break;
 	case MESSAGE_TYPE_ACTOR_KILL:
 		ss << M_ACTOR_KILL;
+		break;
+	case MESSAGE_TYPE_RESTART_GAME_REQUEST:
+		ss << M_RESTART_GAME_REQUEST;
 		break;
 	case MESSAGE_TYPE_SERVER_FULL:
 		ss << M_SERVER_FULL;

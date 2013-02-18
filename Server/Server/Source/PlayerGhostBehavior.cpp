@@ -54,9 +54,9 @@ bool PlayerGhostBehavior::Update( float dt )
 	newPlayerPos = currentPlayerPos + this->zVelocity * dt;
 
 	float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ());
-	if(newGroundHeight > newPlayerPos.y)
+	if(newGroundHeight < newPlayerPos.y)
 	{
-		//newPlayerPos.y = newGroundHeight;
+		newPlayerPos.y = newGroundHeight;
 	}
 	this->zActor->SetPosition(newPlayerPos);
 

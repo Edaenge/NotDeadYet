@@ -2,10 +2,9 @@
 #include "ClientServerMessages.h"
 #include "MaloWFileDebug.h"
 
-PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) :
-	zPlayer(player)
+PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) 
+	: BioActor(player)
 {
-	this->zPlayer = player;
 	SetPhysicsObject(physObj);
 	/*InitValues();*/
 

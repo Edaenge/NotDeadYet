@@ -2,10 +2,15 @@
 #include "time.h"
 #include "GameModeFFA.h"
 #include "BioActor.h"
+#include "DeerActor.h"
+#include "WolfActor.h"
+#include "BearActor.h"
 #include "PlayerActor.h"
 #include "GhostActor.h";
 #include "GameEvents.h"
 #include "PlayerGhostBehavior.h"
+#include "PlayerDeerBehavior.h"
+#include "PlayerWolfBehavior.h"
 
 GameModeFFA::GameModeFFA(Game* game) : GameMode(game)
 {
@@ -78,6 +83,13 @@ void GameModeFFA::OnEvent( Event* e )
 			}
 		}
 	}
+	else if (PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
+	{
+		GhostActor* gActor = dynamic_cast<GhostActor*>(PASE->zActor);
+
+		if (gActor)
+			this->SwapToAnimal(gActor, PASE->zAnimalType);
+	}
 	else if( PlayerAddEvent* PAE = dynamic_cast<PlayerAddEvent*>(e) )
 	{
 		//this->zScoreBoard[PAE->player] = 0;
@@ -87,6 +99,72 @@ void GameModeFFA::OnEvent( Event* e )
 	{
 		//this->zScoreBoard.erase(PRE->player);
 		this->zPlayers.erase(PRE->player);
+	}
+}
+
+void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
+{
+	std::set<Actor*> actors = this->zGame->GetActorManager()->GetActors();
+	bool found = false;
+	Player* player = gActor->GetPlayer();
+	ClientData* cd = player->GetClientData();
+
+	NetworkMessageConverter NMC;
+	std::string msg = "";
+	
+	for (auto it_Actors = actors.begin(); it_Actors != actors.end() || !found; it_Actors++)
+	{
+		if (AnimalActor* aActor = dynamic_cast<AnimalActor*>((*it_Actors)))
+		{
+			//If type = Deer
+			if (animalType == 0)
+			{
+				if (DeerActor* dActor = dynamic_cast<DeerActor*>(aActor))
+				{
+					//Kill player on Client
+					msg = NMC.Convert(MESSAGE_TYPE_DEAD_ACTOR, (float)gActor->GetID());
+					Player* player = gActor->GetPlayer();
+					gActor->SetPlayer(NULL);
+
+					cd->Send(msg);
+
+					PlayerDeerBehavior* playerDeerBehavior = new PlayerDeerBehavior(dActor, this->zGame->GetWorld(), player);
+
+					this->zGame->SetPlayerBehavior(player, playerDeerBehavior);
+
+					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, gActor->GetID());
+					msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 2);
+
+					cd->Send(msg);
+
+					this->zGame->GetActorManager()->RemoveActor(gActor);
+
+					found = true;
+				}
+			}
+			//If Type = Wolf
+			else if (animalType == 1)
+			{
+				if (WolfActor* dActor = dynamic_cast<WolfActor*>(aActor))
+				{
+					PlayerWolfBehavior* playerWolfBehavior = new PlayerWolfBehavior(dActor, this->zGame->GetWorld(), player);
+
+					this->zGame->SetPlayerBehavior(player, playerWolfBehavior);
+
+
+					found = true;
+				}
+			}
+			//If Type = Bear
+			else if (animalType == 2)
+			{
+				if (BearActor* dActor = dynamic_cast<BearActor*>(aActor))
+				{
+				}
+			}
+		}
+		
+
 	}
 }
 
