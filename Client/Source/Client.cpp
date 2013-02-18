@@ -34,6 +34,7 @@ Client::Client()
 	this->zMeshID = "Media/Models/temp_guy.obj";
 
 	this->zMeshCameraOffsets["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
+	this->zMeshCameraOffsets["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_WALKING] = Vector3(0.0f, 0.0f, 0.0f);
@@ -552,50 +553,42 @@ void Client::CheckGhostSpecificKeys()
 {
 	this->CheckKey(KEY_JUMP);
 
-	//Play as Deer
-	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL))
+	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed(VK_MENU))
 	{
-		if (this->zEng->GetKeyListener()->IsPressed(VK_SHIFT))
+		//Play as Deer
+		if (this->zEng->GetKeyListener()->IsPressed('I'))
 		{
-			if (this->zEng->GetKeyListener()->IsPressed('I'))
+			if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
 			{
-				if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
-				{
-					this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
+				this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
 
-					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
 
-					this->zServerChannel->Send(msg);
-				}
+				this->zServerChannel->Send(msg);
 			}
-			//Play as Wolf
-			else if (this->zEng->GetKeyListener()->IsPressed('O'))
+		}
+		//Play as Wolf
+		else if (this->zEng->GetKeyListener()->IsPressed('O'))
+		{
+			if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
 			{
-				if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
-				{
-					this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
+				this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
 
-					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 1);
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 1);
 
-					this->zServerChannel->Send(msg);
-				}
+				this->zServerChannel->Send(msg);
 			}
-			//Play as Bear
-			else if (this->zEng->GetKeyListener()->IsPressed('P'))
+		}
+		//Play as Bear
+		else if (this->zEng->GetKeyListener()->IsPressed('P'))
+		{
+			if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
 			{
-				if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
-				{
-					this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
+				this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
 
-					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
 
-					this->zServerChannel->Send(msg);
-				}
-			}
-			else
-			{
-				if(this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
-					this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, false);
+				this->zServerChannel->Send(msg);
 			}
 		}
 		else

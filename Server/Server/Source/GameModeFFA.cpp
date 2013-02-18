@@ -133,8 +133,8 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 
 					this->zGame->SetPlayerBehavior(player, playerDeerBehavior);
 
-					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, gActor->GetID());
-					msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 2);
+					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, dActor->GetID());
+					msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
 
 					cd->Send(msg);
 
