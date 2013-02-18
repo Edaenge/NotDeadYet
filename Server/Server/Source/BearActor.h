@@ -6,7 +6,7 @@
 class BearActor : public AnimalActor
 {
 public:
-	BearActor();
+	BearActor(PhysicsObject* pObj);
 	virtual ~BearActor();
 
 	/*void InitBear() throw(...);

@@ -124,7 +124,7 @@ float Client::Update()
 		if ( zWorldRenderer ) zWorldRenderer->Update();
 	}		
 
-	this->zDamageOpacity -= this->zDeltaTime * 0.25;
+	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
 	
 	if(this->zDamageIndicator != NULL)
 	{
@@ -538,11 +538,11 @@ void Client::CheckGhostSpecificKeys()
 	this->CheckKey(KEY_JUMP);
 
 	//Play as Deer
-	if (this->zEng->GetKeyListener()->IsPressed(VK_LCONTROL))
+	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL))
 	{
-		if (this->zEng->GetKeyListener()->IsPressed(VK_LMENU))
+		if (this->zEng->GetKeyListener()->IsPressed(VK_SHIFT))
 		{
-			if (this->zEng->GetKeyListener()->IsPressed('D'))
+			if (this->zEng->GetKeyListener()->IsPressed('I'))
 			{
 				if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
 				{
@@ -554,7 +554,7 @@ void Client::CheckGhostSpecificKeys()
 				}
 			}
 			//Play as Wolf
-			else if (this->zEng->GetKeyListener()->IsPressed('W'))
+			else if (this->zEng->GetKeyListener()->IsPressed('O'))
 			{
 				if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
 				{
@@ -566,7 +566,7 @@ void Client::CheckGhostSpecificKeys()
 				}
 			}
 			//Play as Bear
-			else if (this->zEng->GetKeyListener()->IsPressed('B'))
+			else if (this->zEng->GetKeyListener()->IsPressed('P'))
 			{
 				if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
 				{
@@ -1228,7 +1228,8 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 
 	if(this->zDamageIndicator == NULL)
 	{
-		
+		float windowHeight = (float)this->zEng->GetEngineParameters().WindowHeight;
+		float windowWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
 		//Make the effect visible based on severity of attack.
 		this->zDamageOpacity = damageTaken / 100;
 		if(this->zDamageOpacity > 0.7f)
@@ -1243,7 +1244,7 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 		if(ID == this->zID)
 		{
 			//There is no attacker, (except techincally the player)
-			this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/behindOrFront_Temp.png" );
+			this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/behindOrFront_Temp.png" );
 		}
 		else
 		{
@@ -1263,12 +1264,11 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 
 			//psuedo    upDotProduct > 0 = upp,   upDotProduct < 0 = ner.
 
-
 			if( testDotProduct > 0.65 && abs(upDotProduct) < 0.3 || testDotProduct < -0.7) 
 			{
 				//The damage is coming from the front and not too high or low. Or, it is coming from behind
 				//Display surroundingpicture
-				this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/behindOrFront_Temp.png" );
+				this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/behindOrFront_Temp.png" );
 			}
 			else //The damage is more specifically trackable.
 			{
@@ -1276,51 +1276,50 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 				{
 					if(upDotProduct > 0.3f) //It's up to the left
 					{
-						this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/highLeft_Temp.png" );
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/highLeft_Temp.png" );
 					}
 					else if(upDotProduct < -0.3f) //It's down to the left
 					{
-						this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/lowLeft_Temp.png" );
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/lowLeft_Temp.png" );
 					}
 					else //It's directly to the left
 					{
-						this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/left_Temp.png" );
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/left_Temp.png" );
 					}		
 				}
 				else if(testDotProduct < 0.65 && rightOrLeft < 0.0f) //it's to the right (needs testing)
+				{
+					if(upDotProduct > 0.3f) //It's up to the right
 					{
-						if(upDotProduct > 0.3f) //It's up to the right
-						{
-							this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/highRight_Temp.png" );
-						}
-						else if(upDotProduct < -0.3f) //It's down to the right
-						{
-							this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/lowRight_Temp.png" );
-						}
-						else //It's directly to the right
-						{
-							this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/right_Temp.png" );
-						}
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/highRight_Temp.png" );
 					}
+					else if(upDotProduct < -0.3f) //It's down to the right
+					{
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/lowRight_Temp.png" );
+					}
+					else //It's directly to the right
+					{
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/right_Temp.png" );
+					}
+				}
 				else// if (dotProduct > 0.65)//It's in front, but too high or low
 				{
 					if(upDotProduct > 0.3f) //Up high.
 					{
-						this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/up_Temp.png" );
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/up_Temp.png" );
 					}
 					else if(upDotProduct < -0.3f) //Down low.
 					{
-						this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/down_Temp.png" );
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/down_Temp.png" );
 					}
 				}
 			}
 		}
-			//Set the opacity
-			this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
+		//Set the opacity
+		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
 
-			GetSounds()->PlaySounds("Media/Sound/Breath.wav", playerPos);
+		GetSounds()->PlaySounds("Media/Sound/Breath.wav", playerPos);
 	}
-
 	return true;
 }
 

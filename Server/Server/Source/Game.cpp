@@ -64,6 +64,7 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	this->zMaxNrOfPlayers = 32;
 	//DEBUG
 	SpawnItemsDebug();
+	SpawnAnimalsDebug();
 }
 
 Game::~Game()
@@ -97,6 +98,24 @@ Game::~Game()
 	}
 
 	FreeItemLookup();
+}
+
+void Game::SpawnAnimalsDebug()
+{
+	int increment = 10;
+	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
+	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/Tree_03_v03.obj", position);
+	DeerActor* dActor = new DeerActor(deerPhysics);
+	dActor->SetPosition(position);
+	dActor->SetScale(Vector3(0.1f, 0.1f, 0.1f));
+	this->zActorManager->AddActor(dActor);
+
+	position = this->CalcPlayerSpawnPoint(increment++);
+	PhysicsObject* wolfPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/Tree_02_v02_r.obj", position);
+	WolfActor* wActor = new WolfActor(wolfPhysics);
+	wActor->SetPosition(position);
+	wActor->SetScale(Vector3(0.1f, 0.1f, 0.1f));
+	this->zActorManager->AddActor(wActor);
 }
 
 void Game::SpawnItemsDebug()

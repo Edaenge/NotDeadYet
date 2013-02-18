@@ -112,7 +112,7 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 	NetworkMessageConverter NMC;
 	std::string msg = "";
 	
-	for (auto it_Actors = actors.begin(); it_Actors != actors.end() || !found; it_Actors++)
+	for (auto it_Actors = actors.begin(); it_Actors != actors.end() && !found; it_Actors++)
 	{
 		if (AnimalActor* aActor = dynamic_cast<AnimalActor*>((*it_Actors)))
 		{
@@ -129,6 +129,7 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 					cd->Send(msg);
 
 					PlayerDeerBehavior* playerDeerBehavior = new PlayerDeerBehavior(dActor, this->zGame->GetWorld(), player);
+					dActor->SetPlayer(player);
 
 					this->zGame->SetPlayerBehavior(player, playerDeerBehavior);
 
@@ -138,7 +139,7 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 					cd->Send(msg);
 
 					this->zGame->GetActorManager()->RemoveActor(gActor);
-
+					this->zGame->GetActorManager()->AddActor(dActor);
 					found = true;
 				}
 			}

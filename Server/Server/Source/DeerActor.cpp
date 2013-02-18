@@ -1,8 +1,9 @@
 #include "DeerActor.h"
 
-DeerActor::DeerActor() : 
+DeerActor::DeerActor(PhysicsObject* pObj) : 
 	AnimalActor()
 {
+	this->SetPhysicsObject(pObj);
 	/*this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitDeer();*/
 }

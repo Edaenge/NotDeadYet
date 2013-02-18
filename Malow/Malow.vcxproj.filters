@@ -24,13 +24,13 @@
     <ClCompile Include="Source\ClientChannel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Include\Process.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\FileReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Include\NetworkChannel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Process.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
