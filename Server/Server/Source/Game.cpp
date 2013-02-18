@@ -723,9 +723,15 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 				{
 					msg += bandage->ToMessageString(&NMC);
 				}
-				pActor->GetInventory()->AddItem(item);
-				cd->Send(msg);
-				this->zActorManager->RemoveActor(iActor);
+				
+				if(pActor->GetInventory()->AddItem(item))
+				{
+					cd->Send(msg);
+					this->zActorManager->RemoveActor(iActor);
+				}
+				else
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory_Full"));
+				
 			}
 		}
 	}
@@ -898,7 +904,7 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 					}
 					if (bandage->GetStackSize() <= 0)
 					{
-						if(inv->RemoveItem(bandage));
+						if(inv->RemoveItem(bandage))
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
 							cd->Send(msg);
@@ -968,6 +974,7 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				this->zBehaviors.insert(projBehavior);
 				//Decrease stack
 				arrow->Use();
+				inventory->RemoveItemStack(arrow->GetID(), 1);
 				if (arrow->GetStackSize() <= 0)
 				{
 					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
@@ -1041,8 +1048,9 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 							if (temp_Arrow)
 							{
 								Projectile* new_Arrow = new Projectile((*temp_Arrow));
+								Item* temp = new_Arrow;
 
-								if (inv->AddItem(new_Arrow))
+								if (inv->AddItem(temp))
 								{
 									msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 									msg += new_Arrow->ToMessageString(&NMC);
@@ -1092,8 +1100,9 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 								if (temp_bow)
 								{
 									RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
+									Item* temp = new_Bow;
 
-									if (inv->AddItem(new_Bow))
+									if (inv->AddItem(temp))
 									{
 										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 										msg += new_Bow->ToMessageString(&NMC);
@@ -1130,8 +1139,9 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 								if (temp_bow)
 								{
 									RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
+									Item* temp = new_Bow;
 
-									if (inv->AddItem(new_Bow))
+									if (inv->AddItem(temp))
 									{
 										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 										msg += new_Bow->ToMessageString(&NMC);
@@ -1150,32 +1160,43 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 {
 	std::string msg;
-	unsigned int slot;
+	int slot = -1;
 
 	NetworkMessageConverter NMC;
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
 	BioActor* pActor = dynamic_cast<PlayerActor*>(actor);
 	Inventory* inventory = pActor->GetInventory();
 	Item* item = inventory->SearchAndGetItem(itemID);
+	Item* ret = NULL;
+	bool success = false;
 
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
-		inventory->EquipProjectile(proj);
+		int weigth = inventory->GetTotalWeight();
+
+		ret = inventory->EquipProjectile(proj);
+		
+		if(weigth > inventory->GetTotalWeight())
+		{
+			inventory->RemoveItem(proj);
+		}
+
 		slot = EQUIPMENT_SLOT_PROJECTILE;
 	}
 	else if(MeleeWeapon* meele = dynamic_cast<MeleeWeapon*>(item))
 	{
-		inventory->EquipMeleeWeapon(meele);
+		ret = inventory->EquipMeleeWeapon(meele, success);
 		slot = EQUIPMENT_SLOT_MELEE_WEAPON;
 	}
 	else if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
 	{
-		inventory->EquipRangedWeapon(ranged);
+		ret = inventory->EquipRangedWeapon(ranged, success);
 		slot = EQUIPMENT_SLOT_RANGED_WEAPON;
 	}
-	else
+
+	if(!success && slot != EQUIPMENT_SLOT_PROJECTILE)
 	{
-		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Cannot_Equip_That_Item");
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Cannot_Equip_Item");
 		cd->Send(msg);
 		return;
 	}

@@ -12,7 +12,7 @@ namespace System { namespace Windows { namespace Interop
 
 	CppCLI::!CppCLI()
 	{
-		if(zServer)	delete zServer;
+		if(zServer)	delete zServer, zServer = NULL;
 	}
 
 	String^ CppCLI::Init(int port, int nrOfPlayers, String^ gameMode, String^ mapName)

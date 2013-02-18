@@ -205,5 +205,10 @@ namespace GUI
                 this.map_combobox.SelectedIndex = 0;
         }
 
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            m_ServerEngine = null;
+        }
+
     }
 }
