@@ -16,6 +16,7 @@
 #include <Packets/ServerFramePacket.h>
 #include <Packets/Packet.h>
 #include "InGameMenu.h"
+#include "PickAnimalMenu.h"
 
 using namespace MaloW;
 
@@ -197,6 +198,7 @@ private:
 
 	iImage* zBlackImage;
 	InGameMenu* zIgm;
+	PickAnimalMenu* zPam;
 
 	//Player Data
 	float zHealth;

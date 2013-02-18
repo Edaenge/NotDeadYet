@@ -59,6 +59,7 @@ Client::Client()
 	this->zDamageOpacity = 0.0f;
 	
 	this->zIgm = new InGameMenu();
+	this->zPam = new PickAnimalMenu();
 
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Walk.wav", false);
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
@@ -681,6 +682,26 @@ void Client::CheckKeyboardInput()
 		if(this->zKeyInfo.GetKeyState(KEY_MENU))
 			this->zKeyInfo.SetKeyState(KEY_MENU, false);
 	}
+
+	// Opens pick menu if you can
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_PICKMENU)))
+	{
+		if(!this->zKeyInfo.GetKeyState(KEY_PICKMENU))
+		{
+			/*this->zKeyInfo.SetKeyState(KEY_PICKMENU, true);
+			this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
+			if(this->zPam->GetShow())
+				zShowCursor = true;
+			else
+				zShowCursor = false;*/
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
+			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
+	}
+
 
 	//Tell Server Client is Ready
 	if(this->zEng->GetKeyListener()->IsPressed('F'))
