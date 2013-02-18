@@ -22,6 +22,7 @@ static const std::string COMMAND_EQUIPMENT	= "C_EQUIPMENT";
 static const std::string COMMAND_READY		= "C_READY";
 static const std::string COMMAND_SWAP_EQ	= "C_SWAP_EQ";
 static const std::string COMMAND_NONE		= "C_NONE";
+static const std::string COMMAND_PICKMENU	= "C_PICKMENU";
 
 
 /*cfg path*/
@@ -63,7 +64,8 @@ void KeyBindConfig::CreateDefaultIni(char* bindings)
 		'B',
 		'C',
 		'F',
-		'Q'
+		'Q',
+		'M'
 	};
 
 	memcpy(bindings, defaultBindings, sizeof(defaultBindings));
@@ -224,6 +226,10 @@ int KeyBindConfig::GetKeyValue(std::string CC)
 	{
 		return KEY_SWAP_EQ;
 	}
+	if(CC == COMMAND_PICKMENU)
+	{
+		return KEY_PICKMENU;
+	}
 
 	return -1;
 }
@@ -270,6 +276,9 @@ const std::string& KeyBindConfig::GetCommand(const int keyValue)
 		break;
 	case KEY_SWAP_EQ:
 		return COMMAND_SWAP_EQ;
+		break;
+	case KEY_PICKMENU:
+		return COMMAND_PICKMENU;
 		break;
 	default:
 		return COMMAND_NONE;

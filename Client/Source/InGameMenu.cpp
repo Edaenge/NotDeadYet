@@ -23,12 +23,10 @@ int InGameMenu::Run()
 {
 	int returnValue = IGNOTHING;
 	bool removeMenu = false;
-	Vector2 mousePos = this->zEng->GetKeyListener()->GetMousePosition();
-	bool mousePressed = this->zEng->GetKeyListener()->IsClicked(1);
 	GUIEvent* guiEvent = NULL;
 
-	mousePos = this->zEng->GetKeyListener()->GetMousePosition();
-	mousePressed = this->zEng->GetKeyListener()->IsClicked(1);
+	Vector2 mousePos = this->zEng->GetKeyListener()->GetMousePosition();
+	bool mousePressed = this->zEng->GetKeyListener()->IsClicked(1);
 	guiEvent = this->zSets[this->zPrimarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, mousePressed, this->zEng);
 	if(guiEvent != NULL)
 	{
