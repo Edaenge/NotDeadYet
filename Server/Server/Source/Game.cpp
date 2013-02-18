@@ -877,7 +877,6 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 				unsigned int ID = 0;
 				if (Food* food = dynamic_cast<Food*>(item))
 				{
-					int oldStack = food->GetStackSize();
 					ID = food->GetID();
 					if (food->Use())
 					{
@@ -885,13 +884,12 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 						float value = food->GetHunger();
 
 						float fullness = pActor->GetFullness();
-						int stacks = food->GetStackSize() - oldStack;
 
 						pActor->SetFullness(fullness + value);
 						pActor->HungerHasChanged();
 
 						//Sending Message to client And removing stack from inventory.
-						inv->RemoveItemStack(ID, stacks);
+						inv->RemoveItemStack(ID, 1);
 						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 
 						cd->Send(msg);

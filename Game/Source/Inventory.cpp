@@ -94,7 +94,6 @@ bool Inventory::AddItem(Item*& item)
 				SAFE_DELETE(item);
 
 				return true;
-				
 			}
 		}
 		//this->NotifyObservers()
@@ -163,20 +162,20 @@ bool Inventory::RemoveItem(const unsigned int Index)
 {
 	if (Index < this->zItems.size())
 	{
-		Item* item = GetItem(Index);
+		Item* item = this->GetItem(Index);
 		int weight = item->GetWeight() * item->GetStackSize();
 		this->zWeightTotal -= weight;
 
 		this->zItems.erase(this->zItems.begin() + Index);
-		if(zRangedWeapon && dynamic_cast<RangedWeapon*>(item) == zRangedWeapon)
+		if(zRangedWeapon && dynamic_cast<RangedWeapon*>(item) == this->zRangedWeapon)
 		{
 			UnEquipRangedWeapon();
 		}
-		else if(zMeleeWeapon && dynamic_cast<MeleeWeapon*>(item) == zMeleeWeapon)
+		else if(zMeleeWeapon && dynamic_cast<MeleeWeapon*>(item) == this->zMeleeWeapon)
 		{
 			UnEquipMeleeWeapon();
 		}
-		else if(zProjectile && dynamic_cast<Projectile*>(item) == zProjectile)
+		else if(zProjectile && dynamic_cast<Projectile*>(item) == this->zProjectile)
 		{
 			UnEquipProjectile();
 		}
@@ -253,7 +252,6 @@ Item* Inventory::EraseItem(const unsigned int ID)
 		int weight = item->GetWeight() * item->GetStackSize();
 		this->zWeightTotal -= weight;
 		
-
 		this->zItems.erase(this->zItems.begin() + index);
 
 		return item;
