@@ -112,15 +112,18 @@ void GameModeFFA::OnPlayerDeath(PlayerActor* pActor)
 	gActor->SetPosition(position);
 	gActor->SetDir(direction);
 	
+	//Create Ghost behavior
 	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);
 
 	this->zGame->SetPlayerBehavior(player, pGhostBehavior);
 
+	//Tell Client his new ID and actor type
 	ActorManager* aManager = this->zGame->GetActorManager();
 	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, gActor->GetID());
 	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 2);
 
 	cd->Send(msg);
 	
+	//Add the actor to the list
 	aManager->AddActor(gActor);
 }

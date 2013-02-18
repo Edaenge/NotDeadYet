@@ -138,6 +138,7 @@ void Client::HandleUseItem(const unsigned int ID)
 	}
 }
 
+//Todo Remove old projectile before adding new one(arrows)
 void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 {
 	Item* item = this->zPlayerInventory->SearchAndGetItem(ItemID);
@@ -163,7 +164,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			return;
 		}
 		RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item);
-		if (!rWpn)
+		if ( !rWpn )
 		{
 			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Bow)");
 			return;
@@ -196,14 +197,14 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 	{
 		if (Slot != EQUIPMENT_SLOT_PROJECTILE)
 		{
-			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not an Ammo: " + MaloW::convertNrToString(EQUIPMENT_SLOT_PROJECTILE) + " != Slot: " + MaloW::convertNrToString((float)Slot));
+			MaloW::Debug("Error In Client::EquipItem Item Slot Is Not a Projectile: " + MaloW::convertNrToString(EQUIPMENT_SLOT_PROJECTILE) + " != Slot: " + MaloW::convertNrToString((float)Slot));
 			return;
 		}
 
 		Projectile* projectile = dynamic_cast<Projectile*>(item);
 		if (!projectile)
 		{
-			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Arrow)");
+			MaloW::Debug("dynamic cast Failed in Client::EquipItem (Projectile)");
 			return;
 		}
 		

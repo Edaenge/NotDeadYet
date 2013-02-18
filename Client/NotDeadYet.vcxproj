@@ -55,6 +55,7 @@
     <ClCompile Include="Source\KeyUtil\KeyHandler.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\MainMenu.cpp" />
+    <ClCompile Include="Source\PickAnimalMenu.cpp" />
     <ClCompile Include="Source\SoundEngine\SoundEffect.cpp" />
     <ClCompile Include="Source\SoundEngine\SoundEngine.cpp" />
     <ClCompile Include="Source\SoundEngine\SoundHandler.cpp" />
@@ -91,6 +92,7 @@
     <ClInclude Include="Source\KeyUtil\KeyConverter.h" />
     <ClInclude Include="Source\KeyUtil\KeyHandler.h" />
     <ClInclude Include="Source\MainMenu.h" />
+    <ClInclude Include="Source\PickAnimalMenu.h" />
     <ClInclude Include="Source\SoundEngine\fmod.h" />
     <ClInclude Include="Source\SoundEngine\SoundEffect.h" />
     <ClInclude Include="Source\SoundEngine\SoundEngine.h" />
