@@ -36,7 +36,7 @@ public:
 	/*! Search for the Item in and returns its position*/
 	int Search(const unsigned int ID) const;
 	/*! Adds an item to the array*/
-	bool AddItem(Item* item);
+	bool AddItem(Item*& item);
 	/*! Returns the item at the position */
 	Item* GetItem(const unsigned int index) const;
 	/*! Returns the Items*/
@@ -52,6 +52,8 @@ public:
 	bool GetBlockedSlot(unsigned int index) const;
 	/*! Returns the Inventory Capacity == Max Weight allowed*/
 	int GetInventoryCapacity() const;
+	/*! */
+	inline int GetTotalWeight() const {return zWeightTotal;}
 	/*! Returns amount of Items the player has in the inventory with itemType = TYPE*/
 	int SearchForItemType(const int Type, const int SubType);
 	/*! Removes a stack from Item*/
@@ -63,11 +65,11 @@ public:
 	Item* EraseItem(const unsigned int ID);
 
 	//Equipment
-	/*! Equips Weapon*/
-	void EquipRangedWeapon(RangedWeapon* weapon);
-	void EquipMeleeWeapon(MeleeWeapon* weapon);
+	/*! Equips Weapon, returns previous equipped item.*/
+	Item* EquipRangedWeapon(RangedWeapon* weapon, bool& success);
+	Item* EquipMeleeWeapon(MeleeWeapon* weapon, bool& success);
 
-	void EquipProjectile(Projectile* projectile);
+	Item* EquipProjectile(Projectile* projectile);
 	void UnEquipProjectile();
 	Projectile* GetProjectile();
 
