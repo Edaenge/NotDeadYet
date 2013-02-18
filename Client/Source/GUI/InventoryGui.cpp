@@ -77,9 +77,12 @@ InventoryGui::~InventoryGui()
 
 bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
+	int temp = gid.zStacks;
+	if(temp == 0)
+		temp = 1;
+	this->zCurrentWeight = this->zCurrentWeight + (gid.zWeight * temp);
 	if(this->zWeightText)
-		this->zCurrentWeight = this->zCurrentWeight + (gid.zWeight * gid.zStacks);
-	this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + "/" + 
+		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + "/" + 
 		MaloW::convertNrToString(this->zMaxWeight)).c_str());
 
 	int size = this->zSlotGui.size();
@@ -113,9 +116,12 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 
 bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
-	this->zCurrentWeight -= gid.zStacks * gid.zWeight;
+	float temp = gid.zStacks;
+	if(temp == 0)
+		temp = 1;
+	this->zCurrentWeight -= gid.zStacks * temp;
 	if(this->zWeightText)
-		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + "/" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
+		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
 
 	int size = zSlotGui.size();
 	for (auto it = this->zSlotGui.begin(); it < this->zSlotGui.end(); it++)
@@ -184,8 +190,8 @@ bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
 	if(!this->zWeightText)
 	{
 		this->zWeightText = ge->CreateText((MaloW::convertNrToString(
-			this->zCurrentWeight) + "/" + MaloW::convertNrToString(this->zMaxWeight)).c_str(), 
-			Vector2(100,100), 1, "Media/Fonts/1.png");
+			this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str(), 
+			Vector2(100,100), 1, "Media/Fonts/1");
 	}
 
 	return true;
