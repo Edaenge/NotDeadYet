@@ -227,7 +227,22 @@ void Client::Life()
 		}
 
 		this->ReadMessages();
-
+		if(this->zPam->GetShow())
+		{
+			int returnValue = this->zPam->Run();
+			if(returnValue == DEER)
+			{
+				this->zPam->ToggleMenu();
+				zShowCursor = this->zPam->GetShow();
+				// MAKE ME A DEER.
+			}
+			if(returnValue == BEAR)
+			{
+				this->zPam->ToggleMenu();
+				zShowCursor = this->zPam->GetShow();
+				// MAKE ME A BEAR.
+			}
+		}
 		if (this->zIgm->GetShow())
 		{
 			int returnValue = this->zIgm->Run();
@@ -584,7 +599,7 @@ void Client::HandleKeyboardInput()
 		if(!this->zKeyInfo.GetKeyState(KEY_MENU))
 		{
 			this->zKeyInfo.SetKeyState(KEY_MENU, true);
-			if(!this->zIgm->GetShow())
+			if(!this->zIgm->GetShow() && !this->zPam->GetShow() && this->zActorType == HUMAN)
 			{
 				this->zIgm->ToggleMenu(); // Shows the menu and sets Show to true.
 				zShowCursor = true;
@@ -597,17 +612,20 @@ void Client::HandleKeyboardInput()
 			this->zKeyInfo.SetKeyState(KEY_MENU, false);
 	}
 
-	// Opens pick menu if you can
+	// Opens pick menu if you can do it.
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_PICKMENU)))
 	{
 		if(!this->zKeyInfo.GetKeyState(KEY_PICKMENU))
 		{
-			/*this->zKeyInfo.SetKeyState(KEY_PICKMENU, true);
-			this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
-			if(this->zPam->GetShow())
-				zShowCursor = true;
-			else
-				zShowCursor = false;*/
+			if(this->zActorType == GHOST)
+			{
+				this->zKeyInfo.SetKeyState(KEY_PICKMENU, true);
+				this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
+				if(this->zPam->GetShow())
+					zShowCursor = true;
+				else
+					zShowCursor = false;
+			}
 		}
 	}
 	else
