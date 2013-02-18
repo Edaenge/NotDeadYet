@@ -34,7 +34,10 @@ void Client::HandleWeaponUse(const unsigned int ID)
 		itemStackID = proj->GetID();
 
 		if( proj->Use() )
+		{
+			this->zPlayerInventory->RemoveItemStack(proj->GetID(), 1);
 			this->zGuiManager->RemoveInventoryItemFromGui(itemStackID, 1);
+		}
 	}
 
 }
@@ -71,18 +74,15 @@ void Client::HandleUseItem(const unsigned int ID)
 			return;
 		}
 
-		int oldStacks = food->GetStackSize();
 		if (!food->Use())
 		{
 			MaloW::Debug("Stack is Empty");
 			return;
 		}
-		int newStacks = food->GetStackSize();
 
-		int stacks = oldStacks - newStacks;
-		this->zPlayerInventory->RemoveItemStack(food->GetID(), stacks);
+		this->zPlayerInventory->RemoveItemStack(food->GetID(), 1);
 
-		this->zGuiManager->RemoveInventoryItemFromGui(food->GetID(), stacks);
+		this->zGuiManager->RemoveInventoryItemFromGui(food->GetID(), 1);
 		MaloW::Debug("Eating");
 	}
 	else if (item->GetItemType() == ITEM_TYPE_MATERIAL)
@@ -141,6 +141,7 @@ void Client::HandleUseItem(const unsigned int ID)
 void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 {
 	Item* item = this->zPlayerInventory->SearchAndGetItem(ItemID);
+	bool success = false;
 
 	if (!item)
 	{
@@ -168,7 +169,20 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			return;
 		}
 
-		this->zPlayerInventory->EquipRangedWeapon(rWpn);
+		Item* prev = NULL;
+		prev = this->zPlayerInventory->EquipRangedWeapon(rWpn, success);
+
+		if(!success)
+			return;
+
+		if(prev)
+		{
+			Gui_Item_Data gid = Gui_Item_Data(prev->GetID(), prev->GetWeight(), 0, 
+			prev->GetItemName(), prev->GetIconPath(), prev->GetItemDescription(), prev->GetItemType(), prev->GetItemSubType());
+
+			this->zGuiManager->AddInventoryItemToGui(gid);
+			this->zGuiManager->UnEquipItem(prev->GetID(), 0);
+		}
 
 		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), 0, 
 			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType(), rWpn->GetItemSubType());
@@ -193,32 +207,28 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			return;
 		}
 		
-		Projectile* oldProjectile = this->zPlayerInventory->GetProjectile();
-		if (oldProjectile)
+		int weigth = this->zPlayerInventory->GetTotalWeight();
+		Item* prev = NULL;
+		prev = this->zPlayerInventory->EquipProjectile(projectile);
+
+		if(prev)
 		{
-			if (oldProjectile->GetItemType() != projectile->GetItemType())
+			//If weigth has increased
+			if(weigth < this->zPlayerInventory->GetTotalWeight())
 			{
-				if(this->zPlayerInventory->AddItem(oldProjectile))
-				{
-					Gui_Item_Data gid = Gui_Item_Data(oldProjectile->GetID(), oldProjectile->GetWeight(), oldProjectile->GetStackSize(), 
-						oldProjectile->GetItemName(), oldProjectile->GetIconPath(), oldProjectile->GetItemDescription(), oldProjectile->GetItemType(), oldProjectile->GetItemSubType());
-
-					this->zGuiManager->AddInventoryItemToGui(gid);
-
-					this->zPlayerInventory->UnEquipProjectile();
-				}
-				else
-				{
-					return;
-				}
+				//Delete projectile
+				this->zPlayerInventory->RemoveItem(projectile);
+				projectile = this->zPlayerInventory->GetProjectile();
 			}
 			else
 			{
-				int stacks = oldProjectile->GetStackSize() + projectile->GetStackSize();
-				projectile->SetStackSize(stacks);
+				Gui_Item_Data gid = Gui_Item_Data(prev->GetID(), prev->GetWeight(), prev->GetStackSize(), 
+					prev->GetItemName(), prev->GetIconPath(), prev->GetItemDescription(), prev->GetItemType(), prev->GetItemSubType());
+
+				this->zGuiManager->AddInventoryItemToGui(gid);
+				this->zGuiManager->UnEquipItem(prev->GetID(), 0);
 			}
 		}
-		this->zPlayerInventory->EquipProjectile(projectile);
 
 		Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
 			projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType(), projectile->GetItemSubType());
@@ -243,7 +253,22 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			return;
 		}
 
-		this->zPlayerInventory->EquipMeleeWeapon(mWpn);
+		Item* prev = NULL;
+		prev = this->zPlayerInventory->EquipMeleeWeapon(mWpn, success);
+
+		if(!success)
+			return;
+
+		if(prev)
+		{
+			Gui_Item_Data gid = Gui_Item_Data(prev->GetID(), prev->GetWeight(), 0, 
+				prev->GetItemName(), prev->GetIconPath(), prev->GetItemDescription(), prev->GetItemType(), prev->GetItemSubType());
+
+			this->zGuiManager->AddInventoryItemToGui(gid);
+			this->zGuiManager->UnEquipItem(prev->GetID(), 0);
+		}
+		else
+			return;
 
 		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), 0, 
 			mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType(), mWpn->GetItemSubType());
@@ -754,14 +779,29 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		MaloW::Debug("Items wasn't found in the switch case type: " + MaloW::convertNrToString((float)itemType));
 		break;
 	}
+
+	if (!item->GetStacking())
+	{
+		itemStackSize = 0;
+	}
+
 	if (this->zPlayerInventory->AddItem(item))
 	{
-		if (!item->GetStacking())
+		Projectile* projectile = this->zPlayerInventory->GetProjectile();
+
+		if(!item && projectile && (projectile->GetItemSubType() == itemSubType))
 		{
-			itemStackSize = 0;
+			Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
+				projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType(), projectile->GetItemSubType());
+
+			this->zGuiManager->RemoveInventoryItemFromGui(projectile->GetID(), projectile->GetStackSize());
+			this->zGuiManager->EquipItem(PROJECTILE, gid);
 		}
-		Gui_Item_Data gid = Gui_Item_Data(ID, itemWeight, itemStackSize, itemName, itemIconFilePath, itemDescription, itemType, itemSubType);
-		this->zGuiManager->AddInventoryItemToGui(gid);
+		else
+		{
+			Gui_Item_Data gid = Gui_Item_Data(ID, itemWeight, itemStackSize, itemName, itemIconFilePath, itemDescription, itemType, itemSubType);
+			this->zGuiManager->AddInventoryItemToGui(gid);
+		}
 	}
 	else
 	{

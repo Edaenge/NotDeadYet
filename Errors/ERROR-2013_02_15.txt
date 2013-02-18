@@ -1,4 +1,4 @@
-Tar upp massa bows men kan bara equip på en av dem (första i listan?)
+Tar upp massa bows men kan bara equip på en av dem (första i listan?) : fixed
 
 
 Saker man tar upp finns inte i inventory (no clue why)
