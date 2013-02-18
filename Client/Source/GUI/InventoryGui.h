@@ -74,7 +74,7 @@ public:
 
 	Selected_Item_ReturnData CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 	bool AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
-	bool RemoveItemFromGui(const int ID, int stacks);
+	bool RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	void EquipItem(int type, const Gui_Item_Data gid, bool guiOpen);
 	void UnEquipItem(const int ID, int stacks);
 
@@ -91,4 +91,8 @@ private:
 	Vector2 zWeaponSlots[WEAPONSLOTS];
 	float zSlotImageWidth;
 	float zSlotImageHeight;
+
+	float zMaxWeight;
+	float zCurrentWeight;
+	iText* zWeightText;
 };

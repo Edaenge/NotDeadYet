@@ -34,7 +34,7 @@ public:
 	void ToggleInventoryGui();
 	void HideInventoryGui();
 	void AddInventoryItemToGui(const Gui_Item_Data gid);
-	void RemoveInventoryItemFromGui(const int ID, int stacks);
+	void RemoveInventoryItemFromGui(const Gui_Item_Data gid);
 	void EquipItem(int type, const Gui_Item_Data gid);
 	void UnEquipItem(const int ID, int stacks);
 	void ShowCircularItemGui();
