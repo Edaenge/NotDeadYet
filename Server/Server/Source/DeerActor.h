@@ -9,6 +9,9 @@ public:
 	DeerActor(PhysicsObject* pObj);
 	virtual ~DeerActor();
 
+private:
+
+	
 	/*
 	void InitDeer() throw(...);
 	virtual void Update(float deltaTime);

@@ -60,6 +60,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 
 	//Create player data
 	actor->SetStaticMesh(mesh);
+	actor->SetModel(filename);
 
 	if (!this->zCreated)
 	{
@@ -70,10 +71,17 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 
 			this->zGuiManager = new GuiManager(this->zEng);
 			this->zCreated = true;
-
+			
 			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(filename);
-			auto stateOffsetsIterator = this->zStateCameraOffset.find(STATE_IDLE);
-			this->zMeshOffset = meshOffsetsIterator->second;
+			if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
+			{
+				this->zMeshOffset = meshOffsetsIterator->second;
+			}
+			else
+			{
+				this->zMeshOffset = Vector3();
+			}
+			
 
 			this->zActorManager->SetCameraOffset(this->zMeshOffset);
 			this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset);

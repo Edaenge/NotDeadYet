@@ -1,11 +1,9 @@
-100   //health
-100   //max fear
 1     //zFearInterval
-10    //zMinimumDistance
+30    //zMinimumDistance
 0.4   //zFieldOfView
 2     //zThreatMovementSpeedThreshold
 0.2   //zConfidenceKoef
-20    //zTooCloseInDistance
+10    //zTooCloseInDistance
 10    //zExtraFearWithNumberOfPlayers
 12    //zExtraFearWithCloseProximity
 4     //zExtraFearAtSight

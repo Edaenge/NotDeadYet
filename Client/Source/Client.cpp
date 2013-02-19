@@ -35,6 +35,8 @@ Client::Client()
 
 	this->zMeshCameraOffsets["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zMeshCameraOffsets["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zMeshCameraOffsets["Media/Models/Ball.obj"] = Vector3();
+
 	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_WALKING] = Vector3(0.0f, 0.0f, 0.0f);
@@ -474,7 +476,7 @@ void Client::CheckPlayerSpecificKeys()
 				std::string msg =  "";
 				for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
 				{
-					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (*it));
+					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (float)(*it));
 				}
 				this->zServerChannel->Send(msg);
 			}
@@ -557,56 +559,7 @@ void Client::CheckPlayerSpecificKeys()
 void Client::CheckGhostSpecificKeys()
 {
 	this->CheckKey(KEY_JUMP);
-
-	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed(VK_MENU))
-	{
-		//Play as Deer
-		if (this->zEng->GetKeyListener()->IsPressed('I'))
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
-			{
-				this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
-
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
-
-				this->zServerChannel->Send(msg);
-			}
-		}
-		//Play as Wolf
-		else if (this->zEng->GetKeyListener()->IsPressed('O'))
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
-			{
-				this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
-
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 1);
-
-				this->zServerChannel->Send(msg);
-			}
-		}
-		//Play as Bear
-		else if (this->zEng->GetKeyListener()->IsPressed('P'))
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
-			{
-				this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, true);
-
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
-
-				this->zServerChannel->Send(msg);
-			}
-		}
-		else
-		{
-			if(this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
-				this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, false);
-		}
-	}
-	else
-	{
-			if(this->zKeyInfo.GetKeyState(KEY_ANIMAL_SWAP))
-				this->zKeyInfo.SetKeyState(KEY_ANIMAL_SWAP, false);
-	}
+	this->CheckKey(KEY_DUCK);
 }
 
 void Client::CheckNonGhostInput()
@@ -1096,13 +1049,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if (msg.find(M_DEAD_ACTOR.c_str()) == 0)
 	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TAKE_DAMAGE, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
 
-		if (this->zID == id)
-		{
-			this->zEng->GetCamera()->RemoveMesh();
-			this->zCreated = false;
-		}
 	}
 	//Actors
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
@@ -1178,6 +1126,24 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	else if(msg.find(M_SELF_ID.c_str()) == 0)
 	{
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
+
+		this->zEng->GetCamera()->RemoveMesh();
+		this->zCreated = false;
+		if (Actor* actor = this->zActorManager->GetActor(this->zID))
+		{
+			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(actor->GetModel());
+			if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
+			{
+				this->zMeshOffset = meshOffsetsIterator->second;
+			}
+			else
+			{
+				this->zMeshOffset = Vector3();
+			}
+			this->zActorManager->SetCameraOffset(this->zMeshOffset);
+			this->zCreated = true;
+			this->zEng->GetCamera()->SetMesh(actor->GetMesh(), this->zMeshOffset);
+		}
 		this->zActorType = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TYPE, msgArray[1]);
 	}
 	else if(msg.find(M_CONNECTED.c_str()) == 0)
