@@ -16,6 +16,7 @@
 #include "BearActor.h"
 #include "ItemActor.h"
 #include "PlayerWolfBehavior.h"
+#include "AIDeerBehavior.h"
 #include "AIWolfBehavior.h"
 #include "WorldActor.h"
 #include "ItemActor.h"
@@ -108,6 +109,11 @@ void Game::SpawnAnimalsDebug()
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj", position);
 	DeerActor* dActor = new DeerActor(deerPhysics);
+
+	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
+
+	zBehaviors.insert(aiDeerBehavior);
+
 	dActor->SetPosition(position);
 	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 	this->zActorManager->AddActor(dActor);
