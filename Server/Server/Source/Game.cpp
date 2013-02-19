@@ -16,14 +16,13 @@
 #include "BearActor.h"
 #include "ItemActor.h"
 #include "PlayerWolfBehavior.h"
+#include "AIDeerBehavior.h"
 #include "AIWolfBehavior.h"
 #include "WorldActor.h"
 #include "ItemActor.h"
 #include "Physics.h"
 #include "ClientServerMessages.h"
 
-
-//Temporary
 #include "ItemLookup.h"
 
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
@@ -108,6 +107,11 @@ void Game::SpawnAnimalsDebug()
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj", position);
 	DeerActor* dActor = new DeerActor(deerPhysics);
+
+	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
+
+	zBehaviors.insert(aiDeerBehavior);
+
 	dActor->SetPosition(position);
 	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 	this->zActorManager->AddActor(dActor);
@@ -237,7 +241,7 @@ bool Game::Update( float dt )
 			ItemActor* newActor = ConvertToItemActor(temp, oldActor);
 			
 			i = zBehaviors.erase(i);
-			SAFE_DELETE(temp);
+			delete temp, temp = NULL;
 
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
@@ -258,23 +262,30 @@ bool Game::Update( float dt )
 	// Collisions Projectiles Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
-		if(ProjectileActor* projActor = dynamic_cast<ProjectileActor*>((*i)->GetActor()))
+		if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
 		{
-			Vector3 scale = projActor->GetScale();
-			float middle = (0.85f * max(max(scale.x, scale.y),scale.z)) / 2; //Hard coded
+			ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(projBehavior->GetActor());
+			if(!projActor)
+			{
+				MaloW::Debug("ProjectileActor is null. Arrow collision detectin in Game.cpp, Update.");;
+				continue;
+			}
 
+			//Get Data
+			Vector3 scale = projActor->GetScale();
+			float length = projBehavior->GetLenght();
+
+			//Calculate the arrow
+			float middle = (length * max(max(scale.x, scale.y),scale.z)) / 2; //Hard coded
+
+			//Check collision, returns the result
 			Actor* collide = this->zActorManager->CheckCollisions(projActor, middle); 
 
 			if(BioActor* victim = dynamic_cast<BioActor*>(collide))
 			{
-				if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
-					projBehavior->Stop();
-				else
-				{
-					MaloW::Debug("Proj. collision detection failed.");
-					continue;
-				}
-
+				//Stop arrow
+				projBehavior->Stop();
+				//Take damage
 				victim->TakeDamage(projActor->GetDamage(), projActor);
 			}
 		}
@@ -897,10 +908,14 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 					}
 					if (food->GetStackSize() <= 0)
 					{
-						if(inv->RemoveItem(food))
+						item = inv->RemoveItem(food);
+
+						if(item)
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
 							cd->Send(msg);
+							
+							delete item, item = NULL;
 						}
 					}
 				}
@@ -942,10 +957,13 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 					}
 					if (bandage->GetStackSize() <= 0)
 					{
-						if(inv->RemoveItem(bandage))
+						item = inv->RemoveItem(bandage);
+
+						if(item)
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
 							cd->Send(msg);
+							delete item, item = NULL;
 						}
 					}
 				}
@@ -1013,12 +1031,14 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//Decrease stack
 				arrow->Use();
 				inventory->RemoveItemStack(arrow->GetID(), 1);
+
 				if (arrow->GetStackSize() <= 0)
 				{
 					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
 					msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_PROJECTILE);
 					cd->Send(msg);
-					inventory->RemoveItem(arrow);
+					item = inventory->RemoveItem(arrow);
+					SAFE_DELETE(item);
 					inventory->UnEquipProjectile();
 				}
 				//Send feedback message
@@ -1103,11 +1123,15 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 						}
 						if (material->GetStackSize() <= 0)
 						{
-							if (inv->RemoveItem(material))
+							item = inv->RemoveItem(material);
+
+							if (item)
 							{
 								ID = material->GetID();
 								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
 								cd->Send(msg);
+
+								delete item, item = NULL;
 							}
 						}
 					}
@@ -1208,6 +1232,7 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 	Item* ret = NULL;
 	bool success = false;
 
+
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
 		int weigth = inventory->GetTotalWeight();
@@ -1216,7 +1241,8 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 		
 		if(weigth > inventory->GetTotalWeight())
 		{
-			inventory->RemoveItem(proj);
+			Item* temp = inventory->RemoveItem(proj);
+			SAFE_DELETE(temp);
 		}
 
 		slot = EQUIPMENT_SLOT_PROJECTILE;
