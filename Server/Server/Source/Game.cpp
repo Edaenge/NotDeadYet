@@ -241,7 +241,7 @@ bool Game::Update( float dt )
 			ItemActor* newActor = ConvertToItemActor(temp, oldActor);
 			
 			i = zBehaviors.erase(i);
-			SAFE_DELETE(temp);
+			delete temp, temp = NULL;
 
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
@@ -262,23 +262,30 @@ bool Game::Update( float dt )
 	// Collisions Projectiles Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
-		if(ProjectileActor* projActor = dynamic_cast<ProjectileActor*>((*i)->GetActor()))
+		if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
 		{
-			Vector3 scale = projActor->GetScale();
-			float middle = (0.85f * max(max(scale.x, scale.y),scale.z)) / 2; //Hard coded
+			ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(projBehavior->GetActor());
+			if(!projActor)
+			{
+				MaloW::Debug("ProjectileActor is null. Arrow collision detectin in Game.cpp, Update.");;
+				continue;
+			}
 
+			//Get Data
+			Vector3 scale = projActor->GetScale();
+			float length = projBehavior->GetLenght();
+
+			//Calculate the arrow
+			float middle = (length * max(max(scale.x, scale.y),scale.z)) / 2; //Hard coded
+
+			//Check collision, returns the result
 			Actor* collide = this->zActorManager->CheckCollisions(projActor, middle); 
 
 			if(BioActor* victim = dynamic_cast<BioActor*>(collide))
 			{
-				if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
-					projBehavior->Stop();
-				else
-				{
-					MaloW::Debug("Proj. collision detection failed.");
-					continue;
-				}
-
+				//Stop arrow
+				projBehavior->Stop();
+				//Take damage
 				victim->TakeDamage(projActor->GetDamage(), projActor);
 			}
 		}
@@ -722,6 +729,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 {
 	Actor* actor = this->zActorManager->GetActor(objID);
 	Item* item = NULL;
+	bool stacked = false;
 
 	auto playerActor = this->zPlayers.find(cd);
 	auto* pBehaviour = playerActor->second->GetBehavior();
@@ -768,7 +776,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 					msg += bandage->ToMessageString(&NMC);
 				}
 				
-				if(pActor->GetInventory()->AddItem(item))
+				if(pActor->GetInventory()->AddItem(item, stacked))
 				{
 					cd->Send(msg);
 					this->zActorManager->RemoveActor(iActor);
@@ -821,7 +829,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 						msg += bandage->ToMessageString(&NMC);
 					}
 
-					if(pActor->GetInventory()->AddItem(item))
+					if(pActor->GetInventory()->AddItem(item, stacked))
 					{
 						bActor->GetInventory()->RemoveItem(item);
 						cd->Send(msg);
@@ -905,10 +913,14 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 					}
 					if (food->GetStackSize() <= 0)
 					{
-						if(inv->RemoveItem(food))
+						item = inv->RemoveItem(food);
+
+						if(item)
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
 							cd->Send(msg);
+							
+							delete item, item = NULL;
 						}
 					}
 				}
@@ -950,10 +962,13 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 					}
 					if (bandage->GetStackSize() <= 0)
 					{
-						if(inv->RemoveItem(bandage))
+						item = inv->RemoveItem(bandage);
+
+						if(item)
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
 							cd->Send(msg);
+							delete item, item = NULL;
 						}
 					}
 				}
@@ -1021,12 +1036,14 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//Decrease stack
 				arrow->Use();
 				inventory->RemoveItemStack(arrow->GetID(), 1);
+
 				if (arrow->GetStackSize() <= 0)
 				{
 					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
 					msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_PROJECTILE);
 					cd->Send(msg);
-					inventory->RemoveItem(arrow);
+					item = inventory->RemoveItem(arrow);
+					SAFE_DELETE(item);
 					inventory->UnEquipProjectile();
 				}
 				//Send feedback message
@@ -1084,7 +1101,6 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 				{
 					if (material->GetItemSubType() == ITEM_SUB_TYPE_SMALL_STICK)
 					{
-						
 						if (material->IsUsable())
 						{
 							//Use the Materials.
@@ -1120,13 +1136,16 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 							if (temp_Arrow)
 							{
 								Projectile* new_Arrow = new Projectile((*temp_Arrow));
-								Item* temp = new_Arrow;
 
-								if (inv->AddItem(temp))
+								bool stacked;
+								if (inv->AddItem(new_Arrow, stacked))
 								{
 									msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 									msg += new_Arrow->ToMessageString(&NMC);
 									cd->Send(msg);
+
+									if (stacked)
+										SAFE_DELETE(new_Arrow);
 								}
 							}
 						}
@@ -1134,9 +1153,7 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
 							cd->Send(msg);
-						}
-						
-					}
+						}					}
 					else if (material->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK || material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)
 					{
 						Item* tempItem = NULL;
@@ -1163,7 +1180,6 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 								ID = material->GetID();
 								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 								cd->Send(msg);
-
 								//Get the number of Materials Being Removed.
 								stackRemoved = material->GetRequiredStacksToCraft();
 								//Remove stacks from inventory.
@@ -1217,13 +1233,15 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 								if (temp_bow)
 								{
 									RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
-									Item* temp = new_Bow;
-
-									if (inv->AddItem(temp))
+									bool stacked = false;
+									if (inv->AddItem(new_Bow, stacked))
 									{
 										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 										msg += new_Bow->ToMessageString(&NMC);
 										cd->Send(msg);
+
+										if (stacked)
+											SAFE_DELETE(new_Bow);
 									}
 								}
 							}
@@ -1292,6 +1310,7 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 	Item* ret = NULL;
 	bool success = false;
 
+
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
 		int weigth = inventory->GetTotalWeight();
@@ -1300,7 +1319,8 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 		
 		if(weigth > inventory->GetTotalWeight())
 		{
-			inventory->RemoveItem(proj);
+			Item* temp = inventory->RemoveItem(proj);
+			SAFE_DELETE(temp);
 		}
 
 		slot = EQUIPMENT_SLOT_PROJECTILE;

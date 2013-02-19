@@ -234,7 +234,8 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			if(weigth < this->zPlayerInventory->GetTotalWeight())
 			{
 				//Delete projectile
-				this->zPlayerInventory->RemoveItem(projectile);
+				Item* temp = this->zPlayerInventory->RemoveItem(projectile);
+				SAFE_DELETE(temp);
 				projectile = this->zPlayerInventory->GetProjectile();
 			}
 			else
@@ -288,8 +289,6 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			this->zGuiManager->AddInventoryItemToGui(gid);
 			this->zGuiManager->UnEquipItem(gid);
 		}
-		else
-			return;
 
 		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), 0, 
 			mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType(), mWpn->GetItemSubType());
@@ -515,7 +514,8 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 
 				this->zGuiManager->UnEquipItem(gid);
 
-				this->zPlayerInventory->RemoveItem(ItemID);
+				Item* temp = this->zPlayerInventory->RemoveItem(ItemID);
+				SAFE_DELETE(temp);
 
 				this->zPlayerInventory->UnEquipRangedWeapon();
 			}
@@ -541,7 +541,8 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 
 				this->zGuiManager->UnEquipItem(gid);
 
-				this->zPlayerInventory->RemoveItem(ItemID);
+				Item* temp = this->zPlayerInventory->RemoveItem(ItemID);
+				SAFE_DELETE(temp);
 
 				this->zPlayerInventory->UnEquipMeleeWeapon();
 			}
@@ -564,13 +565,15 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 
 				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), totalWeight, projectile->GetStackSize(), 
 					projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType(), projectile->GetItemSubType());
+				
+				Item* temp = this->zPlayerInventory->RemoveItem(projectile);
+				SAFE_DELETE(temp);
 
 
 				this->zGuiManager->UnEquipItem(gid);
 
 				this->zPlayerInventory->RemoveItem(projectile);
-					
-				this->zPlayerInventory->UnEquipProjectile();
+									this->zPlayerInventory->UnEquipProjectile();
 			}
 		}
 		return;
@@ -630,7 +633,9 @@ void Client::HandleRemoveInventoryItem(const unsigned int ID)
 	if (item)
 	{
 		int stackSize = item->GetStackSize();
-		if(this->zPlayerInventory->RemoveItem(item))
+		item = this->zPlayerInventory->RemoveItem(item);
+
+		if(item)
 		{
 			unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 
@@ -640,7 +645,10 @@ void Client::HandleRemoveInventoryItem(const unsigned int ID)
 			this->zGuiManager->RemoveInventoryItemFromGui(gid);
 			if (Messages::FileWrite())
 				Messages::Debug("Item Removed on Client");
+
+			delete item, item = NULL;
 		}
+
 	}
 	
 }
@@ -825,12 +833,12 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	{
 		itemStackSize = 0;
 	}
-
-	if (this->zPlayerInventory->AddItem(item))
+	bool stacked = false;
+	if (this->zPlayerInventory->AddItem(item, stacked))
 	{
 		Projectile* projectile = this->zPlayerInventory->GetProjectile();
 
-		if(!item && projectile && (projectile->GetItemSubType() == itemSubType))
+		if(stacked && projectile && (projectile->GetItemSubType() == itemSubType))
 		{
 			unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 
