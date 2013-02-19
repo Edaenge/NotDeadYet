@@ -35,6 +35,7 @@ public:
 	virtual ~Inventory();
 	/*! Search for the Item in and returns its position*/
 	int Search(const unsigned int ID) const;
+	int Search(Item* item) const;
 	/*! Adds an item to the array*/
 	bool AddItem(Item*& item);
 	/*! Returns the item at the position */
@@ -43,9 +44,9 @@ public:
 	std::vector<Item*> GetItems() const;
 	/*! Search for the item and returns it if found or NULL if not found*/
 	Item* SearchAndGetItem(const unsigned int ID) const;
-	/*! Deletes the item*/
-	bool RemoveItem(const unsigned int index);
-	bool RemoveItem(Item* item);
+	/*! Removes the item from the list. Resturns the removed item.*/
+	Item* RemoveItem(const unsigned int ID);
+	Item* RemoveItem(Item* item);
 	/*! Returns blocked slots*/
 	std::vector<bool> GetBlockedSlots() const;
 	/*! Get the status of the slot at Position*/
@@ -59,10 +60,6 @@ public:
 	/*! Removes a stack from Item*/
 	bool RemoveItemStack(const unsigned int ID, const unsigned int numberOfStacks = 1);
 	Item* SearchAndGetItemFromType(const int Type, const int SubType);
-	/*! Returns Item and removes it from inventory
-		Doesn't delete the Item.
-	*/
-	Item* EraseItem(const unsigned int ID);
 
 	//Equipment
 	/*! Equips Weapon, returns previous equipped item.*/
@@ -91,7 +88,9 @@ public:
 	void UnEquipGear(const unsigned int type);
 
 	bool SwapWeapon();
-
+private:
+	/*Removes the item from the list.*/
+	Item* Erase(const unsigned int Index);
 private:
 	/*! Array of items*/
 	std::vector<Item*> zItems;
