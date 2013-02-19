@@ -72,8 +72,8 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 			continue;
 
 		//check length, ignore if too far.
-		Vector3 vec = actor->GetPosition() - (*it)->GetPosition();
-		if(vec.GetLength() > rangeWithin)
+		float length = ( actor->GetPosition() - (*it)->GetPosition() ).GetLength();
+		if(length > rangeWithin)
 			continue;
 
 		if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
@@ -92,6 +92,43 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 		
 	}
 
+	//Returns the closest actor
+	return collide;
+}
+
+Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
+{
+	if(!actor)
+		return NULL;
+
+	Actor* collide = NULL;
+	float distance;
+
+	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
+	{
+		//If same, ignore
+		if((*it) == actor)
+			continue;
+
+		//If not BioActor, ignore
+		BioActor* target = dynamic_cast<BioActor*>(*it);
+		if(!target)
+			continue;
+
+		//If the BioActor is dead, ignore
+		if(!target->IsAlive())
+			continue;
+
+		//Check distance
+		distance = ( actor->GetPosition() - (*it)->GetPosition() ).GetLength();
+		if(distance < range)
+		{
+			range = distance;
+			collide = (*it);
+		}
+	}
+
+	//Returns the closest actor
 	return collide;
 }
 

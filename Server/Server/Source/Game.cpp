@@ -22,8 +22,8 @@
 #include "ItemActor.h"
 #include "Physics.h"
 #include "ClientServerMessages.h"
-
 #include "ItemLookup.h"
+#include "PlayerGhostBehavior.h"
 
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
@@ -259,15 +259,16 @@ bool Game::Update( float dt )
 	// Update World
 	zWorld->Update();
 
-	// Collisions Projectiles Tests
+	// Collisions Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
+		//Projectiles
 		if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
 		{
 			ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(projBehavior->GetActor());
 			if(!projActor)
 			{
-				MaloW::Debug("ProjectileActor is null. Arrow collision detectin in Game.cpp, Update.");;
+				MaloW::Debug("ProjectileActor is null. Arrow collision detection in Game.cpp, Update.");;
 				continue;
 			}
 
@@ -276,7 +277,7 @@ bool Game::Update( float dt )
 			float length = projBehavior->GetLenght();
 
 			//Calculate the arrow
-			float middle = (length * max(max(scale.x, scale.y),scale.z)) / 2; //Hard coded
+			float middle = (length * max(max(scale.x, scale.y),scale.z)) / 2;
 
 			//Check collision, returns the result
 			Actor* collide = this->zActorManager->CheckCollisions(projActor, middle); 
@@ -287,6 +288,33 @@ bool Game::Update( float dt )
 				projBehavior->Stop();
 				//Take damage
 				victim->TakeDamage(projActor->GetDamage(), projActor);
+			}
+		}
+		//If ghost, ignore
+		else if( dynamic_cast<PlayerGhostBehavior*>(*i) )
+		{
+			continue;
+		}
+		//Others
+		else
+		{
+			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
+
+			//If player hasn't moved, ignore
+			if( pActor && !pActor->HasMoved() )
+				continue;
+
+			Actor* collide = NULL;
+			float range = 1.5f; //hard coded
+
+			collide = this->zActorManager->CheckCollisionsByDistance(pActor, range);
+
+			if(BioActor* target = dynamic_cast<BioActor*>(collide))
+			{
+				if( target->HasMoved() )
+					target->RewindPosition();
+
+				pActor->RewindPosition();
 			}
 		}
 	}

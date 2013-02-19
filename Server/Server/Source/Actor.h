@@ -64,6 +64,7 @@ public:
 class Actor : public Observed
 {
 	Vector3 zPos;
+	Vector3 zPreviousPos;
 	Vector4 zRot;
 	Vector3 zDir;
 	Vector3 zScale;
@@ -76,6 +77,8 @@ public:
 	virtual ~Actor();
 	
 	inline unsigned int GetID() const { return this->zID; }
+	/*! Rewinds to previous position.*/
+	inline virtual void RewindPosition();
 
 	// Set Transformation Functions
 	void SetPosition(const Vector3& pos);
@@ -87,6 +90,7 @@ public:
 
 	// Get Transformation Functions
 	inline const Vector3& GetPosition() const { return zPos; }
+	inline const Vector3& GetPreviousPos() const { return zPreviousPos; }
 	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
 	inline const Vector3& GetDir() const { return zDir; }

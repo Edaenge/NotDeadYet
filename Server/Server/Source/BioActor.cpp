@@ -48,7 +48,6 @@ BioActor::~BioActor()
 	SAFE_DELETE(this->zInventory);
 }
 
-
 bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 {
 	// Notify Damage
@@ -119,16 +118,11 @@ bool BioActor::Sprint(float dt)
 	return true;
 }
 
-void BioActor::RewindPosition()
-{
-	SetPosition(zPreviousPos);
-}
-
 bool BioActor::HasMoved()
 {
 	Vector3 curPos = GetPosition();
 
-	if(curPos == this->zPreviousPos)
+	if(curPos == GetPreviousPos())
 		return false;	
 	return true;
 }
