@@ -59,6 +59,8 @@ bool AIDeerBehavior::InitValues()
 	this->zFearMax = 100.0f;
 	DeerActor* dActor = dynamic_cast<DeerActor*>(this->zActor);
 	this->SetPreviousHealth( dActor->GetHealth());
+
+	return true;
 }
 
 bool AIDeerBehavior::SetValuesFromFile()
