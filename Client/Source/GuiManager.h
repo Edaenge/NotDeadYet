@@ -36,7 +36,7 @@ public:
 	void AddInventoryItemToGui(const Gui_Item_Data gid);
 	void RemoveInventoryItemFromGui(const Gui_Item_Data gid);
 	void EquipItem(int type, const Gui_Item_Data gid);
-	void UnEquipItem(const int ID, int stacks);
+	void UnEquipItem( const Gui_Item_Data gid );
 	void ShowCircularItemGui();
 	void HideCircularItemGui();
 	void ShowLootingGui(std::vector<Looting_Gui_Data> gui_Item_Data);

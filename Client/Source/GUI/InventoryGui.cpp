@@ -80,9 +80,9 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 	int temp = gid.zStacks;
 	if(temp == 0)
 		temp = 1;
-	this->zCurrentWeight = this->zCurrentWeight + (gid.zWeight * temp);
+	this->zCurrentWeight += gid.zWeight * temp;
 	if(this->zWeightText)
-		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + "/" + 
+		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + 
 		MaloW::convertNrToString(this->zMaxWeight)).c_str());
 
 	int size = this->zSlotGui.size();
@@ -119,7 +119,7 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 	float temp = gid.zStacks;
 	if(temp == 0)
 		temp = 1;
-	this->zCurrentWeight -= gid.zStacks * temp;
+	this->zCurrentWeight -= gid.zWeight * temp;
 	if(this->zWeightText)
 		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
 
@@ -189,9 +189,12 @@ bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
 	}
 	if(!this->zWeightText)
 	{
+		float windowHeight = (float)(GetGraphics()->GetEngineParameters().WindowHeight);
+		float dx = ((float)windowHeight * 4.0f) / 3.0f;
+
 		this->zWeightText = ge->CreateText((MaloW::convertNrToString(
 			this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str(), 
-			Vector2(100,100), 1, "Media/Fonts/1");
+			Vector2(this->zX + ((10.0f / 1024.0f) * dx), this->zY + ((10.0f / 768.0f) * windowHeight)), 1, "Media/Fonts/1");
 	}
 
 	return true;
@@ -319,6 +322,13 @@ std::string InventoryGui::GetImageName( unsigned int position )
 
 void InventoryGui::EquipItem( int type, const Gui_Item_Data gid, bool guiOpen )
 {
+	float temp = gid.zStacks;
+	if(temp == 0)
+		temp = 1;
+	this->zCurrentWeight += gid.zWeight * temp;
+	if(this->zWeightText)
+		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
+
 	int size = zWeaponSlotGui.size();
 	for(int i = 0; i < size; i++)
 	{
@@ -337,12 +347,19 @@ void InventoryGui::EquipItem( int type, const Gui_Item_Data gid, bool guiOpen )
 	
 }
 
-void InventoryGui::UnEquipItem( const int ID, int stacks )
+void InventoryGui::UnEquipItem(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
+	float temp = gid.zStacks;
+	if(temp == 0)
+		temp = 1;
+	this->zCurrentWeight -= gid.zWeight * temp;
+	if(this->zWeightText)
+		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
+
 	int size = zWeaponSlotGui.size();
 	for(int i = 0; i < size; i++)
 	{
-		if(zWeaponSlotGui.at(i)->GetID() == ID)
+		if(zWeaponSlotGui.at(i)->GetID() == gid.zID)
 		{
 			InventorySlotGui* InvGui = this->zWeaponSlotGui.at(i);
 			InvGui->RemoveFromRenderer(GetGraphics());

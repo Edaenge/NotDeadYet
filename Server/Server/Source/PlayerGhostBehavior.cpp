@@ -38,8 +38,7 @@ bool PlayerGhostBehavior::Update( float dt )
 
 	moveDir += currentPlayerRight * (float)(keyStates.GetKeyState(KEY_RIGHT) - keyStates.GetKeyState(KEY_LEFT));
 
-	if (keyStates.GetKeyState(KEY_JUMP))
-		moveDir += currentPlayerUp;
+	moveDir += currentPlayerUp * (float)(keyStates.GetKeyState(KEY_JUMP) - keyStates.GetKeyState(KEY_DUCK));
 
 	moveDir *= 10.0f;
 
@@ -53,7 +52,7 @@ bool PlayerGhostBehavior::Update( float dt )
 
 	newPlayerPos = currentPlayerPos + this->zVelocity * dt;
 
-	float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ());
+	float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ()) + 1.0f;
 	if(newGroundHeight > newPlayerPos.y)
 	{
 		newPlayerPos.y = newGroundHeight;

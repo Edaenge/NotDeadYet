@@ -76,7 +76,7 @@ public:
 	bool AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	bool RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	void EquipItem(int type, const Gui_Item_Data gid, bool guiOpen);
-	void UnEquipItem(const int ID, int stacks);
+	void UnEquipItem(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 
 	void FadeOut(float value);
 	void ShowGui();

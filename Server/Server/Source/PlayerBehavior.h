@@ -18,4 +18,5 @@ public:
 protected:
 	Player* zPlayer;
 	Vector3 zVelocity;
+	float	zVelDown;
 };

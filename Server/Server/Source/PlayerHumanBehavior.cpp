@@ -71,11 +71,19 @@ bool PlayerHumanBehavior::Update( float dt )
 	bool isOnGround = false;
 	float heightAboveGround = 0.0f;
 
+	// Apply Velocity
+	Vector3 newPosition = Vector3(0, 0, 0);
+
 	try
 	{
 		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
 		heightAboveGround = curPosition.y - groundHeight;
-		if( heightAboveGround <= 0.0f ) isOnGround = true;
+		if( heightAboveGround <= 0.0f ) 
+		{
+			isOnGround = true;
+			curPosition.y = groundHeight;
+			zVelocity.y = 0.0f;
+		}
 	}
 	catch(...)
 	{
@@ -87,10 +95,7 @@ bool PlayerHumanBehavior::Update( float dt )
 		zVelocity -= ( zVelocity * 4.0f ) * dt;
 	}
 
-	BioActor* bActor = dynamic_cast<BioActor*>(zActor);
-
-	// Gravity
-	zVelocity += GRAVITY * dt;
+	newPosition = curPosition + zVelocity * dt;
 
 	// Air Resistance
 	Vector3 airResistance(0.0f, 0.0f, 0.0f);
@@ -104,22 +109,7 @@ bool PlayerHumanBehavior::Update( float dt )
 	airResistance *= 0.5f * AIRDENSITY * DRAGCOOEFICIENT * HUMANSURFACEAREA;
 	zVelocity -= airResistance / HUMANWEIGHT * dt;
 
-	// Apply Velocity
-	Vector3 newPosition = curPosition + zVelocity * dt;
-
-	try
-	{
-		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
-		if ( newPosition.y < groundHeight )
-		{
-			newPosition.y = groundHeight;
-			zVelocity.y = 0.0f;
-		}
-	}
-	catch(...)
-	{
-
-	}
+	BioActor* bActor = dynamic_cast<BioActor*>(zActor);
 	// Check Max Speeds
 	if(keyStates.GetKeyState(KEY_DUCK))
 	{
@@ -173,6 +163,14 @@ bool PlayerHumanBehavior::Update( float dt )
 		}
 	}
 
+	// Gravity
+	if(!isOnGround)
+		this->zVelDown += -9.82f * dt;
+	else
+	{
+		this->zVelDown = 0.0f;
+	}
+	newPosition += Vector3(0.0f, this->zVelDown, 0.0f);
 	//Look so player isn't outside of World.
 	if ( zWorld->IsInside(newPosition.GetXZ()) )
 	{

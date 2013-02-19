@@ -16,14 +16,13 @@
 #include "BearActor.h"
 #include "ItemActor.h"
 #include "PlayerWolfBehavior.h"
+#include "AIDeerBehavior.h"
 #include "AIWolfBehavior.h"
 #include "WorldActor.h"
 #include "ItemActor.h"
 #include "Physics.h"
 #include "ClientServerMessages.h"
 
-
-//Temporary
 #include "ItemLookup.h"
 
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
@@ -31,7 +30,8 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 {
 	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
-
+	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
+	
 	if (mode.find("FFA") == 0 )
 	{
 		zGameMode = new GameModeFFA(this);
@@ -105,18 +105,16 @@ void Game::SpawnAnimalsDebug()
 {
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/Tree_02_v02_r.obj", position);
+	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj", position);
 	DeerActor* dActor = new DeerActor(deerPhysics);
-	dActor->SetPosition(position);
-	dActor->SetScale(Vector3(0.1f, 0.1f, 0.1f));
-	this->zActorManager->AddActor(dActor);
 
-	position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* wolfPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/Tree_02_v02_r.obj", position);
-	WolfActor* wActor = new WolfActor(wolfPhysics);
-	wActor->SetPosition(position);
-	wActor->SetScale(Vector3(0.1f, 0.1f, 0.1f));
-	this->zActorManager->AddActor(wActor);
+	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
+
+	zBehaviors.insert(aiDeerBehavior);
+
+	dActor->SetPosition(position);
+	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	this->zActorManager->AddActor(dActor);
 }
 
 void Game::SpawnItemsDebug()
@@ -363,6 +361,7 @@ void Game::OnEvent( Event* e )
 	{
 		auto playerIterator = this->zPlayers.find(PASE->clientData);
 		Player* player = playerIterator->second;
+
 		if (player)
 		{
 			Behavior* playerBehavior = player->GetBehavior();
