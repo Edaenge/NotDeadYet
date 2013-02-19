@@ -7,7 +7,7 @@
 class WolfActor : public AnimalActor
 {
 public:
-	WolfActor();
+	WolfActor(PhysicsObject* pObj);
 	virtual ~WolfActor();
 	
 	/*

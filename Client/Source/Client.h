@@ -16,6 +16,7 @@
 #include <Packets/ServerFramePacket.h>
 #include <Packets/Packet.h>
 #include "InGameMenu.h"
+#include "PickAnimalMenu.h"
 
 using namespace MaloW;
 
@@ -83,9 +84,12 @@ private:
 	//			  		//
 	//////////////////////
 
+	void CheckGhostSpecificKeys();
+	void CheckNonGhostInput();
+	void CheckPlayerSpecificKeys();
 	void CheckMovementKeys();
 	/*! Handle Keyboard Input */
-	void HandleKeyboardInput();
+	void CheckKeyboardInput();
 	/*! Used to Equip weapons with Keyboard*/
 	void HandleWeaponEquips();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
@@ -151,7 +155,7 @@ private:
 	void HandleDisplayLootData(std::vector<std::string> msgArray);
 protected:
 	virtual void OnEvent(Event* e);
-	
+
 private:
 	/*! Current Client ID*/
 	unsigned int zID;
@@ -194,6 +198,7 @@ private:
 
 	iImage* zBlackImage;
 	InGameMenu* zIgm;
+	PickAnimalMenu* zPam;
 
 	//Player Data
 	float zHealth;

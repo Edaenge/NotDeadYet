@@ -1,11 +1,11 @@
 #include "DeerActor.h"
 
-DeerActor::DeerActor() : 
+DeerActor::DeerActor(PhysicsObject* pObj) : 
 	AnimalActor()
 {
+	this->SetPhysicsObject(pObj);
 	this->SetHealth(80.0f);
 	this->zHealthMax = 80.0f;
-	//this->zType = DEER;
 	/*this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitDeer();*/
 }

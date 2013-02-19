@@ -11,9 +11,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 {
 	MaloW::ClearDebug();
 #ifdef INCLUDE_MODEL_VIEWER
-	//_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//MaloW::Debug("(DEBUG): NotDeadYet: Debug flag set to: _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF). ");
-	MaloW::Debug("(DEBUG): NotDeadYet: vld.h included.");
+	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	MaloW::Debug("(DEBUG): Client: Debug flag set to: _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF). ");
+	MaloW::Debug("(DEBUG): Client: vld.h included.");
 #endif
 
 	if ( !GraphicsInit(hInstance) )

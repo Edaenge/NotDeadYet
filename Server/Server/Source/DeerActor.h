@@ -2,13 +2,11 @@
 
 #include "AnimalActor.h"
 
-
-
 /*This is a deer. It inherits from AnimalActor.*/
 class DeerActor : public AnimalActor
 {
 public:
-	DeerActor();
+	DeerActor(PhysicsObject* pObj);
 	virtual ~DeerActor();
 
 private:

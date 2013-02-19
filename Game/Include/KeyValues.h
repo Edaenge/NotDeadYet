@@ -1,8 +1,7 @@
 #pragma once
 
 //Should be increased if enums are added.
-static const int KEY_CAP = 18;
-
+static const int KEY_CAP = 22;
 enum KEY_BINDINGS
 {
 	KEY_FORWARD,
@@ -19,8 +18,12 @@ enum KEY_BINDINGS
 	MOUSE_LEFT_PRESS,
 	MOUSE_RIGHT_PRESS,
 	KEY_TEST,
+	KEY_KILL,
+	KEY_RESTART,
+	KEY_ANIMAL_SWAP,
 	KEY_EQUIP,
 	KEY_DEBUG_INFO,
 	KEY_READY,
-	KEY_SWAP_EQ
+	KEY_SWAP_EQ,
+	KEY_PICKMENU
 };

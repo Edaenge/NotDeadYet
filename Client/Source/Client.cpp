@@ -34,6 +34,9 @@ Client::Client()
 	this->zMeshID = "Media/Models/temp_guy.obj";
 
 	this->zMeshCameraOffsets["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
+	this->zMeshCameraOffsets["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zMeshCameraOffsets["Media/Models/Ball.obj"] = Vector3();
+
 	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_WALKING] = Vector3(0.0f, 0.0f, 0.0f);
@@ -59,6 +62,7 @@ Client::Client()
 	this->zDamageOpacity = 0.0f;
 	
 	this->zIgm = new InGameMenu();
+	this->zPam = new PickAnimalMenu();
 
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Walk.wav", false);
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
@@ -123,7 +127,7 @@ float Client::Update()
 		if ( zWorldRenderer ) zWorldRenderer->Update();
 	}		
 
-	this->zDamageOpacity -= this->zDeltaTime * 0.25;
+	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
 	
 	if(this->zDamageIndicator != NULL)
 	{
@@ -144,8 +148,6 @@ float Client::Update()
 
 void Client::InitGraphics(const std::string& mapName)
 {
-	this->zEng->CreateSkyBox("Media/skymap.dds");
-
 	LoadEntList("Entities.txt");
 
 	if ( zWorld ) delete zWorld, zWorld=0;
@@ -168,7 +170,7 @@ void Client::InitGraphics(const std::string& mapName)
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 	float length = ((25.0f / 1024.0f) * dx);
 	float xPos = offSet + (0.5f * dx) - length * 0.5f;
-	float yPos = (windowHeight / 2.0f) - length * 0.5f; //Boom
+	float yPos = (windowHeight / 2.0f) - length * 0.5f;
 
 	this->zWorld->Update();
 	this->zWorldRenderer->Update();
@@ -176,9 +178,13 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zEng->DeleteImage(this->zBlackImage);
 	this->zBlackImage = NULL;
 
-	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);	//this->zEng->StartRendering();
+	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);	//this->zEng->StartRendering();
+	
+	if (this->zCrossHair)
+		this->zEng->DeleteImage(this->zCrossHair);
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
+	this->zCrossHair->SetOpacity(0.5f);
 }
 
 void Client::Init()
@@ -195,6 +201,8 @@ void Client::Init()
 	this->zActorManager = new ClientActorManager();
 	this->zGuiManager = new GuiManager(this->zEng);
 	this->zPlayerInventory = new Inventory();
+
+	this->zEng->CreateSkyBox("Media/skymap.dds");
 }
 
 void Client::Life()
@@ -206,7 +214,7 @@ void Client::Life()
 	{
 		this->Update();
 
-		this->HandleKeyboardInput();
+		this->CheckKeyboardInput();
 		if(this->zCreated)
 		{
 			this->zSendUpdateDelayTimer += this->zDeltaTime;
@@ -225,7 +233,27 @@ void Client::Life()
 		}
 
 		this->ReadMessages();
+		if(this->zPam->GetShow())
+		{
+			int returnValue = this->zPam->Run();
+			if(returnValue == DEER)
+			{
+				this->zPam->ToggleMenu();
+				zShowCursor = this->zPam->GetShow();
+				// MAKE ME A DEER.
 
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
+				this->zServerChannel->Send(msg);
+			}
+			if(returnValue == BEAR)
+			{
+				this->zPam->ToggleMenu();
+				zShowCursor = this->zPam->GetShow();
+				// MAKE ME A BEAR.
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
+				this->zServerChannel->Send(msg);
+			}
+		}
 		if (this->zIgm->GetShow())
 		{
 			int returnValue = this->zIgm->Run();
@@ -239,8 +267,8 @@ void Client::Life()
 				this->zIgm->SetShow(false);
 				zShowCursor = false;
 				this->zEng->GetKeyListener()->SetMousePosition(
-					Vector2(this->zEng->GetEngineParameters().WindowWidth/2, 
-					this->zEng->GetEngineParameters().WindowHeight/2));
+					Vector2((float)(this->zEng->GetEngineParameters().WindowWidth/2), 
+					(float)(this->zEng->GetEngineParameters().WindowHeight/2)));
 			}
 		}
 
@@ -395,13 +423,171 @@ void Client::CheckMovementKeys()
 	{
 		pressed = this->CheckKey(KEY_RIGHT);
 	}
-
-	pressed = this->CheckKey(KEY_SPRINT);
-
-	pressed = this->CheckKey(KEY_DUCK);
 }
 
-void Client::HandleKeyboardInput()
+void Client::CheckPlayerSpecificKeys()
+{
+	if(this->zGuiManager->IsGuiOpen())
+	{
+		Menu_select_data msd;
+		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
+
+		if (msd.zAction != -1)
+		{
+			if (msd.zID != -1)
+			{
+				Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
+				if (msd.zAction == USE)
+				{
+					if (item)
+						SendUseItemMessage(item->GetID());
+				}
+				if (msd.zAction == CRAFT)
+				{
+					if (item)
+						SendCraftItemMessage(item->GetID());
+				}
+				else if(msd.zAction == EQUIP)
+				{
+					if(item)
+						SendEquipItem(msd.zID);
+				}
+				else if (msd.zAction == DROP)
+				{
+					if(item)
+						this->SendDropItemMessage(msd.zID);
+				}
+				else if (msd.zAction == UNEQUIP)
+				{
+					if(item)
+						this->SendUnEquipItem(msd.zID, (msd.zType));
+				}
+			}
+		}
+	}
+
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			std::vector<unsigned int> collisionObjects = this->RayVsWorld();
+			if (collisionObjects.size() > 0)
+			{
+				std::string msg =  "";
+				for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
+				{
+					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (float)(*it));
+				}
+				this->zServerChannel->Send(msg);
+			}
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			this->zGuiManager->HideLootingGui();
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
+		}
+	}
+
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_SWAP_EQ)))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
+		{
+			this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, true);
+
+			if(this->zPlayerInventory->SwapWeapon())
+			{
+				std::string msg;
+				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_EQUIPMENT_SWAP);
+				this->zServerChannel->Send(msg);
+			}
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
+			this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, false);
+	}
+
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY) && !this->zPam->GetShow())
+		{
+			this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
+			this->zShowCursor = !this->zShowCursor;
+			this->zGuiManager->ToggleInventoryGui();
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_INVENTORY))
+			this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
+	}
+
+	if (!this->zGuiManager->IsGuiOpen())
+	{
+		if (this->zEng->GetKeyListener()->IsClicked(1))
+		{
+			if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			{
+				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+
+				Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
+				if (!primaryWeapon)
+				{
+					this->DisplayMessageToClient("No Weapon is Equipped");
+				}
+				else
+				{
+					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)primaryWeapon->GetID());
+					this->zServerChannel->Send(msg);
+				}
+			}
+		}
+		else
+		{
+			if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
+		}
+	}
+	this->HandleWeaponEquips();
+}
+
+void Client::CheckGhostSpecificKeys()
+{
+	this->CheckKey(KEY_JUMP);
+	this->CheckKey(KEY_DUCK);
+}
+
+void Client::CheckNonGhostInput()
+{
+	this->CheckKey(KEY_SPRINT);
+
+	this->CheckKey(KEY_DUCK);
+
+	//Kill yourself button
+	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('K'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_KILL))
+		{
+			this->zKeyInfo.SetKeyState(KEY_KILL, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACTOR_KILL);
+
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_KILL))
+			this->zKeyInfo.SetKeyState(KEY_KILL, false);
+	}
+}
+
+void Client::CheckKeyboardInput()
 {
 	if (this->zCreated && this->zGameStarted)
 	{
@@ -410,154 +596,81 @@ void Client::HandleKeyboardInput()
 	}
 
 	if (this->zActorType != NONE)
+	{
 		this->CheckMovementKeys();
-
+	}
 
 	if (this->zActorType == HUMAN)
 	{
-		if(this->zGuiManager->IsGuiOpen())
-		{
-			Menu_select_data msd;
-			msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
-
-			if (msd.zAction != -1)
-			{
-				if (msd.zID != -1)
-				{
-					Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
-					if (msd.zAction == USE)
-					{
-						if (item)
-							SendUseItemMessage(item->GetID());
-					}
-					if (msd.zAction == CRAFT)
-					{
-						if (item)
-							SendCraftItemMessage(item->GetID());
-					}
-					else if(msd.zAction == EQUIP)
-					{
-						if(item)
-							SendEquipItem(msd.zID);
-					}
-					else if (msd.zAction == DROP)
-					{
-						if(item)
-							this->SendDropItemMessage(msd.zID);
-					}
-					else if (msd.zAction == UNEQUIP)
-					{
-						if(item)
-							this->SendUnEquipItem(msd.zID, (msd.zType));
-					}
-				}
-			}
-		}
-		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
-			{
-				std::vector<unsigned int> collisionObjects = this->RayVsWorld();
-				if (collisionObjects.size() > 0)
-				{
-					std::string msg =  "";
-					for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
-					{
-						msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (*it));
-					}
-					this->zServerChannel->Send(msg);
-				}
-				this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
-			}
-		}
-		else
-		{
-			if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
-			{
-				this->zGuiManager->HideLootingGui();
-				this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
-			}
-
-		}
-		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_SWAP_EQ)))
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
-			{
-				this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, true);
-
-				if(this->zPlayerInventory->SwapWeapon())
-				{
-					std::string msg;
-					msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_EQUIPMENT_SWAP);
-					this->zServerChannel->Send(msg);
-				}
-			}
-		}
-		else
-		{
-			if (this->zKeyInfo.GetKeyState(KEY_SWAP_EQ))
-				this->zKeyInfo.SetKeyState(KEY_SWAP_EQ, false);
-		}
-		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
-			{
-				this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
-				this->zShowCursor = !this->zShowCursor;
-				this->zGuiManager->ToggleInventoryGui();
-			}
-		}
-		else
-		{
-			if (this->zKeyInfo.GetKeyState(KEY_INVENTORY))
-				this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
-		}
-		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
-		{
-			if(!this->zKeyInfo.GetKeyState(KEY_MENU))
-			{
-				this->zKeyInfo.SetKeyState(KEY_MENU, true);
-				if(!this->zIgm->GetShow())
-				{
-					this->zIgm->ToggleMenu(); // Shows the menu and sets Show to true.
-					zShowCursor = true;
-				}
-			}
-		}
-		else
-		{
-			if(this->zKeyInfo.GetKeyState(KEY_MENU))
-				this->zKeyInfo.SetKeyState(KEY_MENU, false);
-		}
-		if (!this->zShowCursor)
-		{
-			if (this->zEng->GetKeyListener()->IsClicked(1))
-			{
-				if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
-				{
-					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
-
-					Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
-					if (!primaryWeapon)
-					{
-						this->DisplayMessageToClient("No Weapon is Equipped");
-					}
-					else
-					{
-						std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)primaryWeapon->GetID());
-						this->zServerChannel->Send(msg);
-					}
-				}
-			}
-			else
-			{
-				if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
-					this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
-			}
-		}
-		this->HandleWeaponEquips();
+		this->CheckPlayerSpecificKeys();
 	}
-	
+	if (this->zActorType == GHOST)
+	{
+		this->CheckGhostSpecificKeys();
+	}
+
+	if (this->zActorType != GHOST)
+	{
+		this->CheckNonGhostInput();
+	}
+
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('R'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_RESTART))
+		{
+			this->zKeyInfo.SetKeyState(KEY_RESTART, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_RESTART_GAME_REQUEST);
+
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_RESTART))
+			this->zKeyInfo.SetKeyState(KEY_RESTART, false);
+	}
+
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
+	{
+		if(!this->zKeyInfo.GetKeyState(KEY_MENU))
+		{
+			this->zKeyInfo.SetKeyState(KEY_MENU, true);
+			if(!this->zIgm->GetShow())
+			{
+				this->zIgm->ToggleMenu(); // Shows the menu and sets Show to true.
+				zShowCursor = true;
+			}
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_MENU))
+			this->zKeyInfo.SetKeyState(KEY_MENU, false);
+	}
+
+	// Opens pick menu if you can do it.
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_PICKMENU)))
+	{
+		if(!this->zKeyInfo.GetKeyState(KEY_PICKMENU))
+		{
+			if(this->zActorType == GHOST)
+			{
+				this->zKeyInfo.SetKeyState(KEY_PICKMENU, true);
+				this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
+				if(this->zPam->GetShow())
+					zShowCursor = true;
+				else
+					zShowCursor = false;
+			}
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
+			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
+	}
+
 
 	//Tell Server Client is Ready
 	if(this->zEng->GetKeyListener()->IsPressed('F'))
@@ -575,13 +688,12 @@ void Client::HandleKeyboardInput()
 	else
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_READY))
-		{
 			this->zKeyInfo.SetKeyState(KEY_READY, false);
-		}
 	}
 	
 	this->HandleDebugInfo();
 }
+
 //use to equip weapon with keyboard
 void Client::HandleWeaponEquips()
 {
@@ -937,12 +1049,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if (msg.find(M_DEAD_ACTOR.c_str()) == 0)
 	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TAKE_DAMAGE, msgArray[0]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
 
-		if (this->zID == id)
-		{
-			this->zCreated = false;
-		}
 	}
 	//Actors
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
@@ -1018,6 +1126,24 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	else if(msg.find(M_SELF_ID.c_str()) == 0)
 	{
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
+
+		this->zEng->GetCamera()->RemoveMesh();
+		this->zCreated = false;
+		if (Actor* actor = this->zActorManager->GetActor(this->zID))
+		{
+			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(actor->GetModel());
+			if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
+			{
+				this->zMeshOffset = meshOffsetsIterator->second;
+			}
+			else
+			{
+				this->zMeshOffset = Vector3();
+			}
+			this->zActorManager->SetCameraOffset(this->zMeshOffset);
+			this->zCreated = true;
+			this->zEng->GetCamera()->SetMesh(actor->GetMesh(), this->zMeshOffset);
+		}
 		this->zActorType = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TYPE, msgArray[1]);
 	}
 	else if(msg.find(M_CONNECTED.c_str()) == 0)
@@ -1085,7 +1211,8 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 
 	if(this->zDamageIndicator == NULL)
 	{
-		
+		float windowHeight = (float)this->zEng->GetEngineParameters().WindowHeight;
+		float windowWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
 		//Make the effect visible based on severity of attack.
 		this->zDamageOpacity = damageTaken / 100;
 		if(this->zDamageOpacity > 0.7f)
@@ -1100,7 +1227,7 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 		if(ID == this->zID)
 		{
 			//There is no attacker, (except techincally the player)
-			this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/behindOrFront_Temp.png" );
+			this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/behindOrFront_Temp.png" );
 		}
 		else
 		{
@@ -1120,12 +1247,11 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 
 			//psuedo    upDotProduct > 0 = upp,   upDotProduct < 0 = ner.
 
-
 			if( testDotProduct > 0.65 && abs(upDotProduct) < 0.3 || testDotProduct < -0.7) 
 			{
 				//The damage is coming from the front and not too high or low. Or, it is coming from behind
 				//Display surroundingpicture
-				this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/behindOrFront_Temp.png" );
+				this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/behindOrFront_Temp.png" );
 			}
 			else //The damage is more specifically trackable.
 			{
@@ -1133,51 +1259,50 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 				{
 					if(upDotProduct > 0.3f) //It's up to the left
 					{
-						this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/highLeft_Temp.png" );
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/highLeft_Temp.png" );
 					}
 					else if(upDotProduct < -0.3f) //It's down to the left
 					{
-						this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/lowLeft_Temp.png" );
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/lowLeft_Temp.png" );
 					}
 					else //It's directly to the left
 					{
-						this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/left_Temp.png" );
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/left_Temp.png" );
 					}		
 				}
 				else if(testDotProduct < 0.65 && rightOrLeft < 0.0f) //it's to the right (needs testing)
+				{
+					if(upDotProduct > 0.3f) //It's up to the right
 					{
-						if(upDotProduct > 0.3f) //It's up to the right
-						{
-							this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/highRight_Temp.png" );
-						}
-						else if(upDotProduct < -0.3f) //It's down to the right
-						{
-							this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/lowRight_Temp.png" );
-						}
-						else //It's directly to the right
-						{
-							this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/right_Temp.png" );
-						}
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/highRight_Temp.png" );
 					}
+					else if(upDotProduct < -0.3f) //It's down to the right
+					{
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/lowRight_Temp.png" );
+					}
+					else //It's directly to the right
+					{
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/right_Temp.png" );
+					}
+				}
 				else// if (dotProduct > 0.65)//It's in front, but too high or low
 				{
 					if(upDotProduct > 0.3f) //Up high.
 					{
-						this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/up_Temp.png" );
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/up_Temp.png" );
 					}
 					else if(upDotProduct < -0.3f) //Down low.
 					{
-						this->zDamageIndicator = this->zEng->CreateImage(Vector2(),Vector2(this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight),"Media/Icons/down_Temp.png" );
+						this->zDamageIndicator = this->zEng->CreateImage(Vector2(), Vector2(windowWidth, windowHeight), "Media/Icons/down_Temp.png" );
 					}
 				}
 			}
 		}
-			//Set the opacity
-			this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
+		//Set the opacity
+		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
 
-			GetSounds()->PlaySounds("Media/Sound/Breath.wav", playerPos);
+		GetSounds()->PlaySounds("Media/Sound/Breath.wav", playerPos);
 	}
-
 	return true;
 }
 

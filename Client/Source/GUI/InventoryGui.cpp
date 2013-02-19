@@ -55,6 +55,12 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 
 	xTemp = this->zX + (EQXPOS[2] / 1024.0f) * dx;
 	zWeaponSlots[2] = Vector2(xTemp, this->zY + startOffsetY);
+
+	this->zMaxWeight = 49.0f;
+	this->zCurrentWeight = 0.0f;
+	this->zWeightText = NULL;
+
+
 }
 
 InventoryGui::~InventoryGui()
@@ -71,6 +77,14 @@ InventoryGui::~InventoryGui()
 
 bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
+	int temp = gid.zStacks;
+	if(temp == 0)
+		temp = 1;
+	this->zCurrentWeight = this->zCurrentWeight + (gid.zWeight * temp);
+	if(this->zWeightText)
+		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + "/" + 
+		MaloW::convertNrToString(this->zMaxWeight)).c_str());
+
 	int size = this->zSlotGui.size();
 	bool stacks = false;
 	if(size >=  SLOTS)
@@ -100,16 +114,23 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 	return true;
 }
 
-bool InventoryGui::RemoveItemFromGui(const int ID, int stacks)
+bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
+	float temp = gid.zStacks;
+	if(temp == 0)
+		temp = 1;
+	this->zCurrentWeight -= gid.zStacks * temp;
+	if(this->zWeightText)
+		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
+
 	int size = zSlotGui.size();
 	for (auto it = this->zSlotGui.begin(); it < this->zSlotGui.end(); it++)
 	{
-		if ((*it)->GetID() == ID)
+		if ((*it)->GetID() == gid.zID)
 		{
 			if((*it)->GetStacks() > 0)
 			{
-				(*it)->SetStacks((*it)->GetStacks() - stacks);
+				(*it)->SetStacks((*it)->GetStacks() - gid.zStacks);
 				if((*it)->GetStacks() > 0)
 					return true;
 			}
@@ -131,11 +152,11 @@ bool InventoryGui::RemoveItemFromGui(const int ID, int stacks)
 	}
 	for (auto it = this->zWeaponSlotGui.begin(); it < this->zWeaponSlotGui.end(); it++)
 	{
-		if ((*it)->GetID() == ID)
+		if ((*it)->GetID() == gid.zID)
 		{
 			if((*it)->GetStacks() > 0)
 			{
-				(*it)->SetStacks((*it)->GetStacks() - stacks);
+				(*it)->SetStacks((*it)->GetStacks() - gid.zStacks);
 				if((*it)->GetStacks() > 0)
 					return true;
 			}
@@ -166,6 +187,12 @@ bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
 
 		(*x)->AddToRenderer(ge);
 	}
+	if(!this->zWeightText)
+	{
+		this->zWeightText = ge->CreateText((MaloW::convertNrToString(
+			this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str(), 
+			Vector2(100,100), 1, "Media/Fonts/1");
+	}
 
 	return true;
 
@@ -181,6 +208,10 @@ bool InventoryGui::RemoveFromRenderer(GraphicsEngine* ge)
 	for (auto x = this->zWeaponSlotGui.begin(); x < this->zWeaponSlotGui.end(); x++)
 	{
 		(*x)->RemoveFromRenderer(ge);
+	}
+	if(this->zWeightText)
+	{
+		ge->DeleteText(this->zWeightText);
 	}
 	return true;
 }

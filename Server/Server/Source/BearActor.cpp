@@ -1,7 +1,9 @@
 #include "BearActor.h"
 
-BearActor::BearActor()
+BearActor::BearActor(PhysicsObject* pObj) : 
+	AnimalActor()
 {
+	this->SetPhysicsObject(pObj);
 	/*this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitBear();
 	*/

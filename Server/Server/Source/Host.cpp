@@ -309,10 +309,31 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.itemID = _itemID;
 		NotifyObservers(&e);
 	}
+	else if(msgArray[0].find(M_PLAY_AS_ANIMAL.c_str()) == 0)
+	{
+		PlayerAnimalSwapEvent e;
+		int animalType = this->zMessageConverter.ConvertStringToInt(M_PLAY_AS_ANIMAL, msgArray[0]);
+
+		e.zActor = NULL;
+		e.clientData = cd;
+		e.zAnimalType = animalType;
+		NotifyObservers(&e);
+	}
+	else if(msgArray[0].find(M_ACTOR_KILL.c_str()) == 0)
+	{
+		PlayerKillEvent e;
+
+		e.clientData = cd;
+		NotifyObservers(&e);
+	}
 	//Handles user data from client. Used when the player is new.
 	else if(msgArray[0].find(M_USER_DATA.c_str()) == 0)
 	{
 		HandleUserData(msgArray, cd);
+	}
+	else if(msgArray[0].find(M_RESTART_GAME_REQUEST.c_str()) == 0)
+	{
+		this->Restart(this->zGameMode, this->zMapName);
 	}
 	//Handles if client disconnects.
 	else if(msgArray[0].find(M_CONNECTION_CLOSED.c_str()) == 0)
@@ -531,16 +552,18 @@ void Host::SynchronizeAll()
 void Host::Restart( const std::string& gameMode, const std::string& map )
 {
 	// Update
-	zGameMode = gameMode;
-	zMapName = map;
+	this->zGameMode = gameMode;
+	this->zMapName = map;
 
-	if ( zSynchronizer ) zSynchronizer->ClearAll();
-	if ( !zSynchronizer ) zSynchronizer = new ActorSynchronizer();
+	if ( this->zSynchronizer ) 
+		this->zSynchronizer->ClearAll();
+	if ( !this->zSynchronizer ) 
+		this->zSynchronizer = new ActorSynchronizer();
 
-	if ( zGame )
+	if ( this->zGame )
 	{
 		// Fake Disconnects
-		for( auto i = zClients.begin(); i != zClients.end(); ++i )
+		for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
 		{
 			PlayerDisconnectedEvent PDE;
 			PDE.clientData = i->second;
@@ -555,11 +578,11 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
 
 	// Start New
 	PhysicsInit();
-	zGame = new Game(GetPhysics(), zSynchronizer, gameMode, map);
-	this->AddObserver(zGame);
+	this->zGame = new Game(GetPhysics(), this->zSynchronizer, gameMode, map);
+	this->AddObserver(this->zGame);
 
 	// Fake Connects
-	for( auto i = zClients.begin(); i != zClients.end(); ++i )
+	for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
 	{
 		PlayerConnectedEvent PCE;
 		PCE.clientData = i->second;

@@ -2,10 +2,9 @@
 #include "ClientServerMessages.h"
 #include "MaloWFileDebug.h"
 
-PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) :
-	zPlayer(player)
+PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj ) 
+	: BioActor(player)
 {
-	this->zPlayer = player;
 	SetPhysicsObject(physObj);
 	/*InitValues();*/
 
@@ -48,6 +47,24 @@ Item* PlayerActor::DropItem(const long ID)
 		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString((float)ID));
 		return NULL;
 	}
+	
+	RangedWeapon* rwp = this->zInventory->GetRangedWeapon();
+	MeleeWeapon* mwp = this->zInventory->GetMeleeWeapon();
+	Projectile* proj = this->zInventory->GetProjectile();
+
+	if(rwp && dynamic_cast<RangedWeapon*>(item) == rwp)
+	{
+		this->zInventory->UnEquipRangedWeapon();
+	}
+	else if(mwp && dynamic_cast<MeleeWeapon*>(item) == mwp)
+	{
+		this->zInventory->UnEquipMeleeWeapon();
+	}
+	else if(proj && dynamic_cast<Projectile*>(item) == proj)
+	{
+		this->zInventory->UnEquipProjectile();
+	}
+
 	this->zInventory->EraseItem(item->GetID());
 	if (Messages::FileWrite())	
 		Messages::Debug("Removed successes: " + MaloW::convertNrToString((float)ID));

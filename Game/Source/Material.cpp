@@ -46,6 +46,7 @@ Material::Material(const Material& other)
 	this->zCraftingType = other.zCraftingType;
 	this->zItemDescription = other.zItemDescription;
 	this->zRequiredStackToCraft = other.zRequiredStackToCraft;
+	this->zStacking = other.zStacking;
 }
 
 Material::Material(const Material* other)
@@ -61,6 +62,7 @@ Material::Material(const Material* other)
 	this->zCraftingType = other->zCraftingType;
 	this->zItemDescription = other->zItemDescription;
 	this->zRequiredStackToCraft = other->zRequiredStackToCraft;
+	this->zStacking = other->zStacking;
 }
 
 bool Material::Use()

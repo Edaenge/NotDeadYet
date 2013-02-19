@@ -73,9 +73,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Include\NetworkChannel.cpp" />
-    <ClCompile Include="Include\Process.cpp" />
     <ClCompile Include="Source\ClientChannel.cpp" />
     <ClCompile Include="Source\FileReader.cpp" />
+    <ClCompile Include="Source\Process.cpp" />
     <ClCompile Include="Source\ServerChannel.cpp" />
     <ClCompile Include="Source\ServerListener.cpp" />
   </ItemGroup>

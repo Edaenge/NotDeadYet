@@ -11,8 +11,6 @@ Player::Player( ClientData* client ) :
 
 Player::~Player()
 {
-	zBehavior = NULL;
-	zClient = NULL;
 }
 
 void Player::Kick()

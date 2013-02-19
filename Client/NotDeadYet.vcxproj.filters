@@ -138,6 +138,9 @@
     <ClCompile Include="Source\InGameMenu.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PickAnimalMenu.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\SoundEngine\fmod.h">
@@ -246,6 +249,9 @@
       <Filter>Source\GUI\Events</Filter>
     </ClInclude>
     <ClInclude Include="Source\InGameMenu.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PickAnimalMenu.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

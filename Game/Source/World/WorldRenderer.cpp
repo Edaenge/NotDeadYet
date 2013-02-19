@@ -398,7 +398,6 @@ void WorldRenderer::SetEntityGraphics( Entity* e )
 	else
 	{
 		float billboardDistance = GetEntBillboardDistance(e->GetType());
-
 		if ( billboardDistance > 0.0f )
 		{
 			zEntities[e] = zGraphics->CreateMesh(

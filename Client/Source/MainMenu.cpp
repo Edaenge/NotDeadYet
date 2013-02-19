@@ -40,6 +40,7 @@ void MainMenu::Init()
 		"Media/Models/WaterGrass_02.ani",
 		"Media/Models/Bow_v01.obj",
 		"Media/Models/temp_guy.obj",
+		"Media/Models/deer_temp.obj",
 		"Media/Models/Arrow_v01.obj",
 		"Media/Models/Machete_v01.obj",
 		"Media/Models/Bush_02_v02.obj",
@@ -50,9 +51,9 @@ void MainMenu::Init()
 		"Media/Models/Campfire_01_v01.obj",
 		"Media/Models/Pocketknife_v02.obj",
 		"Media/Models/StoneItem_01_v01.obj",
-		"Media/Models/BranchesItem_01_v01.obj",};
+		"Media/Models/BranchesItem_01_v01.obj"};
 
-	GetGraphics()->PreLoadResources(19, object);
+	GetGraphics()->PreLoadResources(20, object);
 
 	eng->StartRendering();
 
@@ -257,19 +258,19 @@ void MainMenu::Init()
 	//Sound tech
 	//Master volume
 	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetSounds()->GetMasterVolume() * 100), 
 		"MasterVolume", 1.0f, 2, NR);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Music Volume
 	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetSounds()->GetMusicVolume() * 100), 
 		"MusicVolume", 1.0f, 2, NR);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Normal Volume
 	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetSounds()->GetSoundVolume() * 100), 
 		"NormalVolume", 1.0f, 2, NR);
 	zSets[OPTIONS].AddElement(temp);
 
@@ -295,10 +296,10 @@ void MainMenu::Init()
 
 void MainMenu::StartTestRun()
 {
-	zGame->InitGameClient("194.47.150.16", 11521);
+	//zGame->InitGameClient("194.47.150.16", 11521);
 	//zGame->InitGameClient("194.47.150.12", 11521);
 	//zGame->InitGameClient("80.78.216.201", 11521);
-	//zGame->InitGameClient("127.0.0.1", 11521);	
+	zGame->InitGameClient("127.0.0.1", 11521);	
 	zGame->Run();
 }
 
@@ -633,4 +634,13 @@ void MainMenu::UpdateOptionsMenu()
 	//Update View Distance.
 	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("ViewDistance");
 	tbTemp->SetText(MaloW::convertNrToString(GetGraphics()->GetEngineParameters().FarClip));
+
+	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("MasterVolume");
+	tbTemp->SetText(MaloW::convertNrToString(GetSounds()->GetMasterVolume() * 100));
+
+	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("MusicVolume");
+	tbTemp->SetText(MaloW::convertNrToString(GetSounds()->GetMusicVolume() * 100));
+
+	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("NormalVolume");
+	tbTemp->SetText(MaloW::convertNrToString(GetSounds()->GetSoundVolume() * 100));
 }

@@ -1,8 +1,11 @@
 #include "WolfActor.h"
 
-WolfActor::WolfActor() : 
-	AnimalActor()
-{}
+WolfActor::WolfActor(PhysicsObject* pObj)
+	: AnimalActor()
+
+{
+	this->SetPhysicsObject(pObj);
+}
 
 WolfActor::~WolfActor()
 {

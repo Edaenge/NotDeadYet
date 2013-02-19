@@ -77,19 +77,42 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_ITEM_SUB_TYPE,
 	MESSAGE_TYPE_ITEM_FINISHED,
 	MESSAGE_TYPE_WEAPON_EQUIPMENT_SWAP,
-	/*	NONE = 0
+	/*	
+		NONE = 0
 		HUMAN = 1
 		GHOST = 2
 		ANIMAL = 3
 	*/
-	MESSAGE_TYPE_ACTOR_TYPE
+	MESSAGE_TYPE_ACTOR_TYPE,
+	MESSAGE_TYPE_ACTOR_KILL,
+	MESSAGE_TYPE_RESTART_GAME_REQUEST,
+	/*
+		DEER = 0
+		WOLF = 1
+		BEAR = 2
+	*/
+	MESSAGE_TYPE_PLAY_AS_ANIMAL
 };
 
 static const std::string M_UPDATE_ACTOR				= "UA";
 static const std::string M_REMOVE_ACTOR				= "RA";
 static const std::string M_DEAD_ACTOR				= "DA";
 static const std::string M_ACTOR_TAKE_DAMAGE		= "ATD";
+/*	
+	NONE = 0
+	HUMAN = 1
+	GHOST = 2
+	ANIMAL = 3
+*/
 static const std::string M_ACTOR_TYPE				= "AT";
+static const std::string M_ACTOR_KILL				= "AK";
+static const std::string M_RESTART_GAME_REQUEST		= "RGR";
+/*
+	DEER = 0
+	WOLF = 1
+	BEAR = 2
+*/
+static const std::string M_PLAY_AS_ANIMAL			= "PAD";
 //Data Messages
 static const std::string M_LOAD_MAP					= "LM";
 static const std::string M_CONNECTED				= "CON";

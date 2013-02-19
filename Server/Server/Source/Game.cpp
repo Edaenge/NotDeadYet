@@ -29,8 +29,10 @@
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
 {
-	zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.7f, 0.0f);
-
+	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
+	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
+	
 	if (mode.find("FFA") == 0 )
 	{
 		zGameMode = new GameModeFFA(this);
@@ -64,27 +66,51 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	this->zMaxNrOfPlayers = 32;
 	//DEBUG
 	SpawnItemsDebug();
+	SpawnAnimalsDebug();
 }
 
 Game::~Game()
 {	
-	for( auto i = zBehaviors.begin(); i != zBehaviors.end(); ++i )
+	for( auto i = this->zBehaviors.begin(); i != this->zBehaviors.end(); ++i )
 	{
 		delete *i;
 	}
-	zBehaviors.clear();
+	this->zBehaviors.clear();
 
-	for( auto i = zPlayers.begin(); i != zPlayers.end(); ++i )
+	for( auto i = this->zPlayers.begin(); i != this->zPlayers.end(); ++i )
 	{
 		delete i->second;
 	}
-	zPlayers.clear();
+	this->zPlayers.clear();
 
-	if ( zGameMode ) delete zGameMode;
-	if ( zWorld ) delete zWorld;
-	if ( zActorManager ) delete zActorManager;
+	if ( this->zGameMode )
+	{
+		delete this->zGameMode;
+		this->zGameMode = NULL;
+	}
+	if ( this->zWorld ) 
+	{
+		delete this->zWorld;
+		this->zWorld = NULL;
+	}
+	if ( this->zActorManager ) 
+	{
+		delete this->zActorManager;
+		this->zActorManager = NULL;
+	}
 
 	FreeItemLookup();
+}
+
+void Game::SpawnAnimalsDebug()
+{
+	int increment = 10;
+	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
+	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj", position);
+	DeerActor* dActor = new DeerActor(deerPhysics);
+	dActor->SetPosition(position);
+	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	this->zActorManager->AddActor(dActor);
 }
 
 void Game::SpawnItemsDebug()
@@ -286,8 +312,10 @@ void Game::OnEvent( Event* e )
 	}
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
 	{
-		if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(zPlayers[CDE->clientData]->GetBehavior()))
-			dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
+		Player* player = zPlayers[CDE->clientData];
+		if (player)
+			if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(player->GetBehavior()))
+				dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
@@ -324,6 +352,20 @@ void Game::OnEvent( Event* e )
 	else if (PlayerUnEquipItemEvent* PUEIE = dynamic_cast<PlayerUnEquipItemEvent*>(e) )
 	{
 		HandleUnEquipItem(PUEIE->clientData, PUEIE->itemID, PUEIE->eq_Slot);
+	}
+	else if(PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
+	{
+		auto playerIterator = this->zPlayers.find(PASE->clientData);
+		Player* player = playerIterator->second;
+
+		if (player)
+		{
+			Behavior* playerBehavior = player->GetBehavior();
+			if (playerBehavior)
+			{
+				PASE->zActor = playerBehavior->GetActor();
+			}
+		}
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
@@ -413,6 +455,17 @@ void Game::OnEvent( Event* e )
 	{
 
 	}
+	else if ( PlayerKillEvent* PKE = dynamic_cast<PlayerKillEvent*>(e) )
+	{
+		ClientData* cd = PKE->clientData;
+
+		Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
+
+		BioActor* bActor = dynamic_cast<BioActor*>(actor);
+
+		if (bActor)
+			bActor->Kill();
+	}
 
 	NotifyObservers(e);
 }
@@ -427,6 +480,7 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	{
 		zBehaviors.erase(curPlayerBehavior);
 		delete curPlayerBehavior;
+		curPlayerBehavior = NULL;
 	}
 
 	// Set New Behavior
@@ -592,7 +646,7 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 			if ((*it_ID) == (*it_actor)->GetID())
 			{
 				//Check if the distance between the actors are to far to be able to loot.
-				if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 4.0f)
+				if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 5.0f)
 					continue;
 
 				//Check if the Actor is an ItemActor
@@ -603,7 +657,7 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 					msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
 					bLooted = true;
 				}
-				//Check if the Actor is an PlayerActor
+				//Check if the Actor is a PlayerActor
 				else if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(*it_actor))
 				{
 					//Check if the PlayerActor is Dead.
@@ -709,13 +763,19 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 				{
 					msg += bandage->ToMessageString(&NMC);
 				}
-				pActor->GetInventory()->AddItem(item);
-				cd->Send(msg);
-				this->zActorManager->RemoveActor(iActor);
+				
+				if(pActor->GetInventory()->AddItem(item))
+				{
+					cd->Send(msg);
+					this->zActorManager->RemoveActor(iActor);
+				}
+				else
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory_Full"));
+				
 			}
 		}
 	}
-	//Check if the Actor being looted is an BioActor.
+	//Check if the Actor being looted is a BioActor.
 	else if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
 	{
 		Inventory* inv = bActor->GetInventory();
@@ -727,6 +787,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 				std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 				if (item->GetItemType() == itemType && item->GetItemSubType() == subType)
 				{
+
 					if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
 					{
 						msg += rWpn->ToMessageString(&NMC);
@@ -758,7 +819,6 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 
 					pActor->GetInventory()->AddItem(item);
 					cd->Send(msg);
-					this->zActorManager->RemoveActor(bActor);
 				}
 			}
 		}
@@ -799,8 +859,10 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 
 	Actor* actor = playerBehavior->GetActor();
 
+	//Check if the actor trying to use an item is a PlayerActor
 	if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
 	{
+		//Check if he has an inventory
 		if (Inventory* inv = pActor->GetInventory())
 		{
 			NetworkMessageConverter NMC;
@@ -811,7 +873,6 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 				unsigned int ID = 0;
 				if (Food* food = dynamic_cast<Food*>(item))
 				{
-					int oldStack = food->GetStackSize();
 					ID = food->GetID();
 					if (food->Use())
 					{
@@ -819,13 +880,12 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 						float value = food->GetHunger();
 
 						float fullness = pActor->GetFullness();
-						int stacks = food->GetStackSize() - oldStack;
 
 						pActor->SetFullness(fullness + value);
 						pActor->HungerHasChanged();
 
 						//Sending Message to client And removing stack from inventory.
-						inv->RemoveItemStack(ID, stacks);
+						inv->RemoveItemStack(ID, 1);
 						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 
 						cd->Send(msg);
@@ -864,17 +924,13 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 				}
 				else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
 				{
-					int oldStack = bandage->GetStackSize();
 					ID = bandage->GetID();
 					if (bandage->Use())
-					{
-						int stacks = bandage->GetStackSize() - oldStack;
-						
+					{				
 						pActor->SetBleeding(false);
 						
-						
 						//Sending Message to client And removing stack from inventory.
-						inv->RemoveItemStack(ID, stacks);
+						inv->RemoveItemStack(ID, 1);
 						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
 
 						cd->Send(msg);
@@ -886,7 +942,7 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 					}
 					if (bandage->GetStackSize() <= 0)
 					{
-						if(inv->RemoveItem(bandage));
+						if(inv->RemoveItem(bandage))
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
 							cd->Send(msg);
@@ -956,6 +1012,7 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				this->zBehaviors.insert(projBehavior);
 				//Decrease stack
 				arrow->Use();
+				inventory->RemoveItemStack(arrow->GetID(), 1);
 				if (arrow->GetStackSize() <= 0)
 				{
 					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
@@ -1023,16 +1080,16 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 							cd->Send(msg);
 
-							//Creating a bow With default Values
+							//Create a bow With default Values
 							const Projectile* temp_Arrow = GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
 
 							if (temp_Arrow)
 							{
 								Projectile* new_Arrow = new Projectile((*temp_Arrow));
+								Item* temp = new_Arrow;
 
-								if (inv->AddItem(new_Arrow))
+								if (inv->AddItem(temp))
 								{
-									ID = new_Arrow->GetID();
 									msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 									msg += new_Arrow->ToMessageString(&NMC);
 									cd->Send(msg);
@@ -1081,8 +1138,9 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 								if (temp_bow)
 								{
 									RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
+									Item* temp = new_Bow;
 
-									if (inv->AddItem(new_Bow))
+									if (inv->AddItem(temp))
 									{
 										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 										msg += new_Bow->ToMessageString(&NMC);
@@ -1113,14 +1171,15 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 								cd->Send(msg);
 
-								//Creating a bow With default Values
+								//Create a bow With default Values
 								const RangedWeapon* temp_bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
 
 								if (temp_bow)
 								{
 									RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
+									Item* temp = new_Bow;
 
-									if (inv->AddItem(new_Bow))
+									if (inv->AddItem(temp))
 									{
 										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 										msg += new_Bow->ToMessageString(&NMC);
@@ -1128,37 +1187,6 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 									}
 								}
 							}
-						}
-					}
-				}
-				else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
-				{
-					int oldStack = bandage->GetStackSize();
-					ID = bandage->GetID();
-					if (bandage->Use())
-					{
-						int stacks = bandage->GetStackSize() - oldStack;
-
-						pActor->SetBleeding(false);
-
-
-						//Sending Message to client And removing stack from inventory.
-						inv->RemoveItemStack(ID, stacks);
-						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-
-						cd->Send(msg);
-					}
-					else
-					{
-						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Bandage_Stack_is_Empty");
-						cd->Send(msg);
-					}
-					if (bandage->GetStackSize() <= 0)
-					{
-						if(inv->RemoveItem(bandage));
-						{
-							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
-							cd->Send(msg);
 						}
 					}
 				}
@@ -1170,32 +1198,43 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 {
 	std::string msg;
-	unsigned int slot;
+	int slot = -1;
 
 	NetworkMessageConverter NMC;
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
 	BioActor* pActor = dynamic_cast<PlayerActor*>(actor);
 	Inventory* inventory = pActor->GetInventory();
 	Item* item = inventory->SearchAndGetItem(itemID);
+	Item* ret = NULL;
+	bool success = false;
 
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
-		inventory->EquipProjectile(proj);
+		int weigth = inventory->GetTotalWeight();
+
+		ret = inventory->EquipProjectile(proj);
+		
+		if(weigth > inventory->GetTotalWeight())
+		{
+			inventory->RemoveItem(proj);
+		}
+
 		slot = EQUIPMENT_SLOT_PROJECTILE;
 	}
 	else if(MeleeWeapon* meele = dynamic_cast<MeleeWeapon*>(item))
 	{
-		inventory->EquipMeleeWeapon(meele);
+		ret = inventory->EquipMeleeWeapon(meele, success);
 		slot = EQUIPMENT_SLOT_MELEE_WEAPON;
 	}
 	else if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
 	{
-		inventory->EquipRangedWeapon(ranged);
+		ret = inventory->EquipRangedWeapon(ranged, success);
 		slot = EQUIPMENT_SLOT_RANGED_WEAPON;
 	}
-	else
+
+	if(!success && slot != EQUIPMENT_SLOT_PROJECTILE)
 	{
-		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Cannot_Equip_That_Item");
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Cannot_Equip_Item");
 		cd->Send(msg);
 		return;
 	}
