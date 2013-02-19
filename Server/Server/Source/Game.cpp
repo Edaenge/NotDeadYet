@@ -902,10 +902,14 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 					}
 					if (food->GetStackSize() <= 0)
 					{
-						if(inv->RemoveItem(food))
+						item = inv->RemoveItem(food);
+
+						if(item)
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
 							cd->Send(msg);
+							
+							delete item, item = NULL;
 						}
 					}
 				}
@@ -947,10 +951,13 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 					}
 					if (bandage->GetStackSize() <= 0)
 					{
-						if(inv->RemoveItem(bandage))
+						item = inv->RemoveItem(bandage);
+
+						if(item)
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
 							cd->Send(msg);
+							delete item, item = NULL;
 						}
 					}
 				}
@@ -1018,12 +1025,14 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//Decrease stack
 				arrow->Use();
 				inventory->RemoveItemStack(arrow->GetID(), 1);
+
 				if (arrow->GetStackSize() <= 0)
 				{
 					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
 					msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_PROJECTILE);
 					cd->Send(msg);
-					inventory->RemoveItem(arrow);
+					item = inventory->RemoveItem(arrow);
+					SAFE_DELETE(item);
 					inventory->UnEquipProjectile();
 				}
 				//Send feedback message
@@ -1108,11 +1117,15 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 						}
 						if (material->GetStackSize() <= 0)
 						{
-							if (inv->RemoveItem(material))
+							item = inv->RemoveItem(material);
+
+							if (item)
 							{
 								ID = material->GetID();
 								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
 								cd->Send(msg);
+
+								delete item, item = NULL;
 							}
 						}
 					}
@@ -1213,6 +1226,7 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 	Item* ret = NULL;
 	bool success = false;
 
+
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
 		int weigth = inventory->GetTotalWeight();
@@ -1221,7 +1235,8 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 		
 		if(weigth > inventory->GetTotalWeight())
 		{
-			inventory->RemoveItem(proj);
+			Item* temp = inventory->RemoveItem(proj);
+			SAFE_DELETE(temp);
 		}
 
 		slot = EQUIPMENT_SLOT_PROJECTILE;
