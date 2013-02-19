@@ -62,15 +62,15 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 	this->zHealthChanged = true;
 	MaloW::Debug("Damage Taken " + MaloW::convertNrToString(dmg.GetTotal()));
 
-	if(dmg.GetTotal() / this->zHealth > 0.20 && dmg.GetBleedFactor() > 0.6)
-	{
-		this->zBleeding = true;
-	}
-
 	if(this->zHealth <= 0.0f)
 	{
 		this->zAlive = false;
 		this->zHealth = 0.0f;
+	}
+
+	if(dmg.GetTotal() / this->zHealth > 0.20 && dmg.GetBleedFactor() > 0.6)
+	{
+		this->zBleeding = true;
 	}
 
 	if(!zAlive)

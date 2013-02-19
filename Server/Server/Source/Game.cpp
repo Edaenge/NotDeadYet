@@ -241,7 +241,7 @@ bool Game::Update( float dt )
 			ItemActor* newActor = ConvertToItemActor(temp, oldActor);
 			
 			i = zBehaviors.erase(i);
-			SAFE_DELETE(temp);
+			delete temp, temp = NULL;
 
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
@@ -262,23 +262,30 @@ bool Game::Update( float dt )
 	// Collisions Projectiles Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
-		if(ProjectileActor* projActor = dynamic_cast<ProjectileActor*>((*i)->GetActor()))
+		if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
 		{
-			Vector3 scale = projActor->GetScale();
-			float middle = (0.85f * max(max(scale.x, scale.y),scale.z)) / 2; //Hard coded
+			ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(projBehavior->GetActor());
+			if(!projActor)
+			{
+				MaloW::Debug("ProjectileActor is null. Arrow collision detectin in Game.cpp, Update.");;
+				continue;
+			}
 
+			//Get Data
+			Vector3 scale = projActor->GetScale();
+			float length = projBehavior->GetLenght();
+
+			//Calculate the arrow
+			float middle = (length * max(max(scale.x, scale.y),scale.z)) / 2; //Hard coded
+
+			//Check collision, returns the result
 			Actor* collide = this->zActorManager->CheckCollisions(projActor, middle); 
 
 			if(BioActor* victim = dynamic_cast<BioActor*>(collide))
 			{
-				if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
-					projBehavior->Stop();
-				else
-				{
-					MaloW::Debug("Proj. collision detection failed.");
-					continue;
-				}
-
+				//Stop arrow
+				projBehavior->Stop();
+				//Take damage
 				victim->TakeDamage(projActor->GetDamage(), projActor);
 			}
 		}
