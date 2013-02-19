@@ -316,9 +316,9 @@ void GuiManager::EquipItem( int type, const Gui_Item_Data gid )
 	this->zInvGui->EquipItem(type, gid, this->zInventoryOpen);
 }
 
-void GuiManager::UnEquipItem( const int ID, int stacks )
+void GuiManager::UnEquipItem( const Gui_Item_Data gid )
 {
-	this->zInvGui->UnEquipItem(ID, stacks);
+	this->zInvGui->UnEquipItem(gid, this->zInventoryOpen, this->zEng);
 }
 
 void GuiManager::Resize( int width, int height )
