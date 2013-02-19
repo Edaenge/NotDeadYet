@@ -145,7 +145,7 @@ bool PlayerHumanBehavior::Update( float dt )
 			}
 		}
 	}
-	else if(keyStates.GetKeyState(KEY_SPRINT))
+	else if(keyStates.GetKeyState(KEY_SPRINT) && bActor->GetStamina() > 0)
 	{
 		if(this->zVelocity.GetLength() > MAX_VELOCITY_SPRINT)
 		{
@@ -163,14 +163,17 @@ bool PlayerHumanBehavior::Update( float dt )
 		}
 	}
 
+	Vector3 groundNormal;
+
 	// Gravity
 	if(!isOnGround)
 		this->zVelDown += -9.82f * dt;
 	else
 	{
+		groundNormal = this->zWorld->CalcNormalAt(newPosition.GetXZ());
 		this->zVelDown = 0.0f;
 	}
-	newPosition += Vector3(0.0f, this->zVelDown, 0.0f);
+	newPosition += Vector3(0.0f, this->zVelDown, 0.0f) + (groundNormal * dt);
 	//Look so player isn't outside of World.
 	if ( zWorld->IsInside(newPosition.GetXZ()) )
 	{
