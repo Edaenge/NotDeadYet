@@ -3,6 +3,9 @@
 DeerActor::DeerActor() : 
 	AnimalActor()
 {
+	this->SetHealth(80.0f);
+	this->zHealthMax = 80.0f;
+	//this->zType = DEER;
 	/*this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitDeer();*/
 }

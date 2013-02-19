@@ -11,6 +11,9 @@ public:
 	DeerActor();
 	virtual ~DeerActor();
 
+private:
+
+	
 	/*
 	void InitDeer() throw(...);
 	virtual void Update(float deltaTime);
