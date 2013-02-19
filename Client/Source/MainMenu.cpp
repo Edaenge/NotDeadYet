@@ -26,10 +26,15 @@ void MainMenu::Init()
 {
 	GraphicsEngine* eng = GetGraphics();
 
+	eng->CreateSkyBox("Media/skymap.dds");
+
 	float windowWidth = (float)eng->GetEngineParameters().WindowWidth;
 	float windowHeight = (float)eng->GetEngineParameters().WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
+
+	this->zSizedForWidth = windowWidth;
+	this->zSizedForHeight = windowHeight;
 
 	const char* object[] = {
 		"Media/Models/Bush_01.ani",
@@ -352,6 +357,10 @@ void MainMenu::Run()
 							this->EnableMouse(false);
 
 							this->StartTestRun();
+							
+							delete this->zGame;
+
+							this->zGame = new Game();
 
 							this->EnableMouse(true);
 
@@ -438,6 +447,24 @@ void MainMenu::Run()
 							}
 							GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
 
+						}
+						else if(maximized)
+						{
+							float oldWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
+							float oldHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
+
+							RECT desktop;
+							const HWND hDesktop = GetDesktopWindow();
+							GetWindowRect(hDesktop, &desktop);
+							float width = (float)desktop.right;
+							float height = (float)desktop.bottom;
+
+							int i = NOMENU;
+							while(i != LASTMENU)
+							{
+								zSets[i].Resize(oldWidth, oldHeight, width, height);
+								i++;
+							}
 						}
 						// Getting shadow
 						std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");
@@ -643,4 +670,20 @@ void MainMenu::UpdateOptionsMenu()
 
 	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("NormalVolume");
 	tbTemp->SetText(MaloW::convertNrToString(GetSounds()->GetSoundVolume() * 100));
+}
+
+void MainMenu::Resize()
+{
+	if(this->zSizedForWidth == GetGraphics()->GetEngineParameters().WindowWidth &&
+		this->zSizedForHeight == GetGraphics()->GetEngineParameters().WindowHeight)
+		return;
+
+	this->zSets[MAINSET].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
+	this->zSets[FIND_SERVER].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
+	this->zSets[OPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
+	this->zSets[GETIPADRESS].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
+
+
+	this->zSizedForWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
+	this->zSizedForHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
 }

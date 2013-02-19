@@ -78,6 +78,8 @@ void Client::Connect(const std::string &IPAddress, const unsigned int &port)
 
 Client::~Client()
 {
+	this->zEng->GetCamera()->RemoveMesh();
+
 	this->Close();
 	this->WaitUntillDone();
 
@@ -88,6 +90,7 @@ Client::~Client()
 
 	SAFE_DELETE(this->zIgm);
 
+	SAFE_DELETE(this->zWorldRenderer);
 	SAFE_DELETE(this->zWorld);
 	
 	if ( this->zCrossHair ) GetGraphics()->DeleteImage(zCrossHair);
@@ -151,8 +154,7 @@ void Client::InitGraphics(const std::string& mapName)
 	LoadEntList("Entities.txt");
 
 	if ( zWorld ) delete zWorld, zWorld=0;
-	this->zWorld = new World(this, mapName);
-	this->zWorldRenderer = new WorldRenderer(zWorld, this->zEng);
+	this->zWorld = new World(this, mapName, true);
 
 	Vector2 center = this->zWorld->GetWorldCenter();
 
@@ -202,7 +204,6 @@ void Client::Init()
 	this->zGuiManager = new GuiManager(this->zEng);
 	this->zPlayerInventory = new Inventory();
 
-	this->zEng->CreateSkyBox("Media/skymap.dds");
 }
 
 void Client::Life()
@@ -337,7 +338,7 @@ void Client::SendAck(unsigned int IM_ID)
 
 void Client::UpdateMeshRotation()
 {
-	Actor* player = this->zActorManager->GetActor(this->zID);
+	/*Actor* player = this->zActorManager->GetActor(this->zID);
 	if (!player)
 	{
 		return;
@@ -363,7 +364,7 @@ void Client::UpdateMeshRotation()
 	iMesh* playerMesh = player->GetMesh();
 
 	playerMesh->ResetRotation();
-	playerMesh->RotateAxis(around, angle);
+	playerMesh->RotateAxis(around, angle);*/
 }
 
 void Client::UpdateActors()

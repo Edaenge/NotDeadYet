@@ -11,10 +11,12 @@ ClientActorManager::ClientActorManager()
 
 ClientActorManager::~ClientActorManager()
 {
+	GraphicsEngine* ge = GetGraphics();
 	for(auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
 		if(it->second)
 		{
+			ge->DeleteMesh(it->second->GetMesh());
 			delete it->second;
 			it->second = NULL;
 		}

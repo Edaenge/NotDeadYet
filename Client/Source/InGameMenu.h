@@ -24,6 +24,8 @@ private:
 
 	bool zShow;
 
+	float zSizedForWidth;
+	float zSizedForHeight;
 public:
 	InGameMenu();
 	virtual ~InGameMenu();
@@ -43,4 +45,6 @@ private:
 	void UpdateOptionsMenu();
 
 	void SwapMenus(int primary);
+
+	void Resize();
 };
