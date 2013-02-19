@@ -29,7 +29,8 @@
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
 {
-	zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
+	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 
 	if (mode.find("FFA") == 0 )
 	{

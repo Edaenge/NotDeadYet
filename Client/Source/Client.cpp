@@ -176,9 +176,9 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zEng->DeleteImage(this->zBlackImage);
 	this->zBlackImage = NULL;
 
-	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png" ,"Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);	//this->zEng->StartRendering();
+	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);	//this->zEng->StartRendering();
 	
-	if (!this->zCrossHair)
+	if (this->zCrossHair)
 		this->zEng->DeleteImage(this->zCrossHair);
 
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
@@ -239,12 +239,17 @@ void Client::Life()
 				this->zPam->ToggleMenu();
 				zShowCursor = this->zPam->GetShow();
 				// MAKE ME A DEER.
+
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
+				this->zServerChannel->Send(msg);
 			}
 			if(returnValue == BEAR)
 			{
 				this->zPam->ToggleMenu();
 				zShowCursor = this->zPam->GetShow();
 				// MAKE ME A BEAR.
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
+				this->zServerChannel->Send(msg);
 			}
 		}
 		if (this->zIgm->GetShow())
@@ -260,8 +265,8 @@ void Client::Life()
 				this->zIgm->SetShow(false);
 				zShowCursor = false;
 				this->zEng->GetKeyListener()->SetMousePosition(
-					Vector2(this->zEng->GetEngineParameters().WindowWidth/2, 
-					this->zEng->GetEngineParameters().WindowHeight/2));
+					Vector2((float)(this->zEng->GetEngineParameters().WindowWidth/2), 
+					(float)(this->zEng->GetEngineParameters().WindowHeight/2)));
 			}
 		}
 
@@ -1095,6 +1100,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		if (this->zID == id)
 		{
+			this->zEng->GetCamera()->RemoveMesh();
 			this->zCreated = false;
 		}
 	}

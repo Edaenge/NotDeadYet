@@ -76,7 +76,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 			this->zMeshOffset = meshOffsetsIterator->second;
 
 			this->zActorManager->SetCameraOffset(this->zMeshOffset);
-			//this->zEng->GetCamera()->SetMesh(mesh, Vector3());
+			this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset);
 			this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
 		}
 	}
@@ -168,6 +168,7 @@ bool Client::RemoveActor(const unsigned int ID)
 
 	if(mesh)
 	{
+		
 		this->zEng->DeleteMesh(mesh);
 	}
 

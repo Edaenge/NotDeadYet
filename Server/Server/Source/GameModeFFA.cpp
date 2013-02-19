@@ -146,13 +146,28 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 			//If Type = Wolf
 			else if (animalType == 1)
 			{
-				if (WolfActor* dActor = dynamic_cast<WolfActor*>(aActor))
+				if (WolfActor* wActor = dynamic_cast<WolfActor*>(aActor))
 				{
-					PlayerWolfBehavior* playerWolfBehavior = new PlayerWolfBehavior(dActor, this->zGame->GetWorld(), player);
+					//Kill player on Client
+					msg = NMC.Convert(MESSAGE_TYPE_DEAD_ACTOR, (float)gActor->GetID());
+					Player* player = gActor->GetPlayer();
+					gActor->SetPlayer(NULL);
+
+					cd->Send(msg);
+
+					PlayerWolfBehavior* playerWolfBehavior = new PlayerWolfBehavior(wActor, this->zGame->GetWorld(), player);
 
 					this->zGame->SetPlayerBehavior(player, playerWolfBehavior);
 
+					wActor->SetPlayer(player);
 
+					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, wActor->GetID());
+					msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
+
+					cd->Send(msg);
+
+					this->zGame->GetActorManager()->RemoveActor(gActor);
+					this->zGame->GetActorManager()->AddActor(wActor);
 					found = true;
 				}
 			}

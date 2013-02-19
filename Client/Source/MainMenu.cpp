@@ -304,7 +304,7 @@ void MainMenu::StartTestRun()
 
 void MainMenu::Run()
 {
-	bool proModeOrNot = false; // CHANGE HERE!!!!!!!
+	bool proModeOrNot = true; // CHANGE HERE!!!!!!!
 	if(!proModeOrNot)
 	{
 		this->StartTestRun();
