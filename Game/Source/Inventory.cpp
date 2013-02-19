@@ -283,10 +283,17 @@ Item* Inventory::EquipRangedWeapon(RangedWeapon* weapon, bool& success)
 		zSecondaryEquip = weapon;
 	}
 	else
+	{
+		MaloW::Debug("Failed to Equip Ranged Weapon");
 		success = false;
+	}
 
 	if(success)
+	{
+		if (Messages::FileWrite())
+			Messages::Debug("Equipped Ranged Weapon");
 		this->zRangedWeapon = weapon;
+	}
 
 	return ret;
 }
@@ -314,10 +321,17 @@ Item* Inventory::EquipMeleeWeapon(MeleeWeapon* weapon, bool& success)
 		zSecondaryEquip = weapon;
 	}
 	else
+	{
+		MaloW::Debug("Failed to Equip Melee Weapon");
 		success = false;
+	}
 
 	if(ret)
+	{
+		if (Messages::FileWrite())
+			Messages::Debug("Equipped Melee Weapon");
 		this->zMeleeWeapon = weapon;
+	}
 
 	return ret;
 }
@@ -338,16 +352,21 @@ Item* Inventory::EquipProjectile(Projectile* projectile)
 			this->zProjectile->SetStackSize(totalStacks);
 
 			ret = zProjectile;
-
+			if (Messages::FileWrite())
+				Messages::Debug("Equipped Projectile and added stacks");
 		}
 		else
 		{
+			if (Messages::FileWrite())
+				Messages::Debug("Equipped Projectile and replaced old one");
 			ret = this->zProjectile;
 			this->zProjectile = projectile;
 		}
 	}
 	else
 	{
+		if (Messages::FileWrite())
+			Messages::Debug("Equipped Projectile");
 		this->zProjectile = projectile;
 	}
 
