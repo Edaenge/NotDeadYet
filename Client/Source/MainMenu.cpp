@@ -40,6 +40,7 @@ void MainMenu::Init()
 		"Media/Models/WaterGrass_02.ani",
 		"Media/Models/Bow_v01.obj",
 		"Media/Models/temp_guy.obj",
+		"Media/Models/deer_temp.obj",
 		"Media/Models/Arrow_v01.obj",
 		"Media/Models/Machete_v01.obj",
 		"Media/Models/Bush_02_v02.obj",
@@ -52,7 +53,7 @@ void MainMenu::Init()
 		"Media/Models/StoneItem_01_v01.obj",
 		"Media/Models/BranchesItem_01_v01.obj"};
 
-	GetGraphics()->PreLoadResources(19, object);
+	GetGraphics()->PreLoadResources(20, object);
 
 	eng->StartRendering();
 

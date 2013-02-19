@@ -121,16 +121,12 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 			{
 				if (DeerActor* dActor = dynamic_cast<DeerActor*>(aActor))
 				{
-					//Kill player on Client
-					msg = NMC.Convert(MESSAGE_TYPE_DEAD_ACTOR, (float)gActor->GetID());
 					Player* player = gActor->GetPlayer();
 					gActor->SetPlayer(NULL);
 
-					cd->Send(msg);
-
 					PlayerDeerBehavior* playerDeerBehavior = new PlayerDeerBehavior(dActor, this->zGame->GetWorld(), player);
 					dActor->SetPlayer(player);
-
+					
 					this->zGame->SetPlayerBehavior(player, playerDeerBehavior);
 
 					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, dActor->GetID());
@@ -139,21 +135,17 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 					cd->Send(msg);
 
 					this->zGame->GetActorManager()->RemoveActor(gActor);
-					this->zGame->GetActorManager()->AddActor(dActor);
 					found = true;
 				}
 			}
-			//If Type = Wolf
+			/*//If Type = Wolf
 			else if (animalType == 1)
 			{
 				if (WolfActor* wActor = dynamic_cast<WolfActor*>(aActor))
 				{
 					//Kill player on Client
-					msg = NMC.Convert(MESSAGE_TYPE_DEAD_ACTOR, (float)gActor->GetID());
 					Player* player = gActor->GetPlayer();
 					gActor->SetPlayer(NULL);
-
-					cd->Send(msg);
 
 					PlayerWolfBehavior* playerWolfBehavior = new PlayerWolfBehavior(wActor, this->zGame->GetWorld(), player);
 
@@ -167,15 +159,29 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 					cd->Send(msg);
 
 					this->zGame->GetActorManager()->RemoveActor(gActor);
-					this->zGame->GetActorManager()->AddActor(wActor);
 					found = true;
 				}
-			}
+			}*/
 			//If Type = Bear
 			else if (animalType == 2)
 			{
 				if (BearActor* dActor = dynamic_cast<BearActor*>(aActor))
 				{
+					//Player* player = gActor->GetPlayer();
+					//gActor->SetPlayer(NULL);
+
+					//PlayerBearBehavior* playerBearBehavior = new PlayerBearBehavior(dActor, this->zGame->GetWorld(), player);
+					//dActor->SetPlayer(player);
+
+					//this->zGame->SetPlayerBehavior(player, playerBearBehavior);
+
+					//msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, dActor->GetID());
+					//msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
+
+					//cd->Send(msg);
+
+					//this->zGame->GetActorManager()->RemoveActor(gActor);
+					//found = true;
 				}
 			}
 		}
@@ -187,15 +193,12 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 void GameModeFFA::OnPlayerDeath(PlayerActor* pActor)
 {
 	NetworkMessageConverter NMC;
-	//Kill player on Client
-	std::string msg = NMC.Convert(MESSAGE_TYPE_DEAD_ACTOR, (float)pActor->GetID());
+	std::string msg = "";
 
 	Player* player = pActor->GetPlayer();
 	pActor->SetPlayer(NULL);
 
 	ClientData* cd = player->GetClientData();
-
-	cd->Send(msg);
 
 	//Create Spirit
 	Vector3 position = pActor->GetPosition();
