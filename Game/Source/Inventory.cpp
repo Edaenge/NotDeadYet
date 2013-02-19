@@ -72,7 +72,7 @@ std::vector<Item*> Inventory::GetItems() const
 	return this->zItems;
 }
 
-bool Inventory::AddItem(Item*& item)
+bool Inventory::AddItem(Item* item, bool &stacked)
 {
 	if (!item)
 		return false;
@@ -91,13 +91,13 @@ bool Inventory::AddItem(Item*& item)
 				if (Messages::FileWrite())
 					Messages::Debug("Added Stack to inventory " + item->GetItemName());
 
-				SAFE_DELETE(item);
-
+				stacked = true;
 				return true;
 			}
 		}
 		//this->NotifyObservers()
 		this->zItems.push_back(item);
+		stacked = false;
 
 		if (Messages::FileWrite())
 			Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
@@ -256,27 +256,6 @@ Item* Inventory::SearchAndGetItemFromType(const int Type, const int SubType)
 	return NULL;
 }
 
-// Item* Inventory::EraseItem(const unsigned int ID)
-// {
-// 	int index = this->Search(ID);
-// 
-// 	if (index == -1)
-// 		return NULL;
-// 	
-// 	if ((unsigned int)index < this->zItems.size())
-// 	{
-// 		Item* item = this->GetItem(index);
-// 
-// 		int weight = item->GetWeight() * item->GetStackSize();
-// 		this->zWeightTotal -= weight;
-// 		
-// 		this->zItems.erase(this->zItems.begin() + index);
-// 
-// 		return item;
-// 	}
-// 	return NULL;
-// }
-
 //Equipment
 Item* Inventory::EquipRangedWeapon(RangedWeapon* weapon, bool& success)
 {
@@ -301,10 +280,17 @@ Item* Inventory::EquipRangedWeapon(RangedWeapon* weapon, bool& success)
 		zSecondaryEquip = weapon;
 	}
 	else
+	{
+		MaloW::Debug("Failed to Equip Ranged Weapon");
 		success = false;
+	}
 
 	if(success)
+	{
+		if (Messages::FileWrite())
+			Messages::Debug("Equipped Ranged Weapon");
 		this->zRangedWeapon = weapon;
+	}
 
 	return ret;
 }
@@ -332,10 +318,17 @@ Item* Inventory::EquipMeleeWeapon(MeleeWeapon* weapon, bool& success)
 		zSecondaryEquip = weapon;
 	}
 	else
+	{
+		MaloW::Debug("Failed to Equip Melee Weapon");
 		success = false;
+	}
 
 	if(success)
+	{
+		if (Messages::FileWrite())
+			Messages::Debug("Equipped Melee Weapon");
 		this->zMeleeWeapon = weapon;
+	}
 
 	return ret;
 }
@@ -356,16 +349,21 @@ Item* Inventory::EquipProjectile(Projectile* projectile)
 			this->zProjectile->SetStackSize(totalStacks);
 
 			ret = zProjectile;
-
+			if (Messages::FileWrite())
+				Messages::Debug("Equipped Projectile and added stacks");
 		}
 		else
 		{
+			if (Messages::FileWrite())
+				Messages::Debug("Equipped Projectile and replaced old one");
 			ret = this->zProjectile;
 			this->zProjectile = projectile;
 		}
 	}
 	else
 	{
+		if (Messages::FileWrite())
+			Messages::Debug("Equipped Projectile");
 		this->zProjectile = projectile;
 	}
 
@@ -475,7 +473,7 @@ Projectile* Inventory::GetProjectile()
 	return this->zProjectile;
 }
 
-void Inventory::SetPrimaryEquip( unsigned int ID )
+void Inventory::SetPrimaryEquip(unsigned int ID)
 {
 	Item* item = SearchAndGetItem(ID);
 
@@ -488,7 +486,7 @@ void Inventory::SetPrimaryEquip( unsigned int ID )
 	this->zPrimaryEquip = item;
 }
 
-void Inventory::SetSecondaryEquip( unsigned int ID )
+void Inventory::SetSecondaryEquip(unsigned int ID)
 {
 	Item* item = SearchAndGetItem(ID);
 

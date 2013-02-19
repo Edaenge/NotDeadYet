@@ -37,7 +37,7 @@ public:
 	int Search(const unsigned int ID) const;
 	int Search(Item* item) const;
 	/*! Adds an item to the array*/
-	bool AddItem(Item*& item);
+	bool AddItem(Item* item, bool &stacked);
 	/*! Returns the item at the position */
 	Item* GetItem(const unsigned int index) const;
 	/*! Returns the Items*/

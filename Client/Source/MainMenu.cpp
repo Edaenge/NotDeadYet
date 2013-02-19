@@ -58,7 +58,7 @@ void MainMenu::Init()
 		"Media/Models/StoneItem_01_v01.obj",
 		"Media/Models/BranchesItem_01_v01.obj"};
 
-	GetGraphics()->PreLoadResources(20, object);
+	eng->PreLoadResources(20, object);
 
 	eng->StartRendering();
 
@@ -301,7 +301,7 @@ void MainMenu::Init()
 
 void MainMenu::StartTestRun()
 {
-	//zGame->InitGameClient("194.47.150.16", 11521);
+	//zGame->InitGameClient("194.47.150.20", 11521);
 	//zGame->InitGameClient("194.47.150.12", 11521);
 	//zGame->InitGameClient("80.78.216.201", 11521);
 	zGame->InitGameClient("127.0.0.1", 11521);	
