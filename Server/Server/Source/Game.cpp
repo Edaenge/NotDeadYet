@@ -23,8 +23,6 @@
 #include "Physics.h"
 #include "ClientServerMessages.h"
 
-
-//Temporary
 #include "ItemLookup.h"
 
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :

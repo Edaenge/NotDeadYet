@@ -21,7 +21,7 @@ bool AIDeerBehavior::InitValues()
 
 	for(int i = 0; i < 32; i++)
 	{
-	this->zTargets.push_back(vectorFilling);
+		this->zTargets.push_back(vectorFilling);
 	}
 
 	this->zIntervalCounter = 0;
@@ -59,6 +59,8 @@ bool AIDeerBehavior::InitValues()
 	this->zFearMax = 100.0f;
 	DeerActor* dActor = dynamic_cast<DeerActor*>(this->zActor);
 	this->SetPreviousHealth( dActor->GetHealth());
+
+	return true;
 }
 
 bool AIDeerBehavior::SetValuesFromFile()
@@ -403,7 +405,6 @@ void AIDeerBehavior::SetPreviousHealth(float oldHealth)
 	this->zPreviousHealth = oldHealth;
 }
 
-
 bool AIDeerBehavior::Update( float dt )
 {
 	DeerActor* dActor = dynamic_cast<DeerActor*>(this->zActor);
@@ -518,9 +519,6 @@ bool AIDeerBehavior::Update( float dt )
 		}
 	}
 		
-	
-	
-	
 	//Change state of mind.
 	if(this->GetFearLevel() == 0 && !nearbyPredatorsExist)
 	{
@@ -812,5 +810,5 @@ bool AIDeerBehavior::Update( float dt )
 		this->SetIfNeedPath(true);
 	}
 
-	return true;
+	return false;
 }
