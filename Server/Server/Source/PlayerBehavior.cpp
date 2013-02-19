@@ -9,6 +9,7 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 {	
 	this->zPlayer = player;
 	this->zVelocity = Vector3(0.0f, 0.0f, 0.0f);
+	this->zVelDown = 0.0f;
 }
 
 PlayerBehavior::~PlayerBehavior()

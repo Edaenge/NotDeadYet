@@ -6,7 +6,7 @@
 
 ClientActorManager::ClientActorManager()
 {
-	zInterpolationVelocity = 100.0f;
+	zInterpolationVelocity = 1000.0f;
 }
 
 ClientActorManager::~ClientActorManager()
