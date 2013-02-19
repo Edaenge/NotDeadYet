@@ -21,6 +21,7 @@ InGameMenu::~InGameMenu()
 
 int InGameMenu::Run()
 {
+	this->Resize();
 	int returnValue = IGNOTHING;
 	bool removeMenu = false;
 	GUIEvent* guiEvent = NULL;
@@ -82,6 +83,24 @@ int InGameMenu::Run()
 				GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
 
 			}
+			else if(maximized)
+			{
+				float oldWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
+				float oldHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
+
+				RECT desktop;
+				const HWND hDesktop = GetDesktopWindow();
+				GetWindowRect(hDesktop, &desktop);
+				float width = (float)desktop.right;
+				float height = (float)desktop.bottom;
+
+				int i = IGNOMENU;
+				while(i != IGLASTMENU)
+				{
+					zSets[i].Resize(oldWidth, oldHeight, width, height);
+					i++;
+				}
+			}
 			// Getting shadow
 			std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");
 			this->zEng->ChangeShadowQuality(MaloW::convertStringToInt(tbTemp));
@@ -119,6 +138,12 @@ int InGameMenu::Run()
 
 			this->SwapMenus(cEvent->GetSet());
 		}
+		else if(this->zEng->GetKeyListener()->IsPressed(VK_ESCAPE))
+		{
+			returnValue = IGRESUME;
+			removeMenu = true;
+		}
+			
 	}
 	if(removeMenu)
 		this->zSets[this->zPrimarySet].RemoveSetFromRenderer(this->zEng);
@@ -132,6 +157,10 @@ void InGameMenu::Init()
 
 	float windowWidth = (float)eng->GetEngineParameters().WindowWidth;
 	float windowHeight = (float)eng->GetEngineParameters().WindowHeight;
+
+	this->zSizedForWidth = windowWidth;
+	this->zSizedForHeight = windowHeight;
+
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
@@ -372,4 +401,17 @@ void InGameMenu::ToggleMenu()
 	this->zSets[this->zPrimarySet].AddSetToRenderer(this->zEng);
 
 	this->zShow = true;
+}
+
+void InGameMenu::Resize()
+{
+	if(this->zSizedForWidth == this->zEng->GetEngineParameters().WindowWidth &&
+		this->zSizedForHeight == this->zEng->GetEngineParameters().WindowHeight)
+		return;
+
+	this->zSets[INGAMEMAIN].Resize(this->zSizedForWidth, this->zSizedForHeight, this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight);
+	this->zSets[IGOPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight);
+
+	this->zSizedForWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
+	this->zSizedForHeight = (float)this->zEng->GetEngineParameters().WindowHeight;
 }

@@ -17,7 +17,8 @@ void Client::HandleWeaponUse(const unsigned int ID)
 		if(proj->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
 		{
 			itemStackID = proj->GetID();
-			Gui_Item_Data gid = Gui_Item_Data(proj->GetID(), proj->GetWeight(), 1, 
+			unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
+			Gui_Item_Data gid = Gui_Item_Data(proj->GetID(), totalWeight, 1, 
 				proj->GetItemName(), proj->GetIconPath(), proj->GetItemDescription(), proj->GetItemType(), proj->GetItemSubType());
 			if( proj->Use() )
 			{
@@ -39,8 +40,9 @@ void Client::HandleWeaponUse(const unsigned int ID)
 
 		if( proj->Use() )
 		{
+			unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 			this->zPlayerInventory->RemoveItemStack(proj->GetID(), 1);
-			Gui_Item_Data gid = Gui_Item_Data(proj->GetID(), proj->GetWeight(), 1, 
+			Gui_Item_Data gid = Gui_Item_Data(proj->GetID(), totalWeight, 1, 
 				proj->GetItemName(), proj->GetIconPath(), proj->GetItemDescription(), proj->GetItemType(), proj->GetItemSubType());
 			this->zGuiManager->RemoveInventoryItemFromGui(gid);
 		}
@@ -86,8 +88,9 @@ void Client::HandleUseItem(const unsigned int ID)
 			return;
 		}
 		this->zPlayerInventory->RemoveItemStack(food->GetID(), 1);
+		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 
-		Gui_Item_Data gid = Gui_Item_Data(food->GetID(), food->GetWeight(), 1, 
+		Gui_Item_Data gid = Gui_Item_Data(food->GetID(), totalWeight, 1, 
 			food->GetItemName(), food->GetIconPath(), food->GetItemDescription(), food->GetItemType(), food->GetItemSubType());
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 
@@ -106,18 +109,18 @@ void Client::HandleUseItem(const unsigned int ID)
 		if (Messages::FileWrite())
 			Messages::Debug("Crafting");
 
-		int oldStacks = material->GetStackSize();
 		if (!material->Use())
 		{
 			MaloW::Debug("Not Enough materials to Craft");
 			return;
 		}
-		int newStacks = material->GetStackSize();
 
-		int stacks = oldStacks - newStacks;
-		this->zPlayerInventory->RemoveItemStack(material->GetID(), stacks);
+		int removedStacks = material->GetRequiredStacksToCraft();
 
-		Gui_Item_Data gid = Gui_Item_Data(material->GetID(), material->GetWeight(), stacks, 
+		this->zPlayerInventory->RemoveItemStack(material->GetID(), removedStacks);
+		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
+
+		Gui_Item_Data gid = Gui_Item_Data(material->GetID(), totalWeight, removedStacks, 
 			material->GetItemName(), material->GetIconPath(), material->GetItemDescription(), material->GetItemType(), material->GetItemSubType());
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
@@ -132,18 +135,17 @@ void Client::HandleUseItem(const unsigned int ID)
 			return;
 		}
 
-		int oldStacks = bandage->GetStackSize();
 		if (!bandage->Use())
 		{
 			MaloW::Debug("Stack is Empty");
 			return;
 		}
-		
-		int newStacks = bandage->GetStackSize();
 
-		int stacks = oldStacks - newStacks;
-		this->zPlayerInventory->RemoveItemStack(bandage->GetID(), stacks);
-		Gui_Item_Data gid = Gui_Item_Data(bandage->GetID(), bandage->GetWeight(), 1, 
+		this->zPlayerInventory->RemoveItemStack(bandage->GetID(), 1);
+
+		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
+
+		Gui_Item_Data gid = Gui_Item_Data(bandage->GetID(), totalWeight, 1, 
 			bandage->GetItemName(), bandage->GetIconPath(), bandage->GetItemDescription(), bandage->GetItemType(), bandage->GetItemSubType());
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 		MaloW::Debug("Bandaging");
@@ -187,17 +189,19 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		if(!success)
 			return;
-
+		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 		if(prev)
 		{
-			Gui_Item_Data gid = Gui_Item_Data(prev->GetID(), prev->GetWeight(), 0, 
+			
+
+			Gui_Item_Data gid = Gui_Item_Data(prev->GetID(), totalWeight, 0, 
 			prev->GetItemName(), prev->GetIconPath(), prev->GetItemDescription(), prev->GetItemType(), prev->GetItemSubType());
 
 			this->zGuiManager->AddInventoryItemToGui(gid);
 			this->zGuiManager->UnEquipItem(gid);
 		}
 
-		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), rWpn->GetWeight(), 0, 
+		Gui_Item_Data gid = Gui_Item_Data(rWpn->GetID(), totalWeight, 0, 
 			rWpn->GetItemName(), rWpn->GetIconPath(), rWpn->GetItemDescription(), rWpn->GetItemType(), rWpn->GetItemSubType());
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
@@ -223,7 +227,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 		int weigth = this->zPlayerInventory->GetTotalWeight();
 		Item* prev = NULL;
 		prev = this->zPlayerInventory->EquipProjectile(projectile);
-
+		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 		if(prev)
 		{
 			//If weigth has increased
@@ -236,7 +240,9 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			}
 			else
 			{
-				Gui_Item_Data gid = Gui_Item_Data(prev->GetID(), prev->GetWeight(), prev->GetStackSize(), 
+				
+
+				Gui_Item_Data gid = Gui_Item_Data(prev->GetID(), totalWeight, prev->GetStackSize(), 
 					prev->GetItemName(), prev->GetIconPath(), prev->GetItemDescription(), prev->GetItemType(), prev->GetItemSubType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -244,7 +250,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			}
 		}
 
-		Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
+		Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), totalWeight, projectile->GetStackSize(), 
 			projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType(), projectile->GetItemSubType());
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
@@ -272,17 +278,19 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		if(!success)
 			return;
-
+		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 		if(prev)
 		{
-			Gui_Item_Data gid = Gui_Item_Data(prev->GetID(), prev->GetWeight(), 0, 
+			
+
+			Gui_Item_Data gid = Gui_Item_Data(prev->GetID(), totalWeight, 0, 
 				prev->GetItemName(), prev->GetIconPath(), prev->GetItemDescription(), prev->GetItemType(), prev->GetItemSubType());
 
 			this->zGuiManager->AddInventoryItemToGui(gid);
 			this->zGuiManager->UnEquipItem(gid);
 		}
 
-		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), mWpn->GetWeight(), 0, 
+		Gui_Item_Data gid = Gui_Item_Data(mWpn->GetID(), totalWeight, 0, 
 			mWpn->GetItemName(), mWpn->GetIconPath(), mWpn->GetItemDescription(), mWpn->GetItemType(), mWpn->GetItemSubType());
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
@@ -303,8 +311,9 @@ bool Client::HandleUnEquipItem(const unsigned int ItemID, const int Slot)
 		{
 			if (projectile->GetID() == ItemID)
 			{
+				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 
-				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
+				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), totalWeight, projectile->GetStackSize(), 
 					projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType(), projectile->GetItemSubType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -329,7 +338,9 @@ bool Client::HandleUnEquipItem(const unsigned int ItemID, const int Slot)
 		{
 			if (wpn->GetID() == ItemID)
 			{
-				Gui_Item_Data gid = Gui_Item_Data(wpn->GetID(), wpn->GetWeight(), 0, 
+				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
+
+				Gui_Item_Data gid = Gui_Item_Data(wpn->GetID(), totalWeight, 0, 
 					wpn->GetItemName(), wpn->GetIconPath(), wpn->GetItemDescription(), wpn->GetItemType(), wpn->GetItemSubType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -354,7 +365,9 @@ bool Client::HandleUnEquipItem(const unsigned int ItemID, const int Slot)
 		{
 			if (wpn->GetID() == ItemID)
 			{
-				Gui_Item_Data gid = Gui_Item_Data(wpn->GetID(), wpn->GetWeight(), 0, 
+				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
+
+				Gui_Item_Data gid = Gui_Item_Data(wpn->GetID(), totalWeight, 0, 
 					wpn->GetItemName(), wpn->GetIconPath(), wpn->GetItemDescription(), wpn->GetItemType(), wpn->GetItemSubType());
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -494,7 +507,9 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 				if (Messages::FileWrite())
 					Messages::Debug("Weapon UnEquipped " + weapon->GetItemName() + " ID: " + MaloW::convertNrToString((float)weapon->GetID()));
 
-				Gui_Item_Data gid = Gui_Item_Data(weapon->GetID(), weapon->GetWeight(), weapon->GetStackSize(), 
+				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
+
+				Gui_Item_Data gid = Gui_Item_Data(weapon->GetID(), totalWeight, weapon->GetStackSize(), 
 					weapon->GetItemName(), weapon->GetIconPath(), weapon->GetItemDescription(), weapon->GetItemType(), weapon->GetItemSubType());
 
 				this->zGuiManager->UnEquipItem(gid);
@@ -519,7 +534,9 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 				if (Messages::FileWrite())
 					Messages::Debug("Weapon UnEquipped " + weapon->GetItemName() + " ID: " + MaloW::convertNrToString((float)weapon->GetID()));
 
-				Gui_Item_Data gid = Gui_Item_Data(weapon->GetID(), weapon->GetWeight(), weapon->GetStackSize(), 
+				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
+
+				Gui_Item_Data gid = Gui_Item_Data(weapon->GetID(), totalWeight, weapon->GetStackSize(), 
 					weapon->GetItemName(), weapon->GetIconPath(), weapon->GetItemDescription(), weapon->GetItemType(), weapon->GetItemSubType());
 
 				this->zGuiManager->UnEquipItem(gid);
@@ -544,7 +561,9 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 				if (Messages::FileWrite())
 					Messages::Debug("Ammo UnEquipped " + projectile->GetItemName() + " ID: " + MaloW::convertNrToString((float)projectile->GetID()));
 
-				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
+				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
+
+				Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), totalWeight, projectile->GetStackSize(), 
 					projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType(), projectile->GetItemSubType());
 				
 				Item* temp = this->zPlayerInventory->RemoveItem(projectile);
@@ -618,7 +637,9 @@ void Client::HandleRemoveInventoryItem(const unsigned int ID)
 
 		if(item)
 		{
-			Gui_Item_Data gid = Gui_Item_Data(item->GetID(), item->GetWeight(), stackSize, 
+			unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
+
+			Gui_Item_Data gid = Gui_Item_Data(item->GetID(), totalWeight, stackSize, 
 				item->GetItemName(), item->GetIconPath(), item->GetItemDescription(), item->GetItemType(), item->GetItemSubType());
 
 			this->zGuiManager->RemoveInventoryItemFromGui(gid);
@@ -812,14 +833,18 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	{
 		itemStackSize = 0;
 	}
-
-	if (this->zPlayerInventory->AddItem(item))
+	bool stacked = false;
+	
+	if (this->zPlayerInventory->AddItem(item, stacked))
 	{
+		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 		Projectile* projectile = this->zPlayerInventory->GetProjectile();
 
-		if(!item && projectile && (projectile->GetItemSubType() == itemSubType))
+		if(stacked && projectile && (projectile->GetItemSubType() == itemSubType))
 		{
-			Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), projectile->GetWeight(), projectile->GetStackSize(), 
+			
+
+			Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), totalWeight, projectile->GetStackSize(), 
 				projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType(), projectile->GetItemSubType());
 
 			this->zGuiManager->RemoveInventoryItemFromGui(gid);
@@ -827,7 +852,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		}
 		else
 		{
-			Gui_Item_Data gid = Gui_Item_Data(ID, itemWeight, itemStackSize, itemName, itemIconFilePath, itemDescription, itemType, itemSubType);
+			Gui_Item_Data gid = Gui_Item_Data(ID, totalWeight, itemStackSize, itemName, itemIconFilePath, itemDescription, itemType, itemSubType);
 			this->zGuiManager->AddInventoryItemToGui(gid);
 		}
 	}

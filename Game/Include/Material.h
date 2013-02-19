@@ -28,7 +28,7 @@ public:
 	virtual ~Material();
 
 	unsigned int GetCraftingType() const {return this->zCraftingType;}
-	unsigned int GetRequiredStackToCraft() const {return this->zRequiredStackToCraft;}
+	unsigned int GetRequiredStacksToCraft() const {return this->zRequiredStackToCraft;}
 
 	void SetCraftingType(const int TYPE) {this->zCraftingType = TYPE;}
 	void SetRequiredStackToCraft(const int size) {this->zRequiredStackToCraft = size;}

@@ -21,6 +21,9 @@ private:
 
 	bool zShow;
 
+	float zSizedForWidth;
+	float zSizedForHeight;
+
 public:
 	PickAnimalMenu();
 	virtual ~PickAnimalMenu();
@@ -34,4 +37,6 @@ public:
 
 private:
 	void Init();
+
+	void Resize();
 };

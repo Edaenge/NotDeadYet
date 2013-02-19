@@ -37,6 +37,7 @@ private:
 
 	void UpdateOptionsMenu();
 
+	void Resize();
 private:
 	GUISet*	zSets;
 	int		zNrOfSets;
@@ -46,4 +47,7 @@ private:
 	Game* zGame;
 	bool zClientConnected;
 	bool zHostCreated;
+
+	float zSizedForWidth;
+	float zSizedForHeight;
 };

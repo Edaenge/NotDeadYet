@@ -7,10 +7,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "BioActor.h"
 
-
-
-
-
 /*This is a NPC animal. It inherits from BioActor.*/
 /*ID is generated in Actor.h*/
 class AnimalActor : public BioActor

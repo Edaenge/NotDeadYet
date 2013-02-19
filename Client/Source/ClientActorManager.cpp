@@ -11,10 +11,12 @@ ClientActorManager::ClientActorManager()
 
 ClientActorManager::~ClientActorManager()
 {
+	GraphicsEngine* ge = GetGraphics();
 	for(auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
 		if(it->second)
 		{
+			ge->DeleteMesh(it->second->GetMesh());
 			delete it->second;
 			it->second = NULL;
 		}
@@ -39,10 +41,10 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				Vector3 position;
 				if(update->GetID() == clientID)
 				{
-					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
+					position = this->InterpolatePosition(gEng->GetCamera()->GetPosition() - this->zCameraOffset, update->GetPosition(), t);
 					//if ( rand()%10000 == 0 ) GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);
 					//actor->SetPosition(position);
-					GetGraphics()->GetCamera()->SetPosition(position + this->zCameraOffset);
+					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
 				}
 				else 
 				{

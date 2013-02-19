@@ -149,12 +149,12 @@ std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 
 void BioActor::SetState( const int state )
 {
-	//if (state != this->zState)
-	//{
-	//	BioActorStateEvent BASE;
-	//	BASE.zBioActor = this;
-	//	NotifyObservers(&BASE);
-	//}
-	
+	if (state != this->zState)
+	{
+		BioActorStateEvent BASE;
+		BASE.zBioActor = this;
+		NotifyObservers(&BASE);
+	}
+
 	this->zState = state;
 }

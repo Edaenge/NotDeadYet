@@ -46,8 +46,14 @@ bool ProjectileArrowBehavior::Update( float dt )
 
 	//**Check if the projectile has hit the ground**
 
-	float yValue;
-	yValue = this->zWorld->CalcHeightAtWorldPos(newPos.GetXZ());
+	float yValue = std::numeric_limits<float>::lowest();
+	try
+	{
+		yValue = this->zWorld->CalcHeightAtWorldPos(newPos.GetXZ());
+	}
+	catch(...)
+	{
+	}
 
 	// If true, stop the projectile and return.
 	Vector3 scale = this->zActor->GetScale();

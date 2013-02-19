@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "Actor.h"
 
-const float MAX_VELOCITY = 5.0f;
+const float MAX_VELOCITY = 7.0f;
 const float ACCELERATION = 5.0f;
 
 PlayerGhostBehavior::PlayerGhostBehavior( Actor* actor, World* world, Player* player ) : PlayerBehavior(actor, world, player)
@@ -52,12 +52,17 @@ bool PlayerGhostBehavior::Update( float dt )
 
 	newPlayerPos = currentPlayerPos + this->zVelocity * dt;
 
-	float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ()) + 1.0f;
-	if(newGroundHeight > newPlayerPos.y)
+	//Look so Ghost isn't outside of World.
+	if ( zWorld->IsInside(newPlayerPos.GetXZ()) )
 	{
-		newPlayerPos.y = newGroundHeight;
+		float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ()) + 1.0f;
+		if(newGroundHeight > newPlayerPos.y)
+		{
+			newPlayerPos.y = newGroundHeight;
+		}
+
+		zActor->SetPosition(newPlayerPos);
 	}
-	this->zActor->SetPosition(newPlayerPos);
 
 	return false;
 }
