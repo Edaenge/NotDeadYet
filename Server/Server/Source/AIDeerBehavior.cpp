@@ -87,8 +87,8 @@ bool AIDeerBehavior::SetValuesFromFile()
 		//minimum distance
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = (int)atoi(characters);
-		this->zMinimumDistance = numberFromFile;
+		numberFromFile = (float)atoi(characters);
+		this->zMinimumDistance = (int)numberFromFile;
 
 		//field of view
 		infile.getline(characters, 256,' ');

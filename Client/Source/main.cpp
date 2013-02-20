@@ -22,7 +22,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 		MaloW::Debug("Failed Initializing Graphics!");
 		return 1;
 	}
-	if ( SoundsInit() != 0 )
+	if ( !SoundsInit() )
 	{
 		MaloW::Debug("Failed Initializing Sounds!");
 		return 1;

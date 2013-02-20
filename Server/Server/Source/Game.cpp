@@ -74,32 +74,42 @@ Game::~Game()
 {	
 	for( auto i = this->zBehaviors.begin(); i != this->zBehaviors.end(); ++i )
 	{
-		delete *i;
+		Behavior* data = (*i);
+		SAFE_DELETE(data);
 	}
 	this->zBehaviors.clear();
 
 	for( auto i = this->zPlayers.begin(); i != this->zPlayers.end(); ++i )
 	{
-		delete i->second;
+		Player* data = i->second;
+		if (data)
+		{
+			delete data;
+			data = NULL;
+		}
 	}
 	this->zPlayers.clear();
 
-	if ( this->zGameMode )
-	{
-		delete this->zGameMode;
-		this->zGameMode = NULL;
-	}
-	if ( this->zWorld ) 
-	{
-		delete this->zWorld;
-		this->zWorld = NULL;
-	}
-	if ( this->zActorManager ) 
-	{
-		delete this->zActorManager;
-		this->zActorManager = NULL;
-	}
+	SAFE_DELETE(this->zWorld);
+	SAFE_DELETE(this->zGameMode);
+	SAFE_DELETE(this->zActorManager);
 
+	//if ( this->zGameMode )
+	//{
+	//	delete this->zGameMode;
+	//	this->zGameMode = NULL;
+	//}
+	//if ( this->zWorld ) 
+	//{
+	//	delete this->zWorld;
+	//	this->zWorld = NULL;
+	//}
+	//if ( this->zActorManager ) 
+	//{
+	//	delete this->zActorManager;
+	//	this->zActorManager = NULL;
+	//}
+	
 	FreeItemLookup();
 }
 
@@ -546,7 +556,8 @@ void Game::OnEvent( Event* e )
 		auto i = zWorldActors.find(ERE->entity);
 		if ( i != zWorldActors.end() )
 		{
-			delete i->second;
+			SAFE_DELETE(i->second);
+
 			zWorldActors.erase(i);
 		}
 	}
@@ -1161,13 +1172,9 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 		MaloW::Debug("Item ID do not match in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
-
-	RangedWeapon* ranged = NULL;
-	MeleeWeapon* meele = NULL;
-	Projectile* proj = NULL;
 	NetworkMessageConverter NMC;
 
-	if(ranged = dynamic_cast<RangedWeapon*>(item))
+	if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
 	{
 		if (ranged->GetItemSubType() == ITEM_SUB_TYPE_BOW)
 		{
@@ -1208,11 +1215,11 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
 		}
 	}
-	else if(proj = dynamic_cast<Projectile*>(item))
+	else if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
 		//TODO: Implement rocks
 	}
-	else if(meele = dynamic_cast<MeleeWeapon*>(item))
+	else if(MeleeWeapon* meele = dynamic_cast<MeleeWeapon*>(item))
 	{
 		float range = 0.0f; 
 		BioActor* victim = NULL;

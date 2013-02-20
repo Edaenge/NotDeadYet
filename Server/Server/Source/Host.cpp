@@ -40,6 +40,25 @@ Host::~Host()
 	BroadCastServerShutdown();
 
 	SAFE_DELETE(this->zServerListener);
+	this->zClients.clear();
+
+	SAFE_DELETE(this->zGame);
+
+	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
+	{
+		auto iterator = it;
+
+		ClientData* data = iterator->second;
+		if(data)
+		{
+			delete data;
+			data = NULL;
+		}
+
+	}
+
+	SAFE_DELETE(this->zSynchronizer);
+
 	this->Close();
 	this->WaitUntillDone();
 }

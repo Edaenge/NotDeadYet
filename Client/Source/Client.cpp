@@ -91,10 +91,14 @@ Client::~Client()
 	SAFE_DELETE(this->zPlayerInventory);
 
 	SAFE_DELETE(this->zIgm);
+	SAFE_DELETE(this->zPam);
 
 	SAFE_DELETE(this->zWorldRenderer);
 	SAFE_DELETE(this->zWorld);
 	
+	this->zMeshCameraOffsets.clear();
+	this->zStateCameraOffset.clear();
+
 	if ( this->zCrossHair ) GetGraphics()->DeleteImage(zCrossHair);
 }
 

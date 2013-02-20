@@ -13,6 +13,8 @@ public:
 	std::map< unsigned int, Vector3 > newScales;
 	std::map< unsigned int, unsigned int> newStates;
 
+	virtual ~ServerFramePacket() {}
+
 	virtual bool Serialize( std::ostream& ss ) const
 	{
 		size_t num = newPositions.size();
