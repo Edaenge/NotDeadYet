@@ -92,7 +92,8 @@ enum MESSAGE_TYPE
 		WOLF = 1
 		BEAR = 2
 	*/
-	MESSAGE_TYPE_PLAY_AS_ANIMAL
+	MESSAGE_TYPE_PLAY_AS_ANIMAL,
+	MESSAGE_TYPE_LEAVE_ANIMAL
 };
 
 static const std::string M_UPDATE_ACTOR				= "UA";
@@ -114,6 +115,7 @@ static const std::string M_RESTART_GAME_REQUEST		= "RGR";
 	BEAR = 2
 */
 static const std::string M_PLAY_AS_ANIMAL			= "PAD";
+static const std::string M_LEAVE_ANIMAL				= "LA";
 //Data Messages
 static const std::string M_LOAD_MAP					= "LM";
 static const std::string M_CONNECTED				= "CON";

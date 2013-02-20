@@ -22,13 +22,724 @@ void AI::SetWorldPointer(World* theWorld)
 {
 	this->zWorld = theWorld;
 }
-
+/*
 //Note: by Y, we of course mean Z. I was merely thinking in a 2-d grid when designing this.
 bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goalYPos, std::vector<Vector2> &inVector, int maximumPathLenght)
 {
-	// 1 Issue(s):
-		//- checking the world for good/bad nodes.
 
+	if(goalXPos < 1 ) //With a dynamic system, these branches make sure it does not get outside the level.
+	{
+		goalXPos = 1;
+	}
+	else if ( goalXPos > this->zMaximumRange )
+	{
+		goalXPos = this->zMaximumRange - 1;
+	}
+	if(goalYPos < 1 ) //With a dynamic system, these branches make sure it does not get outside the level.
+	{
+		goalYPos = 1;
+	}
+	else if ( goalYPos > this->zMaximumRange )
+	{
+		goalYPos = this->zMaximumRange - 1;
+	}
+	
+
+	//Is the goal position in an impossible position?
+	if(this->zWorld->IsBlockingAt(Vector2(goalXPos, goalYPos)))
+	{
+		return false;
+	}
+
+
+	bool done = false;
+	bool valid = false;
+	bool add = false;
+
+	int smallestFCost = 99999;
+
+	int currentNode = 0;
+
+	zNodeList.push_front(Node(startYPos, startXPos));
+
+	zOpenList.push_front(&zNodeList.back());
+
+	while(!zOpenList.empty())
+	{
+
+		auto current = zOpenList.begin();
+		auto selected = zNodeList.begin();
+
+		smallestFCost = 99999;
+
+		for(auto it = zOpenList.begin(); it != zOpenList.end(); it++)
+		{
+			if((*it)->fCost < smallestFCost)
+			{
+					smallestFCost = (*it)->fCost;
+					current = it;
+			}
+		}
+
+		for(auto it = zNodeList.begin(); it != zNodeList.end(); it++)
+		{
+			if((*current)->x == it->x && (*current)->y == it->y)
+			{
+					selected = it;
+			}
+		}
+
+
+		zClosedList.splice(zClosedList.begin(),zOpenList,current);
+
+		int x, y;
+
+		x = zClosedList.front()->x;
+		y = zClosedList.front()->y;
+
+		//currentNode = y * GRIDSIZE + x; //Possible relic
+
+
+		for(int i = 0; i < 8; i++)
+		{
+			valid = false;
+			add = false;
+
+			float nextNode = -1;
+			float nextX = x;
+			float nextY = y;
+
+			if(i == 0)
+				{
+					//if(selected->x <= 0 || selected->y <= 0)//if(zNodes[currentNode].x <= 0 || zNodes[currentNode].y <= 0)
+					//{
+					//	continue;
+					//}
+					//nextNode = currentNode - 1 - GRIDSIZE;
+					nextX = x - 0.5;
+					nextY = y - 0.5;
+
+					//OXX
+					//XOX
+					//XXX
+				}
+
+
+				else if(i == 1)
+				{
+					//if(selected->y <= 0)//if(zNodes[currentNode].y <= 0)
+					//{	
+					//	continue;
+					//}
+					//nextNode = currentNode - GRIDSIZE;
+					nextX = x;
+					nextY = y - 0.5;
+					//XOX
+					//XOX
+					//XXX
+				}
+				else if(i == 2)
+				{
+					//if(selected->x >= GRIDSIZE -1 || selected->y <= 0)//if(zNodes[currentNode].x >= GRIDSIZE -1 || zNodes[currentNode].y <= 0)
+					//{
+					//	continue;
+					//}
+					//nextNode = currentNode + 1 - GRIDSIZE;
+					nextX = x + 0.5;
+					nextY = y - 0.5;
+
+					//XXO
+					//XOX
+					//XXX
+				}
+				else if(i == 3)
+				{
+					//if(selected->x <= 0)//if(zNodes[currentNode].x <= 0)
+					//{
+					//	continue;
+					//}
+					//nextNode = currentNode - 1;
+					nextX = x - 0.5;
+					nextY = y;
+					//XXX
+					//OOX
+					//XXX
+				}
+				else if(i == 4)
+				{
+					//if(selected->x >= GRIDSIZE -1)//if(zNodes[currentNode].x >= GRIDSIZE -1)
+					//{
+					//	continue;
+					//} 
+					//nextNode = currentNode + 1;
+					nextX = x + 0.5;
+					nextY = y;
+					//XXX
+					//XOO
+					//XXX
+				}
+				else if(i == 5)
+				{
+					//if(selected->x <= 0 || selected->y >= GRIDSIZE - 1)//if(zNodes[currentNode].x <= 0 || zNodes[currentNode].y >= GRIDSIZE-1)
+					//{
+					//	continue;
+					//} 
+					//nextNode = currentNode - 1 + GRIDSIZE;
+					nextX = x - 0.5;
+					nextY = y + 0.5;
+					//XXX
+					//XOX
+					//OXX
+				}
+				else if(i == 6)
+				{
+					//if(selected->y >= GRIDSIZE - 1)//if(zNodes[currentNode].y >= GRIDSIZE -1)
+					//{
+					//	continue;
+					//} 
+					//nextNode = currentNode + GRIDSIZE;
+					nextX = x;
+					nextY = y + 0.5;
+					
+					//XXX
+					//XOX
+					//XOX
+				}
+				else if(i == 7)
+				{
+					//if(selected->x >= GRIDSIZE -1 || selected->y >= GRIDSIZE - 1)//if(zNodes[currentNode].x >= GRIDSIZE -1 || zNodes[currentNode].y >= GRIDSIZE -1)
+					//{
+					//	continue;
+					//} 
+					//nextNode = currentNode + 1 + GRIDSIZE;
+					nextX = x + 0.5;
+					nextY = y + 0.5;
+					
+					//XXX
+					//XOX
+					//XXO
+					
+				}
+
+
+				//It is valid in terms of location.
+
+				//if(nextY > GRIDSIZE - 1)
+				//{
+				//	nextY = GRIDSIZE - 1;
+				//}
+				//if(nextX > GRIDSIZE - 1)
+				//{
+				//	nextX = GRIDSIZE - 1;
+				//}
+
+				//Is it valid in the bitset? If not, ignore.
+				//if(zGrid[GRIDSIZE * nextY + nextX] == true )
+				//{
+				//	//It is not valid in the bitset.
+				//	continue;
+				//}
+
+				//Is it valid? If not, ignore.
+				if(this->zWorld->IsBlockingAt(Vector2(nextX, nextY)))
+				{
+					//It is not valid.
+					continue;
+				}
+
+				Node theNextNode(nextX,nextY);
+			
+				//calculate the f cost.			
+				theNextNode.fCost = abs(goalXPos - nextX);//zNodes[nextNode].fCost = abs( goalX - zNodes[nextNode].x);
+				theNextNode.fCost += abs(goalYPos - nextY);//zNodes[nextNode].fCost += abs( goalY - zNodes[nextNode].y);
+
+				theNextNode.fCost *= 10;//zNodes[nextNode].fCost *= 10;
+
+				if(i == 1 || i == 3 || i == 4 || i == 6)
+				{
+					if(currentNode == 0)
+					{
+						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+					}
+					theNextNode.gCost = selected->gCost + 10;//zNodes[nextNode].gCost = zNodes[currentNode].gCost + 10;
+					theNextNode.fCost += theNextNode.gCost;//zNodes[nextNode].fCost += zNodes[nextNode].gCost;
+				}
+				else
+				{	
+					if(currentNode == 0)
+					{
+						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+					}
+					theNextNode.gCost = selected->gCost + 14;//zNodes[nextNode].gCost = zNodes[currentNode].gCost + 14;
+					theNextNode.fCost += theNextNode.gCost;//zNodes[nextNode].fCost += zNodes[nextNode].gCost;
+				}
+
+
+				add = true;
+
+				for(auto iter = zOpenList.begin(); iter != zOpenList.end(); iter++)
+				{
+					if((*iter)->x == theNextNode.x && (*iter)->y == theNextNode.y)//if((*iter)->x == zNodes[nextNode].x && (*iter)->y == zNodes[nextNode].y)
+					{
+						add = false;
+						break;
+					}
+				}
+
+				for(auto iter = zClosedList.begin(); iter != zClosedList.end(); iter++)
+				{
+					if((*iter)->x == theNextNode.x && (*iter)->y == theNextNode.y)//if((*iter)->x == zNodes[nextNode].x && (*iter)->y == zNodes[nextNode].y)
+					{
+						add = false;
+						break;
+					}
+				}
+
+				if(add)
+				{
+					
+				//Now we need to set the parent of the node.
+				theNextNode.parent = (&*selected); //zNodes[zNodes[nextNode].y*GRIDSIZE+zNodes[nextNode].x].parent = &zNodes[currentNode];
+
+				this->zNodeList.push_front(theNextNode);
+				
+
+				
+				//Add it to the open list. 
+				zOpenList.push_front(&this->zNodeList.front());//zOpenList.push_front(&zNodes[nextNode]);
+
+
+					if(zNodeList.front().x == goalXPos && zNodeList.front().y == goalYPos)//if(zNodes[nextNode].x == goalX && zNodes[nextNode].y == goalY)
+					{
+						done = true;
+						break;
+					}
+				}
+
+				currentNode++;
+		}
+
+		if(done)
+		{
+			zClosedList.splice(zClosedList.begin(),zOpenList,zOpenList.begin());
+
+			break;
+		}
+
+		if(zClosedList.size() > maximumPathLenght)
+		{
+				break;
+		}
+
+	}
+	startXPos;
+	goalXPos;
+
+	startYPos;
+	goalYPos;
+
+	goalXPos - startXPos;
+	goalYPos - startYPos;
+
+	Node* tracer = zClosedList.front();
+
+	while(tracer->parent != NULL && tracer->parent != tracer)
+	{
+		//inVector.push_back(Vector2(tracer->x * this->zNodeDistance, tracer->y * this->zNodeDistance) ); // Static
+		//inVector.push_back(Vector2( (startXPos + (tracer->x - GRIDSIZE/2) * this->zNodeDistance ), (startYPos + (tracer->y - GRIDSIZE/2) * this->zNodeDistance)) ); //Dynamic
+		inVector.push_back(Vector2 (tracer->x, tracer->y ) );
+		tracer = tracer->parent;
+	}
+
+	//Clear the lists, so repeating the function doesn't give bugs or such.
+	zClosedList.clear();
+	zOpenList.clear();
+	zNodeList.clear();
+
+	return true;
+
+}*/
+
+
+
+	//Note: by Y, we of course mean Z. I was merely thinking in a 2-d grid when designing this.
+bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goalYPos, std::vector<Vector2> &inVector, int maximumPathLenght)
+{	
+	float goalX = ceil(goalXPos - 0.5); //Dynamic
+	float goalY = ceil(goalYPos - 0.5); //Dynamic
+
+	if(goalX < 1) 
+	{
+		goalX = 1;
+	}
+	if(goalY < 1)
+	{
+		goalY = 1;
+	}
+
+	if(goalX >= this->zMaximumRange)
+	{
+		goalX = this->zMaximumRange - 1;
+	}
+
+	if(goalY >= this->zMaximumRange)
+	{
+		goalY = this->zMaximumRange - 1;
+	}
+	
+
+	//Is the goal position in an impossible position
+	if(this->zWorld->IsBlockingAt(Vector2(goalX, goalY )))
+	{
+		return false;
+	}
+
+
+	bool done = false;
+	bool valid = false;
+	bool add = false;
+
+	int smallestFCost = 9999;
+
+	int currentNode = 0;
+
+	float startX = ceil(startXPos - 0.5); //Dynamic
+	float startY = ceil(startYPos - 0.5); //Dynamic
+
+	zNodeList.push_front(Node(startX, startY));
+
+	zOpenList.push_front(&zNodeList.back());
+
+	while(!zOpenList.empty())
+	{
+
+		auto current = zOpenList.begin();
+		auto selected = zNodeList.begin();
+
+		smallestFCost = 9999;
+
+		for(auto it = zOpenList.begin(); it != zOpenList.end(); it++)
+		{
+			if((*it)->fCost < smallestFCost)
+			{
+					smallestFCost = (*it)->fCost;
+					current = it;
+			}
+		}
+
+		for(auto it = zNodeList.begin(); it != zNodeList.end(); it++)
+		{
+			if((*current)->x == it->x && (*current)->y == it->y)
+			{
+					selected = it;
+			}
+		}
+
+
+		zClosedList.splice(zClosedList.begin(),zOpenList,current);
+
+		float x, y;
+
+		x = zClosedList.front()->x;
+		y = zClosedList.front()->y;
+
+		for(int i = 0; i < 8; i++)
+		{
+			valid = false;
+			add = false;
+
+			int nextNode = -1;
+			float nextX = x;
+			float nextY = y;
+
+			switch( i )
+			{
+			case 0:
+				nextX = x - this->zNodeDistance;
+				nextY = y - this->zNodeDistance;
+				//OXX
+				//XOX
+				//XXX
+				break;
+			case 1:
+				nextX = x;
+				nextY = y - this->zNodeDistance;
+				//XOX
+				//XOX
+				//XXX
+				break;
+			case 2:
+				nextX = x + this->zNodeDistance;
+				nextY = y - this->zNodeDistance;
+				//XXO
+				//XOX
+				//XXX
+				break;
+			case 3:
+				nextX = x - this->zNodeDistance;
+				nextY = y;
+				//XXX
+				//OOX
+				//XXX
+				break;
+			case 4:
+				nextX = x + this->zNodeDistance;
+				nextY = y;
+				//XXX
+				//XOO
+				//XXX
+				break;
+			case 5:
+				nextX = x - this->zNodeDistance;
+				nextY = y + this->zNodeDistance;
+				//XXX
+				//XOX
+				//OXX
+				break;
+			case 6:
+				nextX = x;
+				nextY = y + this->zNodeDistance;
+				//XXX
+				//XOX
+				//XOX
+				break;
+			case 7:
+				nextX = x + this->zNodeDistance;
+				nextY = y + this->zNodeDistance;
+				//XXX
+				//XOX
+				//XXO
+				break;
+			}
+
+			//if(i == 0)
+			//	{
+			//		nextX = x - this->zNodeDistance;
+			//		nextY = y - this->zNodeDistance;
+			//		//OXX
+			//		//XOX
+			//		//XXX
+			//	}
+
+
+			//	else if(i == 1)
+			//	{
+			//		nextX = x;
+			//		nextY = y - this->zNodeDistance;
+			//		//XOX
+			//		//XOX
+			//		//XXX
+			//	}
+			//	else if(i == 2)
+			//	{
+			//		nextX = x + this->zNodeDistance;
+			//		nextY = y - this->zNodeDistance;
+			//		//XXO
+			//		//XOX
+			//		//XXX
+			//	}
+			//	else if(i == 3)
+			//	{
+			//		nextX = x - this->zNodeDistance;
+			//		nextY = y;
+			//		//XXX
+			//		//OOX
+			//		//XXX
+			//	}
+			//	else if(i == 4)
+			//	{
+			//		nextX = x + this->zNodeDistance;
+			//		nextY = y;
+			//		//XXX
+			//		//XOO
+			//		//XXX
+			//	}
+			//	else if(i == 5)
+			//	{
+			//		nextX = x - this->zNodeDistance;
+			//		nextY = y + this->zNodeDistance;
+			//		//XXX
+			//		//XOX
+			//		//OXX
+			//	}
+			//	else if(i == 6)
+			//	{
+			//		nextX = x;
+			//		nextY = y + this->zNodeDistance;
+			//		//XXX
+			//		//XOX
+			//		//XOX
+			//	}
+			//	else if(i == 7)
+			//	{
+			//		nextX = x + this->zNodeDistance;
+			//		nextY = y + this->zNodeDistance;
+			//		//XXX
+			//		//XOX
+			//		//XXO
+			//		
+			//	}
+
+				if(this->zWorld->IsBlockingAt(Vector2(nextX, nextY)))
+				{
+					continue;
+				}
+
+				Node theNextNode(nextX,nextY);
+			
+				//calculate the f cost.			
+				theNextNode.fCost = abs(goalX - nextX);//zNodes[nextNode].fCost = abs( goalX - zNodes[nextNode].x);
+				theNextNode.fCost += abs(goalY - nextY);//zNodes[nextNode].fCost += abs( goalY - zNodes[nextNode].y);
+
+				theNextNode.fCost *= 10;//zNodes[nextNode].fCost *= 10;
+
+				switch( i )
+				{
+				case( 1 ) :
+					if(currentNode == 0)
+					{
+						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+					}
+					theNextNode.gCost = selected->gCost + 10;
+					theNextNode.fCost += theNextNode.gCost;
+					break;
+				case( 3 ) :
+					if(currentNode == 0)
+					{
+						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+					}
+					theNextNode.gCost = selected->gCost + 10;
+					theNextNode.fCost += theNextNode.gCost;
+					break;
+				case( 4 ) :
+					if(currentNode == 0)
+					{
+						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+					}
+					theNextNode.gCost = selected->gCost + 10;
+					theNextNode.fCost += theNextNode.gCost;
+					break;
+				case ( 6 ):
+					if(currentNode == 0)
+					{
+						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+					}
+					theNextNode.gCost = selected->gCost + 10;
+					theNextNode.fCost += theNextNode.gCost;
+					break;
+				default:
+					if(currentNode == 0)
+					{
+						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+					}
+					theNextNode.gCost = selected->gCost + 14;
+					theNextNode.fCost += theNextNode.gCost;
+					break;
+
+				}
+
+				//if(i == 1 || i == 3 || i == 4 || i == 6)
+				//{
+				//	if(currentNode == 0)
+				//	{
+				//		selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+				//	}
+				//	theNextNode.gCost = selected->gCost + 10;//zNodes[nextNode].gCost = zNodes[currentNode].gCost + 10;
+				//	theNextNode.fCost += theNextNode.gCost;//zNodes[nextNode].fCost += zNodes[nextNode].gCost;
+				//}
+				//else
+				//{	
+				//	if(currentNode == 0)
+				//	{
+				//		selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+				//	}
+				//	theNextNode.gCost = selected->gCost + 14;//zNodes[nextNode].gCost = zNodes[currentNode].gCost + 14;
+				//	theNextNode.fCost += theNextNode.gCost;//zNodes[nextNode].fCost += zNodes[nextNode].gCost;
+				//}
+
+
+				add = true;
+				
+
+				for(auto iter = zOpenList.begin(); iter != zOpenList.end(); iter++)
+				{
+					if((*iter)->x == theNextNode.x && (*iter)->y == theNextNode.y)//if((*iter)->x == zNodes[nextNode].x && (*iter)->y == zNodes[nextNode].y)
+					{
+						add = false;
+						break;
+					}
+				}
+
+				for(auto iter = zClosedList.begin(); iter != zClosedList.end(); iter++)
+				{
+					if((*iter)->x == theNextNode.x && (*iter)->y == theNextNode.y)//if((*iter)->x == zNodes[nextNode].x && (*iter)->y == zNodes[nextNode].y)
+					{
+						add = false;
+						break;
+					}
+				}
+
+				if(add)
+				{
+					
+				//Now we need to set the parent of the node.
+				theNextNode.parent = (&*selected); 
+				this->zNodeList.push_front(theNextNode);
+				
+				//Add it to the open list. 
+				zOpenList.push_front(&this->zNodeList.front());//zOpenList.push_front(&zNodes[nextNode]);
+
+
+					if(zNodeList.front().x == goalX && zNodeList.front().y == goalY)
+					{
+						done = true;
+						break;
+					}
+				}
+
+				currentNode++;
+		}
+
+		if(done)
+		{
+			zClosedList.splice(zClosedList.begin(),zOpenList,zOpenList.begin());
+
+			break;
+		}
+
+		if(zClosedList.size() > (unsigned int)maximumPathLenght)
+		{
+				break;
+		}
+
+	}
+
+	Node* tracer = zClosedList.front();
+
+	while(tracer->parent != NULL && tracer->parent != tracer)
+	{
+		inVector.push_back(Vector2( tracer->x, tracer->y ) );
+		tracer = tracer->parent;
+	}
+
+	//Clear the lists, so repeating the function doesn't give bugs or such.
+	zClosedList.clear();
+	zOpenList.clear();
+	zNodeList.clear();
+
+	return true;
+
+}
+
+
+
+
+
+
+/*
+//Note: by Y, we of course mean Z. I was merely thinking in a 2-d grid when designing this.
+bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goalYPos, std::vector<Vector2> &inVector, int maximumPathLenght)
+{
 	//Here we determine which nodes are good or bad.
 	for(int j = 0; j < GRIDSIZE; j++)
 	{
@@ -151,16 +862,16 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 
 	zOpenList.push_front(&zNodeList.back());
 
-	/*zOpenList.push_front(&zNodes[startY*GRIDSIZE + startX]);
+	//zOpenList.push_front(&zNodes[startY*GRIDSIZE + startX]);
 
-	for(unsigned int i = 0; i < GRIDSIZE; i++)
-	{
-		for(unsigned int j = 0; j < GRIDSIZE; j++)
-		{
-			zNodes[i+GRIDSIZE*j].x = i;
-			zNodes[i+GRIDSIZE*j].y = j;
-		}
-	}*/
+	//for(unsigned int i = 0; i < GRIDSIZE; i++)
+	//{
+	//	for(unsigned int j = 0; j < GRIDSIZE; j++)
+	//	{
+	//		zNodes[i+GRIDSIZE*j].x = i;
+	//		zNodes[i+GRIDSIZE*j].y = j;
+	//	}
+	//}
 
 	while(!zOpenList.empty())
 	{
@@ -447,4 +1158,4 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 
 	return true;
 
-}
+}*/

@@ -3,6 +3,7 @@
 #include "GameModeTest.h"
 #include "BioActor.h"
 #include "PlayerActor.h"
+#include "AnimalActor.h"
 #include "GhostActor.h";
 #include "GameEvents.h"
 #include "PlayerHumanBehavior.h"
@@ -39,13 +40,13 @@ void GameModeTest::OnEvent( Event* e )
 {
 	if( BioActorTakeDamageEvent* ATD = dynamic_cast<BioActorTakeDamageEvent*>(e) )
 	{
-		if( PlayerActor* pa = dynamic_cast<PlayerActor*>(ATD->zActor) )
+		if( PlayerActor* pActor = dynamic_cast<PlayerActor*>(ATD->zActor) )
 		{
-			if(pa->GetHealth() - ATD->zDamage->GetTotal() <= 0)
+			if(pActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 			{
 				// Set new spawn pos
-				int maxPlayers = zPlayers.size();
-				int rand = 1 + (std::rand() % (maxPlayers+1));
+				//int maxPlayers = zPlayers.size();
+				//int rand = 1 + (std::rand() % (maxPlayers+1));
 				//pa->SetPosition(zGame->CalcPlayerSpawnPoint(rand));
 				//pa->SetHealth(pa->GetHealthMax());
 				//pa->SetStamina(pa->GetStaminaMax());
@@ -59,12 +60,12 @@ void GameModeTest::OnEvent( Event* e )
 
 				//Add to scoreboard
 				if( PlayerActor* dpa = dynamic_cast<PlayerActor*>(ATD->zDealer) )
-					if(dpa != pa)
+					if(dpa != pActor)
 						zScoreBoard[dpa->GetPlayer()]++;
-					else if( dpa == pa )
-						zScoreBoard[pa->GetPlayer()]--;
+					else if( dpa == pActor )
+						zScoreBoard[pActor->GetPlayer()]--;
 
-				OnPlayerDeath(pa);
+				OnPlayerDeath(pActor);
 			}
 			else
 			{
@@ -74,8 +75,15 @@ void GameModeTest::OnEvent( Event* e )
 				NetworkMessageConverter NMC;
 				std::string msg = NMC.Convert(MESSAGE_TYPE_ACTOR_TAKE_DAMAGE, (float)ID);
 				msg += NMC.Convert(MESSAGE_TYPE_HEALTH, damage);
-				ClientData* cd = pa->GetPlayer()->GetClientData();
+				ClientData* cd = pActor->GetPlayer()->GetClientData();
 				cd->Send(msg);
+			}
+		}
+		else if( AnimalActor* aActor = dynamic_cast<AnimalActor*>(ATD->zActor) )
+		{
+			if(aActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
+			{
+				this->zGame->RemoveAIBehavior(aActor);
 			}
 		}
 	}
@@ -95,14 +103,12 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 {
 	NetworkMessageConverter NMC;
 	//Kill player on Client
-	std::string msg = NMC.Convert(MESSAGE_TYPE_DEAD_ACTOR, (float)pActor->GetID());
+	std::string msg;
 
 	Player* player = pActor->GetPlayer();
 	pActor->SetPlayer(NULL);
 
 	ClientData* cd = player->GetClientData();
-
-	cd->Send(msg);
 
 	//Create new Player
 	int maxPlayers = zPlayers.size();

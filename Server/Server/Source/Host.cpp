@@ -319,6 +319,14 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.zAnimalType = animalType;
 		NotifyObservers(&e);
 	}
+	else if(msgArray[0].find(M_LEAVE_ANIMAL) == 0)
+	{
+		PlayerLeaveAnimalEvent e;
+
+		e.clientData = cd;
+
+		NotifyObservers(&e);
+	}
 	else if(msgArray[0].find(M_ACTOR_KILL.c_str()) == 0)
 	{
 		PlayerKillEvent e;
@@ -410,9 +418,6 @@ float Host::Update()
 	this->zDeltaTime = timeDifference * this->zSecsPerCnt;
 
 	this->zStartime = currentTime;
-
-	//Update the objects in the world.
-	//this->zGameMode->Update(zDeltaTime);
 
 	return this->zDeltaTime;
 }

@@ -273,6 +273,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	case MESSAGE_TYPE_ACTOR_KILL:
 		ss << M_ACTOR_KILL;
 		break;
+	case MESSAGE_TYPE_LEAVE_ANIMAL:
+		ss << M_LEAVE_ANIMAL;
+		break;
 	case MESSAGE_TYPE_RESTART_GAME_REQUEST:
 		ss << M_RESTART_GAME_REQUEST;
 		break;

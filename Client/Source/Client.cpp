@@ -407,17 +407,11 @@ bool Client::CheckKey(const unsigned int ID)
 
 void Client::CheckMovementKeys()
 {
-	bool pressed = this->CheckKey(KEY_FORWARD);
-	if (!pressed)
-	{
-		pressed = this->CheckKey(KEY_BACKWARD);
-	}
+	this->CheckKey(KEY_FORWARD);
+	this->CheckKey(KEY_BACKWARD);
 
-	pressed = this->CheckKey(KEY_LEFT);
-	if (!pressed)
-	{
-		pressed = this->CheckKey(KEY_RIGHT);
-	}
+	this->CheckKey(KEY_LEFT);
+	this->CheckKey(KEY_RIGHT);
 }
 
 void Client::CheckPlayerSpecificKeys()
@@ -599,9 +593,13 @@ void Client::CheckKeyboardInput()
 	{
 		this->CheckPlayerSpecificKeys();
 	}
-	if (this->zActorType == GHOST)
+	else if (this->zActorType == GHOST)
 	{
 		this->CheckGhostSpecificKeys();
+	}
+	else if (this->zActorType == ANIMAL)
+	{
+		this->CheckAnimalInput();
 	}
 
 	if (this->zActorType != GHOST)
@@ -689,7 +687,30 @@ void Client::CheckKeyboardInput()
 	this->HandleDebugInfo();
 }
 
-//use to equip weapon with keyboard
+void Client::CheckAnimalInput()
+{
+	this->CheckKey(KEY_JUMP);
+
+	//Leave Animal An Become a Ghost again
+	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed(VK_MENU) && this->zEng->GetKeyListener()->IsPressed('G'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_LEAVE_ANIMAL);
+
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_TEST))
+			this->zKeyInfo.SetKeyState(KEY_TEST, false);
+	}
+}
+
+//Use to equip weapon with keyboard
 void Client::HandleWeaponEquips()
 {
 	if (!this->zPlayerInventory)

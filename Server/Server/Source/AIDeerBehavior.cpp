@@ -30,7 +30,7 @@ bool AIDeerBehavior::InitValues()
 	{
 		//Values could not be retrieved from file, set default values.
 		this->zFearInterval = 1.0f;
-		this->zMinimumDistance = 30.0f;
+		this->zMinimumDistance = 30;
 		this->zFieldOfView = 0.4f;
 		this->zThreatMovementSpeedThreshold = 2.0f;
 		this->zConfidenceKoef = 0.2f;
@@ -43,22 +43,27 @@ bool AIDeerBehavior::InitValues()
 		this->zFearAtDamageDone = 30.0f;
 		this->zSupspiciousToAggressiveThreshold = 20.0f;
 		this->zAggressiveToAfraidThreshold = 35.0f;
-		this->zDistanceToWalkWhenCalm = 14.0f;
-		this->zDistanceToWalkWhenSuspicious = 8.0f;
-		this->zNewTargetCloseByAFactorOf = 4.0f;
-		this->zFleeDistance = 80.0f;
-		this->zLargeSoundEventFearIncrease = 60.0f;
-		this->zCalmRandomInterval = 5.0f;
-		this->zCalmRandomAddition = 4.0f;
-		this->zSupsiciousRandomInterval = 8.0f;
-		this->zSupsiciousAddition = 6.0f;
+		this->zDistanceToWalkWhenCalm = 14;
+		this->zDistanceToWalkWhenSuspicious = 8;
+		this->zNewTargetCloseByAFactorOf = 4;
+		this->zFleeDistance = 80;
+		this->zLargeSoundEventFearIncrease = 60;
+		this->zCalmRandomInterval = 5;
+		this->zCalmRandomAddition = 4;
+		this->zSupsiciousRandomInterval = 8;
+		this->zSupsiciousAddition = 6;
 		this->zWalkingVelocity = 1.2f;
 		this->zAttackingVelocity = 4.4f;
 		this->zFleeingVelocity = 7.8f;
 	}
+	this->SetFearLevel(0.0f);
 	this->zFearMax = 100.0f;
 	DeerActor* dActor = dynamic_cast<DeerActor*>(this->zActor);
 	this->SetPreviousHealth( dActor->GetHealth());
+
+	
+	this->zFearIntervalCounter = 0.0f;
+	this->zIntervalCounter = 0.0f;
 
 	return true;
 }
@@ -76,157 +81,157 @@ bool AIDeerBehavior::SetValuesFromFile()
 		//fear interval
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFearInterval = numberFromFile;
 
 		//minimum distance
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atoi(characters);
+		numberFromFile = (int)atoi(characters);
 		this->zMinimumDistance = numberFromFile;
 
 		//field of view
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFieldOfView = numberFromFile;
 
 		//Threat movement speed threshold
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zThreatMovementSpeedThreshold = numberFromFile;
 
 		//Confidence koef
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zConfidenceKoef = numberFromFile;
 
 		//Distance too close for comfort
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zTooCloseInDistance = numberFromFile;
 
 		//extra fear with more players
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearWithNumberOfPlayers = numberFromFile;
 
 		//extra fear with something too close
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearWithCloseProximity = numberFromFile;
 
 		//extra fear when seeing threat
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearAtSight = numberFromFile;
 
 		//extra fear when threat moves too quickly
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearAtThreatMovementSpeed = numberFromFile;
 
 		//amount of fear decrease
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFearDecrease = numberFromFile;
 
 		//fear when hurt
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFearAtDamageDone = numberFromFile;
 
 		//fear level between suspicious and aggressive.
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zSupspiciousToAggressiveThreshold = numberFromFile;
 
 		//fear level between aggressive and afraid
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zAggressiveToAfraidThreshold = numberFromFile;
 
 		//distance to walk when calm
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zDistanceToWalkWhenCalm = numberFromFile;
 
 		//distance to walk when suspicious
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zDistanceToWalkWhenSuspicious = numberFromFile;
 
 		//factor to use when chosing a new target
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zNewTargetCloseByAFactorOf = numberFromFile;
 
 		//flee distance
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFleeDistance = numberFromFile;
 
 		//How afraid to be when a large sound even happens
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zLargeSoundEventFearIncrease = numberFromFile;
 
 		//The range of the pausing time when calm.
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zCalmRandomInterval = numberFromFile;
 
 		//The minimum value 
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zCalmRandomAddition = numberFromFile;
 
 		//the range of the pausing time when suspicious.
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zSupsiciousRandomInterval = numberFromFile;
 
 		//the minimum value
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zSupsiciousAddition = numberFromFile;
 
 		//the walking velocity
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zWalkingVelocity = numberFromFile;
 
 		//the velocity when attacking
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zAttackingVelocity = numberFromFile;
 		
 		//the fleeing velocity
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFleeingVelocity = numberFromFile;
 
 		valuesRetrieved = true;
@@ -407,12 +412,16 @@ void AIDeerBehavior::SetPreviousHealth(float oldHealth)
 
 bool AIDeerBehavior::Update( float dt )
 {
+
+	if ( Behavior::Update(dt) )
+		return true;
+
 	DeerActor* dActor = dynamic_cast<DeerActor*>(this->zActor);
 
-	//static float testInterval = 0; //Just for debugging.
-	//testInterval += deltaTime;
+	static float testInterval = 0; //Just for debugging.
+	testInterval += dt;
 	this->zIntervalCounter += dt;
-	this->zIntervalCounter += dt;
+	//this->zIntervalCounter += dt;
 	this->zFearIntervalCounter += dt;
 	//this->zAlertnessIntervalCounter += deltaTime;
 	
@@ -426,6 +435,8 @@ bool AIDeerBehavior::Update( float dt )
 	float yDistance = 0;
 	float zDistance = 0;
 	float finalDistance = 0;
+
+	int maximumNodesTest = 40;
 
 	
 	//Determine closest threat/target
@@ -492,7 +503,8 @@ bool AIDeerBehavior::Update( float dt )
 				if(this->zTargets[i].valid == true)
 				{
 				//Do a mathematical check, see if anyone is right in front of the deer. But... how? http://www.youtube.com/watch?v=gENVB6tjq_M
-					float dotProduct = dActor->GetDirection().GetDotProduct( this->zTargets[i].position - dActor->GetPosition() );
+					Vector3 actorPosition = dActor->GetPosition();
+					float dotProduct = dActor->GetDirection().GetDotProduct( this->zTargets[i].position - actorPosition );
 					if(dotProduct > this->zFieldOfView)//This sight is relatively wide, since it is a deer. If this is true, then the deer sees a player.
 					{
 						//Which means, it is even more afraid.
@@ -518,7 +530,7 @@ bool AIDeerBehavior::Update( float dt )
 			this->SetFearLevel( this->GetFearLevel() - this->zFearDecrease);
 		}
 	}
-		
+
 	//Change state of mind.
 	if(this->GetFearLevel() == 0 && !nearbyPredatorsExist)
 	{
@@ -567,7 +579,7 @@ bool AIDeerBehavior::Update( float dt )
 			this->zCalmActionInterval = rand() % this->zCalmRandomInterval + this->zCalmRandomAddition; 
 			this->zCurrentPath.clear(); //Since a new path is gotten, and the old one might not have been completed, we clear it just in case.
 			//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->GetPosition().x + rand() % 14 - 7, this->GetPosition().z + rand() % 14 - 7, this->zCurrentPath, 20); //Get a small path to walk, short and does not have to lead anywhere.
-			this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, dActor->GetPosition().x + rand() % zDistanceToWalkWhenCalm - zDistanceToWalkWhenCalm/2, dActor->GetPosition().z + rand() % zDistanceToWalkWhenCalm - zDistanceToWalkWhenCalm/2, this->zCurrentPath, 20);
+			this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, dActor->GetPosition().x + rand() % zDistanceToWalkWhenCalm - zDistanceToWalkWhenCalm/2, dActor->GetPosition().z + rand() % zDistanceToWalkWhenCalm - zDistanceToWalkWhenCalm/2, this->zCurrentPath, maximumNodesTest);
 			this->SetIfNeedPath(false);
 		}
 	}
@@ -582,7 +594,7 @@ bool AIDeerBehavior::Update( float dt )
 			this->zCalmActionInterval = rand() % this->zSupsiciousRandomInterval + this->zSupsiciousAddition;
 			this->zCurrentPath.clear();
 			//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->GetPosition().x + rand() % 8 - 4, this->GetPosition().z + rand() % 8 - 4, this->zCurrentPath, 20); //Get a small path to walk, quite short (since the animal is nervous) and does not have to lead anywhere.
-			this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, dActor->GetPosition().x + rand() % zDistanceToWalkWhenSuspicious - zDistanceToWalkWhenSuspicious/2, dActor->GetPosition().z + rand() % zDistanceToWalkWhenSuspicious - zDistanceToWalkWhenSuspicious/2, this->zCurrentPath, 20);
+			this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, dActor->GetPosition().x + rand() % zDistanceToWalkWhenSuspicious - zDistanceToWalkWhenSuspicious/2, dActor->GetPosition().z + rand() % zDistanceToWalkWhenSuspicious - zDistanceToWalkWhenSuspicious/2, this->zCurrentPath, maximumNodesTest);
 			this->SetIfNeedPath(false);
 		}
 	}
@@ -598,7 +610,7 @@ bool AIDeerBehavior::Update( float dt )
 		{
 			this->SetIfNeedPath(false);
 			this->zCurrentPath.clear();
-			if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40) == false ) //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large. //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40) == false
+			if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, maximumNodesTest) == false ) //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large. //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40) == false
 			{
 				this->SetIfNeedPath(true);
 			}
@@ -611,7 +623,7 @@ bool AIDeerBehavior::Update( float dt )
 			if( lastDistance < this->GetLastDistanceCheck() / 2) // The animal has traveled towards its goal halfway, at this point, it is safe to asume the goal has moved.
 			{
 				this->zCurrentPath.clear();
-				this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 30);
+				this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, maximumNodesTest);
 				//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40);
 			}
 
@@ -661,7 +673,7 @@ bool AIDeerBehavior::Update( float dt )
 				
 
 				this->zCurrentPath.clear();
-				if(!this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath,30) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
+				if(!this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath, maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
 				{
 					this->SetIfNeedPath(true);
 				}
@@ -692,7 +704,7 @@ bool AIDeerBehavior::Update( float dt )
 				}
 				
 				this->zCurrentPath.clear();
-				if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,30) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
+				if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, awayFromThreatX, awayFromThreatZ,this->zCurrentPath, maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
 				{
 					this->SetIfNeedPath(true);
 				}
@@ -707,7 +719,7 @@ bool AIDeerBehavior::Update( float dt )
 				this->zDestination.z += ( direction.z * this->zFleeDistance );
 				
 				this->zCurrentPath.clear();
-				if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath,30) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
+				if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath, maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
 				{
 					this->SetIfNeedPath(true);
 				}
@@ -757,10 +769,10 @@ bool AIDeerBehavior::Update( float dt )
 			direction.Normalize();
 			dActor->SetDirection( direction ); 
 			dActor->SetVelocity(this->zWalkingVelocity);
-			//if(testInterval > 1.0) //Mainly for testing purposes.
+			//if(testInterval > 2.0) //Mainly for testing purposes.
 			//{
 			//	testInterval = 0;
-			//	this->SetPosition(Vector3(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y) );
+			//	dActor->SetPosition(Vector3(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y) );
 			//}
 			
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDirection() * dt * dActor->GetVelocity());

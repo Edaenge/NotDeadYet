@@ -7,7 +7,7 @@
 
 const float MAX_VELOCITY_RUN = 2.95f;
 const float MAX_VELOCITY_SPRINT = 5.90f;
-const float MAX_VELOCITY_DUCK = 0.1f;
+const float MAX_VELOCITY_DUCK = 1.0f;
 const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 const float ELASTICITY = 0.5f;
 const float ACCELERATION = 10000.0f;
@@ -67,18 +67,15 @@ bool PlayerHumanBehavior::Update( float dt )
 		zVelocity += moveDir * dt;
 	}
 
-	// Check Ground
+	// Check On Ground
 	bool isOnGround = false;
 	float heightAboveGround = 0.0f;
-
-	// Apply Velocity
-	Vector3 newPosition = Vector3(0, 0, 0);
 
 	try
 	{
 		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
 		heightAboveGround = curPosition.y - groundHeight;
-		if( heightAboveGround <= 0.0f ) 
+		if( heightAboveGround <= 0.0f) 
 		{
 			isOnGround = true;
 			curPosition.y = groundHeight;
@@ -89,13 +86,6 @@ bool PlayerHumanBehavior::Update( float dt )
 	{
 
 	}
-
-	if ( isOnGround )
-	{
-		zVelocity -= ( zVelocity * 4.0f ) * dt;
-	}
-
-	newPosition = curPosition + zVelocity * dt;
 
 	// Air Resistance
 	Vector3 airResistance(0.0f, 0.0f, 0.0f);
@@ -109,6 +99,30 @@ bool PlayerHumanBehavior::Update( float dt )
 	airResistance *= 0.5f * AIRDENSITY * DRAGCOOEFICIENT * HUMANSURFACEAREA;
 	zVelocity -= airResistance / HUMANWEIGHT * dt;
 
+	//Check if fall/slide
+	Vector3 groundNormal = Vector3(0.0f, 0.0f, 0.0f);
+
+	Vector3 normGround = zWorld->CalcNormalAt(curPosition.GetXZ());
+
+	//Calc the vector in the plane.
+	Vector3 groundProj = normGround;
+	groundProj.y = 0;
+	groundProj.Normalize();
+
+	float angle = acos(normGround.GetDotProduct(groundProj));
+	angle = angle * TODEGREES;
+	if(angle < 45.0f)
+	{
+		zVelocity = Vector3(0.0f, 0.0f, 0.0f);
+		groundNormal = this->zWorld->CalcNormalAt(curPosition.GetXZ()) * 4.0f;
+		this->zVelDown = 0.0f;
+	}
+	else
+		zVelocity -= ( zVelocity * 4.0f ) * dt;
+
+	if(!isOnGround)
+		this->zVelDown += -9.82f * dt; // Gravity
+
 	BioActor* bActor = dynamic_cast<BioActor*>(zActor);
 	// Check Max Speeds
 	if(keyStates.GetKeyState(KEY_DUCK))
@@ -119,12 +133,12 @@ bool PlayerHumanBehavior::Update( float dt )
 			this->zVelocity.Normalize();
 			this->zVelocity *= MAX_VELOCITY_DUCK;
 		}
-		else if(this->zVelocity.GetLength() < MAX_VELOCITY_DUCK)
+		else if(this->zVelocity.GetLength() < MAX_VELOCITY_DUCK/2)
 		{
 			if( !keyStates.GetKeyState(KEY_FORWARD) && !keyStates.GetKeyState(KEY_BACKWARD) && !keyStates.GetKeyState(KEY_RIGHT) && !keyStates.GetKeyState(KEY_LEFT))
 			{
 				bActor->SetState(STATE_IDLE);
-				this->zVelocity = Vector3(0, 0, 0);
+				this->zVelocity = Vector3(0.0f, 0.0f, 0.0f);
 			}
 		}
 	}
@@ -141,7 +155,7 @@ bool PlayerHumanBehavior::Update( float dt )
 			if( !keyStates.GetKeyState(KEY_FORWARD) && !keyStates.GetKeyState(KEY_BACKWARD) && !keyStates.GetKeyState(KEY_RIGHT) && !keyStates.GetKeyState(KEY_LEFT))
 			{
 				bActor->SetState(STATE_IDLE);
-				this->zVelocity = Vector3(0, 0, 0);
+				this->zVelocity = Vector3(0.0f, 0.0f, 0.0f);
 			}
 		}
 	}
@@ -158,22 +172,14 @@ bool PlayerHumanBehavior::Update( float dt )
 			if( !keyStates.GetKeyState(KEY_FORWARD) && !keyStates.GetKeyState(KEY_BACKWARD) && !keyStates.GetKeyState(KEY_RIGHT) && !keyStates.GetKeyState(KEY_LEFT))
 			{
 				bActor->SetState(STATE_IDLE);
-				this->zVelocity = Vector3(0, 0, 0);
+				this->zVelocity = Vector3(0.0f, 0.0f, 0.0f);
 			}
 		}
 	}
 
-	Vector3 groundNormal;
+	// Apply Velocity
+	Vector3 newPosition = curPosition + (zVelocity * dt) + Vector3(0.0f, this->zVelDown, 0.0f) + (groundNormal * dt);
 
-	// Gravity
-	if(!isOnGround)
-		this->zVelDown += -9.82f * dt;
-	else
-	{
-		groundNormal = this->zWorld->CalcNormalAt(newPosition.GetXZ());
-		this->zVelDown = 0.0f;
-	}
-	newPosition += Vector3(0.0f, this->zVelDown, 0.0f) + (groundNormal * dt);
 	//Look so player isn't outside of World.
 	if ( zWorld->IsInside(newPosition.GetXZ()) )
 	{
