@@ -231,7 +231,9 @@ void Game::SpawnItemsDebug()
 bool Game::Update( float dt )
 {
 	// Update Behaviors
+	
 	auto i = zBehaviors.begin();
+	int counter = 0;
 	while( i != zBehaviors.end() )
 	{
 		if ( (*i)->Update(dt) )
@@ -249,8 +251,53 @@ bool Game::Update( float dt )
 		else
 		{
 			++i;
+			counter++;
 		}
 	}
+
+	//Updating animals.
+
+	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+	{
+		Behavior* temp = (*i);
+		if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
+		{
+			animalBehavior->SetCurrentTargets(counter);
+		}
+	}
+
+	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+	{
+		int counter = 0;
+		for(auto j = zBehaviors.begin(); j != zBehaviors.end(); j++)
+		{
+			
+			if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
+			{
+				//animalBehavior->SetTargetInfo(counter,(*j)
+				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
+				{
+					//tempBehaviour->get
+					Actor* oldActor = NULL;
+					ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
+					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
+				}
+				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
+				{
+					Actor* oldActor = NULL;
+					ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
+					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
+				}
+			}
+			counter++;
+		}
+	}
+
+
+
+
+
+
 
 	// Update Game Mode, Might Notify That GameMode is Finished
 	if ( !zGameMode->Update(dt) )
