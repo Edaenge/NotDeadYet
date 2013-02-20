@@ -61,6 +61,10 @@ bool AIDeerBehavior::InitValues()
 	DeerActor* dActor = dynamic_cast<DeerActor*>(this->zActor);
 	this->SetPreviousHealth( dActor->GetHealth());
 
+	
+	this->zFearIntervalCounter = 0.0f;
+	this->zIntervalCounter = 0.0f;
+
 	return true;
 }
 
@@ -417,7 +421,7 @@ bool AIDeerBehavior::Update( float dt )
 	static float testInterval = 0; //Just for debugging.
 	testInterval += dt;
 	this->zIntervalCounter += dt;
-	this->zIntervalCounter += dt;
+	//this->zIntervalCounter += dt;
 	this->zFearIntervalCounter += dt;
 	//this->zAlertnessIntervalCounter += deltaTime;
 	
@@ -526,8 +530,7 @@ bool AIDeerBehavior::Update( float dt )
 			this->SetFearLevel( this->GetFearLevel() - this->zFearDecrease);
 		}
 	}
-	float testFear = this->GetFearLevel();
-	this->zNeedPath;
+
 	//Change state of mind.
 	if(this->GetFearLevel() == 0 && !nearbyPredatorsExist)
 	{
