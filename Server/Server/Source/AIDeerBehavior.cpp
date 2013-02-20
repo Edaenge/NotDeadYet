@@ -30,7 +30,7 @@ bool AIDeerBehavior::InitValues()
 	{
 		//Values could not be retrieved from file, set default values.
 		this->zFearInterval = 1.0f;
-		this->zMinimumDistance = 30.0f;
+		this->zMinimumDistance = 30;
 		this->zFieldOfView = 0.4f;
 		this->zThreatMovementSpeedThreshold = 2.0f;
 		this->zConfidenceKoef = 0.2f;
@@ -43,15 +43,15 @@ bool AIDeerBehavior::InitValues()
 		this->zFearAtDamageDone = 30.0f;
 		this->zSupspiciousToAggressiveThreshold = 20.0f;
 		this->zAggressiveToAfraidThreshold = 35.0f;
-		this->zDistanceToWalkWhenCalm = 14.0f;
-		this->zDistanceToWalkWhenSuspicious = 8.0f;
-		this->zNewTargetCloseByAFactorOf = 4.0f;
-		this->zFleeDistance = 80.0f;
-		this->zLargeSoundEventFearIncrease = 60.0f;
-		this->zCalmRandomInterval = 5.0f;
-		this->zCalmRandomAddition = 4.0f;
-		this->zSupsiciousRandomInterval = 8.0f;
-		this->zSupsiciousAddition = 6.0f;
+		this->zDistanceToWalkWhenCalm = 14;
+		this->zDistanceToWalkWhenSuspicious = 8;
+		this->zNewTargetCloseByAFactorOf = 4;
+		this->zFleeDistance = 80;
+		this->zLargeSoundEventFearIncrease = 60;
+		this->zCalmRandomInterval = 5;
+		this->zCalmRandomAddition = 4;
+		this->zSupsiciousRandomInterval = 8;
+		this->zSupsiciousAddition = 6;
 		this->zWalkingVelocity = 1.2f;
 		this->zAttackingVelocity = 4.4f;
 		this->zFleeingVelocity = 7.8f;
@@ -77,157 +77,157 @@ bool AIDeerBehavior::SetValuesFromFile()
 		//fear interval
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFearInterval = numberFromFile;
 
 		//minimum distance
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atoi(characters);
+		numberFromFile = (int)atoi(characters);
 		this->zMinimumDistance = numberFromFile;
 
 		//field of view
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFieldOfView = numberFromFile;
 
 		//Threat movement speed threshold
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zThreatMovementSpeedThreshold = numberFromFile;
 
 		//Confidence koef
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zConfidenceKoef = numberFromFile;
 
 		//Distance too close for comfort
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zTooCloseInDistance = numberFromFile;
 
 		//extra fear with more players
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearWithNumberOfPlayers = numberFromFile;
 
 		//extra fear with something too close
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearWithCloseProximity = numberFromFile;
 
 		//extra fear when seeing threat
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearAtSight = numberFromFile;
 
 		//extra fear when threat moves too quickly
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearAtThreatMovementSpeed = numberFromFile;
 
 		//amount of fear decrease
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFearDecrease = numberFromFile;
 
 		//fear when hurt
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFearAtDamageDone = numberFromFile;
 
 		//fear level between suspicious and aggressive.
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zSupspiciousToAggressiveThreshold = numberFromFile;
 
 		//fear level between aggressive and afraid
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zAggressiveToAfraidThreshold = numberFromFile;
 
 		//distance to walk when calm
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zDistanceToWalkWhenCalm = numberFromFile;
 
 		//distance to walk when suspicious
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zDistanceToWalkWhenSuspicious = numberFromFile;
 
 		//factor to use when chosing a new target
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zNewTargetCloseByAFactorOf = numberFromFile;
 
 		//flee distance
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFleeDistance = numberFromFile;
 
 		//How afraid to be when a large sound even happens
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zLargeSoundEventFearIncrease = numberFromFile;
 
 		//The range of the pausing time when calm.
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zCalmRandomInterval = numberFromFile;
 
 		//The minimum value 
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zCalmRandomAddition = numberFromFile;
 
 		//the range of the pausing time when suspicious.
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zSupsiciousRandomInterval = numberFromFile;
 
 		//the minimum value
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zSupsiciousAddition = numberFromFile;
 
 		//the walking velocity
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zWalkingVelocity = numberFromFile;
 
 		//the velocity when attacking
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zAttackingVelocity = numberFromFile;
 		
 		//the fleeing velocity
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFleeingVelocity = numberFromFile;
 
 		valuesRetrieved = true;
@@ -408,6 +408,10 @@ void AIDeerBehavior::SetPreviousHealth(float oldHealth)
 
 bool AIDeerBehavior::Update( float dt )
 {
+
+	if ( Behavior::Update(dt) )
+		return true;
+
 	DeerActor* dActor = dynamic_cast<DeerActor*>(this->zActor);
 
 	static float testInterval = 0; //Just for debugging.
@@ -495,7 +499,8 @@ bool AIDeerBehavior::Update( float dt )
 				if(this->zTargets[i].valid == true)
 				{
 				//Do a mathematical check, see if anyone is right in front of the deer. But... how? http://www.youtube.com/watch?v=gENVB6tjq_M
-					float dotProduct = dActor->GetDirection().GetDotProduct( this->zTargets[i].position - dActor->GetPosition() );
+					Vector3 actorPosition = dActor->GetPosition();
+					float dotProduct = dActor->GetDirection().GetDotProduct( this->zTargets[i].position - actorPosition );
 					if(dotProduct > this->zFieldOfView)//This sight is relatively wide, since it is a deer. If this is true, then the deer sees a player.
 					{
 						//Which means, it is even more afraid.

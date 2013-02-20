@@ -87,10 +87,20 @@ bool PlayerGhostBehavior::Update( float dt )
 
 		zActor->SetPosition(newPlayerPos);
 	}
+	GhostActor* gActor = dynamic_cast<GhostActor*>(zActor);
 
-	float energy = dynamic_cast<GhostActor*>(zActor)->GetEnergy();
+	float energy = gActor->GetEnergy();
 
-	energy += ENERGY_REGEN_COEEFFICENCY * dt;
+	if (energy < 200.0f)
+	{
+		energy += ENERGY_REGEN_COEEFFICENCY * dt;
+	}
+	
+	if (energy >= 200.0f)
+	{
+		energy = 200.0f;
+	}
+	gActor->SetEnergy(energy);
 
 	return false;
 }

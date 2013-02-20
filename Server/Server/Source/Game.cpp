@@ -15,6 +15,7 @@
 #include "DeerActor.h"
 #include "WolfActor.h"
 #include "BearActor.h"
+#include "GhostActor.h"
 #include "ItemActor.h"
 #include "PlayerWolfBehavior.h"
 #include "AIDeerBehavior.h"
@@ -424,6 +425,44 @@ void Game::OnEvent( Event* e )
 			if (playerBehavior)
 			{
 				PASE->zActor = playerBehavior->GetActor();
+			}
+		}
+	}
+	else if (PlayerLeaveAnimalEvent* PLAE = dynamic_cast<PlayerLeaveAnimalEvent*>(e))
+	{
+		auto playerIterator = this->zPlayers.find(PLAE->clientData);
+
+		Player* player = playerIterator->second;
+		NetworkMessageConverter NMC;
+		std::string msg;
+		if (player)
+		{
+			Behavior* playerBehavior = player->GetBehavior();
+			if (playerBehavior)
+			{
+				Actor* actor = playerBehavior->GetActor();
+
+				if(DeerActor* dActor = dynamic_cast<DeerActor*>(actor))
+				{
+					dActor->SetPlayer(NULL);
+					AIDeerBehavior* behavior = new AIDeerBehavior(dActor, this->zWorld);
+
+					this->zBehaviors.insert(behavior);
+
+					//Create Ghost behavior And Ghost Actor
+					GhostActor* gActor = new GhostActor(player);
+					PlayerGhostBehavior* playerGhostBehavior = new PlayerGhostBehavior(gActor, this->zWorld, player);
+
+					this->SetPlayerBehavior(player, playerGhostBehavior);
+
+					//Tell Client his new ID and actor type
+					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, gActor->GetID());
+					msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 2);
+					PLAE->clientData->Send(msg);
+
+					//Add the actor to the list
+					this->zActorManager->AddActor(gActor);
+				}
 			}
 		}
 	}
@@ -1158,7 +1197,6 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 			Item* item = inv->SearchAndGetItem(itemID);
 			std::string msg;
 			int stackRemoved = 0;
-			int oldStacks = 0;
 			if (item)
 			{
 				unsigned int ID = 0;

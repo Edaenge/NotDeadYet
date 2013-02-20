@@ -43,9 +43,9 @@ void GameModeFFA::OnEvent( Event* e )
 {
 	if( BioActorTakeDamageEvent* ATD = dynamic_cast<BioActorTakeDamageEvent*>(e) )
 	{
-		if( PlayerActor* pa = dynamic_cast<PlayerActor*>(ATD->zActor) )
+		if( PlayerActor* pActor = dynamic_cast<PlayerActor*>(ATD->zActor) )
 		{
-			if(pa->GetHealth() - ATD->zDamage->GetTotal() <= 0)
+			if(pActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 			{
 				// Set new spawn pos
 				//int maxPlayers = zPlayers.size();
@@ -68,7 +68,7 @@ void GameModeFFA::OnEvent( Event* e )
 				//	else if( dpa == pa )
 				//		zScoreBoard[pa->GetPlayer()]--;
 
-				OnPlayerDeath(pa);
+				OnPlayerDeath(pActor);
 			}
 			else
 			{
@@ -78,8 +78,15 @@ void GameModeFFA::OnEvent( Event* e )
 				NetworkMessageConverter NMC;
 				std::string msg = NMC.Convert(MESSAGE_TYPE_ACTOR_TAKE_DAMAGE, (float)ID);
 				msg += NMC.Convert(MESSAGE_TYPE_HEALTH, damage);
-				ClientData* cd = pa->GetPlayer()->GetClientData();
+				ClientData* cd = pActor->GetPlayer()->GetClientData();
 				cd->Send(msg);
+			}
+		}
+		else if( AnimalActor* aActor = dynamic_cast<AnimalActor*>(ATD->zActor) )
+		{
+			if(aActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
+			{
+				this->zGame->RemoveAIBehavior(aActor);
 			}
 		}
 	}
@@ -124,7 +131,6 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 					Player* player = gActor->GetPlayer();
 					gActor->SetPlayer(NULL);
 
-					
 					PlayerDeerBehavior* playerDeerBehavior = new PlayerDeerBehavior(dActor, this->zGame->GetWorld(), player);
 					dActor->SetPlayer(player);
 					

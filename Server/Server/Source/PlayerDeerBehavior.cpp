@@ -148,24 +148,6 @@ bool PlayerDeerBehavior::Update( float dt )
 	airResistance *= 0.5f * AIRDENSITY * DRAGCOOEFICIENT * DEERSURFACEAREA;
 	zVelocity -= airResistance / DEERWEIGHT * dt;
 
-	// Apply Velocity
-	Vector3 newPosition = curPosition + zVelocity * dt;
-
-	try
-	{
-		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
-		if ( newPosition.y < groundHeight )
-		{
-			newPosition.y = groundHeight;
-			zVelocity.y = 0.0f;
-		}
-	}
-	catch(...)
-	{
-
-	}
-
-
 	//Perform a jump
 	if(isOnGround)
 	{
@@ -175,7 +157,6 @@ bool PlayerDeerBehavior::Update( float dt )
 		}
 		
 	}
-
 
 	// Check Max Speeds
 	if(keyStates.GetKeyState(KEY_DUCK))
@@ -228,6 +209,22 @@ bool PlayerDeerBehavior::Update( float dt )
 				this->zVelocity = Vector3(0, 0, 0);
 			}
 		}
+	}
+
+	// Apply Velocity
+	Vector3 newPosition = curPosition + zVelocity * dt;
+	try
+	{
+		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
+		if ( newPosition.y < groundHeight )
+		{
+			newPosition.y = groundHeight;
+			zVelocity.y = 0.0f;
+		}
+	}
+	catch(...)
+	{
+
 	}
 
 	//Look so player isn't outside of World.
