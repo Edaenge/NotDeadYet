@@ -278,7 +278,6 @@ bool Game::Update( float dt )
 	}
 
 	//Updating animals.
-
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
 		Behavior* temp = (*i);
@@ -299,7 +298,7 @@ bool Game::Update( float dt )
 				//animalBehavior->SetTargetInfo(counter,(*j)
 				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
 				{
-					//tempBehaviour->get
+					//tempBehaviour->get_
 					Actor* oldActor = NULL;
 					ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
 					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
@@ -314,11 +313,6 @@ bool Game::Update( float dt )
 			counter++;
 		}
 	}
-
-
-
-
-
 
 
 	// Update Game Mode, Might Notify That GameMode is Finished
@@ -370,20 +364,26 @@ bool Game::Update( float dt )
 			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
 
 			//If player hasn't moved, ignore
-				if( pActor && !pActor->HasMoved() )
-					continue;
+ 				if( pActor && !pActor->HasMoved() )
+ 					continue;
 
 			Actor* collide = NULL;
-			float range = 1.5f; //hard coded Boom!
+			float range = 1.5f; //hard coded
 
 			collide = this->zActorManager->CheckCollisionsByDistance(pActor, range);
 
 			if(BioActor* target = dynamic_cast<BioActor*>(collide))
 			{
-				if( target->HasMoved() )
-					target->RewindPosition();
+				//Calculate directions from each other
+				Vector3 pActor_rewind_dir = (target->GetPosition() - pActor->GetPosition());
+				pActor_rewind_dir.Normalize();
+				Vector3 target_rewind_dir = pActor_rewind_dir * -1;
+	
+				//Id target did not move, do not rewind position.
+				if(target->HasMoved())
+					target->SetPosition(target->GetPosition() - (target_rewind_dir * 0.5f));
 
-				pActor->RewindPosition();
+				pActor->SetPosition(pActor->GetPosition() - (pActor_rewind_dir * 0.5f));
 			}
 		}
 	}
