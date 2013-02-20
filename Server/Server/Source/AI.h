@@ -22,7 +22,7 @@ struct Node
 	Node(float x, float y){this->x = x; this->y = y; this->parent = NULL; fCost = 99999;};
 };
 
-const int GRIDSIZE = 80;
+const int GRIDSIZE = 18;
 
 class AI
 {

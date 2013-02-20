@@ -413,17 +413,11 @@ bool Client::CheckKey(const unsigned int ID)
 
 void Client::CheckMovementKeys()
 {
-	bool pressed = this->CheckKey(KEY_FORWARD);
-	if (!pressed)
-	{
-		pressed = this->CheckKey(KEY_BACKWARD);
-	}
+	this->CheckKey(KEY_FORWARD);
+	this->CheckKey(KEY_BACKWARD);
 
-	pressed = this->CheckKey(KEY_LEFT);
-	if (!pressed)
-	{
-		pressed = this->CheckKey(KEY_RIGHT);
-	}
+	this->CheckKey(KEY_LEFT);
+	this->CheckKey(KEY_RIGHT);
 }
 
 void Client::CheckPlayerSpecificKeys()
@@ -605,9 +599,13 @@ void Client::CheckKeyboardInput()
 	{
 		this->CheckPlayerSpecificKeys();
 	}
-	if (this->zActorType == GHOST)
+	else if (this->zActorType == GHOST)
 	{
 		this->CheckGhostSpecificKeys();
+	}
+	else if (this->zActorType == ANIMAL)
+	{
+		this->CheckAnimalInput();
 	}
 
 	if (this->zActorType != GHOST)
@@ -695,7 +693,12 @@ void Client::CheckKeyboardInput()
 	this->HandleDebugInfo();
 }
 
-//use to equip weapon with keyboard
+void Client::CheckAnimalInput()
+{
+	this->CheckKey(KEY_JUMP);
+}
+
+//Use to equip weapon with keyboard
 void Client::HandleWeaponEquips()
 {
 	if (!this->zPlayerInventory)

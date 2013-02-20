@@ -6,7 +6,6 @@ Actor::Actor() :
 	zID(++NextActorID),
 	zPhysicsObject(0)
 {
-	this->zPreviousPos = this->zPos;
 	SetScale(Vector3(0.05f, 0.05f, 0.05f));
 }
 
@@ -19,15 +18,19 @@ Actor::~Actor()
 
 void Actor::RewindPosition()
 {
-	Vector3 temp = this->zPreviousPos;
-	SetPosition(this->zPreviousPos);
-	this->zPreviousPos = temp;
+	if( zPreviousPos == Vector3(0.0f,0.0f,0.0f) )
+		zPreviousPos = zPos;
+
+	Vector3 temp = zPreviousPos;
+	SetPosition(temp);
+	zPreviousPos = zPos;
 }
 
 void Actor::SetPosition( const Vector3& pos )
 {
 	this->zPreviousPos = this->zPos;
 	this->zPos = pos;
+	
 	if (this->zPhysicsObject)
 	{
 		this->zPhysicsObject->SetPosition(pos);

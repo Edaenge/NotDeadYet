@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <time.h>
 #include "GameModeFFA.h"
 #include "GameModeTest.h"
 #include "Behavior.h"
@@ -103,6 +104,7 @@ Game::~Game()
 
 void Game::SpawnAnimalsDebug()
 {
+	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj", position);
@@ -114,13 +116,30 @@ void Game::SpawnAnimalsDebug()
 
 	dActor->SetPosition(position);
 	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+	const Food* temp_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
+	
+	int lootSize = (rand() % 5) + 1;
+	Food* new_Food = NULL;
+	Inventory* inv = dActor->GetInventory();
+	bool stacked = false;
+	if (temp_food)
+	{
+		for (int i = 0; i < lootSize; i++)
+		{
+			new_Food = new Food((*temp_food));
+
+			inv->AddItem(new_Food, stacked);
+		}
+	}
+	
 	this->zActorManager->AddActor(dActor);
 }
 
 void Game::SpawnItemsDebug()
 {
 	//ITEMS
-	const Food*			temp_food		= GetItemLookup()->GetFood(ITEM_SUB_TYPE_BOW);
+	const Food*			temp_food		= GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
 	const RangedWeapon* temp_R_weapon	= GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
 	const Projectile*	temp_Arrow		= GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
 	const MeleeWeapon*	temp_M_weapon	= GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE);
@@ -241,8 +260,10 @@ bool Game::Update( float dt )
 			ItemActor* newActor = ConvertToItemActor(temp, oldActor);
 			
 			i = zBehaviors.erase(i);
-			delete temp, temp = NULL;
-
+			
+			delete temp;
+			temp = NULL;
+			
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
 		}
@@ -301,8 +322,8 @@ bool Game::Update( float dt )
 			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
 
 			//If player hasn't moved, ignore
-			if( pActor && !pActor->HasMoved() )
-				continue;
+				if( pActor && !pActor->HasMoved() )
+					continue;
 
 			Actor* collide = NULL;
 			float range = 1.5f; //hard coded
@@ -525,6 +546,21 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	// Set New Behavior
 	if ( behavior )	zBehaviors.insert(behavior);
 	player->zBehavior = behavior;
+}
+
+void Game::RemoveAIBehavior( AnimalActor* aActor )
+{
+	for (auto it_behavior = this->zBehaviors.begin(); it_behavior != this->zBehaviors.end();)
+	{
+		if ((*it_behavior)->GetActor() == aActor)
+		{
+			it_behavior = this->zBehaviors.erase(it_behavior);
+		}
+		else
+		{
+			it_behavior++;
+		}
+	}
 }
 
 Vector3 Game::CalcPlayerSpawnPoint(int maxPoints, Vector2 center)
@@ -1049,6 +1085,7 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 			Projectile* arrow = inventory->GetProjectile();
 			if(arrow && arrow->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
 			{
+				
 				//create projectileActor
 				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
 				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);

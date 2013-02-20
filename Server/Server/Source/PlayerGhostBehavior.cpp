@@ -1,10 +1,12 @@
 #include <World/World.h>
 #include "PlayerGhostBehavior.h"
+#include "GhostActor.h"
 #include "Player.h"
 #include "Actor.h"
 
-const float MAX_VELOCITY = 7.0f;
-const float ACCELERATION = 5.0f;
+static const float MAX_VELOCITY = 7.0f;
+static const float ACCELERATION = 5.0f;
+static const float ENERGY_REGEN_COEEFFICENCY = 1.55f;
 
 PlayerGhostBehavior::PlayerGhostBehavior( Actor* actor, World* world, Player* player ) : PlayerBehavior(actor, world, player)
 {
@@ -18,6 +20,12 @@ PlayerGhostBehavior::~PlayerGhostBehavior()
 
 bool PlayerGhostBehavior::Update( float dt )
 {
+	if ( !zPlayer )
+		return true;
+
+	if ( PlayerBehavior::Update(dt) )
+		return true;
+
 	KeyStates keyStates = this->zPlayer->GetKeys();
 	Vector3 newPlayerPos;
 	Vector3 moveDir = Vector3(0.0f, 0.0f, 0.0f);
@@ -30,7 +38,15 @@ bool PlayerGhostBehavior::Update( float dt )
 	currentPlayerDir.Normalize();
 	Vector3 currentPlayerRight = currentPlayerUp.GetCrossProduct(currentPlayerDir);
 	currentPlayerRight.Normalize();
-	Vector3 currentGroundNormal = this->zWorld->CalcNormalAt(currentPlayerPos.GetXZ());
+	try
+	{
+		Vector3 currentGroundNormal = this->zWorld->CalcNormalAt(currentPlayerPos.GetXZ());
+	}
+	catch(...)
+	{
+
+	}
+	
 
 	// Calc the movement vector
 	moveDir += currentPlayerDir * (float)(keyStates.GetKeyState(KEY_FORWARD) - //if KEY_BACKWARD then currentPlayerDir inverse 
@@ -55,7 +71,15 @@ bool PlayerGhostBehavior::Update( float dt )
 	//Look so Ghost isn't outside of World.
 	if ( zWorld->IsInside(newPlayerPos.GetXZ()) )
 	{
-		float newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ()) + 1.0f;
+		float newGroundHeight = 1.0f;
+		try
+		{
+			newGroundHeight = zWorld->CalcHeightAtWorldPos(newPlayerPos.GetXZ()) + 1.0f;
+		}
+		catch(...)
+		{
+
+		}
 		if(newGroundHeight > newPlayerPos.y)
 		{
 			newPlayerPos.y = newGroundHeight;
@@ -63,6 +87,10 @@ bool PlayerGhostBehavior::Update( float dt )
 
 		zActor->SetPosition(newPlayerPos);
 	}
+
+	float energy = dynamic_cast<GhostActor*>(zActor)->GetEnergy();
+
+	energy += ENERGY_REGEN_COEEFFICENCY * dt;
 
 	return false;
 }
