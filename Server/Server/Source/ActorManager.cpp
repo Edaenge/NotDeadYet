@@ -102,7 +102,7 @@ Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
 		return NULL;
 
 	Actor* collide = NULL;
-	float distance;
+	float distance = 0.0f;
 
 	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
@@ -121,7 +121,7 @@ Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
 
 		//Check distance
 		distance = ( actor->GetPosition() - (*it)->GetPosition() ).GetLength();
-		if(distance < range)
+		if(distance <= range)
 		{
 			range = distance;
 			collide = (*it);
