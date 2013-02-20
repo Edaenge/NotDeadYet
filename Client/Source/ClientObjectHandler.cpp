@@ -85,6 +85,15 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 			this->zActorManager->SetCameraOffset(this->zMeshOffset);
 			this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset);
 			this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
+
+			if (this->zActorType == GHOST)
+			{
+				this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
+				if(this->zPam->GetShow())
+					zShowCursor = true;
+				else
+					zShowCursor = false;
+			}
 		}
 	}
 

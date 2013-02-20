@@ -498,6 +498,8 @@ void Game::OnEvent( Event* e )
 
 					//Create Ghost behavior And Ghost Actor
 					GhostActor* gActor = new GhostActor(player);
+					gActor->SetPosition(dActor->GetPosition());
+
 					PlayerGhostBehavior* playerGhostBehavior = new PlayerGhostBehavior(gActor, this->zWorld, player);
 
 					this->SetPlayerBehavior(player, playerGhostBehavior);
