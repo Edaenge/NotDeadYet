@@ -43,7 +43,6 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				{
 					position = this->InterpolatePosition(gEng->GetCamera()->GetPosition() - this->zCameraOffset, update->GetPosition(), t);
 					//if ( rand()%10000 == 0 ) GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);
-					//actor->SetPosition(position);
 					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
 				}
 				else 

@@ -222,3 +222,10 @@ public:
 	Actor* zActor;
 	int zAnimalType;
 };
+class PlayerLeaveAnimalEvent : public Event
+{
+public:
+	virtual ~PlayerLeaveAnimalEvent() {}
+
+	ClientData* clientData;
+};

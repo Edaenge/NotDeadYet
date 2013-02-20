@@ -44,8 +44,8 @@ void GameModeTest::OnEvent( Event* e )
 			if(pa->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 			{
 				// Set new spawn pos
-				int maxPlayers = zPlayers.size();
-				int rand = 1 + (std::rand() % (maxPlayers+1));
+				//int maxPlayers = zPlayers.size();
+				//int rand = 1 + (std::rand() % (maxPlayers+1));
 				//pa->SetPosition(zGame->CalcPlayerSpawnPoint(rand));
 				//pa->SetHealth(pa->GetHealthMax());
 				//pa->SetStamina(pa->GetStaminaMax());

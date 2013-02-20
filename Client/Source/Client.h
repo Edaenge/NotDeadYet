@@ -84,6 +84,7 @@ private:
 	//			  		//
 	//////////////////////
 
+	void CheckAnimalInput();
 	void CheckGhostSpecificKeys();
 	void CheckNonGhostInput();
 	void CheckPlayerSpecificKeys();

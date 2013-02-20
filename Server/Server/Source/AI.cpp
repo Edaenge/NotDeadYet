@@ -707,7 +707,7 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 			break;
 		}
 
-		if(zClosedList.size() > maximumPathLenght)
+		if(zClosedList.size() > (unsigned int)maximumPathLenght)
 		{
 				break;
 		}
