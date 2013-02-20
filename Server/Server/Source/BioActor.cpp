@@ -124,6 +124,7 @@ bool BioActor::HasMoved()
 
 	if(curPos == GetPreviousPos())
 		return false;	
+
 	return true;
 }
 
