@@ -22,8 +22,8 @@
 #include "ItemActor.h"
 #include "Physics.h"
 #include "ClientServerMessages.h"
-
 #include "ItemLookup.h"
+#include "PlayerGhostBehavior.h"
 
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
@@ -241,7 +241,7 @@ bool Game::Update( float dt )
 			ItemActor* newActor = ConvertToItemActor(temp, oldActor);
 			
 			i = zBehaviors.erase(i);
-			SAFE_DELETE(temp);
+			delete temp, temp = NULL;
 
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
@@ -259,27 +259,62 @@ bool Game::Update( float dt )
 	// Update World
 	zWorld->Update();
 
-	// Collisions Projectiles Tests
+	// Collisions Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
-		if(ProjectileActor* projActor = dynamic_cast<ProjectileActor*>((*i)->GetActor()))
+		//Projectiles
+		if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
 		{
-			Vector3 scale = projActor->GetScale();
-			float middle = (0.85f * max(max(scale.x, scale.y),scale.z)) / 2; //Hard coded
+			ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(projBehavior->GetActor());
+			if(!projActor)
+			{
+				MaloW::Debug("ProjectileActor is null. Arrow collision detection in Game.cpp, Update.");;
+				continue;
+			}
 
+			//Get Data
+			Vector3 scale = projActor->GetScale();
+			float length = projBehavior->GetLenght();
+
+			//Calculate the arrow
+			float middle = (length * max(max(scale.x, scale.y),scale.z)) / 2;
+
+			//Check collision, returns the result
 			Actor* collide = this->zActorManager->CheckCollisions(projActor, middle); 
 
 			if(BioActor* victim = dynamic_cast<BioActor*>(collide))
 			{
-				if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
-					projBehavior->Stop();
-				else
-				{
-					MaloW::Debug("Proj. collision detection failed.");
-					continue;
-				}
-
+				//Stop arrow
+				projBehavior->Stop();
+				//Take damage
 				victim->TakeDamage(projActor->GetDamage(), projActor);
+			}
+		}
+		//If ghost, ignore
+		else if( dynamic_cast<PlayerGhostBehavior*>(*i) )
+		{
+			continue;
+		}
+		//Others
+		else
+		{
+			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
+
+			//If player hasn't moved, ignore
+				if( pActor && !pActor->HasMoved() )
+					continue;
+
+			Actor* collide = NULL;
+			float range = 1.5f; //hard coded
+
+			collide = this->zActorManager->CheckCollisionsByDistance(pActor, range);
+
+			if(BioActor* target = dynamic_cast<BioActor*>(collide))
+			{
+				if( target->HasMoved() )
+					target->RewindPosition();
+
+				pActor->RewindPosition();
 			}
 		}
 	}
@@ -541,11 +576,11 @@ ItemActor* Game::ConvertToItemActor(Behavior* behavior, Actor*& oldActorOut)
 	int itemType = 0;
 	ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(behavior);
 
-	//Check what kind of projectilé
+	//Check what kind of projectile
 	if(projBehavior)
 		itemType = ITEM_SUB_TYPE_ARROW;
-	else if(false) //Else if stone
-		itemType = ITEM_SUB_TYPE_ROCK;
+	//else if(false) //Else if stone
+	//	itemType = ITEM_SUB_TYPE_ROCK;
 	else
 		return NULL;
 	
@@ -722,6 +757,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 {
 	Actor* actor = this->zActorManager->GetActor(objID);
 	Item* item = NULL;
+	bool stacked = false;
 
 	auto playerActor = this->zPlayers.find(cd);
 	auto* pBehaviour = playerActor->second->GetBehavior();
@@ -768,7 +804,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 					msg += bandage->ToMessageString(&NMC);
 				}
 				
-				if(pActor->GetInventory()->AddItem(item))
+				if(pActor->GetInventory()->AddItem(item, stacked))
 				{
 					cd->Send(msg);
 					this->zActorManager->RemoveActor(iActor);
@@ -821,8 +857,12 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 						msg += bandage->ToMessageString(&NMC);
 					}
 
-					pActor->GetInventory()->AddItem(item);
-					cd->Send(msg);
+					if(pActor->GetInventory()->AddItem(item, stacked))
+					{
+						bActor->GetInventory()->RemoveItem(item);
+						cd->Send(msg);
+					}
+					
 				}
 			}
 		}
@@ -901,10 +941,14 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 					}
 					if (food->GetStackSize() <= 0)
 					{
-						if(inv->RemoveItem(food))
+						item = inv->RemoveItem(food);
+
+						if(item)
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
 							cd->Send(msg);
+							
+							delete item, item = NULL;
 						}
 					}
 				}
@@ -946,10 +990,13 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 					}
 					if (bandage->GetStackSize() <= 0)
 					{
-						if(inv->RemoveItem(bandage))
+						item = inv->RemoveItem(bandage);
+
+						if(item)
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
 							cd->Send(msg);
+							delete item, item = NULL;
 						}
 					}
 				}
@@ -1017,12 +1064,14 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//Decrease stack
 				arrow->Use();
 				inventory->RemoveItemStack(arrow->GetID(), 1);
+
 				if (arrow->GetStackSize() <= 0)
 				{
 					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
 					msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_PROJECTILE);
 					cd->Send(msg);
-					inventory->RemoveItem(arrow);
+					item = inventory->RemoveItem(arrow);
+					SAFE_DELETE(item);
 					inventory->UnEquipProjectile();
 				}
 				//Send feedback message
@@ -1071,6 +1120,8 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 			NetworkMessageConverter NMC;
 			Item* item = inv->SearchAndGetItem(itemID);
 			std::string msg;
+			int stackRemoved = 0;
+			int oldStacks = 0;
 			if (item)
 			{
 				unsigned int ID = 0;
@@ -1078,11 +1129,34 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 				{
 					if (material->GetItemSubType() == ITEM_SUB_TYPE_SMALL_STICK)
 					{
-						if (material->Use())
+						if (material->IsUsable())
 						{
+							//Use the Materials.
+							material->Use();
+							//Send message to client to use the Material.
 							ID = material->GetID();
 							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 							cd->Send(msg);
+
+							//Get the number of Materials Being Removed.
+							stackRemoved = material->GetRequiredStacksToCraft();
+							//Remove stacks from inventory.
+							inv->RemoveItemStack(ID, stackRemoved);
+
+							//Check if there are no stacks left
+							if (material->GetStackSize() <= 0)
+							{
+								//Remove the Item from the Inventory
+								if (inv->RemoveItem(material))
+								{
+									//Send Message to Client
+									ID = material->GetID();
+									msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
+									cd->Send(msg);
+
+									SAFE_DELETE(material);
+								}
+							}
 
 							//Create a bow With default Values
 							const Projectile* temp_Arrow = GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
@@ -1090,13 +1164,16 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 							if (temp_Arrow)
 							{
 								Projectile* new_Arrow = new Projectile((*temp_Arrow));
-								Item* temp = new_Arrow;
 
-								if (inv->AddItem(temp))
+								bool stacked;
+								if (inv->AddItem(new_Arrow, stacked))
 								{
 									msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 									msg += new_Arrow->ToMessageString(&NMC);
 									cd->Send(msg);
+
+									if (stacked)
+										SAFE_DELETE(new_Arrow);
 								}
 							}
 						}
@@ -1104,57 +1181,106 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
 							cd->Send(msg);
-						}
-						if (material->GetStackSize() <= 0)
-						{
-							if (inv->RemoveItem(material))
-							{
-								ID = material->GetID();
-								msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
-								cd->Send(msg);
-							}
-						}
-					}
-					else if (material->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK)
+						}					}
+					else if (material->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK || material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)
 					{
-						if (Material* material_Thread = dynamic_cast<Material*>(inv->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL, ITEM_SUB_TYPE_THREAD)))
+						Item* tempItem = NULL;
+						
+						//Get the Correct Secondary Material
+						if (material->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK)
 						{
-							if (!material->IsUsable() || !material_Thread->IsUsable())
+							tempItem = inv->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL, ITEM_SUB_TYPE_THREAD);
+						}
+						else if (material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)
+						{
+							tempItem = inv->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL, ITEM_SUB_TYPE_MEDIUM_STICK);
+						}
+
+						if (Material* material_Secondary = dynamic_cast<Material*>(tempItem))
+						{
+							if (material->IsUsable() && material_Secondary->IsUsable())
 							{
-								msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
-								cd->Send(msg);
-							}
-							else
-							{
+								//Use Primary material
+
+								//Use the Materials.
 								material->Use();
+								//Send message to client to use the Material.
 								ID = material->GetID();
 								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 								cd->Send(msg);
+								//Get the number of Materials Being Removed.
+								stackRemoved = material->GetRequiredStacksToCraft();
+								//Remove stacks from inventory.
+								inv->RemoveItemStack(ID, stackRemoved);
 
-								material_Thread->Use();
-								ID = material_Thread->GetID();
+								//Use Secondary material
+
+								//Use the Materials.
+								material_Secondary->Use();
+								//Send message to client to use the Material.
+								ID = material_Secondary->GetID();
 								msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 								cd->Send(msg);
 
-								//Creating a bow With default Values
+								//Get the number of Materials Being Removed.
+								stackRemoved = material_Secondary->GetRequiredStacksToCraft();
+								//Remove stacks from inventory.
+								inv->RemoveItemStack(ID, stackRemoved);
+
+								//Check if there are no stacks left
+								if (material->GetStackSize() <= 0)
+								{
+									//Remove the Item from the Inventory
+									if (inv->RemoveItem(material))
+									{
+										//Send Message to Client
+										ID = material->GetID();
+										msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
+										cd->Send(msg);
+
+										SAFE_DELETE(material);
+									}
+								}
+								//Check if there are no stacks left
+								if (material_Secondary->GetStackSize() <= 0)
+								{
+									//Remove the Item from the Inventory
+									if (inv->RemoveItem(material_Secondary))
+									{
+										//Send Message to Client
+										ID = material_Secondary->GetID();
+										msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
+										cd->Send(msg);
+
+										SAFE_DELETE(material_Secondary);
+									}
+								}
+								//Craft a bow With default Values
 								const RangedWeapon* temp_bow = GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
 
 								if (temp_bow)
 								{
 									RangedWeapon* new_Bow = new RangedWeapon((*temp_bow));
-									Item* temp = new_Bow;
-
-									if (inv->AddItem(temp))
+									bool stacked = false;
+									if (inv->AddItem(new_Bow, stacked))
 									{
 										msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 										msg += new_Bow->ToMessageString(&NMC);
 										cd->Send(msg);
+
+										if (stacked)
+											SAFE_DELETE(new_Bow);
 									}
 								}
 							}
+							else
+							{
+								msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
+								cd->Send(msg);
+							}
 						}
 					}
-					else if (material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)
+					/*else if (material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)
 					{
 						if (Material* material_Medium_Stick = dynamic_cast<Material*>(inv->SearchAndGetItemFromType(ITEM_TYPE_MATERIAL, ITEM_SUB_TYPE_THREAD)))
 						{
@@ -1192,7 +1318,7 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 								}
 							}
 						}
-					}
+					}*/
 				}
 			}
 		}
@@ -1212,6 +1338,7 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 	Item* ret = NULL;
 	bool success = false;
 
+
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
 		int weigth = inventory->GetTotalWeight();
@@ -1220,7 +1347,8 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 		
 		if(weigth > inventory->GetTotalWeight())
 		{
-			inventory->RemoveItem(proj);
+			Item* temp = inventory->RemoveItem(proj);
+			SAFE_DELETE(temp);
 		}
 
 		slot = EQUIPMENT_SLOT_PROJECTILE;

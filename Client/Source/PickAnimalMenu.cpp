@@ -21,6 +21,7 @@ PickAnimalMenu::~PickAnimalMenu()
 
 int PickAnimalMenu::Run()
 {
+	this->Resize();
 	int returnValue = PICKNOTHING;
 	bool removeMenu = false;
 
@@ -77,6 +78,9 @@ void PickAnimalMenu::Init()
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
+	this->zSizedForWidth = windowWidth;
+	this->zSizedForHeight = windowHeight;
+
 	Element* temp = new GUIPicture(offSet + (100.0f / 1024.0f) * dx, (50.0f / 768.0f) * windowHeight, 1.0f, 
 		"Media/Menu/UI/PickAnimalBG.png", (824.0f / 1024.0f) * dx, (668.0f / 768.0f) * windowHeight);
 	this->zSets[MAINSET].AddElement(temp);
@@ -94,4 +98,16 @@ void PickAnimalMenu::Init()
 	zSets[MAINSET].AddElement(temp);
 
 	this->zPrimarySet = MAINSET;
+}
+
+void PickAnimalMenu::Resize()
+{
+	if(this->zSizedForWidth == this->zEng->GetEngineParameters().WindowWidth &&
+		this->zSizedForHeight == this->zEng->GetEngineParameters().WindowHeight)
+		return;
+
+	this->zSets[MAINSET].Resize(this->zSizedForWidth, this->zSizedForHeight, this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight);
+
+	this->zSizedForWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
+	this->zSizedForHeight = (float)this->zEng->GetEngineParameters().WindowHeight;
 }

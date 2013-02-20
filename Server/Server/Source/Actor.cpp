@@ -16,9 +16,21 @@ Actor::~Actor()
 	NotifyObservers(&ADE);
 }
 
+void Actor::RewindPosition()
+{
+	if( zPreviousPos == Vector3(0.0f,0.0f,0.0f) )
+		zPreviousPos = zPos;
+
+	Vector3 temp = zPreviousPos;
+	SetPosition(temp);
+	zPreviousPos = zPos;
+}
+
 void Actor::SetPosition( const Vector3& pos )
 {
+	this->zPreviousPos = this->zPos;
 	this->zPos = pos;
+	
 	if (this->zPhysicsObject)
 	{
 		this->zPhysicsObject->SetPosition(pos);

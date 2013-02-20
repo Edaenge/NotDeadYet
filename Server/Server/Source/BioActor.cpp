@@ -48,7 +48,6 @@ BioActor::~BioActor()
 	SAFE_DELETE(this->zInventory);
 }
 
-
 bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 {
 	// Notify Damage
@@ -62,15 +61,15 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 	this->zHealthChanged = true;
 	MaloW::Debug("Damage Taken " + MaloW::convertNrToString(dmg.GetTotal()));
 
-	if(dmg.GetTotal() / this->zHealth > 0.20 && dmg.GetBleedFactor() > 0.6)
-	{
-		this->zBleeding = true;
-	}
-
 	if(this->zHealth <= 0.0f)
 	{
 		this->zAlive = false;
 		this->zHealth = 0.0f;
+	}
+
+	if(dmg.GetTotal() / this->zHealth > 0.20 && dmg.GetBleedFactor() > 0.6)
+	{
+		this->zBleeding = true;
 	}
 
 	if(!zAlive)
@@ -119,17 +118,13 @@ bool BioActor::Sprint(float dt)
 	return true;
 }
 
-void BioActor::RewindPosition()
-{
-	SetPosition(zPreviousPos);
-}
-
 bool BioActor::HasMoved()
 {
 	Vector3 curPos = GetPosition();
 
-	if(curPos == this->zPreviousPos)
+	if(curPos == GetPreviousPos())
 		return false;	
+
 	return true;
 }
 
@@ -155,12 +150,12 @@ std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
 
 void BioActor::SetState( const int state )
 {
-	//if (state != this->zState)
-	//{
-	//	BioActorStateEvent BASE;
-	//	BASE.zBioActor = this;
-	//	NotifyObservers(&BASE);
-	//}
-	
+	if (state != this->zState)
+	{
+		BioActorStateEvent BASE;
+		BASE.zBioActor = this;
+		NotifyObservers(&BASE);
+	}
+
 	this->zState = state;
 }

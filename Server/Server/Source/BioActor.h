@@ -48,10 +48,6 @@ public:
 	virtual bool Sprint(float dt);
 	/*! Returns false if player is dead.*/
 	virtual bool IsAlive() const;
-
-	/*! Rewinds to previous position.*/
-	virtual void RewindPosition();
-
 	/*! Check if the player has moved after last update.
 		Note that it may change if the player collides with an other Actor.
 	*/
@@ -119,7 +115,6 @@ protected:
 
 	bool	zAlive;
 
-	Vector3 zPreviousPos;
 	Vector3 zDirection;
 	Vector3 zCameraOffset;
 

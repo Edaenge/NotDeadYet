@@ -65,8 +65,9 @@ Item* PlayerActor::DropItem(const long ID)
 		this->zInventory->UnEquipProjectile();
 	}
 
-	this->zInventory->EraseItem(item->GetID());
-	if (Messages::FileWrite())	
+	item = this->zInventory->RemoveItem(item);
+
+	if (item && Messages::FileWrite())	
 		Messages::Debug("Removed successes: " + MaloW::convertNrToString((float)ID));
 
 	return item;

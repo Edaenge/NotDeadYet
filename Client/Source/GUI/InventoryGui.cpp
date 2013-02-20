@@ -77,10 +77,8 @@ InventoryGui::~InventoryGui()
 
 bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
-	int temp = gid.zStacks;
-	if(temp == 0)
-		temp = 1;
-	this->zCurrentWeight += gid.zWeight * temp;
+	this->zCurrentWeight = gid.zWeight;
+
 	if(this->zWeightText)
 		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + 
 		MaloW::convertNrToString(this->zMaxWeight)).c_str());
@@ -116,10 +114,8 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 
 bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
-	float temp = gid.zStacks;
-	if(temp == 0)
-		temp = 1;
-	this->zCurrentWeight -= gid.zWeight * temp;
+	this->zCurrentWeight = gid.zWeight;
+
 	if(this->zWeightText)
 		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
 
@@ -322,10 +318,8 @@ std::string InventoryGui::GetImageName( unsigned int position )
 
 void InventoryGui::EquipItem( int type, const Gui_Item_Data gid, bool guiOpen )
 {
-	float temp = gid.zStacks;
-	if(temp == 0)
-		temp = 1;
-	this->zCurrentWeight += gid.zWeight * temp;
+	this->zCurrentWeight = gid.zWeight;
+
 	if(this->zWeightText)
 		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
 
@@ -349,10 +343,7 @@ void InventoryGui::EquipItem( int type, const Gui_Item_Data gid, bool guiOpen )
 
 void InventoryGui::UnEquipItem(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
-	float temp = gid.zStacks;
-	if(temp == 0)
-		temp = 1;
-	this->zCurrentWeight -= gid.zWeight * temp;
+	this->zCurrentWeight = gid.zWeight;
 	if(this->zWeightText)
 		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
 

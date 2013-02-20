@@ -78,6 +78,8 @@ void Client::Connect(const std::string &IPAddress, const unsigned int &port)
 
 Client::~Client()
 {
+	this->zEng->GetCamera()->RemoveMesh();
+
 	this->Close();
 	this->WaitUntillDone();
 
@@ -88,6 +90,7 @@ Client::~Client()
 
 	SAFE_DELETE(this->zIgm);
 
+	SAFE_DELETE(this->zWorldRenderer);
 	SAFE_DELETE(this->zWorld);
 	
 	if ( this->zCrossHair ) GetGraphics()->DeleteImage(zCrossHair);
@@ -151,8 +154,7 @@ void Client::InitGraphics(const std::string& mapName)
 	LoadEntList("Entities.txt");
 
 	if ( zWorld ) delete zWorld, zWorld=0;
-	this->zWorld = new World(this, mapName);
-	this->zWorldRenderer = new WorldRenderer(zWorld, this->zEng);
+	this->zWorld = new World(this, mapName, true);
 
 	Vector2 center = this->zWorld->GetWorldCenter();
 
@@ -202,7 +204,6 @@ void Client::Init()
 	this->zGuiManager = new GuiManager(this->zEng);
 	this->zPlayerInventory = new Inventory();
 
-	this->zEng->CreateSkyBox("Media/skymap.dds");
 }
 
 void Client::Life()
@@ -337,7 +338,7 @@ void Client::SendAck(unsigned int IM_ID)
 
 void Client::UpdateMeshRotation()
 {
-	Actor* player = this->zActorManager->GetActor(this->zID);
+	/*Actor* player = this->zActorManager->GetActor(this->zID);
 	if (!player)
 	{
 		return;
@@ -363,7 +364,7 @@ void Client::UpdateMeshRotation()
 	iMesh* playerMesh = player->GetMesh();
 
 	playerMesh->ResetRotation();
-	playerMesh->RotateAxis(around, angle);
+	playerMesh->RotateAxis(around, angle);*/
 }
 
 void Client::UpdateActors()
@@ -1049,8 +1050,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if (msg.find(M_DEAD_ACTOR.c_str()) == 0)
 	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
-
+		//unsigned int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
 	}
 	//Actors
 	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
@@ -1127,8 +1127,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 
-		this->zEng->GetCamera()->RemoveMesh();
-		this->zCreated = false;
+		
 		if (Actor* actor = this->zActorManager->GetActor(this->zID))
 		{
 			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(actor->GetModel());
@@ -1143,6 +1142,11 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			this->zActorManager->SetCameraOffset(this->zMeshOffset);
 			this->zCreated = true;
 			this->zEng->GetCamera()->SetMesh(actor->GetMesh(), this->zMeshOffset);
+		}
+		else
+		{
+			this->zEng->GetCamera()->RemoveMesh();
+			this->zCreated = false;
 		}
 		this->zActorType = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TYPE, msgArray[1]);
 	}
@@ -1447,18 +1451,25 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 
 void Client::UpdateCameraOffset(unsigned int state)
 {
+	iMesh* mesh = NULL;
 	Vector3 position = this->zEng->GetCamera()->GetPosition();
-
+	if (Actor* actor = this->zActorManager->GetActor(this->zID))
+	{
+		mesh = actor->GetMesh();
+	}
+	
 	if (state == STATE_CROUCHING)
 	{
 		auto cameraPos = this->zStateCameraOffset.find(state);
 
 		Vector3 offset = cameraPos->second;
 
+		this->zEng->GetCamera()->SetMesh(mesh, offset);
 		this->zActorManager->SetCameraOffset(offset);
 	}
 	else
 	{
+		this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset);
 		this->zActorManager->SetCameraOffset(this->zMeshOffset);
 	}
 }
