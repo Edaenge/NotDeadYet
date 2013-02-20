@@ -390,8 +390,6 @@ void MainMenu::Run()
 
 						string temp = zSets[this->zPrimarySet].GetTextFromField(cEvent->GetTextBoxName());
 
-					
-
 						this->SwapMenus(NOMENU, NOMENU);
 
 						this->EnableMouse(false);

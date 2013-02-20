@@ -3,6 +3,8 @@
 #include "Behavior.h"
 #include <Vector.h>
 
+#define TODEGREES (180 / 3.1415f)
+
 class Player;
 
 const float SIGHTRADIUS = 200.0f;
