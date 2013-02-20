@@ -19,6 +19,9 @@ public:
 
 	Player* GetPlayer(){ return this->zPlayer; }
 	void SetPlayer(Player* player) {this->zPlayer = player;}
+
+	float GetEnergy() {return this->zEnergy;}
+	void SetEnergy(float energy) {this->zEnergy = energy;}
 private:
 	/*float zVelocity;
 	float maxHeight;*/

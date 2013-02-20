@@ -170,7 +170,15 @@ bool PlayerHumanBehavior::Update( float dt )
 		this->zVelDown += -9.82f * dt;
 	else
 	{
-		groundNormal = this->zWorld->CalcNormalAt(newPosition.GetXZ());
+		try
+		{
+			groundNormal = this->zWorld->CalcNormalAt(newPosition.GetXZ());
+		}
+		catch(...)
+		{
+
+		}
+		
 		this->zVelDown = 0.0f;
 	}
 	newPosition += Vector3(0.0f, this->zVelDown, 0.0f) + (groundNormal * dt);

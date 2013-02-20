@@ -411,9 +411,6 @@ float Host::Update()
 
 	this->zStartime = currentTime;
 
-	//Update the objects in the world.
-	//this->zGameMode->Update(zDeltaTime);
-
 	return this->zDeltaTime;
 }
 

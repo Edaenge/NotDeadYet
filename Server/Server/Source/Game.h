@@ -18,6 +18,7 @@ class KeyStates;
 class Entity;
 class WorldActor;
 class ItemActor;
+class AnimalActor;
 
 class Game : public Observer, public Observed
 {
@@ -44,6 +45,7 @@ public:
 
 	// Sets The Behavior Of Player
 	void SetPlayerBehavior( Player* player, PlayerBehavior* behavior );
+	void RemoveAIBehavior(AnimalActor* aActor);
 	/*! Converts an item to ItemActor*/
 	ItemActor* ConvertToItemActor(Behavior* behavior,  Actor*& oldActorOut);
 	
