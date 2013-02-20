@@ -305,7 +305,7 @@ bool Game::Update( float dt )
 					continue;
 
 			Actor* collide = NULL;
-			float range = 1.5f; //hard coded
+			float range = 1.5f; //hard coded Boom!
 
 			collide = this->zActorManager->CheckCollisionsByDistance(pActor, range);
 
@@ -446,6 +446,8 @@ void Game::OnEvent( Event* e )
 		// Create Player Actor
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
+		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
+
 		zActorManager->AddActor(actor);
 		actor->AddObserver(this->zGameMode);
 		Vector3 center;

@@ -7,6 +7,7 @@
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
 #include "Sounds.h"
+#include "PlayerConfig/PlayerSettings.h"
 
 using namespace MaloW;
 
@@ -31,7 +32,8 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Models/temp_guy.obj";
+	this->zMeshID	= GetPlayerSettings()->GetPlayerModel();
+	this->zName		= GetPlayerSettings()->GetPlayerName();
 
 	this->zMeshCameraOffsets["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zMeshCameraOffsets["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
@@ -326,14 +328,6 @@ void Client::SendClientUpdate()
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ROTATION, rot);
 	
 	this->zServerChannel->TrySend(msg);
-}
-
-void Client::SendAck(unsigned int IM_ID)
-{
-	std::string msg;
-	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACKNOWLEDGE, (float)IM_ID);
-
-	this->zServerChannel->Send(msg);
 }
 
 void Client::UpdateMeshRotation()
@@ -1160,6 +1154,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_MESH_MODEL, this->zMeshID);
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, camDir);
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, camUp);
+		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_USER_NAME, zName);
 
 		this->zServerChannel->Send(serverMessage);
 	}

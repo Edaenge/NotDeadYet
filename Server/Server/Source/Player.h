@@ -19,6 +19,9 @@ class Player : public Observed
 	// Pointer Set By Game Class
 	Behavior* zBehavior;
 
+	//The player Name
+	std::string zUserName;
+
 private:
 	Player( ClientData* client );
 	virtual ~Player();
@@ -35,6 +38,10 @@ public:
 
 	//Returns Client Data
 	ClientData* GetClientData() const {return this->zClient;}
+
+	//Returns player name
+	std::string GetPlayerName() const {return this->zUserName;}
+
 private:
 	friend class Game;
 };

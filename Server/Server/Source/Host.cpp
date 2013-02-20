@@ -529,6 +529,10 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 		{
 			e.direction = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it_m));
 		}
+		else if(it_m->find(M_USER_NAME) == 0)
+		{
+			e.playerName = this->zMessageConverter.ConvertStringToSubstring(M_USER_NAME, (*it_m));
+		}
 		else if(it_m->find(M_UP) == 0)
 		{
 			e.upVector = this->zMessageConverter.ConvertStringToVector(M_UP, (*it_m));
