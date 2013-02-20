@@ -106,7 +106,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 	}
 
 	MaloW::Debug("Failed to add item "+item->GetItemName() + " ID: " +MaloW::convertNrToString((float)item->GetID()));
-	MaloW::Debug("Inventory full current Weight = " + MaloW::convertNrToString(zWeightTotal) + " Weight to be Added = " + MaloW::convertNrToString(weight));
+	MaloW::Debug("Inventory full current Weight = " + MaloW::convertNrToString((float)zWeightTotal) + " Weight to be Added = " + MaloW::convertNrToString((float)weight));
 	
 	return false;
 }

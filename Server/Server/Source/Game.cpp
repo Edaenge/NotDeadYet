@@ -503,7 +503,7 @@ void Game::OnEvent( Event* e )
 					this->SetPlayerBehavior(player, playerGhostBehavior);
 
 					//Tell Client his new ID and actor type
-					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, gActor->GetID());
+					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)gActor->GetID());
 					msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 2);
 					PLAE->clientData->Send(msg);
 
@@ -1103,7 +1103,7 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 						
 						//Sending Message to client And removing stack from inventory.
 						inv->RemoveItemStack(ID, 1);
-						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 
 						cd->Send(msg);
 					}
@@ -1118,7 +1118,7 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 
 						if(item)
 						{
-							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
+							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
 							cd->Send(msg);
 							delete item, item = NULL;
 						}
