@@ -36,7 +36,6 @@ void Game::Run()
 		
 		Sleep(5);
 	}
-
 }
 
 void Game::InitGameClient(const std::string &IP, const unsigned int &port)

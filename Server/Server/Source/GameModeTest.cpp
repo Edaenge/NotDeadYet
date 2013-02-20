@@ -4,7 +4,7 @@
 #include "BioActor.h"
 #include "PlayerActor.h"
 #include "AnimalActor.h"
-#include "GhostActor.h";
+#include "GhostActor.h"
 #include "GameEvents.h"
 #include "PlayerHumanBehavior.h"
 #include "Physics.h"

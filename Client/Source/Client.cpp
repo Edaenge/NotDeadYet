@@ -549,6 +549,25 @@ void Client::CheckGhostSpecificKeys()
 {
 	this->CheckKey(KEY_JUMP);
 	this->CheckKey(KEY_DUCK);
+
+	// Opens pick menu if you can do it.
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_PICKMENU)))
+	{
+		if(!this->zKeyInfo.GetKeyState(KEY_PICKMENU))
+		{
+			this->zKeyInfo.SetKeyState(KEY_PICKMENU, true);
+			this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
+			if(this->zPam->GetShow())
+				zShowCursor = true;
+			else
+				zShowCursor = false;
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
+			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
+	}
 }
 
 void Client::CheckNonGhostInput()
@@ -640,28 +659,6 @@ void Client::CheckKeyboardInput()
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_MENU))
 			this->zKeyInfo.SetKeyState(KEY_MENU, false);
-	}
-
-	// Opens pick menu if you can do it.
-	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_PICKMENU)))
-	{
-		if(!this->zKeyInfo.GetKeyState(KEY_PICKMENU))
-		{
-			if(this->zActorType == GHOST)
-			{
-				this->zKeyInfo.SetKeyState(KEY_PICKMENU, true);
-				this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
-				if(this->zPam->GetShow())
-					zShowCursor = true;
-				else
-					zShowCursor = false;
-			}
-		}
-	}
-	else
-	{
-		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
-			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
 	}
 
 
@@ -1142,7 +1139,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 
-		
 		if (Actor* actor = this->zActorManager->GetActor(this->zID))
 		{
 			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(actor->GetModel());
