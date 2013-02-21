@@ -39,15 +39,18 @@ Host::~Host()
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 
-	SAFE_DELETE(this->zServerListener);
+	this->Close();
+	this->WaitUntillDone();
 
 	SAFE_DELETE(this->zGame);
 
+	SAFE_DELETE(this->zSynchronizer);
+
+	SAFE_DELETE(this->zServerListener);
+
 	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
 	{
-		auto iterator = it;
-
-		ClientData* data = iterator->second;
+		ClientData* data = it->second;
 		if(data)
 		{
 			delete data;
@@ -56,11 +59,6 @@ Host::~Host()
 
 	}
 	this->zClients.clear();
-
-	SAFE_DELETE(this->zSynchronizer);
-
-	this->Close();
-	this->WaitUntillDone();
 }
 
 void Host::Life()
@@ -336,6 +334,20 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.zActor = NULL;
 		e.clientData = cd;
 		e.zAnimalType = animalType;
+		NotifyObservers(&e);
+	}
+	else if(msgArray[0].find(M_DEER_EAT_OBJECT) == 0)
+	{
+		PlayerDeerEatObjectEvent e;
+
+		e.clientData = cd;
+		for (auto it = msgArray.begin(); it != msgArray.end(); it++)
+		{
+			unsigned int id = this->zMessageConverter.ConvertStringToInt(M_DEER_EAT_OBJECT, (*it));
+
+			e.actorID.push_back(id);
+		}
+
 		NotifyObservers(&e);
 	}
 	else if(msgArray[0].find(M_LEAVE_ANIMAL) == 0)

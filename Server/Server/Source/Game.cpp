@@ -141,6 +141,8 @@ void Game::SpawnAnimalsDebug()
 			new_Food = new Food((*temp_food));
 
 			inv->AddItem(new_Food, stacked);
+			if(stacked)
+				SAFE_DELETE(new_Food);
 		}
 	}
 	
@@ -540,6 +542,11 @@ void Game::OnEvent( Event* e )
 				}
 			}
 		}
+	}
+	else if (PlayerDeerEatObjectEvent* PDEOE = dynamic_cast<PlayerDeerEatObjectEvent*>(e))
+	{
+		//ID's of the Object deer is trying to eat
+		
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
@@ -968,6 +975,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 				if(pActor->GetInventory()->AddItem(item, stacked))
 				{
 					cd->Send(msg);
+					iActor->RemoveItem();
 					this->zActorManager->RemoveActor(iActor);
 				}
 				else
@@ -988,7 +996,6 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 				std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 				if (item->GetItemType() == itemType && item->GetItemSubType() == subType)
 				{
-
 					if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
 					{
 						msg += rWpn->ToMessageString(&NMC);

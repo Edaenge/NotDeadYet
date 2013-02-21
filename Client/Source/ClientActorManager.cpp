@@ -22,6 +22,16 @@ ClientActorManager::~ClientActorManager()
 		}
 	}
 	this->zActors.clear();
+
+	for(auto it = this->zUpdates.begin(); it != this->zUpdates.end(); it++)
+	{
+		if(it->second)
+		{
+			delete it->second;
+			it->second = NULL;
+		}
+	}
+	this->zUpdates.clear();
 }
 
 void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )

@@ -709,6 +709,31 @@ void Client::CheckAnimalInput()
 		if(this->zKeyInfo.GetKeyState(KEY_TEST))
 			this->zKeyInfo.SetKeyState(KEY_TEST, false);
 	}
+
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			std::vector<unsigned int> collisionObjects = this->RayVsWorld();
+			if (collisionObjects.size() > 0)
+			{
+				std::string msg = "";
+				for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
+				{
+					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DEER_EAT_OBJECT, (float)(*it));
+				}
+				this->zServerChannel->Send(msg);
+			}
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
+		}
+	}
 }
 
 //Use to equip weapon with keyboard

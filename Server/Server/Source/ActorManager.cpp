@@ -18,6 +18,7 @@ ActorManager::~ActorManager()
 		Actor* temp = (*it);
 		SAFE_DELETE(temp);
 	}
+	this->zActors.clear();
 }
 
 void ActorManager::AddActor( Actor* actor )

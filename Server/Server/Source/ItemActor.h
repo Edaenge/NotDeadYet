@@ -16,9 +16,10 @@ public:
 	virtual ~ItemActor();
 
 	inline Item* GetItem() const { return this->zItem; }
+	/*! Sets Item pointer to NULL.*/
+	inline void RemoveItem() {this->zItem = NULL;}
 	virtual const std::string& GetModel() const;
 
 private:
 	Item* zItem;
-
 };

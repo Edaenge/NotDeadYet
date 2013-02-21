@@ -20,6 +20,7 @@ class ItemLookup : public FileReader
 {
 public:
 	ItemLookup();
+	virtual ~ItemLookup();
 	const Projectile* GetProjectile(const unsigned int SubType);
 	const RangedWeapon* GetRangedWeapon(const unsigned int SubType);
 	const MeleeWeapon* GetMeleeWeapon(const unsigned int SubType);

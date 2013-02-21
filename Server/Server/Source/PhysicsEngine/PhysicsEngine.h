@@ -79,7 +79,4 @@ public:
 	//virtual PhysicsCollisionData GetCollisionBoundingOnly(Vector3 rayOrigin, Vector3 rayDirection, iTerrain* iterr);
 	virtual PhysicsCollisionData GetCollisionBoundingOnly(PhysicsObject* mesh1, PhysicsObject* mesh2);
 	//virtual PhysicsCollisionData GetCollisionBoundingOnly(iMesh* mesh, iTerrain* terr);
-
-	//Check Collision vs all other Meshes
-	virtual std::vector<PhysicsCollisionData> CheckCollisionVsSurrounding(PhysicsObject* pObject);
 };
