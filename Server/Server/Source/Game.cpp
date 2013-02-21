@@ -120,6 +120,7 @@ void Game::SpawnAnimalsDebug()
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	DeerActor* dActor = new DeerActor(deerPhysics);
+	dActor->AddObserver(this->zGameMode);
 
 	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
 
@@ -297,10 +298,17 @@ bool Game::Update( float dt )
 		}
 		else
 		{
-			++i;
+			i++;
 			counter++;
 		}
 	}
+
+	// Update Game Mode, Might Notify That GameMode is Finished
+	if ( !zGameMode->Update(dt) )
+		return false;
+
+	// Update World
+	zWorld->Update();
 
 	//Updating animals.
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
@@ -338,14 +346,6 @@ bool Game::Update( float dt )
 			counter++;
 		}
 	}
-
-	
-	// Update Game Mode, Might Notify That GameMode is Finished
-	if ( !zGameMode->Update(dt) )
-		return false;
-	
-	// Update World
-	zWorld->Update();
 
 	// Collisions Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
@@ -1230,20 +1230,30 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//create projectileActor
 				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
 				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
-				ProjectileArrowBehavior* projBehavior= new ProjectileArrowBehavior(projActor, this->zWorld);
+		
+				ProjectileArrowBehavior* projBehavior = NULL;
 				Damage damage;
 
 				//Sets damage
 				damage.piercing = ranged->GetDamage() + arrow->GetDamage();
 				projActor->SetDamage(damage);
+				//Set other values
 				projActor->SetScale(projActor->GetScale());
+				projActor->SetPosition( pActor->GetPosition() + pActor->GetCameraOffset());
+				projActor->SetDir(pActor->GetDir());
 
+				//Create behavior
+				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
+
+				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
 				this->zBehaviors.insert(projBehavior);
 				//Decrease stack
 				arrow->Use();
 				inventory->RemoveItemStack(arrow->GetID(), 1);
 
+
+				//if arrow stack is empty
 				if (arrow->GetStackSize() <= 0)
 				{
 					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());

@@ -24,7 +24,7 @@ bool ProjectileArrowBehavior::Update( float dt )
 	// Update linear position.
 	newPos =  this->zActor->GetPosition();
 	zVelocity.Normalize();
-	zVelocity *=zSpeed;
+	zVelocity *= zSpeed;
 	newPos += (zVelocity * dt);
 	newDir = zVelocity;
 	newDir.Normalize();

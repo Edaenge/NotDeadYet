@@ -8,6 +8,7 @@ ItemActor::ItemActor(Item* item) : Actor()
 ItemActor::~ItemActor()
 {
 	SAFE_DELETE(this->zItem);
+	this->zType = ACTOR_TYPE_ITEM;
 }
 
 const std::string& ItemActor::GetModel() const

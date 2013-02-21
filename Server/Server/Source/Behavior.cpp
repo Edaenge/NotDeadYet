@@ -20,7 +20,9 @@ Behavior::Behavior( Actor* actor, World* world ) :
 
 Behavior::~Behavior()
 {
-	if ( zAnchor && zWorld ) zWorld->DeleteAnchor(zAnchor);
+	if ( zAnchor && zWorld ) 
+		zWorld->DeleteAnchor(zAnchor);
+
 	zActor->RemoveObserver(this);
 }
 

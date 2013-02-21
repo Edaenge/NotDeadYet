@@ -5,6 +5,7 @@ GhostActor::GhostActor(Player* player) :
 {
 	this->zEnergy = 0;
 	this->SetScale(Vector3(0.0f,0.0f,0.0f));
+	this->zType = ACTOR_TYPE_GHOST;
 }
 
 GhostActor::~GhostActor()

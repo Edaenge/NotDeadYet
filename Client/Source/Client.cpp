@@ -89,6 +89,9 @@ Client::~Client()
 	this->Close();
 	this->WaitUntillDone();
 
+	if (this->zAnchor)
+		this->zWorld->DeleteAnchor(this->zAnchor);
+
 	SAFE_DELETE(this->zGuiManager);
 	SAFE_DELETE(this->zActorManager);
 	SAFE_DELETE(this->zServerChannel);
@@ -103,7 +106,14 @@ Client::~Client()
 	this->zMeshCameraOffsets.clear();
 	this->zStateCameraOffset.clear();
 
-	if ( this->zCrossHair ) GetGraphics()->DeleteImage(zCrossHair);
+	if (this->zBlackImage)
+		this->zEng->DeleteImage(this->zBlackImage);
+	
+	if (this->zDamageIndicator)
+		this->zEng->DeleteImage(this->zDamageIndicator);
+
+	if (this->zCrossHair) 
+		this->zEng->DeleteImage(this->zCrossHair);
 
 	GetSounds()->StopMusic();
 }
@@ -158,7 +168,6 @@ float Client::Update()
 			this->zDamageIndicator = NULL;
 		}
 	}
-
 	return this->zDeltaTime;
 }
 
@@ -1046,7 +1055,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		ss.read(&type[0], packetTypeSize); 
 
 		// TODO: Factory Pattern
-		Packet* packet = 0;
+		Packet* packet = NULL;
 
 		if ( type == "ServerFramePacket" )
 		{

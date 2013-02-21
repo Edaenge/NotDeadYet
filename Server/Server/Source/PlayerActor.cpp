@@ -16,9 +16,8 @@ PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj )
 
 	this->zFullnessMax = 100;
 	this->zHydrationMax = 100;
-
 	this->zBreathSoundTimer = 1.5f;
-}
+	this->zType = ACTOR_TYPE_PLAYER;}
 //
 //void PlayerActor::InitValues()
 //{
