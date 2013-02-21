@@ -632,6 +632,9 @@ void Game::OnEvent( Event* e )
 			if(actor == (*it))
 				continue;
 
+			if(dynamic_cast<WorldActor*>(*it))
+				continue;
+
 			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (float)(*it)->GetID());
 			message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
 			message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
