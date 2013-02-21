@@ -18,8 +18,9 @@ public:
 	void RemoveActor( Actor* actor );
 	std::set<Actor*>& GetActors() {return this->zActors;}
 	Actor* GetActor(const unsigned int ID) const;
-	/*! */
+	/*! Adds all Actors within the circle to out. Returns total amount of actors found*/
 	unsigned int GetActorsInCircle(const Vector2& center, float radius, std::set<Actor*>& out) const;
+	unsigned int GetActorsInCircle(const Vector2& center, float radius, std::set<Actor*>& out, const unsigned int filter) const;
 
 	/*! Checks if this actor collides with BioActors/WorldActors in the game using physics calculations.*/
 	Actor* CheckCollisions(Actor* actor, float& range);

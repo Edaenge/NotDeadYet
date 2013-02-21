@@ -180,3 +180,23 @@ unsigned int ActorManager::GetActorsInCircle( const Vector2& center, float radiu
 
 	return counter;
 }
+
+unsigned int ActorManager::GetActorsInCircle( const Vector2& center, float radius, std::set<Actor*>& out, const unsigned int filter ) const
+{
+	unsigned int counter=0;
+
+	for(auto i = zActors.cbegin(); i != zActors.cend(); i++)
+	{
+		if( (*i)->GetType() == filter )
+		{
+			Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );
+			if( Vector2(center-pos).GetLength() < radius)
+			{
+				out.insert(*i);
+				counter++;
+			}
+		}
+	}
+
+	return counter;
+}
