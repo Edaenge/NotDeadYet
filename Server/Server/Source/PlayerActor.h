@@ -32,7 +32,8 @@ public:
 	void HungerHasChanged() {this->zHungerChanged = true;}
 	void HydrationHasChanged() {this->zHydrationChanged = true;}
 
-	
+	bool UpdateBreathSoundTimer(float dt);
+
 	/*! Returns The dropped item.
 	Doesn't deallocate Item.*/
 	Item* DropItem(const long ID);
@@ -47,6 +48,8 @@ private:
 
 	float zFullnessMax;
 	float zHydrationMax;
+
+	float zBreathSoundTimer;
 };
 
 //class PlayerUpdatedEvent : public Event

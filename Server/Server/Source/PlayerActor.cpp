@@ -16,6 +16,8 @@ PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj )
 
 	this->zFullnessMax = 100;
 	this->zHydrationMax = 100;
+
+	this->zBreathSoundTimer = 1.5f;
 }
 //
 //void PlayerActor::InitValues()
@@ -359,4 +361,16 @@ void PlayerActor::SetFullness(float fullness)
 void PlayerActor::SetHydration(float hydration)
 {
 	this->zHydration = hydration;
+}
+
+bool PlayerActor::UpdateBreathSoundTimer( float dt )
+{
+	this->zBreathSoundTimer -= dt;
+	if(this->zBreathSoundTimer > 0.0f)
+		return false;
+	else
+	{
+		this->zBreathSoundTimer = 1.5f;
+		return true;
+	}
 }
