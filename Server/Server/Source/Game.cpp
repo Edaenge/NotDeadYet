@@ -118,7 +118,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj", position);
+	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	DeerActor* dActor = new DeerActor(deerPhysics);
 
 	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
@@ -324,7 +324,7 @@ bool Game::Update( float dt )
 		}
 	}
 
-
+	
 	// Update Game Mode, Might Notify That GameMode is Finished
 	if ( !zGameMode->Update(dt) )
 		return false;
@@ -335,7 +335,7 @@ bool Game::Update( float dt )
 	// Collisions Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
-		//Projectiles
+		//*** Projectiles ***
 		if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
 		{
 			ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(projBehavior->GetActor());
@@ -350,25 +350,31 @@ bool Game::Update( float dt )
 			float length = projBehavior->GetLenght();
 
 			//Calculate the arrow
-			float middle = (length * max(max(scale.x, scale.y),scale.z)) / 2;
+			float middle = (length * max(max(scale.x, scale.y),scale.z)) * 0.5f;
 
 			//Check collision, returns the result
 			Actor* collide = this->zActorManager->CheckCollisions(projActor, middle); 
 
-			if(BioActor* victim = dynamic_cast<BioActor*>(collide))
+			if( BioActor* victim = dynamic_cast<BioActor*>(collide) )
 			{
 				//Stop arrow
 				projBehavior->Stop();
 				//Take damage
 				victim->TakeDamage(projActor->GetDamage(), projActor);
 			}
+			else if( WorldActor* object = dynamic_cast<WorldActor*>(collide) )
+			{
+				//Stop Arrow
+				projBehavior->Stop();
+			}
+
 		}
-		//If ghost, ignore
+		//*** Ghosts, ignore ***
 		else if( dynamic_cast<PlayerGhostBehavior*>(*i) )
 		{
 			continue;
 		}
-		//Others
+		//*** Others ***
 		else
 		{
 			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
@@ -378,22 +384,32 @@ bool Game::Update( float dt )
  					continue;
 
 			Actor* collide = NULL;
-			float range = 1.5f; //hard coded
+			float range = 1.0f; //hard coded
 
 			collide = this->zActorManager->CheckCollisionsByDistance(pActor, range);
 
-			if(BioActor* target = dynamic_cast<BioActor*>(collide))
+			//No collision, ignore the rest
+			if(!collide)
+				continue;
+
+			Vector3 pActor_rewind_dir = (collide->GetPosition() - pActor->GetPosition());
+			pActor_rewind_dir.Normalize();
+
+			if( BioActor* target = dynamic_cast<BioActor*>(collide) )
 			{
-				//Calculate directions from each other
-				Vector3 pActor_rewind_dir = (target->GetPosition() - pActor->GetPosition());
-				pActor_rewind_dir.Normalize();
+				//Calculate Target rewind dir.
 				Vector3 target_rewind_dir = pActor_rewind_dir * -1;
 	
 				//Id target did not move, do not rewind position.
 				if(target->HasMoved())
-					target->SetPosition(target->GetPosition() - (target_rewind_dir * 0.5f));
+					target->SetPosition( target->GetPosition() - (target_rewind_dir * 0.25f) );
 
-				pActor->SetPosition(pActor->GetPosition() - (pActor_rewind_dir * 0.5f));
+				pActor->SetPosition( pActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+			}
+			else if( WorldActor* object = dynamic_cast<WorldActor*>(collide) )
+			{
+				//Rewind the pActor only.
+				pActor->SetPosition( pActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
 			}
 		}
 	}
@@ -537,28 +553,36 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e) )
 	{
-		//PhysicsObject* phys = 0;
-		//
-		//if ( GetEntBlockRadius(ELE->entity->GetType()) > 0.0f )
-		//{
-		//	phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(ELE->entity->GetType()), ELE->entity->GetPosition());
-		//}
+		PhysicsObject* phys = 0;
+		
+		if ( GetEntBlockRadius(ELE->entity->GetType()) > 0.0f )
+		{
+			// Create Physics Object
+			phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(ELE->entity->GetType()));
+		}
 
-		//// Create Physics Object
-		//WorldActor* actor = new WorldActor();
-		//zWorldActors[ELE->entity] = actor;
-		//zActorManager->AddActor(actor);
+		if(!phys)
+		{
+			throw("Phys is null");
+			return;
+		}
 
-		//actor->AddObserver(this->zGameMode);
+		WorldActor* actor = new WorldActor(phys);
+		actor->SetPosition(ELE->entity->GetPosition());
+		actor->SetScale(actor->GetScale());
+		actor->AddObserver(this->zGameMode);
+		
+		this->zWorldActors[ELE->entity] = actor;
+		this->zActorManager->AddActor(actor);
+		
 	}
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
 		auto i = zWorldActors.find(ERE->entity);
 		if ( i != zWorldActors.end() )
 		{
-			SAFE_DELETE(i->second);
-
-			zWorldActors.erase(i);
+			this->zActorManager->RemoveActor(i->second);
+			this->zWorldActors.erase(i);
 		}
 	}
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
@@ -1192,6 +1216,7 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//Sets damage
 				damage.piercing = ranged->GetDamage() + arrow->GetDamage();
 				projActor->SetDamage(damage);
+				projActor->SetScale(projActor->GetScale());
 
 				this->zActorManager->AddActor(projActor);
 				this->zBehaviors.insert(projBehavior);

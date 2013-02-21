@@ -5,6 +5,6 @@
 class WorldActor : public Actor
 {
 public:
-	WorldActor();
+	WorldActor(PhysicsObject* pObj);
 	virtual ~WorldActor();
 };
