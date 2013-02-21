@@ -112,7 +112,7 @@ void GameModeFFA::OnEvent( Event* e )
 
 void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 {
-	std::set<Actor*> actors = this->zGame->GetActorManager()->GetActors();
+	
 	bool found = false;
 	Player* player = gActor->GetPlayer();
 	ClientData* cd = player->GetClientData();
@@ -121,9 +121,13 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 	std::string msg = "";
 	AnimalActor* closestAnimal = NULL;
 	float distance = 999999.9f;
+	
 	Vector3 position = gActor->GetPosition();
 
-	//this->zGame->GetActorManager()->
+	float radius = 4000.0f;
+	std::set<Actor*> actors;
+	this->zGame->GetActorManager()->GetActorsInCircle(position.GetXZ(), radius, actors, ACTOR_TYPE_ANIMAL);
+	
 	for (auto it_Actors = actors.begin(); it_Actors != actors.end(); it_Actors++)
 	{
 		if (AnimalActor* aActor = dynamic_cast<AnimalActor*>((*it_Actors)))

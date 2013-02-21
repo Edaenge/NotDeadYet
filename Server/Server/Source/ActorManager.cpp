@@ -52,29 +52,37 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 	if(!actor)
 		return NULL;
 
+	float radiusWithin = 2.0f + range;
 	Actor* collide = NULL;
 	PhysicsCollisionData data;
-	float rangeWithin = 2.0f + range;
 	Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
-
-	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
+	std::set<Actor*> inRadius;
+	GetActorsInCircle(actor->GetPosition().GetXZ(), radiusWithin, inRadius);
+	
+	for (auto it = inRadius.begin(); it != inRadius.end(); it++)
 	{
 		//If same, ignore
 		if((*it) == actor)
 			continue;
 		
-		//If not BioActor, ignore
-		BioActor* target = dynamic_cast<BioActor*>(*it);
-		if(!target)
-			continue;
-		
-		//If the BioActor is dead, ignore
-		if(!target->IsAlive())
-			continue;
+		BioActor* tBioActor = dynamic_cast<BioActor*>(*it);
+		WorldActor* tWorldActor = dynamic_cast<WorldActor*>(*it);
+		Actor* target = NULL;
 
-		//check length, ignore if too far.
-		float length = ( actor->GetPosition() - (*it)->GetPosition() ).GetLength();
-		if(length > rangeWithin)
+		//if BioActor
+		if(tBioActor)
+		{
+			if(tBioActor->IsAlive())
+				target = tBioActor;
+		}
+		//If WorldActor
+		else if(tWorldActor)
+		{
+			target = tWorldActor;
+		}
+
+		//If the target is null, ignore
+		if(!target)
 			continue;
 
 		if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
@@ -111,13 +119,24 @@ Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
 		if((*it) == actor)
 			continue;
 
-		//If not BioActor, ignore
-		BioActor* target = dynamic_cast<BioActor*>(*it);
-		if(!target)
-			continue;
+		BioActor* tBioActor = dynamic_cast<BioActor*>(*it);
+		WorldActor* tWorldActor = dynamic_cast<WorldActor*>(*it);
+		Actor* target = NULL;
 
-		//If the BioActor is dead, ignore
-		if(!target->IsAlive())
+		//if BioActor
+		if(tBioActor)
+		{
+			if(tBioActor->IsAlive())
+				target = tBioActor;
+		}
+		//If WorldActor
+		else if(tWorldActor)
+		{
+			target = tWorldActor;
+		}
+
+		//If the target is null, ignore
+		if(!target)
 			continue;
 
 		//Check distance
@@ -143,4 +162,41 @@ Actor* ActorManager::GetActor( const unsigned int ID ) const
 		}
 	}
 	return NULL;
+}
+
+unsigned int ActorManager::GetActorsInCircle( const Vector2& center, float radius, std::set<Actor*>& out) const
+{
+	unsigned int counter=0;
+
+	for(auto i = zActors.cbegin(); i != zActors.cend(); i++)
+	{
+		Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );
+		if( Vector2(center-pos).GetLength() < radius)
+		{
+			out.insert(*i);
+			counter++;
+		}
+	}
+
+	return counter;
+}
+
+unsigned int ActorManager::GetActorsInCircle( const Vector2& center, float radius, std::set<Actor*>& out, const unsigned int filter ) const
+{
+	unsigned int counter=0;
+
+	for(auto i = zActors.cbegin(); i != zActors.cend(); i++)
+	{
+		if( (*i)->GetType() == filter )
+		{
+			Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );
+			if( Vector2(center-pos).GetLength() < radius)
+			{
+				out.insert(*i);
+				counter++;
+			}
+		}
+	}
+
+	return counter;
 }

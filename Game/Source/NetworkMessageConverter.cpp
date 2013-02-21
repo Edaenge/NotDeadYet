@@ -98,6 +98,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	case MESSAGE_TYPE_USER_NAME:
 		ss << M_USER_NAME;
 		break;
+	case MESSAGE_TYPE_PLAY_SOUND:
+		ss << M_PLAY_SOUND;
+		break;
 	default:
 		return "";
 		break;

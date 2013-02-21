@@ -5,6 +5,7 @@ AnimalActor::AnimalActor() :
 	BioActor()
 {
 	this->SetDir(Vector3(0,0,-1));
+	this->zType = ACTOR_TYPE_ANIMAL;
 }
 
 AnimalActor::~AnimalActor()

@@ -8,6 +8,19 @@
 #include <vector>
 #include <map>
 
+class SoundChecker
+{
+private:
+	float zLeftFoot;
+	float zRightFoot;
+
+public:
+	SoundChecker(){ this->zLeftFoot = 0.0f; this->zRightFoot = 0.4f; }
+
+	bool CheckLeftFootPlaying(float deltaTime){ if(this->zLeftFoot <= 0.0f) { this->zLeftFoot = 0.8f; return false; } else{ this->zLeftFoot -= deltaTime; return true;} }
+	bool CheckRightFootPlaying(float deltaTime){ if(this->zRightFoot <= 0.0f) { this->zRightFoot = 0.8f; return false; } else{ this->zRightFoot -= deltaTime; return true;} }
+};
+
 class Updates
 {
 public:
@@ -127,4 +140,6 @@ private:
 	std::map<unsigned int, Updates*> zUpdates;
 	float zInterpolationVelocity;
 	Vector3 zCameraOffset;
+
+	SoundChecker zSoundChecker;
 };

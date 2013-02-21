@@ -118,7 +118,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj", position);
+	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	DeerActor* dActor = new DeerActor(deerPhysics);
 	dActor->AddObserver(this->zGameMode);
 
@@ -327,7 +327,7 @@ bool Game::Update( float dt )
 		}
 	}
 
-
+	
 	// Update Game Mode, Might Notify That GameMode is Finished
 	if ( !zGameMode->Update(dt) )
 		return false;
@@ -338,7 +338,7 @@ bool Game::Update( float dt )
 	// Collisions Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
-		//Projectiles
+		//*** Projectiles ***
 		if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
 		{
 			ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(projBehavior->GetActor());
@@ -353,25 +353,31 @@ bool Game::Update( float dt )
 			float length = projBehavior->GetLenght();
 
 			//Calculate the arrow
-			float middle = (length * max(max(scale.x, scale.y),scale.z)) / 2;
+			float middle = (length * max(max(scale.x, scale.y),scale.z)) * 0.5f;
 
 			//Check collision, returns the result
 			Actor* collide = this->zActorManager->CheckCollisions(projActor, middle); 
 
-			if(BioActor* victim = dynamic_cast<BioActor*>(collide))
+			if( BioActor* victim = dynamic_cast<BioActor*>(collide) )
 			{
 				//Stop arrow
 				projBehavior->Stop();
 				//Take damage
 				victim->TakeDamage(projActor->GetDamage(), projActor);
 			}
+			else if( WorldActor* object = dynamic_cast<WorldActor*>(collide) )
+			{
+				//Stop Arrow
+				projBehavior->Stop();
+			}
+
 		}
-		//If ghost, ignore
+		//*** Ghosts, ignore ***
 		else if( dynamic_cast<PlayerGhostBehavior*>(*i) )
 		{
 			continue;
 		}
-		//Others
+		//*** Others ***
 		else
 		{
 			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
@@ -381,22 +387,32 @@ bool Game::Update( float dt )
  					continue;
 
 			Actor* collide = NULL;
-			float range = 1.5f; //hard coded
+			float range = 1.0f; //hard coded
 
 			collide = this->zActorManager->CheckCollisionsByDistance(pActor, range);
 
-			if(BioActor* target = dynamic_cast<BioActor*>(collide))
+			//No collision, ignore the rest
+			if(!collide)
+				continue;
+
+			Vector3 pActor_rewind_dir = (collide->GetPosition() - pActor->GetPosition());
+			pActor_rewind_dir.Normalize();
+
+			if( BioActor* target = dynamic_cast<BioActor*>(collide) )
 			{
-				//Calculate directions from each other
-				Vector3 pActor_rewind_dir = (target->GetPosition() - pActor->GetPosition());
-				pActor_rewind_dir.Normalize();
+				//Calculate Target rewind dir.
 				Vector3 target_rewind_dir = pActor_rewind_dir * -1;
 	
 				//Id target did not move, do not rewind position.
 				if(target->HasMoved())
-					target->SetPosition(target->GetPosition() - (target_rewind_dir * 0.5f));
+					target->SetPosition( target->GetPosition() - (target_rewind_dir * 0.25f) );
 
-				pActor->SetPosition(pActor->GetPosition() - (pActor_rewind_dir * 0.5f));
+				pActor->SetPosition( pActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+			}
+			else if( WorldActor* object = dynamic_cast<WorldActor*>(collide) )
+			{
+				//Rewind the pActor only.
+				pActor->SetPosition( pActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
 			}
 		}
 	}
@@ -545,28 +561,36 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e) )
 	{
-		//PhysicsObject* phys = 0;
-		//
-		//if ( GetEntBlockRadius(ELE->entity->GetType()) > 0.0f )
-		//{
-		//	phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(ELE->entity->GetType()), ELE->entity->GetPosition());
-		//}
+		PhysicsObject* phys = 0;
+		
+		if ( GetEntBlockRadius(ELE->entity->GetType()) > 0.0f )
+		{
+			// Create Physics Object
+			phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(ELE->entity->GetType()));
+		}
 
-		//// Create Physics Object
-		//WorldActor* actor = new WorldActor();
-		//zWorldActors[ELE->entity] = actor;
-		//zActorManager->AddActor(actor);
+		if(!phys)
+		{
+			throw("Phys is null");
+			return;
+		}
 
-		//actor->AddObserver(this->zGameMode);
+		WorldActor* actor = new WorldActor(phys);
+		actor->SetPosition(ELE->entity->GetPosition());
+		actor->SetScale(actor->GetScale());
+		actor->AddObserver(this->zGameMode);
+		
+		this->zWorldActors[ELE->entity] = actor;
+		this->zActorManager->AddActor(actor);
+		
 	}
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
 		auto i = zWorldActors.find(ERE->entity);
 		if ( i != zWorldActors.end() )
 		{
-			SAFE_DELETE(i->second);
-
-			zWorldActors.erase(i);
+			this->zActorManager->RemoveActor(i->second);
+			this->zWorldActors.erase(i);
 		}
 	}
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
@@ -1194,19 +1218,30 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//create projectileActor
 				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
 				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
-				ProjectileArrowBehavior* projBehavior= new ProjectileArrowBehavior(projActor, this->zWorld);
+		
+				ProjectileArrowBehavior* projBehavior = NULL;
 				Damage damage;
 
 				//Sets damage
 				damage.piercing = ranged->GetDamage() + arrow->GetDamage();
 				projActor->SetDamage(damage);
+				//Set other values
+				projActor->SetScale(projActor->GetScale());
+				projActor->SetPosition( pActor->GetPosition() + pActor->GetCameraOffset());
+				projActor->SetDir(pActor->GetDir());
 
+				//Create behavior
+				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
+
+				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
 				this->zBehaviors.insert(projBehavior);
 				//Decrease stack
 				arrow->Use();
 				inventory->RemoveItemStack(arrow->GetID(), 1);
 
+
+				//if arrow stack is empty
 				if (arrow->GetStackSize() <= 0)
 				{
 					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
@@ -1218,6 +1253,10 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				}
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
+
+				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/BowShot.mp3");
+				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
+				this->SendToAll(msg);
 			}
 			else
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
@@ -1555,4 +1594,12 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 	msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)itemID);
 	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)eq_slot);
 	cd->Send(msg);
+}
+
+void Game::SendToAll( std::string msg)
+{
+	for(auto it = this->zPlayers.begin(); it != this->zPlayers.end(); it++)
+	{
+		it->first->Send(msg);
+	}
 }

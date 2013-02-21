@@ -18,7 +18,7 @@ MainMenu::MainMenu()
 MainMenu::~MainMenu()
 {
 	delete [] zSets;
-	zSets = NULL;
+	zSets = 0;
 	SAFE_DELETE(this->zGame);
 }
 
@@ -301,9 +301,9 @@ void MainMenu::Init()
 
 void MainMenu::StartTestRun()
 {
-	//zGame->InitGameClient("194.47.150.20", 11521);
-	//zGame->InitGameClient("194.47.150.16", 11521);
-	//zGame->InitGameClient("194.47.150.12", 11521);
+	//zGame->InitGameClient("194.47.150.20", 11521); // Ediz
+	//zGame->InitGameClient("194.47.150.16", 11521); // Server
+	//zGame->InitGameClient("194.47.150.12", 11521); // Crant
 	//zGame->InitGameClient("80.78.216.201", 11521);
 	zGame->InitGameClient("127.0.0.1", 11521);	
 	zGame->Run();
