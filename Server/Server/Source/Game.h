@@ -71,6 +71,8 @@ private:
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID, int eq_slot);
 
+	void SendToAll(std::string msg);
+
 private:
 	PhysicsEngine* zPhysicsEngine;
 	

@@ -1217,6 +1217,10 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				}
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
+
+				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/BowShot.mp3");
+				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
+				this->SendToAll(msg);
 			}
 			else
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
@@ -1554,4 +1558,12 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 	msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)itemID);
 	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)eq_slot);
 	cd->Send(msg);
+}
+
+void Game::SendToAll( std::string msg)
+{
+	for(auto it = this->zPlayers.begin(); it != this->zPlayers.end(); it++)
+	{
+		it->first->Send(msg);
+	}
 }

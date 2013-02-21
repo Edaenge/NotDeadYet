@@ -6,7 +6,7 @@
 
 ClientActorManager::ClientActorManager()
 {
-	zInterpolationVelocity = 1000.0f;
+	zInterpolationVelocity = 100.0f;
 }
 
 ClientActorManager::~ClientActorManager()
@@ -52,7 +52,11 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				if(update->GetID() == clientID)
 				{
 					position = this->InterpolatePosition(gEng->GetCamera()->GetPosition() - this->zCameraOffset, update->GetPosition(), t);
-					//if ( rand()%10000 == 0 ) GetSounds()->PlaySounds("Media/Sound/Walk.wav", position);
+					if(!zSoundChecker.CheckLeftFootPlaying(deltaTime))
+						GetSounds()->PlaySounds("Media/Sound/LeftStep.mp3", position);
+					if(!zSoundChecker.CheckRightFootPlaying(deltaTime))
+						GetSounds()->PlaySounds("Media/Sound/RightStep.mp3", position);
+
 					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
 				}
 				else 
