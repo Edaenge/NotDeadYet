@@ -336,6 +336,20 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.zAnimalType = animalType;
 		NotifyObservers(&e);
 	}
+	else if(msgArray[0].find(M_DEER_EAT_OBJECT) == 0)
+	{
+		PlayerDeerEatObjectEvent e;
+
+		e.clientData = cd;
+		for (auto it = msgArray.begin(); it != msgArray.end(); it++)
+		{
+			unsigned int id = this->zMessageConverter.ConvertStringToInt(M_DEER_EAT_OBJECT, (*it));
+
+			e.actorID.push_back(id);
+		}
+
+		NotifyObservers(&e);
+	}
 	else if(msgArray[0].find(M_LEAVE_ANIMAL) == 0)
 	{
 		PlayerLeaveAnimalEvent e;

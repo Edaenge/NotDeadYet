@@ -230,3 +230,12 @@ public:
 
 	ClientData* clientData;
 };
+class PlayerDeerEatObjectEvent : public Event
+{
+public:
+	virtual ~PlayerDeerEatObjectEvent() {}
+
+	ClientData* clientData;
+	//ID's of all actors possibly hit by the deer
+	std::vector<unsigned int> actorID;
+};
