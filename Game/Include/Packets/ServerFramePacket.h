@@ -13,7 +13,13 @@ public:
 	std::map< unsigned int, Vector3 > newScales;
 	std::map< unsigned int, unsigned int> newStates;
 
-	virtual ~ServerFramePacket() {}
+	virtual ~ServerFramePacket() 
+	{
+		this->newPositions.clear();
+		this->newRotations.clear();
+		this->newScales.clear();
+		this->newStates.clear();
+	}
 
 	virtual bool Serialize( std::ostream& ss ) const
 	{

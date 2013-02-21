@@ -47,28 +47,7 @@ void GameModeFFA::OnEvent( Event* e )
 		{
 			if(pActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 			{
-				// Set new spawn pos
-				//int maxPlayers = zPlayers.size();
-				//int rand = 1 + (std::rand() % (maxPlayers+1));
-				//pa->SetPosition(zGame->CalcPlayerSpawnPoint(rand));
-				//pa->SetHealth(pa->GetHealthMax());
-				//pa->SetStamina(pa->GetStaminaMax());
-				//pa->SetFullness(pa->GetFullnessMax());
-				//pa->SetHydration(pa->GetHydrationMax());
-
-				//ATD->zDamage->blunt = 0;
-				//ATD->zDamage->fallingDamage = 0;
-				//ATD->zDamage->piercing = 0;
-				//ATD->zDamage->slashing = 0;
-
-				//Add to scoreboard
-				//if( PlayerActor* dpa = dynamic_cast<PlayerActor*>(ATD->zDealer) )
-				//	if(dpa != pa)
-				//		zScoreBoard[dpa->GetPlayer()]++;
-				//	else if( dpa == pa )
-				//		zScoreBoard[pa->GetPlayer()]--;
-
-				OnPlayerDeath(pActor);
+				this->OnPlayerHumanDeath(pActor);
 			}
 			else
 			{
@@ -84,10 +63,32 @@ void GameModeFFA::OnEvent( Event* e )
 		}
 		else if( AnimalActor* aActor = dynamic_cast<AnimalActor*>(ATD->zActor) )
 		{
-			if(aActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
+			if (aActor->GetPlayer())
 			{
-				this->zGame->RemoveAIBehavior(aActor);
+				if(aActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
+				{
+					this->OnPlayerAnimalDeath(aActor);
+				}
+				else
+				{
+					unsigned int ID = ATD->zDealer->GetID();
+					float damage = ATD->zDamage->GetTotal();
+
+					NetworkMessageConverter NMC;
+					std::string msg = NMC.Convert(MESSAGE_TYPE_ACTOR_TAKE_DAMAGE, (float)ID);
+					msg += NMC.Convert(MESSAGE_TYPE_HEALTH, damage);
+					ClientData* cd = aActor->GetPlayer()->GetClientData();
+					cd->Send(msg);
+				}
 			}
+			else
+			{
+				if(aActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
+				{
+					this->zGame->RemoveAIBehavior(aActor);
+				}
+			}
+			
 		}
 	}
 	else if (PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
@@ -118,8 +119,12 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 
 	NetworkMessageConverter NMC;
 	std::string msg = "";
-	
-	for (auto it_Actors = actors.begin(); it_Actors != actors.end() && !found; it_Actors++)
+	AnimalActor* closestAnimal = NULL;
+	float distance = 999999.9f;
+	Vector3 position = gActor->GetPosition();
+
+	//this->zGame->GetActorManager()->
+	for (auto it_Actors = actors.begin(); it_Actors != actors.end(); it_Actors++)
 	{
 		if (AnimalActor* aActor = dynamic_cast<AnimalActor*>((*it_Actors)))
 		{
@@ -128,22 +133,16 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 			{
 				if (DeerActor* dActor = dynamic_cast<DeerActor*>(aActor))
 				{
-					Player* player = gActor->GetPlayer();
-					gActor->SetPlayer(NULL);
+					if (dActor->IsAlive())
+					{
+						float dist = (position - dActor->GetPosition()).GetLength();
 
-					PlayerDeerBehavior* playerDeerBehavior = new PlayerDeerBehavior(dActor, this->zGame->GetWorld(), player);
-					dActor->SetPlayer(player);
-					
-					this->zGame->RemoveAIBehavior(dActor);
-					this->zGame->SetPlayerBehavior(player, playerDeerBehavior);
-
-					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, dActor->GetID());
-					msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
-
-					cd->Send(msg);
-
-					this->zGame->GetActorManager()->RemoveActor(gActor);
-					found = true;
+						if (dist < distance)
+						{
+							distance = dist;
+							closestAnimal = dActor;
+						}
+					}
 				}
 			}
 			/*//If Type = Wolf
@@ -173,37 +172,79 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 			//If Type = Bear
 			else if (animalType == 2)
 			{
-				if (BearActor* dActor = dynamic_cast<BearActor*>(aActor))
+				if (BearActor* bActor = dynamic_cast<BearActor*>(aActor))
 				{
-					//Player* player = gActor->GetPlayer();
-					//gActor->SetPlayer(NULL);
+					if (bActor->IsAlive())
+					{
+						float dist = (position - bActor->GetPosition()).GetLength();
 
-					//PlayerBearBehavior* playerBearBehavior = new PlayerBearBehavior(dActor, this->zGame->GetWorld(), player);
-					//dActor->SetPlayer(player);
-
-					//this->zGame->SetPlayerBehavior(player, playerBearBehavior);
-
-					//msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, dActor->GetID());
-					//msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
-
-					//cd->Send(msg);
-
-					//this->zGame->GetActorManager()->RemoveActor(gActor);
-					//found = true;
+						if (dist < distance)
+						{
+							distance = dist;
+							closestAnimal = bActor;
+						}
+					}
 				}
 			}
 		}
-		
-
 	}
+
+	PlayerBehavior* animalBehavior = NULL;
+	if (closestAnimal)
+	{
+		//Deer
+		if (animalType == 0)
+		{
+			animalBehavior = new PlayerDeerBehavior(closestAnimal, this->zGame->GetWorld(), player);
+
+			gActor->SetPlayer(NULL);
+
+			closestAnimal->SetPlayer(player);
+
+			this->zGame->RemoveAIBehavior(closestAnimal);
+			this->zGame->SetPlayerBehavior(player, animalBehavior);
+
+			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, closestAnimal->GetID());
+			msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
+
+			cd->Send(msg);
+
+			this->zGame->GetActorManager()->RemoveActor(gActor);
+		}
+		//Bear
+		else if (animalType == 2)
+		{
+			/*Player* player = gActor->GetPlayer();
+			gActor->SetPlayer(NULL);
+
+			PlayerBearBehavior* playerBearBehavior = new PlayerBearBehavior(dActor, this->zGame->GetWorld(), player);
+			dActor->SetPlayer(player);
+
+			this->zGame->SetPlayerBehavior(player, playerBearBehavior);
+
+			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, dActor->GetID());
+			msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
+
+			cd->Send(msg);
+
+			this->zGame->GetActorManager()->RemoveActor(gActor);
+			found = true;*/
+		}
+	}
+	else
+	{
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_animal_of_the_type_is_close_by"));
+	}
+
 }
 
-void GameModeFFA::OnPlayerDeath(PlayerActor* pActor)
+void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 {
 	NetworkMessageConverter NMC;
 	std::string msg = "";
 
 	Player* player = pActor->GetPlayer();
+	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 
 	ClientData* cd = player->GetClientData();
@@ -229,6 +270,41 @@ void GameModeFFA::OnPlayerDeath(PlayerActor* pActor)
 
 	cd->Send(msg);
 	
+	//Add the actor to the list
+	aManager->AddActor(gActor);
+}
+
+void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
+{
+	NetworkMessageConverter NMC;
+	std::string msg = "";
+
+	Player* player = aActor->GetPlayer();
+	//Remove Player Pointer From the Actor
+	aActor->SetPlayer(NULL);
+	
+	ClientData* cd = player->GetClientData();
+
+	Vector3 position = aActor->GetPosition();
+	Vector3 direction = aActor->GetDir();
+
+	//Create a Ghost Actor
+	GhostActor* gActor = new GhostActor(player);
+	gActor->SetPosition(position);
+	gActor->SetDir(direction);
+
+	//Create Ghost behavior
+	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);
+
+	this->zGame->SetPlayerBehavior(player, pGhostBehavior);
+
+	//Tell Client his new ID and actor type
+	ActorManager* aManager = this->zGame->GetActorManager();
+	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, gActor->GetID());
+	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 2);
+
+	cd->Send(msg);
+
 	//Add the actor to the list
 	aManager->AddActor(gActor);
 }
