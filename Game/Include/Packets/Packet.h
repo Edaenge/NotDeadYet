@@ -6,6 +6,7 @@
 class Packet
 {
 public:
+	virtual ~Packet() {}
 	virtual bool Serialize( std::ostream& ss ) const = 0;
 	virtual bool Deserialize( std::istream& ss ) = 0;
 

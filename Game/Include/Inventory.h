@@ -44,7 +44,7 @@ public:
 	std::vector<Item*> GetItems() const;
 	/*! Search for the item and returns it if found or NULL if not found*/
 	Item* SearchAndGetItem(const unsigned int ID) const;
-	/*! Removes the item from the list. Resturns the removed item.*/
+	/*! Removes the item from the list. Returns the removed item.*/
 	Item* RemoveItem(const unsigned int ID);
 	Item* RemoveItem(Item* item);
 	/*! Returns blocked slots*/
@@ -53,12 +53,13 @@ public:
 	bool GetBlockedSlot(unsigned int index) const;
 	/*! Returns the Inventory Capacity == Max Weight allowed*/
 	int GetInventoryCapacity() const;
-	/*! */
+	/*! Returns the total Weight.*/
 	inline int GetTotalWeight() const {return zWeightTotal;}
 	/*! Returns amount of Items the player has in the inventory with itemType = TYPE*/
 	int SearchForItemType(const int Type, const int SubType);
-	/*! Removes a stack from Item*/
+	/*! Removes weight from Inventory depending on item stacks and Weight.*/
 	bool RemoveItemStack(const unsigned int ID, const unsigned int numberOfStacks = 1);
+	/*! Search after the item and returns it if found else return NULL.*/
 	Item* SearchAndGetItemFromType(const int Type, const int SubType);
 
 	//Equipment
@@ -87,6 +88,7 @@ public:
 	Gear* GetGear(const unsigned int type);
 	void UnEquipGear(const unsigned int type);
 
+	/*! Swaps between the Primary and secondary Weapons.*/
 	bool SwapWeapon();
 private:
 	/*Removes the item from the list.*/

@@ -120,6 +120,7 @@ void Game::SpawnAnimalsDebug()
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	DeerActor* dActor = new DeerActor(deerPhysics);
+	dActor->AddObserver(this->zGameMode);
 
 	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
 
@@ -284,7 +285,7 @@ bool Game::Update( float dt )
 		}
 		else
 		{
-			++i;
+			i++;
 			counter++;
 		}
 	}
