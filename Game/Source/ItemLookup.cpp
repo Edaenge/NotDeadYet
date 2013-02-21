@@ -12,6 +12,19 @@ void FreeItemLookup()
 	SAFE_DELETE(itemLookup);
 }
 
+
+ItemLookup::~ItemLookup()
+{
+	for( unsigned int i = 0; i < this->zItems.size(); i++ )
+	{
+		if (this->zItems.at(i))
+		{
+			delete this->zItems.at(i);
+		}
+	}
+	this->zItems.clear();
+}
+
 void InitItemLookup()
 {
 	itemLookup = new ItemLookup();
@@ -678,3 +691,4 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Bandage*& b
 
 	return true;
 }
+

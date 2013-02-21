@@ -141,6 +141,8 @@ void Game::SpawnAnimalsDebug()
 			new_Food = new Food((*temp_food));
 
 			inv->AddItem(new_Food, stacked);
+			if(stacked)
+				SAFE_DELETE(new_Food);
 		}
 	}
 	

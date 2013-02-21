@@ -91,7 +91,6 @@ public:
 private:
 	/*Removes the item from the list.*/
 	Item* Erase(const unsigned int Index);
-private:
 	/*! Array of items*/
 	std::vector<Item*> zItems;
 	/*! Array to keep track of Gui Representation*/

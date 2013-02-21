@@ -207,7 +207,14 @@ namespace GUI
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            this.m_ServerEngine.ShutdownHost();
+            
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
             m_ServerEngine = null;
+            GC.WaitForFullGCComplete();
         }
 
     }

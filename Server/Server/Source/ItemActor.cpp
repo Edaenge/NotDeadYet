@@ -7,7 +7,7 @@ ItemActor::ItemActor(Item* item) : Actor()
 
 ItemActor::~ItemActor()
 {
-	
+	SAFE_DELETE(this->zItem);
 }
 
 const std::string& ItemActor::GetModel() const
