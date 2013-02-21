@@ -10,7 +10,7 @@ const float MAX_VELOCITY_RUN = 4.40f;
 const float MAX_VELOCITY_SPRINT = 7.80f;
 const float MAX_VELOCITY_DUCK = 0.1f;
 const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
-const Vector3 JUMPING_FORCE = Vector3(0, 25.0f, 0);
+const Vector3 JUMPING_FORCE = Vector3(0, 1250.0f, 0);
 const float ELASTICITY = 0.5f;
 const float ACCELERATION = 10000.0f;
 const float GROUNDFRICTION = 0.4f;
@@ -148,22 +148,12 @@ bool PlayerDeerBehavior::Update( float dt )
 	airResistance *= 0.5f * AIRDENSITY * DRAGCOOEFICIENT * DEERSURFACEAREA;
 	zVelocity -= airResistance / DEERWEIGHT * dt;
 
-	//Perform a jump
-	if(isOnGround)
-	{
-		if(keyStates.GetKeyState(KEY_JUMP))
-		{
-			zVelocity += JUMPING_FORCE * dt;
-		}
-		
-	}
-
 	// Check Max Speeds
 	if(keyStates.GetKeyState(KEY_DUCK))
 	{
 		if(this->zVelocity.GetLength() > MAX_VELOCITY_WALK)
 		{
-			bActor->SetState(STATE_CROUCHING);
+			bActor->SetState(STATE_WALKING);
 			this->zVelocity.Normalize();
 			this->zVelocity *= MAX_VELOCITY_WALK;
 		}
@@ -192,6 +182,7 @@ bool PlayerDeerBehavior::Update( float dt )
 				this->zVelocity = Vector3(0, 0, 0);
 			}
 		}
+
 	}
 	else if(keyStates.GetKeyState(KEY_SPRINT))
 	{
@@ -209,14 +200,26 @@ bool PlayerDeerBehavior::Update( float dt )
 				this->zVelocity = Vector3(0, 0, 0);
 			}
 		}
+
 	}
+
+	if(isOnGround)
+	{
+		//isOnGround = false;
+		if(keyStates.GetKeyState(KEY_JUMP))
+		{
+			zVelocity += JUMPING_FORCE * dt;
+		}
+	}
+	
+	
 
 	// Apply Velocity
 	Vector3 newPosition = curPosition + zVelocity * dt;
 	try
 	{
 		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
-		if ( newPosition.y < groundHeight )
+		if ( newPosition.y < groundHeight)
 		{
 			newPosition.y = groundHeight;
 			zVelocity.y = 0.0f;

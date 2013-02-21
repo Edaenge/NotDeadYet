@@ -112,6 +112,8 @@ private:
 		float		zAttackingVelocity;
 		float		zFleeingVelocity;
 
+		float		zPreviousVelocity;
+
 
 		float		zPreviousHealth; //Used to detect if the deer has been wounded.
 		float		zFearMax;

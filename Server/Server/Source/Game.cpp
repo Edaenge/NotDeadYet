@@ -300,14 +300,14 @@ bool Game::Update( float dt )
 				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
 				{
 					//tempBehaviour->get
-					Actor* oldActor = NULL;
-					ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
+					//Actor* oldActor = NULL;
+					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
 					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
 				}
 				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
 				{
-					Actor* oldActor = NULL;
-					ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
+					//Actor* oldActor = NULL;
+					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
 					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
 				}
 			}
