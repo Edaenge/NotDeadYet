@@ -4,6 +4,7 @@
 
 class ActorSynchronizer;
 class Actor;
+class Vector2;
 
 class ActorManager : public Observed, public Observer
 {
@@ -16,9 +17,12 @@ public:
 	void AddActor( Actor* actor );
 	void RemoveActor( Actor* actor );
 	std::set<Actor*>& GetActors() {return this->zActors;}
-	Actor* GetActor(const unsigned int Index) const;
-	/*! Checks if this actor collides with BioActors in the game using physics calculations.*/
+	Actor* GetActor(const unsigned int ID) const;
+	/*! */
+	unsigned int GetActorsInCircle(const Vector2& center, float radius, std::set<Actor*>& out) const;
+
+	/*! Checks if this actor collides with BioActors/WorldActors in the game using physics calculations.*/
 	Actor* CheckCollisions(Actor* actor, float& range);
-	/*! Checks if this actor collides with BioActors in the game using distance calculations.*/
+	/*! Checks if this actor collides with BioActors/WorldActors in the game using distance calculations.*/
 	Actor* CheckCollisionsByDistance(Actor* actor, float& range);
 };

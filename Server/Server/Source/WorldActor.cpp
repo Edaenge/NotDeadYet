@@ -1,8 +1,8 @@
 #include "WorldActor.h"
 
-WorldActor::WorldActor()
+WorldActor::WorldActor( PhysicsObject* pObj )
 {
-
+	this->SetPhysicsObject(pObj);
 }
 
 WorldActor::~WorldActor()
