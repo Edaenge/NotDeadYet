@@ -40,6 +40,25 @@ Host::~Host()
 	BroadCastServerShutdown();
 
 	SAFE_DELETE(this->zServerListener);
+
+	SAFE_DELETE(this->zGame);
+
+	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
+	{
+		auto iterator = it;
+
+		ClientData* data = iterator->second;
+		if(data)
+		{
+			delete data;
+			data = NULL;
+		}
+
+	}
+	this->zClients.clear();
+
+	SAFE_DELETE(this->zSynchronizer);
+
 	this->Close();
 	this->WaitUntillDone();
 }
@@ -533,6 +552,10 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 		else if(it_m->find(M_DIRECTION) == 0)
 		{
 			e.direction = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, (*it_m));
+		}
+		else if(it_m->find(M_USER_NAME) == 0)
+		{
+			e.playerName = this->zMessageConverter.ConvertStringToSubstring(M_USER_NAME, (*it_m));
 		}
 		else if(it_m->find(M_UP) == 0)
 		{

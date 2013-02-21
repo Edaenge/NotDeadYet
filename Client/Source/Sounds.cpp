@@ -27,6 +27,7 @@ bool FreeSounds()
 		return false;
 	
 	delete sound_engine;
+	sound_engine = NULL;
 
 	return true;
 }

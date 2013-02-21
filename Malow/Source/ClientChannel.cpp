@@ -45,10 +45,18 @@ void ClientChannel::CloseSpecific()
 {
 	if(zSocket)
 	{
-		if( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
+		try
 		{
-			throw NetworkException("Failed Shutting Down Socket!", WSAGetLastError());
+			if( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
+			{
+				throw NetworkException("Failed Shutting Down Socket!", WSAGetLastError());
+			}
 		}
+		catch(...)
+		{
+
+		}
+		
 	}
 }
 

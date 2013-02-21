@@ -7,6 +7,7 @@
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
 #include "Sounds.h"
+#include "PlayerConfig/PlayerSettings.h"
 
 using namespace MaloW;
 
@@ -31,7 +32,8 @@ Client::Client()
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID = "Media/Models/temp_guy.obj";
+	this->zMeshID	= GetPlayerSettings()->GetPlayerModel();
+	this->zName		= GetPlayerSettings()->GetPlayerName();
 
 	this->zMeshCameraOffsets["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zMeshCameraOffsets["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
@@ -89,10 +91,14 @@ Client::~Client()
 	SAFE_DELETE(this->zPlayerInventory);
 
 	SAFE_DELETE(this->zIgm);
+	SAFE_DELETE(this->zPam);
 
 	SAFE_DELETE(this->zWorldRenderer);
 	SAFE_DELETE(this->zWorld);
 	
+	this->zMeshCameraOffsets.clear();
+	this->zStateCameraOffset.clear();
+
 	if ( this->zCrossHair ) GetGraphics()->DeleteImage(zCrossHair);
 }
 
@@ -328,14 +334,6 @@ void Client::SendClientUpdate()
 	this->zServerChannel->TrySend(msg);
 }
 
-void Client::SendAck(unsigned int IM_ID)
-{
-	std::string msg;
-	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACKNOWLEDGE, (float)IM_ID);
-
-	this->zServerChannel->Send(msg);
-}
-
 void Client::UpdateMeshRotation()
 {
 	/*Actor* player = this->zActorManager->GetActor(this->zID);
@@ -555,6 +553,25 @@ void Client::CheckGhostSpecificKeys()
 {
 	this->CheckKey(KEY_JUMP);
 	this->CheckKey(KEY_DUCK);
+
+	// Opens pick menu if you can do it.
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_PICKMENU)))
+	{
+		if(!this->zKeyInfo.GetKeyState(KEY_PICKMENU))
+		{
+			this->zKeyInfo.SetKeyState(KEY_PICKMENU, true);
+			this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
+			if(this->zPam->GetShow())
+				zShowCursor = true;
+			else
+				zShowCursor = false;
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
+			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
+	}
 }
 
 void Client::CheckNonGhostInput()
@@ -646,28 +663,6 @@ void Client::CheckKeyboardInput()
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_MENU))
 			this->zKeyInfo.SetKeyState(KEY_MENU, false);
-	}
-
-	// Opens pick menu if you can do it.
-	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_PICKMENU)))
-	{
-		if(!this->zKeyInfo.GetKeyState(KEY_PICKMENU))
-		{
-			if(this->zActorType == GHOST)
-			{
-				this->zKeyInfo.SetKeyState(KEY_PICKMENU, true);
-				this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
-				if(this->zPam->GetShow())
-					zShowCursor = true;
-				else
-					zShowCursor = false;
-			}
-		}
-	}
-	else
-	{
-		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
-			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
 	}
 
 
@@ -1148,7 +1143,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 
-		
 		if (Actor* actor = this->zActorManager->GetActor(this->zID))
 		{
 			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(actor->GetModel());
@@ -1181,6 +1175,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_MESH_MODEL, this->zMeshID);
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, camDir);
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, camUp);
+		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_USER_NAME, zName);
 
 		this->zServerChannel->Send(serverMessage);
 	}

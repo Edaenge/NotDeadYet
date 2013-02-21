@@ -25,6 +25,9 @@
     <Filter Include="Source\GUI\Events">
       <UniqueIdentifier>{ff6b4179-7f8a-479f-938e-9cb49c14f9b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\PlayerConfig">
+      <UniqueIdentifier>{ffa11063-3665-40a6-8f55-2bc52c1fd8f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\SoundEngine\SoundEffect.cpp">
@@ -141,6 +144,12 @@
     <ClCompile Include="Source\PickAnimalMenu.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PlayerConfig\UserDataConfig.cpp">
+      <Filter>Source\PlayerConfig</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerConfig\PlayerSettings.cpp">
+      <Filter>Source\PlayerConfig</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\SoundEngine\fmod.h">
@@ -253,6 +262,12 @@
     </ClInclude>
     <ClInclude Include="Source\PickAnimalMenu.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerConfig\UserDataConfig.h">
+      <Filter>Source\PlayerConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerConfig\PlayerSettings.h">
+      <Filter>Source\PlayerConfig</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

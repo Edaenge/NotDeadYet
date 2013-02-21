@@ -40,6 +40,8 @@ private:
 
 public:
 	AIDeerBehavior(Actor* actor, World* world);
+	virtual ~AIDeerBehavior() {}
+
 	bool InitValues();
 	bool SetValuesFromFile();
 

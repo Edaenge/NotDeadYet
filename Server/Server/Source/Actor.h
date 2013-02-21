@@ -77,8 +77,6 @@ public:
 	virtual ~Actor();
 	
 	inline unsigned int GetID() const { return this->zID; }
-	/*! Rewinds to previous position.*/
-	inline virtual void RewindPosition();
 
 	// Set Transformation Functions
 	void SetPosition(const Vector3& pos);

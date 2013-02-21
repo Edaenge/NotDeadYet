@@ -75,8 +75,6 @@ private:
 	void HandleNetworkMessage(const std::string& msg);
 	/*! Reads Messages from the server*/
 	void ReadMessages();
-	/*! Sends an acknowledge, important message received.*/
-	void SendAck(unsigned int IM_ID);
 
 	//////////////////////
 	//					//
@@ -178,6 +176,7 @@ private:
 	
 	std::string zIP;
 	std::string zMeshID;
+	std::string zName;
 
 	KeyHandler zKeyInfo;
 	GraphicsEngine* zEng;

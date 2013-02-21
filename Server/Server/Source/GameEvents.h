@@ -178,6 +178,7 @@ public:
 	ClientData* clientData;
 
 	std::string playerModel;
+	std::string playerName;
 	Vector3 upVector;
 	Vector3 direction;
 };

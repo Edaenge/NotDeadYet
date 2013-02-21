@@ -8,7 +8,19 @@ AI::AI()
 
 AI::~AI()
 {
+	//for (auto it = this->zOpenList.begin(); it != this->zOpenList.end(); it++)
+	//{
+	//	SAFE_DELETE((*it));
+	//}
+	//this->zOpenList.clear();
 
+	//for (auto it = this->zClosedList.begin(); it != this->zClosedList.end(); it++)
+	//{
+	//	SAFE_DELETE((*it));
+	//}
+	//this->zClosedList.clear();
+
+	//this->zNodeList.clear();
 }
 
 void AI::InitAI(float nodeDistance, float mapRange)
@@ -359,8 +371,6 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 	return true;
 
 }*/
-
-
 
 	//Note: by Y, we of course mean Z. I was merely thinking in a 2-d grid when designing this.
 bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goalYPos, std::vector<Vector2> &inVector, int maximumPathLenght)
@@ -730,12 +740,6 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 	return true;
 
 }
-
-
-
-
-
-
 /*
 //Note: by Y, we of course mean Z. I was merely thinking in a 2-d grid when designing this.
 bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goalYPos, std::vector<Vector2> &inVector, int maximumPathLenght)

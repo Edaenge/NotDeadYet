@@ -1,6 +1,7 @@
 #include "Graphics.h"
 #include "Sounds.h"
 #include "MainMenu.h"
+#include "PlayerConfig/PlayerSettings.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
 	#include <vld.h>
@@ -21,9 +22,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 		MaloW::Debug("Failed Initializing Graphics!");
 		return 1;
 	}
-	if ( SoundsInit() != 0 )
+	if ( !SoundsInit() )
 	{
 		MaloW::Debug("Failed Initializing Sounds!");
+		return 1;
+	}
+	if ( !PlayerSettingsInit() )
+	{
+		MaloW::Debug("Failed Initializing PlayerSettings!");
 		return 1;
 	}
 
@@ -38,5 +44,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 
 	// Free Sounds
 	FreeSounds();	
+
+	// Save and Free Settings
+	SavePlayerSettings();
+	FreePlayerSettings();
+
 	return 0;
 }

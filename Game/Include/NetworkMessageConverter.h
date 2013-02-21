@@ -18,6 +18,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_ROTATION,
 	MESSAGE_TYPE_STATE,
 	MESSAGE_TYPE_MESH_MODEL,
+	MESSAGE_TYPE_USER_NAME,
 	MESSAGE_TYPE_CONNECTION_CLOSED,
 	MESSAGE_TYPE_CONNECTED,
 	MESSAGE_TYPE_LOAD_MAP,
@@ -123,6 +124,7 @@ static const std::string M_ROTATION					= "R";
 static const std::string M_DIRECTION				= "D";
 static const std::string M_UP						= "U";
 static const std::string M_MESH_MODEL				= "M";
+static const std::string M_USER_NAME				= "UN";
 static const std::string M_KICKED					= "K";
 static const std::string M_SCALE					= "SC";
 static const std::string M_HUNGER					= "HU";

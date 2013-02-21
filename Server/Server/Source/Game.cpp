@@ -74,32 +74,42 @@ Game::~Game()
 {	
 	for( auto i = this->zBehaviors.begin(); i != this->zBehaviors.end(); ++i )
 	{
-		delete *i;
+		Behavior* data = (*i);
+		SAFE_DELETE(data);
 	}
 	this->zBehaviors.clear();
 
 	for( auto i = this->zPlayers.begin(); i != this->zPlayers.end(); ++i )
 	{
-		delete i->second;
+		Player* data = i->second;
+		if (data)
+		{
+			delete data;
+			data = NULL;
+		}
 	}
 	this->zPlayers.clear();
 
-	if ( this->zGameMode )
-	{
-		delete this->zGameMode;
-		this->zGameMode = NULL;
-	}
-	if ( this->zWorld ) 
-	{
-		delete this->zWorld;
-		this->zWorld = NULL;
-	}
-	if ( this->zActorManager ) 
-	{
-		delete this->zActorManager;
-		this->zActorManager = NULL;
-	}
+	SAFE_DELETE(this->zWorld);
+	SAFE_DELETE(this->zGameMode);
+	SAFE_DELETE(this->zActorManager);
 
+	//if ( this->zGameMode )
+	//{
+	//	delete this->zGameMode;
+	//	this->zGameMode = NULL;
+	//}
+	//if ( this->zWorld ) 
+	//{
+	//	delete this->zWorld;
+	//	this->zWorld = NULL;
+	//}
+	//if ( this->zActorManager ) 
+	//{
+	//	delete this->zActorManager;
+	//	this->zActorManager = NULL;
+	//}
+	
 	FreeItemLookup();
 }
 
@@ -278,7 +288,6 @@ bool Game::Update( float dt )
 	}
 
 	//Updating animals.
-
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
 		Behavior* temp = (*i);
@@ -299,7 +308,7 @@ bool Game::Update( float dt )
 				//animalBehavior->SetTargetInfo(counter,(*j)
 				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
 				{
-					//tempBehaviour->get
+					//tempBehaviour->get_
 					//Actor* oldActor = NULL;
 					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
 					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
@@ -314,11 +323,6 @@ bool Game::Update( float dt )
 			counter++;
 		}
 	}
-
-
-
-
-
 
 
 	// Update Game Mode, Might Notify That GameMode is Finished
@@ -370,8 +374,8 @@ bool Game::Update( float dt )
 			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
 
 			//If player hasn't moved, ignore
-				if( pActor && !pActor->HasMoved() )
-					continue;
+ 				if( pActor && !pActor->HasMoved() )
+ 					continue;
 
 			Actor* collide = NULL;
 			float range = 1.5f; //hard coded
@@ -380,10 +384,16 @@ bool Game::Update( float dt )
 
 			if(BioActor* target = dynamic_cast<BioActor*>(collide))
 			{
-				if( target->HasMoved() )
-					target->RewindPosition();
+				//Calculate directions from each other
+				Vector3 pActor_rewind_dir = (target->GetPosition() - pActor->GetPosition());
+				pActor_rewind_dir.Normalize();
+				Vector3 target_rewind_dir = pActor_rewind_dir * -1;
+	
+				//Id target did not move, do not rewind position.
+				if(target->HasMoved())
+					target->SetPosition(target->GetPosition() - (target_rewind_dir * 0.5f));
 
-				pActor->RewindPosition();
+				pActor->SetPosition(pActor->GetPosition() - (pActor_rewind_dir * 0.5f));
 			}
 		}
 	}
@@ -498,12 +508,14 @@ void Game::OnEvent( Event* e )
 
 					//Create Ghost behavior And Ghost Actor
 					GhostActor* gActor = new GhostActor(player);
+					gActor->SetPosition(dActor->GetPosition());
+
 					PlayerGhostBehavior* playerGhostBehavior = new PlayerGhostBehavior(gActor, this->zWorld, player);
 
 					this->SetPlayerBehavior(player, playerGhostBehavior);
 
 					//Tell Client his new ID and actor type
-					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, gActor->GetID());
+					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)gActor->GetID());
 					msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 2);
 					PLAE->clientData->Send(msg);
 
@@ -544,7 +556,8 @@ void Game::OnEvent( Event* e )
 		auto i = zWorldActors.find(ERE->entity);
 		if ( i != zWorldActors.end() )
 		{
-			delete i->second;
+			SAFE_DELETE(i->second);
+
 			zWorldActors.erase(i);
 		}
 	}
@@ -553,6 +566,8 @@ void Game::OnEvent( Event* e )
 		// Create Player Actor
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
+		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
+
 		zActorManager->AddActor(actor);
 		actor->AddObserver(this->zGameMode);
 		Vector3 center;
@@ -1101,7 +1116,7 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 						
 						//Sending Message to client And removing stack from inventory.
 						inv->RemoveItemStack(ID, 1);
-						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, ID);
+						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 
 						cd->Send(msg);
 					}
@@ -1116,7 +1131,7 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 
 						if(item)
 						{
-							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, ID);
+							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
 							cd->Send(msg);
 							delete item, item = NULL;
 						}
@@ -1157,13 +1172,9 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 		MaloW::Debug("Item ID do not match in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
-
-	RangedWeapon* ranged = NULL;
-	MeleeWeapon* meele = NULL;
-	Projectile* proj = NULL;
 	NetworkMessageConverter NMC;
 
-	if(ranged = dynamic_cast<RangedWeapon*>(item))
+	if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
 	{
 		if (ranged->GetItemSubType() == ITEM_SUB_TYPE_BOW)
 		{
@@ -1204,11 +1215,11 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
 		}
 	}
-	else if(proj = dynamic_cast<Projectile*>(item))
+	else if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
 		//TODO: Implement rocks
 	}
-	else if(meele = dynamic_cast<MeleeWeapon*>(item))
+	else if(MeleeWeapon* meele = dynamic_cast<MeleeWeapon*>(item))
 	{
 		float range = 0.0f; 
 		BioActor* victim = NULL;

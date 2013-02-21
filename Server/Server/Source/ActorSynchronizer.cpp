@@ -12,7 +12,7 @@ ActorSynchronizer::ActorSynchronizer() :
 
 ActorSynchronizer::~ActorSynchronizer()
 {
-	if ( zFrameData ) delete zFrameData;
+	SAFE_DELETE(this->zFrameData);
 }
 
 void ActorSynchronizer::OnEvent( Event* e )
@@ -92,7 +92,7 @@ void ActorSynchronizer::RemoveActor( ClientData* cd )
 
 	for(auto it = zRemoveActorSet.begin(); it != this->zRemoveActorSet.end(); it++)
 	{
-		msg = nmc.Convert(MESSAGE_TYPE_REMOVE_ACTOR, *it);
+		msg = nmc.Convert(MESSAGE_TYPE_REMOVE_ACTOR, (float)(*it));
 
 		cd->Send(msg);
 	}

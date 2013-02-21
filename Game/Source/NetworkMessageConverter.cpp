@@ -95,6 +95,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	case MESSAGE_TYPE_ERROR_MESSAGE:
 		ss << M_ERROR_MESSAGE;
 		break;
+	case MESSAGE_TYPE_USER_NAME:
+		ss << M_USER_NAME;
+		break;
 	default:
 		return "";
 		break;

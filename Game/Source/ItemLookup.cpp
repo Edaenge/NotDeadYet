@@ -323,7 +323,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, MeleeWeapon
 	}
 	else if(command == STACKING)
 	{
-		wp->SetStacking(MaloW::convertStringToInt(key));
+		if(MaloW::convertStringToInt(key))
+			wp->SetStacking(true);
+		else
+			wp->SetStacking(false);
 	}
 	else if(command == RANGE)
 	{
@@ -380,7 +383,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, RangedWeapo
 	}
 	else if(command == STACKING)
 	{
-		wp->SetStacking(MaloW::convertStringToInt(key));
+		if(MaloW::convertStringToInt(key))
+			wp->SetStacking(true);
+		else
+			wp->SetStacking(false);
 	}
 	else if(command == RANGE)
 	{
@@ -436,7 +442,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Food*& fd)
 	}
 	else if(command == STACKING)
 	{
-		fd->SetStacking(MaloW::convertStringToInt(key));
+		if(MaloW::convertStringToInt(key))
+			fd->SetStacking(true);
+		else
+			fd->SetStacking(false);
 	}
 	else if(command == HUNGER)
 	{
@@ -487,7 +496,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Container*&
 	}
 	else if(command == STACKING)
 	{
-		ct->SetStacking(MaloW::convertStringToInt(key));
+		if(MaloW::convertStringToInt(key))
+			ct->SetStacking(true);
+		else
+			ct->SetStacking(false);
 	}
 	else if(command == MAX_USE)
 	{
@@ -542,7 +554,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Material*& 
 	}
 	else if(command == STACKING)
 	{
-		ma->SetStacking(MaloW::convertStringToInt(key));
+		if(MaloW::convertStringToInt(key))
+			ma->SetStacking(true);
+		else
+			ma->SetStacking(false);
 	}
 	else if(command == CRAFTING_TYPE)
 	{
@@ -597,7 +612,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Projectile*
 	}
 	else if(command == STACKING)
 	{
-		pa->SetStacking(MaloW::convertStringToInt(key));
+		if(MaloW::convertStringToInt(key))
+			pa->SetStacking(true);
+		else
+			pa->SetStacking(false);
 	}
 	else if(command == SPEED)
 	{
@@ -652,7 +670,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Bandage*& b
 	}
 	else if(command == STACKING)
 	{
-		ba->SetStacking(MaloW::convertStringToInt(key));
+		if(MaloW::convertStringToInt(key))
+			ba->SetStacking(true);
+		else
+			ba->SetStacking(false);
 	}
 
 	return true;
