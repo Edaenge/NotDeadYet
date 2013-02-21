@@ -87,7 +87,6 @@ bool SoundReader::ReadFromFile()
 				}
 			}
 		}
-
-		
 	}
+	return true;
 }

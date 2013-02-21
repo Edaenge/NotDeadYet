@@ -967,21 +967,3 @@ bool PhysicsEngine::DoCollisionTriangleVsTriangle(Vector3 v00, Vector3 v01, Vect
 
 	return true;
 }
-
-std::vector<PhysicsCollisionData> PhysicsEngine::CheckCollisionVsSurrounding(PhysicsObject* pObject)
-{
-	std::vector<PhysicsCollisionData> data;
-	for (int i = 0; i < this->objects.size(); i++)
-	{
-		if (this->objects[i] != pObject)
-		{
-			PhysicsCollisionData tempData = this->GetCollisionMeshMesh(pObject, this->objects[i]);
-
-			if (tempData.BoundingSphereCollision || tempData.collision)
-			{
-				data.push_back(tempData);
-			}
-		}
-	}
-	return data;
-}
