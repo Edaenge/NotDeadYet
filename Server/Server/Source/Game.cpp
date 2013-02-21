@@ -289,6 +289,13 @@ bool Game::Update( float dt )
 		}
 	}
 
+	// Update Game Mode, Might Notify That GameMode is Finished
+	if ( !zGameMode->Update(dt) )
+		return false;
+
+	// Update World
+	zWorld->Update();
+
 	//Updating animals.
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
@@ -325,14 +332,6 @@ bool Game::Update( float dt )
 			counter++;
 		}
 	}
-
-	
-	// Update Game Mode, Might Notify That GameMode is Finished
-	if ( !zGameMode->Update(dt) )
-		return false;
-	
-	// Update World
-	zWorld->Update();
 
 	// Collisions Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
