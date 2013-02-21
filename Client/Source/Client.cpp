@@ -65,8 +65,9 @@ Client::Client()
 	
 	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
-
+	
 	GetSounds()->LoadMusicIntoSystem("Media/Sound/ForestAmbience.mp3", true);
+	GetSounds()->LoadSoundIntoSystem("Media/Sound/Running_Breath_4.mp3", false);
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/LeftStep.mp3", false);
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/RightStep.mp3", false);
 	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);

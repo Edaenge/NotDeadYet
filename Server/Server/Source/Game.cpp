@@ -269,6 +269,19 @@ bool Game::Update( float dt )
 	int counter = 0;
 	while( i != zBehaviors.end() )
 	{
+		if(PlayerActor* cActor = dynamic_cast<PlayerActor*>((*i)->GetActor()))
+		{
+			if(cActor->GetStamina() < 25.0f)
+			{
+				if(cActor->UpdateBreathSoundTimer(dt))
+				{
+					NetworkMessageConverter NMC;
+					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/Running_Breath_4.mp3");
+					msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
+					this->SendToAll(msg);
+				}
+			}
+		}
 		if ( (*i)->Update(dt) )
 		{
 			Behavior* temp = (*i);

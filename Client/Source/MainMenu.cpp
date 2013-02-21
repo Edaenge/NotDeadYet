@@ -28,6 +28,8 @@ void MainMenu::Init()
 
 	eng->CreateSkyBox("Media/skymap.dds");
 
+	GetSounds()->LoadSoundIntoSystem("Media/Sound/MenuCLICK.mp3", false);
+
 	float windowWidth = (float)eng->GetEngineParameters().WindowWidth;
 	float windowHeight = (float)eng->GetEngineParameters().WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
@@ -292,7 +294,7 @@ void MainMenu::Init()
 		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ApplyOptionsAndChangeSetEvent(MAINMENU), "", "", 
 		offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
 		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
-	zSets[OPTIONS].AddElement(temp);
+	zSets[OPTIONS].AddElement(temp); 
 
 
 	this->zPrimarySet = MAINMENU;
@@ -342,6 +344,8 @@ void MainMenu::Run()
 
 				if(retEvent != NULL)
 				{
+					GetSounds()->PlaySounds("Media/Sound/MenuCLICK.mp3", GetGraphics()->GetCamera()->GetPosition());
+
 					if(retEvent->GetEventMessage() == "ChangeSetEvent")
 					{
 						ChangeSetEvent* setEvent = (ChangeSetEvent*)retEvent;

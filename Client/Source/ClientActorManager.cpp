@@ -52,11 +52,7 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				if(update->GetID() == clientID)
 				{
 					position = this->InterpolatePosition(gEng->GetCamera()->GetPosition() - this->zCameraOffset, update->GetPosition(), t);
-					if(!zSoundChecker.CheckLeftFootPlaying(deltaTime))
-						GetSounds()->PlaySounds("Media/Sound/LeftStep.mp3", position);
-					if(!zSoundChecker.CheckRightFootPlaying(deltaTime))
-						GetSounds()->PlaySounds("Media/Sound/RightStep.mp3", position);
-
+					
 					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
 				}
 				else 
@@ -65,6 +61,13 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 					actor->SetPosition(position);
 				}
 				update->ComparePosition(position);
+
+				SoundChecker* soundChecker = actor->GetSoundChecker();
+				if(!soundChecker->CheckLeftFootPlaying(deltaTime))
+					GetSounds()->PlaySounds("Media/Sound/LeftStep.mp3", position);
+				if(!soundChecker->CheckRightFootPlaying(deltaTime))
+					GetSounds()->PlaySounds("Media/Sound/RightStep.mp3", position);
+				soundChecker = NULL;
 			}
 			//if((*it_Update)->GetID() != clientID)
 			//{

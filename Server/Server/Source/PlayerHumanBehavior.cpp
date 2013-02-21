@@ -159,7 +159,7 @@ bool PlayerHumanBehavior::Update( float dt )
 			}
 		}
 	}
-	else if(keyStates.GetKeyState(KEY_SPRINT) && bActor->GetStamina() > 0)
+	else if(keyStates.GetKeyState(KEY_SPRINT) && bActor->GetStamina() > 1.0f)
 	{
 		if(this->zVelocity.GetLength() > MAX_VELOCITY_SPRINT)
 		{
