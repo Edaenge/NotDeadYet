@@ -231,6 +231,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_STAMINA:
 		ss << M_STAMINA;
 		break;
+	case MESSAGE_TYPE_DEER_EAT_OBJECT:
+		ss << M_DEER_EAT_OBJECT;
+		break;
 	case MESSAGE_TYPE_SELF_ID:
 		ss << M_SELF_ID;
 		break;

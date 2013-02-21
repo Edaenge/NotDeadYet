@@ -93,7 +93,8 @@ enum MESSAGE_TYPE
 		BEAR = 2
 	*/
 	MESSAGE_TYPE_PLAY_AS_ANIMAL,
-	MESSAGE_TYPE_LEAVE_ANIMAL
+	MESSAGE_TYPE_LEAVE_ANIMAL,
+	MESSAGE_TYPE_DEER_EAT_OBJECT
 };
 
 static const std::string M_UPDATE_ACTOR				= "UA";
@@ -116,6 +117,7 @@ static const std::string M_RESTART_GAME_REQUEST		= "RGR";
 */
 static const std::string M_PLAY_AS_ANIMAL			= "PAD";
 static const std::string M_LEAVE_ANIMAL				= "LA";
+static const std::string M_DEER_EAT_OBJECT		= "AE";
 //Data Messages
 static const std::string M_LOAD_MAP					= "LM";
 static const std::string M_CONNECTED				= "CON";

@@ -525,6 +525,11 @@ void Game::OnEvent( Event* e )
 			}
 		}
 	}
+	else if (PlayerDeerEatObjectEvent* PDEOE = dynamic_cast<PlayerDeerEatObjectEvent*>(e))
+	{
+		//ID's of the Object deer is trying to eat
+		
+	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
 		//auto i = zWorldActors.find(EUE->entity);
