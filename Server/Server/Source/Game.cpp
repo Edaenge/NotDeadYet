@@ -392,9 +392,13 @@ bool Game::Update( float dt )
 		{
 			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
 
-			//If player hasn't moved, ignore
- 				if( pActor && !pActor->HasMoved() )
- 					continue;
+			//If Animal, Ignore
+			if( dynamic_cast<AnimalActor*>(pActor) )
+				continue;
+
+			//If actor hasn't moved, ignore
+			if( pActor && !pActor->HasMoved() )
+				continue;
 
 			Actor* collide = NULL;
 			float range = 1.0f; //hard coded
