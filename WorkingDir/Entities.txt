@@ -1,6 +1,6 @@
 Number:1
 Name:Scale
-Model:Media/Scale.obj
+Model:Media/Models/Scale.obj
 BlockRadius:0.5
 
 Number:2
@@ -101,8 +101,8 @@ Model:Media/Models/DEEEEER.obj
 
 Number:201
 Name:Wolf Spawnpoint
-Model:Media/Scale.obj
+Model:Media/Models/Scale.obj
 
 Number:202
 Name:Bear Spawnpoint
-Model:Media/Scale.obj
+Model:Media/Models/Scale.obj

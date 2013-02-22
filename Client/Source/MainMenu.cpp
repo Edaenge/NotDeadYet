@@ -53,6 +53,8 @@ void MainMenu::Init()
 		"Media/Models/Bush_02_v02.obj",
 		"Media/Models/Stone_02_v01.obj",
 		"Media/Models/Stone_01_v02.obj",
+		"Media/Models/Bush_misc_01.obj",
+		"Media/Models/stone_03_v01.obj",
 		"Media/Models/ArmyRation_v01.obj", 
 		"Media/Models/Veins_01_v03_r.obj",
 		"Media/Models/Campfire_01_v01.obj",
@@ -60,7 +62,7 @@ void MainMenu::Init()
 		"Media/Models/StoneItem_01_v01.obj",
 		"Media/Models/BranchesItem_01_v01.obj"};
 
-	eng->PreLoadResources(20, object);
+	eng->PreLoadResources(22, object);
 
 	eng->StartRendering();
 
