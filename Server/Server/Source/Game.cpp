@@ -375,7 +375,7 @@ bool Game::Update( float dt )
 				//Stop arrow
 				projBehavior->Stop();
 				//Take damage
-				victim->TakeDamage(projActor->GetDamage(), projActor);
+				victim->TakeDamage(projActor->GetDamage(), projActor->GetOwner());
 			}
 			else if( WorldActor* object = dynamic_cast<WorldActor*>(collide) )
 			{
@@ -619,10 +619,12 @@ void Game::OnEvent( Event* e )
 		// Start Position
 		center = this->CalcPlayerSpawnPoint(32, zWorld->GetWorldCenter());
 		actor->SetPosition(center);
-
+		actor->SetScale(actor->GetScale());
+	
 		auto offsets = this->zCameraOffset.find(UDE->playerModel);
-
-		dynamic_cast<PlayerActor*>(actor)->SetCameraOffset(offsets->second);
+		
+		if(offsets != this->zCameraOffset.end())
+			dynamic_cast<PlayerActor*>(actor)->SetCameraOffset(offsets->second);
 
 		// Apply Default Player Behavior
 		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));
@@ -940,6 +942,7 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType )
 {
 	Actor* actor = this->zActorManager->GetActor(objID);
+	NetworkMessageConverter NMC;
 	Item* item = NULL;
 	bool stacked = false;
 
@@ -947,8 +950,14 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 	auto* pBehaviour = playerActor->second->GetBehavior();
 
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(pBehaviour->GetActor());
+	
+	if(!pActor)
+	{
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You_Are_Dead_Loot_Failed"));
+		return;
+	}
 
-	NetworkMessageConverter NMC;
+	
 	//Check if the Actor being looted is an ItemActor.
 	if (ItemActor* iActor = dynamic_cast<ItemActor*>(actor))
 	{

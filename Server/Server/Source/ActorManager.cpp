@@ -4,6 +4,7 @@
 #include "Physics.h"
 #include "BioActor.h"
 #include "WorldActor.h"
+#include "ProjectileActor.h"
 
 ActorManager::ActorManager( ActorSynchronizer* syncher ) : 
 	zSynch(syncher)
@@ -89,7 +90,11 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 		{
 			offset = bActor->GetCameraOffset();
 		}
-
+		else if ( ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(actor) )
+		{
+			if( target ==  projActor->GetOwner() )
+				continue;
+		}
 		PhysicsObject* targetObject = target->GetPhysicsObject();
 		data = GetPhysics()->GetCollisionRayMesh(actor->GetPosition() + offset, actor->GetDir(), targetObject);
 
