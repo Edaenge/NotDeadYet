@@ -16,7 +16,7 @@ SoundReader::SoundReader(SoundHandler* engine)
 
 SoundReader::~SoundReader()
 {
-
+	
 }
 
 bool SoundReader::ReadFromFile()

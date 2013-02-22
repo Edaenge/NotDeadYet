@@ -7,9 +7,8 @@ class GhostActor;
 class GameModeFFA : public GameMode
 {
 private:
-	//int zKillLimit;
-	//std::map<Player*, int> zScoreBoard;
 	std::set<Player*> zPlayers;
+
 public:
 	GameModeFFA(Game* game);
 	virtual ~GameModeFFA();
@@ -18,6 +17,8 @@ public:
 
 private:
 	virtual void OnEvent( Event* e );
-	void OnPlayerDeath(PlayerActor* pActor);
+	void OnPlayerHumanDeath(PlayerActor* pActor);
+	void OnPlayerAnimalDeath(AnimalActor* aActor);
 	void SwapToAnimal(GhostActor* actor, unsigned int animalType);
+	
 };

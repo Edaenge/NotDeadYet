@@ -34,7 +34,7 @@ PhysicsObject::PhysicsObject(PhysicsEngine* engine, const std::string& model, co
 	this->mesh = NULL;
 	this->nrOfIndicies = 0;
 	this->nrOfVerts = 0;
-	this->scale = Vector3(1, 1, 1);
+	this->scale = Vector3(1.0f, 1.0f, 1.0f);
 }
 
 PhysicsObject::~PhysicsObject()

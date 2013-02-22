@@ -76,6 +76,7 @@ private:
 	/*! Reads Messages from the server*/
 	void ReadMessages();
 
+	bool CheckHumanSpecificMessages(std::vector<std::string> msgArray);
 	//////////////////////
 	//					//
 	//	   Input		//

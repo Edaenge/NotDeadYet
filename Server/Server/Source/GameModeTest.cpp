@@ -44,20 +44,6 @@ void GameModeTest::OnEvent( Event* e )
 		{
 			if(pActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 			{
-				// Set new spawn pos
-				//int maxPlayers = zPlayers.size();
-				//int rand = 1 + (std::rand() % (maxPlayers+1));
-				//pa->SetPosition(zGame->CalcPlayerSpawnPoint(rand));
-				//pa->SetHealth(pa->GetHealthMax());
-				//pa->SetStamina(pa->GetStaminaMax());
-				//pa->SetFullness(pa->GetFullnessMax());
-				//pa->SetHydration(pa->GetHydrationMax());
-
-				//ATD->zDamage->blunt = 0;
-				//ATD->zDamage->fallingDamage = 0;
-				//ATD->zDamage->piercing = 0;
-				//ATD->zDamage->slashing = 0;
-
 				//Add to scoreboard
 				if( PlayerActor* dpa = dynamic_cast<PlayerActor*>(ATD->zDealer) )
 					if(dpa != pActor)
@@ -102,10 +88,10 @@ void GameModeTest::OnEvent( Event* e )
 void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 {
 	NetworkMessageConverter NMC;
-	//Kill player on Client
 	std::string msg;
 
 	Player* player = pActor->GetPlayer();
+	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 
 	ClientData* cd = player->GetClientData();
@@ -122,6 +108,7 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	PlayerActor* newPActor = new PlayerActor(player, pObj);
 	newPActor->SetPosition(position);
 	newPActor->SetDir(direction);
+	newPActor->AddObserver(this);
 
 	//Create New Human Behavior
 	PlayerHumanBehavior* pHumanBehavior = new PlayerHumanBehavior(newPActor, this->zGame->GetWorld(), player);
@@ -130,7 +117,7 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 
 	//Tell The Client his ID and Actor Type
 	ActorManager* aManager = this->zGame->GetActorManager();
-	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, newPActor->GetID());
+	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)newPActor->GetID());
 	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 1);
 
 	cd->Send(msg);

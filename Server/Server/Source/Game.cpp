@@ -67,7 +67,7 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	this->zMaxNrOfPlayers = 32;
 	//DEBUG
 	SpawnItemsDebug();
-	SpawnAnimalsDebug();
+	//SpawnAnimalsDebug();
 }
 
 Game::~Game()
@@ -118,8 +118,9 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj", position);
+	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	DeerActor* dActor = new DeerActor(deerPhysics);
+	dActor->AddObserver(this->zGameMode);
 
 	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
 
@@ -141,6 +142,8 @@ void Game::SpawnAnimalsDebug()
 			new_Food = new Food((*temp_food));
 
 			inv->AddItem(new_Food, stacked);
+			if(stacked)
+				SAFE_DELETE(new_Food);
 		}
 	}
 	
@@ -160,102 +163,111 @@ void Game::SpawnItemsDebug()
 	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE);
 
 	unsigned int increment = 0;
-	//Food
-	if (temp_food)
+	int maxPoints = 10;
+	float radius = 3.5f;
+	int numberOfObjects = 8;
+	int total = 0;
+	Vector3 center;
+	Vector3 position;
+	Vector2 tempCenter = this->zWorld->GetWorldCenter();
+	for (int i = 0; i < maxPoints; i++)
 	{
-		Food* new_Item = new Food((*temp_food));
-		ItemActor* actor = new ItemActor(new_Item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-	//Weapon_ranged
-	if(temp_R_weapon)
-	{
-		for (int i = 0; i < 9; i++)
+		center = Vector3(tempCenter.x, 0, tempCenter.y);
+		int currentPoint = i % maxPoints;
+
+		center = this->CalcPlayerSpawnPoint(currentPoint, maxPoints, 17.0f, center);
+
+		//Food
+		if (temp_food)
+		{
+			Food* new_Item = new Food((*temp_food));
+			ItemActor* actor = new ItemActor(new_Item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		//Weapon_ranged
+		if(temp_R_weapon)
 		{
 			RangedWeapon* new_item = new RangedWeapon((*temp_R_weapon));
 			ItemActor* actor = new ItemActor(new_item);
-			Vector3 center;
-			center = CalcPlayerSpawnPoint(increment++);
-			actor->SetPosition(center);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
 			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 			this->zActorManager->AddActor(actor);
 		}
-		
-	}
-	//Arrows
-	if(temp_Arrow)
-	{
-		for (int i = 0; i < 9; i++)
+		//Arrows
+		if(temp_Arrow)
 		{
 			Projectile* new_item = new Projectile((*temp_Arrow));
 			ItemActor* actor = new ItemActor(new_item);
-			Vector3 center;
-			center = CalcPlayerSpawnPoint(increment++);
-			actor->SetPosition(center);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
 			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 			this->zActorManager->AddActor(actor);
 		}
+		//Melee_weapon
+		if(temp_M_weapon)
+		{
+			MeleeWeapon* new_item = new MeleeWeapon((*temp_M_weapon));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		//Small_stick
+		if(temp_material_S)
+		{
+			Material* new_item = new Material((*temp_material_S));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		//Medium_stick
+		if(temp_material_M)
+		{
+			Material* new_item = new Material((*temp_material_M));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		//Thread
+		if(temp_material_T)
+		{
+			Material* new_item = new Material((*temp_material_T));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		//Bandage
+		if(temp_bandage)
+		{
+			Bandage* new_item = new Bandage((*temp_bandage));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		total += increment;
+		increment = 0;
 	}
-	//Melee_weap
-	if(temp_M_weapon)
-	{
-		MeleeWeapon* new_item = new MeleeWeapon((*temp_M_weapon));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-	//Small_stick
-	if(temp_material_S)
-	{
-		Material* new_item = new Material((*temp_material_S));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-	//Medium_stick
-	if(temp_material_M)
-	{
-		Material* new_item = new Material((*temp_material_M));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-	//Thread
-	if(temp_material_T)
-	{
-		Material* new_item = new Material((*temp_material_T));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-	//Bandage
-	if(temp_bandage)
-	{
-		Bandage* new_item = new Bandage((*temp_bandage));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-
 }
 
 bool Game::Update( float dt )
@@ -266,6 +278,19 @@ bool Game::Update( float dt )
 	int counter = 0;
 	while( i != zBehaviors.end() )
 	{
+		if(PlayerActor* cActor = dynamic_cast<PlayerActor*>((*i)->GetActor()))
+		{
+			if(cActor->GetStamina() < 25.0f)
+			{
+				if(cActor->UpdateBreathSoundTimer(dt))
+				{
+					NetworkMessageConverter NMC;
+					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/Running_Breath_4.mp3");
+					msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
+					this->SendToAll(msg);
+				}
+			}
+		}
 		if ( (*i)->Update(dt) )
 		{
 			Behavior* temp = (*i);
@@ -282,16 +307,22 @@ bool Game::Update( float dt )
 		}
 		else
 		{
-			++i;
+			i++;
 			counter++;
 		}
 	}
 
+	// Update Game Mode, Might Notify That GameMode is Finished
+	if ( !zGameMode->Update(dt) )
+		return false;
+
+	// Update World
+	zWorld->Update();
+
 	//Updating animals.
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
-		Behavior* temp = (*i);
-		if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
+		if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>( (*i) ))
 		{
 			animalBehavior->SetCurrentTargets(counter);
 		}
@@ -324,18 +355,10 @@ bool Game::Update( float dt )
 		}
 	}
 
-
-	// Update Game Mode, Might Notify That GameMode is Finished
-	if ( !zGameMode->Update(dt) )
-		return false;
-	
-	// Update World
-	zWorld->Update();
-
 	// Collisions Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
-		//Projectiles
+		//*** Projectiles ***
 		if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
 		{
 			ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(projBehavior->GetActor());
@@ -348,52 +371,70 @@ bool Game::Update( float dt )
 			//Get Data
 			Vector3 scale = projActor->GetScale();
 			float length = projBehavior->GetLenght();
-
-			//Calculate the arrow
-			float middle = (length * max(max(scale.x, scale.y),scale.z)) / 2;
-
+			float distance = length;
 			//Check collision, returns the result
-			Actor* collide = this->zActorManager->CheckCollisions(projActor, middle); 
+			Actor* collide = this->zActorManager->CheckCollisions(projActor, distance); 
 
-			if(BioActor* victim = dynamic_cast<BioActor*>(collide))
+			if( BioActor* victim = dynamic_cast<BioActor*>(collide) )
 			{
 				//Stop arrow
 				projBehavior->Stop();
+				
 				//Take damage
-				victim->TakeDamage(projActor->GetDamage(), projActor);
+				victim->TakeDamage(projActor->GetDamage(), projActor->GetOwner());
 			}
+			else if( WorldActor* object = dynamic_cast<WorldActor*>(collide) )
+			{
+				//Stop Arrow
+				projBehavior->Stop();
+			}
+
 		}
-		//If ghost, ignore
+		//*** Ghosts, ignore ***
 		else if( dynamic_cast<PlayerGhostBehavior*>(*i) )
 		{
 			continue;
 		}
-		//Others
+		//*** Others ***
 		else
 		{
 			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
 
-			//If player hasn't moved, ignore
- 				if( pActor && !pActor->HasMoved() )
- 					continue;
+			//If Animal, Ignore
+			if( dynamic_cast<AnimalActor*>(pActor) )
+				continue;
+
+			//If actor hasn't moved, ignore
+			if( pActor && !pActor->HasMoved() )
+				continue;
 
 			Actor* collide = NULL;
-			float range = 1.5f; //hard coded
+			float range = 1.0f; //hard coded
 
 			collide = this->zActorManager->CheckCollisionsByDistance(pActor, range);
 
-			if(BioActor* target = dynamic_cast<BioActor*>(collide))
+			//No collision, ignore the rest
+			if(!collide)
+				continue;
+
+			Vector3 pActor_rewind_dir = (collide->GetPosition() - pActor->GetPosition());
+			pActor_rewind_dir.Normalize();
+
+			if( BioActor* target = dynamic_cast<BioActor*>(collide) )
 			{
-				//Calculate directions from each other
-				Vector3 pActor_rewind_dir = (target->GetPosition() - pActor->GetPosition());
-				pActor_rewind_dir.Normalize();
+				//Calculate Target rewind dir.
 				Vector3 target_rewind_dir = pActor_rewind_dir * -1;
 	
 				//Id target did not move, do not rewind position.
 				if(target->HasMoved())
-					target->SetPosition(target->GetPosition() - (target_rewind_dir * 0.5f));
+					target->SetPosition( target->GetPosition() - (target_rewind_dir * 0.25f) );
 
-				pActor->SetPosition(pActor->GetPosition() - (pActor_rewind_dir * 0.5f));
+				pActor->SetPosition( pActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+			}
+			else if( WorldActor* object = dynamic_cast<WorldActor*>(collide) )
+			{
+				//Rewind the pActor only.
+				pActor->SetPosition( pActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
 			}
 		}
 	}
@@ -617,28 +658,30 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e) )
 	{
-		//PhysicsObject* phys = 0;
-		//
-		//if ( GetEntBlockRadius(ELE->entity->GetType()) > 0.0f )
-		//{
-		//	phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(ELE->entity->GetType()), ELE->entity->GetPosition());
-		//}
+		PhysicsObject* phys = 0;
+		
+		if ( GetEntBlockRadius(ELE->entity->GetType()) > 0.0f )
+		{
+			// Create Physics Object
+			phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(ELE->entity->GetType()));
+		}
 
-		//// Create Physics Object
-		//WorldActor* actor = new WorldActor();
-		//zWorldActors[ELE->entity] = actor;
-		//zActorManager->AddActor(actor);
-
-		//actor->AddObserver(this->zGameMode);
+		WorldActor* actor = new WorldActor(phys);
+		actor->SetPosition(ELE->entity->GetPosition());
+		actor->SetScale(actor->GetScale());
+		actor->AddObserver(this->zGameMode);
+		
+		this->zWorldActors[ELE->entity] = actor;
+		this->zActorManager->AddActor(actor);
+		
 	}
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
 		auto i = zWorldActors.find(ERE->entity);
 		if ( i != zWorldActors.end() )
 		{
-			SAFE_DELETE(i->second);
-
-			zWorldActors.erase(i);
+			this->zActorManager->RemoveActor(i->second);
+			this->zWorldActors.erase(i);
 		}
 	}
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
@@ -655,10 +698,12 @@ void Game::OnEvent( Event* e )
 		// Start Position
 		center = this->CalcPlayerSpawnPoint(32, zWorld->GetWorldCenter());
 		actor->SetPosition(center);
-
+		actor->SetScale(actor->GetScale());
+	
 		auto offsets = this->zCameraOffset.find(UDE->playerModel);
-
-		dynamic_cast<PlayerActor*>(actor)->SetCameraOffset(offsets->second);
+		
+		if(offsets != this->zCameraOffset.end())
+			dynamic_cast<PlayerActor*>(actor)->SetCameraOffset(offsets->second);
 
 		// Apply Default Player Behavior
 		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));
@@ -679,6 +724,9 @@ void Game::OnEvent( Event* e )
 		for (auto it = actors.begin(); it != actors.end(); it++)
 		{
 			if(actor == (*it))
+				continue;
+
+			if(dynamic_cast<WorldActor*>(*it))
 				continue;
 
 			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (float)(*it)->GetID());
@@ -742,6 +790,26 @@ void Game::RemoveAIBehavior( AnimalActor* aActor )
 			it_behavior++;
 		}
 	}
+}
+
+Vector3 Game::CalcPlayerSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center)
+{
+	static const float PI = 3.14159265358979323846f;
+
+	float slice  = 2 * PI / maxPoints;
+
+	float angle = slice * currentPoint;
+
+	float x = center.x + radius * cos(angle);
+	float z = center.z + radius * sin(angle);
+	float y = 0.0f;
+
+	if ( x >= 0.0f && y >= 0.0f && x<zWorld->GetWorldSize().x && y<zWorld->GetWorldSize().y )
+	{
+		y = this->zWorld->CalcHeightAtWorldPos(Vector2(x, z));
+	}
+
+	return Vector3(x, y, z);
 }
 
 Vector3 Game::CalcPlayerSpawnPoint(int maxPoints, Vector2 center)
@@ -973,6 +1041,7 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType )
 {
 	Actor* actor = this->zActorManager->GetActor(objID);
+	NetworkMessageConverter NMC;
 	Item* item = NULL;
 	bool stacked = false;
 
@@ -980,8 +1049,14 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 	auto* pBehaviour = playerActor->second->GetBehavior();
 
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(pBehaviour->GetActor());
+	
+	if(!pActor)
+	{
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You_Are_Dead_Loot_Failed"));
+		return;
+	}
 
-	NetworkMessageConverter NMC;
+	
 	//Check if the Actor being looted is an ItemActor.
 	if (ItemActor* iActor = dynamic_cast<ItemActor*>(actor))
 	{
@@ -1225,24 +1300,27 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 {
 	Actor* actor = NULL;
-	PlayerActor* pActor = NULL;
-	Inventory* inventory = NULL;
-	Item* item = NULL;
+
 
 	auto playerIterator = zPlayers.find(cd);
 	actor = playerIterator->second->GetBehavior()->GetActor();
 
-	if ( !(pActor = dynamic_cast<PlayerActor*>(actor)) )
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+	if ( !(pActor) )
 	{
 		MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
-	if( !(inventory = pActor->GetInventory()) )
+
+	Inventory* inventory = pActor->GetInventory();
+	if( !(inventory) )
 	{
 		MaloW::Debug("Inventory is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
-	if ( !(item = inventory->GetPrimaryEquip()) )
+
+	Item* item = inventory->GetPrimaryEquip();
+	if ( !(item ) )
 	{
 		MaloW::Debug("Item is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
@@ -1266,19 +1344,30 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//create projectileActor
 				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
 				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
-				ProjectileArrowBehavior* projBehavior= new ProjectileArrowBehavior(projActor, this->zWorld);
+		
+				ProjectileArrowBehavior* projBehavior = NULL;
 				Damage damage;
 
 				//Sets damage
 				damage.piercing = ranged->GetDamage() + arrow->GetDamage();
 				projActor->SetDamage(damage);
+				//Set other values
+				projActor->SetScale(projActor->GetScale());
+				projActor->SetPosition( pActor->GetPosition() + pActor->GetCameraOffset());
+				projActor->SetDir(pActor->GetDir());
 
+				//Create behavior
+				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
+
+				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
 				this->zBehaviors.insert(projBehavior);
 				//Decrease stack
 				arrow->Use();
 				inventory->RemoveItemStack(arrow->GetID(), 1);
 
+
+				//if arrow stack is empty
 				if (arrow->GetStackSize() <= 0)
 				{
 					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
@@ -1290,6 +1379,10 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				}
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
+
+				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/BowShot.mp3");
+				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
+				this->SendToAll(msg);
 			}
 			else
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
@@ -1627,4 +1720,12 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 	msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)itemID);
 	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)eq_slot);
 	cd->Send(msg);
+}
+
+void Game::SendToAll( std::string msg)
+{
+	for(auto it = this->zPlayers.begin(); it != this->zPlayers.end(); it++)
+	{
+		it->first->Send(msg);
+	}
 }

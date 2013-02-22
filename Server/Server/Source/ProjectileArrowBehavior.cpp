@@ -6,11 +6,18 @@ static const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 
 ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world ) : Behavior(actor, world)
 {
-	this->zSpeed = 30.0f;
+	this->zSpeed = 25.0f;
 	this->zVelocity = actor->GetDir();// * zSpeed;
 	this->zDamping = 0.99f;
 	this->zMoving = true;
-	this->zLength = 16.396855f;
+	//this->zLength = 16.396855f;
+
+	PhysicsObject* actorPhys = actor->GetPhysicsObject();
+	Vector3 center = actorPhys->GetBoundingSphere().center;
+	center = actorPhys->GetWorldMatrix() * center;
+
+	this->zLength = ( ( center - actor->GetPosition() ) * 2).GetLength();
+
 }
 
 bool ProjectileArrowBehavior::Update( float dt )
@@ -24,7 +31,7 @@ bool ProjectileArrowBehavior::Update( float dt )
 	// Update linear position.
 	newPos =  this->zActor->GetPosition();
 	zVelocity.Normalize();
-	zVelocity *=zSpeed;
+	zVelocity *= zSpeed;
 	newPos += (zVelocity * dt);
 	newDir = zVelocity;
 	newDir.Normalize();
@@ -57,12 +64,12 @@ bool ProjectileArrowBehavior::Update( float dt )
 
 	// If true, stop the projectile and return.
 	Vector3 scale = this->zActor->GetScale();
-	float middle = (zLength * max(max(scale.x, scale.y),scale.z)) / 2;
+	float middle = zLength * 0.5f;
 	float yTip = newPos.y - middle;
 	if(yTip <= yValue )
 	{
-		middle += yValue;
-		newPos.y = middle;
+ 		middle += yValue;
+ 		newPos.y = middle;
 
 		this->zActor->SetPosition(newPos);
 		this->zMoving = false;

@@ -55,13 +55,12 @@ Inventory::Inventory(const unsigned int inventorySize)
 Inventory::~Inventory()
 {
 	//Remove Item Arrays
-	for (auto x = this->zItems.begin(); x < this->zItems.end(); x++)
+	for (auto x = this->zItems.begin(); x != this->zItems.end(); x++)
 	{
 		SAFE_DELETE((*x));
-
 	}
 
-	for (auto x = this->zGear.begin(); x < this->zGear.end(); x++)
+	for (auto x = this->zGear.begin(); x != this->zGear.end(); x++)
 	{
 		SAFE_DELETE((*x));
 	}

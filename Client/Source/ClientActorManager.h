@@ -127,4 +127,6 @@ private:
 	std::map<unsigned int, Updates*> zUpdates;
 	float zInterpolationVelocity;
 	Vector3 zCameraOffset;
+
+	SoundChecker zSoundChecker;
 };

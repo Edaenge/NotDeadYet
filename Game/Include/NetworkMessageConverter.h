@@ -94,7 +94,8 @@ enum MESSAGE_TYPE
 	*/
 	MESSAGE_TYPE_PLAY_AS_ANIMAL,
 	MESSAGE_TYPE_LEAVE_ANIMAL,
-	MESSAGE_TYPE_DEER_EAT_OBJECT
+	MESSAGE_TYPE_DEER_EAT_OBJECT,
+	MESSAGE_TYPE_PLAY_SOUND
 };
 
 static const std::string M_UPDATE_ACTOR				= "UA";
@@ -198,7 +199,7 @@ static const std::string M_SELF_ID					= "SELF";
 static const std::string M_PING						= "PING";
 
 static const std::string M_START_GAME				= "SG";
-
+static const std::string M_PLAY_SOUND				= "PS";
 /*
 	This class creates string messages used for communication
 	between sockets.

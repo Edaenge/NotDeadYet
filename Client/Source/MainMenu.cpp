@@ -28,6 +28,8 @@ void MainMenu::Init()
 
 	eng->CreateSkyBox("Media/skymap.dds");
 
+	GetSounds()->LoadSoundIntoSystem("Media/Sound/MenuCLICK.mp3", false);
+
 	float windowWidth = (float)eng->GetEngineParameters().WindowWidth;
 	float windowHeight = (float)eng->GetEngineParameters().WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
@@ -51,6 +53,8 @@ void MainMenu::Init()
 		"Media/Models/Bush_02_v02.obj",
 		"Media/Models/Stone_02_v01.obj",
 		"Media/Models/Stone_01_v02.obj",
+		"Media/Models/Bush_misc_01.obj",
+		"Media/Models/stone_03_v01.obj",
 		"Media/Models/ArmyRation_v01.obj", 
 		"Media/Models/Veins_01_v03_r.obj",
 		"Media/Models/Campfire_01_v01.obj",
@@ -58,7 +62,7 @@ void MainMenu::Init()
 		"Media/Models/StoneItem_01_v01.obj",
 		"Media/Models/BranchesItem_01_v01.obj"};
 
-	eng->PreLoadResources(20, object);
+	eng->PreLoadResources(22, object);
 
 	eng->StartRendering();
 
@@ -292,7 +296,7 @@ void MainMenu::Init()
 		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ApplyOptionsAndChangeSetEvent(MAINMENU), "", "", 
 		offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
 		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
-	zSets[OPTIONS].AddElement(temp);
+	zSets[OPTIONS].AddElement(temp); 
 
 
 	this->zPrimarySet = MAINMENU;
@@ -301,10 +305,11 @@ void MainMenu::Init()
 
 void MainMenu::StartTestRun()
 {
-	//zGame->InitGameClient("194.47.150.20", 11521);
-	//zGame->InitGameClient("194.47.150.12", 11521);
+	//zGame->InitGameClient("194.47.150.20", 11521); // Ediz
+	zGame->InitGameClient("194.47.150.16", 11521); // Server
+	//zGame->InitGameClient("194.47.150.12", 11521); // Crant
 	//zGame->InitGameClient("80.78.216.201", 11521);
-	zGame->InitGameClient("127.0.0.1", 11521);	
+	//zGame->InitGameClient("127.0.0.1", 11521);	
 	zGame->Run();
 }
 
@@ -341,6 +346,8 @@ void MainMenu::Run()
 
 				if(retEvent != NULL)
 				{
+					GetSounds()->PlaySounds("Media/Sound/MenuCLICK.mp3", GetGraphics()->GetCamera()->GetPosition());
+
 					if(retEvent->GetEventMessage() == "ChangeSetEvent")
 					{
 						ChangeSetEvent* setEvent = (ChangeSetEvent*)retEvent;

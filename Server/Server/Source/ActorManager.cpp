@@ -4,6 +4,7 @@
 #include "Physics.h"
 #include "BioActor.h"
 #include "WorldActor.h"
+#include "ProjectileActor.h"
 
 ActorManager::ActorManager( ActorSynchronizer* syncher ) : 
 	zSynch(syncher)
@@ -18,6 +19,7 @@ ActorManager::~ActorManager()
 		Actor* temp = (*it);
 		SAFE_DELETE(temp);
 	}
+	this->zActors.clear();
 }
 
 void ActorManager::AddActor( Actor* actor )
@@ -51,36 +53,54 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 	if(!actor)
 		return NULL;
 
+	float radiusWithin = 2.0f + range;
 	Actor* collide = NULL;
 	PhysicsCollisionData data;
-	float rangeWithin = 2.0f + range;
-	Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
-
-	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
+	std::set<Actor*> inRadius;
+	GetActorsInCircle(actor->GetPosition().GetXZ(), radiusWithin, inRadius);
+	
+	for (auto it = inRadius.begin(); it != inRadius.end(); it++)
 	{
 		//If same, ignore
 		if((*it) == actor)
 			continue;
 		
-		//If not BioActor, ignore
-		BioActor* target = dynamic_cast<BioActor*>(*it);
+		BioActor* tBioActor = dynamic_cast<BioActor*>(*it);
+		Actor* target = NULL;
+
+		//if BioActor
+		if(tBioActor)
+		{
+			if(tBioActor->IsAlive())
+				target = tBioActor;
+		}
+		//If Actor has Physics
+		else if( (*it) && (*it)->GetPhysicsObject() )
+		{
+			target = (*it);
+		}
+
+		//If the target is null, ignore
 		if(!target)
 			continue;
-		
-		//If the BioActor is dead, ignore
-		if(!target->IsAlive())
-			continue;
 
-		//check length, ignore if too far.
-		float length = ( actor->GetPosition() - (*it)->GetPosition() ).GetLength();
-		if(length > rangeWithin)
-			continue;
+		Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
 
 		if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
 		{
 			offset = bActor->GetCameraOffset();
 		}
+		else if ( ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(actor) )
+		{
+			if( target ==  projActor->GetOwner() )
+				continue;
 
+// 			PhysicsObject* actorPhys = actor->GetPhysicsObject();
+// 			Vector3 center = actorPhys->GetBoundingSphere().center;
+// 			center = actorPhys->GetWorldMatrix() * center;
+// 			offset = ( center - actor->GetPosition() ) * 2;
+
+		}
 		PhysicsObject* targetObject = target->GetPhysicsObject();
 		data = GetPhysics()->GetCollisionRayMesh(actor->GetPosition() + offset, actor->GetDir(), targetObject);
 
@@ -110,13 +130,23 @@ Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
 		if((*it) == actor)
 			continue;
 
-		//If not BioActor, ignore
-		BioActor* target = dynamic_cast<BioActor*>(*it);
-		if(!target)
-			continue;
+		BioActor* tBioActor = dynamic_cast<BioActor*>(*it);
+		Actor* target = NULL;
 
-		//If the BioActor is dead, ignore
-		if(!target->IsAlive())
+		//if BioActor
+		if(tBioActor)
+		{
+			if(tBioActor->IsAlive())
+				target = tBioActor;
+		}
+		//If Actor has Physics
+		else if( (*it) && (*it)->GetPhysicsObject() )
+		{
+			target = (*it);
+		}
+
+		//If the target is null, ignore
+		if(!target)
 			continue;
 
 		//Check distance
@@ -142,4 +172,41 @@ Actor* ActorManager::GetActor( const unsigned int ID ) const
 		}
 	}
 	return NULL;
+}
+
+unsigned int ActorManager::GetActorsInCircle( const Vector2& center, float radius, std::set<Actor*>& out) const
+{
+	unsigned int counter=0;
+
+	for(auto i = zActors.cbegin(); i != zActors.cend(); i++)
+	{
+		Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );
+		if( Vector2(center-pos).GetLength() < radius)
+		{
+			out.insert(*i);
+			counter++;
+		}
+	}
+
+	return counter;
+}
+
+unsigned int ActorManager::GetActorsInCircle( const Vector2& center, float radius, std::set<Actor*>& out, const unsigned int filter ) const
+{
+	unsigned int counter=0;
+
+	for(auto i = zActors.cbegin(); i != zActors.cend(); i++)
+	{
+		if( (*i)->GetType() == filter )
+		{
+			Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );
+			if( Vector2(center-pos).GetLength() < radius)
+			{
+				out.insert(*i);
+				counter++;
+			}
+		}
+	}
+
+	return counter;
 }

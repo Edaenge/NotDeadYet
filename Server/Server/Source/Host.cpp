@@ -39,15 +39,18 @@ Host::~Host()
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 
-	SAFE_DELETE(this->zServerListener);
+	this->Close();
+	this->WaitUntillDone();
 
 	SAFE_DELETE(this->zGame);
 
+	SAFE_DELETE(this->zSynchronizer);
+
+	SAFE_DELETE(this->zServerListener);
+
 	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
 	{
-		auto iterator = it;
-
-		ClientData* data = iterator->second;
+		ClientData* data = it->second;
 		if(data)
 		{
 			delete data;
@@ -56,11 +59,6 @@ Host::~Host()
 
 	}
 	this->zClients.clear();
-
-	SAFE_DELETE(this->zSynchronizer);
-
-	this->Close();
-	this->WaitUntillDone();
 }
 
 void Host::Life()

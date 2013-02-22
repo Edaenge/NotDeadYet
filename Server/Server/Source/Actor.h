@@ -14,15 +14,11 @@ static const enum ACTOR_TYPE
 {
 	ACTOR_TYPE_NONE,
 	ACTOR_TYPE_PLAYER,
+	ACTOR_TYPE_GHOST,
 	ACTOR_TYPE_ANIMAL,
-	ACTOR_TYPE_STATIC_OBJECT_FOOD,
-	ACTOR_TYPE_STATIC_OBJECT_WEAPON,
-	ACTOR_TYPE_STATIC_OBJECT_CONTAINER,
-	ACTOR_TYPE_STATIC_OBJECT_PROJECTILE,
-	ACTOR_TYPE_STATIC_OBJECT_MATERIAL,
-	ACTOR_TYPE_DYNAMIC_OBJECT_PROJECTILE,
-	ACTOR_TYPE_DEAD_PLAYER,
-	ACTOR_TYPE_DEAD_ANIMAL
+	ACTOR_TYPE_WORLD,
+	ACTOR_TYPE_PROJECTILE,
+	ACTOR_TYPE_ITEM
 };
 
 class Actor;
@@ -63,6 +59,8 @@ public:
 */
 class Actor : public Observed
 {
+
+private:
 	Vector3 zPos;
 	Vector3 zPreviousPos;
 	Vector4 zRot;
@@ -71,6 +69,9 @@ class Actor : public Observed
 
 	unsigned int zID;
 	PhysicsObject* zPhysicsObject;
+
+protected:
+		unsigned int zType;
 
 public:
 	Actor();
@@ -94,4 +95,5 @@ public:
 	inline const Vector3& GetDir() const { return zDir; }
 	virtual const std::string& GetModel() const;
 	PhysicsObject* GetPhysicsObject() const {return this->zPhysicsObject;}
+	inline unsigned int GetType() const {return this->zType;}
 };
