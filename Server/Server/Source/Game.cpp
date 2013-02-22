@@ -528,6 +528,81 @@ void Game::OnEvent( Event* e )
 	else if (PlayerDeerEatObjectEvent* PDEOE = dynamic_cast<PlayerDeerEatObjectEvent*>(e))
 	{
 		//ID's of the Object deer is trying to eat
+		auto playerIterator = this->zPlayers.find(PDEOE->clientData);
+		auto playerBehavior = playerIterator->second->GetBehavior();
+		Actor* actor = playerBehavior->GetActor();
+
+		NetworkMessageConverter NMC;
+		std::string msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE);
+		unsigned int ID = 0;
+		bool bEaten = false;
+
+		std::set<Actor*> actors = this->zActorManager->GetActors();
+
+		//BioActor* thePlayerActor = dynamic_cast<BioActor*>(actor);
+		DeerActor* thePlayerActor;
+
+		ItemActor* toBeRemoved = NULL;
+
+		Damage idiotDamage;
+
+		if(thePlayerActor = dynamic_cast<DeerActor*>(actor))
+		{
+
+			for (auto it_actor = actors.begin(); it_actor != actors.end() && !bEaten; it_actor++)
+			{
+			
+				//Loop through all ID's of all actors the client tried to loot.
+				for (auto it_ID = PDEOE->actorID.begin(); it_ID != PDEOE->actorID.end(); it_ID++)
+				{
+					//Check if the ID is the same.
+					if ((*it_ID) == (*it_actor)->GetID())
+					{
+						//Check if the distance between the actors are to far to be able to loot.
+						if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 5.0f)
+							continue;
+
+						//Check if the Actor is an ItemActor
+						if (ItemActor* iActor = dynamic_cast<ItemActor*>(*it_actor))
+						{
+							ID = iActor->GetID();
+							Item* theItem = iActor->GetItem();
+							if(theItem->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+							{
+								idiotDamage.piercing = 25.0f;
+						
+								thePlayerActor->TakeDamage(idiotDamage,actor);
+							}
+							else if(theItem->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+							{
+								Damage idiotDamage;
+								idiotDamage.piercing = 10.0f;
+						
+								thePlayerActor->TakeDamage(idiotDamage,actor);
+							}
+							else if(theItem->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
+							{
+								Damage idiotDamage;
+								idiotDamage.piercing = 5.0f;
+						
+								thePlayerActor->TakeDamage(idiotDamage,actor);
+							}
+							toBeRemoved = iActor;
+							bEaten = true;
+							
+
+						}
+					}
+				}
+
+			}
+		
+		}
+
+		if(bEaten)
+		{
+			this->zActorManager->RemoveActor(toBeRemoved);
+		}
 		
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
