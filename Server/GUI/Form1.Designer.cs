@@ -50,7 +50,10 @@
             this.textBox_Players = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.textBoxMessages = new System.Windows.Forms.TextBox();
+            this.textBoxServerMessages = new System.Windows.Forms.TextBox();
+            this.ServerMessagesLabel = new System.Windows.Forms.Label();
+            this.ClientMessagesLabel = new System.Windows.Forms.Label();
+            this.textBoxClientMessages = new System.Windows.Forms.TextBox();
             this.richTextBoxConsole = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -275,27 +278,58 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.textBoxMessages);
+            this.panel2.Controls.Add(this.textBoxServerMessages);
+            this.panel2.Controls.Add(this.ServerMessagesLabel);
+            this.panel2.Controls.Add(this.ClientMessagesLabel);
+            this.panel2.Controls.Add(this.textBoxClientMessages);
             this.panel2.Controls.Add(this.richTextBoxConsole);
             this.panel2.Location = new System.Drawing.Point(6, 6);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(302, 387);
             this.panel2.TabIndex = 0;
             // 
-            // textBoxMessages
+            // textBoxServerMessages
             // 
-            this.textBoxMessages.Location = new System.Drawing.Point(0, 337);
-            this.textBoxMessages.Name = "textBoxMessages";
-            this.textBoxMessages.Size = new System.Drawing.Size(302, 20);
-            this.textBoxMessages.TabIndex = 1;
-            this.textBoxMessages.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxMessages_KeyDown);
+            this.textBoxServerMessages.Location = new System.Drawing.Point(16, 267);
+            this.textBoxServerMessages.Name = "textBoxServerMessages";
+            this.textBoxServerMessages.ReadOnly = true;
+            this.textBoxServerMessages.Size = new System.Drawing.Size(257, 20);
+            this.textBoxServerMessages.TabIndex = 4;
+            this.textBoxServerMessages.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxServerMessages_KeyPress);
+            // 
+            // ServerMessagesLabel
+            // 
+            this.ServerMessagesLabel.AutoSize = true;
+            this.ServerMessagesLabel.Location = new System.Drawing.Point(95, 251);
+            this.ServerMessagesLabel.Name = "ServerMessagesLabel";
+            this.ServerMessagesLabel.Size = new System.Drawing.Size(89, 13);
+            this.ServerMessagesLabel.TabIndex = 3;
+            this.ServerMessagesLabel.Text = "Server Messages";
+            // 
+            // ClientMessagesLabel
+            // 
+            this.ClientMessagesLabel.AutoSize = true;
+            this.ClientMessagesLabel.Location = new System.Drawing.Point(95, 200);
+            this.ClientMessagesLabel.Name = "ClientMessagesLabel";
+            this.ClientMessagesLabel.Size = new System.Drawing.Size(84, 13);
+            this.ClientMessagesLabel.TabIndex = 2;
+            this.ClientMessagesLabel.Text = "Client Messages";
+            // 
+            // textBoxClientMessages
+            // 
+            this.textBoxClientMessages.Location = new System.Drawing.Point(16, 216);
+            this.textBoxClientMessages.Name = "textBoxClientMessages";
+            this.textBoxClientMessages.ReadOnly = true;
+            this.textBoxClientMessages.Size = new System.Drawing.Size(257, 20);
+            this.textBoxClientMessages.TabIndex = 1;
+            this.textBoxClientMessages.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxClientMessages_KeyDown);
             // 
             // richTextBoxConsole
             // 
             this.richTextBoxConsole.Location = new System.Drawing.Point(3, 3);
             this.richTextBoxConsole.Name = "richTextBoxConsole";
             this.richTextBoxConsole.ReadOnly = true;
-            this.richTextBoxConsole.Size = new System.Drawing.Size(296, 317);
+            this.richTextBoxConsole.Size = new System.Drawing.Size(296, 182);
             this.richTextBoxConsole.TabIndex = 0;
             this.richTextBoxConsole.Text = "";
             // 
@@ -406,8 +440,11 @@
         private System.Windows.Forms.ComboBox map_combobox;
         private System.Windows.Forms.GroupBox groupBox_gamemode;
         private System.IO.FileSystemWatcher fileSystemWatcher1;
-        private System.Windows.Forms.TextBox textBoxMessages;
+        private System.Windows.Forms.TextBox textBoxClientMessages;
         private System.Windows.Forms.RichTextBox richTextBoxConsole;
+        private System.Windows.Forms.TextBox textBoxServerMessages;
+        private System.Windows.Forms.Label ServerMessagesLabel;
+        private System.Windows.Forms.Label ClientMessagesLabel;
 
     }
 }

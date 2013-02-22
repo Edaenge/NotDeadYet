@@ -271,7 +271,6 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 	int counter = 0; //Just for testing stuff
 	getEmergencyDirection = false;
 
-
 	while(foundPath == false)
 	{
 		getEmergencyDirection = false;

@@ -64,6 +64,8 @@ namespace GUI
 
         private void button_Start_MouseClick(object sender, MouseEventArgs e)
         {
+            textBoxClientMessages.ReadOnly = false;
+            textBoxServerMessages.ReadOnly = false;
             int port;
             int players;
             bool isNr = false;
@@ -217,15 +219,41 @@ namespace GUI
             GC.WaitForFullGCComplete();
         }
 
-        private void textBoxMessages_KeyDown(object sender, EventArgs e)
+        private void TextBoxClientMessages_KeyDown(object sender, KeyEventArgs e)
         {
-            String serverText = "";
+            if (this.m_ServerEngine.IsRunning())
+            {
+                if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
+                {
+                    String serverText = "";
 
-            serverText = textBoxMessages.Text;
-            serverText.Replace(' ', '_');
-            textBoxMessages.Text = "";
+                    serverText = textBoxClientMessages.Text;
 
-           // this.m_ServerEngine.SendMessageToClient(serverText);
+                    this.richTextBoxConsole.AppendText(serverText + "\n");
+                    serverText = serverText.Replace(' ', '_');
+                    textBoxClientMessages.Text = "";
+
+                    this.m_ServerEngine.SendMessageToClient(serverText);
+                }
+            }
+            
+        }
+
+        private void textBoxServerMessages_KeyPress(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
+            {
+                string serverText = "";
+
+                serverText = textBoxClientMessages.Text;
+
+                this.richTextBoxConsole.AppendText(serverText + "\n");
+                serverText = serverText.Replace(' ', '_');
+
+                textBoxClientMessages.Text = "";
+
+                this.m_ServerEngine.SendMessageToClient(serverText);
+            }
         }
     }
 }

@@ -378,5 +378,4 @@ std::string NetworkMessageConverter::ConvertStringToSubstring(const std::string&
 	char subString[100];
 	sscanf_s(msg.c_str(), (type + "%s").c_str(), &subString, sizeof(subString));
 	return subString;
-
 }

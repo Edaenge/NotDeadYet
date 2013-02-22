@@ -24,7 +24,6 @@ public:
 	bool IsRunning() const;
 	unsigned int GetNumClients() const;
 
-
 private:
 	Host* zHost;
 };

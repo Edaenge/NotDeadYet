@@ -63,9 +63,16 @@ Host::~Host()
 
 void Host::SendMessageToClient( const std::string& message )
 {
-	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ERROR_MESSAGE, message);
+	if (message.find("EV") == 0)
+	{
+		std::string msg = this->zMessageConverter.ConvertStringToSubstring("EV", message);
+	}
+	else
+	{
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ERROR_MESSAGE, message);
 
-	this->SendToAllClients(msg);
+		this->SendToAllClients(msg);
+	}
 }
 
 void Host::Life()

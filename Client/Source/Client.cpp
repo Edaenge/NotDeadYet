@@ -262,8 +262,8 @@ void Client::Life()
 			counter += this->zDeltaTime;
 			if (counter >= 1.0f)
 			{
-				this->zUpsText->SetText("Updates per second ");
-				this->zUpsText->AppendText(MaloW::convertNrToString(this->zUps).c_str());
+				std::string text = "Updates per second " + MaloW::convertNrToString((float)this->zUps);
+				this->zUpsText->SetText(text.c_str());
 				this->zUps = 0;
 				counter = 0;
 			}
@@ -1581,7 +1581,7 @@ void Client::UpdateCameraOffset(unsigned int state)
 void Client::AddDisplayText( const std::string& msg )
 {
 	char* newString = "";
-	for (int i = 0; i != msg.length(); i++)
+	for (int i = 0; i < (int)msg.length(); i++)
 	{
 		if (msg[i] == '_')
 		{
@@ -1593,26 +1593,26 @@ void Client::AddDisplayText( const std::string& msg )
 		}
 	}
 
-	float yPos = this->zDisplayedText.size();
+	int yPos = (int)this->zDisplayedText.size();
 
 	int windowWidth = this->zEng->GetEngineParameters().WindowWidth;
 	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;
 
-	float yPosition = windowHeight / (yPos + 2.0f);
-	float xPosition = windowWidth * 0.333f;
+	float yPosition = (float)(windowHeight / (yPos + 2));
+	float xPosition = (float)(windowWidth * 0.333f);
 
 	Vector2 position = Vector2(xPosition, yPosition);
 
 	iText* text = this->zEng->CreateText(newString, position, 0.7f, "Media/Fonts/1");
 
-	TextDisplay displayedText = TextDisplay(text, 5.0f);
+	TextDisplay* displayedText = new TextDisplay(text, 5.0f);
 
 	this->zDisplayedText.insert(displayedText);
 }
 
-void Client::RemoveText( TextDisplay displayedText)
+void Client::RemoveText( TextDisplay* displayedText)
 {
-	this->zEng->DeleteText(displayedText.zText);
+	this->zEng->DeleteText(displayedText->zText);
 
 	this->zDisplayedText.erase(displayedText);
 }

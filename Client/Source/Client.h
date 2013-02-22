@@ -28,7 +28,7 @@ enum CLIENT_ACTOR_TYPE
 	ANIMAL
 
 };
-static struct TextDisplay
+struct TextDisplay
 {
 	TextDisplay(iText* text, float time)
 	{
@@ -89,7 +89,8 @@ private:
 	bool CheckHumanSpecificMessages(std::vector<std::string> msgArray);
 
 	void AddDisplayText(const std::string& msg);
-	void RemoveText(TextDisplay displayedText);
+	void RemoveText(TextDisplay* displayedText);
+
 	//////////////////////
 	//					//
 	//	   Input		//
@@ -228,5 +229,5 @@ private:
 	iText* zUpsText;
 
 	//Error Text
-	std::set<TextDisplay> zDisplayedText;
+	std::set<TextDisplay*> zDisplayedText;
 };
