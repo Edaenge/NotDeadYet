@@ -28,7 +28,7 @@ namespace System { namespace Windows { namespace Interop
 		String^ Init(int port, int nrOfPlayers, String^ gameMode, String^ mapName);
 		void ShutdownHost();
 		bool StartHost();
-
+		void SendMessageToClient(String^ message);
 		bool IsRunning();
 		unsigned int GetNumClients();
 	};

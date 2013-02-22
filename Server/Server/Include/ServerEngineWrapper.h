@@ -24,6 +24,7 @@ public:
 	bool StartHost() const;
 	void ShutdownHost() const;
 
+	void SendMessageToClient(char* message);
 	bool IsRunning() const;
 	unsigned int GetNumClients() const;
 

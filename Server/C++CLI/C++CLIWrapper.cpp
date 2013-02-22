@@ -54,6 +54,16 @@ namespace System { namespace Windows { namespace Interop
 		return zServer->IsRunning();
 	}
 
-
-
+	void CppCLI::SendMessageToClient( String^ message )
+	{
+		char* messageChar = nullptr;
+		try
+		{
+			messageChar = (char*)Marshal::StringToHGlobalAnsi(message).ToPointer();
+		}
+		catch(...)
+		{
+		}
+		zServer->SendMessageToClient(messageChar);
+	}
 }}}

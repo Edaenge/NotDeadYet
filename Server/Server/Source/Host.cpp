@@ -61,6 +61,13 @@ Host::~Host()
 	this->zClients.clear();
 }
 
+void Host::SendMessageToClient( const std::string& message )
+{
+	std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ERROR_MESSAGE, message);
+
+	this->SendToAllClients(msg);
+}
+
 void Host::Life()
 {
 	if (Messages::FileWrite())

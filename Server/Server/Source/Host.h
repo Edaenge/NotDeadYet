@@ -77,6 +77,7 @@ public:
 	// Restart Game
 	void Restart( const std::string& gameMode, const std::string& map );
 
+	void SendMessageToClient(const std::string& message);
 	// Synchronize Clients
 	void SynchronizeAll();
 private:

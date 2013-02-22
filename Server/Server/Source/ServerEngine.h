@@ -20,7 +20,7 @@ public:
 	const char* InitHost(const unsigned int& port, const unsigned int& maxPlayers, const std::string& gameMode, const std::string& mapName);
 	bool StartHost();
 	void ShutDownHost();
-
+	void SendMessageToClient(const std::string& message);
 	bool IsRunning() const;
 	unsigned int GetNumClients() const;
 

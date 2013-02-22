@@ -194,7 +194,6 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zAnchor->position = center;
 	this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
 	
-
 	int windowWidth = this->zEng->GetEngineParameters().WindowWidth;
 	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;	
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
@@ -1577,4 +1576,43 @@ void Client::UpdateCameraOffset(unsigned int state)
 		this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset);
 		this->zActorManager->SetCameraOffset(this->zMeshOffset);
 	}
+}
+
+void Client::AddDisplayText( const std::string& msg )
+{
+	char* newString = "";
+	for (int i = 0; i != msg.length(); i++)
+	{
+		if (msg[i] == '_')
+		{
+			newString += ' ';
+		}
+		else
+		{
+			newString += msg[i];
+		}
+	}
+
+	float yPos = this->zDisplayedText.size();
+
+	int windowWidth = this->zEng->GetEngineParameters().WindowWidth;
+	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;
+
+	float yPosition = windowHeight / (yPos + 2.0f);
+	float xPosition = windowWidth * 0.333f;
+
+	Vector2 position = Vector2(xPosition, yPosition);
+
+	iText* text = this->zEng->CreateText(newString, position, 0.7f, "Media/Fonts/1");
+
+	TextDisplay displayedText = TextDisplay(text, 5.0f);
+
+	this->zDisplayedText.insert(displayedText);
+}
+
+void Client::RemoveText( TextDisplay displayedText)
+{
+	this->zEng->DeleteText(displayedText.zText);
+
+	this->zDisplayedText.erase(displayedText);
 }

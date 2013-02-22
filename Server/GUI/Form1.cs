@@ -217,5 +217,15 @@ namespace GUI
             GC.WaitForFullGCComplete();
         }
 
+        private void textBoxMessages_KeyDown(object sender, EventArgs e)
+        {
+            String serverText = "";
+
+            serverText = textBoxMessages.Text;
+            serverText.Replace(' ', '_');
+            textBoxMessages.Text = "";
+
+           // this.m_ServerEngine.SendMessageToClient(serverText);
+        }
     }
 }

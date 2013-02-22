@@ -28,6 +28,16 @@ enum CLIENT_ACTOR_TYPE
 	ANIMAL
 
 };
+static struct TextDisplay
+{
+	TextDisplay(iText* text, float time)
+	{
+		zText = text;
+		zTimer = time;
+	}
+	iText* zText;
+	float zTimer;
+};
 class Client : public MaloW::Process, public Observer
 {
 public:
@@ -77,6 +87,9 @@ private:
 	void ReadMessages();
 
 	bool CheckHumanSpecificMessages(std::vector<std::string> msgArray);
+
+	void AddDisplayText(const std::string& msg);
+	void RemoveText(TextDisplay displayedText);
 	//////////////////////
 	//					//
 	//	   Input		//
@@ -213,4 +226,7 @@ private:
 	//Updates per second
 	int zUps;
 	iText* zUpsText;
+
+	//Error Text
+	std::set<TextDisplay> zDisplayedText;
 };
