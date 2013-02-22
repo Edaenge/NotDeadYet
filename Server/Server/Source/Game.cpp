@@ -163,102 +163,111 @@ void Game::SpawnItemsDebug()
 	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE);
 
 	unsigned int increment = 0;
-	//Food
-	if (temp_food)
+	int maxPoints = 10;
+	float radius = 3.5f;
+	int numberOfObjects = 8;
+	int total = 0;
+	Vector3 center;
+	Vector3 position;
+	Vector2 tempCenter = this->zWorld->GetWorldCenter();
+	for (int i = 0; i < maxPoints; i++)
 	{
-		Food* new_Item = new Food((*temp_food));
-		ItemActor* actor = new ItemActor(new_Item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-	//Weapon_ranged
-	if(temp_R_weapon)
-	{
-		for (int i = 0; i < 9; i++)
+		center = Vector3(tempCenter.x, 0, tempCenter.y);
+		int currentPoint = i % maxPoints;
+
+		center = this->CalcPlayerSpawnPoint(currentPoint, maxPoints, 17.0f, center);
+
+		//Food
+		if (temp_food)
+		{
+			Food* new_Item = new Food((*temp_food));
+			ItemActor* actor = new ItemActor(new_Item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		//Weapon_ranged
+		if(temp_R_weapon)
 		{
 			RangedWeapon* new_item = new RangedWeapon((*temp_R_weapon));
 			ItemActor* actor = new ItemActor(new_item);
-			Vector3 center;
-			center = CalcPlayerSpawnPoint(increment++);
-			actor->SetPosition(center);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
 			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 			this->zActorManager->AddActor(actor);
 		}
-		
-	}
-	//Arrows
-	if(temp_Arrow)
-	{
-		for (int i = 0; i < 9; i++)
+		//Arrows
+		if(temp_Arrow)
 		{
 			Projectile* new_item = new Projectile((*temp_Arrow));
 			ItemActor* actor = new ItemActor(new_item);
-			Vector3 center;
-			center = CalcPlayerSpawnPoint(increment++);
-			actor->SetPosition(center);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
 			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 			this->zActorManager->AddActor(actor);
 		}
+		//Melee_weapon
+		if(temp_M_weapon)
+		{
+			MeleeWeapon* new_item = new MeleeWeapon((*temp_M_weapon));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		//Small_stick
+		if(temp_material_S)
+		{
+			Material* new_item = new Material((*temp_material_S));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		//Medium_stick
+		if(temp_material_M)
+		{
+			Material* new_item = new Material((*temp_material_M));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		//Thread
+		if(temp_material_T)
+		{
+			Material* new_item = new Material((*temp_material_T));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		//Bandage
+		if(temp_bandage)
+		{
+			Bandage* new_item = new Bandage((*temp_bandage));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		total += increment;
+		increment = 0;
 	}
-	//Melee_weap
-	if(temp_M_weapon)
-	{
-		MeleeWeapon* new_item = new MeleeWeapon((*temp_M_weapon));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-	//Small_stick
-	if(temp_material_S)
-	{
-		Material* new_item = new Material((*temp_material_S));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-	//Medium_stick
-	if(temp_material_M)
-	{
-		Material* new_item = new Material((*temp_material_M));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-	//Thread
-	if(temp_material_T)
-	{
-		Material* new_item = new Material((*temp_material_T));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-	//Bandage
-	if(temp_bandage)
-	{
-		Bandage* new_item = new Bandage((*temp_bandage));
-		ItemActor* actor = new ItemActor(new_item);
-		Vector3 center;
-		center = CalcPlayerSpawnPoint(increment++);
-		actor->SetPosition(center);
-		actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-		this->zActorManager->AddActor(actor);
-	}
-
 }
 
 bool Game::Update( float dt )
@@ -712,6 +721,26 @@ void Game::RemoveAIBehavior( AnimalActor* aActor )
 			it_behavior++;
 		}
 	}
+}
+
+Vector3 Game::CalcPlayerSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center)
+{
+	static const float PI = 3.14159265358979323846f;
+
+	float slice  = 2 * PI / maxPoints;
+
+	float angle = slice * currentPoint;
+
+	float x = center.x + radius * cos(angle);
+	float z = center.z + radius * sin(angle);
+	float y = 0.0f;
+
+	if ( x >= 0.0f && y >= 0.0f && x<zWorld->GetWorldSize().x && y<zWorld->GetWorldSize().y )
+	{
+		y = this->zWorld->CalcHeightAtWorldPos(Vector2(x, z));
+	}
+
+	return Vector3(x, y, z);
 }
 
 Vector3 Game::CalcPlayerSpawnPoint(int maxPoints, Vector2 center)
