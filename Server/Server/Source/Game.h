@@ -51,7 +51,7 @@ public:
 	
 	Vector3 CalcPlayerSpawnPoint(int MaxPoints, Vector2 center);
 	Vector3 CalcPlayerSpawnPoint(int nr);
-	
+	Vector3 CalcPlayerSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center);
 	ActorManager* GetActorManager() {return this->zActorManager;}
 	World* GetWorld() {return this->zWorld;}
 private:
@@ -72,7 +72,6 @@ private:
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID, int eq_slot);
 
 	void SendToAll(std::string msg);
-
 private:
 	PhysicsEngine* zPhysicsEngine;
 	
