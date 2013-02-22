@@ -1075,16 +1075,17 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
+	bool bFoundHumanMsg = false;
 
 	if (Messages::MsgFileWrite())
 		Messages::Debug(msg);
 
 	//Checks what type of message was sent
-	if(msg.find(M_PING.c_str()) == 0)
+	if(msgArray[0].find(M_PING.c_str()) == 0)
 	{
 		this->Ping();
 	}
-	else if (msg.find(M_HEALTH) == 0)
+	else if (msgArray[0].find(M_HEALTH) == 0)
 	{
 	}
 	//Actors
@@ -1093,12 +1094,12 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
 	//	this->UpdateActor(msgArray, id);
 	//}
-	else if(msg.find(M_NEW_ACTOR.c_str()) == 0)
+	else if(msgArray[0].find(M_NEW_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
 		this->AddActor(msgArray, id);
 	}
-	else if (msg.find(M_ACTOR_TAKE_DAMAGE.c_str()) == 0)
+	else if (msgArray[0].find(M_ACTOR_TAKE_DAMAGE.c_str()) == 0)
 	{
 		if (msgArray.size() > 1)
 		{
@@ -1107,89 +1108,28 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			this->HandleTakeDamage(id, damageTaken);
 		}
 	}
-	else if (msg.find(M_DEAD_ACTOR.c_str()) == 0)
+	else if (msgArray[0].find(M_DEAD_ACTOR.c_str()) == 0)
 	{
 		//unsigned int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
 	}
 	//Actors
-	else if(msg.find(M_REMOVE_ACTOR.c_str()) == 0)
+	else if(msgArray[0].find(M_REMOVE_ACTOR.c_str()) == 0)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_ACTOR, msgArray[0]);
 		this->RemoveActor(id);
 	}
-	else if (msg.find(M_LOOT_OBJECT_RESPONSE.c_str()) == 0)
+	else if (this->zActorType == HUMAN && this->CheckHumanSpecificMessages(msgArray))
 	{
-		this->HandleDisplayLootData(msgArray);
+		
 	}
-	else if(msg.find(M_EQUIP_ITEM.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
-		int slot = -1;
-		if (msgArray.size() > 1)
-		{
-			slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
-		}
-		else
-		{
-			MaloW::Debug("Forgot Slot Type in Equip Item");
-		}
-		this->HandleEquipItem(id, slot);
-	}
-	else if(msg.find(M_ITEM_USE.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
-		this->HandleUseItem(id);
-	}
-	else if(msg.find(M_REMOVE_EQUIPMENT.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_EQUIPMENT, msgArray[0]);
-		int slot = -1;
-		if (msgArray.size() > 1)
-		{
-			slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
-		}
-		else
-		{
-			MaloW::Debug("Forgot Slot Type in Remove Equipment");
-		}
-		this->HandleRemoveEquipment(id, slot);
-	}
-	else if(msg.find(M_UNEQUIP_ITEM.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
-		int slot = -1;
-		if (msgArray.size() > 1)
-		{
-			slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
-		}
-		else
-		{
-			MaloW::Debug("Forgot Slot Type in UnEquip Item");
-		}
-		this->HandleUnEquipItem(id, slot);
-	}
-	else if(msg.find(M_ADD_INVENTORY_ITEM.c_str()) == 0)
-	{
-		this->HandleAddInventoryItem(msgArray);
-	}
-	else if(msg.find(M_REMOVE_INVENTORY_ITEM.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_INVENTORY_ITEM, msgArray[0]);
-		this->HandleRemoveInventoryItem(id);
-	}
-	else if(msg.find(M_WEAPON_USE.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
-		this->HandleWeaponUse(id);
-	}
-	else if(msg.find(M_PLAY_SOUND.c_str()) == 0)
+	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
 		std::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
 
 		GetSounds()->PlaySounds(&fileName[0], pos);
 	}
-	else if(msg.find(M_SELF_ID.c_str()) == 0)
+	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 
@@ -1215,7 +1155,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		}
 		this->zActorType = this->zMsgHandler.ConvertStringToInt(M_ACTOR_TYPE, msgArray[1]);
 	}
-	else if(msg.find(M_CONNECTED.c_str()) == 0)
+	else if(msgArray[0].find(M_CONNECTED.c_str()) == 0)
 	{
 		Vector3 camDir = this->zEng->GetCamera()->GetForward();
 		Vector3 camUp = this->zEng->GetCamera()->GetUpVector();
@@ -1229,30 +1169,30 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		this->zServerChannel->Send(serverMessage);
 	}
-	else if(msg.find(M_LOAD_MAP.c_str()) == 0)
+	else if(msgArray[0].find(M_LOAD_MAP.c_str()) == 0)
 	{
 		std::string mapName = this->zMsgHandler.ConvertStringToSubstring(M_LOAD_MAP, msgArray[0]);
 
 		this->InitGraphics(mapName);
 	}
-	else if(msg.find(M_ERROR_MESSAGE.c_str()) == 0)
+	else if(msgArray[0].find(M_ERROR_MESSAGE.c_str()) == 0)
 	{
 		std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_ERROR_MESSAGE, msgArray[0]);
 		DisplayMessageToClient(error_Message);
 	}
-	else if(msg.find(M_SERVER_FULL.c_str()) == 0)
+	else if(msgArray[0].find(M_SERVER_FULL.c_str()) == 0)
 	{
 		this->CloseConnection("Server is full");
 	}
-	else if(msg.find(M_KICKED.c_str()) == 0)
+	else if(msgArray[0].find(M_KICKED.c_str()) == 0)
 	{
 		this->CloseConnection("You got kicked");
 	}
-	else if(msg.find(M_SERVER_SHUTDOWN.c_str()) == 0)
+	else if(msgArray[0].find(M_SERVER_SHUTDOWN.c_str()) == 0)
 	{
 		this->CloseConnection("Server Shutdown");
 	}
-	else if(msg.find(M_START_GAME.c_str()) == 0)
+	else if(msgArray[0].find(M_START_GAME.c_str()) == 0)
 	{
 		this->zGameStarted = true;
 	}
@@ -1261,8 +1201,84 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[0] + " in HandleNetworkMessage");
 		MaloW::Debug("C: " + msg);
 	}
+	
+	
 }
 
+bool Client::CheckHumanSpecificMessages(std::vector<std::string> msgArray)
+{
+	if (msgArray[0].find(M_LOOT_OBJECT_RESPONSE.c_str()) == 0)
+	{
+		this->HandleDisplayLootData(msgArray);
+	}
+	else if(msgArray[0].find(M_EQUIP_ITEM.c_str()) == 0)
+	{
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_EQUIP_ITEM, msgArray[0]);
+		int slot = -1;
+		if (msgArray.size() > 1)
+		{
+			slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+		}
+		else
+		{
+			MaloW::Debug("Forgot Slot Type in Equip Item");
+		}
+		this->HandleEquipItem(id, slot);
+	}
+	else if(msgArray[0].find(M_ITEM_USE.c_str()) == 0)
+	{
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
+		this->HandleUseItem(id);
+	}
+	else if(msgArray[0].find(M_REMOVE_EQUIPMENT.c_str()) == 0)
+	{
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_EQUIPMENT, msgArray[0]);
+		int slot = -1;
+		if (msgArray.size() > 1)
+		{
+			slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+		}
+		else
+		{
+			MaloW::Debug("Forgot Slot Type in Remove Equipment");
+		}
+		this->HandleRemoveEquipment(id, slot);
+	}
+	else if(msgArray[0].find(M_UNEQUIP_ITEM.c_str()) == 0)
+	{
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
+		int slot = -1;
+		if (msgArray.size() > 1)
+		{
+			slot = this->zMsgHandler.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
+		}
+		else
+		{
+			MaloW::Debug("Forgot Slot Type in UnEquip Item");
+		}
+		this->HandleUnEquipItem(id, slot);
+	}
+	else if(msgArray[0].find(M_ADD_INVENTORY_ITEM.c_str()) == 0)
+	{
+		this->HandleAddInventoryItem(msgArray);
+	}
+	else if(msgArray[0].find(M_REMOVE_INVENTORY_ITEM.c_str()) == 0)
+	{
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_REMOVE_INVENTORY_ITEM, msgArray[0]);
+		this->HandleRemoveInventoryItem(id);
+	}
+	else if(msgArray[0].find(M_WEAPON_USE.c_str()) == 0)
+	{
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
+		this->HandleWeaponUse(id);
+	}
+	else
+	{
+		return false;
+	}
+	
+	return true;
+}
 bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 {
 	Actor* actor = this->zActorManager->GetActor(ID);

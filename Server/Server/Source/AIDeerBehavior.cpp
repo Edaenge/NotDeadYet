@@ -327,56 +327,6 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 	}
 }
 
-MentalState AIDeerBehavior::GetMentalState()
-{
-	return this->zMentalState;
-}
-
-void AIDeerBehavior::SetMentalState(MentalState newMentalState)
-{
-	this->zMentalState = newMentalState;
-}
-	
-bool AIDeerBehavior::GetIfNeedPath()
-{
-	return this->zNeedPath;
-}
-
-void AIDeerBehavior::SetIfNeedPath(bool needPath)
-{
-	this->zNeedPath = needPath;
-}
-
-float AIDeerBehavior::GetFearLevel()
-{
-	return this->zFearLevel;
-}
-
-void AIDeerBehavior::SetFearLevel(float fear)
-{
-	this->zFearLevel = fear;
-}
-
-float AIDeerBehavior::GetFearMax()
-{
-	return this->zFearMax;
-}
-
-void AIDeerBehavior::SetFearMax(float max)
-{
-	this->zFearMax = max;
-}
-
-float AIDeerBehavior::GetLastDistanceCheck()
-{
-	return this->zLastDistanceCheck;
-}
-
-void AIDeerBehavior::SetLastDistanceCheck(float distance)
-{
-	this->zLastDistanceCheck = distance;
-}
-
 void AIDeerBehavior::SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind)
 {
 	this->zTargets[number].position = pos;
@@ -385,34 +335,8 @@ void AIDeerBehavior::SetTargetInfo(int number, Vector3 pos, float velocity, floa
 	this->zTargets[number].kind = kind;
 }
 
-int AIDeerBehavior::GetCurrentTargets()
-{
-	return this->zCurrentNrOfTargets;
-}
-
-void AIDeerBehavior::SetCurrentTargets(int number)
-{
-	this->zCurrentNrOfTargets = number;
-}
-
-std::vector<Vector2>& AIDeerBehavior::GetPath()
-{
-	return this->zCurrentPath;
-}
-
-float AIDeerBehavior::GetPreviousHealth()
-{
-	return this->zPreviousHealth;
-}
-
-void AIDeerBehavior::SetPreviousHealth(float oldHealth)
-{
-	this->zPreviousHealth = oldHealth;
-}
-
 bool AIDeerBehavior::Update( float dt )
 {
-
 	if ( Behavior::Update(dt) )
 		return true;
 
@@ -438,7 +362,6 @@ bool AIDeerBehavior::Update( float dt )
 
 	int maximumNodesTest = 40;
 
-	
 	//Determine closest threat/target
 	for(int i = 0; i < this->GetCurrentTargets(); i++)
 	{
@@ -460,7 +383,6 @@ bool AIDeerBehavior::Update( float dt )
 		{
 			this->zTargets[i].valid = false;
 		}
-		
 	}
 	if(nrOfPredators > 0)
 	{
@@ -471,7 +393,6 @@ bool AIDeerBehavior::Update( float dt )
 		nearbyPredatorsExist = false;
 	}
 
-	
 	//Time to assess threats.
 
 	if( dActor->GetHealth() < this->GetPreviousHealth() ) //In theory, used to check if the animal has been attacked.
@@ -519,7 +440,6 @@ bool AIDeerBehavior::Update( float dt )
 					{
 						fear -= (dActor->GetHealth() / this->zTargets[i].health) / nrOfPredators; //If the animal is faced with a very weak player(s), it gets some confidence. This is reduced with each player present.
 					}
-					
 				}
 			}			
 
@@ -551,7 +471,6 @@ bool AIDeerBehavior::Update( float dt )
 			this->SetMentalState(AGGRESSIVE);
 			//this->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 		}
-		
 	}
 	else if(this->GetFearLevel() > zAggressiveToAfraidThreshold && this->GetFearLevel() <= this->GetFearMax())
 	{
@@ -561,11 +480,8 @@ bool AIDeerBehavior::Update( float dt )
 			this->SetIfNeedPath(true);
 			this->SetMentalState(AFRAID);
 			//this->SetScale(Vector3(3.09f, 3.09f, 3.09f));
-			
 		}
-		
 	}
-	
 	
 	//Act based on state of mind.
 	if(this->GetMentalState() == CALM) //Relaxed behaviour. No threat detected.
@@ -636,7 +552,6 @@ bool AIDeerBehavior::Update( float dt )
 
 			for(int i = 0; i < this->GetCurrentTargets(); i++)
 			{
-				
 				if(this->zTargets[i].valid == true)
 				{
 					xDistance = dActor->GetPosition().x - this->zTargets[i].position.x;
@@ -657,27 +572,22 @@ bool AIDeerBehavior::Update( float dt )
 				this->zMainTarget = mostLikelyTarget;
 			}
 		}
-		
 	}
 	else if(this->GetMentalState() == AFRAID) //Is afraid, need to run.
 	{
-
 		if(this->GetIfNeedPath() == true)
 		{
 			this->SetIfNeedPath(false);
 			
-
 			if(nearbyPredatorsExist)
 			{
 				this->zDestination = this->ExaminePathfindingArea();
 				
-
 				this->zCurrentPath.clear();
 				if(!this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath, maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
 				{
 					this->SetIfNeedPath(true);
 				}
-
 			}
 			else if(this->zPanic == true)
 			{
@@ -724,17 +634,12 @@ bool AIDeerBehavior::Update( float dt )
 					this->SetIfNeedPath(true);
 				}
 			}
-
-			
-			
 		}
 		else//It is already running.
 		{
-			//one or more entities should not collide with each other and stop. (I am not sure this is something to be handled here or elsewhere.
-			
+			//one or more entities should not collide with each other and stop. (I am not sure this is something to be handled here or elsewhere.	
 		}
 	}
-
 
 	//Move the animal along path.
 	if(this->zCurrentPath.size() > 0)
@@ -757,12 +662,10 @@ bool AIDeerBehavior::Update( float dt )
 
 		if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 || this->GetMentalState() == SUSPICIOUS && this->zCurrentPath.size() > 0) // && !this->zCurrentPath.empty() is necessary to be used again to avoid getting into an unlikely but posssible error.
 		{
-
 			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
 
 			result = result;
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
-
 
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - dActor->GetPosition();
@@ -815,12 +718,28 @@ bool AIDeerBehavior::Update( float dt )
 		{
 			this->SetIfNeedPath(true);
 		}
-	
 	}
 	else
 	{
 		this->SetIfNeedPath(true);
 	}
+
+	//Rotate Animal
+	static const Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, -1.0f);
+	Vector3 meshDirection = dActor->GetDir();
+	meshDirection.y = 0;
+	meshDirection.Normalize();
+
+	Vector3 around = Vector3(0.0f, 1.0f, 0.0f);
+	float angle = acos(defaultMeshDir.GetDotProduct(meshDirection));
+
+	if (meshDirection.x > 0.0f)
+	 angle *= -1;
+
+	Vector4 rotation = dActor->GetRotation();
+
+	dActor->SetRotation(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+	dActor->SetRotation(around, angle);
 
 	return false;
 }
