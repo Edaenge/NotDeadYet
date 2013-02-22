@@ -363,17 +363,15 @@ bool Game::Update( float dt )
 			//Get Data
 			Vector3 scale = projActor->GetScale();
 			float length = projBehavior->GetLenght();
-
-			//Calculate the arrow
-			float middle = (length * max(max(scale.x, scale.y),scale.z)) * 0.5f;
-
+			float distance = length;
 			//Check collision, returns the result
-			Actor* collide = this->zActorManager->CheckCollisions(projActor, middle); 
+			Actor* collide = this->zActorManager->CheckCollisions(projActor, distance); 
 
 			if( BioActor* victim = dynamic_cast<BioActor*>(collide) )
 			{
 				//Stop arrow
 				projBehavior->Stop();
+				
 				//Take damage
 				victim->TakeDamage(projActor->GetDamage(), projActor->GetOwner());
 			}

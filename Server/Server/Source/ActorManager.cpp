@@ -56,7 +56,6 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 	float radiusWithin = 2.0f + range;
 	Actor* collide = NULL;
 	PhysicsCollisionData data;
-	Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
 	std::set<Actor*> inRadius;
 	GetActorsInCircle(actor->GetPosition().GetXZ(), radiusWithin, inRadius);
 	
@@ -86,6 +85,8 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 		if(!target)
 			continue;
 
+		Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
+
 		if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
 		{
 			offset = bActor->GetCameraOffset();
@@ -94,6 +95,12 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 		{
 			if( target ==  projActor->GetOwner() )
 				continue;
+
+// 			PhysicsObject* actorPhys = actor->GetPhysicsObject();
+// 			Vector3 center = actorPhys->GetBoundingSphere().center;
+// 			center = actorPhys->GetWorldMatrix() * center;
+// 			offset = ( center - actor->GetPosition() ) * 2;
+
 		}
 		PhysicsObject* targetObject = target->GetPhysicsObject();
 		data = GetPhysics()->GetCollisionRayMesh(actor->GetPosition() + offset, actor->GetDir(), targetObject);
