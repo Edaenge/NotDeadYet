@@ -66,7 +66,6 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 			continue;
 		
 		BioActor* tBioActor = dynamic_cast<BioActor*>(*it);
-		WorldActor* tWorldActor = dynamic_cast<WorldActor*>(*it);
 		Actor* target = NULL;
 
 		//if BioActor
@@ -75,10 +74,10 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 			if(tBioActor->IsAlive())
 				target = tBioActor;
 		}
-		//If WorldActor
-		else if(tWorldActor && tWorldActor->GetPhysicsObject())
+		//If Actor has Physics
+		else if( (*it) && (*it)->GetPhysicsObject() )
 		{
-			target = tWorldActor;
+			target = (*it);
 		}
 
 		//If the target is null, ignore
@@ -132,7 +131,6 @@ Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
 			continue;
 
 		BioActor* tBioActor = dynamic_cast<BioActor*>(*it);
-		WorldActor* tWorldActor = dynamic_cast<WorldActor*>(*it);
 		Actor* target = NULL;
 
 		//if BioActor
@@ -141,10 +139,10 @@ Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
 			if(tBioActor->IsAlive())
 				target = tBioActor;
 		}
-		//If WorldActor
-		else if(tWorldActor && tWorldActor->GetPhysicsObject())
+		//If Actor has Physics
+		else if( (*it) && (*it)->GetPhysicsObject() )
 		{
-			target = tWorldActor;
+			target = (*it);
 		}
 
 		//If the target is null, ignore
