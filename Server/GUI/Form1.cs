@@ -245,10 +245,10 @@ namespace GUI
             {
                 string serverText = "";
 
-                serverText = textBoxClientMessages.Text;
+                serverText = textBoxServerMessages.Text;
 
                 this.richTextBoxConsole.AppendText(serverText + "\n");
-                serverText = serverText.Replace(' ', '_');
+                serverText = "EV " + serverText.Replace(' ', '_');
 
                 textBoxClientMessages.Text = "";
 
