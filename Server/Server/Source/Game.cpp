@@ -313,8 +313,7 @@ bool Game::Update( float dt )
 	//Updating animals.
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
-		Behavior* temp = (*i);
-		if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
+		if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>( (*i) ))
 		{
 			animalBehavior->SetCurrentTargets(counter);
 		}
@@ -1199,24 +1198,27 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 {
 	Actor* actor = NULL;
-	PlayerActor* pActor = NULL;
-	Inventory* inventory = NULL;
-	Item* item = NULL;
+
 
 	auto playerIterator = zPlayers.find(cd);
 	actor = playerIterator->second->GetBehavior()->GetActor();
 
-	if ( !(pActor = dynamic_cast<PlayerActor*>(actor)) )
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+	if ( !(pActor) )
 	{
 		MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
-	if( !(inventory = pActor->GetInventory()) )
+
+	Inventory* inventory = pActor->GetInventory();
+	if( !(inventory) )
 	{
 		MaloW::Debug("Inventory is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
-	if ( !(item = inventory->GetPrimaryEquip()) )
+
+	Item* item = inventory->GetPrimaryEquip();
+	if ( !(item ) )
 	{
 		MaloW::Debug("Item is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;

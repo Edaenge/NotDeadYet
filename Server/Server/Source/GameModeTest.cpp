@@ -117,7 +117,7 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 
 	//Tell The Client his ID and Actor Type
 	ActorManager* aManager = this->zGame->GetActorManager();
-	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, newPActor->GetID());
+	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)newPActor->GetID());
 	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 1);
 
 	cd->Send(msg);

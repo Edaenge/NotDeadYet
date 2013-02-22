@@ -6,7 +6,7 @@
 #include "WolfActor.h"
 #include "BearActor.h"
 #include "PlayerActor.h"
-#include "GhostActor.h";
+#include "GhostActor.h"
 #include "GameEvents.h"
 #include "PlayerGhostBehavior.h"
 #include "PlayerDeerBehavior.h"
@@ -112,8 +112,6 @@ void GameModeFFA::OnEvent( Event* e )
 
 void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 {
-	
-	bool found = false;
 	Player* player = gActor->GetPlayer();
 	ClientData* cd = player->GetClientData();
 
@@ -208,7 +206,7 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 			this->zGame->RemoveAIBehavior(closestAnimal);
 			this->zGame->SetPlayerBehavior(player, animalBehavior);
 
-			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, closestAnimal->GetID());
+			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)closestAnimal->GetID());
 			msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
 
 			cd->Send(msg);
@@ -226,7 +224,7 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 
 			this->zGame->SetPlayerBehavior(player, playerBearBehavior);
 
-			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, dActor->GetID());
+			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)dActor->GetID());
 			msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
 
 			cd->Send(msg);
@@ -269,7 +267,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 
 	//Tell Client his new ID and actor type
 	ActorManager* aManager = this->zGame->GetActorManager();
-	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, gActor->GetID());
+	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)gActor->GetID());
 	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 2);
 
 	cd->Send(msg);
@@ -304,7 +302,7 @@ void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
 
 	//Tell Client his new ID and actor type
 	ActorManager* aManager = this->zGame->GetActorManager();
-	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, gActor->GetID());
+	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)gActor->GetID());
 	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 2);
 
 	cd->Send(msg);
