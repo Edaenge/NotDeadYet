@@ -210,4 +210,7 @@ private:
 	Vector3 zMeshOffset;
 	std::map<std::string, Vector3> zMeshCameraOffsets;
 	std::map<unsigned int, Vector3> zStateCameraOffset;
+	//Updates per second
+	int zUps;
+	iText* zUpsText;
 };

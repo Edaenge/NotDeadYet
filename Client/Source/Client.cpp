@@ -46,7 +46,9 @@ Client::Client()
 
 	this->zSendUpdateDelayTimer = 0.0f;
 
+	
 	this->zEng = NULL;
+	
 	this->zGuiManager = NULL;
 	this->zActorManager = NULL;
 	this->zServerChannel = NULL;
@@ -56,6 +58,8 @@ Client::Client()
 	
 	this->zMsgHandler = NetworkMessageConverter();
 
+	this->zUps;
+	this->zUpsText = NULL;
 	this->zWorld = NULL;
 	this->zWorldRenderer = NULL;
 	this->zAnchor = NULL;
@@ -114,6 +118,9 @@ Client::~Client()
 
 	if (this->zCrossHair) 
 		this->zEng->DeleteImage(this->zCrossHair);
+	
+	if (this->zUpsText)
+		this->zEng->DeleteText(this->zUpsText);
 
 	GetSounds()->StopMusic();
 }
@@ -210,6 +217,11 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 	this->zCrossHair->SetOpacity(0.5f);
 
+	if (this->zUpsText)
+		this->zEng->DeleteText(this->zUpsText);
+
+	this->zUpsText = this->zEng->CreateText("", Vector2(1, 1), 0.7f, "Media/Fonts/1");
+
 	GetSounds()->PlayMusic("Media/Sound/ForestAmbience.mp3");
 }
 
@@ -234,6 +246,8 @@ void Client::Life()
 {
 	MaloW::Debug("Client Process Started");
 
+	float counter = 0.0f;
+	
 	this->Init();
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
@@ -244,6 +258,16 @@ void Client::Life()
 		{
 			this->zSendUpdateDelayTimer += this->zDeltaTime;
 			this->zTimeSinceLastPing += this->zDeltaTime;
+
+			zUps++;
+			counter += this->zDeltaTime;
+			if (counter >= 1.0f)
+			{
+				this->zUpsText->SetText("Updates per second ");
+				this->zUpsText->AppendText(MaloW::convertNrToString(this->zUps).c_str());
+				this->zUps = 0;
+				counter = 0;
+			}
 
  			if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
  			{
@@ -1075,7 +1099,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
-	bool bFoundHumanMsg = false;
 
 	if (Messages::MsgFileWrite())
 		Messages::Debug(msg);
