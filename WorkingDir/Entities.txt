@@ -1,6 +1,6 @@
 Number:1
 Name:Scale
-Model:Media/Models/Scale.obj
+Model:Media/Scale.obj
 BlockRadius:0.5
 
 Number:2
@@ -19,8 +19,8 @@ Number:5
 Name:Tree
 Model:Media/Models/Tree_02_v02_r.obj
 BlockRadius:0.5
-Billboard:
-BillboardDistance:-1
+Billboard:Media/TreeBillboard.png
+BillboardDistance:100
 
 Number:6
 Name:Stone
@@ -85,16 +85,24 @@ BlockRadius:0.5
 
 Number:21
 Name:Water
-Model:Media/Models/Stone_01_v02.obj
+Model:Water
+
+Number:22
+Name:WaterStones	
+Model:Media/Models/Stone_03_v01.obj
+
+Number:23
+Name:Bush_misc_01	
+Model:Media/Models/Bush_misc_01.obj
 
 Number:200
 Name:Deer Spawnpoint
-Model:Media/Models/Scale.obj
+Model:Media/Models/DEEEEER.obj
 
 Number:201
 Name:Wolf Spawnpoint
-Model:Media/Models/Scale.obj
+Model:Media/Scale.obj
 
 Number:202
 Name:Bear Spawnpoint
-Model:Media/Models/Scale.obj
+Model:Media/Scale.obj
