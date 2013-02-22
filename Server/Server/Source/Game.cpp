@@ -582,12 +582,6 @@ void Game::OnEvent( Event* e )
 			phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(ELE->entity->GetType()));
 		}
 
-		if(!phys)
-		{
-			throw("Phys is null");
-			return;
-		}
-
 		WorldActor* actor = new WorldActor(phys);
 		actor->SetPosition(ELE->entity->GetPosition());
 		actor->SetScale(actor->GetScale());
