@@ -79,7 +79,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 			}
 			else
 			{
-				this->zMeshOffset = Vector3();
+				this->zMeshOffset = Vector3(0.0f, 0.5f, 0.0f);
 			}
 			
 			this->zActorManager->SetCameraOffset(this->zMeshOffset);
