@@ -734,7 +734,7 @@ bool AIDeerBehavior::Update( float dt )
 	float angle = acos(defaultMeshDir.GetDotProduct(meshDirection));
 
 	if (meshDirection.x > 0.0f)
-	 meshDirection *= -1;
+	 angle *= -1;
 
 	Vector4 rotation = dActor->GetRotation();
 
