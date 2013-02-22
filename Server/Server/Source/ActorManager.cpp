@@ -76,7 +76,7 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 				target = tBioActor;
 		}
 		//If WorldActor
-		else if(tWorldActor)
+		else if(tWorldActor && tWorldActor->GetPhysicsObject())
 		{
 			target = tWorldActor;
 		}
@@ -142,7 +142,7 @@ Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
 				target = tBioActor;
 		}
 		//If WorldActor
-		else if(tWorldActor)
+		else if(tWorldActor && tWorldActor->GetPhysicsObject())
 		{
 			target = tWorldActor;
 		}
