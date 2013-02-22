@@ -89,7 +89,7 @@ private:
 	bool CheckHumanSpecificMessages(std::vector<std::string> msgArray);
 
 	void AddDisplayText(const std::string& msg);
-	void RemoveText(TextDisplay* displayedText);
+	void RemoveText(TextDisplay*& displayedText);
 
 	//////////////////////
 	//					//

@@ -123,6 +123,16 @@ Client::~Client()
 		this->zEng->DeleteText(this->zUpsText);
 
 	GetSounds()->StopMusic();
+
+	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
+	{
+		TextDisplay* temp = (*it);
+
+		this->zEng->DeleteText(temp->zText);
+		SAFE_DELETE(temp);
+	}
+
+	this->zDisplayedText.clear();
 }
 
 float Client::Update()
@@ -1580,12 +1590,12 @@ void Client::UpdateCameraOffset(unsigned int state)
 
 void Client::AddDisplayText( const std::string& msg )
 {
-	char* newString = "";
+	std::string newString = "";
 	for (int i = 0; i < (int)msg.length(); i++)
 	{
 		if (msg[i] == '_')
 		{
-			newString += ' ';
+			newString += " ";
 		}
 		else
 		{
@@ -1603,16 +1613,22 @@ void Client::AddDisplayText( const std::string& msg )
 
 	Vector2 position = Vector2(xPosition, yPosition);
 
-	iText* text = this->zEng->CreateText(newString, position, 0.7f, "Media/Fonts/1");
+	iText* text = this->zEng->CreateText(newString.c_str(), position, 0.7f, "Media/Fonts/1");
 
 	TextDisplay* displayedText = new TextDisplay(text, 5.0f);
 
 	this->zDisplayedText.insert(displayedText);
 }
 
-void Client::RemoveText( TextDisplay* displayedText)
+void Client::RemoveText( TextDisplay*& displayedText)
 {
+	if(!displayedText)
+		return;
+
 	this->zEng->DeleteText(displayedText->zText);
 
 	this->zDisplayedText.erase(displayedText);
+
+	delete displayedText;
+	displayedText = NULL;
 }
