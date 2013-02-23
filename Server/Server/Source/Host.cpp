@@ -65,11 +65,11 @@ void Host::SendMessageToClient( const std::string& message )
 {
 	if (message.find("EV") == 0)
 	{
-		std::string msg = this->zMessageConverter.ConvertStringToSubstring("EV", message);
+		std::string msg = this->zMessageConverter.ConvertStringToSubstring("EV", message, true);
 	}
 	else
 	{
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_ERROR_MESSAGE, message);
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, message);
 
 		this->SendToAllClients(msg);
 	}
@@ -581,7 +581,7 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 		}
 		else if(it_m->find(M_USER_NAME) == 0)
 		{
-			e.playerName = this->zMessageConverter.ConvertStringToSubstring(M_USER_NAME, (*it_m));
+			e.playerName = this->zMessageConverter.ConvertStringToSubstring(M_USER_NAME, (*it_m), true);
 		}
 		else if(it_m->find(M_UP) == 0)
 		{
@@ -609,16 +609,13 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
 	this->zGameMode = gameMode;
 	this->zMapName = map;
 
-	if ( this->zSynchronizer ) 
-		this->zSynchronizer->ClearAll();
-	if ( !this->zSynchronizer ) 
-		this->zSynchronizer = new ActorSynchronizer();
-
 	if ( this->zGame )
 	{
+		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Server Restarting");
 		// Fake Disconnects
 		for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
 		{
+			i->second->Send(msg);
 			PlayerDisconnectedEvent PDE;
 			PDE.clientData = i->second;
 			zGame->OnEvent(&PDE);
@@ -629,6 +626,11 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
 		delete zGame;
 		FreePhysics();
 	}
+
+	if ( this->zSynchronizer ) 
+		this->zSynchronizer->ClearAll();
+	if ( !this->zSynchronizer ) 
+		this->zSynchronizer = new ActorSynchronizer();
 
 	// Start New
 	PhysicsInit();

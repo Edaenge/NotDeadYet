@@ -20,7 +20,7 @@ GameModeFFA::GameModeFFA(Game* game) : GameMode(game)
 
 GameModeFFA::~GameModeFFA()
 {
-
+	this->zGame->RemoveObserver(this);
 }
 
 bool GameModeFFA::Update( float dt )
@@ -47,6 +47,30 @@ void GameModeFFA::OnEvent( Event* e )
 		{
 			if(pActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 			{
+				std::string killsMsg = "";
+				Player* player = pActor->GetPlayer();
+				if (ATD->zActor == ATD->zDealer)
+				{
+					killsMsg = player->GetPlayerName() + " Killed Himself";
+				}
+				else if (PlayerActor* pDealer = dynamic_cast<PlayerActor*>(ATD->zDealer))
+				{
+					Player* dealer = pDealer->GetPlayer();
+					killsMsg = player->GetPlayerName() + " Was Killed by " + dealer->GetPlayerName();
+				}
+				else if (AnimalActor* pDealer =dynamic_cast<AnimalActor*>(ATD->zDealer))
+				{
+					killsMsg = player->GetPlayerName() + " Was killed by an Animal";
+				}
+				else
+				{
+					killsMsg = player->GetPlayerName() + " Was Killed by the environment";
+				}
+
+				NetworkMessageConverter NMC;
+				std::string msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+				this->zGame->SendToAll(msg);
+
 				this->OnPlayerHumanDeath(pActor);
 			}
 			else

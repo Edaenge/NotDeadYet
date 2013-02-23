@@ -88,8 +88,8 @@ private:
 
 	bool CheckHumanSpecificMessages(std::vector<std::string> msgArray);
 
-	void AddDisplayText(const std::string& msg);
-
+	void AddDisplayText(const std::string& msg, bool bError);
+	void RemoveUnderscore(std::string& msg);
 	//////////////////////
 	//					//
 	//	   Input		//
@@ -159,7 +159,7 @@ private:
 	void HandleAddInventoryItem(const std::vector<std::string>& msgArray);
 	/*! Uses the Selected Item*/
 	void HandleUseItem(const unsigned int ID);
-	void DisplayMessageToClient(const std::string& msg);
+	void DisplayMessageToClient(const std::string& msg, bool bError);
 	void HandleEquipItem(const unsigned int ItemID, const int Slot);
 	bool HandleUnEquipItem(const unsigned int ItemID, const int Slot);
 	void SendUnEquipItem(const unsigned int ID, const int Slot);

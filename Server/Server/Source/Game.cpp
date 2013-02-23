@@ -51,7 +51,7 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	LoadEntList("Entities.txt");
 
 	// Game Mode Observes
-	AddObserver(zGameMode);
+	this->AddObserver(zGameMode);
 
 	// Create World
 	if(worldFile != "")
@@ -91,25 +91,9 @@ Game::~Game()
 	this->zPlayers.clear();
 
 	SAFE_DELETE(this->zWorld);
-	SAFE_DELETE(this->zGameMode);
 	SAFE_DELETE(this->zActorManager);
+	SAFE_DELETE(this->zGameMode);
 
-	//if ( this->zGameMode )
-	//{
-	//	delete this->zGameMode;
-	//	this->zGameMode = NULL;
-	//}
-	//if ( this->zWorld ) 
-	//{
-	//	delete this->zWorld;
-	//	this->zWorld = NULL;
-	//}
-	//if ( this->zActorManager ) 
-	//{
-	//	delete this->zActorManager;
-	//	this->zActorManager = NULL;
-	//}
-	
 	FreeItemLookup();
 }
 
@@ -1077,6 +1061,9 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 					if(pActor->GetInventory()->AddItem(item, stacked))
 					{
 						bActor->GetInventory()->RemoveItem(item);
+						if (stacked)
+							SAFE_DELETE(item);
+
 						cd->Send(msg);
 					}
 					
@@ -1412,7 +1399,8 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
 							cd->Send(msg);
-						}					}
+						}	
+					}
 					else if (material->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK || material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)
 					{
 						Item* tempItem = NULL;
@@ -1509,6 +1497,11 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 								msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
 								cd->Send(msg);
 							}
+						}
+						else
+						{
+							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Missing_materials_in_order_to_craft_Bow");
+							cd->Send(msg);
 						}
 					}
 					/*else if (material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)

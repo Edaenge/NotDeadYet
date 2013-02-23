@@ -14,6 +14,8 @@ ActorManager::ActorManager( ActorSynchronizer* syncher ) :
 
 ActorManager::~ActorManager()
 {
+	this->RemoveObserver(this->zSynch);
+
 	for(auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
 		Actor* temp = (*it);

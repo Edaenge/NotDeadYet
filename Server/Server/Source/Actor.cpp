@@ -4,7 +4,7 @@ static unsigned int NextActorID = 0;
 
 Actor::Actor() :
 	zID(++NextActorID),
-	zPhysicsObject(0)
+	zPhysicsObject(NULL)
 {
 	SetScale(Vector3(0.05f, 0.05f, 0.05f));
 }

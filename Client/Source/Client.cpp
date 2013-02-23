@@ -573,7 +573,7 @@ void Client::CheckPlayerSpecificKeys()
 			this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
 	}
 
-	if (!this->zGuiManager->IsGuiOpen())
+	if (!this->zGuiManager->IsGuiOpen() && !zShowCursor)
 	{
 		if (this->zEng->GetKeyListener()->IsClicked(1))
 		{
@@ -584,7 +584,7 @@ void Client::CheckPlayerSpecificKeys()
 				Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
 				if (!primaryWeapon)
 				{
-					this->DisplayMessageToClient("No Weapon is Equipped");
+					this->DisplayMessageToClient("No Weapon is Equipped", true);
 				}
 				else
 				{
@@ -660,6 +660,23 @@ void Client::CheckKeyboardInput()
 		return;
 	}
 
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL)  && this->zEng->GetKeyListener()->IsPressed(VK_MENU) && this->zEng->GetKeyListener()->IsPressed('R'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_RESTART))
+		{
+			this->zKeyInfo.SetKeyState(KEY_RESTART, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_RESTART_GAME_REQUEST);
+
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_RESTART))
+			this->zKeyInfo.SetKeyState(KEY_RESTART, false);
+	}
+
 	if (this->zActorType != NONE)
 	{
 		this->CheckMovementKeys();
@@ -681,23 +698,6 @@ void Client::CheckKeyboardInput()
 	if (this->zActorType != GHOST)
 	{
 		this->CheckNonGhostInput();
-	}
-
-	else if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('R'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_RESTART))
-		{
-			this->zKeyInfo.SetKeyState(KEY_RESTART, true);
-
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_RESTART_GAME_REQUEST);
-
-			this->zServerChannel->Send(msg);
-		}
-	}
-	else
-	{
-		if(this->zKeyInfo.GetKeyState(KEY_RESTART))
-			this->zKeyInfo.SetKeyState(KEY_RESTART, false);
 	}
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
@@ -1211,8 +1211,13 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_ERROR_MESSAGE.c_str()) == 0)
 	{
-		std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_ERROR_MESSAGE, msgArray[0]);
-		DisplayMessageToClient(error_Message);
+		std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_ERROR_MESSAGE, msgArray[0], true);
+		this->DisplayMessageToClient(error_Message, true);
+	}
+	else if(msgArray[0].find(M_SERVER_ANNOUNCEMENT.c_str()) == 0)
+	{
+		std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_SERVER_ANNOUNCEMENT, msgArray[0], true);
+		this->DisplayMessageToClient(error_Message, false);
 	}
 	else if(msgArray[0].find(M_SERVER_FULL.c_str()) == 0)
 	{
@@ -1313,6 +1318,7 @@ bool Client::CheckHumanSpecificMessages(std::vector<std::string> msgArray)
 	
 	return true;
 }
+
 bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 {
 	Actor* actor = this->zActorManager->GetActor(ID);
@@ -1494,9 +1500,9 @@ bool Client::GetCursorVisibility()
 	return this->zShowCursor;
 }
 
-void Client::DisplayMessageToClient(const std::string& msg)
+void Client::DisplayMessageToClient(const std::string& msg, bool bError)
 {
-	this->AddDisplayText(msg);
+	this->AddDisplayText(msg, bError);
 
 	MaloW::Debug(msg);
 }
@@ -1537,11 +1543,11 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 		}
 		else if((*it_Item_Data).find(M_ITEM_DESCRIPTION.c_str()) == 0)
 		{
-			lgd.zGui_Data.zDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it_Item_Data));
+			lgd.zGui_Data.zDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it_Item_Data), true);
 		}
 		else if((*it_Item_Data).find(M_ITEM_NAME.c_str()) == 0)
 		{
-			lgd.zGui_Data.zName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it_Item_Data));
+			lgd.zGui_Data.zName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it_Item_Data), true);
 		}
 		else if((*it_Item_Data).find(M_ITEM_WEIGHT.c_str()) == 0)
 		{
@@ -1629,7 +1635,7 @@ void Client::UpdateText()
 	}	
 }
 
-void Client::AddDisplayText( const std::string& msg )
+void Client::RemoveUnderscore(std::string& msg)
 {
 	std::string newString = "";
 	for (int i = 0; i < (int)msg.length(); i++)
@@ -1643,27 +1649,50 @@ void Client::AddDisplayText( const std::string& msg )
 			newString += msg[i];
 		}
 	}
+	msg = newString;
+}
+
+void Client::AddDisplayText(const std::string& msg, bool bError)
+{
+	std::string newString = msg;
+
+	this->RemoveUnderscore(newString);
 
 	int yPos = (int)this->zDisplayedText.size();
-
 	int windowWidth = this->zEng->GetEngineParameters().WindowWidth;
 	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;
 
-	float yPosition = (float)(windowHeight / (yPos + 1) );
-	float xPosition = (float)(windowWidth * 0.333f);
-	float textheight = 10.0f;
+	float yPosition = (float)(windowHeight / (yPos + 2) );
+	float xPosition = (float)(windowWidth * 0.25f);
+	float textheight = 20.0f;
 
-	float c = 0;
+	Vector2 position;
+
+	float c = 1;
+
 	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
 	{
-		(*it)->zText->SetPosition( Vector2(xPosition, c * yPosition) );
-
-		c++;
+		float x = (*it)->zText->GetPosition().x;
+		position = Vector2(x, c++ * yPosition - textheight);
+		(*it)->zText->SetPosition(position);
 	}
 
-	Vector2 position = Vector2(xPosition, c * yPosition);
+	if (yPos == 0)
+	{
+		position = Vector2(xPosition, windowHeight * 0.5f);
+	}
+	else
+	{
 
-	iText* text = this->zEng->CreateText(newString.c_str(), position, 0.7f, "Media/Fonts/1");
+		position = Vector2(xPosition, c * yPosition - textheight);
+	}
+	std::string fontPath = "";
+	if (bError)
+		fontPath = "Media/Fonts/1";
+	else
+		fontPath = "Media/Fonts/3";
+
+	iText* text = this->zEng->CreateText(newString.c_str(), position, 0.7f, fontPath.c_str());
 
 	TextDisplay* displayedText = new TextDisplay(text, START_TEXT_TIMER);
 
