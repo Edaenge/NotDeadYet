@@ -48,7 +48,6 @@ Client::Client()
 
 	this->zSendUpdateDelayTimer = 0.0f;
 
-	
 	this->zEng = NULL;
 	
 	this->zGuiManager = NULL;
@@ -152,7 +151,8 @@ float Client::Update()
 
 	this->zFrameTime += this->zDeltaTime;
 
-	this->zGuiManager->Update(this->zDeltaTime);
+	if (this->zGuiManager)
+		this->zGuiManager->Update(this->zDeltaTime);
 
 	// Anchors with the world to decide what to render.
 	if(zWorld)
@@ -173,7 +173,7 @@ float Client::Update()
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
 	
-	if(this->zDamageIndicator != NULL)
+	if(this->zDamageIndicator)
 	{
 		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
 	}
@@ -181,7 +181,7 @@ float Client::Update()
 	if(this->zDamageOpacity < 0.0f)
 	{
 		this->zDamageOpacity = 0.0f;
-		if(this->zDamageIndicator != NULL)
+		if(this->zDamageIndicator)
 		{
 			this->zEng->DeleteImage(this->zDamageIndicator);
 			this->zDamageIndicator = NULL;
@@ -192,6 +192,19 @@ float Client::Update()
 
 void Client::InitGraphics(const std::string& mapName)
 {
+	if (this->zActorManager)
+		delete this->zActorManager;
+
+	if (this->zPlayerInventory)
+		delete this->zPlayerInventory;
+
+	if (this->zGuiManager)
+		delete this->zGuiManager;
+
+	this->zActorManager = new ClientActorManager();
+	this->zGuiManager = new GuiManager(this->zEng);
+	this->zPlayerInventory = new Inventory();
+
 	LoadEntList("Entities.txt");
 
 	if ( zWorld ) delete zWorld, zWorld=0;
@@ -246,11 +259,6 @@ void Client::Init()
 	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
 
 	this->zEng = GetGraphics();
-
-	this->zActorManager = new ClientActorManager();
-	this->zGuiManager = new GuiManager(this->zEng);
-	this->zPlayerInventory = new Inventory();
-
 }
 
 void Client::Life()
@@ -274,7 +282,7 @@ void Client::Life()
 			counter += this->zDeltaTime;
 			if (counter >= 1.0f)
 			{
-				std::string text = "Updates per second " + MaloW::convertNrToString((float)this->zUps);
+				std::string text = MaloW::convertNrToString((float)this->zUps);
 				this->zUpsText->SetText(text.c_str());
 				this->zUps = 0;
 				counter = 0;
@@ -300,8 +308,8 @@ void Client::Life()
 			{
 				this->zPam->ToggleMenu();
 				zShowCursor = this->zPam->GetShow();
-				// MAKE ME A DEER.
 
+				// MAKE ME A DEER.
 				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
 				this->zServerChannel->Send(msg);
 			}
@@ -309,6 +317,7 @@ void Client::Life()
 			{
 				this->zPam->ToggleMenu();
 				zShowCursor = this->zPam->GetShow();
+
 				// MAKE ME A BEAR.
 				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
 				this->zServerChannel->Send(msg);
