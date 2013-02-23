@@ -18,6 +18,8 @@ static const float TIMEOUT_VALUE = 10.0f;
 static const float UPDATE_DELAY = 0.020f;
 static const float MAX_DISTANCE_TO_OBJECT = 3.0f;
 
+static const float START_TEXT_TIMER = 7.0f;
+
 Client::Client()
 {
 	Messages::ClearDebug();
@@ -261,7 +263,7 @@ void Client::Life()
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->Update();
-
+		this->UpdateText();
 		this->CheckKeyboardInput();
 		if(this->zCreated)
 		{
@@ -1494,6 +1496,8 @@ bool Client::GetCursorVisibility()
 
 void Client::DisplayMessageToClient(const std::string& msg)
 {
+	this->AddDisplayText(msg);
+
 	MaloW::Debug(msg);
 }
 
@@ -1588,6 +1592,43 @@ void Client::UpdateCameraOffset(unsigned int state)
 	}
 }
 
+void Client::UpdateText()
+{
+	Vector2 position;
+	auto it = this->zDisplayedText.begin();
+	while (it != this->zDisplayedText.end())
+	{
+		TextDisplay* text  = (*it);
+
+		text->zTimer -= this->zDeltaTime;
+
+		if (text->zTimer <= 0)
+		{
+			position = text->zText->GetPosition();
+
+			this->zEng->DeleteText(text->zText);
+
+			it = this->zDisplayedText.erase(it);
+
+			for (auto new_It = it; new_It != this->zDisplayedText.end(); new_It++)
+			{
+				Vector2 oldPos = (*new_It)->zText->GetPosition();
+
+				(*new_It)->zText->SetPosition(position);
+
+				position = oldPos;
+			}
+			
+			delete text;
+			text = NULL;
+		}
+		else
+		{
+			it++;
+		}
+	}	
+}
+
 void Client::AddDisplayText( const std::string& msg )
 {
 	std::string newString = "";
@@ -1608,27 +1649,23 @@ void Client::AddDisplayText( const std::string& msg )
 	int windowWidth = this->zEng->GetEngineParameters().WindowWidth;
 	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;
 
-	float yPosition = (float)(windowHeight / (yPos + 2));
+	float yPosition = (float)(windowHeight / (yPos + 1) );
 	float xPosition = (float)(windowWidth * 0.333f);
+	float textheight = 10.0f;
 
-	Vector2 position = Vector2(xPosition, yPosition);
+	float c = 0;
+	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
+	{
+		(*it)->zText->SetPosition( Vector2(xPosition, c * yPosition) );
+
+		c++;
+	}
+
+	Vector2 position = Vector2(xPosition, c * yPosition);
 
 	iText* text = this->zEng->CreateText(newString.c_str(), position, 0.7f, "Media/Fonts/1");
 
-	TextDisplay* displayedText = new TextDisplay(text, 5.0f);
+	TextDisplay* displayedText = new TextDisplay(text, START_TEXT_TIMER);
 
-	this->zDisplayedText.insert(displayedText);
-}
-
-void Client::RemoveText( TextDisplay*& displayedText)
-{
-	if(!displayedText)
-		return;
-
-	this->zEng->DeleteText(displayedText->zText);
-
-	this->zDisplayedText.erase(displayedText);
-
-	delete displayedText;
-	displayedText = NULL;
+	this->zDisplayedText.push_back(displayedText);
 }

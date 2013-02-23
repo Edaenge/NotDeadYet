@@ -89,7 +89,6 @@ private:
 	bool CheckHumanSpecificMessages(std::vector<std::string> msgArray);
 
 	void AddDisplayText(const std::string& msg);
-	void RemoveText(TextDisplay*& displayedText);
 
 	//////////////////////
 	//					//
@@ -121,7 +120,8 @@ private:
 	void UpdateMeshRotation();
 	/*! Updates The Clock and returns the DeltaTime*/
 	float Update();
-
+	//Updates the text timer and removes the text when timer reaches 0
+	void UpdateText();
 	/*! Checks Ray Vs Static/Dynamic Objects*/
 	std::vector<unsigned int> RayVsWorld();
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
@@ -229,5 +229,5 @@ private:
 	iText* zUpsText;
 
 	//Error Text
-	std::set<TextDisplay*> zDisplayedText;
+	std::vector<TextDisplay*> zDisplayedText;
 };
