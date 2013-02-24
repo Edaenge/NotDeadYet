@@ -30,15 +30,11 @@ public:
 	{
 		this->zMesh = 0; 
 		this->zID = ID;
-		this->zState = STATE_NONE;
 
 		this->zSoundChecker = new SoundChecker();
 	}
 	virtual ~Actor()
 	{ 
-		if (this->zMesh)
-			this->zMesh = 0;
-
 		if(this->zSoundChecker) 
 			SAFE_DELETE(this->zSoundChecker);
 	}
@@ -48,25 +44,16 @@ public:
 	/*! Returns Object Model Scale*/
 	Vector3 GetScale() const {return this->zMesh->GetScaling();}
 	/*! Returns Object Model Position*/
-	inline Vector3 GetPosition() const 
-	{
-		if (this->zMesh)
-			return this->zMesh->GetPosition();
-		
-		return zPosition;
-	}
+	inline Vector3 GetPosition() const { return this->zMesh->GetPosition();}
 	/*! Returns Object Model Rotation*/
 	inline Vector4 GetRotation() const {return this->zMesh->GetRotationQuaternion();}
-	/*! Sets object Mesh data*/
-	inline unsigned int GetState() const {return this->zState;}
-
+	
+	/*! Sets Actor Mesh data*/
 	void SetModel(std::string model) {this->zModel = model;}
 	inline void SetPosition(const Vector3& pos) 
 	{
 		if (this->zMesh)
 			this->zMesh->SetPosition(pos);
-		else
-			this->zPosition = pos;
 	}
 	void SetScale(const Vector3& scale) {this->zMesh->SetScale(scale);}
 	inline void SetRotation(const Vector4& rot) 
@@ -80,7 +67,6 @@ public:
 	void SetStaticMesh(iMesh* mesh) {this->zMesh = mesh;}
 	/*!  Sets the Client Id given from the server*/
 	void SetID(const int clientID) {this->zID = clientID;}
-	void SetState(const unsigned int state) {this->zState = state;}
 
 	SoundChecker* GetSoundChecker(){ return this->zSoundChecker; }
 
@@ -89,6 +75,5 @@ protected:
 	std::string zModel;
 	iMesh* zMesh;
 	unsigned int zID;
-	unsigned int zState;
 	Vector3 zPosition;
 };

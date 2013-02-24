@@ -38,6 +38,7 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 {
 	float t = GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
 	static GraphicsEngine* gEng = GetGraphics();
+	
 	auto it_Update = this->zUpdates.begin();
 	while( it_Update != this->zUpdates.end() )
 	{
@@ -76,7 +77,6 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				{
 					actorIterator->second = update->GetState();
 				}
-				actor->SetState(update->GetState());
 				update->SetStateChange(false);
 			}
 			//if((*it_Update)->GetID() != clientID)

@@ -31,7 +31,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 		else if(strcmp(key, M_STATE.c_str()) == 0)
 		{
 			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
-			actor->SetState(state);
+			this->zActorManager->AddActorState(actor, state);
 		}
 		else if(strcmp(key, M_SCALE.c_str()) == 0)
 		{
@@ -105,65 +105,35 @@ void Client::AddActor( NewActorPacket* NAP )
 	Actor* actor = NULL;
 	unsigned int ID = 0;
 	
-	Vector3 position;
-	for (auto it = NAP->actorPosition.begin(); it != NAP->actorPosition.end(); it++)
-	{
-		ID = it->first;
-		position = it->second;
-
-		if (!this->zActorManager->GetActor(ID))
-		{
-			actor = new Actor(ID);
-			actor->SetPosition(position);
-
-			if (Messages::FileWrite())
-				Messages::Debug("Actor ID: " + MaloW::convertNrToString((float)ID) +" Added");
-
-			this->zActorManager->AddActor(actor);
-
-			if (!this->zCreated)
-			{
-				if (ID == this->zID)
-				{
-					if (this->zGuiManager)
-						SAFE_DELETE(this->zGuiManager);
-
-					this->zGuiManager = new GuiManager(this->zEng);
-					this->zCreated = true;
-
-					if (this->zActorType == GHOST)
-					{
-						this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
-						if(this->zPam->GetShow())
-							zShowCursor = true;
-						else
-							zShowCursor = false;
-					}
-				}
-			}
-		}
-		else
-		{
-			MaloW::Debug("Cant create a new Actor. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
-		}
-	}
-
 	std::string model;
 	for (auto it = NAP->actorModel.begin(); it != NAP->actorModel.end(); it++)
 	{
 		ID = it->first;
 		model = it->second;
 
-		actor = this->zActorManager->GetActor(ID);
-		if (actor)
+		if (!this->zActorManager->GetActor(ID))
 		{
+			actor = new Actor(ID);
+
 			//Creates a StaticMesh from the given Filename
-			iMesh* mesh = this->zEng->CreateStaticMesh(model.c_str(), actor->GetPosition());
-
+			iMesh* mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
+			
 			actor->SetStaticMesh(mesh);
+			actor->SetModel(model);
 
-			if (this->zID == ID)
+			if (Messages::FileWrite())
+				Messages::Debug("Actor ID: " + MaloW::convertNrToString((float)ID) +" Added with Model: " + model);
+
+			this->zActorManager->AddActor(actor);
+
+			if (ID == this->zID)
 			{
+				if (this->zGuiManager)
+					SAFE_DELETE(this->zGuiManager);
+
+				this->zGuiManager = new GuiManager(this->zEng);
+				this->zCreated = true;
+
 				auto meshOffsetsIterator = this->zMeshCameraOffsets.find(model);
 				if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
 				{
@@ -176,6 +146,38 @@ void Client::AddActor( NewActorPacket* NAP )
 
 				this->zActorManager->SetCameraOffset(this->zMeshOffset);
 				this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset);
+				this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
+
+				if (this->zActorType == GHOST)
+				{
+					this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
+					if(this->zPam->GetShow())
+						zShowCursor = true;
+					else
+						zShowCursor = false;
+				}
+			}
+		}
+		else
+		{
+			MaloW::Debug("Cant create a new Actor. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
+		}
+	}
+
+	Vector3 position;
+	for (auto it = NAP->actorPosition.begin(); it != NAP->actorPosition.end(); it++)
+	{
+		ID = it->first;
+		position = it->second;
+
+		actor = this->zActorManager->GetActor(ID);
+
+		if (actor)
+		{
+			actor->SetPosition(position);
+
+			if (this->zID == ID)
+			{
 				this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
 			}
 		}
@@ -323,8 +325,6 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		{
 			if (this->zID == ID)
 				this->UpdateCameraOffset(actorState);
-
-			actor->SetState(actorState);
 		}
 	}
 }

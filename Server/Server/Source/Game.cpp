@@ -1226,7 +1226,6 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 {
 	Actor* actor = NULL;
 
-
 	auto playerIterator = zPlayers.find(cd);
 	actor = playerIterator->second->GetBehavior()->GetActor();
 
