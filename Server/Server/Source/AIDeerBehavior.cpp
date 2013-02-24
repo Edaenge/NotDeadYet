@@ -4,7 +4,7 @@
 
 //STILL NEED TO ADD TARGETS AND HANDLE THEM
 
-AIDeerBehavior::AIDeerBehavior( Actor* actor, World* world ) : Behavior(actor, world)
+AIDeerBehavior::AIDeerBehavior( Actor* actor, World* world ) : AIBehavior(actor, world)
 {
 	InitValues();
 }

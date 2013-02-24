@@ -353,7 +353,6 @@ bool Game::Update( float dt )
 			}
 
 			//Get Data
-			Vector3 scale = projActor->GetScale();
 			float length = projBehavior->GetLenght();
 			float distance = length;
 			//Check collision, returns the result
@@ -379,14 +378,15 @@ bool Game::Update( float dt )
 		{
 			continue;
 		}
+		//*** AI, ignore ***
+		else if( dynamic_cast<AIBehavior*>(*i) )
+		{
+			continue;
+		}
 		//*** Others ***
 		else
 		{
 			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
-
-			//If Animal, Ignore
-			if( dynamic_cast<AnimalActor*>(pActor) )
-				continue;
 
 			//If actor hasn't moved, ignore
 			if( pActor && !pActor->HasMoved() )
@@ -409,7 +409,7 @@ bool Game::Update( float dt )
 				//Calculate Target rewind dir.
 				Vector3 target_rewind_dir = pActor_rewind_dir * -1;
 	
-				//Id target did not move, do not rewind position.
+				//If target did not move, do not rewind position.
 				if(target->HasMoved())
 					target->SetPosition( target->GetPosition() - (target_rewind_dir * 0.25f) );
 
@@ -418,6 +418,7 @@ bool Game::Update( float dt )
 			else if( WorldActor* object = dynamic_cast<WorldActor*>(collide) )
 			{
 				//Rewind the pActor only.
+				pActor_rewind_dir = pActor_rewind_dir;
 				pActor->SetPosition( pActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
 			}
 		}

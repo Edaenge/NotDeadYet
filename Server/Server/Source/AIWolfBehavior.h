@@ -1,6 +1,6 @@
-#include "Behavior.h"
+#include "AIBehavior.h"
 
-class AIWolfBehavior : public Behavior
+class AIWolfBehavior : public AIBehavior
 {
 private:
 

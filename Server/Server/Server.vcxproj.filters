@@ -135,6 +135,9 @@
     <ClCompile Include="Source\GameModeTest.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AIBehavior.cpp">
+      <Filter>Source\Actors\Behavior</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -265,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="Source\GameModeTest.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AIBehavior.h">
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

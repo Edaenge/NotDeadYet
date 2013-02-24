@@ -1,9 +1,7 @@
 #pragma once
-#include <World/World.h>
-#include "Behavior.h"
-#include "Actor.h"
+
 #include "DeerActor.h"
-#include "AI.h"
+#include "AIBehavior.h"
 
 enum MentalState
 {
@@ -32,7 +30,7 @@ struct Target //Supposed to represent an entity near the animal, like a player, 
 	Type	kind;
 };
 
-class AIDeerBehavior : public Behavior
+class AIDeerBehavior : public AIBehavior
 {
 private:
 	bool InitPathfinder();
