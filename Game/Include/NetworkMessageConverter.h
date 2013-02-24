@@ -119,7 +119,7 @@ static const std::string M_RESTART_GAME_REQUEST		= "RGR";
 */
 static const std::string M_PLAY_AS_ANIMAL			= "PAD";
 static const std::string M_LEAVE_ANIMAL				= "LA";
-static const std::string M_DEER_EAT_OBJECT		= "AE";
+static const std::string M_DEER_EAT_OBJECT			= "AE";
 //Data Messages
 static const std::string M_LOAD_MAP					= "LM";
 static const std::string M_CONNECTED				= "CON";
@@ -193,7 +193,7 @@ static const std::string M_IMPORTANT_MESSAGE		= "IM";
 static const std::string M_ACKNOWLEDGE_MESSAGE		= "ACK";
 //Player Messages
 static const std::string M_CLIENT_DATA				= "CD";
-static const std::string M_NEW_ACTOR				= "NP";
+static const std::string M_NEW_ACTOR				= "NA";
 static const std::string M_READY_PLAYER				= "PRM";
 //Confirmation Message
 static const std::string M_SELF_ID					= "SELF";

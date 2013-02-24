@@ -62,7 +62,8 @@ public:
 			ss.write( &typeName[0], typeNameSize );
 
 			// Write Packet Data
-			if ( !packet.Serialize(ss) ) throw("Failed Packet Serialization!");			
+			if ( !packet.Serialize(ss) ) 
+				throw("Failed Packet Serialization!");			
 
 			// Send
 			Send(ss.str());

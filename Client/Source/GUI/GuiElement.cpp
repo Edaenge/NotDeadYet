@@ -7,7 +7,7 @@ GuiElement::GuiElement()
 	this->zY = 0;
 	this->zWidth = 0;
 	this->zHeight = 0;
-	this->zGuiImage = 0;
+	this->zGuiImage = NULL;
 	this->zOpacity = 0.0f;
 	this->zHidden = true;
 	this->zTextureName = "Unknown";
@@ -17,7 +17,7 @@ GuiElement::GuiElement(float x, float y, float width, float height, std::string 
 {
 	this->zX = x;
 	this->zY = y;
-	this->zGuiImage = 0;
+	this->zGuiImage = NULL;
 	this->zHidden = true;
 	this->zOpacity = 0.0f;
 	this->zWidth = width;

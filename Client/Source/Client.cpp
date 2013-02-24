@@ -4,6 +4,7 @@
 #include <ClientServerMessages.h>
 #include <ClientServerMessages.h>
 #include <World/EntityList.h>
+#include <World/Entity.h>
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
 #include "Sounds.h"
@@ -48,7 +49,6 @@ Client::Client()
 
 	this->zSendUpdateDelayTimer = 0.0f;
 
-	
 	this->zEng = NULL;
 	
 	this->zGuiManager = NULL;
@@ -152,7 +152,8 @@ float Client::Update()
 
 	this->zFrameTime += this->zDeltaTime;
 
-	this->zGuiManager->Update(this->zDeltaTime);
+	if (this->zGuiManager)
+		this->zGuiManager->Update(this->zDeltaTime);
 
 	// Anchors with the world to decide what to render.
 	if(zWorld)
@@ -166,14 +167,14 @@ float Client::Update()
 
 			this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
 		}
-
 		this->zWorld->Update();
-		if ( zWorldRenderer ) zWorldRenderer->Update();
+		if ( zWorldRenderer ) 
+			zWorldRenderer->Update();
 	}		
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
 	
-	if(this->zDamageIndicator != NULL)
+	if(this->zDamageIndicator)
 	{
 		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
 	}
@@ -181,7 +182,7 @@ float Client::Update()
 	if(this->zDamageOpacity < 0.0f)
 	{
 		this->zDamageOpacity = 0.0f;
-		if(this->zDamageIndicator != NULL)
+		if(this->zDamageIndicator)
 		{
 			this->zEng->DeleteImage(this->zDamageIndicator);
 			this->zDamageIndicator = NULL;
@@ -192,9 +193,24 @@ float Client::Update()
 
 void Client::InitGraphics(const std::string& mapName)
 {
+	if (this->zActorManager)
+		delete this->zActorManager;
+
+	if (this->zPlayerInventory)
+		delete this->zPlayerInventory;
+
+	if (this->zGuiManager)
+		delete this->zGuiManager;
+
+	this->zActorManager = new ClientActorManager();
+	this->zGuiManager = new GuiManager(this->zEng);
+	this->zPlayerInventory = new Inventory();
+
 	LoadEntList("Entities.txt");
 
-	if ( zWorld ) delete zWorld, zWorld=0;
+	if ( zWorld ) 
+		delete zWorld, zWorld=0;
+
 	this->zWorld = new World(this, mapName, true);
 
 	Vector2 center = this->zWorld->GetWorldCenter();
@@ -246,11 +262,6 @@ void Client::Init()
 	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
 
 	this->zEng = GetGraphics();
-
-	this->zActorManager = new ClientActorManager();
-	this->zGuiManager = new GuiManager(this->zEng);
-	this->zPlayerInventory = new Inventory();
-
 }
 
 void Client::Life()
@@ -274,7 +285,7 @@ void Client::Life()
 			counter += this->zDeltaTime;
 			if (counter >= 1.0f)
 			{
-				std::string text = "Updates per second " + MaloW::convertNrToString((float)this->zUps);
+				std::string text = MaloW::convertNrToString((float)this->zUps);
 				this->zUpsText->SetText(text.c_str());
 				this->zUps = 0;
 				counter = 0;
@@ -300,8 +311,8 @@ void Client::Life()
 			{
 				this->zPam->ToggleMenu();
 				zShowCursor = this->zPam->GetShow();
-				// MAKE ME A DEER.
 
+				// MAKE ME A DEER.
 				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
 				this->zServerChannel->Send(msg);
 			}
@@ -309,6 +320,7 @@ void Client::Life()
 			{
 				this->zPam->ToggleMenu();
 				zShowCursor = this->zPam->GetShow();
+
 				// MAKE ME A BEAR.
 				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
 				this->zServerChannel->Send(msg);
@@ -1068,6 +1080,10 @@ void Client::HandleNetworkPacket( Packet* P )
 	{
 		this->UpdateActors(SFP);	
 	}
+	else if (NewActorPacket* NPA = dynamic_cast<NewActorPacket*>(P))
+	{
+		this->AddActor(NPA);
+	}
 
 	delete P;
 	P = NULL;
@@ -1096,8 +1112,13 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		{
 			packet = new ServerFramePacket();
 		}
+		else if (type == "NewActorPacket")
+		{
+			packet = new NewActorPacket();
+		}
 
-		if ( !packet ) throw("Unknown Packet Type");
+		if ( !packet ) 
+			throw("Unknown Packet Type");
 
 		// Deserialize
 		packet->Deserialize(ss);
@@ -1128,11 +1149,11 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
 	//	this->UpdateActor(msgArray, id);
 	//}
-	else if(msgArray[0].find(M_NEW_ACTOR.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
-		this->AddActor(msgArray, id);
-	}
+	//else if(msgArray[0].find(M_NEW_ACTOR.c_str()) == 0)
+	//{
+	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
+	//	this->AddActor(msgArray, id);
+	//}
 	else if (msgArray[0].find(M_ACTOR_TAKE_DAMAGE.c_str()) == 0)
 	{
 		if (msgArray.size() > 1)
@@ -1514,6 +1535,10 @@ void Client::OnEvent(Event* e)
 		// Create Anchor
 		zAnchor = WLE->world->CreateAnchor();
 		this->zWorldRenderer = new WorldRenderer(WLE->world, GetGraphics());
+	}
+	else if (EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e))
+	{
+		unsigned int type = ELE->entity->GetType();
 	}
 	else if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )
 	{

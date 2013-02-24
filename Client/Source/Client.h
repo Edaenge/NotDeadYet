@@ -14,7 +14,7 @@
 #include "GuiManager.h"
 #include <World/WorldRenderer.h>
 #include <Packets/ServerFramePacket.h>
-#include <Packets/Packet.h>
+#include <Packets/NewActorPacket.h>
 #include "InGameMenu.h"
 #include "PickAnimalMenu.h"
 
@@ -136,6 +136,7 @@ private:
 	//////////////////////
 	//Temporary Code
 	void UpdateActors(ServerFramePacket* SFP);
+	void AddActor(NewActorPacket* NAP);
 	bool RemoveActor(const unsigned int ID);
 	bool HandleTakeDamage(const unsigned int ID, float damageTaken);
 	/*! Adds A Player Object.*/
