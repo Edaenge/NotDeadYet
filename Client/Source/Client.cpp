@@ -4,6 +4,7 @@
 #include <ClientServerMessages.h>
 #include <ClientServerMessages.h>
 #include <World/EntityList.h>
+#include <World/Entity.h>
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
 #include "Sounds.h"
@@ -1079,10 +1080,10 @@ void Client::HandleNetworkPacket( Packet* P )
 	{
 		this->UpdateActors(SFP);	
 	}
-	//else if (NewActorPacket* NPA = dynamic_cast<NewActorPacket*>(P))
-	//{
-	//	this->AddActor(NPA);
-	//}
+	else if (NewActorPacket* NPA = dynamic_cast<NewActorPacket*>(P))
+	{
+		this->AddActor(NPA);
+	}
 
 	delete P;
 	P = NULL;
@@ -1111,10 +1112,10 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		{
 			packet = new ServerFramePacket();
 		}
-		//else if (type == "NewActorPacket")
-		//{
-		//	packet = new NewActorPacket();
-		//}
+		else if (type == "NewActorPacket")
+		{
+			packet = new NewActorPacket();
+		}
 
 		if ( !packet ) 
 			throw("Unknown Packet Type");
@@ -1148,11 +1149,11 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
 	//	this->UpdateActor(msgArray, id);
 	//}
-	else if(msgArray[0].find(M_NEW_ACTOR.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
-		this->AddActor(msgArray, id);
-	}
+	//else if(msgArray[0].find(M_NEW_ACTOR.c_str()) == 0)
+	//{
+	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
+	//	this->AddActor(msgArray, id);
+	//}
 	else if (msgArray[0].find(M_ACTOR_TAKE_DAMAGE.c_str()) == 0)
 	{
 		if (msgArray.size() > 1)
@@ -1534,6 +1535,10 @@ void Client::OnEvent(Event* e)
 		// Create Anchor
 		zAnchor = WLE->world->CreateAnchor();
 		this->zWorldRenderer = new WorldRenderer(WLE->world, GetGraphics());
+	}
+	else if (EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e))
+	{
+		unsigned int type = ELE->entity->GetType();
 	}
 	else if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )
 	{

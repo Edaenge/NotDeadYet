@@ -54,8 +54,8 @@ public:
 		{
 			unsigned int size = i->second.length();
 			ss.write(reinterpret_cast<const char*>(&i->first), sizeof(i->first));
-			ss.write(reinterpret_cast<const char*>(&size), sizeof(size));
-			ss.write(&i->second[0], size);
+			ss.write(reinterpret_cast<const char*>(&size), sizeof(unsigned int));
+			ss.write(&i->second[0], i->second.length());
 		}
 
 		num = actorState.size();
@@ -108,7 +108,7 @@ public:
 			ss.read(reinterpret_cast<char*>(&key), sizeof(unsigned int));
 			ss.read(reinterpret_cast<char*>(&size), sizeof(unsigned int));
 			value.resize(size);
-			ss.read(&value[0], sizeof(value));
+			ss.read(&value[0], size);
 			actorModel[key] = value;
 		}
 

@@ -9,13 +9,13 @@
 ActorSynchronizer::ActorSynchronizer()
 {
 	this->zFrameData = new ServerFramePacket();
-	//this->zActorData = new NewActorPacket();
+	this->zActorData = new NewActorPacket();
 }
 
 ActorSynchronizer::~ActorSynchronizer()
 {
 	SAFE_DELETE(this->zFrameData);
-	//SAFE_DELETE(this->zActorData);
+	SAFE_DELETE(this->zActorData);
 }
 
 void ActorSynchronizer::OnEvent( Event* e )
@@ -42,16 +42,16 @@ void ActorSynchronizer::OnEvent( Event* e )
 		if( WorldActor* WA = dynamic_cast<WorldActor*>(AD->zActor) )
 			return;
 
-		//this->zActorData->actorPosition[AD->zActor->GetID()] = AD->zActor->GetPosition();
-		//this->zActorData->actorRotation[AD->zActor->GetID()] = AD->zActor->GetRotation();
-		//this->zActorData->actorScale[AD->zActor->GetID()] = AD->zActor->GetScale();
-		//this->zActorData->actorModel[AD->zActor->GetID()] = AD->zActor->GetModel();
-		//if (BioActor* bActor = dynamic_cast<BioActor*>(AD->zActor))
-		//	this->zActorData->actorState[AD->zActor->GetID()] = bActor->GetState();
+		this->zActorData->actorPosition[AD->zActor->GetID()] = AD->zActor->GetPosition();
+		this->zActorData->actorRotation[AD->zActor->GetID()] = AD->zActor->GetRotation();
+		this->zActorData->actorScale[AD->zActor->GetID()] = AD->zActor->GetScale();
+		this->zActorData->actorModel[AD->zActor->GetID()] = AD->zActor->GetModel();
+		if (BioActor* bActor = dynamic_cast<BioActor*>(AD->zActor))
+			this->zActorData->actorState[AD->zActor->GetID()] = bActor->GetState();
 		
 
 		AD->zActor->AddObserver(this);
-		zNewActorSet.insert(AD->zActor);
+		//zNewActorSet.insert(AD->zActor);
 	}
 	else if(ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e))
 	{
@@ -72,9 +72,9 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 	NetworkMessageConverter nmc;
 	std::string msg;
 
-	//cd->Send(*zActorData);
+	cd->Send(*zActorData);
 
-	RegisterActor(cd);
+	//RegisterActor(cd);
 	
 	cd->Send(*zFrameData);
 
@@ -119,10 +119,10 @@ void ActorSynchronizer::ClearAll()
 
 	zFrameData = new ServerFramePacket();
 
-	//if (this->zActorData)
-	//	delete this->zActorData;
+	if (this->zActorData)
+		delete this->zActorData;
 
-	//zActorData = new NewActorPacket();
+	zActorData = new NewActorPacket();
 
 	// Clear Sets
 	this->zUpdateSet.clear();
