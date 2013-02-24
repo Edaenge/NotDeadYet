@@ -26,6 +26,7 @@
 #include "ClientServerMessages.h"
 #include "ItemLookup.h"
 #include "PlayerGhostBehavior.h"
+#include <Packets\NewActorPacket.h>
 
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
@@ -628,6 +629,8 @@ void Game::OnEvent( Event* e )
 
 		UDE->clientData->Send(message);
 
+		//NewActorPacket* NAP = new NewActorPacket();
+
 		//Gather Actors Information and send to client
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		for (auto it = actors.begin(); it != actors.end(); it++)
@@ -638,6 +641,14 @@ void Game::OnEvent( Event* e )
 			if(dynamic_cast<WorldActor*>(*it))
 				continue;
 
+			//NAP->actorPosition[(*it)->GetID()] = (*it)->GetPosition();
+			//NAP->actorRotation[(*it)->GetID()] = (*it)->GetRotation();
+			//NAP->actorScale[(*it)->GetID()] = (*it)->GetScale();
+			//NAP->actorModel[(*it)->GetID()] = (*it)->GetModel();
+
+			//if (BioActor* bActor = dynamic_cast<BioActor*>( (*it) ))
+			//	NAP->actorState[bActor->GetID()] = bActor->GetState();
+
 			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (float)(*it)->GetID());
 			message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
 			message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
@@ -647,7 +658,8 @@ void Game::OnEvent( Event* e )
 			//Sends this Actor to the new player
 			UDE->clientData->Send(message);
 		}
-
+		//UDE->clientData->Send(*NAP);
+		//SAFE_DELETE(NAP);
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{

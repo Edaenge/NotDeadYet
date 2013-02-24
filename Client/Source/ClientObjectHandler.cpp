@@ -3,9 +3,7 @@
 
 bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned int ID)
 {
-	Actor* testActor = this->zActorManager->GetActor(ID);
-
-	if (testActor)
+	if (this->zActorManager->GetActor(ID))
 	{
 		MaloW::Debug("Cant create a new Player Object. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
 		return false;
@@ -68,10 +66,10 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 		{
 			if (this->zGuiManager)
 				SAFE_DELETE(this->zGuiManager);
-
+					
 			this->zGuiManager = new GuiManager(this->zEng);
 			this->zCreated = true;
-			
+
 			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(filename);
 			if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
 			{
@@ -81,7 +79,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 			{
 				this->zMeshOffset = Vector3(0.0f, 0.5f, 0.0f);
 			}
-			
+
 			this->zActorManager->SetCameraOffset(this->zMeshOffset);
 			this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset);
 			this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
@@ -102,11 +100,163 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 	return true;
 }
 
+void Client::AddActor( NewActorPacket* NAP )
+{
+	Actor* actor = NULL;
+	unsigned int ID = 0;
+	
+	Vector3 position;
+	for (auto it = NAP->actorPosition.begin(); it != NAP->actorPosition.end(); it++)
+	{
+		ID = it->first;
+		position = it->second;
+
+		if (!this->zActorManager->GetActor(ID))
+		{
+			actor = new Actor(ID);
+			actor->SetPosition(position);
+
+			if (Messages::FileWrite())
+				Messages::Debug("Actor ID: " + MaloW::convertNrToString((float)ID) +" Added");
+
+			this->zActorManager->AddActor(actor);
+
+			if (!this->zCreated)
+			{
+				if (ID == this->zID)
+				{
+					if (this->zGuiManager)
+						SAFE_DELETE(this->zGuiManager);
+
+					this->zGuiManager = new GuiManager(this->zEng);
+					this->zCreated = true;
+
+					if (this->zActorType == GHOST)
+					{
+						this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
+						if(this->zPam->GetShow())
+							zShowCursor = true;
+						else
+							zShowCursor = false;
+					}
+				}
+			}
+		}
+		else
+		{
+			MaloW::Debug("Cant create a new Actor. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
+		}
+	}
+
+	std::string model;
+	for (auto it = NAP->actorModel.begin(); it != NAP->actorModel.end(); it++)
+	{
+		ID = it->first;
+		model = it->second;
+
+		actor = this->zActorManager->GetActor(ID);
+		if (actor)
+		{
+			//Creates a StaticMesh from the given Filename
+			iMesh* mesh = this->zEng->CreateStaticMesh(model.c_str(), actor->GetPosition());
+
+			actor->SetStaticMesh(mesh);
+
+			if (this->zID == ID)
+			{
+				auto meshOffsetsIterator = this->zMeshCameraOffsets.find(model);
+				if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
+				{
+					this->zMeshOffset = meshOffsetsIterator->second;
+				}
+				else
+				{
+					this->zMeshOffset = Vector3(0.0f, 0.5f, 0.0f);
+				}
+
+				this->zActorManager->SetCameraOffset(this->zMeshOffset);
+				this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset);
+				this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
+			}
+		}
+		else
+		{
+			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
+		}
+	}
+
+	Vector4 rotation;
+	for (auto it = NAP->actorRotation.begin(); it != NAP->actorRotation.end(); it++)
+	{
+		ID = it->first;
+		rotation = it->second;
+
+		actor = this->zActorManager->GetActor(ID);
+		if (actor)
+		{
+			if (actor->GetMesh())
+			{
+				actor->SetRotation(rotation);
+			}
+			else
+			{
+				MaloW::Debug("Failed to find Mesh for Actor with ID: " + MaloW::convertNrToString((float)ID));
+			}
+		}
+		else
+		{
+			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
+		}
+	}
+
+	Vector3 scale;
+	for (auto it = NAP->actorScale.begin(); it != NAP->actorScale.end(); it++)
+	{
+		ID = it->first;
+		scale = it->second;
+
+		actor = this->zActorManager->GetActor(ID);
+		if (actor)
+		{
+			if (actor->GetMesh())
+			{
+				actor->SetScale(scale);
+			}
+			else
+			{
+				MaloW::Debug("Failed to find Mesh for Actor with ID: " + MaloW::convertNrToString((float)ID));
+			}
+		}
+		else
+		{
+			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
+		}
+	}
+
+	unsigned int state;
+	for (auto it = NAP->actorState.begin(); it != NAP->actorState.end(); it++)
+	{
+		ID = it->first;
+		state = it->second;
+
+		actor = this->zActorManager->GetActor(ID);
+		if (actor)
+		{
+			this->zActorManager->AddActorState(actor, state);
+		}
+		else
+		{
+			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
+		}
+	}
+}
+
 void Client::UpdateActors(ServerFramePacket* SFP)
 {
 	Updates* update = NULL;
 	Actor* actor = NULL;
 	unsigned int ID = 0;
+
 	Vector3 actorPosition;
 	for(auto positionIterator = SFP->newPositions.begin(); positionIterator != SFP->newPositions.end(); positionIterator++)
 	{
@@ -127,6 +277,7 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		}
 
 	}
+
 	Vector4 actorRotation;
 	for(auto rotationIterator = SFP->newRotations.begin(); rotationIterator != SFP->newRotations.end(); rotationIterator++)
 	{
@@ -137,6 +288,7 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		if (actor && ID != this->zID)
 			actor->SetRotation(actorRotation);
 	}
+
 	Vector3 actorScale;
 	for(auto scaleIterator = SFP->newScales.begin(); scaleIterator != SFP->newScales.end(); scaleIterator++)
 	{
@@ -147,6 +299,7 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		if (actor)
 			actor->SetScale(actorScale);
 	}
+
 	unsigned int actorState;
 	for (auto stateIterator = SFP->newStates.begin(); stateIterator != SFP->newStates.end(); stateIterator++)
 	{
@@ -154,6 +307,18 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		actorState = stateIterator->second;
 
 		actor = this->zActorManager->GetActor(ID);
+
+		update = this->zActorManager->GetUpdate(ID);
+		if (update)
+		{
+			update->SetState(actorState);
+		}
+		else
+		{
+			update = new Updates(ID);
+			update->SetState(actorState);
+			this->zActorManager->AddUpdate(update);
+		}
 		if (actor)
 		{
 			if (this->zID == ID)

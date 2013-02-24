@@ -34,21 +34,40 @@ public:
 
 		this->zSoundChecker = new SoundChecker();
 	}
-	virtual ~Actor(){ if (this->zMesh){ this->zMesh = 0; } if(this->zSoundChecker) SAFE_DELETE(this->zSoundChecker);}
+	virtual ~Actor()
+	{ 
+		if (this->zMesh)
+			this->zMesh = 0;
+
+		if(this->zSoundChecker) 
+			SAFE_DELETE(this->zSoundChecker);
+	}
 	std::string GetModel() {return this->zModel;}
 	/*!	Returns Pointer to the Player Mesh*/
 	iMesh* GetMesh() const {return this->zMesh;}
 	/*! Returns Object Model Scale*/
 	Vector3 GetScale() const {return this->zMesh->GetScaling();}
 	/*! Returns Object Model Position*/
-	inline Vector3 GetPosition() const {return this->zMesh->GetPosition();}
+	inline Vector3 GetPosition() const 
+	{
+		if (this->zMesh)
+			return this->zMesh->GetPosition();
+		
+		return zPosition;
+	}
 	/*! Returns Object Model Rotation*/
 	inline Vector4 GetRotation() const {return this->zMesh->GetRotationQuaternion();}
 	/*! Sets object Mesh data*/
 	inline unsigned int GetState() const {return this->zState;}
 
 	void SetModel(std::string model) {this->zModel = model;}
-	inline void SetPosition(const Vector3& pos) {this->zMesh->SetPosition(pos);}
+	inline void SetPosition(const Vector3& pos) 
+	{
+		if (this->zMesh)
+			this->zMesh->SetPosition(pos);
+		else
+			this->zPosition = pos;
+	}
 	void SetScale(const Vector3& scale) {this->zMesh->SetScale(scale);}
 	inline void SetRotation(const Vector4& rot) 
 	{
@@ -71,4 +90,5 @@ protected:
 	iMesh* zMesh;
 	unsigned int zID;
 	unsigned int zState;
+	Vector3 zPosition;
 };

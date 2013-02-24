@@ -69,6 +69,16 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 					GetSounds()->PlaySounds("Media/Sound/RightStep.mp3", position);
 				soundChecker = NULL;
 			}
+			if (update->HasStateChanged())
+			{
+				auto actorIterator = this->zState.find(actor);
+				if (actorIterator != this->zState.end())
+				{
+					actorIterator->second = update->GetState();
+				}
+				actor->SetState(update->GetState());
+				update->SetStateChange(false);
+			}
 			//if((*it_Update)->GetID() != clientID)
 			//{
 			//	if ((*it_Update)->HasRotationChanged())
@@ -82,12 +92,7 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			//{
 			//	(*it_Update)->SetRotationChanged(false);
 			//}
-			//if ((*it_Update)->HasStateChanged())
-			//{
-			//	actor->SetState((*it_Update)->GetState());
-			//	(*it_Update)->SetStateChange(false);
-			//}
-			
+
 			if (!update->HasPositionChanged() )//&& !(*it_Update)->HasRotationChanged() && !(*it_Update)->HasStateChanged())
 			{
 				Updates* temp = update; 
@@ -140,9 +145,21 @@ void ClientActorManager::RemoveActor( const unsigned int ID )
 
 	Actor* actor = actorIterator->second;
 
+	auto actorStateIterator = this->zState.find(actor);
+	if (actorStateIterator != this->zState.end())
+	{
+		this->zState.erase(actorStateIterator);
+	}
+
 	SAFE_DELETE(actor);
 
 	this->zActors.erase(actorIterator);
+}
+
+void ClientActorManager::AddActorState( Actor* actor, unsigned int state )
+{
+	if (actor)
+		this->zState[actor] = state;
 }
 
 bool ClientActorManager::AddActor(Actor* actor)

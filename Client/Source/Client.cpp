@@ -166,9 +166,9 @@ float Client::Update()
 
 			this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
 		}
-
 		this->zWorld->Update();
-		if ( zWorldRenderer ) zWorldRenderer->Update();
+		if ( zWorldRenderer ) 
+			zWorldRenderer->Update();
 	}		
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
@@ -207,7 +207,9 @@ void Client::InitGraphics(const std::string& mapName)
 
 	LoadEntList("Entities.txt");
 
-	if ( zWorld ) delete zWorld, zWorld=0;
+	if ( zWorld ) 
+		delete zWorld, zWorld=0;
+
 	this->zWorld = new World(this, mapName, true);
 
 	Vector2 center = this->zWorld->GetWorldCenter();
@@ -1077,6 +1079,10 @@ void Client::HandleNetworkPacket( Packet* P )
 	{
 		this->UpdateActors(SFP);	
 	}
+	//else if (NewActorPacket* NPA = dynamic_cast<NewActorPacket*>(P))
+	//{
+	//	this->AddActor(NPA);
+	//}
 
 	delete P;
 	P = NULL;
@@ -1105,8 +1111,13 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		{
 			packet = new ServerFramePacket();
 		}
+		//else if (type == "NewActorPacket")
+		//{
+		//	packet = new NewActorPacket();
+		//}
 
-		if ( !packet ) throw("Unknown Packet Type");
+		if ( !packet ) 
+			throw("Unknown Packet Type");
 
 		// Deserialize
 		packet->Deserialize(ss);

@@ -2,49 +2,60 @@
 #include "Actor.h"
 #include "BioActor.h"
 #include <Packets\ServerFramePacket.h>
+#include <Packets\NewActorPacket.h>
 #include "WorldActor.h"
 
 
-ActorSynchronizer::ActorSynchronizer() : 
-	zFrameData( new ServerFramePacket() )
+ActorSynchronizer::ActorSynchronizer()
 {
+	this->zFrameData = new ServerFramePacket();
+	//this->zActorData = new NewActorPacket();
 }
 
 ActorSynchronizer::~ActorSynchronizer()
 {
 	SAFE_DELETE(this->zFrameData);
+	//SAFE_DELETE(this->zActorData);
 }
 
 void ActorSynchronizer::OnEvent( Event* e )
 {
 	if (ActorPositionEvent* UPE = dynamic_cast<ActorPositionEvent*>(e))
 	{
-		zFrameData->newPositions[UPE->zActor->GetID()] = UPE->zActor->GetPosition();
+		this->zFrameData->newPositions[UPE->zActor->GetID()] = UPE->zActor->GetPosition();
 	}
 	else if (ActorRotationEvent* URE = dynamic_cast<ActorRotationEvent*>(e))
 	{
-		zFrameData->newRotations[URE->zActor->GetID()] = URE->zActor->GetRotation();
+		this->zFrameData->newRotations[URE->zActor->GetID()] = URE->zActor->GetRotation();
 	}
 	else if (ActorScaleEvent* USE = dynamic_cast<ActorScaleEvent*>(e))
 	{
-		zFrameData->newScales[USE->zActor->GetID()] = USE->zActor->GetScale();
+		this->zFrameData->newScales[USE->zActor->GetID()] = USE->zActor->GetScale();
 	}
 	else if (BioActorStateEvent* BASE = dynamic_cast<BioActorStateEvent*>(e))
 	{
-		zFrameData->newStates[BASE->zBioActor->GetID()] = dynamic_cast<BioActor*>(BASE->zBioActor)->GetState();
+		this->zFrameData->newStates[BASE->zBioActor->GetID()] = dynamic_cast<BioActor*>(BASE->zBioActor)->GetState();
 	}
 	else if (ActorAdded* AD = dynamic_cast<ActorAdded*>(e))
 	{
-		// Do Not Synch World Actors
+		// Do Not Sync World Actors
 		if( WorldActor* WA = dynamic_cast<WorldActor*>(AD->zActor) )
 			return;
+
+		//this->zActorData->actorPosition[AD->zActor->GetID()] = AD->zActor->GetPosition();
+		//this->zActorData->actorRotation[AD->zActor->GetID()] = AD->zActor->GetRotation();
+		//this->zActorData->actorScale[AD->zActor->GetID()] = AD->zActor->GetScale();
+		//this->zActorData->actorModel[AD->zActor->GetID()] = AD->zActor->GetModel();
+		//if (BioActor* bActor = dynamic_cast<BioActor*>(AD->zActor))
+		//	this->zActorData->actorState[AD->zActor->GetID()] = bActor->GetState();
+		
 
 		AD->zActor->AddObserver(this);
 		zNewActorSet.insert(AD->zActor);
 	}
 	else if(ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e))
 	{
-		// Do Not Synch World Actors
+		// Do Not Sync World Actors
 		if( WorldActor* WA = dynamic_cast<WorldActor*>(AR->zActor) )
 			return;
 
@@ -60,6 +71,8 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 {
 	NetworkMessageConverter nmc;
 	std::string msg;
+
+	//cd->Send(*zActorData);
 
 	RegisterActor(cd);
 	
@@ -100,9 +113,16 @@ void ActorSynchronizer::RemoveActor( ClientData* cd )
 
 void ActorSynchronizer::ClearAll()
 {
-	// Clear Frame Data
-	delete zFrameData;
+	// Clear packets
+	if (this->zFrameData)
+		delete this->zFrameData;
+
 	zFrameData = new ServerFramePacket();
+
+	//if (this->zActorData)
+	//	delete this->zActorData;
+
+	//zActorData = new NewActorPacket();
 
 	// Clear Sets
 	this->zUpdateSet.clear();
