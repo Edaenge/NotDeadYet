@@ -225,8 +225,6 @@ void Client::IgnoreRender( const float& radius, Vector2& center )
 
 void Client::InitGraphics(const std::string& mapName)
 {
-	GetSounds()->StopMusic();
-
 	if (this->zActorManager)
 		delete this->zActorManager;
 
