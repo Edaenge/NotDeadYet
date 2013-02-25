@@ -58,6 +58,7 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 					position = this->InterpolatePosition(gEng->GetCamera()->GetPosition() - this->zCameraOffset, update->GetPosition(), t);
 					
 					AudioManager::GetInstance()->SetPlayerPosition(&ConvertToFmodVector(position), &ConvertToFmodVector(gEng->GetCamera()->GetForward()), &ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
+					footStep->Setposition(&ConvertToFmodVector(Vector3(0.0f, 5.0f, 0.0f)));
 					footStep->Play();
 					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
 				}
