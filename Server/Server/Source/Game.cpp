@@ -129,7 +129,7 @@ void Game::SpawnAnimalsDebug()
 			new_Food = new Food((*temp_food));
 
 			inv->AddItem(new_Food, stacked);
-			if(stacked)
+			if( stacked && new_Food->GetStackSize() == 0 )
 				SAFE_DELETE(new_Food);
 		}
 	}
@@ -1112,8 +1112,18 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 				if(pActor->GetInventory()->AddItem(item, stacked))
 				{
 					cd->Send(msg);
-					iActor->RemoveItem();
-					this->zActorManager->RemoveActor(iActor);
+
+					if( stacked && item->GetStackSize() == 0 )
+					{
+						iActor->RemoveItem();
+						this->zActorManager->RemoveActor(iActor);
+						SAFE_DELETE(item);
+					}
+					else if (!stacked)
+					{
+						iActor->RemoveItem();
+						this->zActorManager->RemoveActor(iActor);
+					}
 				}
 				else
 					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory_Full"));
@@ -1165,7 +1175,8 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 					if(pActor->GetInventory()->AddItem(item, stacked))
 					{
 						bActor->GetInventory()->RemoveItem(item);
-						if (stacked)
+
+						if( stacked && item->GetStackSize() == 0 )
 							SAFE_DELETE(item);
 
 						cd->Send(msg);
@@ -1493,7 +1504,7 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 									msg += new_Arrow->ToMessageString(&NMC);
 									cd->Send(msg);
 
-									if (stacked)
+									if( stacked && new_Arrow->GetStackSize() == 0 )
 										SAFE_DELETE(new_Arrow);
 								}
 							}
@@ -1590,7 +1601,7 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 										msg += new_Bow->ToMessageString(&NMC);
 										cd->Send(msg);
 
-										if (stacked)
+										if( stacked && new_Bow->GetStackSize() == 0 )
 											SAFE_DELETE(new_Bow);
 									}
 								}

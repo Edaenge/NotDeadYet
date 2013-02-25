@@ -4,6 +4,7 @@
 #include <Safe.h>
 
 const unsigned int GEAR_SLOTS = 4;
+const unsigned int MAX_QUIVER_SLOTS = 30;
 
 Inventory::Inventory()
 {
@@ -76,37 +77,99 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 	if (!item)
 		return false;
 
-	unsigned int weight = item->GetWeight() * item->GetStackSize();
-	if(this->zWeightTotal + weight <= this->zInventoryCap)
+	int slotsLeft = this->zInventoryCap - this->zWeightTotal;
+	unsigned int weight = item->GetWeight();
+	int available_slots = slotsLeft / weight;
+	
+	//No slots, return false
+	if( available_slots <= 0 )
+		return false;
+
+	if (item->GetStacking())
 	{
-		this->zWeightTotal += weight;
-
-		if (item->GetStacking())
+		Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType(), item->GetItemSubType());
+		if (existingItem)
 		{
-			Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType(), item->GetItemSubType());
-			if (existingItem)
-			{
-				existingItem->IncreaseStackSize(item->GetStackSize());
-				if (Messages::FileWrite())
-					Messages::Debug("Added Stack to inventory " + item->GetItemName());
+			if(weight == 0)
+				return false;
 
-				stacked = true;
-				return true;
+			int max_stack = MAX_QUIVER_SLOTS - existingItem->GetStackSize();
+			unsigned int stack;
+
+			if( max_stack <= 0 )
+				return false;
+
+			if(available_slots < max_stack)
+				max_stack = available_slots;
+
+			if( max_stack < item->GetStackSize() )
+			{
+				stack = max_stack;
+			}
+			else if( max_stack >= item->GetStackSize() )
+			{
+				stack = item->GetStackSize();
+			}
+
+			existingItem->IncreaseStackSize(stack);
+			item->DecreaseStackSize(stack);
+
+			if (Messages::FileWrite())
+				Messages::Debug("Added Stack to inventory " + item->GetItemName());
+
+			stacked = true;
+			this->zWeightTotal += weight * stack;
+
+			return true;
+		}
+		else 
+		{
+			if( item->GetStackSize() > available_slots )
+			{
+				unsigned int stack;
+				stack = available_slots;
+
+				Item* new_item = NULL;
+
+				if( Projectile* projItem  = dynamic_cast<Projectile*>(item) )
+					new_item = new Projectile(projItem);
+				else if( Material* matItem = dynamic_cast<Material*>(item) )
+					new_item = new Material(matItem);
+				else if( Food* foodItem = dynamic_cast<Food*>(item) )
+					new_item = new Food(foodItem);
+				else if( Bandage* bandageItem = dynamic_cast<Bandage*>(item) )
+					new_item = new Bandage(bandageItem);
+
+				if(new_item)
+				{
+					//To generate an ID. For now.
+					Projectile projectile;
+					new_item->SetItemID( projectile.GetID() );
+					new_item->SetStackSize(stack);
+					item->DecreaseStackSize(stack);
+					this->zItems.push_back(new_item);
+
+					stacked = true;
+					this->zWeightTotal += weight * stack;
+
+					return true;
+
+				}
 			}
 		}
-		//this->NotifyObservers()
-		this->zItems.push_back(item);
-		stacked = false;
-
-		if (Messages::FileWrite())
-			Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
-
-		return true;
 	}
-
-	MaloW::Debug("Failed to add item "+item->GetItemName() + " ID: " +MaloW::convertNrToString((float)item->GetID()));
-	MaloW::Debug("Inventory full current Weight = " + MaloW::convertNrToString((float)zWeightTotal) + " Weight to be Added = " + MaloW::convertNrToString((float)weight));
 	
+	this->zItems.push_back(item);
+	stacked = false;
+
+	if (Messages::FileWrite())
+		Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
+
+	this->zWeightTotal += weight * item->GetStackSize();
+
+	return true;
+	
+
 	return false;
 }
 

@@ -839,15 +839,28 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	if (this->zPlayerInventory->AddItem(item, stacked))
 	{
 		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
-		Projectile* projectile = this->zPlayerInventory->GetProjectile();
 
-		if(stacked && projectile && (projectile->GetItemSubType() == itemSubType))
+		if(stacked)
 		{
-			Gui_Item_Data gid = Gui_Item_Data(projectile->GetID(), totalWeight, projectile->GetStackSize(), 
-				projectile->GetItemName(), projectile->GetIconPath(), projectile->GetItemDescription(), projectile->GetItemType(), projectile->GetItemSubType());
+			Item* existingItem = zPlayerInventory->SearchAndGetItemFromType(item->GetItemType(), item->GetItemSubType());
+
+			Gui_Item_Data gid = Gui_Item_Data(existingItem->GetID(), totalWeight, existingItem->GetStackSize(), 
+				existingItem->GetItemName(), existingItem->GetIconPath(), existingItem->GetItemDescription(), existingItem->GetItemType(), existingItem->GetItemSubType());
 
 			this->zGuiManager->RemoveInventoryItemFromGui(gid);
-			this->zGuiManager->EquipItem(PROJECTILE, gid);
+
+			Projectile* projItem = dynamic_cast<Projectile*>(existingItem);
+			if( projItem && projItem == zPlayerInventory->GetProjectile() )
+			{
+				this->zGuiManager->EquipItem(PROJECTILE, gid);
+			}
+			else
+			{
+				this->zGuiManager->AddInventoryItemToGui(gid);
+			}
+
+			if(item->GetStackSize() == 0)
+				SAFE_DELETE(item);
 		}
 		else
 		{

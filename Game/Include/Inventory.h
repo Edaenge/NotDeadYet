@@ -15,6 +15,7 @@
 #include "Bandage.h"
 #include <vector>
 #include "Observer.h"
+
 enum EQUIPMENT_SLOT
 {
 	EQUIPMENT_SLOT_MELEE_WEAPON,
