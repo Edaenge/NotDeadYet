@@ -22,22 +22,25 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const Vector
 	switch (ID)
 	{
 	case MESSAGE_TYPE_UP:
-		ss << M_UP << " " << x << " " << y << " " << z <<"*";
+		ss << M_UP;
 		break;
 	case MESSAGE_TYPE_DIRECTION:
-		ss << M_DIRECTION << " " << x << " " << y << " " << z <<"*";
+		ss << M_DIRECTION;
 		break;
 	case MESSAGE_TYPE_POSITION:
-		ss << M_POSITION << " " << x << " " << y << " " << z <<"*";
+		ss << M_POSITION;
 		break;
 	case MESSAGE_TYPE_SCALE:
-		ss << M_SCALE << " " << x << " " << y << " " << z <<"*";
+		ss << M_SCALE; 
+		break;
+	case MESSAGE_TYPE_SUN_DIRECTION:
+		ss << M_SUN_DIRECTION;
 		break;
 	default:
 		ss << "";
 		break;
 	}
-
+	ss << " " << x << " " << y << " " << z <<"*";
 	return ss.str();
 }
 

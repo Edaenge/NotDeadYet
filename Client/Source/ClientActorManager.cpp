@@ -16,7 +16,10 @@ ClientActorManager::~ClientActorManager()
 	{
 		if(it->second)
 		{
-			ge->DeleteMesh(it->second->GetMesh());
+			iMesh* mesh = it->second->GetMesh();
+			if (mesh)
+				ge->DeleteMesh(mesh);
+
 			delete it->second;
 			it->second = NULL;
 		}

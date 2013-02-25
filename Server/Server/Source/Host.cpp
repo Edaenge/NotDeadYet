@@ -5,6 +5,7 @@
 #include "ClientDroppedEvent.h"
 #include "ActorSynchronizer.h"
 #include "Physics.h"
+#include <algorithm>
 
 // 50 updates per sec
 static const float UPDATE_DELAY = 0.020f;
@@ -66,6 +67,12 @@ void Host::SendMessageToClient( const std::string& message )
 	if (message.find("EV") == 0)
 	{
 		std::string msg = this->zMessageConverter.ConvertStringToSubstring("EV", message, true);
+
+		std::transform(msg.begin(), msg.end(), msg.begin(), ::tolower);
+		if (msg.find("restart") == 0)
+		{
+			Restart(this->zGameMode, this->zMapName);
+		}
 	}
 	else
 	{

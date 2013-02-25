@@ -38,13 +38,11 @@ void Game::Run()
 	}
 }
 
-void Game::InitGameClient(const std::string &IP, const unsigned int &port)
+void Game::InitGameClient(const std::string &IP, const unsigned int &port, std::string& errMsg, int& errorCode)
 {
 	//If a Client Hasn't been created yet Create one
 	if(this->zClient)
-	{
 		SAFE_DELETE(this->zClient);
-	}
 
 	//Connects to a Host With the IP Address and port in the parameters
 	// TODO: RAII
@@ -53,8 +51,9 @@ void Game::InitGameClient(const std::string &IP, const unsigned int &port)
 		GetGraphics()->GetEngineParameters().WindowHeight), "Media/LoadingScreen/FadeTexture.png");
 	this->zClient->SetBlackImage(blackImage);
 	blackImage = NULL;
-	this->zClient->Connect(IP, port);
-	this->zClient->Start();
+	this->zClient->Connect(IP, port, errMsg, errorCode);
+	if (errMsg == "")
+		this->zClient->Start();
 }
 
 bool Game::InitSounds(SoundHandler* engine)
