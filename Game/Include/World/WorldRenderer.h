@@ -34,6 +34,7 @@ public:
 	CollisionData GetCollisionDataWithGround();
 	CollisionData Get3DRayCollisionDataWithGround();
 	Entity* Get3DRayCollisionWithMesh();
+	iMesh* GetEntityMesh(Entity* entity);
 	float GetYPosFromHeightMap(float x, float y);
 
 	void Update();

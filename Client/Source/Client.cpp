@@ -170,6 +170,8 @@ float Client::Update()
 		this->zWorld->Update();
 		if ( zWorldRenderer ) 
 			zWorldRenderer->Update();
+
+		IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
@@ -189,6 +191,43 @@ float Client::Update()
 		}
 	}
 	return this->zDeltaTime;
+}
+
+void Client::IgnoreRender( const float& radius, Vector2& center )
+{
+	static std::set<Entity*> previousEntities;
+	std::set<Entity*> entities; 
+	std::set<Entity*> validEntities;
+
+	zWorld->GetEntitiesInCircle(center, radius, entities);
+
+	for (auto it = entities.begin(); it != entities.end(); it++)
+	{
+		if ( GetEntBlockRadius( (*it)->GetType() ) <= 0.0f )
+		{
+			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*it);
+			
+			if(mesh)
+			{
+				mesh->DontRender(false);
+				validEntities.insert(*it);
+			}
+		}
+	}
+
+	/*Check previous, if prev is not in valid, they should not be rendered.*/
+	for(auto it = previousEntities.begin(); it != previousEntities.end(); it++)
+	{
+		auto found = validEntities.find(*it);
+
+		if(found == validEntities.end())
+		{
+			this->zWorldRenderer->GetEntityMesh(*it)->DontRender(true);
+		}
+	}
+
+	previousEntities.clear();
+	previousEntities = validEntities;
 }
 
 void Client::InitGraphics(const std::string& mapName)
@@ -250,6 +289,22 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zUpsText = this->zEng->CreateText("", Vector2(1, 1), 0.7f, "Media/Fonts/1");
 
 	GetSounds()->PlayMusic("Media/Sound/ForestAmbience.mp3");
+
+	//Go through entities (bush etc) and set render flag.
+	std::set<Entity*> entities;
+	Vector2 size = zWorld->GetWorldSize();
+	float radius = powf(size.x, 2.0f) + powf(size.y, 2.0f);
+	zWorld->GetEntitiesInCircle(center, (radius * 0.5f), entities);
+
+	for (auto i = entities.begin(); i != entities.end(); i++)
+	{
+
+		if ( GetEntBlockRadius( (*i)->GetType() ) <= 0.0f )
+		{
+			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*i);
+			mesh->DontRender(true);
+		}
+	}
 }
 
 void Client::Init()

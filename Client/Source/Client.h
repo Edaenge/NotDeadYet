@@ -129,6 +129,8 @@ private:
 
 	void UpdateCameraOffset(unsigned int state);
 
+	void IgnoreRender(const float& radius, Vector2& center);
+
 	//////////////////////
 	//					//
 	//	   Actors		//
