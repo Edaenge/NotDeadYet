@@ -133,5 +133,5 @@ private:
 	Vector3 zCameraOffset;
 
 	FMOD_VECTOR ConvertToFmodVector(Vector3 v);
-	IEventHandle* footStep;
+	IEventHandle** zFootStep;
 };

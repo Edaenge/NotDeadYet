@@ -12,6 +12,7 @@ class AudioManager;
 #include "IAudioLoader.h"
 #include "IAudioMusic.h"
 #include "IAudioEvents.h"
+#include "sounds.h"
 
 class AudioManager: public IAudioManager, public IAudioLoader, public IAudioMusic, public IAudioEvents
 {

@@ -1,14 +1,17 @@
 #include "ClientActorManager.h"
 #include "Safe.h"
 #include "Graphics.h"
-#include "sounds.h"
 
 #define PI 3.14159265358979323846f
+#define MAXFOOTSTEPS 32
 
 ClientActorManager::ClientActorManager()
 {
 	AudioManager* am = AudioManager::GetInstance();
-	am->GetEventHandle(EVENTGROUP_NOTDEADYET_WALK, footStep);
+	this->zFootStep = new IEventHandle*[MAXFOOTSTEPS];
+	for(int i = 0; i < MAXFOOTSTEPS; i++)
+		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_GRASS, this->zFootStep[i]);
+
 	zInterpolationVelocity = 100.0f;
 }
 
@@ -35,40 +38,55 @@ ClientActorManager::~ClientActorManager()
 		}
 	}
 	this->zUpdates.clear();
+
+	for(int i = 0; i < MAXFOOTSTEPS; i++)
+		this->zFootStep[i]->Release();
+
+	delete this->zFootStep;
 }
 
 void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 {
+	vector<Actor*> actors;
 	float t = GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
 	static GraphicsEngine* gEng = GetGraphics();
-	
+	int stepsPlayedThisUpdate = 1;
+
+	Vector3 position;
 	auto it_Update = this->zUpdates.begin();
 	while( it_Update != this->zUpdates.end() )
 	{
 		Updates* update = it_Update->second;
 		Actor* actor = this->GetActor(update->GetID());
+		position = Vector3(0.0f, 0.0f, 0.0f);
 
 		if (actor)
 		{
 			if (update->HasPositionChanged())
 			{
-				Vector3 position;
 				if(update->GetID() == clientID)
 				{
 					position = this->InterpolatePosition(gEng->GetCamera()->GetPosition() - this->zCameraOffset, update->GetPosition(), t);
 					
 					AudioManager::GetInstance()->SetPlayerPosition(&ConvertToFmodVector(position), &ConvertToFmodVector(gEng->GetCamera()->GetForward()), &ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
-					footStep->Setposition(&ConvertToFmodVector(Vector3(0.0f, 5.0f, 0.0f)));
-					footStep->Play();
+					
+					this->zFootStep[MAXFOOTSTEPS-1]->Setposition(&ConvertToFmodVector(Vector3(48.0f, 0.0f, 48.0f)));
+					this->zFootStep[MAXFOOTSTEPS-1]->Play();
+
 					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
 				}
 				else 
 				{
 					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
 					actor->SetPosition(position);
+					if(stepsPlayedThisUpdate < MAXFOOTSTEPS)
+					{
+						this->zFootStep[stepsPlayedThisUpdate]->Setposition(&ConvertToFmodVector(position));
+						this->zFootStep[stepsPlayedThisUpdate]->Play();
+					}
+
 				}
 				update->ComparePosition(position);
-
 			}
 			if (update->HasStateChanged())
 			{
@@ -92,7 +110,6 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			//{
 			//	(*it_Update)->SetRotationChanged(false);
 			//}
-
 			if (!update->HasPositionChanged() )//&& !(*it_Update)->HasRotationChanged() && !(*it_Update)->HasStateChanged())
 			{
 				Updates* temp = update; 
@@ -102,14 +119,11 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			else
 			{
 				it_Update++;
+				stepsPlayedThisUpdate++;
 			}
 		}
 		else
 		{
-			if(update->GetID() == clientID)
-			{
-				footStep->Stop();
-			}
 			Updates* temp = update; 
 			it_Update = zUpdates.erase(it_Update);
 			SAFE_DELETE(temp);

@@ -1,6 +1,5 @@
 #include "MainMenu.h"
 #include "Safe.h"
-#include "SoundEngine/sounds.h"
 
 MainMenu::MainMenu()
 {
@@ -20,6 +19,9 @@ MainMenu::~MainMenu()
 	zSets = 0;
 	SAFE_DELETE(this->zGame);
 
+	ambientMusic->Release();
+	menuClick->Release();
+
 	AudioManager::ReleaseInstance();
 }
 
@@ -36,9 +38,9 @@ void MainMenu::Init()
 	AudioManager* am = AudioManager::GetInstance();
 	am->GetEventHandle(EVENTID_NOTDEADYET_AMBIENCE_FOREST, ambientMusic);
 	ambientMusic->Play();
-
-	am->GetEventHandle(EVENTID_NOTDEADYET_MENU_TOGGLE_N_CLICK, menuClick);
-	
+	ambientMusic->Setvolume(0.2f);
+	am->GetEventHandle(EVENTID_NOTDEADYET_MENU_N_BACKPACK_TOGGLE_N_CLICK, menuClick);
+	menuClick->Setvolume(0.2f);
 
 	GraphicsEngine* eng = GetGraphics();
 
