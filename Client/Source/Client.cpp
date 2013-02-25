@@ -847,6 +847,38 @@ void Client::CheckAnimalInput()
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
 		}
 	}
+
+	if (this->zEng->GetKeyListener()->IsClicked(1))
+	{
+		if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_LEFT_PRESS);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
+	}
+
+	if (this->zEng->GetKeyListener()->IsClicked(2))
+	{
+		if (!this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_RIGHT_PRESS);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, false);
+	}
 }
 
 //Use to equip weapon with keyboard

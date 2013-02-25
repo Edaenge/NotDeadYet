@@ -245,6 +245,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_PLAY_AS_ANIMAL:
 		ss << M_PLAY_AS_ANIMAL;
 		break;
+	case MESSAGE_TYPE_ANIMAL_ATTACK:
+		ss << M_ANIMAL_ATTACK;
+		break;
 	case MESSAGE_TYPE_STAMINA:
 		ss << M_STAMINA;
 		break;
