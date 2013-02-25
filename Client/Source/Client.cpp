@@ -164,7 +164,7 @@ float Client::Update()
 		if ( zWorldRenderer ) 
 			zWorldRenderer->Update();
 
-		IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
+		this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
@@ -1589,10 +1589,6 @@ void Client::OnEvent(Event* e)
 		// Create Anchor
 		zAnchor = WLE->world->CreateAnchor();
 		this->zWorldRenderer = new WorldRenderer(WLE->world, GetGraphics());
-	}
-	else if (EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e))
-	{
-		unsigned int type = ELE->entity->GetType();
 	}
 	else if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )
 	{

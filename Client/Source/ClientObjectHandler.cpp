@@ -115,8 +115,17 @@ void Client::AddActor( NewActorPacket* NAP )
 		{
 			actor = new Actor(ID);
 
-			//Creates a StaticMesh from the given Filename
-			iMesh* mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
+			iMesh* mesh = NULL;
+			//Creates a Mesh from the given Filename
+			std::string substring = model.substr(model.length() - 4);
+			if (substring == ".obj" || substring == ".ani")
+			{
+				mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
+			}
+			else if (substring == ".fbx")
+			{
+				mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
+			}
 			
 			actor->SetStaticMesh(mesh);
 			actor->SetModel(model);

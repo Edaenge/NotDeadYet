@@ -70,6 +70,15 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
 					actor->SetPosition(position);
 				}
+				//iMesh* mesh = actor->GetMesh();
+				//if (iFBXMesh* iFbxMesh = dynamic_cast<iFBXMesh*>(mesh))
+				//{
+				//	unsigned int state = this->GetState(actor);
+				//	if (state != 500)
+				//	{
+				//		iFbxMesh->SetAnimation()
+				//	}
+				//}
 				update->ComparePosition(position);
 
 			}
@@ -77,9 +86,8 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			{
 				auto actorIterator = this->zState.find(actor);
 				if (actorIterator != this->zState.end())
-				{
 					actorIterator->second = update->GetState();
-				}
+
 				update->SetStateChange(false);
 			}
 			//if((*it_Update)->GetID() != clientID)
@@ -167,6 +175,18 @@ void ClientActorManager::AddActorState( Actor* actor, unsigned int state )
 {
 	if (actor)
 		this->zState[actor] = state;
+}
+
+unsigned int ClientActorManager::GetState( Actor* actor )
+{
+	if (actor)
+	{
+		auto stateIterator = this->zState.find(actor);
+		if (stateIterator != this->zState.end())
+			return stateIterator->second;
+	}	
+
+	return 500;
 }
 
 bool ClientActorManager::AddActor(Actor* actor)
