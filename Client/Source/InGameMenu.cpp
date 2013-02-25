@@ -119,21 +119,6 @@ int InGameMenu::Run()
 			tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ViewDistance");
 			GEP.FarClip = MaloW::convertStringToFloat(tbTemp);
 
-			//Master Volume
-			tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MasterVolume");
-			float temp = MaloW::convertStringToFloat(tbTemp) / 100;
-			GetSounds()->SetMasterVolume(temp);
-
-			//Music Volume
-			tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MusicVolume");
-			temp = MaloW::convertStringToFloat(tbTemp) / 100;
-			GetSounds()->SetMusicVolume(temp);
-
-			//Normal Volume
-			tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("NormalVolume");
-			temp = MaloW::convertStringToFloat(tbTemp) / 100;
-			GetSounds()->SetSoundVolume(temp);
-
 			GEP.SaveToFile("Config.cfg");
 
 			this->SwapMenus(cEvent->GetSet());

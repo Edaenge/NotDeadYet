@@ -6,7 +6,6 @@
 #include <World/EntityList.h>
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
-#include "Sounds.h"
 #include "PlayerConfig/PlayerSettings.h"
 
 using namespace MaloW;
@@ -65,13 +64,6 @@ Client::Client()
 	
 	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
-	
-	GetSounds()->LoadMusicIntoSystem("Media/Sound/ForestAmbience.mp3", true);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Running_Breath_4.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/LeftStep.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/RightStep.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/BowShot.mp3", false);
 }
 
 void Client::Connect(const std::string &IPAddress, const unsigned int &port)
@@ -115,7 +107,6 @@ Client::~Client()
 	if (this->zCrossHair) 
 		this->zEng->DeleteImage(this->zCrossHair);
 
-	GetSounds()->StopMusic();
 }
 
 float Client::Update()
@@ -210,7 +201,6 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 	this->zCrossHair->SetOpacity(0.5f);
 
-	GetSounds()->PlayMusic("Media/Sound/ForestAmbience.mp3");
 }
 
 void Client::Init()
@@ -256,6 +246,9 @@ void Client::Life()
 
 			this->UpdateActors();
 		}
+
+		AudioManager* am = AudioManager::GetInstance();
+		am->Update();
 
 		this->ReadMessages();
 		if(this->zPam->GetShow())
@@ -1184,10 +1177,9 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msg.find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		std::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
+		std	::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
 
-		GetSounds()->PlaySounds(&fileName[0], pos);
 	}
 	else if(msg.find(M_SELF_ID.c_str()) == 0)
 	{
@@ -1371,7 +1363,6 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 		//Set the opacity
 		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
 
-		GetSounds()->PlaySounds("Media/Sound/Breath.wav", playerPos);
 	}
 	return true;
 }
