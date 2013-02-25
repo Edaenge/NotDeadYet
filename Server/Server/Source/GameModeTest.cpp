@@ -17,7 +17,7 @@ GameModeTest::GameModeTest(Game* game, int killLimit) : GameMode(game)
 
 GameModeTest::~GameModeTest()
 {
-
+	this->zGame->RemoveObserver(this);
 }
 
 bool GameModeTest::Update( float dt )
@@ -50,6 +50,30 @@ void GameModeTest::OnEvent( Event* e )
 						zScoreBoard[dpa->GetPlayer()]++;
 					else if( dpa == pActor )
 						zScoreBoard[pActor->GetPlayer()]--;
+
+				std::string killsMsg = "";
+				Player* player = pActor->GetPlayer();
+				if (ATD->zActor == ATD->zDealer)
+				{
+					killsMsg = player->GetPlayerName() + " Killed Himself";
+				}
+				else if (PlayerActor* pDealer = dynamic_cast<PlayerActor*>(ATD->zDealer))
+				{
+					Player* dealer = pDealer->GetPlayer();
+					killsMsg = player->GetPlayerName() + " Was Killed by " + dealer->GetPlayerName();
+				}
+				else if (AnimalActor* pDealer =dynamic_cast<AnimalActor*>(ATD->zDealer))
+				{
+					killsMsg = player->GetPlayerName() + " Was killed by an Animal";
+				}
+				else
+				{
+					killsMsg = player->GetPlayerName() + " Was Killed by the environment";
+				}
+
+				NetworkMessageConverter NMC;
+				std::string msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+				this->zGame->SendToAll(msg);
 
 				OnPlayerDeath(pActor);
 			}

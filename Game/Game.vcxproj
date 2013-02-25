@@ -94,6 +94,7 @@
     <ClInclude Include="Include\Material.h" />
     <ClInclude Include="Include\MeleeWeapon.h" />
     <ClInclude Include="Include\NetworkMessageConverter.h" />
+    <ClInclude Include="Include\Packets\NewActorPacket.h" />
     <ClInclude Include="Include\Packets\Packet.h" />
     <ClInclude Include="Include\Packets\ServerFramePacket.h" />
     <ClInclude Include="Include\Projectile.h" />

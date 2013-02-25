@@ -16,6 +16,7 @@ public:
 	virtual	~PlayerBehavior();
 
 	bool ProcessClientData(Vector3 direction, Vector4 rotation);
+	inline Player* GetPlayer() const {return this->zPlayer;}
 
 protected:
 	Player* zPlayer;

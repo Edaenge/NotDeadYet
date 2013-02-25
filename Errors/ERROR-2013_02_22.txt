@@ -1,0 +1,42 @@
+#1 
+Sprint blir sprint x1000 - hamnar långt åt helvete på en sec.
+
+#2
+Ghost rör sig helt random i början när man dör.
+
+#3 
+Connect till fel ip/inaktiv ger crash.
+
+#4
+Kan inte ta upp så mycket som går av en stack när man nästan har fullt.
+
+#5
+FIX MOVEMENT 
+
+#6
+Kan inte skjuta pilar nära, bra/dåligt?
+
+#7
+W + A = slow movement (kanske i sidled endast?)
+
+#8
+Sprintar man in i träd springer man igenom det
+
+#9
+axe fungerar inte? not sure
+
+#10
+Random skada (hunger syns inte)
+
+#11
+Skador syns inte från vilket håll det kommer
+
+#12
+Crash när d/c via knappen (Unknown)
+
+#13
+Skjuter man för många pilar -> crash.
+
+
+
+

@@ -25,6 +25,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_SERVER_FULL,
 	MESSAGE_TYPE_SERVER_SHUTDOWN,
 	MESSAGE_TYPE_ERROR_MESSAGE,
+	MESSAGE_TYPE_SERVER_ANNOUNCEMENT,
 	MESSAGE_TYPE_IMPORTANT_MESSAGE,
 	MESSAGE_TYPE_ACKNOWLEDGE,
 	MESSAGE_TYPE_NEW_ACTOR,
@@ -118,7 +119,7 @@ static const std::string M_RESTART_GAME_REQUEST		= "RGR";
 */
 static const std::string M_PLAY_AS_ANIMAL			= "PAD";
 static const std::string M_LEAVE_ANIMAL				= "LA";
-static const std::string M_DEER_EAT_OBJECT		= "AE";
+static const std::string M_DEER_EAT_OBJECT			= "AE";
 //Data Messages
 static const std::string M_LOAD_MAP					= "LM";
 static const std::string M_CONNECTED				= "CON";
@@ -186,12 +187,13 @@ static const std::string M_SERVER_FULL				= "SF";
 static const std::string M_SERVER_SHUTDOWN			= "SS";
 //Error Message
 static const std::string M_ERROR_MESSAGE			= "EM";
+static const std::string M_SERVER_ANNOUNCEMENT		= "SA";
 //Important Message Tag
 static const std::string M_IMPORTANT_MESSAGE		= "IM";
 static const std::string M_ACKNOWLEDGE_MESSAGE		= "ACK";
 //Player Messages
 static const std::string M_CLIENT_DATA				= "CD";
-static const std::string M_NEW_ACTOR				= "NP";
+static const std::string M_NEW_ACTOR				= "NA";
 static const std::string M_READY_PLAYER				= "PRM";
 //Confirmation Message
 static const std::string M_SELF_ID					= "SELF";
@@ -224,8 +226,8 @@ public:
 	Vector4 ConvertStringToQuaternion(const std::string& type, const std::string& msg);
 	int ConvertStringToInt(const std::string& type, const std::string& msg);
 	float ConvertStringToFloat(const std::string& type, const std::string& msg);
-	std::string ConvertStringToSubstring(const std::string& type, const std::string& msg);
-private:
+	std::string ConvertStringToSubstring(const std::string& type, const std::string& msg, bool bReplaceUnderscore = false);
 
+private:
 
 };

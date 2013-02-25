@@ -26,6 +26,7 @@
 #include "ClientServerMessages.h"
 #include "ItemLookup.h"
 #include "PlayerGhostBehavior.h"
+#include <Packets\NewActorPacket.h>
 
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
@@ -51,7 +52,7 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	LoadEntList("Entities.txt");
 
 	// Game Mode Observes
-	AddObserver(zGameMode);
+	this->AddObserver(zGameMode);
 
 	// Create World
 	if(worldFile != "")
@@ -91,25 +92,9 @@ Game::~Game()
 	this->zPlayers.clear();
 
 	SAFE_DELETE(this->zWorld);
-	SAFE_DELETE(this->zGameMode);
 	SAFE_DELETE(this->zActorManager);
+	SAFE_DELETE(this->zGameMode);
 
-	//if ( this->zGameMode )
-	//{
-	//	delete this->zGameMode;
-	//	this->zGameMode = NULL;
-	//}
-	//if ( this->zWorld ) 
-	//{
-	//	delete this->zWorld;
-	//	this->zWorld = NULL;
-	//}
-	//if ( this->zActorManager ) 
-	//{
-	//	delete this->zActorManager;
-	//	this->zActorManager = NULL;
-	//}
-	
 	FreeItemLookup();
 }
 
@@ -369,7 +354,6 @@ bool Game::Update( float dt )
 			}
 
 			//Get Data
-			Vector3 scale = projActor->GetScale();
 			float length = projBehavior->GetLenght();
 			float distance = length;
 			//Check collision, returns the result
@@ -395,14 +379,15 @@ bool Game::Update( float dt )
 		{
 			continue;
 		}
+		//*** AI, ignore ***
+		else if( dynamic_cast<AIBehavior*>(*i) )
+		{
+			continue;
+		}
 		//*** Others ***
 		else
 		{
 			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
-
-			//If Animal, Ignore
-			if( dynamic_cast<AnimalActor*>(pActor) )
-				continue;
 
 			//If actor hasn't moved, ignore
 			if( pActor && !pActor->HasMoved() )
@@ -425,7 +410,7 @@ bool Game::Update( float dt )
 				//Calculate Target rewind dir.
 				Vector3 target_rewind_dir = pActor_rewind_dir * -1;
 	
-				//Id target did not move, do not rewind position.
+				//If target did not move, do not rewind position.
 				if(target->HasMoved())
 					target->SetPosition( target->GetPosition() - (target_rewind_dir * 0.25f) );
 
@@ -434,6 +419,7 @@ bool Game::Update( float dt )
 			else if( WorldActor* object = dynamic_cast<WorldActor*>(collide) )
 			{
 				//Rewind the pActor only.
+				pActor_rewind_dir = pActor_rewind_dir;
 				pActor->SetPosition( pActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
 			}
 		}
@@ -658,7 +644,7 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e) )
 	{
-		PhysicsObject* phys = 0;
+		PhysicsObject* phys = NULL;
 		
 		if ( GetEntBlockRadius(ELE->entity->GetType()) > 0.0f )
 		{
@@ -719,6 +705,8 @@ void Game::OnEvent( Event* e )
 
 		UDE->clientData->Send(message);
 
+		NewActorPacket* NAP = new NewActorPacket();
+
 		//Gather Actors Information and send to client
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		for (auto it = actors.begin(); it != actors.end(); it++)
@@ -729,16 +717,25 @@ void Game::OnEvent( Event* e )
 			if(dynamic_cast<WorldActor*>(*it))
 				continue;
 
-			message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (float)(*it)->GetID());
-			message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
-			message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
-			message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
-			message += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetModel());
+			NAP->actorPosition[(*it)->GetID()] = (*it)->GetPosition();
+			NAP->actorRotation[(*it)->GetID()] = (*it)->GetRotation();
+			NAP->actorScale[(*it)->GetID()] = (*it)->GetScale();
+			NAP->actorModel[(*it)->GetID()] = (*it)->GetModel();
+
+			if (BioActor* bActor = dynamic_cast<BioActor*>( (*it) ))
+				NAP->actorState[bActor->GetID()] = bActor->GetState();
+
+			//message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (float)(*it)->GetID());
+			//message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
+			//message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
+			//message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
+			//message += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetModel());
 
 			//Sends this Actor to the new player
-			UDE->clientData->Send(message);
+			//UDE->clientData->Send(message);
 		}
-
+		UDE->clientData->Send(*NAP);
+		SAFE_DELETE(NAP);
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
@@ -1152,6 +1149,9 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 					if(pActor->GetInventory()->AddItem(item, stacked))
 					{
 						bActor->GetInventory()->RemoveItem(item);
+						if (stacked)
+							SAFE_DELETE(item);
+
 						cd->Send(msg);
 					}
 					
@@ -1300,7 +1300,6 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 {
 	Actor* actor = NULL;
-
 
 	auto playerIterator = zPlayers.find(cd);
 	actor = playerIterator->second->GetBehavior()->GetActor();
@@ -1487,7 +1486,8 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
 							cd->Send(msg);
-						}					}
+						}	
+					}
 					else if (material->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK || material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)
 					{
 						Item* tempItem = NULL;
@@ -1584,6 +1584,11 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 								msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_Enough_Materials_To_Craft");
 								cd->Send(msg);
 							}
+						}
+						else
+						{
+							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Missing_materials_in_order_to_craft_Bow");
+							cd->Send(msg);
 						}
 					}
 					/*else if (material->GetItemSubType() == ITEM_SUB_TYPE_THREAD)
