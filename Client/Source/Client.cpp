@@ -7,7 +7,6 @@
 #include <World/Entity.h>
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
-#include "Sounds.h"
 #include "PlayerConfig/PlayerSettings.h"
 
 using namespace MaloW;
@@ -71,13 +70,6 @@ Client::Client()
 	
 	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
-	
-	GetSounds()->LoadMusicIntoSystem("Media/Sound/ForestAmbience.mp3", true);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Running_Breath_4.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/LeftStep.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/RightStep.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/BowShot.mp3", false);
 }
 
 void Client::Connect(const std::string &IPAddress, const unsigned int &port)
@@ -124,7 +116,6 @@ Client::~Client()
 	if (this->zUpsText)
 		this->zEng->DeleteText(this->zUpsText);
 
-	GetSounds()->StopMusic();
 
 	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
 	{
@@ -288,8 +279,6 @@ void Client::InitGraphics(const std::string& mapName)
 
 	this->zUpsText = this->zEng->CreateText("", Vector2(1, 1), 0.7f, "Media/Fonts/1");
 
-	GetSounds()->PlayMusic("Media/Sound/ForestAmbience.mp3");
-
 	//Go through entities (bush etc) and set render flag.
 	std::set<Entity*> entities;
 	Vector2 size = zWorld->GetWorldSize();
@@ -298,13 +287,13 @@ void Client::InitGraphics(const std::string& mapName)
 
 	for (auto i = entities.begin(); i != entities.end(); i++)
 	{
-
 		if ( GetEntBlockRadius( (*i)->GetType() ) <= 0.0f )
 		{
 			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*i);
 			mesh->DontRender(true);
 		}
 	}
+
 }
 
 void Client::Init()
@@ -357,6 +346,9 @@ void Client::Life()
 
 			this->UpdateActors();
 		}
+
+		AudioManager* am = AudioManager::GetInstance();
+		am->Update();
 
 		this->ReadMessages();
 		if(this->zPam->GetShow())
@@ -1234,10 +1226,9 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		std::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
+		std	::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
 
-		GetSounds()->PlaySounds(&fileName[0], pos);
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
@@ -1503,7 +1494,6 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 		//Set the opacity
 		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
 
-		GetSounds()->PlaySounds("Media/Sound/Breath.wav", playerPos);
 	}
 	return true;
 }

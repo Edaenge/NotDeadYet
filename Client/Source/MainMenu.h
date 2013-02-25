@@ -44,6 +44,11 @@ private:
 	SET		zPrimarySet;
 	SET		zSecondarySet;
 
+	IAudioManager* _sound;
+	IAudioLoader* _soundLoader;
+	IEventHandle* ambientMusic;
+	IEventHandle* menuClick;
+
 	Game* zGame;
 	bool zClientConnected;
 	bool zHostCreated;

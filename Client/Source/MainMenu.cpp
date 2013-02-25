@@ -1,6 +1,6 @@
 #include "MainMenu.h"
 #include "Safe.h"
-#include "Sounds.h"
+#include "SoundEngine/sounds.h"
 
 MainMenu::MainMenu()
 {
@@ -12,7 +12,6 @@ MainMenu::MainMenu()
 	this->zPrimarySet	= MAINMENU;
 	this->zSecondarySet = NOMENU;
 
-	SoundsInit();
 }
 
 MainMenu::~MainMenu()
@@ -20,15 +19,31 @@ MainMenu::~MainMenu()
 	delete [] zSets;
 	zSets = 0;
 	SAFE_DELETE(this->zGame);
+
+	AudioManager::ReleaseInstance();
 }
 
 void MainMenu::Init()
 {
+	_sound = AudioManager::GetInstance();
+	_soundLoader = AudioManager::GetInstance();
+	int result = _soundLoader->LoadFEV("Media/fmod/NotDeadYet.fev");
+	if(result != (FMOD_OK))
+	{
+		throw("Could not load .fev file.");
+	}
+
+	AudioManager* am = AudioManager::GetInstance();
+	am->GetEventHandle(EVENTID_NOTDEADYET_AMBIENCE_FOREST, ambientMusic);
+	ambientMusic->Play();
+
+	am->GetEventHandle(EVENTID_NOTDEADYET_MENU_TOGGLE_N_CLICK, menuClick);
+	
+
 	GraphicsEngine* eng = GetGraphics();
 
 	eng->CreateSkyBox("Media/skymap.dds");
 
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/MenuCLICK.mp3", false);
 
 	float windowWidth = (float)eng->GetEngineParameters().WindowWidth;
 	float windowHeight = (float)eng->GetEngineParameters().WindowHeight;
@@ -264,25 +279,6 @@ void MainMenu::Init()
 		"ShadowQuality", 1.0f, 1, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
-	//Sound tech
-	//Master volume
-	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetSounds()->GetMasterVolume() * 100), 
-		"MasterVolume", 1.0f, 2, NR);
-	zSets[OPTIONS].AddElement(temp);
-
-	//Music Volume
-	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetSounds()->GetMusicVolume() * 100), 
-		"MusicVolume", 1.0f, 2, NR);
-	zSets[OPTIONS].AddElement(temp);
-
-	//Normal Volume
-	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetSounds()->GetSoundVolume() * 100), 
-		"NormalVolume", 1.0f, 2, NR);
-	zSets[OPTIONS].AddElement(temp);
-
 
 	//Buttons options menu
 	//Back
@@ -346,8 +342,7 @@ void MainMenu::Run()
 
 				if(retEvent != NULL)
 				{
-					GetSounds()->PlaySounds("Media/Sound/MenuCLICK.mp3", GetGraphics()->GetCamera()->GetPosition());
-
+					menuClick->Play();
 					if(retEvent->GetEventMessage() == "ChangeSetEvent")
 					{
 						ChangeSetEvent* setEvent = (ChangeSetEvent*)retEvent;
@@ -488,21 +483,6 @@ void MainMenu::Run()
 						//View Distance
 						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ViewDistance");
 						GEP.FarClip = MaloW::convertStringToFloat(tbTemp);
-
-						//Master Volume
-						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MasterVolume");
-						float temp = MaloW::convertStringToFloat(tbTemp) / 100;
-						GetSounds()->SetMasterVolume(temp);
-
-						//Music Volume
-						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MusicVolume");
-						temp = MaloW::convertStringToFloat(tbTemp) / 100;
-						GetSounds()->SetMusicVolume(temp);
-
-						//Normal Volume
-						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("NormalVolume");
-						temp = MaloW::convertStringToFloat(tbTemp) / 100;
-						GetSounds()->SetSoundVolume(temp);
 
 						GEP.SaveToFile("Config.cfg");
 
@@ -666,15 +646,6 @@ void MainMenu::UpdateOptionsMenu()
 	//Update View Distance.
 	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("ViewDistance");
 	tbTemp->SetText(MaloW::convertNrToString(GetGraphics()->GetEngineParameters().FarClip));
-
-	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("MasterVolume");
-	tbTemp->SetText(MaloW::convertNrToString(GetSounds()->GetMasterVolume() * 100));
-
-	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("MusicVolume");
-	tbTemp->SetText(MaloW::convertNrToString(GetSounds()->GetMusicVolume() * 100));
-
-	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("NormalVolume");
-	tbTemp->SetText(MaloW::convertNrToString(GetSounds()->GetSoundVolume() * 100));
 }
 
 void MainMenu::Resize()

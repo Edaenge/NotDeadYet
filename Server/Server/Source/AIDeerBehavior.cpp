@@ -643,6 +643,8 @@ bool AIDeerBehavior::Update( float dt )
 	//Move the animal along path.
 	if(this->zCurrentPath.size() > 0)
 	{
+
+		this->zPreviousVelocity = dActor->GetVelocity();
 		this->zPanic = false;
 		
 		//this->zPreviousPos = this->GetPosition();
@@ -670,7 +672,17 @@ bool AIDeerBehavior::Update( float dt )
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
 			dActor->SetDir( direction ); 
+
+			/*if(dActor->GetVelocity() > this->zWalkingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
+			}
+			else if(dActor->GetVelocity() < this->zWalkingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
+			}*/
 			dActor->SetVelocity(this->zWalkingVelocity);
+			
 			//if(testInterval > 2.0) //Mainly for testing purposes.
 			//{
 			//	testInterval = 0;
@@ -691,6 +703,15 @@ bool AIDeerBehavior::Update( float dt )
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
 			dActor->SetDir( direction ); 
+			
+		/*	if(dActor->GetVelocity() > this->zAttackingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
+			}
+			else if(dActor->GetVelocity() < this->zAttackingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
+			}*/
 			dActor->SetVelocity(this->zAttackingVelocity);
 
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
@@ -707,6 +728,15 @@ bool AIDeerBehavior::Update( float dt )
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
 			dActor->SetDir( direction ); 
+
+			/*if(dActor->GetVelocity() > this->zFleeingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
+			}
+			else if(dActor->GetVelocity() < this->zFleeingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
+			}*/
 			dActor->SetVelocity(this->zFleeingVelocity);
 
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());

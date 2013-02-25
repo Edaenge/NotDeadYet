@@ -20,6 +20,8 @@ class PlayerConfiguration
 		float	zHydrationCof;
 		float	zHydrationSprintingCof;
 
+		float	zStaminaSprintingCof;
+
 		//bool zHydrationChanged;
 		//bool zHungerChanged;
 

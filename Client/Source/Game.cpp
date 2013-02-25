@@ -1,7 +1,5 @@
 #include "Game.h"
 #include "Graphics.h"
-#include "Sounds.h"
-#include "SoundReader.h"
 #include <fstream>
 #include <Safe.h>
 
@@ -55,12 +53,4 @@ void Game::InitGameClient(const std::string &IP, const unsigned int &port)
 	blackImage = NULL;
 	this->zClient->Connect(IP, port);
 	this->zClient->Start();
-}
-
-bool Game::InitSounds(SoundHandler* engine)
-{
-	SoundReader soundReader(engine);
-	bool result = soundReader.ReadFromFile();
-
-	return result;
 }
