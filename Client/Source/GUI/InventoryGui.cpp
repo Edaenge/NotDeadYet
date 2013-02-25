@@ -59,8 +59,6 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 	this->zMaxWeight = 49.0f;
 	this->zCurrentWeight = 0.0f;
 	this->zWeightText = NULL;
-
-
 }
 
 InventoryGui::~InventoryGui()

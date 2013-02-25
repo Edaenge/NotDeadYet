@@ -29,27 +29,17 @@ public:
 	unsigned int GetID() const {return this->zID;}
 	Vector3 GetPosition() const {return this->zNextPosition;}
 	//Vector4 GetRotation() const {return this->zRotation;}
-	//unsigned int GetState() const {return this->zState;}
+	unsigned int GetState() const {return this->zState;}
 
 	bool HasPositionChanged() const {return this->zPositionChange;}
 	//bool HasRotationChanged() const {return this->zRotationChange;}
-	//bool HasStateChanged() const {return this->zStateChange;}
+	bool HasStateChanged() const {return this->zStateChange;}
 
 	void SetPosition(Vector3 position) 
 	{
 		this->zNextPosition = position;
 		this->zPositionChange = true;
 	}
-	//void SetRotation(Vector4 rotation) 
-	//{
-	//	this->zRotation = rotation;
-	//	this->zRotationChange = true;
-	//}
-	//void SetState(unsigned int state) 
-	//{
-	//	this->zState = state;
-	//	this->zStateChange = true;
-	//}
 	bool ComparePosition(const Vector3& position)
 	{
 		if ((this->zNextPosition - position).GetLength() < 0.5f)
@@ -57,6 +47,21 @@ public:
 
 		return this->zPositionChange;
 	}
+	//void SetRotation(Vector4 rotation) 
+	//{
+	//	this->zRotation = rotation;
+	//	this->zRotationChange = true;
+	//}
+	void SetState(unsigned int state) 
+	{
+		this->zState = state;
+		this->zStateChange = true;
+	}
+	void SetStateChange(bool value)
+	{
+		this->zStateChange = value;
+	}
+	
 	//bool CompareRotation(const Vector4& rotation)
 	//{
 	//	if ((this->zRotation - rotation).GetLength() < 0.5f)
@@ -64,10 +69,7 @@ public:
 
 	//	return this->zRotationChange;
 	//}
-	//void SetStateChange(bool value)
-	//{
-	//	this->zStateChange = value;
-	//}
+
 	//void SetRotationChanged(bool value)
 	//{
 	//	this->zRotationChange = value;
@@ -76,9 +78,9 @@ private:
 	unsigned int zID;
 	Vector3 zNextPosition;
 	//Vector4 zRotation;
-	//unsigned int zState;
+	unsigned int zState;
 
-	//bool zStateChange;
+	bool zStateChange;
 	bool zPositionChange;
 	//bool zRotationChange;
 };
@@ -101,6 +103,7 @@ public:
 	/*! Interpolates all the Objects towards their final Position*/
 	void UpdateObjects(float deltaTime, unsigned int ignoreID);
 
+	void AddActorState(Actor* actor, unsigned int state);
 	bool AddActor(Actor* actor);
 	Actor* GetActor(unsigned int ID);
 	std::map<unsigned int, Actor*> GetActors();
@@ -124,7 +127,7 @@ public:
 
 private:
 	std::map<unsigned int, Actor*> zActors;
-	std::map<unsigned int, Actor*> zState;
+	std::map<Actor*, unsigned int> zState;
 	std::map<unsigned int, Updates*> zUpdates;
 	float zInterpolationVelocity;
 	Vector3 zCameraOffset;

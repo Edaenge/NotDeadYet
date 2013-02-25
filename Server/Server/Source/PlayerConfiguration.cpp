@@ -12,6 +12,7 @@ PlayerConfiguration::PlayerConfiguration()
 		this->zHydrationMax = 100.0f;
 		this->zHydrationCof = 0.12f;
 		this->zHydrationSprintingCof = 0.60f;
+		this->zStaminaSprintingCof = 1.0f;
 		this->zDamageAtStarvationCof = 0.1f;
 		this->zDamageAtThirstCof = 0.4f;
 		this->zStaminaDecreaseCofWithHunger = 0.6f;
@@ -80,6 +81,12 @@ bool PlayerConfiguration::SetValuesFromFile()
 		infile.ignore(256, '\n');
 		numberFromFile = (float)atof(characters);
 		this->zHydrationSprintingCof = numberFromFile;
+
+		//Stamina sprinting cof
+		infile.getline(characters, 256,' ');
+		infile.ignore(256, '\n');
+		numberFromFile = (float)atof(characters);
+		this->zStaminaSprintingCof = numberFromFile;
 
 		//Damage cof when you starve 
 		infile.getline(characters, 256,' ');

@@ -35,7 +35,7 @@ void Behavior::OnEvent(Event* e)
 	else if ( ActorDeleteEvent* ADE = dynamic_cast<ActorDeleteEvent*>(e) )
 	{
 		zWorld->DeleteAnchor(zAnchor);
-		zActor = 0;
+		zActor = NULL;
 	}
 }
 

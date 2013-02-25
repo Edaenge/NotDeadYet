@@ -10,7 +10,7 @@ const float MAX_VELOCITY_RUN = 4.40f;
 const float MAX_VELOCITY_SPRINT = 7.80f;
 const float MAX_VELOCITY_DUCK = 0.1f;
 const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
-const Vector3 JUMPING_FORCE = Vector3(0, 25.0f, 0);
+const Vector3 JUMPING_FORCE = Vector3(0, 2.84f, 0);
 const float ELASTICITY = 0.5f;
 const float ACCELERATION = 10000.0f;
 const float GROUNDFRICTION = 0.4f;
@@ -23,7 +23,7 @@ const float DEERWEIGHT = 110.0f;
 PlayerDeerBehavior::PlayerDeerBehavior( Actor* actor, World* world, Player* player) : 
 	PlayerBehavior(actor, world, player)
 {
-
+	this->jumpingTime = 0.0f;
 }
 
 PlayerDeerBehavior::~PlayerDeerBehavior()
@@ -83,6 +83,8 @@ bool PlayerDeerBehavior::Update( float dt )
 	if ( PlayerBehavior::Update(dt) )
 		return true;
 
+	
+
 	KeyStates keyStates = this->zPlayer->GetKeys();
 	Vector3 curPosition = this->zActor->GetPosition();
 
@@ -111,30 +113,26 @@ bool PlayerDeerBehavior::Update( float dt )
 		zVelocity += moveDir * dt;
 	}
 
-	// Check Ground
+	// Check On Ground
 	bool isOnGround = false;
 	float heightAboveGround = 0.0f;
+	bool isJumping = false;
 
 	try
 	{
 		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
 		heightAboveGround = curPosition.y - groundHeight;
-		if( heightAboveGround <= 0.0f ) isOnGround = true;
+		if( heightAboveGround <= 0.0f) 
+		{
+			isOnGround = true;
+			curPosition.y = groundHeight;
+			zVelocity.y = 0.0f;
+		}
 	}
 	catch(...)
 	{
 
 	}
-
-	if ( isOnGround )
-	{
-		zVelocity -= ( zVelocity * 4.0f ) * dt;
-	}
-
-	BioActor* bActor = dynamic_cast<BioActor*>(zActor);
-
-	// Gravity
-	zVelocity += GRAVITY * dt;
 
 	// Air Resistance
 	Vector3 airResistance(0.0f, 0.0f, 0.0f);
@@ -148,22 +146,38 @@ bool PlayerDeerBehavior::Update( float dt )
 	airResistance *= 0.5f * AIRDENSITY * DRAGCOOEFICIENT * DEERSURFACEAREA;
 	zVelocity -= airResistance / DEERWEIGHT * dt;
 
-	//Perform a jump
-	if(isOnGround)
+	//Check if fall/slide
+	Vector3 groundNormal = Vector3(0.0f, 0.0f, 0.0f);
+
+	Vector3 normGround = zWorld->CalcNormalAt(curPosition.GetXZ());
+
+	//Calc the vector in the plane.
+	Vector3 groundProj = normGround;
+	groundProj.y = 0;
+	groundProj.Normalize();
+
+	float angle = acos(normGround.GetDotProduct(groundProj));
+	angle = angle * TODEGREES;
+	if(angle < 45.0f)
 	{
-		if(keyStates.GetKeyState(KEY_JUMP))
-		{
-			zVelocity += JUMPING_FORCE * dt;
-		}
-		
+		zVelocity = Vector3(0.0f, 0.0f, 0.0f);
+		groundNormal = this->zWorld->CalcNormalAt(curPosition.GetXZ()) * 4.0f;
+		this->zVelDown = 0.0f;
 	}
+	else
+		zVelocity -= ( zVelocity * 4.0f ) * dt;
+
+	if(!isOnGround)
+		this->zVelDown += -9.82f * dt; // Gravity
+
+	BioActor* bActor = dynamic_cast<BioActor*>(zActor);
 
 	// Check Max Speeds
 	if(keyStates.GetKeyState(KEY_DUCK))
 	{
 		if(this->zVelocity.GetLength() > MAX_VELOCITY_WALK)
 		{
-			bActor->SetState(STATE_CROUCHING);
+			bActor->SetState(STATE_WALKING);
 			this->zVelocity.Normalize();
 			this->zVelocity *= MAX_VELOCITY_WALK;
 		}
@@ -192,6 +206,7 @@ bool PlayerDeerBehavior::Update( float dt )
 				this->zVelocity = Vector3(0, 0, 0);
 			}
 		}
+
 	}
 	else if(keyStates.GetKeyState(KEY_SPRINT))
 	{
@@ -209,23 +224,106 @@ bool PlayerDeerBehavior::Update( float dt )
 				this->zVelocity = Vector3(0, 0, 0);
 			}
 		}
+
 	}
 
-	// Apply Velocity
-	Vector3 newPosition = curPosition + zVelocity * dt;
+	
+
+	
+
 	try
 	{
 		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
-		if ( newPosition.y < groundHeight )
+		heightAboveGround = curPosition.y - groundHeight;
+		if( heightAboveGround <= 0.0f) 
 		{
-			newPosition.y = groundHeight;
+			isOnGround = true;
+			curPosition.y = groundHeight;
 			zVelocity.y = 0.0f;
+			this->zVelDown = 0.0;
 		}
 	}
 	catch(...)
 	{
 
 	}
+
+
+	if(keyStates.GetKeyState(KEY_JUMP))
+	{
+		if(isOnGround)
+		{
+			this->zVelDown += 30.02 * dt;
+		
+			//this->zVelDown += JUMPING_FORCE.y * dt;
+		/*Vector3 pos = zActor->GetPosition();
+		pos += Vector3(0.0f,10.0f,0.0f);
+		zActor->SetPosition(pos);
+		curPosition = pos;*/
+
+			/*if(jumpingTime == 0.0f)
+			{
+					jumpingTime = 1.0f;
+			}
+			else
+			{
+				jumpingTime -= dt;
+				if(jumpingTime < 0.0f)
+				{
+					jumpingTime = 0.0f;
+				}
+			}
+
+			if(jumpingTime > 0.0f)
+			{
+				zVelDown += 2.83f * dt;
+			}
+			if(isOnGround)
+			{
+				jumpingTime = 0.0f;
+			}*/
+
+
+
+
+
+		}
+	}
+
+		/*if(jumpingTime == 0.0f)
+		{
+			if(keyStates.GetKeyState(KEY_JUMP))
+			{
+				jumpingTime = 1.0f;
+			}
+		}
+		else
+		{
+			jumpingTime -= dt;
+			if(jumpingTime < 0.0f)
+			{
+				jumpingTime = 0.0f;
+			}
+		}
+
+		if(jumpingTime > 0.0f)
+		{
+			zVelDown += 9.83f * dt;
+		}
+		if(isOnGround)
+		{
+			jumpingTime = 0.0f;
+		}
+*/
+
+
+
+
+
+	
+
+	// Apply Velocity
+	Vector3 newPosition = curPosition + (zVelocity * dt) + Vector3(0.0f, this->zVelDown, 0.0f) + (groundNormal * dt);
 
 	//Look so player isn't outside of World.
 	if ( zWorld->IsInside(newPosition.GetXZ()) )

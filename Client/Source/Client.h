@@ -14,7 +14,7 @@
 #include "GuiManager.h"
 #include <World/WorldRenderer.h>
 #include <Packets/ServerFramePacket.h>
-#include <Packets/Packet.h>
+#include <Packets/NewActorPacket.h>
 #include "InGameMenu.h"
 #include "PickAnimalMenu.h"
 
@@ -27,6 +27,16 @@ enum CLIENT_ACTOR_TYPE
 	GHOST,
 	ANIMAL
 
+};
+struct TextDisplay
+{
+	TextDisplay(iText* text, float time)
+	{
+		zText = text;
+		zTimer = time;
+	}
+	iText* zText;
+	float zTimer;
 };
 class Client : public MaloW::Process, public Observer
 {
@@ -76,6 +86,10 @@ private:
 	/*! Reads Messages from the server*/
 	void ReadMessages();
 
+	bool CheckHumanSpecificMessages(std::vector<std::string> msgArray);
+
+	void AddDisplayText(const std::string& msg, bool bError);
+	void RemoveUnderscore(std::string& msg);
 	//////////////////////
 	//					//
 	//	   Input		//
@@ -106,7 +120,8 @@ private:
 	void UpdateMeshRotation();
 	/*! Updates The Clock and returns the DeltaTime*/
 	float Update();
-
+	//Updates the text timer and removes the text when timer reaches 0
+	void UpdateText();
 	/*! Checks Ray Vs Static/Dynamic Objects*/
 	std::vector<unsigned int> RayVsWorld();
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
@@ -121,6 +136,7 @@ private:
 	//////////////////////
 	//Temporary Code
 	void UpdateActors(ServerFramePacket* SFP);
+	void AddActor(NewActorPacket* NAP);
 	bool RemoveActor(const unsigned int ID);
 	bool HandleTakeDamage(const unsigned int ID, float damageTaken);
 	/*! Adds A Player Object.*/
@@ -144,7 +160,7 @@ private:
 	void HandleAddInventoryItem(const std::vector<std::string>& msgArray);
 	/*! Uses the Selected Item*/
 	void HandleUseItem(const unsigned int ID);
-	void DisplayMessageToClient(const std::string& msg);
+	void DisplayMessageToClient(const std::string& msg, bool bError);
 	void HandleEquipItem(const unsigned int ItemID, const int Slot);
 	bool HandleUnEquipItem(const unsigned int ItemID, const int Slot);
 	void SendUnEquipItem(const unsigned int ID, const int Slot);
@@ -209,4 +225,10 @@ private:
 	Vector3 zMeshOffset;
 	std::map<std::string, Vector3> zMeshCameraOffsets;
 	std::map<unsigned int, Vector3> zStateCameraOffset;
+	//Updates per second
+	int zUps;
+	iText* zUpsText;
+
+	//Error Text
+	std::vector<TextDisplay*> zDisplayedText;
 };

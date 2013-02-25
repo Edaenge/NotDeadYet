@@ -4,6 +4,7 @@
 #include "Physics.h"
 #include "BioActor.h"
 #include "WorldActor.h"
+#include "ProjectileActor.h"
 
 ActorManager::ActorManager( ActorSynchronizer* syncher ) : 
 	zSynch(syncher)
@@ -13,6 +14,8 @@ ActorManager::ActorManager( ActorSynchronizer* syncher ) :
 
 ActorManager::~ActorManager()
 {
+	this->RemoveObserver(this->zSynch);
+
 	for(auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
 		Actor* temp = (*it);
@@ -55,7 +58,6 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 	float radiusWithin = 2.0f + range;
 	Actor* collide = NULL;
 	PhysicsCollisionData data;
-	Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
 	std::set<Actor*> inRadius;
 	GetActorsInCircle(actor->GetPosition().GetXZ(), radiusWithin, inRadius);
 	
@@ -66,7 +68,6 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 			continue;
 		
 		BioActor* tBioActor = dynamic_cast<BioActor*>(*it);
-		WorldActor* tWorldActor = dynamic_cast<WorldActor*>(*it);
 		Actor* target = NULL;
 
 		//if BioActor
@@ -75,21 +76,33 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 			if(tBioActor->IsAlive())
 				target = tBioActor;
 		}
-		//If WorldActor
-		else if(tWorldActor)
+		//If Actor has Physics
+		else if( (*it) && (*it)->GetPhysicsObject() )
 		{
-			target = tWorldActor;
+			target = (*it);
 		}
 
 		//If the target is null, ignore
 		if(!target)
 			continue;
 
+		Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
+
 		if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
 		{
 			offset = bActor->GetCameraOffset();
 		}
+		else if ( ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(actor) )
+		{
+			if( target ==  projActor->GetOwner() )
+				continue;
 
+// 			PhysicsObject* actorPhys = actor->GetPhysicsObject();
+// 			Vector3 center = actorPhys->GetBoundingSphere().center;
+// 			center = actorPhys->GetWorldMatrix() * center;
+// 			offset = ( center - actor->GetPosition() ) * 2;
+
+		}
 		PhysicsObject* targetObject = target->GetPhysicsObject();
 		data = GetPhysics()->GetCollisionRayMesh(actor->GetPosition() + offset, actor->GetDir(), targetObject);
 
@@ -120,7 +133,6 @@ Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
 			continue;
 
 		BioActor* tBioActor = dynamic_cast<BioActor*>(*it);
-		WorldActor* tWorldActor = dynamic_cast<WorldActor*>(*it);
 		Actor* target = NULL;
 
 		//if BioActor
@@ -129,10 +141,10 @@ Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
 			if(tBioActor->IsAlive())
 				target = tBioActor;
 		}
-		//If WorldActor
-		else if(tWorldActor)
+		//If Actor has Physics
+		else if( (*it) && (*it)->GetPhysicsObject() )
 		{
-			target = tWorldActor;
+			target = (*it);
 		}
 
 		//If the target is null, ignore

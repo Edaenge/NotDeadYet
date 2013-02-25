@@ -4,7 +4,7 @@
 
 //STILL NEED TO ADD TARGETS AND HANDLE THEM
 
-AIDeerBehavior::AIDeerBehavior( Actor* actor, World* world ) : Behavior(actor, world)
+AIDeerBehavior::AIDeerBehavior( Actor* actor, World* world ) : AIBehavior(actor, world)
 {
 	InitValues();
 }
@@ -166,55 +166,55 @@ bool AIDeerBehavior::SetValuesFromFile()
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
 		numberFromFile = (float)atof(characters);
-		this->zDistanceToWalkWhenCalm = numberFromFile;
+		this->zDistanceToWalkWhenCalm = (int)numberFromFile;
 
 		//distance to walk when suspicious
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
 		numberFromFile = (float)atof(characters);
-		this->zDistanceToWalkWhenSuspicious = numberFromFile;
+		this->zDistanceToWalkWhenSuspicious = (int)numberFromFile;
 
 		//factor to use when chosing a new target
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
 		numberFromFile = (float)atof(characters);
-		this->zNewTargetCloseByAFactorOf = numberFromFile;
+		this->zNewTargetCloseByAFactorOf = (int)numberFromFile;
 
 		//flee distance
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
 		numberFromFile = (float)atof(characters);
-		this->zFleeDistance = numberFromFile;
+		this->zFleeDistance = (int)numberFromFile;
 
 		//How afraid to be when a large sound even happens
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
 		numberFromFile = (float)atof(characters);
-		this->zLargeSoundEventFearIncrease = numberFromFile;
+		this->zLargeSoundEventFearIncrease = (int)numberFromFile;
 
 		//The range of the pausing time when calm.
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
 		numberFromFile = (float)atof(characters);
-		this->zCalmRandomInterval = numberFromFile;
+		this->zCalmRandomInterval = (int)numberFromFile;
 
 		//The minimum value 
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
 		numberFromFile = (float)atof(characters);
-		this->zCalmRandomAddition = numberFromFile;
+		this->zCalmRandomAddition = (int)numberFromFile;
 
 		//the range of the pausing time when suspicious.
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
 		numberFromFile = (float)atof(characters);
-		this->zSupsiciousRandomInterval = numberFromFile;
+		this->zSupsiciousRandomInterval = (int)numberFromFile;
 
 		//the minimum value
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
 		numberFromFile = (float)atof(characters);
-		this->zSupsiciousAddition = numberFromFile;
+		this->zSupsiciousAddition = (int)numberFromFile;
 
 		//the walking velocity
 		infile.getline(characters, 256,' ');
@@ -271,7 +271,6 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 	int counter = 0; //Just for testing stuff
 	getEmergencyDirection = false;
 
-
 	while(foundPath == false)
 	{
 		getEmergencyDirection = false;
@@ -307,7 +306,7 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 		{
 			//this->zDestination.Normalize();
 			counter++;
-			float angle = (-10 * counter) * 3.14/180;
+			float angle = (-10 * counter) * 3.14f/180;
 			float oldX, oldY;
 			oldX = dest.x;
 			oldY = dest.z;
@@ -315,7 +314,7 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 			dest.x = cos(angle) * oldX - sin(angle) * oldY;
 			dest.z = cos(angle) * oldY + sin(angle) * oldX;
 			dest.Normalize();
-			dest = dest * zFleeDistance;
+			dest = dest * (float)zFleeDistance;
 
 					
 		}
@@ -327,56 +326,6 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 	}
 }
 
-MentalState AIDeerBehavior::GetMentalState()
-{
-	return this->zMentalState;
-}
-
-void AIDeerBehavior::SetMentalState(MentalState newMentalState)
-{
-	this->zMentalState = newMentalState;
-}
-	
-bool AIDeerBehavior::GetIfNeedPath()
-{
-	return this->zNeedPath;
-}
-
-void AIDeerBehavior::SetIfNeedPath(bool needPath)
-{
-	this->zNeedPath = needPath;
-}
-
-float AIDeerBehavior::GetFearLevel()
-{
-	return this->zFearLevel;
-}
-
-void AIDeerBehavior::SetFearLevel(float fear)
-{
-	this->zFearLevel = fear;
-}
-
-float AIDeerBehavior::GetFearMax()
-{
-	return this->zFearMax;
-}
-
-void AIDeerBehavior::SetFearMax(float max)
-{
-	this->zFearMax = max;
-}
-
-float AIDeerBehavior::GetLastDistanceCheck()
-{
-	return this->zLastDistanceCheck;
-}
-
-void AIDeerBehavior::SetLastDistanceCheck(float distance)
-{
-	this->zLastDistanceCheck = distance;
-}
-
 void AIDeerBehavior::SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind)
 {
 	this->zTargets[number].position = pos;
@@ -385,34 +334,8 @@ void AIDeerBehavior::SetTargetInfo(int number, Vector3 pos, float velocity, floa
 	this->zTargets[number].kind = kind;
 }
 
-int AIDeerBehavior::GetCurrentTargets()
-{
-	return this->zCurrentNrOfTargets;
-}
-
-void AIDeerBehavior::SetCurrentTargets(int number)
-{
-	this->zCurrentNrOfTargets = number;
-}
-
-std::vector<Vector2>& AIDeerBehavior::GetPath()
-{
-	return this->zCurrentPath;
-}
-
-float AIDeerBehavior::GetPreviousHealth()
-{
-	return this->zPreviousHealth;
-}
-
-void AIDeerBehavior::SetPreviousHealth(float oldHealth)
-{
-	this->zPreviousHealth = oldHealth;
-}
-
 bool AIDeerBehavior::Update( float dt )
 {
-
 	if ( Behavior::Update(dt) )
 		return true;
 
@@ -438,7 +361,6 @@ bool AIDeerBehavior::Update( float dt )
 
 	int maximumNodesTest = 40;
 
-	
 	//Determine closest threat/target
 	for(int i = 0; i < this->GetCurrentTargets(); i++)
 	{
@@ -460,7 +382,6 @@ bool AIDeerBehavior::Update( float dt )
 		{
 			this->zTargets[i].valid = false;
 		}
-		
 	}
 	if(nrOfPredators > 0)
 	{
@@ -471,7 +392,6 @@ bool AIDeerBehavior::Update( float dt )
 		nearbyPredatorsExist = false;
 	}
 
-	
 	//Time to assess threats.
 
 	if( dActor->GetHealth() < this->GetPreviousHealth() ) //In theory, used to check if the animal has been attacked.
@@ -504,7 +424,7 @@ bool AIDeerBehavior::Update( float dt )
 				{
 				//Do a mathematical check, see if anyone is right in front of the deer. But... how? http://www.youtube.com/watch?v=gENVB6tjq_M
 					Vector3 actorPosition = dActor->GetPosition();
-					float dotProduct = dActor->GetDirection().GetDotProduct( this->zTargets[i].position - actorPosition );
+					float dotProduct = dActor->GetDir().GetDotProduct( this->zTargets[i].position - actorPosition );
 					if(dotProduct > this->zFieldOfView)//This sight is relatively wide, since it is a deer. If this is true, then the deer sees a player.
 					{
 						//Which means, it is even more afraid.
@@ -519,7 +439,6 @@ bool AIDeerBehavior::Update( float dt )
 					{
 						fear -= (dActor->GetHealth() / this->zTargets[i].health) / nrOfPredators; //If the animal is faced with a very weak player(s), it gets some confidence. This is reduced with each player present.
 					}
-					
 				}
 			}			
 
@@ -551,7 +470,6 @@ bool AIDeerBehavior::Update( float dt )
 			this->SetMentalState(AGGRESSIVE);
 			//this->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 		}
-		
 	}
 	else if(this->GetFearLevel() > zAggressiveToAfraidThreshold && this->GetFearLevel() <= this->GetFearMax())
 	{
@@ -561,11 +479,8 @@ bool AIDeerBehavior::Update( float dt )
 			this->SetIfNeedPath(true);
 			this->SetMentalState(AFRAID);
 			//this->SetScale(Vector3(3.09f, 3.09f, 3.09f));
-			
 		}
-		
 	}
-	
 	
 	//Act based on state of mind.
 	if(this->GetMentalState() == CALM) //Relaxed behaviour. No threat detected.
@@ -575,8 +490,8 @@ bool AIDeerBehavior::Update( float dt )
 		if(this->zIntervalCounter > this->zCalmActionInterval && this->GetIfNeedPath())
 		{
 			this->zIntervalCounter = 0;
-			srand(time(NULL));
-			this->zCalmActionInterval = rand() % this->zCalmRandomInterval + this->zCalmRandomAddition; 
+			srand(time(0));
+			this->zCalmActionInterval = (float)(rand() % this->zCalmRandomInterval + this->zCalmRandomAddition); 
 			this->zCurrentPath.clear(); //Since a new path is gotten, and the old one might not have been completed, we clear it just in case.
 			//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->GetPosition().x + rand() % 14 - 7, this->GetPosition().z + rand() % 14 - 7, this->zCurrentPath, 20); //Get a small path to walk, short and does not have to lead anywhere.
 			this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, dActor->GetPosition().x + rand() % zDistanceToWalkWhenCalm - zDistanceToWalkWhenCalm/2, dActor->GetPosition().z + rand() % zDistanceToWalkWhenCalm - zDistanceToWalkWhenCalm/2, this->zCurrentPath, maximumNodesTest);
@@ -590,8 +505,8 @@ bool AIDeerBehavior::Update( float dt )
 		if(this->zIntervalCounter > this->zCalmActionInterval && this->GetIfNeedPath()) //The increase in time is supposed to represent listening, waiting for something to happen.
 		{
 			this->zIntervalCounter = 0;
-			srand(time(NULL));
-			this->zCalmActionInterval = rand() % this->zSupsiciousRandomInterval + this->zSupsiciousAddition;
+			srand(time(0));
+			this->zCalmActionInterval = (float)(rand() % this->zSupsiciousRandomInterval + this->zSupsiciousAddition);
 			this->zCurrentPath.clear();
 			//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->GetPosition().x + rand() % 8 - 4, this->GetPosition().z + rand() % 8 - 4, this->zCurrentPath, 20); //Get a small path to walk, quite short (since the animal is nervous) and does not have to lead anywhere.
 			this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, dActor->GetPosition().x + rand() % zDistanceToWalkWhenSuspicious - zDistanceToWalkWhenSuspicious/2, dActor->GetPosition().z + rand() % zDistanceToWalkWhenSuspicious - zDistanceToWalkWhenSuspicious/2, this->zCurrentPath, maximumNodesTest);
@@ -636,7 +551,6 @@ bool AIDeerBehavior::Update( float dt )
 
 			for(int i = 0; i < this->GetCurrentTargets(); i++)
 			{
-				
 				if(this->zTargets[i].valid == true)
 				{
 					xDistance = dActor->GetPosition().x - this->zTargets[i].position.x;
@@ -657,27 +571,22 @@ bool AIDeerBehavior::Update( float dt )
 				this->zMainTarget = mostLikelyTarget;
 			}
 		}
-		
 	}
 	else if(this->GetMentalState() == AFRAID) //Is afraid, need to run.
 	{
-
 		if(this->GetIfNeedPath() == true)
 		{
 			this->SetIfNeedPath(false);
 			
-
 			if(nearbyPredatorsExist)
 			{
 				this->zDestination = this->ExaminePathfindingArea();
 				
-
 				this->zCurrentPath.clear();
 				if(!this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath, maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
 				{
 					this->SetIfNeedPath(true);
 				}
-
 			}
 			else if(this->zPanic == true)
 			{
@@ -711,7 +620,7 @@ bool AIDeerBehavior::Update( float dt )
 			}
 			else //It has started to run, but still need to go further.
 			{
-				Vector3 direction = dActor->GetDirection();
+				Vector3 direction = dActor->GetDir();
 
 				direction.Normalize();
 
@@ -724,21 +633,18 @@ bool AIDeerBehavior::Update( float dt )
 					this->SetIfNeedPath(true);
 				}
 			}
-
-			
-			
 		}
 		else//It is already running.
 		{
-			//one or more entities should not collide with each other and stop. (I am not sure this is something to be handled here or elsewhere.
-			
+			//one or more entities should not collide with each other and stop. (I am not sure this is something to be handled here or elsewhere.	
 		}
 	}
-
 
 	//Move the animal along path.
 	if(this->zCurrentPath.size() > 0)
 	{
+
+		this->zPreviousVelocity = dActor->GetVelocity();
 		this->zPanic = false;
 		
 		//this->zPreviousPos = this->GetPosition();
@@ -757,25 +663,33 @@ bool AIDeerBehavior::Update( float dt )
 
 		if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 || this->GetMentalState() == SUSPICIOUS && this->zCurrentPath.size() > 0) // && !this->zCurrentPath.empty() is necessary to be used again to avoid getting into an unlikely but posssible error.
 		{
-
 			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
 
 			result = result;
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
 
-
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
-			dActor->SetDirection( direction ); 
+			dActor->SetDir( direction ); 
+
+			/*if(dActor->GetVelocity() > this->zWalkingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
+			}
+			else if(dActor->GetVelocity() < this->zWalkingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
+			}*/
 			dActor->SetVelocity(this->zWalkingVelocity);
+			
 			//if(testInterval > 2.0) //Mainly for testing purposes.
 			//{
 			//	testInterval = 0;
 			//	dActor->SetPosition(Vector3(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y) );
 			//}
 			
-			dActor->SetPosition(dActor->GetPosition() + dActor->GetDirection() * dt * dActor->GetVelocity());
+			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 		
 		}
 		else if(this->GetMentalState() == AGGRESSIVE  && this->zCurrentPath.size() > 0)
@@ -788,10 +702,19 @@ bool AIDeerBehavior::Update( float dt )
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
-			dActor->SetDirection( direction ); 
+			dActor->SetDir( direction ); 
+			
+		/*	if(dActor->GetVelocity() > this->zAttackingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
+			}
+			else if(dActor->GetVelocity() < this->zAttackingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
+			}*/
 			dActor->SetVelocity(this->zAttackingVelocity);
 
-			dActor->SetPosition(dActor->GetPosition() + dActor->GetDirection() * dt * dActor->GetVelocity());
+			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 
 		}
 		else if(this->GetMentalState() == AFRAID && this->zCurrentPath.size() > 0)
@@ -804,10 +727,19 @@ bool AIDeerBehavior::Update( float dt )
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
-			dActor->SetDirection( direction ); 
+			dActor->SetDir( direction ); 
+
+			/*if(dActor->GetVelocity() > this->zFleeingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
+			}
+			else if(dActor->GetVelocity() < this->zFleeingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
+			}*/
 			dActor->SetVelocity(this->zFleeingVelocity);
 
-			dActor->SetPosition(dActor->GetPosition() + dActor->GetDirection() * dt * dActor->GetVelocity());
+			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 			this->zCurrentDistanceFled += dt * dActor->GetVelocity();
 
 		}
@@ -815,12 +747,26 @@ bool AIDeerBehavior::Update( float dt )
 		{
 			this->SetIfNeedPath(true);
 		}
-	
 	}
 	else
 	{
 		this->SetIfNeedPath(true);
 	}
+
+	//Rotate Animal
+	static Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, -1.0f);
+	Vector3 meshDirection = dActor->GetDir();
+	meshDirection.y = 0;
+	meshDirection.Normalize();
+
+	Vector3 around = Vector3(0.0f, 1.0f, 0.0f);
+	float angle = acos(meshDirection.GetDotProduct(defaultMeshDir));
+
+	if (meshDirection.x > 0.0f)
+	 angle *= -1;
+
+	dActor->SetRotation(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+	dActor->SetRotation(around, angle);
 
 	return false;
 }

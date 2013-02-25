@@ -10,5 +10,4 @@ GhostActor::GhostActor(Player* player) :
 
 GhostActor::~GhostActor()
 {
-
 }

@@ -1,9 +1,7 @@
 #pragma once
-#include <World/World.h>
-#include "Behavior.h"
-#include "Actor.h"
+
 #include "DeerActor.h"
-#include "AI.h"
+#include "AIBehavior.h"
 
 enum MentalState
 {
@@ -32,7 +30,7 @@ struct Target //Supposed to represent an entity near the animal, like a player, 
 	Type	kind;
 };
 
-class AIDeerBehavior : public Behavior
+class AIDeerBehavior : public AIBehavior
 {
 private:
 	bool InitPathfinder();
@@ -45,27 +43,27 @@ public:
 	bool InitValues();
 	bool SetValuesFromFile();
 
-	MentalState	GetMentalState();
-	void		SetMentalState(MentalState newMentalState);
+	inline MentalState GetMentalState() {return this->zMentalState;}
+	inline void SetMentalState(MentalState newMentalState) {this->zMentalState = newMentalState;}
 
-	bool		GetIfNeedPath();
-	void		SetIfNeedPath(bool needPath);
-	float		GetFearLevel();
-	void		SetFearLevel(float fear);
-	float		GetFearMax();
-	void		SetFearMax(float max);
+	inline bool GetIfNeedPath() {return this->zNeedPath;}
+	inline void SetIfNeedPath(bool needPath) {this->zNeedPath = needPath;}
+	inline float GetFearLevel() {return this->zFearLevel;}
+	inline void	SetFearLevel(float fear) {this->zFearLevel = fear;}
+	inline float GetFearMax() {return this->zFearMax;}
+	inline void	SetFearMax(float max) {this->zFearMax = max;}
 
-	float		GetLastDistanceCheck();
-	void		SetLastDistanceCheck(float distance);
+	inline float GetLastDistanceCheck() {return this->zLastDistanceCheck;}
+	inline void SetLastDistanceCheck(float distance) {this->zLastDistanceCheck = distance;}
 	
-	void		SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind = HUMAN);
-	int			GetCurrentTargets();
-	void		SetCurrentTargets(int number);
+	void SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind = HUMAN);
+	inline int	GetCurrentTargets() {return this->zCurrentNrOfTargets;}
+	inline void SetCurrentTargets(int number) {this->zCurrentNrOfTargets = number;}
 
-	std::vector<Vector2>& GetPath();
+	inline std::vector<Vector2>& GetPath() {return this->zCurrentPath;}
 
-	float		GetPreviousHealth();
-	void		SetPreviousHealth(float oldHealth);
+	float GetPreviousHealth() {return this->zPreviousHealth;}
+	void SetPreviousHealth(float oldHealth) {this->zPreviousHealth = oldHealth;}
 
 	bool Update(float dt);
 
@@ -113,6 +111,8 @@ private:
 		float		zWalkingVelocity;
 		float		zAttackingVelocity;
 		float		zFleeingVelocity;
+
+		float		zPreviousVelocity;
 
 
 		float		zPreviousHealth; //Used to detect if the deer has been wounded.

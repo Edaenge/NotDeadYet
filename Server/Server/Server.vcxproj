@@ -23,6 +23,7 @@
     <ClCompile Include="Source\ActorManager.cpp" />
     <ClCompile Include="Source\ActorSynchronizer.cpp" />
     <ClCompile Include="Source\AI.cpp" />
+    <ClCompile Include="Source\AIBehavior.cpp" />
     <ClCompile Include="Source\AIDeerBehavior.cpp" />
     <ClCompile Include="Source\AIWolfBehavior.cpp" />
     <ClCompile Include="Source\AnimalActor.cpp" />
@@ -64,6 +65,7 @@
     <ClInclude Include="Source\ActorManager.h" />
     <ClInclude Include="Source\ActorSynchronizer.h" />
     <ClInclude Include="Source\AI.h" />
+    <ClInclude Include="Source\AIBehavior.h" />
     <ClInclude Include="Source\AIDeerBehavior.h" />
     <ClInclude Include="Source\AIWolfBehavior.h" />
     <ClInclude Include="Source\AnimalActor.h" />

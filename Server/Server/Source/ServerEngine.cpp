@@ -45,3 +45,7 @@ const char* ServerEngine::InitHost( const unsigned int& port, const unsigned int
 	return zHost->InitHost(port, maxPlayers, gameMode, mapName);
 }
 
+void ServerEngine::SendMessageToClient( const std::string& message )
+{
+	this->zHost->SendMessageToClient(message);
+}

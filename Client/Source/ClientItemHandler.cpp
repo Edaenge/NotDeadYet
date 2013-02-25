@@ -680,11 +680,11 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 
 		if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
 		{
-			itemName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it));
+			itemName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it), true);
 		}
 		else if(strcmp(key, M_ITEM_DESCRIPTION.c_str()) == 0)
 		{
-			itemDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it));
+			itemDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it), true);
 		}
 		else if(strcmp(key, M_ITEM_ICON_PATH.c_str()) == 0)
 		{

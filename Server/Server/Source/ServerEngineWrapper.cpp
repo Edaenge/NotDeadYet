@@ -37,3 +37,8 @@ bool ServerEngineWrapper::IsRunning() const
 {
 	return zServerEngine->IsRunning();
 }
+
+void ServerEngineWrapper::SendMessageToClient(char* message)
+{
+	zServerEngine->SendMessageToClient(message);
+}

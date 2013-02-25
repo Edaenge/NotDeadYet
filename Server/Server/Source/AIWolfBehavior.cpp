@@ -1,7 +1,7 @@
 #include "AIWolfBehavior.h"
 
 
-AIWolfBehavior::AIWolfBehavior( Actor* actor, World* world ) : Behavior(actor, world)
+AIWolfBehavior::AIWolfBehavior( Actor* actor, World* world ) : AIBehavior(actor, world)
 {
 
 }
