@@ -98,19 +98,15 @@ int AudioManager::init()
 
 int AudioManager::PlayMusicCue(int cue)
 {
-	
 	FMOD_RESULT result;
 
 	if(currentCue != NULL)
 	{
-
 		result = currentCue->end();	
 		
 		if (result != FMOD_OK)
 		{
-
 			return result;
-
 		}
 	}
 	

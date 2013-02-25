@@ -28,6 +28,14 @@
 #include "PlayerGhostBehavior.h"
 #include <Packets\NewActorPacket.h>
 
+static const float PI = 3.14159265358979323846f;
+//Total Degrees for the sun to rotate (160 degrees atm)
+static const float TOTAL_SUN_DEGREE_SHIFT = 160 * PI / 180;
+
+//Wait time in Seconds for sun Update. (5s atm)
+static const float SUN_UPDATE_DELAY = 0.5f;
+//Total Update Time in Seconds (6h atm)
+static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
 {
@@ -37,38 +45,57 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	
 	if (mode.find("FFA") == 0 )
 	{
-		zGameMode = new GameModeFFA(this);
+		this->zGameMode = new GameModeFFA(this);
 	}
 	else if (mode.find("TestMode") == 0)
 	{
-		zGameMode = new GameModeTest(this, 10);	
+		this->zGameMode = new GameModeTest(this, 10);	
 	}
 	else
 	{
-		zGameMode = new GameModeFFA(this);
+		this->zGameMode = new GameModeFFA(this);
 	}
 
 	// Load Entities
 	LoadEntList("Entities.txt");
 
 	// Game Mode Observes
-	this->AddObserver(zGameMode);
+	this->AddObserver(this->zGameMode);
 
 	// Create World
 	if(worldFile != "")
-		zWorld = new World(this, worldFile.c_str());
+		this->zWorld = new World(this, worldFile.c_str());
 	else
-		zWorld = new World(this, 10, 10);  // Handle Error.
+		this->zWorld = new World(this, 10, 10);  // Handle Error.
 
 	// Actor Manager
-	zActorManager = new ActorManager(syncher);
+	this->zActorManager = new ActorManager(syncher);
 	
 	InitItemLookup();
 
 	this->zMaxNrOfPlayers = 32;
-	//DEBUG
-	SpawnItemsDebug();
-	//SpawnAnimalsDebug();
+	//DEBUG;
+	this->SpawnItemsDebug();
+	this->SpawnAnimalsDebug();
+	this->SpawnHumanDebug();
+
+
+	//Initialize Sun Direction
+	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
+
+	float radius = mapCenter2D.x;
+	float angle = TOTAL_SUN_DEGREE_SHIFT * 0.5f;
+	float x = mapCenter2D.x + radius * sin(angle);
+
+	this->zCurrentSunPosition = Vector3(x, 10000.0f, 0.0f);
+
+	this->zCurrentSunDirection = Vector3(mapCenter2D.x, 0.0f, mapCenter2D.y) - this->zCurrentSunPosition;
+	this->zCurrentSunDirection.Normalize();
+
+	this->zSunTimer = 0.0f;
+
+	this->zTotalSunRadiansShift = 0.0f;
+	this->zSunRadiansShiftPerUpdate = TOTAL_SUN_DEGREE_SHIFT / (SUN_UPDATE_DELAY * TOTAL_SUN_UPDATE_TIME);
 }
 
 Game::~Game()
@@ -255,10 +282,56 @@ void Game::SpawnItemsDebug()
 	}
 }
 
+void Game::SpawnHumanDebug()
+{
+	srand((unsigned int)time(0));
+	int increment = 10;
+	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
+	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/temp_guy.obj");
+	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics);
+	pActor->AddObserver(this->zGameMode);
+	pActor->SetPosition(position);
+	pActor->SetHealth(5000);
+	pActor->SetScale(pActor->GetScale());
+	this->zActorManager->AddActor(pActor);
+}
+
+void Game::UpdateSunDirection(float dt)
+{
+	//Update Sun
+	this->zSunTimer += dt;
+
+	if (this->zSunTimer >= SUN_UPDATE_DELAY)
+	{
+		Vector2 worldCenter = this->zWorld->GetWorldCenter();
+		float radius = worldCenter.x;
+		float angle = TOTAL_SUN_DEGREE_SHIFT * 0.5f + this->zTotalSunRadiansShift;
+		float x = worldCenter.x + radius * sin(angle);
+
+		this->zTotalSunRadiansShift += this->zSunRadiansShiftPerUpdate;
+
+		if (this->zTotalSunRadiansShift >= TOTAL_SUN_DEGREE_SHIFT)
+			this->zTotalSunRadiansShift = 0.0f;
+
+		this->zCurrentSunPosition.x = x;
+
+		this->zCurrentSunDirection = this->zMapCenter - this->zCurrentSunPosition;
+		this->zCurrentSunDirection.Normalize();
+
+		NetworkMessageConverter NMC;
+		std::string msg = NMC.Convert(MESSAGE_TYPE_SUN_DIRECTION, this->zCurrentSunDirection);
+
+		this->SendToAll(msg);
+
+		this->zSunTimer = 0.0f;
+	}
+}
+
 bool Game::Update( float dt )
 {
+	this->UpdateSunDirection(dt);
+
 	// Update Behaviors
-	
 	auto i = zBehaviors.begin();
 	int counter = 0;
 	while( i != zBehaviors.end() )
@@ -325,14 +398,10 @@ bool Game::Update( float dt )
 				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
 				{
 					//tempBehaviour->get_
-					//Actor* oldActor = NULL;
-					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
 					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
 				}
 				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
 				{
-					//Actor* oldActor = NULL;
-					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
 					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
 				}
 			}
@@ -548,6 +617,9 @@ void Game::OnEvent( Event* e )
 
 					//Add the actor to the list
 					this->zActorManager->AddActor(gActor);
+
+					NetworkMessageConverter NMC;
+					std::string msg = NMC.Convert(MESSAGE_TYPE_SUN_DIRECTION, this->zCurrentSunDirection);
 				}
 			}
 		}
@@ -575,10 +647,8 @@ void Game::OnEvent( Event* e )
 
 		if(thePlayerActor = dynamic_cast<DeerActor*>(actor))
 		{
-
 			for (auto it_actor = actors.begin(); it_actor != actors.end() && !bEaten; it_actor++)
 			{
-			
 				//Loop through all ID's of all actors the client tried to loot.
 				for (auto it_ID = PDEOE->actorID.begin(); it_ID != PDEOE->actorID.end(); it_ID++)
 				{
@@ -616,21 +686,14 @@ void Game::OnEvent( Event* e )
 							}
 							toBeRemoved = iActor;
 							bEaten = true;
-							
-
 						}
 					}
 				}
-
 			}
-		
 		}
 
 		if(bEaten)
-		{
 			this->zActorManager->RemoveActor(toBeRemoved);
-		}
-		
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
@@ -791,8 +854,6 @@ void Game::RemoveAIBehavior( AnimalActor* aActor )
 
 Vector3 Game::CalcPlayerSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center)
 {
-	static const float PI = 3.14159265358979323846f;
-
 	float slice  = 2 * PI / maxPoints;
 
 	float angle = slice * currentPoint;
@@ -813,7 +874,6 @@ Vector3 Game::CalcPlayerSpawnPoint(int maxPoints, Vector2 center)
 {
 	int point = this->zPlayers.size();
 
-	static const float PI = 3.14159265358979323846f;
 	static const float radius = 20.0f;
 	float slice  = 2 * PI / maxPoints;
 
@@ -835,7 +895,6 @@ Vector3 Game::CalcPlayerSpawnPoint(int nr)
 {
 	int point = nr;
 
-	static const float PI = 3.14159265358979323846f;
 	static const float radius = 20.0f;
 	float slice  = 2 * PI / this->zMaxNrOfPlayers;
 
@@ -994,6 +1053,8 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 							msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
 							bLooted = true;
 						}
+						if (items.size() == 0)
+							this->zActorManager->RemoveActor(pActor);
 					}
 				}
 				//Check if the Actor is an AnimalActor.
@@ -1023,6 +1084,9 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 										msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
 										bLooted = true;
 									}
+
+									if (items.size() == 0)
+										this->zActorManager->RemoveActor(aActor);
 								}
 							}
 						}
@@ -1033,6 +1097,8 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 	}
 	if (bLooted)
 		cd->Send(msg);
+	else
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No Lootable Objects Found."));
 }
 
 void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType )
@@ -1049,11 +1115,10 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 	
 	if(!pActor)
 	{
-		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You_Are_Dead_Loot_Failed"));
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You Are Dead Loot Failed"));
 		return;
 	}
 
-	
 	//Check if the Actor being looted is an ItemActor.
 	if (ItemActor* iActor = dynamic_cast<ItemActor*>(actor))
 	{
@@ -1100,7 +1165,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 					this->zActorManager->RemoveActor(iActor);
 				}
 				else
-					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory_Full"));
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory Is Full"));
 				
 			}
 		}
@@ -1153,8 +1218,12 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 							SAFE_DELETE(item);
 
 						cd->Send(msg);
+
+						if (bActor->GetInventory()->GetItems().size() <= 0)
+							this->zActorManager->RemoveActor(bActor);
 					}
-					
+					else
+						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
 				}
 			}
 		}

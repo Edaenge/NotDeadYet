@@ -303,12 +303,30 @@ void MainMenu::Init()
 
 void MainMenu::StartTestRun()
 {
+	std::string errorMessage;
+	int errorCode = 0;
 	//zGame->InitGameClient("194.47.150.20", 11521); // Ediz
 	//zGame->InitGameClient("194.47.150.16", 11521); // Server
 	//zGame->InitGameClient("194.47.150.12", 11521); // Crant
 	//zGame->InitGameClient("80.78.216.201", 11521);
-	zGame->InitGameClient("127.0.0.1", 11521);	
-	zGame->Run();
+	zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
+
+	if (errorMessage != "")
+	{
+		GraphicsEngine* gEng = GetGraphics();
+		Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
+
+		std::string errorMsg = "Error Code: " + MaloW::convertNrToString(errorCode) + ": " + errorMessage;
+		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/1");
+
+		Sleep(5000);
+
+		gEng->DeleteText(errorText);
+	}
+	else
+	{
+		zGame->Run();
+	}
 }
 
 void MainMenu::Run()
@@ -398,8 +416,26 @@ void MainMenu::Run()
 
 						this->EnableMouse(false);
 
-						zGame->InitGameClient(temp, 11521);	 // Save to connect IP
-						zGame->Run();
+						std::string errorMessage;
+						int errorCode = 0;
+
+						zGame->InitGameClient(temp, 11521, errorMessage, errorCode);	 // Save to connect IP
+						if (errorMessage != "")
+						{
+							GraphicsEngine* gEng = GetGraphics();
+							Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
+
+							std::string errorMsg = "Error Code: " + MaloW::convertNrToString(errorCode) + ": " + errorMessage;
+							iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/1");
+
+							Sleep(5000);
+
+							gEng->DeleteText(errorText);
+						}
+						else
+						{
+							zGame->Run();
+						}
 
 						this->EnableMouse(true);
 

@@ -138,8 +138,10 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 					}
 				}
 			}
+			InventorySlotGui* temp = (*it);
 			(*it)->RemoveFromRenderer(GetGraphics());
 			this->zSlotGui.erase(it);
+			SAFE_DELETE(temp);
 
 			return true;
 		}
@@ -154,9 +156,10 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 				if((*it)->GetStacks() > 0)
 					return true;
 			}
+			InventorySlotGui* temp = (*it);
 			(*it)->RemoveFromRenderer(GetGraphics());
 			this->zWeaponSlotGui.erase(it);
-
+			SAFE_DELETE(temp);
 			return true;
 		}
 	}
