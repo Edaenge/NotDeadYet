@@ -96,7 +96,9 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_PLAY_AS_ANIMAL,
 	MESSAGE_TYPE_LEAVE_ANIMAL,
 	MESSAGE_TYPE_DEER_EAT_OBJECT,
-	MESSAGE_TYPE_PLAY_SOUND
+	MESSAGE_TYPE_PLAY_SOUND,
+	MESSAGE_TYPE_SUN_DIRECTION,
+	MESSAGE_TYPE_ANIMAL_ATTACK
 };
 
 static const std::string M_UPDATE_ACTOR				= "UA";
@@ -120,6 +122,7 @@ static const std::string M_RESTART_GAME_REQUEST		= "RGR";
 static const std::string M_PLAY_AS_ANIMAL			= "PAD";
 static const std::string M_LEAVE_ANIMAL				= "LA";
 static const std::string M_DEER_EAT_OBJECT			= "AE";
+static const std::string M_SUN_DIRECTION			= "SD";
 //Data Messages
 static const std::string M_LOAD_MAP					= "LM";
 static const std::string M_CONNECTED				= "CON";
@@ -172,10 +175,7 @@ static const std::string M_ITEM_FINISHED			= "IF";
 static const std::string M_WEAPON_EQUIPMENT_SWAP	= "WEQS";
 
 //Animal Messages
-static const std::string M_ADD_DEAD_ANIMAL_ITEM		= "ADAI";
-static const std::string M_DEAD_ANIMAL_REMOVE_ITEM	= "DARI";
-static const std::string M_REMOVE_DEAD_ANIMAL_OBJECT= "RDAO";
-static const std::string M_DEAD_ANIMAL_ITEM_FINISHED= "DAIF";
+static const std::string M_ANIMAL_ATTACK			= "AA";
 //Key Messages
 static const std::string M_KEY_DOWN					= "KD";
 static const std::string M_KEY_UP					= "KU";

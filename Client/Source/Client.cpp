@@ -8,6 +8,7 @@
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
 #include "PlayerConfig/PlayerSettings.h"
+#include <algorithm>
 
 using namespace MaloW;
 
@@ -48,7 +49,7 @@ Client::Client()
 
 	this->zSendUpdateDelayTimer = 0.0f;
 
-	this->zEng = NULL;
+	this->zEng = GetGraphics();
 	
 	this->zGuiManager = NULL;
 	this->zActorManager = NULL;
@@ -72,12 +73,13 @@ Client::Client()
 	this->zPam = new PickAnimalMenu();
 }
 
-void Client::Connect(const std::string &IPAddress, const unsigned int &port)
+void Client::Connect(const std::string &IPAddress, const unsigned int &port, std::string& errMsg, int& errorCode)
 {
 	this->zIP = IPAddress;
 	this->zPort = port;
-	this->zServerChannel = new ServerChannel(this, IPAddress, port);
-	this->zServerChannel->Start();
+	this->zServerChannel = new ServerChannel(this, IPAddress, port, errMsg, errorCode);
+	if (errMsg == "")
+		this->zServerChannel->Start();
 }
 
 Client::~Client()
@@ -162,7 +164,7 @@ float Client::Update()
 		if ( zWorldRenderer ) 
 			zWorldRenderer->Update();
 
-		IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
+		this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
@@ -304,8 +306,6 @@ void Client::Init()
 	this->zSecsPerCnt = 1.0f / (float)(frequency);
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
-
-	this->zEng = GetGraphics();
 }
 
 void Client::Life()
@@ -847,6 +847,38 @@ void Client::CheckAnimalInput()
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
 		}
 	}
+
+	if (this->zEng->GetKeyListener()->IsClicked(1))
+	{
+		if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_LEFT_PRESS);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
+	}
+
+	if (this->zEng->GetKeyListener()->IsClicked(2))
+	{
+		if (!this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_RIGHT_PRESS);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, false);
+	}
 }
 
 //Use to equip weapon with keyboard
@@ -1177,6 +1209,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		return;
 	}
 
+	
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
 
@@ -1210,6 +1243,13 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			float damageTaken = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, msgArray[1]);
 			this->HandleTakeDamage(id, damageTaken);
 		}
+	}
+	else if (msgArray[0].find(M_SUN_DIRECTION.c_str()) == 0)
+	{
+		Vector3 sunLightDirection = this->zMsgHandler.ConvertStringToVector(M_SUN_DIRECTION, msgArray[0]);
+		Vector3 sunLightColor = this->zEng->GetSunLightColor();
+		float sunLightIntensity = this->zEng->GetSunLightIntensity();
+		this->zEng->SetSunLightProperties(sunLightDirection, sunLightColor, sunLightIntensity);
 	}
 	else if (msgArray[0].find(M_DEAD_ACTOR.c_str()) == 0)
 	{
@@ -1582,10 +1622,6 @@ void Client::OnEvent(Event* e)
 		zAnchor = WLE->world->CreateAnchor();
 		this->zWorldRenderer = new WorldRenderer(WLE->world, GetGraphics());
 	}
-	else if (EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e))
-	{
-		unsigned int type = ELE->entity->GetType();
-	}
 	else if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )
 	{
 		if ( zWorldRenderer ) delete zWorldRenderer, zWorldRenderer = 0;
@@ -1706,56 +1742,51 @@ void Client::UpdateText()
 	}	
 }
 
-void Client::RemoveUnderscore(std::string& msg)
-{
-	std::string newString = "";
-	for (int i = 0; i < (int)msg.length(); i++)
-	{
-		if (msg[i] == '_')
-		{
-			newString += " ";
-		}
-		else
-		{
-			newString += msg[i];
-		}
-	}
-	msg = newString;
-}
-
 void Client::AddDisplayText(const std::string& msg, bool bError)
 {
 	std::string newString = msg;
 
-	this->RemoveUnderscore(newString);
 
-	int yPos = (int)this->zDisplayedText.size();
+	std::replace(newString.begin(), newString.end(), '_', ' ');
+
+	int arrSize = (int)this->zDisplayedText.size();
 	int windowWidth = this->zEng->GetEngineParameters().WindowWidth;
 	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;
 
-	float yPosition = (float)(windowHeight / (yPos + 2) );
-	float xPosition = (float)(windowWidth * 0.25f);
+	float yStartPosition = 40.0f;
+	float xPosition = 50.0f;
 	float textheight = 20.0f;
+
+	static const int MAX_ITEMS = (windowHeight - yStartPosition) * 0.05f;
 
 	Vector2 position;
 
-	float c = 1;
+	float c = 0;
+	
+	if (arrSize >= MAX_ITEMS)
+	{
+		TextDisplay* temp = this->zDisplayedText[0];
+		this->zDisplayedText.erase(this->zDisplayedText.begin());
+
+		this->zEng->DeleteText(temp->zText);
+		SAFE_DELETE(temp);
+	}
 
 	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
 	{
 		float x = (*it)->zText->GetPosition().x;
-		position = Vector2(x, c++ * yPosition - textheight);
+		position = Vector2(x, yStartPosition + c++ * textheight);
 		(*it)->zText->SetPosition(position);
 	}
 
-	if (yPos == 0)
+	if (arrSize == 0)
 	{
-		position = Vector2(xPosition, windowHeight * 0.5f);
+		position = Vector2(xPosition, yStartPosition);
 	}
 	else
 	{
 
-		position = Vector2(xPosition, c * yPosition - textheight);
+		position = Vector2(xPosition, yStartPosition + c++ * textheight);
 	}
 	std::string fontPath = "";
 	if (bError)

@@ -4,7 +4,6 @@ EventHandle::EventHandle(FMOD::Event* eventI)
 {
 
 	this->eventInstance = eventI;
-
 }
 
 int EventHandle::Play()
@@ -56,7 +55,7 @@ int EventHandle::Release()
 int EventHandle::Setposition(FMOD_VECTOR* position)
 {
 
-	return eventInstance->set3DAttributes(position,0,0);
+	return eventInstance->set3DAttributes(position,0);
 
 }
 
@@ -64,7 +63,6 @@ int EventHandle::Setvolume(float volume)
 {
 
 	return eventInstance->setVolume(volume);
-
 }
 
 EventHandle::~EventHandle()

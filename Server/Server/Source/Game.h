@@ -33,6 +33,13 @@ class Game : public Observer, public Observed
 
 	int zMaxNrOfPlayers;
 
+	Vector3 zCurrentSunPosition;
+	Vector3 zCurrentSunDirection;
+	Vector3 zMapCenter;
+
+	float zSunTimer;
+	float zTotalSunRadiansShift;
+	float zSunRadiansShiftPerUpdate;
 public:
 	Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
 	virtual ~Game();
@@ -75,6 +82,7 @@ private:
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID, int eq_slot);
 
+	void UpdateSunDirection(float dt);
 private:
 	PhysicsEngine* zPhysicsEngine;
 	

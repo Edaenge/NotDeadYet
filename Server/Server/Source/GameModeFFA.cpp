@@ -47,29 +47,40 @@ void GameModeFFA::OnEvent( Event* e )
 		{
 			if(pActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 			{
+				NetworkMessageConverter NMC;
 				std::string killsMsg = "";
+				std::string msg = "";
 				Player* player = pActor->GetPlayer();
 				if (ATD->zActor == ATD->zDealer)
 				{
-					killsMsg = player->GetPlayerName() + " Killed Himself";
+					killsMsg = "You killed yourself";
+					std::string msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
 				}
 				else if (PlayerActor* pDealer = dynamic_cast<PlayerActor*>(ATD->zDealer))
 				{
 					Player* dealer = pDealer->GetPlayer();
-					killsMsg = player->GetPlayerName() + " Was Killed by " + dealer->GetPlayerName();
+					killsMsg = "You were killed by " + dealer->GetPlayerName();
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
+
+					killsMsg = "You killed " + player->GetPlayerName();
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					dealer->GetClientData()->Send(msg);
+
 				}
 				else if (AnimalActor* pDealer =dynamic_cast<AnimalActor*>(ATD->zDealer))
 				{
-					killsMsg = player->GetPlayerName() + " Was killed by an Animal";
+					killsMsg = "You were killed by an Animal";
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
 				}
 				else
 				{
-					killsMsg = player->GetPlayerName() + " Was Killed by the environment";
+					killsMsg = "You Were killed by the environment";
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
 				}
-
-				NetworkMessageConverter NMC;
-				std::string msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
-				this->zGame->SendToAll(msg);
 
 				this->OnPlayerHumanDeath(pActor);
 			}

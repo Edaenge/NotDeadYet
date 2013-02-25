@@ -250,7 +250,7 @@ namespace GUI
                 this.richTextBoxConsole.AppendText(serverText + "\n");
                 serverText = "EV " + serverText.Replace(' ', '_');
 
-                textBoxClientMessages.Text = "";
+                textBoxServerMessages.Text = "";
 
                 this.m_ServerEngine.SendMessageToClient(serverText);
             }

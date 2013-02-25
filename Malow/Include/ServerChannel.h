@@ -29,7 +29,8 @@ namespace MaloW
 		void CloseSpecific();
 
 	public:
-		ServerChannel( MaloW::Process* observerProcess, const std::string &IP, const unsigned int &port );
+		ServerChannel( MaloW::Process* observerProcess, const std::string &IP, const unsigned int &port,
+						std::string& out, int& errCode);
 		virtual ~ServerChannel();
 
 		// Begin Process

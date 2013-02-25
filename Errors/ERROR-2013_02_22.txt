@@ -5,7 +5,7 @@ Sprint blir sprint x1000 - hamnar långt åt helvete på en sec.
 Ghost rör sig helt random i början när man dör.
 
 #3 
-Connect till fel ip/inaktiv ger crash.
+Connect till fel ip/inaktiv ger crash. Fixed
 
 #4
 Kan inte ta upp så mycket som går av en stack när man nästan har fullt.
@@ -32,7 +32,7 @@ Random skada (hunger syns inte)
 Skador syns inte från vilket håll det kommer
 
 #12
-Crash när d/c via knappen (Unknown)
+Crash när d/c via Quit knappen (Unknown). Fixed (tror jag)
 
 #13
 Skjuter man för många pilar -> crash.
