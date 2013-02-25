@@ -61,6 +61,7 @@ private:
 	//Test function, spawns items/Animals
 	void SpawnItemsDebug();
 	void SpawnAnimalsDebug();
+	void SpawnHumanDebug();
 
 	void HandleConnection(ClientData* cd);
 	void HandleDisconnect(ClientData* cd);

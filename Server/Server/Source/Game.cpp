@@ -68,7 +68,9 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	this->zMaxNrOfPlayers = 32;
 	//DEBUG
 	SpawnItemsDebug();
-	//SpawnAnimalsDebug();
+	SpawnAnimalsDebug();
+	SpawnHumanDebug();
+
 }
 
 Game::~Game()
@@ -253,6 +255,20 @@ void Game::SpawnItemsDebug()
 		total += increment;
 		increment = 0;
 	}
+}
+
+void Game::SpawnHumanDebug()
+{
+	srand((unsigned int)time(0));
+	int increment = 10;
+	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
+	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/temp_guy.obj");
+	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics);
+	pActor->AddObserver(this->zGameMode);
+	pActor->SetPosition(position);
+	pActor->SetHealth(5000);
+	pActor->SetScale(pActor->GetScale());
+	this->zActorManager->AddActor(pActor);
 }
 
 bool Game::Update( float dt )

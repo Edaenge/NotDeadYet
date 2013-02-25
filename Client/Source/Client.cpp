@@ -427,6 +427,7 @@ void Client::ReadMessages()
 void Client::SendClientUpdate()
 {
 	std::string msg;
+
 	Vector3 dir = this->zEng->GetCamera()->GetForward();
 	Vector3 up = this->zEng->GetCamera()->GetUpVector();
 	Vector4 rot = Vector4(0, 0, 0, 0);
@@ -805,7 +806,7 @@ void Client::CheckAnimalInput()
 	this->CheckKey(KEY_JUMP);
 
 	//Leave Animal An Become a Ghost again
-	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed(VK_MENU) && this->zEng->GetKeyListener()->IsPressed('G'))
+	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('G'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
