@@ -4,7 +4,6 @@
 #pragma once
 
 #include "Client.h"
-#include "SoundHandler.h"
 
 
 enum NETWORK_ERROR_CODE
@@ -25,7 +24,6 @@ class Game
 		/*! Initialize the sounds.
 			It will read and load all sounds.
 		*/
-		bool InitSounds(SoundHandler* engine);
 
 		virtual ~Game();
 

@@ -7,7 +7,6 @@
 #include <World/Entity.h>
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
-#include "Sounds.h"
 #include "PlayerConfig/PlayerSettings.h"
 #include <algorithm>
 
@@ -72,13 +71,6 @@ Client::Client()
 	
 	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
-	
-	GetSounds()->LoadMusicIntoSystem("Media/Sound/ForestAmbience.mp3", true);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Running_Breath_4.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/LeftStep.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/RightStep.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/BowShot.mp3", false);
 }
 
 void Client::Connect(const std::string &IPAddress, const unsigned int &port, std::string& errMsg, int& errorCode)
@@ -126,7 +118,6 @@ Client::~Client()
 	if (this->zUpsText)
 		this->zEng->DeleteText(this->zUpsText);
 
-	GetSounds()->StopMusic();
 
 	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
 	{
@@ -172,6 +163,8 @@ float Client::Update()
 		this->zWorld->Update();
 		if ( zWorldRenderer ) 
 			zWorldRenderer->Update();
+
+		IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
@@ -191,6 +184,43 @@ float Client::Update()
 		}
 	}
 	return this->zDeltaTime;
+}
+
+void Client::IgnoreRender( const float& radius, Vector2& center )
+{
+	static std::set<Entity*> previousEntities;
+	std::set<Entity*> entities; 
+	std::set<Entity*> validEntities;
+
+	zWorld->GetEntitiesInCircle(center, radius, entities);
+
+	for (auto it = entities.begin(); it != entities.end(); it++)
+	{
+		if ( GetEntBlockRadius( (*it)->GetType() ) <= 0.0f )
+		{
+			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*it);
+			
+			if(mesh)
+			{
+				mesh->DontRender(false);
+				validEntities.insert(*it);
+			}
+		}
+	}
+
+	/*Check previous, if prev is not in valid, they should not be rendered.*/
+	for(auto it = previousEntities.begin(); it != previousEntities.end(); it++)
+	{
+		auto found = validEntities.find(*it);
+
+		if(found == validEntities.end())
+		{
+			this->zWorldRenderer->GetEntityMesh(*it)->DontRender(true);
+		}
+	}
+
+	previousEntities.clear();
+	previousEntities = validEntities;
 }
 
 void Client::InitGraphics(const std::string& mapName)
@@ -253,7 +283,21 @@ void Client::InitGraphics(const std::string& mapName)
 
 	this->zUpsText = this->zEng->CreateText("", Vector2(1, 1), 0.7f, "Media/Fonts/1");
 
-	GetSounds()->PlayMusic("Media/Sound/ForestAmbience.mp3");
+	//Go through entities (bush etc) and set render flag.
+	std::set<Entity*> entities;
+	Vector2 size = zWorld->GetWorldSize();
+	float radius = powf(size.x, 2.0f) + powf(size.y, 2.0f);
+	zWorld->GetEntitiesInCircle(center, (radius * 0.5f), entities);
+
+	for (auto i = entities.begin(); i != entities.end(); i++)
+	{
+		if ( GetEntBlockRadius( (*i)->GetType() ) <= 0.0f )
+		{
+			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*i);
+			mesh->DontRender(true);
+		}
+	}
+
 }
 
 void Client::Init()
@@ -304,6 +348,9 @@ void Client::Life()
 
 			this->UpdateActors();
 		}
+
+		AudioManager* am = AudioManager::GetInstance();
+		am->Update();
 
 		this->ReadMessages();
 		if(this->zPam->GetShow())
@@ -382,6 +429,7 @@ void Client::ReadMessages()
 void Client::SendClientUpdate()
 {
 	std::string msg;
+
 	Vector3 dir = this->zEng->GetCamera()->GetForward();
 	Vector3 up = this->zEng->GetCamera()->GetUpVector();
 	Vector4 rot = Vector4(0, 0, 0, 0);
@@ -760,7 +808,7 @@ void Client::CheckAnimalInput()
 	this->CheckKey(KEY_JUMP);
 
 	//Leave Animal An Become a Ghost again
-	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed(VK_MENU) && this->zEng->GetKeyListener()->IsPressed('G'))
+	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('G'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
@@ -1189,10 +1237,9 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		std::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
+		std	::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
 
-		GetSounds()->PlaySounds(&fileName[0], pos);
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
@@ -1458,7 +1505,6 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 		//Set the opacity
 		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
 
-		GetSounds()->PlaySounds("Media/Sound/Breath.wav", playerPos);
 	}
 	return true;
 }

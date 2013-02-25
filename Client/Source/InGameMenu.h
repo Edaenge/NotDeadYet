@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GUI\GUISet.h"
-#include "Sounds.h"
 
 enum SETIG
 {

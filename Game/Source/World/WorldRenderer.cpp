@@ -284,7 +284,6 @@ void WorldRenderer::UpdateSectorTextures( const Vector2UINT& sectorCoords )
 	}
 }
 
-
 void WorldRenderer::Update()
 {
 	while ( !zUpdatesRequired.empty() )
@@ -350,6 +349,11 @@ iTerrain* WorldRenderer::GetTerrain( const Vector2UINT& sectorCoords )
 	if ( zTerrain.empty() ) return 0;
 	unsigned int tIndex = sectorCoords.y * zWorld->GetNumSectorsWidth() + sectorCoords.x;
 	return zTerrain[tIndex];
+}
+
+iMesh* WorldRenderer::GetEntityMesh( Entity* entity )
+{
+	return this->zEntities[entity];
 }
 
 void WorldRenderer::CreateTerrain( const Vector2UINT& sectorCoords )

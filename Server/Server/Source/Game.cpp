@@ -74,11 +74,13 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	InitItemLookup();
 
 	this->zMaxNrOfPlayers = 32;
-	//DEBUG
+	//DEBUG;
 	this->SpawnItemsDebug();
-	//SpawnAnimalsDebug();
+	this->SpawnAnimalsDebug();
+	this->SpawnHumanDebug();
 
-	//Initiate Sun Direction
+
+	//Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
 
 	float radius = mapCenter2D.x;
@@ -280,7 +282,21 @@ void Game::SpawnItemsDebug()
 	}
 }
 
-bool Game::Update( float dt )
+void Game::SpawnHumanDebug()
+{
+	srand((unsigned int)time(0));
+	int increment = 10;
+	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
+	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/temp_guy.obj");
+	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics);
+	pActor->AddObserver(this->zGameMode);
+	pActor->SetPosition(position);
+	pActor->SetHealth(5000);
+	pActor->SetScale(pActor->GetScale());
+	this->zActorManager->AddActor(pActor);
+}
+
+void Game::UpdateSunDirection(float dt)
 {
 	//Update Sun
 	this->zSunTimer += dt;
@@ -309,6 +325,11 @@ bool Game::Update( float dt )
 
 		this->zSunTimer = 0.0f;
 	}
+}
+
+bool Game::Update( float dt )
+{
+	this->UpdateSunDirection(dt);
 
 	// Update Behaviors
 	auto i = zBehaviors.begin();
@@ -377,14 +398,10 @@ bool Game::Update( float dt )
 				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
 				{
 					//tempBehaviour->get_
-					Actor* oldActor = NULL;
-					ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
 					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
 				}
 				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
 				{
-					Actor* oldActor = NULL;
-					ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
 					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
 				}
 			}
@@ -610,7 +627,73 @@ void Game::OnEvent( Event* e )
 	else if (PlayerDeerEatObjectEvent* PDEOE = dynamic_cast<PlayerDeerEatObjectEvent*>(e))
 	{
 		//ID's of the Object deer is trying to eat
-		
+		auto playerIterator = this->zPlayers.find(PDEOE->clientData);
+		auto playerBehavior = playerIterator->second->GetBehavior();
+		Actor* actor = playerBehavior->GetActor();
+
+		NetworkMessageConverter NMC;
+		std::string msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE);
+		unsigned int ID = 0;
+		bool bEaten = false;
+
+		std::set<Actor*> actors = this->zActorManager->GetActors();
+
+		//BioActor* thePlayerActor = dynamic_cast<BioActor*>(actor);
+		DeerActor* thePlayerActor;
+
+		ItemActor* toBeRemoved = NULL;
+
+		Damage idiotDamage;
+
+		if(thePlayerActor = dynamic_cast<DeerActor*>(actor))
+		{
+			for (auto it_actor = actors.begin(); it_actor != actors.end() && !bEaten; it_actor++)
+			{
+				//Loop through all ID's of all actors the client tried to loot.
+				for (auto it_ID = PDEOE->actorID.begin(); it_ID != PDEOE->actorID.end(); it_ID++)
+				{
+					//Check if the ID is the same.
+					if ((*it_ID) == (*it_actor)->GetID())
+					{
+						//Check if the distance between the actors are to far to be able to loot.
+						if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 5.0f)
+							continue;
+
+						//Check if the Actor is an ItemActor
+						if (ItemActor* iActor = dynamic_cast<ItemActor*>(*it_actor))
+						{
+							ID = iActor->GetID();
+							Item* theItem = iActor->GetItem();
+							if(theItem->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+							{
+								idiotDamage.piercing = 25.0f;
+						
+								thePlayerActor->TakeDamage(idiotDamage,actor);
+							}
+							else if(theItem->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+							{
+								Damage idiotDamage;
+								idiotDamage.piercing = 10.0f;
+						
+								thePlayerActor->TakeDamage(idiotDamage,actor);
+							}
+							else if(theItem->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
+							{
+								Damage idiotDamage;
+								idiotDamage.piercing = 5.0f;
+						
+								thePlayerActor->TakeDamage(idiotDamage,actor);
+							}
+							toBeRemoved = iActor;
+							bEaten = true;
+						}
+					}
+				}
+			}
+		}
+
+		if(bEaten)
+			this->zActorManager->RemoveActor(toBeRemoved);
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{

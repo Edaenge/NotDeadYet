@@ -1,11 +1,14 @@
 #include "ClientActorManager.h"
 #include "Safe.h"
 #include "Graphics.h"
-#include "Sounds.h"
+#include "sounds.h"
+
 #define PI 3.14159265358979323846f
 
 ClientActorManager::ClientActorManager()
 {
+	AudioManager* am = AudioManager::GetInstance();
+	am->GetEventHandle(EVENTGROUP_NOTDEADYET_WALK, footStep);
 	zInterpolationVelocity = 100.0f;
 }
 
@@ -57,6 +60,9 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				{
 					position = this->InterpolatePosition(gEng->GetCamera()->GetPosition() - this->zCameraOffset, update->GetPosition(), t);
 					
+					AudioManager::GetInstance()->SetPlayerPosition(&ConvertToFmodVector(position), &ConvertToFmodVector(gEng->GetCamera()->GetForward()), &ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
+					footStep->Setposition(&ConvertToFmodVector(Vector3(0.0f, 5.0f, 0.0f)));
+					footStep->Play();
 					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
 				}
 				else 
@@ -66,12 +72,6 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				}
 				update->ComparePosition(position);
 
-				SoundChecker* soundChecker = actor->GetSoundChecker();
-				if(!soundChecker->CheckLeftFootPlaying(deltaTime))
-					GetSounds()->PlaySounds("Media/Sound/LeftStep.mp3", position);
-				if(!soundChecker->CheckRightFootPlaying(deltaTime))
-					GetSounds()->PlaySounds("Media/Sound/RightStep.mp3", position);
-				soundChecker = NULL;
 			}
 			if (update->HasStateChanged())
 			{
@@ -109,6 +109,10 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 		}
 		else
 		{
+			if(update->GetID() == clientID)
+			{
+				footStep->Stop();
+			}
 			Updates* temp = update; 
 			it_Update = zUpdates.erase(it_Update);
 			SAFE_DELETE(temp);
@@ -239,4 +243,13 @@ Vector4 ClientActorManager::InterpolateRotation( const Vector4& currentRotation,
 		returnRotation = newRotation;
 
 	return returnRotation;
+}
+
+FMOD_VECTOR ClientActorManager::ConvertToFmodVector( Vector3 v )
+{
+	FMOD_VECTOR temp;
+	temp.x = v.x;
+	temp.y = v.y;
+	temp.z = v.z;
+	return temp;
 }

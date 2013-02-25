@@ -7,6 +7,7 @@
 #include "Actor.h"
 #include <vector>
 #include <map>
+#include "AudioManager.h"
 
 class Updates
 {
@@ -131,5 +132,6 @@ private:
 	float zInterpolationVelocity;
 	Vector3 zCameraOffset;
 
-	SoundChecker zSoundChecker;
+	FMOD_VECTOR ConvertToFmodVector(Vector3 v);
+	IEventHandle* footStep;
 };
