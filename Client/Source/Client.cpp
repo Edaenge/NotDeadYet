@@ -1254,10 +1254,10 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	else if (msgArray[0].find(M_CLIENT_LATENCY.c_str()) == 0)
 	{
 		float latency = this->zMsgHandler.ConvertStringToFloat(M_CLIENT_LATENCY, msgArray[0]);
-		latency *= 1000.0f;
+		//latency *= 1000.0f;
 
 		int ms = (int)latency;
-		std::string text = MaloW::convertNrToString((float)ms) + " ms";
+		std::string text = MaloW::convertNrToString((float)ms) + "s";
 
 		zLatencyText->SetText(text.c_str());
 	}

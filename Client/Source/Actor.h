@@ -9,19 +9,6 @@
 #include <string>
 #include "Safe.h"
 
-class SoundChecker
-{
-private:
-	float zLeftFoot;
-	float zRightFoot;
-
-public:
-	SoundChecker(){ this->zLeftFoot = 0.0f; this->zRightFoot = 0.6f; }
-
-	bool CheckLeftFootPlaying(float deltaTime){ if(this->zLeftFoot <= 0.0f) { this->zLeftFoot = 1.0f; return false; } else{ this->zLeftFoot -= deltaTime; return true;} }
-	bool CheckRightFootPlaying(float deltaTime){ if(this->zRightFoot <= 0.0f) { this->zRightFoot = 1.0f; return false; } else{ this->zRightFoot -= deltaTime; return true;} }
-};
-
 /*! Base class for World Objects*/
 class Actor
 {
@@ -30,14 +17,8 @@ public:
 	{
 		this->zMesh = 0; 
 		this->zID = ID;
-
-		this->zSoundChecker = new SoundChecker();
 	}
-	virtual ~Actor()
-	{ 
-		if(this->zSoundChecker) 
-			SAFE_DELETE(this->zSoundChecker);
-	}
+	virtual ~Actor(){}
 	std::string GetModel() {return this->zModel;}
 	/*!	Returns Pointer to the Player Mesh*/
 	iMesh* GetMesh() const {return this->zMesh;}
@@ -68,10 +49,7 @@ public:
 	/*!  Sets the Client Id given from the server*/
 	void SetID(const int clientID) {this->zID = clientID;}
 
-	SoundChecker* GetSoundChecker(){ return this->zSoundChecker; }
-
 protected:
-	SoundChecker* zSoundChecker;
 	std::string zModel;
 	iMesh* zMesh;
 	unsigned int zID;

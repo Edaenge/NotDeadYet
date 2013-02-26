@@ -19,7 +19,7 @@
 #include "ItemActor.h"
 #include "PlayerWolfBehavior.h"
 #include "AIDeerBehavior.h"
-#include "AIWolfBehavior.h"
+#include "AIBearBehavior.h"
 #include "WorldActor.h"
 #include "ItemActor.h"
 #include "Physics.h"
@@ -75,7 +75,8 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	InitItemLookup();
 
 	this->zMaxNrOfPlayers = 32;
-	//DEBUG;
+	
+//DEBUG;
 	this->SpawnItemsDebug();
 	this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
@@ -135,18 +136,29 @@ void Game::SpawnAnimalsDebug()
 	DeerActor* dActor = new DeerActor(deerPhysics);
 	dActor->AddObserver(this->zGameMode);
 
+	Vector3 position2 = this->CalcPlayerSpawnPoint(increment++);
+	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
+	BearActor* bActor = new BearActor(bearPhysics);
+	bActor->AddObserver(this->zGameMode);
+
 	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
+	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
 
 	zBehaviors.insert(aiDeerBehavior);
+	zBehaviors.insert(aiBearBehavior);
 
 	dActor->SetPosition(position);
 	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+	bActor->SetPosition(position2);
+	bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
 
 	const Food* temp_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
 	
 	int lootSize = (rand() % 5) + 1;
 	Food* new_Food = NULL;
-	Inventory* inv = dActor->GetInventory();
+	//Inventory* inv = dActor->GetInventory();
+	Inventory* inv = bActor->GetInventory();
 	bool stacked = false;
 	if (temp_food)
 	{
@@ -155,12 +167,13 @@ void Game::SpawnAnimalsDebug()
 			new_Food = new Food((*temp_food));
 
 			inv->AddItem(new_Food, stacked);
-			if(stacked)
+			if( stacked && new_Food->GetStackSize() == 0 )
 				SAFE_DELETE(new_Food);
 		}
 	}
 	
 	this->zActorManager->AddActor(dActor);
+	this->zActorManager->AddActor(bActor);
 }
 
 void Game::SpawnItemsDebug()
@@ -463,6 +476,10 @@ bool Game::Update( float dt )
 		{
 			animalBehavior->SetCurrentTargets(counter);
 		}
+		else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>( (*i) ))
+		{
+			animalBehavior->SetCurrentTargets(counter);
+		}
 	}
 
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
@@ -473,6 +490,27 @@ bool Game::Update( float dt )
 			
 			if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
 			{
+				
+				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
+				{
+					//tempBehaviour->get_
+					//Actor* oldActor = NULL;
+					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
+					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
+				}
+				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
+				{
+					//Actor* oldActor = NULL;
+					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
+					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
+				}
+				else if(AIBearBehavior* tempBehaviour = dynamic_cast<AIBearBehavior*>(*j))
+				{
+					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, BEAR);
+				}
+			}
+			else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>(*i))
+			{
 				//animalBehavior->SetTargetInfo(counter,(*j)
 				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
 				{
@@ -482,6 +520,12 @@ bool Game::Update( float dt )
 				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
 				{
 					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
+				}
+				else if(AIBearBehavior* tempBehaviour = dynamic_cast<AIBearBehavior*>(*j))
+				{
+					//Actor* oldActor = NULL;
+					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
+					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, BEAR);
 				}
 			}
 			counter++;
@@ -637,6 +681,45 @@ void Game::OnEvent( Event* e )
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
 		HandleUseWeapon(PUEWE->clientData, PUEWE->itemID);
+	}
+	else if(PlayerAnimalAttackEvent* PAAE = dynamic_cast<PlayerAnimalAttackEvent*>(e))
+	{
+		auto playerIterator = this->zPlayers.find(PAAE->clientData);
+		Player* player = playerIterator->second;
+		auto it = playerIterator->second->GetBehavior();
+		Actor* self = it->GetActor();
+
+		float range = 0.0f;
+		Damage damage;
+		
+
+		//Use dynamic cast with if to determine what animal it is.
+		if(BearActor* bActor = dynamic_cast<BearActor*>(self))
+		{
+			if(player)
+			{
+				if(PAAE->mouseButton == MOUSE_LEFT_PRESS)
+				{
+					range = 2.0f;
+					damage.blunt = 10.0f;
+				}
+				else if(PAAE->mouseButton == MOUSE_RIGHT_PRESS)
+				{
+					range = 1.4f;
+					damage.piercing = 5.0f;
+					damage.slashing = 25.0f;
+				}
+				if(Actor* target = this->zActorManager->CheckCollisions(self, range))
+				{
+					BioActor* bActor = dynamic_cast<BioActor*>(target);
+					bActor->TakeDamage(damage,self);
+					//Dynamic cast actor into bioactor, use takedamage function.
+				}
+			}
+		}
+		
+
+
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{
@@ -1064,13 +1147,13 @@ void Game::HandleDisconnect( ClientData* cd )
 		auto playerBehavior = playerIterator->second->GetBehavior();
 		
 		// Create AI Behavior For Players That Disconnected
-		if ( PlayerWolfBehavior* playerWolf = dynamic_cast<PlayerWolfBehavior*>(playerBehavior) )
+	/*	if ( PlayerWolfBehavior* playerWolf = dynamic_cast<PlayerWolfBehavior*>(playerBehavior) )
 		{
 			AIWolfBehavior* aiWolf = new AIWolfBehavior(playerWolf->GetActor(), zWorld);
 			zBehaviors.insert(aiWolf);
 		}
 		//Kills actor if human
-		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
+		else */if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
 		{
 			dynamic_cast<BioActor*>(pHuman->GetActor())->Kill();
 		}
@@ -1189,7 +1272,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 	NetworkMessageConverter NMC;
 	Item* item = NULL;
 	bool stacked = false;
-
+	bool itemScattered = false;
 	auto playerActor = this->zPlayers.find(cd);
 	auto* pBehaviour = playerActor->second->GetBehavior();
 
@@ -1206,52 +1289,78 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 	{
 		item = iActor->GetItem();
 
-		if (item)
+		if (!item)
+			return;
+
+		std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+
+		if (item->GetID() == itemID && item->GetItemType() == itemType && item->GetItemSubType() == subType)
 		{
-			std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-			if (item->GetID() == itemID && item->GetItemType() == itemType && item->GetItemSubType() == subType)
+			if( item->GetStacking() && !pActor->GetInventory()->IsStacking(item) )
 			{
-				if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
+				int slots = pActor->GetInventory()->CalcMaxAvailableSlots(item);
+
+				if(item->GetStackSize() > slots)
 				{
-					msg += rWpn->ToMessageString(&NMC);
+					Item* new_item = NULL;
+
+					if( Projectile* projItem  = dynamic_cast<Projectile*>(item) )
+						new_item = new Projectile(projItem);
+					else if( Material* matItem = dynamic_cast<Material*>(item) )
+						new_item = new Material(matItem);
+					else if( Food* foodItem = dynamic_cast<Food*>(item) )
+						new_item = new Food(foodItem);
+					else if( Bandage* bandageItem = dynamic_cast<Bandage*>(item) )
+						new_item = new Bandage(bandageItem);
+
+					if(new_item)
+					{
+					 	//To generate an ID. For now.
+					 	Projectile projectile;
+					 	new_item->SetItemID( projectile.GetID() );
+					 	new_item->SetStackSize(slots);
+					 	item->DecreaseStackSize(slots);
+
+					 	item = new_item;
+						itemScattered = true;
+					}
+					else
+					{
+						return;
+					}
 				}
-				else if (MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item))
+			}
+
+			msg += item->ToMessageString(&NMC);
+
+			//add item
+			if(pActor->GetInventory()->AddItem(item, stacked))
+			{
+				if( stacked && item->GetStackSize() == 0 )
 				{
-					msg += mWpn->ToMessageString(&NMC);
+					iActor->RemoveItem();
+					this->zActorManager->RemoveActor(iActor);
+
+					SAFE_DELETE(item);
 				}
-				else if (Projectile* projectile = dynamic_cast<Projectile*>(item))
+				else if ( !stacked && !itemScattered )
 				{
-					msg += projectile->ToMessageString(&NMC);
-				}
-				else if (Food* food = dynamic_cast<Food*>(item))
-				{
-					msg += food->ToMessageString(&NMC);
-				}
-				else if (Material* material = dynamic_cast<Material*>(item))
-				{
-					msg += material->ToMessageString(&NMC);
-				}
-				else if (Container* container = dynamic_cast<Container*>(item))
-				{
-					msg += container->ToMessageString(&NMC);
-				}
-				else if (Bandage* bandage = dynamic_cast<Bandage*>(item))
-				{
-					msg += bandage->ToMessageString(&NMC);
-				}
-				
-				if(pActor->GetInventory()->AddItem(item, stacked))
-				{
-					cd->Send(msg);
 					iActor->RemoveItem();
 					this->zActorManager->RemoveActor(iActor);
 				}
-				else
-					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory Is Full"));
-				
+
 			}
+			else
+			{
+				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory Is Full"));
+				return;
+			}
+
+			cd->Send(msg);
 		}
+		
 	}
+
 	//Check if the Actor being looted is a BioActor.
 	else if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
 	{
@@ -1259,55 +1368,36 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 		if (inv)
 		{
 			item = inv->SearchAndGetItem(itemID);
-			if(item)
+
+			if( !item )
+				return;
+		
+			std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+			if (item->GetItemType() == itemType && item->GetItemSubType() == subType)
 			{
-				std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-				if (item->GetItemType() == itemType && item->GetItemSubType() == subType)
+				msg += item->ToMessageString(&NMC);
+				//Add item
+				if(pActor->GetInventory()->AddItem(item, stacked))
 				{
-					if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
+					bActor->GetInventory()->RemoveItem(item);
+
+					if( stacked && item->GetStackSize() == 0 )
 					{
-						msg += rWpn->ToMessageString(&NMC);
-					}
-					else if (MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item))
-					{
-						msg += mWpn->ToMessageString(&NMC);
-					}
-					else if (Projectile* projectile = dynamic_cast<Projectile*>(item))
-					{
-						msg += projectile->ToMessageString(&NMC);
-					}
-					else if (Food* food = dynamic_cast<Food*>(item))
-					{
-						msg += food->ToMessageString(&NMC);
-					}
-					else if (Material* material = dynamic_cast<Material*>(item))
-					{
-						msg += material->ToMessageString(&NMC);
-					}
-					else if (Container* container = dynamic_cast<Container*>(item))
-					{
-						msg += container->ToMessageString(&NMC);
-					}
-					else if (Bandage* bandage = dynamic_cast<Bandage*>(item))
-					{
-						msg += bandage->ToMessageString(&NMC);
+						SAFE_DELETE(item);
 					}
 
-					if(pActor->GetInventory()->AddItem(item, stacked))
-					{
-						bActor->GetInventory()->RemoveItem(item);
-						if (stacked)
-							SAFE_DELETE(item);
-
-						cd->Send(msg);
-
-						if (bActor->GetInventory()->GetItems().size() <= 0)
-							this->zActorManager->RemoveActor(bActor);
-					}
-					else
-						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
+					if (bActor->GetInventory()->GetItems().size() <= 0)
+						this->zActorManager->RemoveActor(bActor);
 				}
+				else
+				{
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
+					return;
+				}
+
+				cd->Send(msg);
 			}
+			
 		}
 	}
 }
@@ -1639,7 +1729,7 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 									msg += new_Arrow->ToMessageString(&NMC);
 									cd->Send(msg);
 
-									if (stacked)
+									if( stacked && new_Arrow->GetStackSize() == 0 )
 										SAFE_DELETE(new_Arrow);
 								}
 							}
@@ -1736,7 +1826,7 @@ void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
 										msg += new_Bow->ToMessageString(&NMC);
 										cd->Send(msg);
 
-										if (stacked)
+										if( stacked && new_Bow->GetStackSize() == 0 )
 											SAFE_DELETE(new_Bow);
 									}
 								}

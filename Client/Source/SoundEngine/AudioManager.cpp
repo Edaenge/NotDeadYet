@@ -82,7 +82,7 @@ int AudioManager::init()
 
 	}
 
-	result = system->init(256, FMOD_INIT_OCCLUSION_LOWPASS, 0);	// Initialize FMOD.
+	result = system->init(64, FMOD_INIT_NORMAL, 0, FMOD_EVENT_INIT_NORMAL);	// Initialize FMOD.
 	
 	if (result != FMOD_OK)
 	{
@@ -90,7 +90,6 @@ int AudioManager::init()
 		return result;
 
 	}
-
 	result = system->getMusicSystem(&mSystem);
 	return result;
 

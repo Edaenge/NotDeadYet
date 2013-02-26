@@ -93,9 +93,6 @@
     <ClCompile Include="Source\AIDeerBehavior.cpp">
       <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AIWolfBehavior.cpp">
-      <Filter>Source\Actors\Behavior</Filter>
-    </ClCompile>
     <ClCompile Include="Source\ActorSynchronizer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -136,6 +133,12 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\AIBehavior.cpp">
+      <Filter>Source\Actors\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AIBearBehavior.cpp">
+      <Filter>Source\Actors\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerBearBehavior.cpp">
       <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,9 +209,6 @@
     <ClInclude Include="Source\AIDeerBehavior.h">
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AIWolfBehavior.h">
-      <Filter>Source\Actors\Behavior</Filter>
-    </ClInclude>
     <ClInclude Include="Source\PlayerWolfBehavior.h">
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
@@ -270,6 +270,12 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\AIBehavior.h">
+      <Filter>Source\Actors\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AIBearBehavior.h">
+      <Filter>Source\Actors\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerBearBehavior.h">
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
   </ItemGroup>

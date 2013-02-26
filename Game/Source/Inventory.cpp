@@ -4,6 +4,7 @@
 #include <Safe.h>
 
 const unsigned int GEAR_SLOTS = 4;
+const unsigned int MAX_QUIVER_SLOTS = 30;
 
 Inventory::Inventory()
 {
@@ -76,38 +77,92 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 	if (!item)
 		return false;
 
-	unsigned int weight = item->GetWeight() * item->GetStackSize();
-	if(this->zWeightTotal + weight <= this->zInventoryCap)
-	{
-		this->zWeightTotal += weight;
+	unsigned int weight = item->GetWeight();
+	int available_slots = CalcMaxAvailableSlots(item);
+	stacked = false;
+	
+	//No slots, return false
+	if( available_slots <= 0 )
+		return false;
 
-		if (item->GetStacking())
+	if ( item->GetStacking() )
+	{
+		if( IsStacking(item) )
 		{
 			Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType(), item->GetItemSubType());
-			if (existingItem)
-			{
-				existingItem->IncreaseStackSize(item->GetStackSize());
-				if (Messages::FileWrite())
-					Messages::Debug("Added Stack to inventory " + item->GetItemName());
 
-				stacked = true;
-				return true;
+			int max_stack = MAX_QUIVER_SLOTS - existingItem->GetStackSize();
+			unsigned int stack;
+
+			if(available_slots < max_stack)
+				max_stack = available_slots;
+
+			if( max_stack < item->GetStackSize() )
+			{
+				stack = max_stack;
 			}
+			else if( max_stack >= item->GetStackSize() )
+			{
+				stack = item->GetStackSize();
+			}
+
+			existingItem->IncreaseStackSize(stack);
+			item->DecreaseStackSize(stack);
+
+			if (Messages::FileWrite())
+				Messages::Debug("Added Stack to inventory " + item->GetItemName());
+
+			stacked = true;
+			this->zWeightTotal += weight * stack;
+
+			return true;
 		}
-		//this->NotifyObservers()
+	}
+	
+	if( available_slots >= item->GetStackSize() )
+	{
 		this->zItems.push_back(item);
-		stacked = false;
 
 		if (Messages::FileWrite())
 			Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
 
+		this->zWeightTotal += weight * item->GetStackSize();
+		
 		return true;
 	}
 
-	MaloW::Debug("Failed to add item "+item->GetItemName() + " ID: " +MaloW::convertNrToString((float)item->GetID()));
-	MaloW::Debug("Inventory full current Weight = " + MaloW::convertNrToString((float)zWeightTotal) + " Weight to be Added = " + MaloW::convertNrToString((float)weight));
-	
 	return false;
+}
+
+int Inventory::CalcMaxAvailableSlots( Item* item )
+{
+	if(!item)
+		return 0;
+
+	int slotsLeft = this->zInventoryCap - this->zWeightTotal;
+	unsigned int weight = item->GetWeight();
+
+	int available_slots = slotsLeft / weight;
+
+	return available_slots;
+}
+
+bool Inventory::IsStacking( Item* item )
+{
+	if( !item->GetStacking() )
+		return false;
+
+	Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType(), item->GetItemSubType());
+
+	if( !existingItem )
+		return false;
+
+	int max_stack = MAX_QUIVER_SLOTS - existingItem->GetStackSize();
+
+	if( max_stack <= 0)
+		return false;
+
+	return true;
 }
 
 Item* Inventory::SearchAndGetItem(unsigned int ID) const
@@ -513,3 +568,5 @@ bool Inventory::SwapWeapon()
 
 	return true;
 }
+
+

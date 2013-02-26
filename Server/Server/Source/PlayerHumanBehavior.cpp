@@ -203,7 +203,7 @@ bool PlayerHumanBehavior::Update( float dt )
 		zActor->SetPosition(center);
 	}
 
-	PhysicalConditionCalculator(dt);
+	//PhysicalConditionCalculator(dt);
 
 	return false;
 }
