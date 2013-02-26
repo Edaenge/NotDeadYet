@@ -36,6 +36,7 @@ static const float TOTAL_SUN_DEGREE_SHIFT = 160 * PI / 180;
 static const float SUN_UPDATE_DELAY = 0.5f;
 //Total Update Time in Seconds (6h atm)
 static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
+
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
 {
@@ -330,6 +331,8 @@ void Game::UpdateSunDirection(float dt)
 bool Game::Update( float dt )
 {
 	this->UpdateSunDirection(dt);
+	NetworkMessageConverter NMC;
+	std::string msg;
 
 	// Update Behaviors
 	auto i = zBehaviors.begin();
@@ -348,7 +351,86 @@ bool Game::Update( float dt )
 					this->SendToAll(msg);
 				}
 			}
+
+			KeyStates keys = cActor->GetPlayer()->GetKeys();
+			unsigned int state = cActor->GetState();
+			std::string animation = "";
+			if (state == STATE_IDLE)
+			{
+				srand((unsigned int)time(0));
+
+				int idle_Animation = (rand() % 350) + 1;
+				if (idle_Animation > 0 && idle_Animation <= 50)//High Chance
+				{
+					animation = "idle_01";
+				}
+				else if (idle_Animation > 50 && idle_Animation <= 90)//Low Chance
+				{
+					animation = "idle_02";
+				}
+				else if (idle_Animation > 90 && idle_Animation <= 100)//High Chance
+				{
+					animation = "idle_03";
+				}
+				else if (idle_Animation > 100 && idle_Animation <= 200)//Very High Chance
+				{
+					animation = "idle_04";
+				}
+				else if (idle_Animation > 200 && idle_Animation <= 300)//Very High Chance
+				{
+					animation = "idle_05";
+				}
+				else if (idle_Animation > 300 && idle_Animation <= 350)//Medium Chance
+				{
+					animation = "idle_06";
+				}
+				
+			}
+			else if (state == STATE_WALKING)
+			{
+				if(keys.GetKeyState(KEY_FORWARD))
+				{
+					animation = "walk_fwd";
+				}
+				else if (keys.GetKeyState(KEY_BACKWARD))
+				{
+					animation = "walk_bwd";
+				}
+				else if(keys.GetKeyState(KEY_LEFT))
+				{
+					animation = "walk_lwd";
+				}
+				else if (keys.GetKeyState(KEY_RIGHT))
+				{
+					animation = "walk_rwd";
+				}
+			}
+			//else if (state == STATE_JOG)
+			//{
+			//}
+			//else if (state == STATE_RUNNING)
+			//{
+			//	animation = "sprint";
+			//}
+
+			if (animation != "")
+			{
+				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, animation);
+				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)cActor->GetID());
+
+				for (auto it = this->zPlayers.begin(); it != this->zPlayers.end(); it++)
+				{
+					it->first->Send(msg);
+				}
+			}
 		}
+
+		//if (BioActor* bActor = dynamic_cast<BioActor*>((*i)->GetActor()))
+		//{
+		//	
+		//	
+		//}
+
 		if ( (*i)->Update(dt) )
 		{
 			Behavior* temp = (*i);
@@ -736,7 +818,8 @@ void Game::OnEvent( Event* e )
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
 	{
 		// Create Player Actor
-		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
+		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
+		//pObject->SetModel("Media/Models/temp_guy_movement_anims.fbx");
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 
@@ -749,7 +832,7 @@ void Game::OnEvent( Event* e )
 		actor->SetPosition(center);
 		actor->SetScale(actor->GetScale());
 	
-		auto offsets = this->zCameraOffset.find(UDE->playerModel);
+		auto offsets = this->zCameraOffset.find("Media/Models/temp_guy.obj");
 		
 		if(offsets != this->zCameraOffset.end())
 			dynamic_cast<PlayerActor*>(actor)->SetCameraOffset(offsets->second);
@@ -833,7 +916,9 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	}
 
 	// Set New Behavior
-	if ( behavior )	zBehaviors.insert(behavior);
+	if ( behavior )	
+		zBehaviors.insert(behavior);
+
 	player->zBehavior = behavior;
 }
 

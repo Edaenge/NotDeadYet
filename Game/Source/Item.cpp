@@ -44,7 +44,7 @@ std::string Item::ToMessageString(NetworkMessageConverter* NMC)
 {
 	std::string msg;
 
-	msg = NMC->Convert(MESSAGE_TYPE_ITEM_ID, (float)this->zID);
+	msg = NMC->Convert(MESSAGE_TYPE_OBJECT_ID, (float)this->zID);
 	msg += NMC->Convert(MESSAGE_TYPE_ITEM_TYPE, (float)this->zItemType);
 	msg += NMC->Convert(MESSAGE_TYPE_ITEM_SUB_TYPE, (float)this->zItemSubType);
 	msg += NMC->Convert(MESSAGE_TYPE_ITEM_DESCRIPTION, this->zItemDescription);

@@ -601,7 +601,7 @@ void Client::SendLootItemMessage(const unsigned int ID, const unsigned int ItemI
 	std::string msg;
 
 	msg = this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_ITEM, (float)ID);
-	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_ID, (float)ItemID);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ItemID);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)Type);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_SUB_TYPE, (float)SubType);
 	this->zServerChannel->Send(msg);
@@ -702,9 +702,9 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		{
 			itemType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it));
 		}
-		else if(strcmp(key, M_ITEM_ID.c_str()) == 0)
+		else if(strcmp(key, M_OBJECT_ID.c_str()) == 0)
 		{
-			ID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, (*it));
+			ID = this->zMsgHandler.ConvertStringToInt(M_OBJECT_ID, (*it));
 		}
 		else if(strcmp(key, M_ITEM_SUB_TYPE.c_str()) == 0)
 		{

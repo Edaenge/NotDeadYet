@@ -25,6 +25,7 @@
     <ResourceCompile Include="NotDeadYet.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\AnimationFileReader.cpp" />
     <ClCompile Include="Source\Client.cpp" />
     <ClCompile Include="Source\ClientItemHandler.cpp" />
     <ClCompile Include="Source\ClientObjectHandler.cpp" />
@@ -63,6 +64,7 @@
     <ClCompile Include="Source\ClientActorManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\AnimationFileReader.h" />
     <ClInclude Include="Source\Client.h" />
     <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\GuiManager.h" />

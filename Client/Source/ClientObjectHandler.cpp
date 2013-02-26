@@ -114,18 +114,14 @@ void Client::AddActor( NewActorPacket* NAP )
 		if (!this->zActorManager->GetActor(ID))
 		{
 			actor = new Actor(ID);
-
+			
 			iMesh* mesh = NULL;
 			//Creates a Mesh from the given Filename
 			std::string substring = model.substr(model.length() - 4);
 			if (substring == ".obj" || substring == ".ani")
-			{
 				mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
-			}
 			else if (substring == ".fbx")
-			{
 				mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
-			}
 			
 			actor->SetStaticMesh(mesh);
 			actor->SetModel(model);
@@ -145,16 +141,12 @@ void Client::AddActor( NewActorPacket* NAP )
 
 				auto meshOffsetsIterator = this->zMeshCameraOffsets.find(model);
 				if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
-				{
 					this->zMeshOffset = meshOffsetsIterator->second;
-				}
 				else
-				{
-					this->zMeshOffset = Vector3(0.0f, 0.5f, 0.0f);
-				}
+					this->zMeshOffset = Vector3(0.0f, 1.0f, 0.0f);
 
 				this->zActorManager->SetCameraOffset(this->zMeshOffset);
-				this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset);
+				this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
 				this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
 
 				if (this->zActorType == GHOST)
@@ -168,9 +160,7 @@ void Client::AddActor( NewActorPacket* NAP )
 			}
 		}
 		else
-		{
 			MaloW::Debug("Cant create a new Actor. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
-		}
 	}
 
 	Vector3 position;
@@ -186,14 +176,10 @@ void Client::AddActor( NewActorPacket* NAP )
 			actor->SetPosition(position);
 
 			if (this->zID == ID)
-			{
 				this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
-			}
 		}
 		else
-		{
 			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
-		}
 	}
 
 	Vector4 rotation;
@@ -206,18 +192,12 @@ void Client::AddActor( NewActorPacket* NAP )
 		if (actor)
 		{
 			if (actor->GetMesh())
-			{
 				actor->SetRotation(rotation);
-			}
 			else
-			{
 				MaloW::Debug("Failed to find Mesh for Actor with ID: " + MaloW::convertNrToString((float)ID));
-			}
 		}
 		else
-		{
 			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
-		}
 	}
 
 	Vector3 scale;
@@ -230,18 +210,12 @@ void Client::AddActor( NewActorPacket* NAP )
 		if (actor)
 		{
 			if (actor->GetMesh())
-			{
 				actor->SetScale(scale);
-			}
 			else
-			{
 				MaloW::Debug("Failed to find Mesh for Actor with ID: " + MaloW::convertNrToString((float)ID));
-			}
 		}
 		else
-		{
 			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
-		}
 	}
 
 	unsigned int state;
@@ -252,13 +226,15 @@ void Client::AddActor( NewActorPacket* NAP )
 
 		actor = this->zActorManager->GetActor(ID);
 		if (actor)
-		{
 			this->zActorManager->AddActorState(actor, state);
-		}
 		else
-		{
 			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
-		}
+	}
+
+	if (!this->zReady)
+	{
+		//this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);
+		//this->zReady = true;
 	}
 }
 
