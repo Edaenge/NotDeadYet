@@ -7,8 +7,8 @@
 #include <World/Entity.h>
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
-#include "Sounds.h"
 #include "PlayerConfig/PlayerSettings.h"
+#include <algorithm>
 
 using namespace MaloW;
 
@@ -49,7 +49,7 @@ Client::Client()
 
 	this->zSendUpdateDelayTimer = 0.0f;
 
-	this->zEng = NULL;
+	this->zEng = GetGraphics();
 	
 	this->zGuiManager = NULL;
 	this->zActorManager = NULL;
@@ -71,21 +71,15 @@ Client::Client()
 	
 	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
-	
-	GetSounds()->LoadMusicIntoSystem("Media/Sound/ForestAmbience.mp3", true);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Running_Breath_4.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/LeftStep.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/RightStep.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/BowShot.mp3", false);
 }
 
-void Client::Connect(const std::string &IPAddress, const unsigned int &port)
+void Client::Connect(const std::string &IPAddress, const unsigned int &port, std::string& errMsg, int& errorCode)
 {
 	this->zIP = IPAddress;
 	this->zPort = port;
-	this->zServerChannel = new ServerChannel(this, IPAddress, port);
-	this->zServerChannel->Start();
+	this->zServerChannel = new ServerChannel(this, IPAddress, port, errMsg, errorCode);
+	if (errMsg == "")
+		this->zServerChannel->Start();
 }
 
 Client::~Client()
@@ -124,7 +118,6 @@ Client::~Client()
 	if (this->zUpsText)
 		this->zEng->DeleteText(this->zUpsText);
 
-	GetSounds()->StopMusic();
 
 	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
 	{
@@ -170,6 +163,8 @@ float Client::Update()
 		this->zWorld->Update();
 		if ( zWorldRenderer ) 
 			zWorldRenderer->Update();
+
+		this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
@@ -189,6 +184,43 @@ float Client::Update()
 		}
 	}
 	return this->zDeltaTime;
+}
+
+void Client::IgnoreRender( const float& radius, Vector2& center )
+{
+	static std::set<Entity*> previousEntities;
+	std::set<Entity*> entities; 
+	std::set<Entity*> validEntities;
+
+	zWorld->GetEntitiesInCircle(center, radius, entities);
+
+	for (auto it = entities.begin(); it != entities.end(); it++)
+	{
+		if ( GetEntBlockRadius( (*it)->GetType() ) <= 0.0f )
+		{
+			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*it);
+			
+			if(mesh)
+			{
+				mesh->DontRender(false);
+				validEntities.insert(*it);
+			}
+		}
+	}
+
+	/*Check previous, if prev is not in valid, they should not be rendered.*/
+	for(auto it = previousEntities.begin(); it != previousEntities.end(); it++)
+	{
+		auto found = validEntities.find(*it);
+
+		if(found == validEntities.end())
+		{
+			this->zWorldRenderer->GetEntityMesh(*it)->DontRender(true);
+		}
+	}
+
+	previousEntities.clear();
+	previousEntities = validEntities;
 }
 
 void Client::InitGraphics(const std::string& mapName)
@@ -249,7 +281,21 @@ void Client::InitGraphics(const std::string& mapName)
 
 	this->zUpsText = this->zEng->CreateText("", Vector2(1, 1), 0.7f, "Media/Fonts/1");
 
-	GetSounds()->PlayMusic("Media/Sound/ForestAmbience.mp3");
+	//Go through entities (bush etc) and set render flag.
+	std::set<Entity*> entities;
+	Vector2 size = zWorld->GetWorldSize();
+	float radius = powf(size.x, 2.0f) + powf(size.y, 2.0f);
+	zWorld->GetEntitiesInCircle(center, (radius * 0.5f), entities);
+
+	for (auto i = entities.begin(); i != entities.end(); i++)
+	{
+		if ( GetEntBlockRadius( (*i)->GetType() ) <= 0.0f )
+		{
+			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*i);
+			mesh->DontRender(true);
+		}
+	}
+
 }
 
 void Client::Init()
@@ -260,8 +306,6 @@ void Client::Init()
 	this->zSecsPerCnt = 1.0f / (float)(frequency);
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
-
-	this->zEng = GetGraphics();
 }
 
 void Client::Life()
@@ -302,6 +346,9 @@ void Client::Life()
 
 			this->UpdateActors();
 		}
+
+		AudioManager* am = AudioManager::GetInstance();
+		am->Update();
 
 		this->ReadMessages();
 		if(this->zPam->GetShow())
@@ -380,6 +427,7 @@ void Client::ReadMessages()
 void Client::SendClientUpdate()
 {
 	std::string msg;
+
 	Vector3 dir = this->zEng->GetCamera()->GetForward();
 	Vector3 up = this->zEng->GetCamera()->GetUpVector();
 	Vector4 rot = Vector4(0, 0, 0, 0);
@@ -758,7 +806,7 @@ void Client::CheckAnimalInput()
 	this->CheckKey(KEY_JUMP);
 
 	//Leave Animal An Become a Ghost again
-	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed(VK_MENU) && this->zEng->GetKeyListener()->IsPressed('G'))
+	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('G'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
@@ -798,6 +846,38 @@ void Client::CheckAnimalInput()
 		{
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
 		}
+	}
+
+	if (this->zEng->GetKeyListener()->IsClicked(1))
+	{
+		if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_LEFT_PRESS);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
+	}
+
+	if (this->zEng->GetKeyListener()->IsClicked(2))
+	{
+		if (!this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_RIGHT_PRESS);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, false);
 	}
 }
 
@@ -1129,6 +1209,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		return;
 	}
 
+	
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
 
@@ -1163,6 +1244,13 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			this->HandleTakeDamage(id, damageTaken);
 		}
 	}
+	else if (msgArray[0].find(M_SUN_DIRECTION.c_str()) == 0)
+	{
+		Vector3 sunLightDirection = this->zMsgHandler.ConvertStringToVector(M_SUN_DIRECTION, msgArray[0]);
+		Vector3 sunLightColor = this->zEng->GetSunLightColor();
+		float sunLightIntensity = this->zEng->GetSunLightIntensity();
+		this->zEng->SetSunLightProperties(sunLightDirection, sunLightColor, sunLightIntensity);
+	}
 	else if (msgArray[0].find(M_DEAD_ACTOR.c_str()) == 0)
 	{
 		//unsigned int id = this->zMsgHandler.ConvertStringToInt(M_DEAD_ACTOR, msgArray[0]);
@@ -1179,10 +1267,9 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		std::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
+		std	::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
 
-		GetSounds()->PlaySounds(&fileName[0], pos);
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
@@ -1448,7 +1535,6 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 		//Set the opacity
 		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
 
-		GetSounds()->PlaySounds("Media/Sound/Breath.wav", playerPos);
 	}
 	return true;
 }
@@ -1535,10 +1621,6 @@ void Client::OnEvent(Event* e)
 		// Create Anchor
 		zAnchor = WLE->world->CreateAnchor();
 		this->zWorldRenderer = new WorldRenderer(WLE->world, GetGraphics());
-	}
-	else if (EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e))
-	{
-		unsigned int type = ELE->entity->GetType();
 	}
 	else if ( WorldDeletedEvent* WDE = dynamic_cast<WorldDeletedEvent*>(e) )
 	{
@@ -1660,56 +1742,51 @@ void Client::UpdateText()
 	}	
 }
 
-void Client::RemoveUnderscore(std::string& msg)
-{
-	std::string newString = "";
-	for (int i = 0; i < (int)msg.length(); i++)
-	{
-		if (msg[i] == '_')
-		{
-			newString += " ";
-		}
-		else
-		{
-			newString += msg[i];
-		}
-	}
-	msg = newString;
-}
-
 void Client::AddDisplayText(const std::string& msg, bool bError)
 {
 	std::string newString = msg;
 
-	this->RemoveUnderscore(newString);
 
-	int yPos = (int)this->zDisplayedText.size();
+	std::replace(newString.begin(), newString.end(), '_', ' ');
+
+	int arrSize = (int)this->zDisplayedText.size();
 	int windowWidth = this->zEng->GetEngineParameters().WindowWidth;
 	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;
 
-	float yPosition = (float)(windowHeight / (yPos + 2) );
-	float xPosition = (float)(windowWidth * 0.25f);
+	float yStartPosition = 40.0f;
+	float xPosition = 50.0f;
 	float textheight = 20.0f;
+
+	static const int MAX_ITEMS = (windowHeight - yStartPosition) * 0.05f;
 
 	Vector2 position;
 
-	float c = 1;
+	float c = 0;
+	
+	if (arrSize >= MAX_ITEMS)
+	{
+		TextDisplay* temp = this->zDisplayedText[0];
+		this->zDisplayedText.erase(this->zDisplayedText.begin());
+
+		this->zEng->DeleteText(temp->zText);
+		SAFE_DELETE(temp);
+	}
 
 	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
 	{
 		float x = (*it)->zText->GetPosition().x;
-		position = Vector2(x, c++ * yPosition - textheight);
+		position = Vector2(x, yStartPosition + c++ * textheight);
 		(*it)->zText->SetPosition(position);
 	}
 
-	if (yPos == 0)
+	if (arrSize == 0)
 	{
-		position = Vector2(xPosition, windowHeight * 0.5f);
+		position = Vector2(xPosition, yStartPosition);
 	}
 	else
 	{
 
-		position = Vector2(xPosition, c * yPosition - textheight);
+		position = Vector2(xPosition, yStartPosition + c++ * textheight);
 	}
 	std::string fontPath = "";
 	if (bError)

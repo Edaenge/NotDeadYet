@@ -188,7 +188,8 @@ bool PlayerHumanBehavior::Update( float dt )
 	//Look so player isn't outside of World.
 	if ( zWorld->IsInside(newPosition.GetXZ()) )
 	{
-		zActor->SetPosition(newPosition);
+		if(!(newPosition == zActor->GetPosition()))
+			zActor->SetPosition(newPosition);
 	}
 	else
 	{

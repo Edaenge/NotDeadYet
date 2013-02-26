@@ -1,0 +1,8 @@
+Buggar:
+Minnesläckor:
+	SoundHandler
+	Säkert fler
+
+
+Annat:
+Master server till wonderlan?

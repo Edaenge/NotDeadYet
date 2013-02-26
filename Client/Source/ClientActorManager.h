@@ -7,6 +7,7 @@
 #include "Actor.h"
 #include <vector>
 #include <map>
+#include "AudioManager.h"
 
 class Updates
 {
@@ -102,6 +103,7 @@ public:
 	/*! Interpolates all the Objects towards their final Position*/
 	void UpdateObjects(float deltaTime, unsigned int ignoreID);
 
+	unsigned int GetState(Actor* actor);
 	void AddActorState(Actor* actor, unsigned int state);
 	bool AddActor(Actor* actor);
 	Actor* GetActor(unsigned int ID);
@@ -110,6 +112,8 @@ public:
 
 	void AddUpdate(Updates* update);
 	Updates* GetUpdate(const int ID);
+
+	
 
 	Vector4 InterpolateRotation(const Vector4& currentRotation, const Vector4& newRotation, float t);
 	Vector3 InterpolatePosition(const Vector3& currentPosition, const Vector3& newPosition, float t);
@@ -131,5 +135,6 @@ private:
 	float zInterpolationVelocity;
 	Vector3 zCameraOffset;
 
-	SoundChecker zSoundChecker;
+	FMOD_VECTOR ConvertToFmodVector(Vector3 v);
+	IEventHandle** zFootStep;
 };

@@ -5,6 +5,7 @@
 #include "ClientDroppedEvent.h"
 #include "ActorSynchronizer.h"
 #include "Physics.h"
+#include <algorithm>
 
 // 50 updates per sec
 static const float UPDATE_DELAY = 0.020f;
@@ -66,6 +67,12 @@ void Host::SendMessageToClient( const std::string& message )
 	if (message.find("EV") == 0)
 	{
 		std::string msg = this->zMessageConverter.ConvertStringToSubstring("EV", message, true);
+
+		std::transform(msg.begin(), msg.end(), msg.begin(), ::tolower);
+		if (msg.find("restart") == 0)
+		{
+			Restart(this->zGameMode, this->zMapName);
+		}
 	}
 	else
 	{
@@ -350,7 +357,16 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.zAnimalType = animalType;
 		NotifyObservers(&e);
 	}
-	else if(msgArray[0].find(M_DEER_EAT_OBJECT) == 0)
+	else if (msgArray[0].find(M_ANIMAL_ATTACK.c_str()) == 0)
+	{
+		unsigned int mouseButton = this->zMessageConverter.ConvertStringToInt(M_ANIMAL_ATTACK, msgArray[0]);
+
+		//PlayerAnimalAttackEvent e
+		//e.clientData = cd;
+		//e.key = mouseButton;
+		//NotifyObservers(&e);
+	}
+	else if(msgArray[0].find(M_DEER_EAT_OBJECT.c_str()) == 0)
 	{
 		PlayerDeerEatObjectEvent e;
 
@@ -364,7 +380,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 
 		NotifyObservers(&e);
 	}
-	else if(msgArray[0].find(M_LEAVE_ANIMAL) == 0)
+	else if(msgArray[0].find(M_LEAVE_ANIMAL.c_str()) == 0)
 	{
 		PlayerLeaveAnimalEvent e;
 

@@ -43,7 +43,7 @@ class Client : public MaloW::Process, public Observer
 public:
 	Client();
 	/*! Connects to a Host with the specified parameters*/
-	void Connect(const std::string& IPAddress, const unsigned int &port);
+	void Connect(const std::string& IPAddress, const unsigned int &port, std::string& errMsg, int& errorCode);
 	virtual ~Client();
 	void Life();
 	/*! Checks if Thread is alive*/
@@ -128,6 +128,8 @@ private:
 	bool CheckCollision();
 
 	void UpdateCameraOffset(unsigned int state);
+
+	void IgnoreRender(const float& radius, Vector2& center);
 
 	//////////////////////
 	//					//

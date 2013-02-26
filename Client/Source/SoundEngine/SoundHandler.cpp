@@ -551,10 +551,9 @@ void SoundHandler::StopMusic()
 
 	if(zMusicChannel)
 	{
-	result = this->zMusicChannel->stop();
-	ERRCHECK(result);
+		result = this->zMusicChannel->stop();
+		ERRCHECK(result);
 	}
-
 }
 
 //void SoundHandler::SetEffect(int effectNumber)

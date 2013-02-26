@@ -1,6 +1,5 @@
 #include "MainMenu.h"
 #include "Safe.h"
-#include "Sounds.h"
 
 MainMenu::MainMenu()
 {
@@ -12,7 +11,6 @@ MainMenu::MainMenu()
 	this->zPrimarySet	= MAINMENU;
 	this->zSecondarySet = NOMENU;
 
-	SoundsInit();
 }
 
 MainMenu::~MainMenu()
@@ -20,15 +18,34 @@ MainMenu::~MainMenu()
 	delete [] zSets;
 	zSets = 0;
 	SAFE_DELETE(this->zGame);
+
+	ambientMusic->Release();
+	menuClick->Release();
+
+	AudioManager::ReleaseInstance();
 }
 
 void MainMenu::Init()
 {
+	_sound = AudioManager::GetInstance();
+	_soundLoader = AudioManager::GetInstance();
+	int result = _soundLoader->LoadFEV("Media/fmod/NotDeadYet.fev");
+	if(result != (FMOD_OK))
+	{
+		throw("Could not load .fev file.");
+	}
+
+	AudioManager* am = AudioManager::GetInstance();
+	am->GetEventHandle(EVENTID_NOTDEADYET_AMBIENCE_FOREST, ambientMusic);
+	ambientMusic->Play();
+	ambientMusic->Setvolume(0.2f);
+	am->GetEventHandle(EVENTID_NOTDEADYET_MENU_N_BACKPACK_TOGGLE_N_CLICK, menuClick);
+	menuClick->Setvolume(0.2f);
+
 	GraphicsEngine* eng = GetGraphics();
 
 	eng->CreateSkyBox("Media/skymap.dds");
 
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/MenuCLICK.mp3", false);
 
 	float windowWidth = (float)eng->GetEngineParameters().WindowWidth;
 	float windowHeight = (float)eng->GetEngineParameters().WindowHeight;
@@ -264,25 +281,6 @@ void MainMenu::Init()
 		"ShadowQuality", 1.0f, 1, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
-	//Sound tech
-	//Master volume
-	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetSounds()->GetMasterVolume() * 100), 
-		"MasterVolume", 1.0f, 2, NR);
-	zSets[OPTIONS].AddElement(temp);
-
-	//Music Volume
-	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetSounds()->GetMusicVolume() * 100), 
-		"MusicVolume", 1.0f, 2, NR);
-	zSets[OPTIONS].AddElement(temp);
-
-	//Normal Volume
-	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
-		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(GetSounds()->GetSoundVolume() * 100), 
-		"NormalVolume", 1.0f, 2, NR);
-	zSets[OPTIONS].AddElement(temp);
-
 
 	//Buttons options menu
 	//Back
@@ -305,12 +303,30 @@ void MainMenu::Init()
 
 void MainMenu::StartTestRun()
 {
+	std::string errorMessage;
+	int errorCode = 0;
 	//zGame->InitGameClient("194.47.150.20", 11521); // Ediz
 	//zGame->InitGameClient("194.47.150.16", 11521); // Server
 	//zGame->InitGameClient("194.47.150.12", 11521); // Crant
 	//zGame->InitGameClient("80.78.216.201", 11521);
-	zGame->InitGameClient("127.0.0.1", 11521);	
-	zGame->Run();
+	zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
+
+	if (errorMessage != "")
+	{
+		GraphicsEngine* gEng = GetGraphics();
+		Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
+
+		std::string errorMsg = "Error Code: " + MaloW::convertNrToString(errorCode) + ": " + errorMessage;
+		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/1");
+
+		Sleep(5000);
+
+		gEng->DeleteText(errorText);
+	}
+	else
+	{
+		zGame->Run();
+	}
 }
 
 void MainMenu::Run()
@@ -346,8 +362,7 @@ void MainMenu::Run()
 
 				if(retEvent != NULL)
 				{
-					GetSounds()->PlaySounds("Media/Sound/MenuCLICK.mp3", GetGraphics()->GetCamera()->GetPosition());
-
+					menuClick->Play();
 					if(retEvent->GetEventMessage() == "ChangeSetEvent")
 					{
 						ChangeSetEvent* setEvent = (ChangeSetEvent*)retEvent;
@@ -401,8 +416,26 @@ void MainMenu::Run()
 
 						this->EnableMouse(false);
 
-						zGame->InitGameClient(temp, 11521);	 // Save to connect IP
-						zGame->Run();
+						std::string errorMessage;
+						int errorCode = 0;
+
+						zGame->InitGameClient(temp, 11521, errorMessage, errorCode);	 // Save to connect IP
+						if (errorMessage != "")
+						{
+							GraphicsEngine* gEng = GetGraphics();
+							Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
+
+							std::string errorMsg = "Error Code: " + MaloW::convertNrToString(errorCode) + ": " + errorMessage;
+							iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/1");
+
+							Sleep(5000);
+
+							gEng->DeleteText(errorText);
+						}
+						else
+						{
+							zGame->Run();
+						}
 
 						this->EnableMouse(true);
 
@@ -488,21 +521,6 @@ void MainMenu::Run()
 						//View Distance
 						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ViewDistance");
 						GEP.FarClip = MaloW::convertStringToFloat(tbTemp);
-
-						//Master Volume
-						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MasterVolume");
-						float temp = MaloW::convertStringToFloat(tbTemp) / 100;
-						GetSounds()->SetMasterVolume(temp);
-
-						//Music Volume
-						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MusicVolume");
-						temp = MaloW::convertStringToFloat(tbTemp) / 100;
-						GetSounds()->SetMusicVolume(temp);
-
-						//Normal Volume
-						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("NormalVolume");
-						temp = MaloW::convertStringToFloat(tbTemp) / 100;
-						GetSounds()->SetSoundVolume(temp);
 
 						GEP.SaveToFile("Config.cfg");
 
@@ -666,15 +684,6 @@ void MainMenu::UpdateOptionsMenu()
 	//Update View Distance.
 	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("ViewDistance");
 	tbTemp->SetText(MaloW::convertNrToString(GetGraphics()->GetEngineParameters().FarClip));
-
-	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("MasterVolume");
-	tbTemp->SetText(MaloW::convertNrToString(GetSounds()->GetMasterVolume() * 100));
-
-	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("MusicVolume");
-	tbTemp->SetText(MaloW::convertNrToString(GetSounds()->GetMusicVolume() * 100));
-
-	tbTemp = this->zSets[this->zPrimarySet].GetTextBox("NormalVolume");
-	tbTemp->SetText(MaloW::convertNrToString(GetSounds()->GetSoundVolume() * 100));
 }
 
 void MainMenu::Resize()
