@@ -145,6 +145,14 @@ public:
 	unsigned int itemID;
 };
 
+class PlayerAnimalAttackEvent : public Event
+{
+public:
+	virtual ~PlayerAnimalAttackEvent() {}
+	ClientData* clientData;
+	unsigned int mouseButton;
+};
+
 /*Event when a player swaps his equipped weapons between primary and secondary.*/
 class PlayerSwapEquippedWeaponsEvent : public Event
 {

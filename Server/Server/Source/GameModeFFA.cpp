@@ -11,6 +11,7 @@
 #include "PlayerGhostBehavior.h"
 #include "PlayerDeerBehavior.h"
 #include "PlayerWolfBehavior.h"
+#include "PlayerBearBehavior.h"
 
 GameModeFFA::GameModeFFA(Game* game) : GameMode(game)
 {
@@ -255,6 +256,23 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 
 			this->zGame->GetActorManager()->RemoveActor(gActor);
 			found = true;*/
+			animalBehavior = new PlayerBearBehavior(closestAnimal, this->zGame->GetWorld(), player);
+
+			gActor->SetPlayer(NULL);
+
+			closestAnimal->SetPlayer(player);
+
+			this->zGame->RemoveAIBehavior(closestAnimal);
+			this->zGame->SetPlayerBehavior(player, animalBehavior);
+
+			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)closestAnimal->GetID());
+			msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
+
+			cd->Send(msg);
+
+			this->zGame->GetActorManager()->RemoveActor(gActor);
+
+
 		}
 	}
 	else

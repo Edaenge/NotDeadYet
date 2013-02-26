@@ -19,7 +19,7 @@
 #include "ItemActor.h"
 #include "PlayerWolfBehavior.h"
 #include "AIDeerBehavior.h"
-#include "AIWolfBehavior.h"
+#include "AIBearBehavior.h"
 #include "WorldActor.h"
 #include "ItemActor.h"
 #include "Physics.h"
@@ -68,7 +68,7 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	this->zMaxNrOfPlayers = 32;
 	//DEBUG
 	SpawnItemsDebug();
-	//SpawnAnimalsDebug();
+	SpawnAnimalsDebug();
 }
 
 Game::~Game()
@@ -103,22 +103,32 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
+	/*PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	DeerActor* dActor = new DeerActor(deerPhysics);
-	dActor->AddObserver(this->zGameMode);
+	dActor->AddObserver(this->zGameMode);*/
 
-	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
+	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
+	BearActor* bActor = new BearActor(bearPhysics);
+	bActor->AddObserver(this->zGameMode);
 
-	zBehaviors.insert(aiDeerBehavior);
+	//AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
+	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
 
-	dActor->SetPosition(position);
-	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	//zBehaviors.insert(aiDeerBehavior);
+	zBehaviors.insert(aiBearBehavior);
+
+	//dActor->SetPosition(position);
+	//dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+	bActor->SetPosition(position);
+	bActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 
 	const Food* temp_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
 	
 	int lootSize = (rand() % 5) + 1;
 	Food* new_Food = NULL;
-	Inventory* inv = dActor->GetInventory();
+	//Inventory* inv = dActor->GetInventory();
+	Inventory* inv = bActor->GetInventory();
 	bool stacked = false;
 	if (temp_food)
 	{
@@ -132,7 +142,8 @@ void Game::SpawnAnimalsDebug()
 		}
 	}
 	
-	this->zActorManager->AddActor(dActor);
+	//this->zActorManager->AddActor(dActor);
+	this->zActorManager->AddActor(bActor);
 }
 
 void Game::SpawnItemsDebug()
@@ -311,6 +322,10 @@ bool Game::Update( float dt )
 		{
 			animalBehavior->SetCurrentTargets(counter);
 		}
+		else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>( (*i) ))
+		{
+			animalBehavior->SetCurrentTargets(counter);
+		}
 	}
 
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
@@ -320,6 +335,27 @@ bool Game::Update( float dt )
 		{
 			
 			if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
+			{
+				
+				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
+				{
+					//tempBehaviour->get_
+					//Actor* oldActor = NULL;
+					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
+					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
+				}
+				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
+				{
+					//Actor* oldActor = NULL;
+					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
+					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
+				}
+				else if(AIBearBehavior* tempBehaviour = dynamic_cast<AIBearBehavior*>(*j))
+				{
+					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, BEAR);
+				}
+			}
+			else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>(*i))
 			{
 				//animalBehavior->SetTargetInfo(counter,(*j)
 				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
@@ -334,6 +370,12 @@ bool Game::Update( float dt )
 					//Actor* oldActor = NULL;
 					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
 					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
+				}
+				else if(AIBearBehavior* tempBehaviour = dynamic_cast<AIBearBehavior*>(*j))
+				{
+					//Actor* oldActor = NULL;
+					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
+					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, BEAR);
 				}
 			}
 			counter++;
@@ -489,6 +531,45 @@ void Game::OnEvent( Event* e )
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
 		HandleUseWeapon(PUEWE->clientData, PUEWE->itemID);
+	}
+	else if(PlayerAnimalAttackEvent* PAAE = dynamic_cast<PlayerAnimalAttackEvent*>(e))
+	{
+		auto playerIterator = this->zPlayers.find(PAAE->clientData);
+		Player* player = playerIterator->second;
+		auto it = playerIterator->second->GetBehavior();
+		Actor* self = it->GetActor();
+
+		float range = 0.0f;
+		Damage damage;
+		
+
+		//Use dynamic cast with if to determine what animal it is.
+		if(BearActor* bActor = dynamic_cast<BearActor*>(self))
+		{
+			if(player)
+			{
+				if(PAAE->mouseButton == MOUSE_LEFT_PRESS)
+				{
+					range = 2.0f;
+					damage.blunt = 10.0f;
+				}
+				else if(PAAE->mouseButton == MOUSE_RIGHT_PRESS)
+				{
+					range = 1.4f;
+					damage.piercing = 5.0f;
+					damage.slashing = 25.0f;
+				}
+				if(Actor* target = this->zActorManager->CheckCollisions(self, range))
+				{
+					BioActor* bActor = dynamic_cast<BioActor*>(target);
+					bActor->TakeDamage(damage,self);
+					//Dynamic cast actor into bioactor, use takedamage function.
+				}
+			}
+		}
+		
+
+
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{
@@ -923,13 +1004,13 @@ void Game::HandleDisconnect( ClientData* cd )
 		auto playerBehavior = playerIterator->second->GetBehavior();
 		
 		// Create AI Behavior For Players That Disconnected
-		if ( PlayerWolfBehavior* playerWolf = dynamic_cast<PlayerWolfBehavior*>(playerBehavior) )
+	/*	if ( PlayerWolfBehavior* playerWolf = dynamic_cast<PlayerWolfBehavior*>(playerBehavior) )
 		{
 			AIWolfBehavior* aiWolf = new AIWolfBehavior(playerWolf->GetActor(), zWorld);
 			zBehaviors.insert(aiWolf);
 		}
 		//Kills actor if human
-		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
+		else */if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
 		{
 			dynamic_cast<BioActor*>(pHuman->GetActor())->Kill();
 		}

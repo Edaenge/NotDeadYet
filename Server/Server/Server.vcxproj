@@ -25,7 +25,7 @@
     <ClCompile Include="Source\AI.cpp" />
     <ClCompile Include="Source\AIBehavior.cpp" />
     <ClCompile Include="Source\AIDeerBehavior.cpp" />
-    <ClCompile Include="Source\AIWolfBehavior.cpp" />
+    <ClCompile Include="Source\AIBearBehavior.cpp" />
     <ClCompile Include="Source\AnimalActor.cpp" />
     <ClCompile Include="Source\BearActor.cpp" />
     <ClCompile Include="Source\Behavior.cpp" />
@@ -38,6 +38,7 @@
     <ClCompile Include="Source\GhostActor.cpp" />
     <ClCompile Include="Source\PhysicsEngine\ObjectDataResource.cpp" />
     <ClCompile Include="Source\PhysicsEngine\PhysicsResourceManager.cpp" />
+    <ClCompile Include="Source\PlayerBearBehavior.cpp" />
     <ClCompile Include="Source\PlayerConfiguration.cpp" />
     <ClCompile Include="Source\PlayerGhostBehavior.cpp" />
     <ClCompile Include="Source\Host.cpp" />
@@ -67,7 +68,7 @@
     <ClInclude Include="Source\AI.h" />
     <ClInclude Include="Source\AIBehavior.h" />
     <ClInclude Include="Source\AIDeerBehavior.h" />
-    <ClInclude Include="Source\AIWolfBehavior.h" />
+    <ClInclude Include="Source\AIBearBehavior.h" />
     <ClInclude Include="Source\AnimalActor.h" />
     <ClInclude Include="Source\BearActor.h" />
     <ClInclude Include="Source\Behavior.h" />
@@ -84,6 +85,7 @@
     <ClInclude Include="Source\PhysicsEngine\ObjectDataResource.h" />
     <ClInclude Include="Source\PhysicsEngine\PhysicsResourceManager.h" />
     <ClInclude Include="Source\PhysicsEngine\ReferenceCounted.h" />
+    <ClInclude Include="Source\PlayerBearBehavior.h" />
     <ClInclude Include="Source\PlayerConfiguration.h" />
     <ClInclude Include="Source\PlayerGhostBehavior.h" />
     <ClInclude Include="Source\Host.h" />
