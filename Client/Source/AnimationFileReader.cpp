@@ -61,14 +61,12 @@ bool AnimationFileReader::ReadFromFile()
 		if (line.empty())
 			continue;
 
-		sscanf_s(line.c_str(), "%s", &key, sizeof(key));
-
 		if (key == ANIMATIONS)
 		{
 			while (!read.eof() && key != END)
 			{
 				std::getline(read, line);
-				
+
 				TrimAndSet(line, key, value);
 
 				this->zAnimationNames[key] = value;
