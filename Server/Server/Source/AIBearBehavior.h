@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DeerActor.h"
+#include "BearActor.h"
 #include "AIBehavior.h"
 
 //enum MentalState
@@ -30,15 +30,15 @@
 //	Type	kind;
 //};
 
-class AIDeerBehavior : public AIBehavior
+class AIBearBehavior : public AIBehavior
 {
 private:
 	bool InitPathfinder();
 	Vector3		ExaminePathfindingArea();
 
 public:
-	AIDeerBehavior(Actor* actor, World* world);
-	virtual ~AIDeerBehavior() {}
+	AIBearBehavior(Actor* actor, World* world);
+	virtual ~AIBearBehavior() {}
 
 	bool InitValues();
 	bool SetValuesFromFile();
@@ -99,6 +99,8 @@ private:
 		int			zNewTargetCloseByAFactorOf; //If the animal is hunting someone, if a new possible target is closer by a factor of this variable, then chase that target instead.
 		int			zFleeDistance; //The distance the animal will try to flee when it is afraid.
 		int			zLargeSoundEventFearIncrease; //The amount of fear that will directly be added to the animal if, say, a flare goes off or there is a large sound.
+
+		float		zCalmToAggressiveThreshold;
 
 		//These are basically to ensure random pauses in the movement behaviour, as animals sometimes might do.
 		int		zCalmRandomInterval; //The value that will be used with rand() % value 

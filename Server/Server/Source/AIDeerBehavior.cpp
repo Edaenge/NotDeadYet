@@ -2,8 +2,6 @@
 #include <time.h>
 
 
-//STILL NEED TO ADD TARGETS AND HANDLE THEM
-
 AIDeerBehavior::AIDeerBehavior( Actor* actor, World* world ) : AIBehavior(actor, world)
 {
 	InitValues();
@@ -359,7 +357,7 @@ bool AIDeerBehavior::Update( float dt )
 	float zDistance = 0;
 	float finalDistance = 0;
 
-	int maximumNodesTest = 40;
+	int maximumNodesTest = 10;
 
 	//Determine closest threat/target
 	for(int i = 0; i < this->GetCurrentTargets(); i++)
@@ -661,7 +659,7 @@ bool AIDeerBehavior::Update( float dt )
 			//reachedNode = false;
 		}
 
-		if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 || this->GetMentalState() == SUSPICIOUS && this->zCurrentPath.size() > 0) // && !this->zCurrentPath.empty() is necessary to be used again to avoid getting into an unlikely but posssible error.
+		if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 || this->GetMentalState() == SUSPICIOUS && this->zCurrentPath.size() > 0)
 		{
 			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
 
