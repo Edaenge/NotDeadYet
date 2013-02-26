@@ -131,25 +131,26 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	/*PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
+	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	DeerActor* dActor = new DeerActor(deerPhysics);
-	dActor->AddObserver(this->zGameMode);*/
+	dActor->AddObserver(this->zGameMode);
 
+	Vector3 position2 = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	BearActor* bActor = new BearActor(bearPhysics);
 	bActor->AddObserver(this->zGameMode);
 
-	//AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
+	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
 	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
 
-	//zBehaviors.insert(aiDeerBehavior);
+	zBehaviors.insert(aiDeerBehavior);
 	zBehaviors.insert(aiBearBehavior);
 
-	//dActor->SetPosition(position);
-	//dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	dActor->SetPosition(position);
+	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 
-	bActor->SetPosition(position);
-	bActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	bActor->SetPosition(position2);
+	bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
 
 	const Food* temp_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
 	
@@ -170,7 +171,7 @@ void Game::SpawnAnimalsDebug()
 		}
 	}
 	
-	//this->zActorManager->AddActor(dActor);
+	this->zActorManager->AddActor(dActor);
 	this->zActorManager->AddActor(bActor);
 }
 

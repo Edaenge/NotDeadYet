@@ -361,10 +361,10 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	{
 		unsigned int mouseButton = this->zMessageConverter.ConvertStringToInt(M_ANIMAL_ATTACK, msgArray[0]);
 
-		//PlayerAnimalAttackEvent e
-		//e.clientData = cd;
-		//e.key = mouseButton;
-		//NotifyObservers(&e);
+		PlayerAnimalAttackEvent e;
+		e.clientData = cd;
+		e.mouseButton = mouseButton;
+		NotifyObservers(&e);
 	}
 	else if(msgArray[0].find(M_DEER_EAT_OBJECT.c_str()) == 0)
 	{

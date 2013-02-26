@@ -357,7 +357,7 @@ bool AIDeerBehavior::Update( float dt )
 	float zDistance = 0;
 	float finalDistance = 0;
 
-	int maximumNodesTest = 25;
+	int maximumNodesTest = 10;
 
 	//Determine closest threat/target
 	for(int i = 0; i < this->GetCurrentTargets(); i++)
