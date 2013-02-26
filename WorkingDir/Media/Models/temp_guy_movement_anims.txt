@@ -1,3 +1,4 @@
+[Animations]
 walk_fwd=walk_fwd_03
 walk_bwd=walk_bwd_03
 walk_rwd=walk_rwd_03
@@ -13,3 +14,15 @@ idle_03=idle_03_zombie
 idle_04=idle_04_the_look
 idle_05=idle_05_relax
 idle_06=idle_06_new_wave
+#END
+
+[BindingBones]
+LWpn=???
+RWpn=???
+Root=???
+CamOffset=???
+#END
+
+[Misc]
+Offset=0,0,0
+#END

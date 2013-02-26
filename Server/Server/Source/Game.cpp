@@ -418,10 +418,7 @@ bool Game::Update( float dt )
 				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, animation);
 				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)cActor->GetID());
 
-				for (auto it = this->zPlayers.begin(); it != this->zPlayers.end(); it++)
-				{
-					it->first->Send(msg);
-				}
+				this->SendToAll(msg);
 			}
 		}
 
@@ -1533,8 +1530,14 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
 
+				
 				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/BowShot.mp3");
 				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
+				this->SendToAll(msg);
+
+				//Send Message to client to Play Shot Bow Animation
+				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, "idle_01");
+				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)pActor->GetID()); 
 				this->SendToAll(msg);
 			}
 			else
@@ -1562,6 +1565,11 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				dmg.slashing = meele->GetDamage();
 
 			victim->TakeDamage(dmg, pActor);
+
+			//Send Message to client to Play Cut Animation
+			std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, "idle_01");
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)pActor->GetID()); 
+			this->SendToAll(msg);
 		}
 	}
 }
