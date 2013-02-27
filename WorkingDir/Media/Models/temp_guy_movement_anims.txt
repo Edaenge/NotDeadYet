@@ -17,10 +17,10 @@ idle_06=idle_06_new_wave
 #END
 
 [BindingBones]
-LWpn=???
-RWpn=???
-Root=???
-CamOffset=???
+LWpn=LeftHand
+RWpn=RightHand
+Root=Root
+CamOffset=Neck
 #END
 
 [Misc]

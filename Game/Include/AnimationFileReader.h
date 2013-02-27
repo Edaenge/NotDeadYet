@@ -10,8 +10,28 @@ enum ANIMATION_INFORMATION
 	BONE_R_WEAPON,
 	BONE_ROOT,
 	BONE_CAMERA_OFFSET,
-	MISC_CAMERA_OFFSET_VALUE
+	MISC_CAMERA_OFFSET_VALUE,
+
 };
+
+static const std::string IDLE_O1		= "idle_01";
+static const std::string IDLE_O2		= "idle_02";
+static const std::string IDLE_O3		= "idle_03";
+static const std::string IDLE_O4		= "idle_04";
+static const std::string IDLE_O5		= "idle_05";
+static const std::string IDLE_O6		= "idle_06";
+
+static const std::string SPRINT			= "sprint";
+
+static const std::string WALK_FORWARD	= "walk_fwd";
+static const std::string WALK_BACKWARD	= "walk_bwd";
+static const std::string WALK_RIGHT		= "walk_rwd";
+static const std::string WALK_LEFT		= "walk_lwd";
+
+static const std::string JOG_FORWARD	= "jog_fwd";
+static const std::string JOG_BACKWARD	= "jog_bwd";
+static const std::string JOG_RIGHT		= "jog_rwd";
+static const std::string JOG_LEFT		= "jog_lwd";
 
 class AnimationFileReader : public FileReader
 {

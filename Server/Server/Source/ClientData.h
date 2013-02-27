@@ -16,26 +16,30 @@ class ClientData
 	virtual ~ClientData();
 
 	bool zPinged;
+	float zCurrentPingDelay;
 	float zCurrentPingTime;
 	float zTotalPingTime;
-	float zMaxPingTime;
+	float zMaxPings;
 	int zNrOfPings;
 	bool zReady;
 
 	MaloW::ClientChannel* zClient;
 public:
 
-	inline float GetCurrentPingTime() const {return zCurrentPingTime;}
-	inline float GetTotalPingTime() const {return zTotalPingTime;}
-	inline int GetNrOfPings() const {return zNrOfPings;}
-	inline bool GetReady(){ return zReady; }
+	inline float GetCurrentPingTime() const {return this->zCurrentPingTime;}
+	inline float GetTotalPingTime() const {return this->zTotalPingTime;}
+	inline float GetCurrentPingDelayTime() const {return this->zCurrentPingDelay;}
+	inline int GetNrOfPings() const {return this->zNrOfPings;}
+	inline bool GetReady(){ return this->zReady; }
 	
-	inline void SetReady(bool ready){ zReady = ready; }
-	inline void SetPinged(const bool pinged) {zPinged = pinged;}
-	inline void SetCurrentPingTime(float const cpt) {zCurrentPingTime = cpt;}
-	inline bool HasBeenPinged() const {return zPinged;}
-	inline void IncPingTime(float dt) {zCurrentPingTime += dt;}
-	inline void ResetPingCounter() {zPinged = 0; zTotalPingTime = 0.0f;}
+	inline void SetReady(bool ready){this->zReady = ready; }
+	inline void SetPinged(const bool pinged) {this->zPinged = pinged;}
+	inline void SetCurrentPingTime(float const cpt) {this->zCurrentPingTime = cpt;}
+	inline void SetCurrentPingDelayTime(float const cpdt) {this->zCurrentPingDelay = cpdt;}
+	inline bool HasBeenPinged() const {return this->zPinged;}
+	inline void IncPingTime(float dt) {this->zCurrentPingTime += dt;}
+	inline void IncPingDelayTimer(float dt) {this->zCurrentPingDelay += dt;}
+	inline void ResetPingCounter() {this->zPinged = false; this->zTotalPingTime = 0.0f; this->zNrOfPings = 0;}
 
 	/*! Sends a message to the client.*/
 	inline void Send(const std::string& msg)

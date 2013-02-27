@@ -97,6 +97,8 @@ void Host::Life()
 	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
 
 	static float waitTimer = 0.0f;
+	static float counter = 0.0f;
+	static int updatesPerSec = 0.0f;
 
 	this->zGameStarted = true;
 	while(this->stayAlive)
@@ -112,13 +114,21 @@ void Host::Life()
 		{
 			this->PingClients();
 
-			waitTimer += zDeltaTime;
-			
+			waitTimer += this->zDeltaTime;
+			counter += this->zDeltaTime;
+
 			if (waitTimer >= UPDATE_DELAY)
 			{
 				SynchronizeAll();
 				
 				waitTimer = 0.0f;
+			}
+			if (counter >= 1.0f)
+			{
+				updatesPerSec = 1.0f / this->zDeltaTime;
+				
+				this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)updatesPerSec));
+				counter = 0.0f;
 			}
 		}
 		else
@@ -126,7 +136,7 @@ void Host::Life()
 			Restart(zGameMode, zMapName);		
 		}
 	
-		// Sleep(5);
+		Sleep(5);
 	}
 }
 
@@ -251,13 +261,15 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 
 		cd->CalculateLatency(latency);
 
+		latency *= 1000.0f;
+
 		cd->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_CLIENT_LATENCY, latency));
 	}
 	//Handles ready from client.
 	else if(msgArray[0].find(M_READY_PLAYER.c_str()) == 0)
 	{
 		PlayerReadyEvent e;
-
+		cd->SetReady(true);
 		e.clientData = cd;
 		NotifyObservers(&e);
 	}
@@ -446,13 +458,14 @@ void Host::PingClients()
 		if(!cd->HasBeenPinged())
 		{
 			//If it was x sec ago we sent a ping, don't send a ping.
-			if(cd->GetCurrentPingTime() < zPingMessageInterval)
-				cd->IncPingTime(this->zDeltaTime);
+			if(cd->GetCurrentPingDelayTime() < zPingMessageInterval)
+				cd->IncPingDelayTimer(this->zDeltaTime);
 
 			//else send ping.
 			else
 			{
 				cd->SetCurrentPingTime(0.0f);
+				cd->SetCurrentPingDelayTime(0.0f);
 				ch->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_PING));
 				cd->SetPinged(true);
 			}
@@ -638,6 +651,7 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
 		for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
 		{
 			i->second->Send(msg);
+			i->second->SetReady(false);
 			PlayerDisconnectedEvent PDE;
 			PDE.clientData = i->second;
 			zGame->OnEvent(&PDE);

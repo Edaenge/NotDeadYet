@@ -6,6 +6,7 @@
 #include "ActorManager.h"
 #include "ActorSynchronizer.h"
 #include "PhysicsEngine.h"
+#include "Item.h"
 
 class ClientData;
 class World;
@@ -81,8 +82,10 @@ private:
 	void HandleCraftItem(ClientData* cd, unsigned int itemID);
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID, int eq_slot);
+	void HandleBindings(Item* item, const unsigned int ID);
 
 	void UpdateSunDirection(float dt);
+
 private:
 	PhysicsEngine* zPhysicsEngine;
 	

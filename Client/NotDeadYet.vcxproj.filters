@@ -28,9 +28,6 @@
     <Filter Include="Source\PlayerConfig">
       <UniqueIdentifier>{ffa11063-3665-40a6-8f55-2bc52c1fd8f1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Animations">
-      <UniqueIdentifier>{3a6e0a21-3124-42c5-a697-024c8139e0ec}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Client.cpp">
@@ -140,9 +137,6 @@
     </ClCompile>
     <ClCompile Include="Source\SoundEngine\AudioManager.cpp">
       <Filter>Source\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AnimationFileReader.cpp">
-      <Filter>Source\Animations</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -265,9 +259,6 @@
     </ClInclude>
     <ClInclude Include="Source\SoundEngine\sounds.h">
       <Filter>Source\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AnimationFileReader.h">
-      <Filter>Source\Animations</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

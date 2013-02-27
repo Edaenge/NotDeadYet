@@ -58,7 +58,7 @@ void MainMenu::Init()
 	const char* object[] = {
 		"Media/Models/Bush_01.ani",
 		"Media/Models/Fern_02.ani",
-		"Media/Models/Tree_01.ani",
+		"Media/Models/Tree_02.ani",
 		"Media/Models/Bigleaf_01.ani",
 		"Media/Models/GrassPlant_01.ani",
 		"Media/Models/WaterGrass_02.ani",

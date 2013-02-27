@@ -80,6 +80,7 @@
     <ClInclude Include="..\Client\Source\KeyUtil\Keybinds.h" />
     <ClInclude Include="..\Client\Source\KeyUtil\KeyConverter.h" />
     <ClInclude Include="..\Client\Source\KeyUtil\KeyHandler.h" />
+    <ClInclude Include="Include\AnimationFileReader.h" />
     <ClInclude Include="Include\AnimationStates.h" />
     <ClInclude Include="Include\Bandage.h" />
     <ClInclude Include="Include\ClientServerMessages.h" />
@@ -115,6 +116,7 @@
     <ClCompile Include="..\Client\Source\KeyUtil\Keybinds.cpp" />
     <ClCompile Include="..\Client\Source\KeyUtil\KeyConverter.cpp" />
     <ClCompile Include="..\Client\Source\KeyUtil\KeyHandler.cpp" />
+    <ClCompile Include="Source\AnimationFileReader.cpp" />
     <ClCompile Include="Source\Bandage.cpp" />
     <ClCompile Include="Source\Container.cpp" />
     <ClCompile Include="Source\Food.cpp" />

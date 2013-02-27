@@ -100,9 +100,14 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_PLAY_ANIMATION,
 	MESSAGE_TYPE_SUN_DIRECTION,
 	MESSAGE_TYPE_ANIMAL_ATTACK,
-	MESSAGE_TYPE_CLIENT_LATENCY
+	MESSAGE_TYPE_CLIENT_LATENCY,
+	MESSAGE_TYPE_SERVER_UPDATES_PER_SEC,
+	MESSAGE_TYPE_MESH_BINDING,
+	MESSAGE_TYPE_MESH_UNBIND
 };
 
+static const std::string M_MESH_UNBIND				= "MUB";
+static const std::string M_MESH_BINDING				= "MB";
 static const std::string M_UPDATE_ACTOR				= "UA";
 static const std::string M_REMOVE_ACTOR				= "RA";
 static const std::string M_DEAD_ACTOR				= "DA";
@@ -202,6 +207,7 @@ static const std::string M_SELF_ID					= "SELF";
 //Ping Message
 static const std::string M_PING						= "PING";
 static const std::string M_CLIENT_LATENCY			= "CL";
+static const std::string M_SERVER_UPDATES_PER_SEC	= "SUPC";
 static const std::string M_START_GAME				= "SG";
 static const std::string M_PLAY_SOUND				= "PS";
 static const std::string M_PLAY_ANIMATION			= "PLAN";

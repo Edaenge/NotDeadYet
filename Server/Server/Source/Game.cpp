@@ -27,6 +27,7 @@
 #include "ItemLookup.h"
 #include "PlayerGhostBehavior.h"
 #include <Packets\NewActorPacket.h>
+#include "AnimationFileReader.h"
 
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
@@ -375,27 +376,27 @@ bool Game::Update( float dt )
 				int idle_Animation = (rand() % 350) + 1;
 				if (idle_Animation > 0 && idle_Animation <= 50)//High Chance
 				{
-					animation = "idle_01";
+					animation = IDLE_O1;
 				}
 				else if (idle_Animation > 50 && idle_Animation <= 90)//Low Chance
 				{
-					animation = "idle_02";
+					animation = IDLE_O2;
 				}
 				else if (idle_Animation > 90 && idle_Animation <= 100)//High Chance
 				{
-					animation = "idle_03";
+					animation = IDLE_O3;
 				}
 				else if (idle_Animation > 100 && idle_Animation <= 200)//Very High Chance
 				{
-					animation = "idle_04";
+					animation = IDLE_O4;
 				}
 				else if (idle_Animation > 200 && idle_Animation <= 300)//Very High Chance
 				{
-					animation = "idle_05";
+					animation = IDLE_O5;
 				}
 				else if (idle_Animation > 300 && idle_Animation <= 350)//Medium Chance
 				{
-					animation = "idle_06";
+					animation = IDLE_O6;
 				}
 				
 			}
@@ -403,28 +404,28 @@ bool Game::Update( float dt )
 			{
 				if(keys.GetKeyState(KEY_FORWARD))
 				{
-					animation = "walk_fwd";
+					animation = WALK_FORWARD;
 				}
 				else if (keys.GetKeyState(KEY_BACKWARD))
 				{
-					animation = "walk_bwd";
+					animation = WALK_BACKWARD;
 				}
 				else if(keys.GetKeyState(KEY_LEFT))
 				{
-					animation = "walk_lwd";
+					animation = WALK_LEFT;
 				}
 				else if (keys.GetKeyState(KEY_RIGHT))
 				{
-					animation = "walk_rwd";
+					animation = WALK_RIGHT;
 				}
 			}
 			//else if (state == STATE_JOG)
 			//{
 			//}
-			//else if (state == STATE_RUNNING)
-			//{
-			//	animation = "sprint";
-			//}
+			else if (state == STATE_RUNNING)
+			{
+				animation = SPRINT;
+			}
 
 			if (animation != "")
 			{
@@ -644,7 +645,22 @@ void Game::OnEvent( Event* e )
 		if(BioActor* pActor = dynamic_cast<BioActor*>(actor))
 		{
 			Inventory* inv = pActor->GetInventory();
-			inv->SwapWeapon();
+			if(inv->SwapWeapon())
+			{
+				NetworkMessageConverter NMC;
+				std::string msg;
+
+				Item* item = inv->GetSecondaryEquip();
+
+				msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)pActor->GetID());
+				msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+				SEQWE->clientdData->Send(msg);
+
+				Item* newPrimary = inv->GetPrimaryEquip();
+
+				if (newPrimary)
+					this->HandleBindings(newPrimary, pActor->GetID());
+			}
 		}
 	}
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
@@ -1580,7 +1596,6 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 			Projectile* arrow = inventory->GetProjectile();
 			if(arrow && arrow->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
 			{
-				
 				//create projectileActor
 				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
 				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
@@ -1620,13 +1635,12 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
 
-				
 				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/BowShot.mp3");
 				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
 				this->SendToAll(msg);
 
 				//Send Message to client to Play Shot Bow Animation
-				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, "idle_01");
+				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, IDLE_O1);
 				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)pActor->GetID()); 
 				this->SendToAll(msg);
 			}
@@ -1895,12 +1909,17 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 
 	NetworkMessageConverter NMC;
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
-	BioActor* pActor = dynamic_cast<PlayerActor*>(actor);
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+	if (!pActor)
+	{
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Equipping items is something only humans can do");
+		cd->Send(msg);
+		return;
+	}
 	Inventory* inventory = pActor->GetInventory();
 	Item* item = inventory->SearchAndGetItem(itemID);
 	Item* ret = NULL;
 	bool success = false;
-
 
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
@@ -1929,11 +1948,15 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 
 	if(!success && slot != EQUIPMENT_SLOT_PROJECTILE)
 	{
-		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Cannot_Equip_Item");
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Cannot Equip Item");
 		cd->Send(msg);
 		return;
 	}
-
+	//Check if the Equipped Item is the Primary one Then Add it to the Mesh
+	Item* primaryWpn = inventory->GetPrimaryEquip();
+	if (primaryWpn == item)
+		this->HandleBindings(item, pActor->GetID());
+	
 	msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)item->GetID());
 	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)slot);
 	cd->Send(msg);
@@ -1944,13 +1967,21 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 	std::string msg;
 	NetworkMessageConverter NMC;
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
-	BioActor* pActor = dynamic_cast<BioActor*>(actor);
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+	if (!pActor)
+		return;
+
 	Inventory* inventory = pActor->GetInventory();
 	Item* item = inventory->SearchAndGetItem(itemID);
 
+	bool wasPrimary = false;
+
+	if (item == inventory->GetPrimaryEquip())
+		wasPrimary = true;
+	
 	if(!item)
 	{
-		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Item_Was_Not_Found");
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Item Was Not Found");
 		cd->Send(msg);
 		return;
 	}
@@ -1974,9 +2005,64 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 		return;
 	}
 
+	if (wasPrimary)
+	{
+		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)pActor->GetID());
+		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+		cd->Send(msg);
+
+		Item* newPrimary = inventory->GetPrimaryEquip();
+
+		if (newPrimary)
+			this->HandleBindings(newPrimary, pActor->GetID());
+	}
+	
+
 	msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)itemID);
 	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)eq_slot);
 	cd->Send(msg);
+}
+
+void Game::HandleBindings(Item* item, const unsigned int ID)
+{
+	std::string msg;
+	NetworkMessageConverter NMC;
+
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
+	{
+		if (item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
+
+	}
+	else if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
+	{
+		if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
+		else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
+	}
+	else if (item->GetItemType() == ITEM_TYPE_PROJECTILE && item->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
+	{
+		msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+		msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+		this->SendToAll(msg);
+	}
 }
 
 void Game::SendToAll( std::string msg)
