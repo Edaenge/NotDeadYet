@@ -271,7 +271,7 @@ Menu_select_data GuiManager::CheckCollisionInv()
 	if(this->zCircularInventorySelectionOpen)
 	{
 		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
-		this->zSelectedCircMenu = this->zInvCircGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(1), zEng);
+		this->zSelectedCircMenu = this->zInvCircGui->CheckCollision(mousePos.x, mousePos.y, (zEng->GetKeyListener()->IsClicked(1) || !zEng->GetKeyListener()->IsClicked(2)), zEng);
 
 		if(this->zSelectedCircMenu != -1)
 		{
@@ -281,11 +281,6 @@ Menu_select_data GuiManager::CheckCollisionInv()
 			msd.zID = this->zSelectedItem;
 			msd.zType = this->zSelectedType;
 			return msd;
-		}
-		else if(!zEng->GetKeyListener()->IsClicked(2))
-		{
-			zMinorFix = false;
-			this->HideCircularItemGui();
 		}
 
 	}
