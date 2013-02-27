@@ -144,7 +144,7 @@ void Host::Life()
 				}
 				if (counter >= 1.0f)
 				{
-					updatesPerSec = 1.0f / this->zDeltaTime;
+					updatesPerSec = (int)(1.0f / this->zDeltaTime);
 
 					this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)updatesPerSec));
 					counter = 0.0f;

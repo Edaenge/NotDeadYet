@@ -314,6 +314,33 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 				this->UpdateCameraOffset(actorState);
 		}
 	}
+
+	for (auto animIterator = SFP->newAnimations.begin(); animIterator != SFP->newAnimations.end(); animIterator++)
+	{
+		if (this->zReady)
+		{
+			unsigned int id = animIterator->first;
+			std::string animationName = animIterator->second;
+
+			Actor* actor = this->zActorManager->GetActor(id);
+			if (actor)
+			{
+				iFBXMesh* mesh = dynamic_cast<iFBXMesh*>(actor->GetMesh());
+				if (mesh)
+				{
+					std::string model = actor->GetModel();
+					auto it = this->zModelToReaderMap.find(model);
+					if (it != this->zModelToReaderMap.end())
+					{
+						std::string animation = it->second.GetAnimation(animationName);
+
+						if (animation != "")
+							mesh->SetAnimation(animation.c_str());
+					}
+				}
+			}
+		}
+	}
 }
 
 bool Client::RemoveActor(const unsigned int ID)
