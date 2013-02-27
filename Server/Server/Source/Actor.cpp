@@ -6,6 +6,7 @@ Actor::Actor() :
 	zID(++NextActorID),
 	zPhysicsObject(NULL)
 {
+	this->zEnergy = 0.0f;
 	SetScale(Vector3(0.05f, 0.05f, 0.05f));
 }
 

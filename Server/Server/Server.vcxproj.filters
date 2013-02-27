@@ -145,7 +145,7 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\SupplyActor.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Actors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -288,7 +288,7 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\SupplyActor.h">
-      <Filter>Source</Filter>
+      <Filter>Source\Actors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

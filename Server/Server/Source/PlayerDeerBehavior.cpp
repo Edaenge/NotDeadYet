@@ -10,7 +10,7 @@ const float MAX_VELOCITY_RUN = 4.40f;
 const float MAX_VELOCITY_SPRINT = 7.80f;
 const float MAX_VELOCITY_DUCK = 0.1f;
 const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
-const Vector3 JUMPING_FORCE = Vector3(0, 2.84f, 0);
+//const Vector3 JUMPING_FORCE = Vector3(0, 2.84f, 0);
 const float ELASTICITY = 0.5f;
 const float ACCELERATION = 10000.0f;
 const float GROUNDFRICTION = 0.4f;
@@ -23,7 +23,7 @@ const float DEERWEIGHT = 110.0f;
 PlayerDeerBehavior::PlayerDeerBehavior( Actor* actor, World* world, Player* player) : 
 	PlayerBehavior(actor, world, player)
 {
-	this->jumpingTime = 0.0f;
+
 }
 
 PlayerDeerBehavior::~PlayerDeerBehavior()
@@ -248,79 +248,6 @@ bool PlayerDeerBehavior::Update( float dt )
 
 	}
 
-
-	if(keyStates.GetKeyState(KEY_JUMP))
-	{
-		if(isOnGround)
-		{
-			this->zVelDown += 30.02 * dt;
-		
-			//this->zVelDown += JUMPING_FORCE.y * dt;
-		/*Vector3 pos = zActor->GetPosition();
-		pos += Vector3(0.0f,10.0f,0.0f);
-		zActor->SetPosition(pos);
-		curPosition = pos;*/
-
-			/*if(jumpingTime == 0.0f)
-			{
-					jumpingTime = 1.0f;
-			}
-			else
-			{
-				jumpingTime -= dt;
-				if(jumpingTime < 0.0f)
-				{
-					jumpingTime = 0.0f;
-				}
-			}
-
-			if(jumpingTime > 0.0f)
-			{
-				zVelDown += 2.83f * dt;
-			}
-			if(isOnGround)
-			{
-				jumpingTime = 0.0f;
-			}*/
-
-
-
-
-
-		}
-	}
-
-		/*if(jumpingTime == 0.0f)
-		{
-			if(keyStates.GetKeyState(KEY_JUMP))
-			{
-				jumpingTime = 1.0f;
-			}
-		}
-		else
-		{
-			jumpingTime -= dt;
-			if(jumpingTime < 0.0f)
-			{
-				jumpingTime = 0.0f;
-			}
-		}
-
-		if(jumpingTime > 0.0f)
-		{
-			zVelDown += 9.83f * dt;
-		}
-		if(isOnGround)
-		{
-			jumpingTime = 0.0f;
-		}
-*/
-
-
-
-
-
-	
 
 	// Apply Velocity
 	Vector3 newPosition = curPosition + (zVelocity * dt) + Vector3(0.0f, this->zVelDown, 0.0f) + (groundNormal * dt);

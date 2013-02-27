@@ -154,6 +154,7 @@ void GameModeFFA::OnEvent( Event* e )
 
 void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 {
+
 	Player* player = gActor->GetPlayer();
 	ClientData* cd = player->GetClientData();
 
@@ -162,6 +163,17 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 	AnimalActor* closestAnimal = NULL;
 	float distance = 999999.9f;
 	
+	if(animalType == 0 && gActor->GetEnergy() < 50)
+	{
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_enough_energy_for_this_animal"));
+		return;
+	}
+	else if(animalType == 2 && gActor->GetEnergy() < 200)
+	{
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_enough_energy_for_this_animal"));
+		return;
+	}
+
 	Vector3 position = gActor->GetPosition();
 
 	float radius = 4000.0f;
@@ -239,6 +251,8 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 		//Deer
 		if (animalType == 0)
 		{
+			closestAnimal->SetEnergy(gActor->GetEnergy());
+
 			animalBehavior = new PlayerDeerBehavior(closestAnimal, this->zGame->GetWorld(), player);
 
 			gActor->SetPlayer(NULL);
@@ -273,6 +287,9 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 
 			this->zGame->GetActorManager()->RemoveActor(gActor);
 			found = true;*/
+
+			closestAnimal->SetEnergy(gActor->GetEnergy());
+
 			animalBehavior = new PlayerBearBehavior(closestAnimal, this->zGame->GetWorld(), player);
 
 			gActor->SetPlayer(NULL);
@@ -353,6 +370,8 @@ void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
 	GhostActor* gActor = new GhostActor(player);
 	gActor->SetPosition(position);
 	gActor->SetDir(direction);
+
+	gActor->SetEnergy(aActor->GetEnergy());
 
 	//Create Ghost behavior
 	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);

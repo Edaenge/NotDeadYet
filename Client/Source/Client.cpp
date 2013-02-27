@@ -370,7 +370,7 @@ void Client::Life()
 				this->SendClientUpdate();
 			}
 
-			this->UpdateMeshRotation(); // Will manage the local model later.
+			//this->UpdateMeshRotation(); // Will manage the local model later.
 
 			this->UpdateActors();
 		}
@@ -419,7 +419,7 @@ void Client::Life()
 			}
 		}
 
-		Sleep(5);
+		//Sleep(5);
 	}
 
 	this->zRunning = false;
@@ -1292,29 +1292,29 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if (msgArray[0].find(M_PLAY_ANIMATION.c_str()) == 0)
 	{
-		if (this->zReady)
-		{
-			std::string animationName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_ANIMATION, msgArray[0]);
-			unsigned int actorID = this->zMsgHandler.ConvertStringToInt(M_OBJECT_ID, msgArray[1]);
+		//if (this->zReady)
+		//{
+		//	std::string animationName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_ANIMATION, msgArray[0]);
+		//	unsigned int actorID = this->zMsgHandler.ConvertStringToInt(M_OBJECT_ID, msgArray[1]);
 
-			Actor* actor = this->zActorManager->GetActor(actorID);
-			if (actor)
-			{
-				iFBXMesh* mesh = dynamic_cast<iFBXMesh*>(actor->GetMesh());
-				if (mesh)
-				{
-					std::string model = actor->GetModel();
-					auto it = this->zModelToReaderMap.find(model);
-					if (it != this->zModelToReaderMap.end())
-					{
-						std::string animation = it->second.GetAnimation(animationName);
+		//	Actor* actor = this->zActorManager->GetActor(actorID);
+		//	if (actor)
+		//	{
+		//		iFBXMesh* mesh = dynamic_cast<iFBXMesh*>(actor->GetMesh());
+		//		if (mesh)
+		//		{
+		//			std::string model = actor->GetModel();
+		//			auto it = this->zModelToReaderMap.find(model);
+		//			if (it != this->zModelToReaderMap.end())
+		//			{
+		//				std::string animation = it->second.GetAnimation(animationName);
 
-						if (animation != "")
-							mesh->SetAnimation(animation.c_str());
-					}
-				}
-			}
-		}
+		//				if (animation != "")
+		//					mesh->SetAnimation(animation.c_str());
+		//			}
+		//		}
+		//	}
+		//}
 	}
 	else if (msgArray[0].find(M_MESH_BINDING.c_str()) == 0)
 	{
@@ -1344,8 +1344,10 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 					if (mesh)
 					{
+						
 						if (iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(actor->GetMesh()))
 						{
+							mesh->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 							fbxMesh->BindMesh(boneName.c_str(), mesh);
 						}
 					}
@@ -1374,7 +1376,10 @@ void Client::HandleNetworkMessage( const std::string& msg )
 					else if (substr == ".fbx")
 						mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
 					if (mesh)
+					{
+						mesh->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 						fbxMesh->UnbindMesh(mesh);
+					}
 				}
 			}
 		}

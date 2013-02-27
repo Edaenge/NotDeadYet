@@ -6,7 +6,8 @@
 
 static const enum M_BANDAGE_ITEM_SUB_TYPE
 {
-	ITEM_SUB_TYPE_BANDAGE
+	ITEM_SUB_TYPE_BANDAGE_POOR,
+	ITEM_SUB_TYPE_BANDAGE_GREAT 
 };
 
 class Bandage : public Item

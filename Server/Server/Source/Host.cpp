@@ -107,24 +107,24 @@ void Host::Life()
 		Update();
 		ReadMessages();
 		
-		if (!this->zGameStarted)
-		{
-			//Check if All players Are Ready
-			unsigned int nrOfReadyPlayers = 0;
-			for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
-			{
-				if (it->second->GetReady())
-				{
-					nrOfReadyPlayers++;
-				}
-			}
-			if (nrOfReadyPlayers == this->zClients.size())
-			{
-				this->zGameStarted = true;
-			}
-		}
-		else
-		{
+		//if (!this->zGameStarted)
+		//{
+		//	//Check if All players Are Ready
+		//	unsigned int nrOfReadyPlayers = 0;
+		//	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
+		//	{
+		//		if (it->second->GetReady())
+		//		{
+		//			nrOfReadyPlayers++;
+		//		}
+		//	}
+		//	if (nrOfReadyPlayers == this->zClients.size())
+		//	{
+		//		this->zGameStarted = true;
+		//	}
+		//}
+		//else
+		//{
 			if ( !zGame )
 			{
 
@@ -154,9 +154,9 @@ void Host::Life()
 			{
 				Restart(zGameMode, zMapName);		
 			}
-		}
+		//}
 
-		Sleep(5);
+		//Sleep(5);
 	}
 }
 
