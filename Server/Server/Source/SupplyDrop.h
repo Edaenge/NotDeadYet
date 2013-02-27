@@ -5,15 +5,23 @@
 #include "Item.h"
 
 class ActorManager;
+class World;
+class PhysicsEngine;
 
 class SupplyDrop : public Observed
 {
 public:
-	SupplyDrop( ActorManager* actorManager );
+	SupplyDrop( ActorManager* actorManager, World* world, PhysicsEngine* engine );
 	virtual ~SupplyDrop();
 	
-	bool SpawnDrop();
-	bool SpawnDrop(const Vector3& pos, std::set<Item*>& items);
-	
+	bool SpawnSupplyDrop( Vector3& pos, std::set<Item*>& items);
+	bool SpawnSupplyDrop( Vector3& pos, std::set<Item*>& items, const unsigned int itemCapacity);
+
+	bool SpawnAirbornSupplyDrop( Vector3& pos, std::set<Item*>& items);
+	bool SpawnAirbornSupplyDrop( Vector3& pos, std::set<Item*>& items, const unsigned int itemCapacity);
+
 private:
+	World* zWorld;
+	ActorManager* zActorManager;
+	PhysicsEngine* zPhyEngine;
 };
