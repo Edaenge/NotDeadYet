@@ -122,6 +122,9 @@
     <ClInclude Include="Include\Packets\NewActorPacket.h">
       <Filter>Header Files\Packets</Filter>
     </ClInclude>
+    <ClInclude Include="Include\AnimationFileReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\World\Sector.cpp">
@@ -197,6 +200,9 @@
       <Filter>Source Files\Packets</Filter>
     </ClCompile>
     <ClCompile Include="Source\Bandage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AnimationFileReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

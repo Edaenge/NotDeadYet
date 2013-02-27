@@ -13,24 +13,6 @@ static const std::string OFFSET_BONE	= "CamOffset";
 
 static const std::string OFFSET_DIST	= "Offset";
 
-static const std::string IDLE_O1		= "idle_01";
-static const std::string IDLE_O2		= "idle_02";
-static const std::string IDLE_O3		= "idle_03";
-static const std::string IDLE_O4		= "idle_04";
-static const std::string IDLE_O5		= "idle_05";
-static const std::string IDLE_O6		= "idle_06";
-
-static const std::string SPRINT			= "sprint";
-
-static const std::string WALK_FORWARD	= "walk_fwd";
-static const std::string WALK_BACKWARD	= "walk_bwd";
-static const std::string WALK_RIGHT		= "walk_rwd";
-static const std::string WALK_LEFT		= "walk_lwd";
-
-static const std::string JOG_FORWARD	= "jog_fwd";
-static const std::string JOG_BACKWARD	= "jog_bwd";
-static const std::string JOG_RIGHT		= "jog_rwd";
-static const std::string JOG_LEFT		= "jog_lwd";
 
 AnimationFileReader::AnimationFileReader( const std::string& filename )
 {
@@ -61,9 +43,9 @@ bool AnimationFileReader::ReadFromFile()
 		if (line.empty())
 			continue;
 
-		if (key == ANIMATIONS)
+		if (line == ANIMATIONS)
 		{
-			while (!read.eof() && key != END)
+			while (!read.eof() && line != END)
 			{
 				std::getline(read, line);
 
@@ -72,9 +54,9 @@ bool AnimationFileReader::ReadFromFile()
 				this->zAnimationNames[key] = value;
 			}
 		}
-		else if(key == BINDINGBONES)
+		else if(line == BINDINGBONES)
 		{
-			while (!read.eof() && key != END)
+			while (!read.eof() && line != END)
 			{
 				std::getline(read, line);
 
@@ -86,9 +68,9 @@ bool AnimationFileReader::ReadFromFile()
 					this->zBindingBones[keyVal] = value;
 			}
 		}
-		else if (key == MISCELLANEOUS)
+		else if (line == MISCELLANEOUS)
 		{
-			while (!read.eof() && key != END)
+			while (!read.eof() && line != END)
 			{
 				std::getline(read, line);
 
@@ -110,8 +92,6 @@ bool AnimationFileReader::ReadFromFile()
 				}
 			}
 		}
-
-		
 	}
 }
 
@@ -134,6 +114,15 @@ const std::string& AnimationFileReader::GetAnimation(const std::string& animatio
 	auto it = this->zAnimationNames.find(animationName);
 
 	if (it != this->zAnimationNames.end())
+		return it->second;
+
+	return "";
+}
+
+const std::string& AnimationFileReader::GetBindingBone( const unsigned int bone ) const
+{
+	auto it = this->zBindingBones.find(bone);
+	if (it != this->zBindingBones.end())
 		return it->second;
 
 	return "";

@@ -152,11 +152,20 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_KEY_UP:
 		ss << M_KEY_UP;
 		break;
+	case MESSAGE_TYPE_SERVER_UPDATES_PER_SEC:
+		ss << M_SERVER_UPDATES_PER_SEC;
+		break;
 	case MESSAGE_TYPE_FRAME_TIME:
 		ss << M_FRAME_TIME;
 		break;
 	case MESSAGE_TYPE_STATE:
 		ss << M_STATE;
+		break;
+	case MESSAGE_TYPE_FOG_ENCLOSEMENT:
+		ss << M_FOG_ENCLOSEMENT;
+		break;
+	case MESSAGE_TYPE_MESH_BINDING:
+		ss << M_MESH_BINDING;
 		break;
 	case MESSAGE_TYPE_ITEM_FINISHED:
 		ss << M_ITEM_FINISHED;
@@ -302,6 +311,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 		break;
 	case MESSAGE_TYPE_ACTOR_KILL:
 		ss << M_ACTOR_KILL;
+		break;
+	case MESSAGE_TYPE_MESH_UNBIND:
+		ss << M_MESH_UNBIND;
 		break;
 	case MESSAGE_TYPE_LEAVE_ANIMAL:
 		ss << M_LEAVE_ANIMAL;

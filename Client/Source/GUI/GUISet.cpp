@@ -124,13 +124,13 @@ string GUISet::GetTextFromField(string textBox)
 	return "";
 }
 
- void GUISet::Resize(float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight)
- {
-	 for(int i = 0; i < this->mNrOfElements; i++)
+void GUISet::Resize(float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight)
+{
+	for(int i = 0; i < this->mNrOfElements; i++)
 		this->mElements[i]->Resize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
- }
- /*
- GUIEvent* GUISet::GetEventFromDropDown(string dropDownMenu)
+}
+
+GUIEvent* GUISet::GetEventFromDropDown(string dropDownMenu)
 {
 	for(int i = 0; i < this->mNrOfElements; i++)
 	{
@@ -144,7 +144,8 @@ string GUISet::GetTextFromField(string textBox)
 		}
 	}
 	return NULL;
-}*/
+}
+
 CheckBox* GUISet::GetCheckBox(string checkBox)
 {
 	for(int i = 0; i < this->mNrOfElements; i++)

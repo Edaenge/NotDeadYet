@@ -17,7 +17,7 @@
 #include <Packets/NewActorPacket.h>
 #include "InGameMenu.h"
 #include "PickAnimalMenu.h"
-#include "AnimationFileReader.h"
+#include <AnimationFileReader.h>
 
 using namespace MaloW;
 
@@ -231,8 +231,10 @@ private:
 	std::map<unsigned int, Vector3> zStateCameraOffset;
 	//Updates per second
 	int zUps;
-	iText* zUpsText;
+	
+	iText* zServerUpsText;
 	iText* zLatencyText;
+	iText* zClientUpsText;
 	//Error Text
 	std::vector<TextDisplay*> zDisplayedText;
 

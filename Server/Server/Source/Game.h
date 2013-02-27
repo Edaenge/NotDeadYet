@@ -6,6 +6,7 @@
 #include "ActorManager.h"
 #include "ActorSynchronizer.h"
 #include "PhysicsEngine.h"
+#include "Item.h"
 
 class ClientData;
 class World;
@@ -40,6 +41,11 @@ class Game : public Observer, public Observed
 	float zSunTimer;
 	float zTotalSunRadiansShift;
 	float zSunRadiansShiftPerUpdate;
+
+	float zInitalFogEnclosement;
+	float zIncrementFogEnclosement;
+	float zCurrentFogEnclosement;
+
 public:
 	Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
 	virtual ~Game();
@@ -81,8 +87,10 @@ private:
 	void HandleCraftItem(ClientData* cd, unsigned int itemID);
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID, int eq_slot);
+	void HandleBindings(Item* item, const unsigned int ID);
 
 	void UpdateSunDirection(float dt);
+
 private:
 	PhysicsEngine* zPhysicsEngine;
 	
