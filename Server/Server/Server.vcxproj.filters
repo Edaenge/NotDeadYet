@@ -141,6 +141,12 @@
     <ClCompile Include="Source\PlayerBearBehavior.cpp">
       <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SupplyDrop.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SupplyActor.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -277,6 +283,12 @@
     </ClInclude>
     <ClInclude Include="Source\PlayerBearBehavior.h">
       <Filter>Source\Actors\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SupplyDrop.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SupplyActor.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
