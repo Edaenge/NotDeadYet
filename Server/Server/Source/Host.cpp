@@ -30,7 +30,9 @@ Host::Host() :
 	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
 	this->zTimeOut = 15.0f;
-	this->zPingMessageInterval = 5.0f;
+	this->zPingMessageInterval = 2.5f;
+
+	this->zGameStarted = false;
 }
 
 Host::~Host()
@@ -97,34 +99,64 @@ void Host::Life()
 	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
 
 	static float waitTimer = 0.0f;
+	static float counter = 0.0f;
+	static int updatesPerSec = 0.0f;
 
-	this->zGameStarted = true;
 	while(this->stayAlive)
 	{
 		Update();
 		ReadMessages();
-
-		if ( !zGame )
+		
+		if (!this->zGameStarted)
 		{
-
-		}
-		else if(zGame->Update(this->zDeltaTime))
-		{
-			waitTimer += zDeltaTime;
-			
-			if (waitTimer >= UPDATE_DELAY)
+			//Check if All players Are Ready
+			unsigned int nrOfReadyPlayers = 0;
+			for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
 			{
-				SynchronizeAll();
-				
-				waitTimer = 0.0f;
+				if (it->second->GetReady())
+				{
+					nrOfReadyPlayers++;
+				}
+			}
+			if (nrOfReadyPlayers == this->zClients.size())
+			{
+				this->zGameStarted = true;
 			}
 		}
 		else
 		{
-			Restart(zGameMode, zMapName);		
+			if ( !zGame )
+			{
+
+			}
+			else if(zGame->Update(this->zDeltaTime))
+			{
+				this->PingClients();
+
+				waitTimer += this->zDeltaTime;
+				counter += this->zDeltaTime;
+
+				if (waitTimer >= UPDATE_DELAY)
+				{
+					SynchronizeAll();
+
+					waitTimer = 0.0f;
+				}
+				if (counter >= 1.0f)
+				{
+					updatesPerSec = 1.0f / this->zDeltaTime;
+
+					this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)updatesPerSec));
+					counter = 0.0f;
+				}
+			}
+			else
+			{
+				Restart(zGameMode, zMapName);		
+			}
 		}
-	
-		// Sleep(5);
+
+		Sleep(5);
 	}
 }
 
@@ -208,13 +240,13 @@ void Host::ReadMessages()
 
 void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &message )
 {
-	
 	std::vector<std::string> msgArray;
 	msgArray = this->zMessageConverter.SplitMessage(message); 
 	ClientData* cd = zClients[cc];
 	
 	// Empty Array
-	if ( msgArray.size() == 0 ) return;
+	if ( msgArray.size() == 0 ) 
+		return;
 
 	//Handles updates from client.
 	if(msgArray[0].find(M_CLIENT_DATA.c_str()) == 0)
@@ -244,14 +276,20 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	//Handles Pings from client.
 	else if(msgArray[0].find(M_PING.c_str()) == 0)
 	{
-		/*this->zClients[c_index]->HandlePingMsg();*/
+		cd->HandlePingMsg();
+		float latency = 0.0f;
 
+		cd->CalculateLatency(latency);
+
+		latency *= 1000.0f;
+
+		cd->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_CLIENT_LATENCY, latency));
 	}
 	//Handles ready from client.
 	else if(msgArray[0].find(M_READY_PLAYER.c_str()) == 0)
 	{
 		PlayerReadyEvent e;
-
+		cd->SetReady(true);
 		e.clientData = cd;
 		NotifyObservers(&e);
 	}
@@ -440,18 +478,19 @@ void Host::PingClients()
 		if(!cd->HasBeenPinged())
 		{
 			//If it was x sec ago we sent a ping, don't send a ping.
-			if(cd->GetCurrentPingTime() < zPingMessageInterval)
-				cd->IncPingTime(zDeltaTime);
+			if(cd->GetCurrentPingDelayTime() < zPingMessageInterval)
+				cd->IncPingDelayTimer(this->zDeltaTime);
 
 			//else send ping.
 			else
 			{
 				cd->SetCurrentPingTime(0.0f);
+				cd->SetCurrentPingDelayTime(0.0f);
 				ch->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_PING));
 				cd->SetPinged(true);
 			}
 		}
-		//If he have sent a ping.
+		//If he has sent a ping.
 		else
 		{
 			//If we sent a ping x sec ago, drop the client.
@@ -460,7 +499,7 @@ void Host::PingClients()
 				//cd->Kick(ch->GetClientID());
 			}
 			else
-				cd->IncPingTime(zDeltaTime);
+				cd->IncPingTime(this->zDeltaTime);
 
 		}
 	}
@@ -564,7 +603,7 @@ void Host::HandleLootRequest( const std::vector<std::string> &msgArray, ClientDa
 	{
 		
 		_objID = this->zMessageConverter.ConvertStringToInt(M_LOOT_ITEM, msgArray[0]);
-		_itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_ID, msgArray[1]);
+		_itemID = this->zMessageConverter.ConvertStringToInt(M_OBJECT_ID, msgArray[1]);
 		_type = this->zMessageConverter.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
 		_subType = this->zMessageConverter.ConvertStringToInt(M_ITEM_SUB_TYPE, msgArray[3]);
 		e.clientData = cd;
@@ -632,6 +671,7 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
 		for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
 		{
 			i->second->Send(msg);
+			i->second->SetReady(false);
 			PlayerDisconnectedEvent PDE;
 			PDE.clientData = i->second;
 			zGame->OnEvent(&PDE);

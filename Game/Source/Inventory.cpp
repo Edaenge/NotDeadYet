@@ -77,27 +77,22 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 	if (!item)
 		return false;
 
-	int slotsLeft = this->zInventoryCap - this->zWeightTotal;
 	unsigned int weight = item->GetWeight();
-	int available_slots = slotsLeft / weight;
+	int available_slots = CalcMaxAvailableSlots(item);
+	stacked = false;
 	
 	//No slots, return false
 	if( available_slots <= 0 )
 		return false;
 
-	if (item->GetStacking())
+	if ( item->GetStacking() )
 	{
-		Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType(), item->GetItemSubType());
-		if (existingItem)
+		if( IsStacking(item) )
 		{
-			if(weight == 0)
-				return false;
+			Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType(), item->GetItemSubType());
 
 			int max_stack = MAX_QUIVER_SLOTS - existingItem->GetStackSize();
 			unsigned int stack;
-
-			if( max_stack <= 0 )
-				return false;
 
 			if(available_slots < max_stack)
 				max_stack = available_slots;
@@ -122,55 +117,52 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 
 			return true;
 		}
-		else 
-		{
-			if( item->GetStackSize() > available_slots )
-			{
-				unsigned int stack;
-				stack = available_slots;
-
-				Item* new_item = NULL;
-
-				if( Projectile* projItem  = dynamic_cast<Projectile*>(item) )
-					new_item = new Projectile(projItem);
-				else if( Material* matItem = dynamic_cast<Material*>(item) )
-					new_item = new Material(matItem);
-				else if( Food* foodItem = dynamic_cast<Food*>(item) )
-					new_item = new Food(foodItem);
-				else if( Bandage* bandageItem = dynamic_cast<Bandage*>(item) )
-					new_item = new Bandage(bandageItem);
-
-				if(new_item)
-				{
-					//To generate an ID. For now.
-					Projectile projectile;
-					new_item->SetItemID( projectile.GetID() );
-					new_item->SetStackSize(stack);
-					item->DecreaseStackSize(stack);
-					this->zItems.push_back(new_item);
-
-					stacked = true;
-					this->zWeightTotal += weight * stack;
-
-					return true;
-
-				}
-			}
-		}
 	}
 	
-	this->zItems.push_back(item);
-	stacked = false;
+	if( available_slots >= item->GetStackSize() )
+	{
+		this->zItems.push_back(item);
 
-	if (Messages::FileWrite())
-		Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
+		if (Messages::FileWrite())
+			Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
 
-	this->zWeightTotal += weight * item->GetStackSize();
-
-	return true;
-	
+		this->zWeightTotal += weight * item->GetStackSize();
+		
+		return true;
+	}
 
 	return false;
+}
+
+int Inventory::CalcMaxAvailableSlots( Item* item )
+{
+	if(!item)
+		return 0;
+
+	int slotsLeft = this->zInventoryCap - this->zWeightTotal;
+	unsigned int weight = item->GetWeight();
+
+	int available_slots = slotsLeft / weight;
+
+	return available_slots;
+}
+
+bool Inventory::IsStacking( Item* item )
+{
+	if( !item->GetStacking() )
+		return false;
+
+	Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType(), item->GetItemSubType());
+
+	if( !existingItem )
+		return false;
+
+	int max_stack = MAX_QUIVER_SLOTS - existingItem->GetStackSize();
+
+	if( max_stack <= 0)
+		return false;
+
+	return true;
 }
 
 Item* Inventory::SearchAndGetItem(unsigned int ID) const
@@ -576,3 +568,5 @@ bool Inventory::SwapWeapon()
 
 	return true;
 }
+
+

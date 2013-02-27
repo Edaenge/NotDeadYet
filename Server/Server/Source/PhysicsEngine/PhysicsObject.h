@@ -106,4 +106,5 @@ public:
 	BoundingSphere GetBoundingSphere() const { return this->bs; }
 	void SetBoundingSphere(BoundingSphere bs) { this->bs = bs; }
 	const std::string& GetModel() const;
+	void SetModel(const std::string& model) {this->zModel = model;}
 };

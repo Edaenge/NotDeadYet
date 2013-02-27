@@ -130,7 +130,6 @@ bool CircularListGui::RemoveFromRenderer(GraphicsEngine* ge)
 int CircularListGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
 {
 	Vector2 dimension = this->GetDimension();
-
 	if(mousePressed)
 	{
 		if(mouseX < (this->zX + this->zWidth * 0.5f) && mouseY < (this->zY + this->zHeight * 0.5f))

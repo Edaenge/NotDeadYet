@@ -51,7 +51,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_HYDRATION,
 	MESSAGE_TYPE_STAMINA,
 	MESSAGE_TYPE_ITEM_TYPE,
-	MESSAGE_TYPE_ITEM_ID,
+	MESSAGE_TYPE_OBJECT_ID,
 	MESSAGE_TYPE_REMOVE_INVENTORY_ITEM,
 	MESSAGE_TYPE_ADD_INVENTORY_ITEM,
 	MESSAGE_TYPE_EQUIPMENT_SLOT,
@@ -97,10 +97,19 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_LEAVE_ANIMAL,
 	MESSAGE_TYPE_DEER_EAT_OBJECT,
 	MESSAGE_TYPE_PLAY_SOUND,
+	MESSAGE_TYPE_PLAY_ANIMATION,
 	MESSAGE_TYPE_SUN_DIRECTION,
-	MESSAGE_TYPE_ANIMAL_ATTACK
+	MESSAGE_TYPE_ANIMAL_ATTACK,
+	MESSAGE_TYPE_CLIENT_LATENCY,
+	MESSAGE_TYPE_SERVER_UPDATES_PER_SEC,
+	MESSAGE_TYPE_MESH_BINDING,
+	MESSAGE_TYPE_MESH_UNBIND,
+	MESSAGE_TYPE_FOG_ENCLOSEMENT
 };
 
+static const std::string M_FOG_ENCLOSEMENT			= "FL";
+static const std::string M_MESH_UNBIND				= "MUB";
+static const std::string M_MESH_BINDING				= "MB";
 static const std::string M_UPDATE_ACTOR				= "UA";
 static const std::string M_REMOVE_ACTOR				= "RA";
 static const std::string M_DEAD_ACTOR				= "DA";
@@ -142,7 +151,7 @@ static const std::string M_STAMINA					= "STAM";
 static const std::string M_STATE					= "STAT";
 static const std::string M_ITEM_TYPE				= "IT";
 static const std::string M_ITEM_SUB_TYPE			= "IST";
-static const std::string M_ITEM_ID					= "IID";
+static const std::string M_OBJECT_ID				= "OID";
 static const std::string M_ITEM_NAME				= "IN";
 static const std::string M_ITEM_DESCRIPTION			= "IDE";
 static const std::string M_ITEM_ICON_PATH			= "IIP";
@@ -199,9 +208,12 @@ static const std::string M_READY_PLAYER				= "PRM";
 static const std::string M_SELF_ID					= "SELF";
 //Ping Message
 static const std::string M_PING						= "PING";
-
+static const std::string M_CLIENT_LATENCY			= "CL";
+static const std::string M_SERVER_UPDATES_PER_SEC	= "SUPC";
 static const std::string M_START_GAME				= "SG";
 static const std::string M_PLAY_SOUND				= "PS";
+static const std::string M_PLAY_ANIMATION			= "PLAN";
+
 /*
 	This class creates string messages used for communication
 	between sockets.

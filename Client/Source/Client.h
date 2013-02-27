@@ -17,6 +17,7 @@
 #include <Packets/NewActorPacket.h>
 #include "InGameMenu.h"
 #include "PickAnimalMenu.h"
+#include <AnimationFileReader.h>
 
 using namespace MaloW;
 
@@ -213,7 +214,7 @@ private:
 	float	zDamageOpacity;
 	
 	bool zGameStarted;
-
+	bool zReady;
 	iImage* zBlackImage;
 	InGameMenu* zIgm;
 	PickAnimalMenu* zPam;
@@ -224,13 +225,26 @@ private:
 	float zHunger;
 	float zHydration;
 
+	
 	Vector3 zMeshOffset;
 	std::map<std::string, Vector3> zMeshCameraOffsets;
 	std::map<unsigned int, Vector3> zStateCameraOffset;
 	//Updates per second
 	int zUps;
-	iText* zUpsText;
-
+	
+	iText* zServerUpsText;
+	iText* zLatencyText;
+	iText* zClientUpsText;
 	//Error Text
 	std::vector<TextDisplay*> zDisplayedText;
+
+	//Animation map with fileName and Model
+	std::map<std::string, AnimationFileReader> zModelToReaderMap;
+	/*! 
+		Male_Model,
+		Female_Model,
+		Deer_Model,
+		Bear_Model
+	*/
+	AnimationFileReader zAnimationFileReader[4];
 };

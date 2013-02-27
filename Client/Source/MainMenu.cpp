@@ -58,7 +58,7 @@ void MainMenu::Init()
 	const char* object[] = {
 		"Media/Models/Bush_01.ani",
 		"Media/Models/Fern_02.ani",
-		"Media/Models/Tree_01.ani",
+		"Media/Models/Tree_02.ani",
 		"Media/Models/Bigleaf_01.ani",
 		"Media/Models/GrassPlant_01.ani",
 		"Media/Models/WaterGrass_02.ani",
@@ -86,72 +86,32 @@ void MainMenu::Init()
 	Element* temp;
 
 	//MAINMENU
-	temp = new SimpleButton((50.0f / 768.0f) * dx, (568.0f / 768.0f) * windowHeight,  1.0f, "Media/Menu/MainMenu/DevButton.png", 
-		(128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight, new ChangeSetEvent(NOMENU), "Media/Menu/MainMenu/DevButtonClick.png", 
-		"Media/Menu/MainMenu/DevButtonOver.png", (50.0f / 768.0f) * dx, (568.0f / 768.0f) * windowHeight, (128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight);
+	#if defined(DEBUG) || defined(_DEBUG)
+	temp = new SimpleButton(0, 0,  1.0f, "Media/Menu/MainMenu/DevButton.png", 
+		(150.0f / 1024.0f) * dx, (25.0f / 768.0f) * windowHeight, new ChangeSetEvent(NOMENU), 
+		"Media/Menu/MainMenu/DevButtonClick.png", "Media/Menu/MainMenu/DevButtonOver.png",
+		0, 0, (150.0f / 1024.0f) * dx, (25.0f / 768.0f) * windowHeight);
+	zSets[MAINMENU].AddElement(temp);
+	#endif
+
+	temp = new GUIPicture(offSet + (150.0f / 1024.0f) * dx, (0.0f / 768.0f) * windowHeight, 1, "Media/Menu/MainMenu/MainMenuLogo.png", 
+		(765.0f / 1024.0f) * dx, (360.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
-	temp = new SimpleButton((50.0f / 768.0f) * dx, (608.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Options.png", 
-		(128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight, new ChangeSetEvent(OPTIONS), "Media/Menu/MainMenu/OptionsClick.png", 
-		"Media/Menu/MainMenu/OptionsOver.png", (50.0f / 768.0f) * dx, (608.0f / 768.0f) * windowHeight, (128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight);
+	temp = new SimpleButton(offSet + (350.0f / 1024.0f) * dx, (350.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Connect.png", 
+		(300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight, new ChangeSetEvent(GETIPADRESS), "Media/Menu/MainMenu/ConnectClick.png", 
+		"Media/Menu/MainMenu/ConnectOver.png", offSet + (350.0f / 768.0f) * dx, (350.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
-	temp = new SimpleButton((50.0f / 768.0f) * dx, (648.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/FindServers.png", 
-		(128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight, new ChangeSetEvent(FIND_SERVER), "Media/Menu/MainMenu/FindServersClick.png", 
-		"Media/Menu/MainMenu/FindServersOver.png", (50.0f / 768.0f) * dx, (648.0f / 768.0f) * windowHeight, (128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight);
+	temp = new SimpleButton(offSet + (350.0f / 1024.0f) * dx, (430.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Options.png", 
+		(300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight, new ChangeSetEvent(OPTIONS), "Media/Menu/MainMenu/OptionsClick.png", 
+		"Media/Menu/MainMenu/OptionsOver.png", offSet + (350.0f / 768.0f) * dx, (430.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
-	temp = new SimpleButton((50.0f / 768.0f) * dx, (688.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Quit.png", 
-		(128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight, new ChangeSetEvent(QUIT), "Media/Menu/MainMenu/QuitClick.png", 
-		"Media/Menu/MainMenu/QuitOver.png", (50.0f / 768.0f) * dx, (688.0f / 768.0f) * windowHeight, (128.0f / 768.0f) * dx, (31.0f / 768.0f) * windowHeight);
+	temp = new SimpleButton(offSet + (350.0f / 1024.0f) * dx, (510.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Quit.png", 
+		(300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight, new ChangeSetEvent(QUIT), "Media/Menu/MainMenu/QuitClick.png", 
+		"Media/Menu/MainMenu/QuitOver.png", offSet + (350.0f / 768.0f) * dx, (510.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
-
-	//FIND SERVER
-	temp = new GUIPicture(offSet, (59.0f / 768.0f) * windowHeight, 1, "Media/Menu/FindServer/FindServer_BG.png", 
-		(1024.0f / 1024.0f) * dx, (650.0f / 768.0f) * windowHeight);
-	zSets[FIND_SERVER].AddElement(temp);
-
-	temp = new SimpleButton(offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/FindServer/Back.png", 
-		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ChangeSetEvent(MAINMENU), "", "", 
-		offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
-		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
-	zSets[FIND_SERVER].AddElement(temp);
-
-	temp = new SimpleButton(offSet + (539.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/FindServer/Quick_Refresh.png", 
-		(171.0f / 1024.0f) * dx,(29.0f / 650.0f) * windowHeight, new ChangeSetEvent(MAINMENU), "", "", 
-		offSet + (539.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
-		(171.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
-	zSets[FIND_SERVER].AddElement(temp);
-
-	temp = new SimpleButton(offSet + (712.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/FindServer/Refresh_All.png", 
-		(135.0f / 1024.0f) * dx,(29.0f / 650.0f) * windowHeight, new ChangeSetEvent(MAINMENU), "", "", 
-		offSet + (712.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
-		(135.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
-	zSets[FIND_SERVER].AddElement(temp);
-
-	temp = new SimpleButton(offSet + (849.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/FindServer/Connect.png", 
-		(105.0f / 1024.0f) * dx,(29.0f / 650.0f) * windowHeight, new ChangeSetEvent(GETIPADRESS), "", "", 
-		offSet + (849.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
-		(105.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
-	zSets[FIND_SERVER].AddElement(temp);
-
-	temp = new SimpleButton(offSet + (76.0f / 1024.0f) * dx, (135.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/FindServer/Internet.png", 
-		(95.0f / 1024.0f) * dx,(29.0f / 650.0f) * windowHeight, new ChangeSetEvent(MAINMENU), "", "", 
-		offSet + (76.0f / 1024.0f) * dx, (135.0f / 768.0f) * windowHeight,
-		(95.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
-	zSets[FIND_SERVER].AddElement(temp);
-
-	temp = new SimpleButton(offSet + (173.0f / 1024.0f) * dx, (135.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/FindServer/Favorites.png", 
-		(113.0f / 1024.0f) * dx,(29.0f / 650.0f) * windowHeight, new ChangeSetEvent(MAINMENU), "", "", 
-		offSet + (173.0f / 1024.0f) * dx, (135.0f / 768.0f) * windowHeight,
-		(113.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
-	zSets[FIND_SERVER].AddElement(temp);
-
-	temp = new SimpleButton(offSet + (288.0f / 1024.0f) * dx, (135.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/FindServer/History.png", 
-		(89.0f / 1024.0f) * dx,(29.0f / 650.0f) * windowHeight, new ChangeSetEvent(MAINMENU), "", "", 
-		offSet + (288.0f / 1024.0f) * dx, (135.0f / 768.0f) * windowHeight,
-		(89.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
-	zSets[FIND_SERVER].AddElement(temp);
 
 	//Get IP
 	float AdressX = (offSet + (512.0f / 1024.0f) * dx) - (((200.0f / 1024.0f) * dx) / 2);
@@ -183,8 +143,12 @@ void MainMenu::Init()
 	temp = new GUIPicture(offSet, (59.0f / 768.0f) * dx, 1.0f, "Media/Menu/Options/OptionsBG.png", 
 		(1024.0f / 1024.0f) * dx, (650.0f / 768.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp); 
+
+	temp = new GUIPicture(offSet, (59.0f / 768.0f) * dx, 1.0f, "Media/Menu/Options/OptionsBGText.png", 
+		(1024.0f / 1024.0f) * dx, (650.0f / 768.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp); 
 	
-	//Option Text
+	/*//Option Text
 	temp = new GUIPicture(offSet + (40.0f / 1024.0f) * dx, (130.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/OptionsText.png", 
 		(175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp); 
@@ -238,13 +202,13 @@ void MainMenu::Init()
 	//Normalvolume Text
 	temp = new GUIPicture(offSet + (520.0f / 1024.0f) * dx, (360.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/NormalvolumeText.png", 
 		(175.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
-	zSets[OPTIONS].AddElement(temp);
+	zSets[OPTIONS].AddElement(temp);*/
 
 	// Tech stuff
 	//Graphics
 	//DropDown list
 	temp = new DropDownList(offSet + (240.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/DropDownBG.png", 
-		(170.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, "ResolutionMenu");
+		(170.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, "Resolutions");
 	DropDownList* dropdownlist = (DropDownList*)temp;
 
 	this->AddResolutionsToDropBox(dropdownlist);
@@ -256,7 +220,7 @@ void MainMenu::Init()
 	if(GetGraphics()->GetEngineParameters().FXAAQuality > 0)
 		checked = true;
 
-	temp = new CheckBox(offSet + (195.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/CheckBoxFrame.png", 
+	temp = new CheckBox(offSet + (180.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/CheckBoxFrame.png", 
 		(32.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, "Media/Menu/Options/CheckBoxCheck.png", checked, 
 		new ChangeOptionEvent("FXAA", "false"), "FXAACheckBox");
 	zSets[OPTIONS].AddElement(temp);
@@ -290,6 +254,7 @@ void MainMenu::Init()
 		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp);
 
+	//Apply
 	temp = new SimpleButton(offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Apply.png", 
 		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ApplyOptionsAndChangeSetEvent(MAINMENU), "", "", 
 		offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
@@ -437,11 +402,16 @@ void MainMenu::Run()
 							zGame->Run();
 						}
 
+
+						delete this->zGame;
+
+						this->zGame = new Game();
+
 						this->EnableMouse(true);
 
 						this->SwapMenus(MAINMENU, this->zSecondarySet);
 					}
-					else if(retEvent->GetEventMessage() == "ChangeResEvent")
+					/*else if(retEvent->GetEventMessage() == "ChangeResEvent")
 					{
 						if(this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn())
 						{
@@ -458,7 +428,7 @@ void MainMenu::Run()
 							GetGraphics()->ResizeGraphicsEngine((int)windowWidth, (int)windowHeight);
 						}
 
-					}
+					}*/
 					else if(retEvent->GetEventMessage() == "ApplyOptionsAndChangeSetEvent")
 					{
 						GraphicsEngine* ge = GetGraphics();
@@ -469,7 +439,7 @@ void MainMenu::Run()
 						//Maximized
 						bool maximized = this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn();
 						GEP.Maximized = !maximized;
-						if(maximized == false)
+						if(!maximized)
 						{
 							RECT desktop;
 							const HWND hDesktop = GetDesktopWindow();
@@ -484,18 +454,24 @@ void MainMenu::Run()
 								i++;
 							}
 							GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
-
 						}
 						else if(maximized)
 						{
 							float oldWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
 							float oldHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
+							
+							float width = oldWidth;
+							float height = oldHeight;
 
-							RECT desktop;
-							const HWND hDesktop = GetDesktopWindow();
-							GetWindowRect(hDesktop, &desktop);
-							float width = (float)desktop.right;
-							float height = (float)desktop.bottom;
+							GUIEvent* temp = this->zSets[this->zPrimarySet].GetEventFromDropDown("Resolutions");
+							if(ChangeResEvent *cre = dynamic_cast<ChangeResEvent *>(temp))
+							{
+								if (NULL != cre)
+								{
+									width = cre->GetWidth();
+									height = cre->GetHeight();
+								}
+							}
 
 							int i = NOMENU;
 							while(i != LASTMENU)
@@ -503,6 +479,7 @@ void MainMenu::Run()
 								zSets[i].Resize(oldWidth, oldHeight, width, height);
 								i++;
 							}
+							GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
 						}
 						// Getting shadow
 						std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");

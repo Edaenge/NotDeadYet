@@ -8,6 +8,7 @@
 #include <vector>
 #include <map>
 #include "AudioManager.h"
+#include "AnimationFileReader.h"
 
 class Updates
 {
@@ -113,8 +114,7 @@ public:
 	void AddUpdate(Updates* update);
 	Updates* GetUpdate(const int ID);
 
-	
-
+	void SetFBXMapping(std::map<std::string, AnimationFileReader> map) {this->zModelToReaderMap = map;}
 	Vector4 InterpolateRotation(const Vector4& currentRotation, const Vector4& newRotation, float t);
 	Vector3 InterpolatePosition(const Vector3& currentPosition, const Vector3& newPosition, float t);
 	/*! Returns time Value depending on type
@@ -137,4 +137,6 @@ private:
 
 	FMOD_VECTOR ConvertToFmodVector(Vector3 v);
 	IEventHandle** zFootStep;
+
+	std::map<std::string, AnimationFileReader> zModelToReaderMap;
 };

@@ -2,13 +2,13 @@
 
 ClientData::ClientData(MaloW::ClientChannel* cc)
 {
-	zClient = cc;
-	zPinged = false;
-	zCurrentPingTime = 0.0f;
-	zTotalPingTime = 0.0f;
-	zMaxPingTime = 0.0f;
-	zNrOfPings = 0;
-	zMaxPingTime = 10.0f;
+	this->zClient = cc;
+	this->zPinged = false;
+	this->zCurrentPingTime = 0.0f;
+	this->zTotalPingTime = 0.0f;
+	this->zNrOfPings = 0;
+	this->zMaxPings = 2.0f;
+	this->zCurrentPingDelay = 0.0f;
 	zReady = false;
 }
 
@@ -19,7 +19,7 @@ ClientData::~ClientData()
 
 void ClientData::HandlePingMsg()
 {
-	if(zTotalPingTime > zMaxPingTime)
+	if(zNrOfPings > zMaxPings)
 		ResetPingCounter();
 
 	zTotalPingTime += zCurrentPingTime;
