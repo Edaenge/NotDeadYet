@@ -84,8 +84,8 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	case MESSAGE_TYPE_KEY_UP:
 		ss << M_KEY_UP;
 		break;
-	case MESSAGE_TYPE_LOAD_MAP:
-		ss << M_LOAD_MAP;
+	case MESSAGE_TYPE_PLAY_ANIMATION:
+		ss << M_PLAY_ANIMATION;
 		break;
 	case MESSAGE_TYPE_ITEM_NAME:
 		ss << M_ITEM_NAME;
@@ -95,9 +95,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 		break;
 	case MESSAGE_TYPE_ITEM_DESCRIPTION:
 		ss << M_ITEM_DESCRIPTION;
-		break;
-	case MESSAGE_TYPE_KICKED:
-		ss << M_KICKED;
 		break;
 	case MESSAGE_TYPE_ERROR_MESSAGE:
 		ss << M_ERROR_MESSAGE;
@@ -110,6 +107,12 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 		break;
 	case MESSAGE_TYPE_PLAY_SOUND:
 		ss << M_PLAY_SOUND;
+		break;
+	case MESSAGE_TYPE_KICKED:
+		ss << M_KICKED;
+		break;
+	case MESSAGE_TYPE_LOAD_MAP:
+		ss << M_LOAD_MAP;
 		break;
 	default:
 		return "";
@@ -133,6 +136,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 		break;
 	case MESSAGE_TYPE_NEW_ACTOR:
 		ss << M_NEW_ACTOR;
+		break;
+	case MESSAGE_TYPE_CLIENT_LATENCY:
+		ss << M_CLIENT_LATENCY;
 		break;
 	case MESSAGE_TYPE_REMOVE_ACTOR:
 		ss << M_REMOVE_ACTOR;
@@ -173,8 +179,8 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_ITEM_SUB_TYPE:
 		ss << M_ITEM_SUB_TYPE;
 		break;
-	case MESSAGE_TYPE_ITEM_ID:
-		ss << M_ITEM_ID;
+	case MESSAGE_TYPE_OBJECT_ID:
+		ss << M_OBJECT_ID;
 		break;
 	case MESSAGE_TYPE_ITEM_STACK_SIZE:
 		ss << M_ITEM_STACK_SIZE;

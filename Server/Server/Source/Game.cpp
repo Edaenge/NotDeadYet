@@ -36,6 +36,7 @@ static const float TOTAL_SUN_DEGREE_SHIFT = 160 * PI / 180;
 static const float SUN_UPDATE_DELAY = 0.5f;
 //Total Update Time in Seconds (6h atm)
 static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
+
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
 {
@@ -343,6 +344,8 @@ void Game::UpdateSunDirection(float dt)
 bool Game::Update( float dt )
 {
 	this->UpdateSunDirection(dt);
+	NetworkMessageConverter NMC;
+	std::string msg;
 
 	// Update Behaviors
 	auto i = zBehaviors.begin();
@@ -361,7 +364,83 @@ bool Game::Update( float dt )
 					this->SendToAll(msg);
 				}
 			}
+
+			KeyStates keys = cActor->GetPlayer()->GetKeys();
+			unsigned int state = cActor->GetState();
+			std::string animation = "";
+			if (state == STATE_IDLE)
+			{
+				srand((unsigned int)time(0));
+
+				int idle_Animation = (rand() % 350) + 1;
+				if (idle_Animation > 0 && idle_Animation <= 50)//High Chance
+				{
+					animation = "idle_01";
+				}
+				else if (idle_Animation > 50 && idle_Animation <= 90)//Low Chance
+				{
+					animation = "idle_02";
+				}
+				else if (idle_Animation > 90 && idle_Animation <= 100)//High Chance
+				{
+					animation = "idle_03";
+				}
+				else if (idle_Animation > 100 && idle_Animation <= 200)//Very High Chance
+				{
+					animation = "idle_04";
+				}
+				else if (idle_Animation > 200 && idle_Animation <= 300)//Very High Chance
+				{
+					animation = "idle_05";
+				}
+				else if (idle_Animation > 300 && idle_Animation <= 350)//Medium Chance
+				{
+					animation = "idle_06";
+				}
+				
+			}
+			else if (state == STATE_WALKING)
+			{
+				if(keys.GetKeyState(KEY_FORWARD))
+				{
+					animation = "walk_fwd";
+				}
+				else if (keys.GetKeyState(KEY_BACKWARD))
+				{
+					animation = "walk_bwd";
+				}
+				else if(keys.GetKeyState(KEY_LEFT))
+				{
+					animation = "walk_lwd";
+				}
+				else if (keys.GetKeyState(KEY_RIGHT))
+				{
+					animation = "walk_rwd";
+				}
+			}
+			//else if (state == STATE_JOG)
+			//{
+			//}
+			//else if (state == STATE_RUNNING)
+			//{
+			//	animation = "sprint";
+			//}
+
+			if (animation != "")
+			{
+				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, animation);
+				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)cActor->GetID());
+
+				this->SendToAll(msg);
+			}
 		}
+
+		//if (BioActor* bActor = dynamic_cast<BioActor*>((*i)->GetActor()))
+		//{
+		//	
+		//	
+		//}
+
 		if ( (*i)->Update(dt) )
 		{
 			Behavior* temp = (*i);
@@ -819,7 +898,8 @@ void Game::OnEvent( Event* e )
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
 	{
 		// Create Player Actor
-		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject(UDE->playerModel);
+		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
+		//pObject->SetModel("Media/Models/temp_guy_movement_anims.fbx");
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 
@@ -832,7 +912,7 @@ void Game::OnEvent( Event* e )
 		actor->SetPosition(center);
 		actor->SetScale(actor->GetScale());
 	
-		auto offsets = this->zCameraOffset.find(UDE->playerModel);
+		auto offsets = this->zCameraOffset.find("Media/Models/temp_guy.obj");
 		
 		if(offsets != this->zCameraOffset.end())
 			dynamic_cast<PlayerActor*>(actor)->SetCameraOffset(offsets->second);
@@ -916,7 +996,9 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	}
 
 	// Set New Behavior
-	if ( behavior )	zBehaviors.insert(behavior);
+	if ( behavior )	
+		zBehaviors.insert(behavior);
+
 	player->zBehavior = behavior;
 }
 
@@ -1190,7 +1272,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 	NetworkMessageConverter NMC;
 	Item* item = NULL;
 	bool stacked = false;
-
+	bool itemScattered = false;
 	auto playerActor = this->zPlayers.find(cd);
 	auto* pBehaviour = playerActor->second->GetBehavior();
 
@@ -1207,62 +1289,78 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 	{
 		item = iActor->GetItem();
 
-		if (item)
-		{
-			std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-			if (item->GetID() == itemID && item->GetItemType() == itemType && item->GetItemSubType() == subType)
-			{
-				if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
-				{
-					msg += rWpn->ToMessageString(&NMC);
-				}
-				else if (MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item))
-				{
-					msg += mWpn->ToMessageString(&NMC);
-				}
-				else if (Projectile* projectile = dynamic_cast<Projectile*>(item))
-				{
-					msg += projectile->ToMessageString(&NMC);
-				}
-				else if (Food* food = dynamic_cast<Food*>(item))
-				{
-					msg += food->ToMessageString(&NMC);
-				}
-				else if (Material* material = dynamic_cast<Material*>(item))
-				{
-					msg += material->ToMessageString(&NMC);
-				}
-				else if (Container* container = dynamic_cast<Container*>(item))
-				{
-					msg += container->ToMessageString(&NMC);
-				}
-				else if (Bandage* bandage = dynamic_cast<Bandage*>(item))
-				{
-					msg += bandage->ToMessageString(&NMC);
-				}
-				
-				if(pActor->GetInventory()->AddItem(item, stacked))
-				{
-					cd->Send(msg);
+		if (!item)
+			return;
 
-					if( stacked && item->GetStackSize() == 0 )
+		std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+
+		if (item->GetID() == itemID && item->GetItemType() == itemType && item->GetItemSubType() == subType)
+		{
+			if( item->GetStacking() && !pActor->GetInventory()->IsStacking(item) )
+			{
+				int slots = pActor->GetInventory()->CalcMaxAvailableSlots(item);
+
+				if(item->GetStackSize() > slots)
+				{
+					Item* new_item = NULL;
+
+					if( Projectile* projItem  = dynamic_cast<Projectile*>(item) )
+						new_item = new Projectile(projItem);
+					else if( Material* matItem = dynamic_cast<Material*>(item) )
+						new_item = new Material(matItem);
+					else if( Food* foodItem = dynamic_cast<Food*>(item) )
+						new_item = new Food(foodItem);
+					else if( Bandage* bandageItem = dynamic_cast<Bandage*>(item) )
+						new_item = new Bandage(bandageItem);
+
+					if(new_item)
 					{
-						iActor->RemoveItem();
-						this->zActorManager->RemoveActor(iActor);
-						SAFE_DELETE(item);
+					 	//To generate an ID. For now.
+					 	Projectile projectile;
+					 	new_item->SetItemID( projectile.GetID() );
+					 	new_item->SetStackSize(slots);
+					 	item->DecreaseStackSize(slots);
+
+					 	item = new_item;
+						itemScattered = true;
 					}
-					else if (!stacked)
+					else
 					{
-						iActor->RemoveItem();
-						this->zActorManager->RemoveActor(iActor);
+						return;
 					}
 				}
-				else
-					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory Is Full"));
-				
 			}
+
+			msg += item->ToMessageString(&NMC);
+
+			//add item
+			if(pActor->GetInventory()->AddItem(item, stacked))
+			{
+				if( stacked && item->GetStackSize() == 0 )
+				{
+					iActor->RemoveItem();
+					this->zActorManager->RemoveActor(iActor);
+
+					SAFE_DELETE(item);
+				}
+				else if ( !stacked && !itemScattered )
+				{
+					iActor->RemoveItem();
+					this->zActorManager->RemoveActor(iActor);
+				}
+
+			}
+			else
+			{
+				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory Is Full"));
+				return;
+			}
+
+			cd->Send(msg);
 		}
+		
 	}
+
 	//Check if the Actor being looted is a BioActor.
 	else if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
 	{
@@ -1270,56 +1368,36 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 		if (inv)
 		{
 			item = inv->SearchAndGetItem(itemID);
-			if(item)
+
+			if( !item )
+				return;
+		
+			std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+			if (item->GetItemType() == itemType && item->GetItemSubType() == subType)
 			{
-				std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-				if (item->GetItemType() == itemType && item->GetItemSubType() == subType)
+				msg += item->ToMessageString(&NMC);
+				//Add item
+				if(pActor->GetInventory()->AddItem(item, stacked))
 				{
-					if (RangedWeapon* rWpn = dynamic_cast<RangedWeapon*>(item))
+					bActor->GetInventory()->RemoveItem(item);
+
+					if( stacked && item->GetStackSize() == 0 )
 					{
-						msg += rWpn->ToMessageString(&NMC);
-					}
-					else if (MeleeWeapon* mWpn = dynamic_cast<MeleeWeapon*>(item))
-					{
-						msg += mWpn->ToMessageString(&NMC);
-					}
-					else if (Projectile* projectile = dynamic_cast<Projectile*>(item))
-					{
-						msg += projectile->ToMessageString(&NMC);
-					}
-					else if (Food* food = dynamic_cast<Food*>(item))
-					{
-						msg += food->ToMessageString(&NMC);
-					}
-					else if (Material* material = dynamic_cast<Material*>(item))
-					{
-						msg += material->ToMessageString(&NMC);
-					}
-					else if (Container* container = dynamic_cast<Container*>(item))
-					{
-						msg += container->ToMessageString(&NMC);
-					}
-					else if (Bandage* bandage = dynamic_cast<Bandage*>(item))
-					{
-						msg += bandage->ToMessageString(&NMC);
+						SAFE_DELETE(item);
 					}
 
-					if(pActor->GetInventory()->AddItem(item, stacked))
-					{
-						bActor->GetInventory()->RemoveItem(item);
-
-						if( stacked && item->GetStackSize() == 0 )
-							SAFE_DELETE(item);
-
-						cd->Send(msg);
-
-						if (bActor->GetInventory()->GetItems().size() <= 0)
-							this->zActorManager->RemoveActor(bActor);
-					}
-					else
-						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
+					if (bActor->GetInventory()->GetItems().size() <= 0)
+						this->zActorManager->RemoveActor(bActor);
 				}
+				else
+				{
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
+					return;
+				}
+
+				cd->Send(msg);
 			}
+			
 		}
 	}
 }
@@ -1542,8 +1620,14 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
 
+				
 				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/BowShot.mp3");
 				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
+				this->SendToAll(msg);
+
+				//Send Message to client to Play Shot Bow Animation
+				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, "idle_01");
+				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)pActor->GetID()); 
 				this->SendToAll(msg);
 			}
 			else
@@ -1571,6 +1655,11 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				dmg.slashing = meele->GetDamage();
 
 			victim->TakeDamage(dmg, pActor);
+
+			//Send Message to client to Play Cut Animation
+			std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, "idle_01");
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)pActor->GetID()); 
+			this->SendToAll(msg);
 		}
 	}
 }

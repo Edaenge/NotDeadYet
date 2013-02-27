@@ -30,7 +30,7 @@ Host::Host() :
 	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
 	this->zTimeOut = 15.0f;
-	this->zPingMessageInterval = 5.0f;
+	this->zPingMessageInterval = 2.5f;
 }
 
 Host::~Host()
@@ -110,6 +110,8 @@ void Host::Life()
 		}
 		else if(zGame->Update(this->zDeltaTime))
 		{
+			this->PingClients();
+
 			waitTimer += zDeltaTime;
 			
 			if (waitTimer >= UPDATE_DELAY)
@@ -208,13 +210,13 @@ void Host::ReadMessages()
 
 void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &message )
 {
-	
 	std::vector<std::string> msgArray;
 	msgArray = this->zMessageConverter.SplitMessage(message); 
 	ClientData* cd = zClients[cc];
 	
 	// Empty Array
-	if ( msgArray.size() == 0 ) return;
+	if ( msgArray.size() == 0 ) 
+		return;
 
 	//Handles updates from client.
 	if(msgArray[0].find(M_CLIENT_DATA.c_str()) == 0)
@@ -244,8 +246,12 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	//Handles Pings from client.
 	else if(msgArray[0].find(M_PING.c_str()) == 0)
 	{
-		/*this->zClients[c_index]->HandlePingMsg();*/
+		cd->HandlePingMsg();
+		float latency = 0.0f;
 
+		cd->CalculateLatency(latency);
+
+		cd->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_CLIENT_LATENCY, latency));
 	}
 	//Handles ready from client.
 	else if(msgArray[0].find(M_READY_PLAYER.c_str()) == 0)
@@ -441,7 +447,7 @@ void Host::PingClients()
 		{
 			//If it was x sec ago we sent a ping, don't send a ping.
 			if(cd->GetCurrentPingTime() < zPingMessageInterval)
-				cd->IncPingTime(zDeltaTime);
+				cd->IncPingTime(this->zDeltaTime);
 
 			//else send ping.
 			else
@@ -451,7 +457,7 @@ void Host::PingClients()
 				cd->SetPinged(true);
 			}
 		}
-		//If he have sent a ping.
+		//If he has sent a ping.
 		else
 		{
 			//If we sent a ping x sec ago, drop the client.
@@ -460,7 +466,7 @@ void Host::PingClients()
 				//cd->Kick(ch->GetClientID());
 			}
 			else
-				cd->IncPingTime(zDeltaTime);
+				cd->IncPingTime(this->zDeltaTime);
 
 		}
 	}
@@ -564,7 +570,7 @@ void Host::HandleLootRequest( const std::vector<std::string> &msgArray, ClientDa
 	{
 		
 		_objID = this->zMessageConverter.ConvertStringToInt(M_LOOT_ITEM, msgArray[0]);
-		_itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_ID, msgArray[1]);
+		_itemID = this->zMessageConverter.ConvertStringToInt(M_OBJECT_ID, msgArray[1]);
 		_type = this->zMessageConverter.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
 		_subType = this->zMessageConverter.ConvertStringToInt(M_ITEM_SUB_TYPE, msgArray[3]);
 		e.clientData = cd;

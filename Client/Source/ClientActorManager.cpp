@@ -65,8 +65,17 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 
 		if (actor)
 		{
+			if (update->HasStateChanged())
+			{
+				auto actorIterator = this->zState.find(actor);
+				if (actorIterator != this->zState.end())
+					actorIterator->second = update->GetState();
+
+				update->SetStateChange(false);
+			}
 			if (update->HasPositionChanged())
 			{
+				Vector3 oldPosition;
 				if(update->GetID() == clientID)
 				{
 					position = this->InterpolatePosition(gEng->GetCamera()->GetPosition() - this->zCameraOffset, update->GetPosition(), t);
@@ -89,24 +98,7 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 					}
 
 				}
-				//iMesh* mesh = actor->GetMesh();
-				//if (iFBXMesh* iFbxMesh = dynamic_cast<iFBXMesh*>(mesh))
-				//{
-				//	unsigned int state = this->GetState(actor);
-				//	if (state != 500)
-				//	{
-				//		iFbxMesh->SetAnimation()
-				//	}
-				//}
 				update->ComparePosition(position);
-			}
-			if (update->HasStateChanged())
-			{
-				auto actorIterator = this->zState.find(actor);
-				if (actorIterator != this->zState.end())
-					actorIterator->second = update->GetState();
-
-				update->SetStateChange(false);
 			}
 			//if((*it_Update)->GetID() != clientID)
 			//{
@@ -285,5 +277,4 @@ FMOD_VECTOR ClientActorManager::ConvertToFmodVector( Vector3 v )
 	temp.x = v.x;
 	temp.y = v.y;
 	temp.z = v.z;
-	return temp;
-}
+	return temp;}
