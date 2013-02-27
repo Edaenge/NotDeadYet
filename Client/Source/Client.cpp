@@ -229,8 +229,12 @@ void Client::IgnoreRender( const float& radius, Vector2& center )
 		auto found = validEntities.find(*it);
 
 		if(found == validEntities.end())
-		{
-			this->zWorldRenderer->GetEntityMesh(*it)->DontRender(true);
+		{ 
+			iMesh* temp;
+			temp = this->zWorldRenderer->GetEntityMesh(*it);
+
+			if(temp)
+				temp->DontRender(true);
 		}
 	}
 
