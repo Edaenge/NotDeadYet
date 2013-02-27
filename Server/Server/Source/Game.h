@@ -41,6 +41,11 @@ class Game : public Observer, public Observed
 	float zSunTimer;
 	float zTotalSunRadiansShift;
 	float zSunRadiansShiftPerUpdate;
+
+	float zInitalFogEnclosement;
+	float zIncrementFogEnclosement;
+	float zCurrentFogEnclosement;
+
 public:
 	Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
 	virtual ~Game();

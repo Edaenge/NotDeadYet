@@ -161,6 +161,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_STATE:
 		ss << M_STATE;
 		break;
+	case MESSAGE_TYPE_FOG_ENCLOSEMENT:
+		ss << M_FOG_ENCLOSEMENT;
+		break;
 	case MESSAGE_TYPE_MESH_BINDING:
 		ss << M_MESH_BINDING;
 		break;

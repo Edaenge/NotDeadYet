@@ -31,7 +31,7 @@
 
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
-static const float TOTAL_SUN_DEGREE_SHIFT = 160 * PI / 180;
+static const float TOTAL_SUN_DEGREE_SHIFT = 140 * PI / 180;
 
 //Wait time in Seconds for sun Update. (5s atm)
 static const float SUN_UPDATE_DELAY = 0.5f;
@@ -99,6 +99,12 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 
 	this->zTotalSunRadiansShift = 0.0f;
 	this->zSunRadiansShiftPerUpdate = TOTAL_SUN_DEGREE_SHIFT / (SUN_UPDATE_DELAY * TOTAL_SUN_UPDATE_TIME);
+
+	//Fog Enclosement
+	this->zIncrementFogEnclosement = 100.0f;
+	this->zInitalFogEnclosement = 1000.0f;
+
+	this->zCurrentFogEnclosement = this->zInitalFogEnclosement + ( this->zIncrementFogEnclosement * this->zPlayers.size() );
 }
 
 Game::~Game()

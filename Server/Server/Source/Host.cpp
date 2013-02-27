@@ -31,6 +31,8 @@ Host::Host() :
 	this->zDeltaTime = 0.0f;
 	this->zTimeOut = 15.0f;
 	this->zPingMessageInterval = 2.5f;
+
+	this->zGameStarted = false;
 }
 
 Host::~Host()
@@ -100,42 +102,60 @@ void Host::Life()
 	static float counter = 0.0f;
 	static int updatesPerSec = 0.0f;
 
-	this->zGameStarted = true;
 	while(this->stayAlive)
 	{
 		Update();
 		ReadMessages();
-
-		if ( !zGame )
+		
+		if (!this->zGameStarted)
 		{
-
-		}
-		else if(zGame->Update(this->zDeltaTime))
-		{
-			this->PingClients();
-
-			waitTimer += this->zDeltaTime;
-			counter += this->zDeltaTime;
-
-			if (waitTimer >= UPDATE_DELAY)
+			//Check if All players Are Ready
+			unsigned int nrOfReadyPlayers = 0;
+			for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
 			{
-				SynchronizeAll();
-				
-				waitTimer = 0.0f;
+				if (it->second->GetReady())
+				{
+					nrOfReadyPlayers++;
+				}
 			}
-			if (counter >= 1.0f)
+			if (nrOfReadyPlayers == this->zClients.size())
 			{
-				updatesPerSec = 1.0f / this->zDeltaTime;
-				
-				this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)updatesPerSec));
-				counter = 0.0f;
+				this->zGameStarted = true;
 			}
 		}
 		else
 		{
-			Restart(zGameMode, zMapName);		
+			if ( !zGame )
+			{
+
+			}
+			else if(zGame->Update(this->zDeltaTime))
+			{
+				this->PingClients();
+
+				waitTimer += this->zDeltaTime;
+				counter += this->zDeltaTime;
+
+				if (waitTimer >= UPDATE_DELAY)
+				{
+					SynchronizeAll();
+
+					waitTimer = 0.0f;
+				}
+				if (counter >= 1.0f)
+				{
+					updatesPerSec = 1.0f / this->zDeltaTime;
+
+					this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)updatesPerSec));
+					counter = 0.0f;
+				}
+			}
+			else
+			{
+				Restart(zGameMode, zMapName);		
+			}
 		}
-	
+
 		Sleep(5);
 	}
 }

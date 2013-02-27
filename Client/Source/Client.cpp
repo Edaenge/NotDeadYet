@@ -1267,7 +1267,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	else if (msgArray[0].find(M_CLIENT_LATENCY.c_str()) == 0)
 	{
 		float latency = this->zMsgHandler.ConvertStringToFloat(M_CLIENT_LATENCY, msgArray[0]);
-		//latency *= 1000.0f;
 
 		std::stringstream ss;
 
@@ -1282,6 +1281,14 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		ss << updatesPerSec <<" SERVER UPDATES PER SEC";
 		this->zServerUpsText->SetText(ss.str().c_str());
+	}
+	else if (msgArray[0].find(M_FOG_ENCLOSEMENT.c_str()) == 0)
+	{
+		Vector2 center2D = this->zWorld->GetWorldCenter();
+		Vector3 center = Vector3(center2D.x, 0.0f, center2D.y);
+
+		float radius = this->zMsgHandler.ConvertStringToFloat(M_FOG_ENCLOSEMENT, msgArray[0]);
+		this->zEng->SetEnclosingFogEffect(center, radius);
 	}
 	else if (msgArray[0].find(M_PLAY_ANIMATION.c_str()) == 0)
 	{
