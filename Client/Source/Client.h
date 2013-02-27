@@ -75,7 +75,7 @@ private:
 	//////////////////////
 
 	/*! Pings client to check if server is still running*/
-	void Ping();
+	void PingAck(const float serverTime);
 	/*! Close the connection and print the reason to the client*/
 	void CloseConnection(const std::string& reason);
 	/*! Send Camera Info and Rotation to Server*/

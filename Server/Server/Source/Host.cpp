@@ -29,8 +29,9 @@ Host::Host() :
 	this->zStartime = 0;
 	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
-	this->zTimeOut = 15.0f;
+	this->zTimeOut = 10.0f;
 	this->zPingMessageInterval = 2.5f;
+	this->zTimeSinceLastPing = 0.0f;
 
 	this->zGameStarted = false;
 }
@@ -248,6 +249,9 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	if ( msgArray.size() == 0 ) 
 		return;
 
+	//Sets last received packet time from this client.
+	cd->SetLastPacketTime(zDeltaTime);
+
 	//Handles updates from client.
 	if(msgArray[0].find(M_CLIENT_DATA.c_str()) == 0)
 	{
@@ -276,12 +280,15 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	//Handles Pings from client.
 	else if(msgArray[0].find(M_PING.c_str()) == 0)
 	{
-		cd->HandlePingMsg();
-		float latency = 0.0f;
-
-		cd->CalculateLatency(latency);
-
+		float latency = this->zMessageConverter.ConvertStringToFloat(M_PING, msgArray[0]);
 		latency *= 1000.0f;
+		latency = ( (this->zDeltaTime * 1000.0f) - latency) / 2;
+
+		if(latency > 1000)
+			latency = 1000;
+
+		cd->AddLatency(latency);
+		latency = cd->GetAverageLatency();
 
 		cd->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_CLIENT_LATENCY, latency));
 	}
@@ -466,42 +473,18 @@ void Host::PingClients()
 	if(!HasClients())
 		return;
 
-	ClientData* cd; 
-	MaloW::ClientChannel* ch;
+	if( this->zTimeSinceLastPing < this->zPingMessageInterval )
+	{
+		this->zTimeSinceLastPing += this->zDeltaTime;
 
+		return;
+	}
+
+	this->zTimeSinceLastPing = 0.0f;
+	std::string message;
 	for(auto it = zClients.begin(); it != zClients.end(); it++)
 	{
-		cd = it->second;
-		ch = it->first;
-
-		//If client has not been pinged.
-		if(!cd->HasBeenPinged())
-		{
-			//If it was x sec ago we sent a ping, don't send a ping.
-			if(cd->GetCurrentPingDelayTime() < zPingMessageInterval)
-				cd->IncPingDelayTimer(this->zDeltaTime);
-
-			//else send ping.
-			else
-			{
-				cd->SetCurrentPingTime(0.0f);
-				cd->SetCurrentPingDelayTime(0.0f);
-				ch->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_PING));
-				cd->SetPinged(true);
-			}
-		}
-		//If he has sent a ping.
-		else
-		{
-			//If we sent a ping x sec ago, drop the client.
-			if(cd->GetCurrentPingTime() > zTimeOut)
-			{
-				//cd->Kick(ch->GetClientID());
-			}
-			else
-				cd->IncPingTime(this->zDeltaTime);
-
-		}
+		(*it).first->Send( zMessageConverter.Convert(MESSAGE_TYPE_PING, zDeltaTime) );
 	}
 }
 

@@ -33,6 +33,7 @@ class Host : public MaloW::Process, public Observed
 	float zSecsPerCnt;
 	float zDeltaTime;
 	float zTimeOut;
+	float zTimeSinceLastPing;
 	float zPingMessageInterval;
 	std::string zGameMode;
 	std::string zMapName;

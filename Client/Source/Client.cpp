@@ -1193,10 +1193,10 @@ void Client::HandleDebugInfo()
 	}
 }
 
-void Client::Ping()
+void Client::PingAck(float serverTime)
 {
 	this->zTimeSinceLastPing = 0.0f;
-	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
+	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PING, serverTime));
 }
 
 void Client::HandleNetworkPacket( Packet* P )
@@ -1263,7 +1263,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	//Checks what type of message was sent
 	if(msgArray[0].find(M_PING.c_str()) == 0)
 	{
-		this->Ping();
+		float time = this->zMsgHandler.ConvertStringToFloat(M_PING, msgArray[0]);
+		this->PingAck(time);
 	}
 	else if (msgArray[0].find(M_HEALTH) == 0)
 	{

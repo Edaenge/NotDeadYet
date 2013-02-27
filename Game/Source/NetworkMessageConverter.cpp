@@ -284,6 +284,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_ACKNOWLEDGE:
 		ss << M_ACKNOWLEDGE_MESSAGE;
 		break;
+	case MESSAGE_TYPE_PING:
+		ss << M_PING;
+		break;
 	default:
 		return "";
 		break;
@@ -299,9 +302,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	{
 	case MESSAGE_TYPE_CLIENT_DATA:
 		ss << M_CLIENT_DATA;
-		break;
-	case MESSAGE_TYPE_PING:
-		ss << M_PING;
 		break;
 	case MESSAGE_TYPE_ADD_INVENTORY_ITEM:
 		ss << M_ADD_INVENTORY_ITEM;
