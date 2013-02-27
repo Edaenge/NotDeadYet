@@ -19,7 +19,7 @@ BioActor::BioActor() : Actor()
 	this->zStaminaCof = 2.2f;
 	this->zStaminaChanged = true;
 
-	this->zBleeding = false;
+	this->zBleedingLevel = 0;
 }
 
 BioActor::BioActor(Player* player) : Actor()
@@ -40,7 +40,7 @@ BioActor::BioActor(Player* player) : Actor()
 	this->zStaminaCof = 2.2f;
 	this->zStaminaChanged = true;
 
-	this->zBleeding = false;
+	this->zBleedingLevel = 0;
 }
 
 BioActor::~BioActor()
@@ -69,7 +69,8 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 
 	if(dmg.GetTotal() / this->zHealth > 0.20 && dmg.GetBleedFactor() > 0.6)
 	{
-		this->zBleeding = true;
+		float currentBleeding = this->GetBleeding();
+		this->SetBleeding( currentBleeding + 1 );
 	}
 
 	if(!zAlive)

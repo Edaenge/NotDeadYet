@@ -185,7 +185,8 @@ void Game::SpawnItemsDebug()
 	const Material*		temp_material_S	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_SMALL_STICK);
 	const Material*		temp_material_M	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_MEDIUM_STICK);
 	const Material*		temp_material_T	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_THREAD);
-	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE);
+	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_POOR);
+	const Bandage*		temp_bandage_G	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT);
 
 	unsigned int increment = 0;
 	int maxPoints = 10;
@@ -283,6 +284,16 @@ void Game::SpawnItemsDebug()
 		if(temp_bandage)
 		{
 			Bandage* new_item = new Bandage((*temp_bandage));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		if(temp_bandage_G)
+		{
+			Bandage* new_item = new Bandage((*temp_bandage_G));
 			ItemActor* actor = new ItemActor(new_item);
 			//center = CalcPlayerSpawnPoint(increment++);
 			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
@@ -613,28 +624,28 @@ void Game::OnEvent( Event* e )
 		float range = 0.0f;
 		Damage damage;
 		
-
-		//Use dynamic cast with if to determine what animal it is.
 		if(BearActor* bActor = dynamic_cast<BearActor*>(self))
 		{
 			if(player)
 			{
 				if(PAAE->mouseButton == MOUSE_LEFT_PRESS)
 				{
-					range = 2.0f;
+					range = 2.2f;
 					damage.blunt = 10.0f;
 				}
 				else if(PAAE->mouseButton == MOUSE_RIGHT_PRESS)
 				{
-					range = 1.4f;
+					range = 1.5f;
 					damage.piercing = 5.0f;
 					damage.slashing = 25.0f;
 				}
 				if(Actor* target = this->zActorManager->CheckCollisions(self, range))
 				{
 					BioActor* bActor = dynamic_cast<BioActor*>(target);
-					bActor->TakeDamage(damage,self);
-					//Dynamic cast actor into bioactor, use takedamage function.
+					if(bActor->IsAlive())
+					{
+						bActor->TakeDamage(damage,self);
+					}
 				}
 			}
 		}
@@ -738,7 +749,7 @@ void Game::OnEvent( Event* e )
 					//Check if the ID is the same.
 					if ((*it_ID) == (*it_actor)->GetID())
 					{
-						//Check if the distance between the actors are to far to be able to loot.
+						//Check if the distance between the actors are too far to be able to loot.
 						if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 5.0f)
 							continue;
 
@@ -1428,9 +1439,19 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 				else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
 				{
 					ID = bandage->GetID();
+					
 					if (bandage->Use())
 					{				
-						pActor->SetBleeding(false);
+						float bleedingLevel = pActor->GetBleeding();
+						if(bandage->GetItemSubType() == 0) //Used poor bandage
+						{
+							pActor->SetBleeding(bleedingLevel - 1);
+						}
+						else if(bandage->GetItemSubType() == 1) //Used great bandage
+						{
+							pActor->SetBleeding(bleedingLevel - 3);
+						}
+						//pActor->SetBleeding(false);
 						
 						//Sending Message to client And removing stack from inventory.
 						inv->RemoveItemStack(ID, 1);

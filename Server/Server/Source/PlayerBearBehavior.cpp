@@ -226,17 +226,7 @@ bool PlayerBearBehavior::Update( float dt )
 		}
 		
 	}
-	//
 
-	//if(keyStates.GetKeyState(MOUSE_LEFT_PRESS))
-	//{
-	// //Fast Slash Attack
-	//}
-	//else if(keyStates.GetKeyState(MOUSE_RIGHT_PRESS))
-	//{
-	// //Slow Maul Attack
-	//}
-	//
 
 	
 
