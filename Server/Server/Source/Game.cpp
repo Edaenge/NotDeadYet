@@ -1155,7 +1155,7 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 			if ((*it_ID) == (*it_actor)->GetID())
 			{
 				//Check if the distance between the actors are to far to be able to loot.
-				if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 5.0f)
+				if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 7.0f)
 					continue;
 
 				//Check if the Actor is an ItemActor

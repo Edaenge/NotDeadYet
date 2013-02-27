@@ -99,9 +99,6 @@ Client::~Client()
 	this->Close();
 	this->WaitUntillDone();
 
-	if (this->zAnchor)
-		this->zWorld->DeleteAnchor(this->zAnchor);
-
 	SAFE_DELETE(this->zGuiManager);
 	SAFE_DELETE(this->zActorManager);
 	SAFE_DELETE(this->zServerChannel);
@@ -110,7 +107,6 @@ Client::~Client()
 	SAFE_DELETE(this->zIgm);
 	SAFE_DELETE(this->zPam);
 
-	SAFE_DELETE(this->zWorldRenderer);
 	SAFE_DELETE(this->zWorld);
 	
 	this->zMeshCameraOffsets.clear();
