@@ -270,10 +270,10 @@ void MainMenu::StartTestRun()
 {
 	std::string errorMessage;
 	int errorCode = 0;
-	//zGame->InitGameClient("194.47.150.20", 11521); // Ediz
-	//zGame->InitGameClient("194.47.150.16", 11521); // Server
-	//zGame->InitGameClient("194.47.150.12", 11521); // Crant
-	//zGame->InitGameClient("80.78.216.201", 11521);
+	//zGame->InitGameClient("194.47.150.20", 11521, errorMessage, errorCode); // Ediz
+	//zGame->InitGameClient("194.47.150.16", 11521, errorMessage, errorCode); // Server
+	//zGame->InitGameClient("194.47.150.12", 11521, errorMessage, errorCode); // Crant
+	//zGame->InitGameClient("80.78.216.201", 11521, errorMessage, errorCode);
 	zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
 
 	if (errorMessage != "")

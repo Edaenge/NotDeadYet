@@ -193,7 +193,8 @@ void Game::SpawnItemsDebug()
 	const Material*		temp_material_S	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_SMALL_STICK);
 	const Material*		temp_material_M	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_MEDIUM_STICK);
 	const Material*		temp_material_T	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_THREAD);
-	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE);
+	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_POOR);
+	const Bandage*		temp_bandage_G	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT);
 
 	unsigned int increment = 0;
 	int maxPoints = 10;
@@ -298,6 +299,16 @@ void Game::SpawnItemsDebug()
 			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 			this->zActorManager->AddActor(actor);
 		}
+		if(temp_bandage_G)
+		{
+			Bandage* new_item = new Bandage((*temp_bandage_G));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
 		total += increment;
 		increment = 0;
 	}
@@ -370,75 +381,6 @@ bool Game::Update( float dt )
 					msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
 					this->SendToAll(msg);
 				}
-			}
-
-			KeyStates keys = cActor->GetPlayer()->GetKeys();
-			unsigned int state = cActor->GetState();
-			std::string animation = "";
-			if (state == STATE_IDLE)
-			{
-				srand((unsigned int)time(0));
-
-				int idle_Animation = (rand() % 350) + 1;
-				if (idle_Animation > 0 && idle_Animation <= 50)//High Chance
-				{
-					animation = IDLE_O1;
-				}
-				else if (idle_Animation > 50 && idle_Animation <= 90)//Low Chance
-				{
-					animation = IDLE_O2;
-				}
-				else if (idle_Animation > 90 && idle_Animation <= 100)//High Chance
-				{
-					animation = IDLE_O3;
-				}
-				else if (idle_Animation > 100 && idle_Animation <= 200)//Very High Chance
-				{
-					animation = IDLE_O4;
-				}
-				else if (idle_Animation > 200 && idle_Animation <= 300)//Very High Chance
-				{
-					animation = IDLE_O5;
-				}
-				else if (idle_Animation > 300 && idle_Animation <= 350)//Medium Chance
-				{
-					animation = IDLE_O6;
-				}
-				
-			}
-			else if (state == STATE_WALKING)
-			{
-				if(keys.GetKeyState(KEY_FORWARD))
-				{
-					animation = WALK_FORWARD;
-				}
-				else if (keys.GetKeyState(KEY_BACKWARD))
-				{
-					animation = WALK_BACKWARD;
-				}
-				else if(keys.GetKeyState(KEY_LEFT))
-				{
-					animation = WALK_LEFT;
-				}
-				else if (keys.GetKeyState(KEY_RIGHT))
-				{
-					animation = WALK_RIGHT;
-				}
-			}
-			//else if (state == STATE_JOG)
-			//{
-			//}
-			else if (state == STATE_RUNNING)
-			{
-				animation = SPRINT;
-			}
-
-			if (animation != "")
-			{
-				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, animation);
-				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)cActor->GetID());
-
-				this->SendToAll(msg);
 			}
 		}
 
@@ -714,28 +656,28 @@ void Game::OnEvent( Event* e )
 		float range = 0.0f;
 		Damage damage;
 		
-
-		//Use dynamic cast with if to determine what animal it is.
 		if(BearActor* bActor = dynamic_cast<BearActor*>(self))
 		{
 			if(player)
 			{
 				if(PAAE->mouseButton == MOUSE_LEFT_PRESS)
 				{
-					range = 2.0f;
+					range = 2.2f;
 					damage.blunt = 10.0f;
 				}
 				else if(PAAE->mouseButton == MOUSE_RIGHT_PRESS)
 				{
-					range = 1.4f;
+					range = 1.5f;
 					damage.piercing = 5.0f;
 					damage.slashing = 25.0f;
 				}
 				if(Actor* target = this->zActorManager->CheckCollisions(self, range))
 				{
 					BioActor* bActor = dynamic_cast<BioActor*>(target);
-					bActor->TakeDamage(damage,self);
-					//Dynamic cast actor into bioactor, use takedamage function.
+					if(bActor->IsAlive())
+					{
+						bActor->TakeDamage(damage,self);
+					}
 				}
 			}
 		}
@@ -839,7 +781,7 @@ void Game::OnEvent( Event* e )
 					//Check if the ID is the same.
 					if ((*it_ID) == (*it_actor)->GetID())
 					{
-						//Check if the distance between the actors are to far to be able to loot.
+						//Check if the distance between the actors are too far to be able to loot.
 						if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 5.0f)
 							continue;
 
@@ -921,7 +863,7 @@ void Game::OnEvent( Event* e )
 	{
 		// Create Player Actor
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
-		//pObject->SetModel("Media/Models/temp_guy_movement_anims.fbx");
+		pObject->SetModel("Media/Models/temp_guy_movement_anims.fbx");
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 
@@ -1528,9 +1470,19 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 				else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
 				{
 					ID = bandage->GetID();
+					
 					if (bandage->Use())
 					{				
-						pActor->SetBleeding(false);
+						float bleedingLevel = pActor->GetBleeding();
+						if(bandage->GetItemSubType() == 0) //Used poor bandage
+						{
+							pActor->SetBleeding(bleedingLevel - 1);
+						}
+						else if(bandage->GetItemSubType() == 1) //Used great bandage
+						{
+							pActor->SetBleeding(bleedingLevel - 3);
+						}
+						//pActor->SetBleeding(false);
 						
 						//Sending Message to client And removing stack from inventory.
 						inv->RemoveItemStack(ID, 1);
