@@ -1,4 +1,4 @@
-#include "InventoryGui.h"
+#include "LootInventoryGui.h"
 #include <Safe.h>
 
 
@@ -6,17 +6,17 @@
 #define SLOTIMAGEHEIGHT 50.0f
 #define PADDING 12.0f
 #define XOFFSETINV 32.0f
-#define YOFFSETINV 206.0f
+#define YOFFSETINV 75.0f
 
 #define YOFFSETEQ 62.0f
 static const int EQXPOS[] = {94, 280, 342};
 
-InventoryGui::InventoryGui()
+LootInventoryGui::LootInventoryGui()
 {
 	zPressed = false;
 }
 
-InventoryGui::InventoryGui(float x, float y, float width, float height, std::string textureName) 
+LootInventoryGui::LootInventoryGui(float x, float y, float width, float height, std::string textureName) 
 	: GuiElement(x, y, width, height, textureName)
 {
 	float windowHeight = (float)(GetGraphics()->GetEngineParameters().WindowHeight);
@@ -47,15 +47,6 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 
 		zSlotPositions[i] = Vector2(xTemp, yTemp);
 	}
-	startOffsetY = (YOFFSETEQ / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight;
-	xTemp = this->zX + (EQXPOS[0] / 1024.0f) * dx;
-	zWeaponSlots[0] = Vector2(xTemp, this->zY + startOffsetY);
-
-	xTemp = this->zX + (EQXPOS[1] / 1024.0f) * dx;
-	zWeaponSlots[1] = Vector2(xTemp, this->zY + startOffsetY);
-
-	xTemp = this->zX + (EQXPOS[2] / 1024.0f) * dx;
-	zWeaponSlots[2] = Vector2(xTemp, this->zY + startOffsetY);
 
 	for(int i = 0; i < SLOTS; i++)
 	{
@@ -64,41 +55,21 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 		this->zSlotGui.push_back(gui);
 	}
 
-	InventorySlotGui* gui = new InventorySlotGui(this->zWeaponSlots[0].x, this->zWeaponSlots[0].y, zSlotImageWidth,
-		zSlotImageHeight, Gui_Item_Data());
-	this->zWeaponSlotGui[ITEM_TYPE_WEAPON_MELEE] = gui;
-	
-	gui = new InventorySlotGui(this->zWeaponSlots[1].x, this->zWeaponSlots[1].y, zSlotImageWidth,
-		zSlotImageHeight, Gui_Item_Data());
-	this->zWeaponSlotGui[ITEM_TYPE_WEAPON_RANGED] = gui;
-
-	gui = new InventorySlotGui(this->zWeaponSlots[2].x, this->zWeaponSlots[2].y, zSlotImageWidth,
-		zSlotImageHeight, Gui_Item_Data());
-	this->zWeaponSlotGui[ITEM_TYPE_PROJECTILE] = gui;
-
+	this->zActorLoot = 0;
 	this->zMaxWeight = 49.0f;
 	this->zCurrentWeight = 0.0f;
 	this->zNrOfItems = 0;
-	this->zWeightText = NULL;
 }
 
-InventoryGui::~InventoryGui()
+LootInventoryGui::~LootInventoryGui()
 {
 	for (auto it = this->zSlotGui.begin(); it != this->zSlotGui.end(); it++)
 	{
 		SAFE_DELETE((*it));
 	}
-	for (auto it = this->zWeaponSlotGui.begin(); it != this->zWeaponSlotGui.end(); it++)
-	{
-		SAFE_DELETE(it->second);
-	}
-	if(this->zWeightText && GetGraphics()->IsRunning())
-		GetGraphics()->DeleteText(this->zWeightText);
-	if(this->zWeightText && !GetGraphics()->IsRunning())
-		throw("Memory leaks!");
 }
 
-bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
+bool LootInventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
 	if(gid.zCanStack) // If item can stack
 	{
@@ -129,7 +100,7 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 	return true;
 }
 
-bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
+bool LootInventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
 	for(int i = 0; i < SLOTS; i++)
 	{
@@ -173,14 +144,12 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 			return true;
 		}
 	}
-	if(gid.zType == ITEM_TYPE_WEAPON_MELEE || gid.zType == ITEM_TYPE_WEAPON_MELEE || gid.zType == ITEM_TYPE_PROJECTILE)
-		this->zWeaponSlotGui[gid.zType]->RemoveItemFromSlot(open, ge); // If item isn't in inventory
 
 	return true;
 	
 }
 
-bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
+bool LootInventoryGui::AddToRenderer(GraphicsEngine* ge)
 {
 	GuiElement::AddToRenderer(ge);
 	for (auto x = this->zSlotGui.begin(); x < this->zSlotGui.end(); x++)
@@ -190,46 +159,21 @@ bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
 
 		(*x)->AddToRenderer(ge);
 	}
-	for (auto x = this->zWeaponSlotGui.begin(); x != this->zWeaponSlotGui.end(); x++)
-	{
-		if(x == this->zWeaponSlotGui.end())
-			break;
-
-		x->second->AddToRenderer(ge);
-	}
-	if(!this->zWeightText)
-	{
-		float windowHeight = (float)(GetGraphics()->GetEngineParameters().WindowHeight);
-		float dx = ((float)windowHeight * 4.0f) / 3.0f;
-
-		this->zWeightText = ge->CreateText((MaloW::convertNrToString(
-			this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str(), 
-			Vector2(this->zX + ((10.0f / 1024.0f) * dx), this->zY + ((10.0f / 768.0f) * windowHeight)), 1, "Media/Fonts/new");
-	}
-
 	return true;
 
 }
 
-bool InventoryGui::RemoveFromRenderer(GraphicsEngine* ge)
+bool LootInventoryGui::RemoveFromRenderer(GraphicsEngine* ge)
 {
 	GuiElement::RemoveFromRenderer(ge);
 	for (auto x = this->zSlotGui.begin(); x < this->zSlotGui.end(); x++)
 	{
 		(*x)->RemoveFromRenderer(ge);
 	}
-	for (auto x = this->zWeaponSlotGui.begin(); x != this->zWeaponSlotGui.end(); x++)
-	{
-		x->second->RemoveFromRenderer(ge);
-	}
-	if(this->zWeightText)
-	{
-		ge->DeleteText(this->zWeightText);
-	}
 	return true;
 }
 
-Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
+Selected_Item_ReturnData LootInventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
 {
 	Vector2 dimension = this->GetDimension();
 	bool bCollision = false;
@@ -250,34 +194,9 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 							Selected_Item_ReturnData sir;
 							sir.ID = (*x)->GetGid().zID;
 							sir.type = (*x)->GetGid().zType;
-							sir.inventory = 0;
+							sir.inventory = 2;
 							return sir;
 						}
-					}
-				}
-			}
-		}
-		for (auto x = this->zWeaponSlotGui.begin(); x != this->zWeaponSlotGui.end() && !bCollision; x++)
-		{
-			if (x->second)
-			{
-				bCollision = x->second->CheckCollision(mouseX, mouseY);
-				if (bCollision)
-				{
-					if(mousePressed)
-					{
-						Selected_Item_ReturnData sir;
-						sir.ID = x->second->GetGid().zID;
-						if(this->zWeaponSlots[MELEE] == x->second->GetPosition())
-							sir.type = MELEE;
-						if(this->zWeaponSlots[RANGED] == x->second->GetPosition())
-							sir.type = RANGED;
-						if(this->zWeaponSlots[PROJECTILE] == x->second->GetPosition())
-							sir.type = PROJECTILE;
-
-						//sir.type = (*x)->GetType();
-						sir.inventory = 1;
-						return sir;
 					}
 				}
 			}
@@ -290,7 +209,7 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 	return sir;
 }
 
-void InventoryGui::HideGui()
+void LootInventoryGui::HideGui()
 {
 	for (auto x = this->zSlotGui.begin(); x < this->zSlotGui.end(); x++)
 	{
@@ -302,7 +221,7 @@ void InventoryGui::HideGui()
 	GuiElement::HideGui();
 }
 
-void InventoryGui::ShowGui()
+void LootInventoryGui::ShowGui()
 {
 	for (auto x = this->zSlotGui.begin(); x < this->zSlotGui.end(); x++)
 	{
@@ -314,7 +233,7 @@ void InventoryGui::ShowGui()
 	GuiElement::ShowGui();
 }
 
-void InventoryGui::FadeOut(float value)
+void LootInventoryGui::FadeOut(float value)
 {
 	GuiElement::FadeOut(value);
 	for (auto x = this->zSlotGui.begin(); x < this->zSlotGui.end(); x++)
@@ -326,30 +245,14 @@ void InventoryGui::FadeOut(float value)
 	}
 }
 
-std::string InventoryGui::GetImageName( unsigned int position )
+std::string LootInventoryGui::GetImageName( unsigned int position )
 {
 	std::string ret;
 	this->zSlotGui[position]->GetTextureName(ret);
 	return ret;
 }
 
-void InventoryGui::EquipItem( const Gui_Item_Data gid, bool guiOpen )
-{
-	if(!this->zWeaponSlotGui.at(gid.zType)->GetBlocked())
-	{
-		this->zWeaponSlotGui.at(gid.zType)->AddItemToSlot(gid, guiOpen, GetGraphics());
-	}
-}
-
-void InventoryGui::UnEquipItem(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
-{
-	if(this->zWeaponSlotGui.at(gid.zType)->GetBlocked())
-	{
-		this->zWeaponSlotGui.at(gid.zType)->RemoveItemFromSlot(open, GetGraphics());
-	}
-}
-
-void InventoryGui::Resize(float windowWidth, float windowHeight, float dx)
+void LootInventoryGui::Resize(float windowWidth, float windowHeight, float dx)
 {
 	// Calcs that is needed for resize
 	float startOffsetX = (XOFFSETINV / 1024.0f) * dx;
@@ -397,31 +300,4 @@ void InventoryGui::Resize(float windowWidth, float windowHeight, float dx)
 	}
 	for(int i = 0; i < SLOTS; i++)
 		zSlotPositions[i] = newSlotPositions[i];
-
-	Vector2 newWeaponSlots[WEAPONSLOTS];
-
-	startOffsetY = (YOFFSETEQ / 768.0f) * windowHeight;
-	xTemp = this->zX + (EQXPOS[0] / 1024.0f) * dx;
-	newWeaponSlots[0] = Vector2(xTemp, this->zY + startOffsetY);
-
-	xTemp = this->zX + (EQXPOS[1] / 1024.0f) * dx;
-	newWeaponSlots[1] = Vector2(xTemp, this->zY + startOffsetY);
-
-	xTemp = this->zX + (EQXPOS[2] / 1024.0f) * dx;
-	newWeaponSlots[2] = Vector2(xTemp, this->zY + startOffsetY);
-
-	for(unsigned int i = 0; i < this->zWeaponSlotGui.size(); i++)
-	{
-		for(int k = 0; k < WEAPONSLOTS; k++)
-		{
-			isg = this->zWeaponSlotGui.at(i);
-			if(isg->GetPosition() == zWeaponSlots[k])
-			{
-				isg->SetPosition(newWeaponSlots[k]);
-				isg->SetDimension(Vector2(zSlotImageWidth, zSlotImageHeight));
-			}
-		}
-	}
-	for(int k = 0; k < WEAPONSLOTS; k++)
-		zWeaponSlots[k] = newWeaponSlots[k];
 }

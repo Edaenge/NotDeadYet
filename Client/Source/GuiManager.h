@@ -5,6 +5,7 @@
 #pragma once
 
 #include "InventoryGui.h"
+#include "LootInventoryGui.h"
 #include "CircularListGui.h"
 #include <string>
 
@@ -33,9 +34,13 @@ public:
 	virtual ~GuiManager();
 	void ToggleInventoryGui();
 	void HideInventoryGui();
+	void ToggleLootGui(unsigned int lootActorId);
+	void HideLootGui();
 	void AddInventoryItemToGui(const Gui_Item_Data gid);
+	void AddLootItemToLootGui(const Gui_Item_Data gid);
+	void RemoveLootItemFromLootGui(const Gui_Item_Data gid);
 	void RemoveInventoryItemFromGui(const Gui_Item_Data gid);
-	void EquipItem(int type, const Gui_Item_Data gid);
+	void EquipItem(const Gui_Item_Data gid);
 	void UnEquipItem( const Gui_Item_Data gid );
 	void ShowCircularItemGui();
 	void HideCircularItemGui();
@@ -53,6 +58,7 @@ private:
 	bool zLooting;
 	bool zDeathGuiOpen;
 	bool zInventoryOpen;
+	bool zLootOpen;
 	bool zIngameMenuOpen;
 	bool zCircularInventorySelectionOpen;
 	
@@ -65,6 +71,7 @@ private:
 	bool zMinorFix;
 
 	InventoryGui* zInvGui;
+	LootInventoryGui* zLootGui;
 	CircularListGui* zInvCircGui;
 	//CircularListGui* zLootingGui;
 	GraphicsEngine* zEng;

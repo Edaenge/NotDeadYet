@@ -1,17 +1,19 @@
 #include "GuiManager.h"
 
-static const std::string DEATH_GUI_PATH						= "Media/Icons/Use_v02.png";
-static const std::string LOOTING_GUI_PATH					= "Media/Icons/Use_v02.png";
-static const std::string INVENTORY_GUI_PATH					= "Media/Icons/Inventory_Full.png";
-static const std::string IN_GAME_MENU_GUI_PATH				= "Media/Icons/Use_v02.png";
-static const std::string INVENTORY_ITEM_SELECTION_GUI_PATH	= "Media/Icons/Menu_Circle.png";
+#define DEATH_GUI_PATH "Media/Icons/Use_v02.png"
+#define LOOTING_GUI_PATH "Media/Icons/Use_v02.png"
+#define INVENTORY_GUI_PATH "Media/InGameUI/Inventory_BG.png"
+#define LOOT_GUI_PATH "Media/InGameUI/Loot_BG.png"
+#define IN_GAME_MENU_GUI_PATH "Media/Icons/Use_v02.png"
+#define INVENTORY_ITEM_SELECTION_GUI_PATH "Media/Icons/Menu_Circle.png"
 
 static const float GUI_DISPLAY_TIMER					= 2.0f;
 
-static const float InvXPos = 538.0f;
-static const float InvYPos = 108.0f;
-static const float InvWidth = 486.0f;
-static const float InvHeight = 660.0f;
+#define INVXPOS 538.0f
+#define INVYPOS 108.0f
+#define INVWIDTH 486.0f
+#define INVHEIGHT 660.0f
+#define LOOTHEIGHT 540.0f
 
 GuiManager::GuiManager()
 {
@@ -40,6 +42,7 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 	this->zLooting = false;
 	this->zDeathGuiOpen = false;
 	this->zInventoryOpen = false;
+	this->zLootOpen = false;
 	this->zIngameMenuOpen = false;
 	this->zCircularInventorySelectionOpen = false;
 
@@ -54,12 +57,15 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
-	float x = offSet + (InvXPos / 1024.0f) * dx;
-	float y = (InvYPos / 768.0f) * windowHeight;
-	float width = (InvWidth / 1024.0f) * dx;
-	float height = (InvHeight / 768.0f) * windowHeight;
-	
+	float x = offSet + (INVXPOS / 1024.0f) * dx;
+	float y = (INVYPOS / 768.0f) * windowHeight;
+	float width = (INVWIDTH / 1024.0f) * dx;
+	float height = (INVHEIGHT / 768.0f) * windowHeight;
+	float heightLoot = (LOOTHEIGHT / 768.0f) * windowHeight;
+
 	this->zInvGui = new InventoryGui(windowWidth - width, windowHeight - height, width, height, INVENTORY_GUI_PATH);
+
+	this->zLootGui = new LootInventoryGui(0, windowHeight - heightLoot, width, heightLoot, LOOT_GUI_PATH);
 
 	Vector2 mousePosition = this->zEng->GetKeyListener()->GetMousePosition();
 
@@ -90,6 +96,11 @@ GuiManager::~GuiManager()
 		this->zInvCircGui = NULL;
 	}
 
+	if (this->zLootGui)
+	{
+		delete this->zLootGui;
+		this->zLootGui = NULL;
+	}
 	//if (this->zLootingGui)
 	//{
 	//	delete this->zLootingGui;
@@ -128,7 +139,39 @@ void GuiManager::ToggleInventoryGui()
 		}
 	}
 }
+void GuiManager::ToggleLootGui(unsigned int lootActorId)
+{
+	if (!this->zLootOpen)
+	{
+		this->zLootGui->SetLootActor(lootActorId);
+		//Show Inventory
+		this->zLootGui->AddToRenderer(this->zEng);
+		this->zLootOpen = true;
+	}
+	else
+	{
+		this->zLootGui->SetLootActor(0);
+		//Hide Inventory
+		this->zLootOpen = false;
+		this->zLootGui->RemoveFromRenderer(this->zEng);
+		if(this->zCircularInventorySelectionOpen)
+		{
+			this->zCircularInventorySelectionOpen = false;
+			this->zInvCircGui->RemoveFromRenderer(this->zEng);
+		}
+	}
+}
 
+
+void GuiManager::HideLootGui()
+{
+	if (this->zLootOpen)
+	{
+		//Hide LootInventory
+		this->zLootOpen = false;
+		//this->zLootGui->RemoveFromRenderer(this->zGraphicEngine);
+	}
+}
 void GuiManager::AddInventoryItemToGui(const Gui_Item_Data gid)
 {
 	this->zInvGui->AddItemToGui(gid, this->zInventoryOpen, this->zEng);
@@ -137,6 +180,16 @@ void GuiManager::AddInventoryItemToGui(const Gui_Item_Data gid)
 void GuiManager::RemoveInventoryItemFromGui(const Gui_Item_Data gid)
 {
 	this->zInvGui->RemoveItemFromGui(gid, this->zInventoryOpen, this->zEng);
+}
+
+void GuiManager::AddLootItemToLootGui(const Gui_Item_Data gid)
+{
+	this->zLootGui->AddItemToGui(gid, this->zLootOpen, this->zEng);
+}
+
+void GuiManager::RemoveLootItemFromLootGui(const Gui_Item_Data gid)
+{
+	this->zLootGui->RemoveItemFromGui(gid, this->zLootOpen, this->zEng);
 }
 
 void GuiManager::ShowCircularItemGui()
@@ -299,6 +352,20 @@ Menu_select_data GuiManager::CheckCollisionInv()
 		}
 		
 	}
+	if( zSelectedItem == -1 && this->zLootOpen)
+	{
+		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
+		Selected_Item_ReturnData sir;
+		sir = this->zLootGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(2), zEng);
+		zSelectedItem = sir.ID;
+		zSelectedType = sir.type;
+		this->zInvCircGui->Adjust(sir.type, sir.inventory);
+		if(zSelectedItem != -1 && !this->zCircularInventorySelectionOpen && !zMinorFix)
+		{
+			zMinorFix = true;
+			this->ShowCircularItemGui();
+		}
+	}
 	Menu_select_data msd;
 	msd.zAction = (CIRCMENU)-1;
 	msd.zID = -1;
@@ -306,9 +373,9 @@ Menu_select_data GuiManager::CheckCollisionInv()
 	return msd;
 }
 
-void GuiManager::EquipItem( int type, const Gui_Item_Data gid )
+void GuiManager::EquipItem( const Gui_Item_Data gid )
 {
-	this->zInvGui->EquipItem(type, gid, this->zInventoryOpen);
+	this->zInvGui->EquipItem(gid, this->zInventoryOpen);
 }
 
 void GuiManager::UnEquipItem( const Gui_Item_Data gid )
@@ -320,8 +387,8 @@ void GuiManager::Resize( int width, int height )
 {
 	float dx = ((float)height * 4.0f) / 3.0f;
 
-	float guiWidth = (InvWidth / 1024.0f) * dx;
-	float guiHeight = (InvHeight / 768.0f) * height;
+	float guiWidth = (INVWIDTH / 1024.0f) * dx;
+	float guiHeight = (INVHEIGHT / 768.0f) * height;
 
 	this->zInvGui->SetPosition(width - guiWidth, height - guiHeight);
 	this->zInvGui->SetDimension(Vector2(guiWidth, guiHeight));

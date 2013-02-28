@@ -27,7 +27,7 @@ public:
 	float GetAverageLatency();
 
 	/*! Sets the time of the last packet received from the client.*/
-	inline void SetLastPacketTime(const float packet) {this->zLastRecivedPacketTime;};
+	inline void SetLastPacketTime(const float packet) {this->zLastRecivedPacketTime = packet;}
 	/*! Adds the latency to the list.*/
 	void AddLatency(const float time);
 	/*! Sends a message to the client.*/

@@ -66,7 +66,7 @@ TextBox::~TextBox()
 bool TextBox::AddToRenderer(GraphicsEngine* ge)
 {
 	Element::AddToRenderer(ge);
-	this->mPointText = ge->CreateText(this->mText.c_str(), this->GetPosition() + Vector2(3.0f, -1.0f), mTextSize, "Media/Fonts/1");
+	this->mPointText = ge->CreateText(this->mText.c_str(), this->GetPosition() + Vector2(3.0f, -1.0f), mTextSize, "Media/Fonts/new");
 
 	return true;
 }
@@ -117,8 +117,6 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 		{
 			if(this->mPressed)
 			{
-				this->mPointText->DeleteFromEnd(strlen(this->mPointText->GetText()));
-				this->mText = "";
 				this->mPressed = false;
 				this->mFocused = true;
 				return;
@@ -134,12 +132,12 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 	{
 		string pushString = "";
 		const int NROFLETTERS = 27;
-		const int NROFSPECIAL = 12;
+		const int NROFSPECIAL = 13;
 		char keys[NROFLETTERS] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', ' '};
 		char KEYS[NROFLETTERS] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' '};
-		char specialChars[NROFSPECIAL] = {',', '.', ';', ':', '*', '?', '!', '<', '>', '-', '_', (char)VK_OEM_PERIOD};
+		char specialChars[NROFSPECIAL] = {',', '.', ';', ':', '*', '?', '!', '<', '>', '-', '_', VK_OEM_PERIOD, 190};
 		char numbers[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-
+		
 		/*Check if a char is pressed*/
 		if(this->mAllowedChars == ALL || this->mAllowedChars == NORMALCHAR || this->mAllowedChars == NORMALCHAR_NR ||
 			this->mAllowedChars == NORMALCHAR_SPECIAL)

@@ -16,7 +16,7 @@ ServerChannel::ServerChannel( MaloW::Process* observerProcess, const std::string
 		WSADATA wsaData;
 		if(int errCode = WSAStartup(MAKEWORD(2,2), &wsaData)) 
 		{
-			out = "Failed Initializing Winsock!";
+			out = "Failed To Initializing network connection!";
 			errorCode = WSAGetLastError();
 			throw( NetworkException("Failed Initializing Winsock!", WSAGetLastError()) );
 		}
@@ -35,6 +35,7 @@ ServerChannel::ServerChannel( MaloW::Process* observerProcess, const std::string
 		{
 			out = "Failed Opening Socket!";
 			errorCode = WSAGetLastError();
+			return;
 			//throw( NetworkException("Failed Opening Socket!", WSAGetLastError()) );
 		}
 	}
@@ -54,8 +55,9 @@ ServerChannel::ServerChannel( MaloW::Process* observerProcess, const std::string
 		if( connect(zSocket, (sockaddr*)&saServer, sizeof(saServer)) == SOCKET_ERROR )
 		{
 			closesocket(zSocket);
-			out = "Failed Connecting Server!";
+			out = "Failed Connecting To Server! Verify that the server is online";
 			errorCode = WSAGetLastError();
+			return;
 			//throw( NetworkException("Failed Connecting Socket!", WSAGetLastError()) );
 		}
 	}

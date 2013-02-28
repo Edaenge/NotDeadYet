@@ -117,6 +117,9 @@ public:
 	void SetFBXMapping(std::map<std::string, AnimationFileReader> map) {this->zModelToReaderMap = map;}
 	Vector4 InterpolateRotation(const Vector4& currentRotation, const Vector4& newRotation, float t);
 	Vector3 InterpolatePosition(const Vector3& currentPosition, const Vector3& newPosition, float t);
+	
+	void SetLatency(int latency) {this->zLatency = latency;}
+	void SetUpdatesPerSec(int ups) {this->zUpdatesPerSec = ups;}
 	/*! Returns time Value depending on type
 	IT_LINEAR,
 	IT_COSINE,
@@ -133,6 +136,8 @@ private:
 	std::map<Actor*, unsigned int> zState;
 	std::map<unsigned int, Updates*> zUpdates;
 	float zInterpolationVelocity;
+	int zUpdatesPerSec;
+	int zLatency;
 	Vector3 zCameraOffset;
 
 	FMOD_VECTOR ConvertToFmodVector(Vector3 v);

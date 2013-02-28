@@ -12,7 +12,9 @@ ClientActorManager::ClientActorManager()
 	for(int i = 0; i < MAXFOOTSTEPS; i++)
 		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_GRASS, this->zFootStep[i]);
 
-	zInterpolationVelocity = 100.0f;
+	this->zInterpolationVelocity = 50.0f;
+	this->zUpdatesPerSec = 0;
+	this->zLatency = 0;
 }
 
 ClientActorManager::~ClientActorManager()
@@ -22,10 +24,6 @@ ClientActorManager::~ClientActorManager()
 	{
 		if(it->second)
 		{
-			iMesh* mesh = it->second->GetMesh();
-			if (mesh)
-				ge->DeleteMesh(mesh);
-
 			delete it->second;
 			it->second = NULL;
 		}
@@ -246,7 +244,12 @@ Vector3 ClientActorManager::InterpolatePosition(const Vector3& currentPosition, 
 	if (oldlength > 200.0f)
 		return newPosition;
 
-	Vector3 returnPosition = currentPosition + (newPosition - currentPosition) * t * zInterpolationVelocity;
+	//float totalDelay = this->zLatency + this->zUpdatesPerSec;
+	
+	//if (totalDelay < 10.0f)
+	//	totalDelay = this->zInterpolationVelocity;
+
+	Vector3 returnPosition = currentPosition + (newPosition - currentPosition) * t * this->zInterpolationVelocity;
 
 	float newLength = (returnPosition - newPosition).GetLength();
 

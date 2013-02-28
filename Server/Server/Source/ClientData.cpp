@@ -1,6 +1,6 @@
 #include "ClientData.h"
 
-#define MAX_STORED_LATENCY 10
+#define MAX_STORED_LATENCY 5
 
 ClientData::ClientData(MaloW::ClientChannel* cc)
 {
@@ -24,18 +24,18 @@ float ClientData::GetAverageLatency()
 		return 0.0f;
 
 	float total = 0.0f;
-	for(auto it = zLatency.begin(); it < zLatency.end(); it++)
+	for(auto it = this->zLatency.begin(); it < this->zLatency.end(); it++)
 	{
 		total += (*it); 
 	}
 
-	return total / zLatency.size();
+	return total / this->zLatency.size();
 }
 
 void ClientData::AddLatency( const float time )
 {
 	if( zLatency.size() == MAX_STORED_LATENCY )
-		this->zLatency.pop_back();
+		this->zLatency.erase(this->zLatency.begin());
 
 	this->zLatency.push_back(time);
 }

@@ -28,22 +28,33 @@ void ActorSynchronizer::AddAnimation(BioActor* bActor)
 	{
 		srand((unsigned int)time(0));
 
-		int idle_Animation = (rand() % 350) + 1;
-		if (idle_Animation > 0 && idle_Animation <= 50)//High Chance
+		int idle_Animation = (rand() % 1000) + 1;
+		if (idle_Animation > 0 && idle_Animation <= 160)//High Chance 16%
 			animation = IDLE_O1;
-		else if (idle_Animation > 50 && idle_Animation <= 90)//Medium Chance
+		else if (idle_Animation > 160 && idle_Animation <= 270)//Medium Chance 11%
 			animation = IDLE_O2;
-		else if (idle_Animation > 90 && idle_Animation <= 100)//Low Chance
+		else if (idle_Animation > 270 && idle_Animation <= 340)//Low Chance 7%
 			animation = IDLE_O3;
-		else if (idle_Animation > 100 && idle_Animation <= 200)//Very High Chance
+		else if (idle_Animation > 340 && idle_Animation <= 590)//Very High Chance 25%
 			animation = IDLE_O4;
-		else if (idle_Animation > 200 && idle_Animation <= 300)//Very High Chance
+		else if (idle_Animation > 590 && idle_Animation <= 840)//Very High Chance 25%
 			animation = IDLE_O5;
-		else if (idle_Animation > 300 && idle_Animation <= 350)//High Chance
+		else if (idle_Animation > 840 && idle_Animation <= 1000)//High Chance 16%
 			animation = IDLE_O6;
 
 	}
 	else if (state == STATE_WALKING)
+	{
+		if(keys.GetKeyState(KEY_FORWARD))
+			animation = JOG_FORWARD;
+		else if (keys.GetKeyState(KEY_BACKWARD))
+			animation = JOG_BACKWARD;
+		else if(keys.GetKeyState(KEY_LEFT))
+			animation = JOG_LEFT;
+		else if (keys.GetKeyState(KEY_RIGHT))
+			animation = JOG_RIGHT;
+	}
+	else if (state == STATE_CROUCHING)
 	{
 		if(keys.GetKeyState(KEY_FORWARD))
 			animation = WALK_FORWARD;
@@ -54,9 +65,6 @@ void ActorSynchronizer::AddAnimation(BioActor* bActor)
 		else if (keys.GetKeyState(KEY_RIGHT))
 			animation = WALK_RIGHT;
 	}
-	//else if (state == STATE_JOG)
-	//{
-	//}
 	else if (state == STATE_RUNNING)
 		animation = SPRINT;
 

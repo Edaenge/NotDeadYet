@@ -45,12 +45,26 @@ private:
 	Vector3 zMapCenter;
 
 	float zSunTimer;
+	/*! How many total radians the sun has rotated.*/
 	float zTotalSunRadiansShift;
 	float zSunRadiansShiftPerUpdate;
 
+	/*! Starting Radius of the Fog without players.*/
 	float zInitalFogEnclosement;
+	/*! How much the fog radius change with each player alive.*/
 	float zIncrementFogEnclosement;
+	/*! Fog radius that is sent to the clients.*/
 	float zCurrentFogEnclosement;
+	/*! How Many players that are alive.*/
+	int zPlayersAlive;
+	/*! How often the fog is updated.*/
+	float zFogUpdateDelay;
+	/*! How much the percent decrease each update.*/
+	float zFogDecreaseCoeff;
+	/*! How Many percent the fog decreased.*/
+	float zFogTotalDecreaseCoeff;
+	/*! Counter that counts up until next fog update.*/
+	float zFogTimer;
 
 public:
 	Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
@@ -75,9 +89,8 @@ public:
 	World* GetWorld() {return this->zWorld;}
 	
 	void SendToAll(std::string msg);
-	void RestartGame();
 
-private:
+	void RestartGame();	void ModifyLivingPlayers(const int value);private:
 	//Test function, spawns items/Animals
 	void SpawnItemsDebug();
 	void SpawnAnimalsDebug();
@@ -97,5 +110,5 @@ private:
 	void HandleBindings(Item* item, const unsigned int ID);
 
 	void UpdateSunDirection(float dt);
-
+	void UpdateFogEnclosement(float dt);
 };

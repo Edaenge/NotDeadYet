@@ -4,10 +4,6 @@ using namespace MaloW;
 
 long Process::nextPID = 0;
 
-
-
-
-
 void DebugMtxInfo(DWORD res)
 {
 	if(res != WAIT_OBJECT_0)
@@ -37,11 +33,6 @@ void DebugMtxInfo(DWORD res)
 		MaloW::Debug(msg);
 	}
 }
-
-
-
-
-
 
 Process::Process()
 {

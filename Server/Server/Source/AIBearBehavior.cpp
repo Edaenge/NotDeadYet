@@ -29,16 +29,16 @@ bool AIBearBehavior::InitValues()
 		//Values could not be retrieved from file, set default values.
 		this->zFearInterval = 1;
 		this->zMinimumDistance = 40;
-		this->zFieldOfView = 0.4;
-		this->zThreatMovementSpeedThreshold = 2;
-		this->zConfidenceKoef = 1;
-		this->zExtraFearWithNumberOfPlayers = 10;
-		this->zExtraFearWithCloseProximity = 12;
-		this->zExtraFearAtSight = 4;
-		this->zExtraFearAtThreatMovementSpeed = 8;
-		this->zFearDecrease = 2;
-		this->zFearAtDamageDone = 30;
-		this->zCalmToAggressiveThreshold = 20;
+		this->zFieldOfView = 0.4f;
+		this->zThreatMovementSpeedThreshold = 2.0f;
+		this->zConfidenceKoef = 1.0f;
+		this->zExtraFearWithNumberOfPlayers = 10.0f;
+		this->zExtraFearWithCloseProximity = 12.0f;
+		this->zExtraFearAtSight = 4.0f;
+		this->zExtraFearAtThreatMovementSpeed = 8.0f;
+		this->zFearDecrease = 2.0f;
+		this->zFearAtDamageDone = 30.0f;
+		this->zCalmToAggressiveThreshold = 20.0f;
 		this->zDistanceToWalkWhenCalm = 14;
 		this->zDistanceToWalkWhenSuspicious = 8;
 		this->zNewTargetCloseByAFactorOf = 4;
@@ -47,9 +47,9 @@ bool AIBearBehavior::InitValues()
 		this->zCalmRandomInterval = 5;
 		this->zCalmRandomAddition = 3;
 
-		this->zWalkingVelocity = 2.0;
-		this->zAttackingVelocity = 5.0;
-		this->zFleeingVelocity = 4.8;
+		this->zWalkingVelocity = 2.0f;
+		this->zAttackingVelocity = 5.0f;
+		this->zFleeingVelocity = 4.8f;
 	}
 	this->SetFearLevel(0.0f);
 	this->zFearMax = 200.0f;
