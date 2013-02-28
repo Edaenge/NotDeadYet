@@ -15,6 +15,7 @@ enum CIRCMENU
 	DROP,
 	UNEQUIP,
 	EQUIP,
+	LOOT,
 	NOTHING
 };
 

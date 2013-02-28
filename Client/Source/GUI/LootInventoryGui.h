@@ -13,21 +13,14 @@
 
 #define ROWS 7
 #define COL 7
-#define WEAPONSLOTS 3
 #define SLOTS (ROWS * COL)
 
-enum EQUIPITEMTYPE
-{
-	MELEE,
-	RANGED,
-	PROJECTILE
-};
-class InventoryGui : public GuiElement
+class LootInventoryGui : public GuiElement
 {
 public:
-	InventoryGui();
-	InventoryGui(float x, float y, float width, float height, std::string textureName);
-	virtual ~InventoryGui();
+	LootInventoryGui();
+	LootInventoryGui(float x, float y, float width, float height, std::string textureName);
+	virtual ~LootInventoryGui();
 
 	virtual bool AddToRenderer(GraphicsEngine* ge);
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
@@ -35,25 +28,25 @@ public:
 	Selected_Item_ReturnData CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 	bool AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	bool RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
-	void EquipItem(const Gui_Item_Data gid, bool guiOpen);
-	void UnEquipItem(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 
 	void FadeOut(float value);
 	void ShowGui();
 	void HideGui();
 	std::string GetImageName(unsigned int position);
 
+	void SetLootActor(unsigned int ID){ this->zActorLoot = ID; }
+	unsigned int GetLootActor(){ return this->zActorLoot; }
+
 	void Resize(float windowWidth, float windowHeight, float dx);
 private:
 	std::vector<InventorySlotGui*> zSlotGui;
-	std::map<int, InventorySlotGui*> zWeaponSlotGui;
 	Vector2 zSlotPositions[SLOTS];
-	Vector2 zWeaponSlots[WEAPONSLOTS];
 	float zSlotImageWidth;
 	float zSlotImageHeight;
+
+	unsigned int zActorLoot;
 
 	float zMaxWeight;
 	float zCurrentWeight;
 	int zNrOfItems;
-	iText* zWeightText;
 };
