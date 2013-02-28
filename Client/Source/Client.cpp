@@ -1835,8 +1835,8 @@ void Client::UpdateCameraOffset(unsigned int state)
 
 		Vector3 offset = cameraPos->second;
 
-		this->zEng->GetCamera()->SetMesh(mesh, offset, Vector3(0.0f, 0.0f, 1.0f));
-		this->zActorManager->SetCameraOffset(offset);
+		//this->zEng->GetCamera()->SetMesh(mesh, offset, Vector3(0.0f, 0.0f, 1.0f));
+		//this->zActorManager->SetCameraOffset(offset);
 	}
 	else
 	{

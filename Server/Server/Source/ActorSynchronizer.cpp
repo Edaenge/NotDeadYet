@@ -46,6 +46,17 @@ void ActorSynchronizer::AddAnimation(BioActor* bActor)
 	else if (state == STATE_WALKING)
 	{
 		if(keys.GetKeyState(KEY_FORWARD))
+			animation = JOG_FORWARD;
+		else if (keys.GetKeyState(KEY_BACKWARD))
+			animation = JOG_BACKWARD;
+		else if(keys.GetKeyState(KEY_LEFT))
+			animation = JOG_LEFT;
+		else if (keys.GetKeyState(KEY_RIGHT))
+			animation = JOG_RIGHT;
+	}
+	else if (state == STATE_CROUCHING)
+	{
+		if(keys.GetKeyState(KEY_FORWARD))
 			animation = WALK_FORWARD;
 		else if (keys.GetKeyState(KEY_BACKWARD))
 			animation = WALK_BACKWARD;
@@ -54,9 +65,6 @@ void ActorSynchronizer::AddAnimation(BioActor* bActor)
 		else if (keys.GetKeyState(KEY_RIGHT))
 			animation = WALK_RIGHT;
 	}
-	//else if (state == STATE_JOG)
-	//{
-	//}
 	else if (state == STATE_RUNNING)
 		animation = SPRINT;
 

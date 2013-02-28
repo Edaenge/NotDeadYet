@@ -32,6 +32,7 @@ class Host : public MaloW::Process, public Observed
 	INT64 zStartime;
 	float zSecsPerCnt;
 	float zDeltaTime;
+	float zTotalTime;
 	float zTimeOut;
 	float zTimeSinceLastPing;
 	float zPingMessageInterval;

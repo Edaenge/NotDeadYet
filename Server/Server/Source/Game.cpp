@@ -36,18 +36,16 @@ static const float TOTAL_SUN_DEGREE_SHIFT = 140 * PI / 180;
 
 //Wait time in Seconds for sun Update. (5s atm)
 static const float SUN_UPDATE_DELAY = 0.5f;
-//Total Update Time in Seconds (6h atm)
+//Total Sun Update Time in Seconds (6h atm) 
 static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
+
+//Expected playtime
+static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
 
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
 {
-	//Fog Enclosement
-	this->zPlayersAlive = 0;
-	this->zIncrementFogEnclosement = 200.0f;
-	this->zInitalFogEnclosement = 1000.0f;
-
-
+	this->zCameraOffset["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
@@ -65,19 +63,19 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 		this->zGameMode = new GameModeFFA(this);
 	}
 
-	// Load Entities
+// Load Entities
 	LoadEntList("Entities.txt");
 
-	// Game Mode Observes
+// Game Mode Observes
 	this->AddObserver(this->zGameMode);
 
-	// Create World
+// Create World
 	if(worldFile != "")
 		this->zWorld = new World(this, worldFile.c_str());
 	else
 		this->zWorld = new World(this, 10, 10);  // Handle Error.
 
-	// Actor Manager
+// Actor Manager
 	this->zActorManager = new ActorManager(syncher);
 	
 	InitItemLookup();
@@ -90,22 +88,40 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 	this->SpawnHumanDebug();
 
 
-	//Initialize Sun Direction
+//Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
 
 	float radius = mapCenter2D.x;
 	float angle = TOTAL_SUN_DEGREE_SHIFT * 0.5f;
 	float x = mapCenter2D.x + radius * sin(angle);
 
+	this->zMapCenter = Vector3(mapCenter2D.x, 0.0f, mapCenter2D.y);
 	this->zCurrentSunPosition = Vector3(x, 10000.0f, 0.0f);
 
-	this->zCurrentSunDirection = Vector3(mapCenter2D.x, 0.0f, mapCenter2D.y) - this->zCurrentSunPosition;
+	this->zCurrentSunDirection =  zMapCenter - this->zCurrentSunPosition;
 	this->zCurrentSunDirection.Normalize();
 
 	this->zSunTimer = 0.0f;
 
 	this->zTotalSunRadiansShift = 0.0f;
 	this->zSunRadiansShiftPerUpdate = TOTAL_SUN_DEGREE_SHIFT / (SUN_UPDATE_DELAY * TOTAL_SUN_UPDATE_TIME);
+
+//Fog Enclosement
+	this->zPlayersAlive = 0;
+
+	Vector2 worldSize = this->zWorld->GetWorldSize();
+
+	radius = (worldSize.x + worldSize.y) * 0.5f;
+
+	this->zInitalFogEnclosement = radius * 0.2f;
+	this->zIncrementFogEnclosement = (radius * 2) / this->zMaxNrOfPlayers;
+
+	this->zFogUpdateDelay = 60.0f;
+	this->zFogDecreaseCoeff = this->zFogUpdateDelay / EXPECTED_PLAYTIME;
+	this->zFogTotalDecreaseCoeff = 1.0f;
+	this->zFogTimer = 0.0f;
+
+	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
 }
 
 Game::~Game()
@@ -360,9 +376,31 @@ void Game::UpdateSunDirection(float dt)
 	}
 }
 
+void Game::UpdateFogEnclosement( float dt )
+{
+	this->zFogTimer += dt;
+
+	if (this->zFogTimer >= this->zFogUpdateDelay)
+	{
+		if (this->zCurrentFogEnclosement > this->zInitalFogEnclosement)
+		{
+			this->zFogTotalDecreaseCoeff -= this->zFogDecreaseCoeff;
+
+			this->zCurrentFogEnclosement = (this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
+			
+			NetworkMessageConverter NMC;
+			this->SendToAll(NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement));
+		}
+		this->zFogTimer = 0.0f;
+
+		
+	}
+}
+
 bool Game::Update( float dt )
 {
 	this->UpdateSunDirection(dt);
+	this->UpdateFogEnclosement(dt);
 	NetworkMessageConverter NMC;
 	std::string msg;
 
@@ -419,7 +457,7 @@ bool Game::Update( float dt )
 	// Update World
 	zWorld->Update();
 
-	//Updating animals.
+	//Updating animals and Check fog.
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
 		if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>( (*i) ))
@@ -429,6 +467,22 @@ bool Game::Update( float dt )
 		else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>( (*i) ))
 		{
 			animalBehavior->SetCurrentTargets(counter);
+		}
+		else if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
+		{
+			if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
+			{
+				Vector2 center = this->zWorld->GetWorldCenter();
+
+				float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
+
+				if (radiusFromCenter > this->zCurrentFogEnclosement)
+				{
+					Damage dmg;
+					dmg.fogDamage = 1.0f * dt;
+					bActor->TakeDamage(dmg, bActor);
+				}
+			}
 		}
 	}
 
@@ -440,7 +494,6 @@ bool Game::Update( float dt )
 			
 			if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
 			{
-				
 				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
 				{
 					//tempBehaviour->get_
@@ -496,7 +549,7 @@ bool Game::Update( float dt )
 			}
 
 			//Get Data
-			float length = projBehavior->GetLenght();
+			float length = projBehavior->GetLength();
 			float distance = length;
 			//Check collision, returns the result
 			Actor* collide = this->zActorManager->CheckCollisions(projActor, distance); 
@@ -933,15 +986,7 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
-		Vector2 size = WLE->world->GetWorldSize();
 
-		float radius = (size.x + size.y) * 0.5f;
-
-		this->zInitalFogEnclosement = radius * 0.10f;
-
-		this->zIncrementFogEnclosement = radius * 0.03125f;
-
-		this->zCurrentFogEnclosement = this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive);
 	}
 	else if ( PlayerKillEvent* PKE = dynamic_cast<PlayerKillEvent*>(e) )
 	{
@@ -2050,10 +2095,10 @@ void Game::SendToAll( std::string msg)
 
 void Game::ModifyLivingPlayers( const int value )
 {
-	this->zPlayersAlive += 1;
+	this->zPlayersAlive += value;
 
-	this->zCurrentFogEnclosement = this->zInitalFogEnclosement + ( this->zIncrementFogEnclosement * this->zPlayersAlive);
-
+	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
+	
 	NetworkMessageConverter NMC;
 	std::string message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 	this->SendToAll(message);

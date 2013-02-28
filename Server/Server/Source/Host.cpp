@@ -29,6 +29,7 @@ Host::Host() :
 	this->zStartime = 0;
 	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
+	this->zTotalTime = 0.0f;
 	this->zTimeOut = 10.0f;
 	this->zPingMessageInterval = 2.5f;
 	this->zTimeSinceLastPing = 0.0f;
@@ -97,9 +98,9 @@ void Host::Life()
 
 	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
 
-	static float waitTimer = 0.0f;
-	static float counter = 0.0f;
-	static int updatesPerSec = 0;
+	float waitTimer = 0.0f;
+	float counter = 0.0f;
+	int updatesPerSec = 0;
 
 	while(this->stayAlive)
 	{
@@ -248,7 +249,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		return;
 
 	//Sets last received packet time from this client.
-	cd->SetLastPacketTime(zDeltaTime);
+	cd->SetLastPacketTime(zTotalTime);
 
 	//Handles updates from client.
 	if(msgArray[0].find(M_CLIENT_DATA.c_str()) == 0)
@@ -279,11 +280,10 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	else if(msgArray[0].find(M_PING.c_str()) == 0)
 	{
 		float latency = this->zMessageConverter.ConvertStringToFloat(M_PING, msgArray[0]);
-		latency *= 1000.0f;
-		latency = ( (this->zDeltaTime * 1000.0f) - latency) / 2;
+		
+		latency = (this->zTotalTime - latency) * 0.5f;
 
-		if(latency > 1000)
-			latency = 1000;
+		latency *= 1000.0f;
 
 		cd->AddLatency(latency);
 		latency = cd->GetAverageLatency();
@@ -482,7 +482,7 @@ void Host::PingClients()
 	std::string message;
 	for(auto it = zClients.begin(); it != zClients.end(); it++)
 	{
-		(*it).first->Send( zMessageConverter.Convert(MESSAGE_TYPE_PING, zDeltaTime) );
+		(*it).first->Send( zMessageConverter.Convert(MESSAGE_TYPE_PING, zTotalTime) );
 	}
 }
 
@@ -499,6 +499,8 @@ float Host::Update()
 	this->zDeltaTime = timeDifference * this->zSecsPerCnt;
 
 	this->zStartime = currentTime;
+
+	this->zTotalTime += this->zDeltaTime;
 
 	return this->zDeltaTime;
 }
