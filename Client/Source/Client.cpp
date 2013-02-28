@@ -1917,7 +1917,7 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 	float xPosition = 50.0f;
 	float textheight = 20.0f;
 
-	static const int MAX_ITEMS = (windowHeight - yStartPosition) * 0.05f;
+	static const int MAX_ITEMS = (int)( (windowHeight - yStartPosition) * 0.05f );
 
 	Vector2 position;
 
