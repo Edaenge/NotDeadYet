@@ -15,21 +15,17 @@ class ClientData
 	ClientData(MaloW::ClientChannel* cc);
 	virtual ~ClientData();
 
-	bool zReady;
 	float zLastRecivedPacketTime;
 	std::vector<float> zLatency;
 
 	MaloW::ClientChannel* zClient;
 public:
 
-
-	inline bool GetReady(){ return this->zReady; }
 	/*! Returns the time of the last packet received from the client.*/
 	inline float GetLastPacketTime() {return this->zLastRecivedPacketTime;}
 	/*! Calculates and returns the average latency.*/
 	float GetAverageLatency();
 
-	inline void SetReady(bool ready){this->zReady = ready; }
 	/*! Sets the time of the last packet received from the client.*/
 	inline void SetLastPacketTime(const float packet) {this->zLastRecivedPacketTime;};
 	/*! Adds the latency to the list.*/

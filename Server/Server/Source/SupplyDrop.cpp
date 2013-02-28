@@ -4,15 +4,19 @@
 #include "SupplyActor.h"
 #include <MaloW.h>
 #include <PhysicsEngine.h>
+#include "Physics.h"
+/*To get Events*/
+#include "ActorSynchronizer.h"
 
 //MODEL NAME
 static const std::string SUPPLY_ACTOR_FILENAME = "Media/Models/Cube_4.obj";
 
-SupplyDrop::SupplyDrop( ActorManager* actorManager, World* world, PhysicsEngine* engine )
-	:zWorld(world), zActorManager(actorManager), zPhyEngine(engine)
+SupplyDrop::SupplyDrop( ActorManager* actorManager, World* world )
+	:zWorld(world), zActorManager(actorManager)
 {
 	this->zActorManager = actorManager;
 	this->AddObserver( this->zActorManager );
+	this->zPhyEngine = GetPhysics();
 }
 
 SupplyDrop::~SupplyDrop()
@@ -20,7 +24,7 @@ SupplyDrop::~SupplyDrop()
 
 }
 
-bool SupplyDrop::SpawnSupplyDrop( Vector3& pos, std::set<Item*>& items )
+bool SupplyDrop::SpawnSupplyDrop( Vector2& pos, std::set<Item*>& items )
 {
 	unsigned int weight = 0;
 	
@@ -39,7 +43,7 @@ bool SupplyDrop::SpawnSupplyDrop( Vector3& pos, std::set<Item*>& items )
 	return SpawnSupplyDrop(pos, items, weight);
 }
 
-bool SupplyDrop::SpawnSupplyDrop( Vector3& pos, std::set<Item*>& items, const unsigned int itemCapacity )
+bool SupplyDrop::SpawnSupplyDrop( Vector2& pos, std::set<Item*>& items, const unsigned int itemCapacity )
 {
 	SupplyActor* spActor = new SupplyActor(itemCapacity);
 
@@ -59,7 +63,7 @@ bool SupplyDrop::SpawnSupplyDrop( Vector3& pos, std::set<Item*>& items, const un
 	PhysicsObject* phyOBj = zPhyEngine->CreatePhysicsObject(SUPPLY_ACTOR_FILENAME);
 
 	//Check if physObj is not null and if the pos given is inside the world.
-	if( !phyOBj && !zWorld->IsInside(pos.GetXZ()) )
+	if( !phyOBj && !zWorld->IsInside(pos) )
 	{
 		delete spActor, spActor = NULL;
 		this->zPhyEngine->DeletePhysicsObject(phyOBj);
@@ -68,16 +72,18 @@ bool SupplyDrop::SpawnSupplyDrop( Vector3& pos, std::set<Item*>& items, const un
 	}
 
 	//We want it on the ground, calc the height
-	float yVale = zWorld->CalcHeightAtWorldPos( pos.GetXZ() );
-	pos.y = yVale;
+	float yVale = zWorld->CalcHeightAtWorldPos( pos );
+	Vector3 position = Vector3(pos.x, yVale, pos.y);
 
 	//Set Values
 	spActor->SetPhysicsObject(phyOBj);
-	spActor->SetPosition(pos);
+	spActor->SetPosition(position);
 	spActor->SetScale(spActor->GetScale());
 
 	//Notify
-	//NotifyObservers();
+	ActorAdded e;
+	e.zActor = spActor;
+	NotifyObservers(&e);
 
 	return true;
 }

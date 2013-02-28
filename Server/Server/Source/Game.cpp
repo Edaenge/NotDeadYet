@@ -38,9 +38,10 @@ static const float SUN_UPDATE_DELAY = 0.5f;
 //Total Update Time in Seconds (6h atm)
 static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 
-Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
-	zPhysicsEngine(phys)
+Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
+	zSyncher(syncher)
 {
+	this->zPhysicsEngine = GetPhysics();
 	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
@@ -412,7 +413,7 @@ bool Game::Update( float dt )
 	}
 
 	// Update Game Mode, Might Notify That GameMode is Finished
-	if ( !zGameMode->Update(dt) )
+	if ( this->zGameMode->Update(dt) )
 		return false;
 
 	// Update World
@@ -577,6 +578,13 @@ void Game::OnEvent( Event* e )
 	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
 	{
 		HandleConnection(PCE->clientData);
+	}
+	else if( UserReadyEvent* URE = dynamic_cast<UserReadyEvent*>(e) )
+	{
+		PlayerReadyEvent playerReady;
+		playerReady.player = this->zPlayers[URE->clientData];
+		
+		NotifyObservers(&playerReady);
 	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
@@ -855,6 +863,7 @@ void Game::OnEvent( Event* e )
 		auto i = zWorldActors.find(ERE->entity);
 		if ( i != zWorldActors.end() )
 		{
+			zPhysicsEngine->DeletePhysicsObject(i->second->GetPhysicsObject());
 			this->zActorManager->RemoveActor(i->second);
 			this->zWorldActors.erase(i);
 		}
@@ -863,9 +872,10 @@ void Game::OnEvent( Event* e )
 	{
 		// Create Player Actor
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
-		pObject->SetModel("Media/Models/temp_guy_movement_anims.fbx");
+		pObject->SetModel(UDE->playerModel);
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
+		zPlayers[UDE->clientData]->zUserModel = UDE->playerModel;
 
 		zActorManager->AddActor(actor);
 		actor->AddObserver(this->zGameMode);
@@ -1098,10 +1108,10 @@ void Game::HandleConnection( ClientData* cd )
 	message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorld->GetFileName());
 	cd->Send(message);
 
-	// Send event to game so it knows what players there are.
-	// PlayerAddEvent* PAE = new PlayerAddEvent();
-	// PAE->player = player;
-	// NotifyObservers(PAE);
+	//Send event to game so it knows what players there are.
+	PlayerAddEvent PAE;
+	PAE.player = player;
+	NotifyObservers(&PAE);
 }
 
 void Game::HandleDisconnect( ClientData* cd )
@@ -2029,4 +2039,60 @@ void Game::SendToAll( std::string msg)
 	{
 		it->first->Send(msg);
 	}
+}
+
+void Game::RestartGame()
+{
+	NetworkMessageConverter NMC;
+	std::string msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Server Restarting");
+
+	//Gather Actors
+	std::set<Actor*> actors = this->zActorManager->GetActors();
+	
+	//Delete All Actors
+	this->zActorManager->ClearAll();
+	
+	//Recreate Actors
+	std::string message = "";
+	int increment = 1;
+	for (auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+	{
+		/*Delete old Behavior*/
+		SetPlayerBehavior( (*it).second, 0 );
+
+		PhysicsObject* physObj = zPhysicsEngine->CreatePhysicsObject( (*it).second->GetModelPath() );
+		PlayerActor* pActor = new PlayerActor((*it).second, physObj);
+		PlayerHumanBehavior* pBehavior = new PlayerHumanBehavior(pActor, zWorld, (*it).second);
+
+		pActor->SetPosition(CalcPlayerSpawnPoint(32));
+		pActor->SetScale(pActor->GetScale());
+		pActor->AddObserver(this->zGameMode);
+		SetPlayerBehavior((*it).second, pBehavior);
+		this->zActorManager->AddActor(pActor);
+
+		//Should be changed Later
+		auto offsets = this->zCameraOffset.find("Media/Models/temp_guy.obj");
+
+		if(offsets != this->zCameraOffset.end())
+			dynamic_cast<PlayerActor*>(pActor)->SetCameraOffset(offsets->second);
+
+		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)pActor->GetID());
+		message += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, (float)1);
+		(*it).first->Send(message);
+	}
+	//Debug
+	SpawnAnimalsDebug();
+
+	//Sends Existing Updates to Clients.
+	for (auto it = this->zPlayers.begin(); it != zPlayers.end(); it++)
+	{
+		zSyncher->SendUpdatesTo( (*it).first );
+	}
+	
+	//Set everyone to false
+	for (auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+	{
+		(*it).second->SetReady(false);
+	}
+
 }

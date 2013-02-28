@@ -5,7 +5,7 @@
 #include <KeyStates.h>
 #include "ActorManager.h"
 #include "ActorSynchronizer.h"
-#include "PhysicsEngine.h"
+#include "Physics.h"
 #include "Item.h"
 
 class ClientData;
@@ -23,10 +23,16 @@ class AnimalActor;
 
 class Game : public Observer, public Observed
 {
+
+private:
 	ActorManager* zActorManager;
 	GameMode* zGameMode;
 	World* zWorld;
 
+	PhysicsEngine* zPhysicsEngine;
+	ActorSynchronizer* zSyncher;
+
+	std::map<std::string, Vector3> zCameraOffset;
 	std::map<ClientData*, Player*> zPlayers;
 	std::map<Entity*, WorldActor*> zWorldActors;
 
@@ -47,7 +53,7 @@ class Game : public Observer, public Observed
 	float zCurrentFogEnclosement;
 
 public:
-	Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
+	Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
 	virtual ~Game();
 
 	// Returns false if game has finished
@@ -69,6 +75,7 @@ public:
 	World* GetWorld() {return this->zWorld;}
 	
 	void SendToAll(std::string msg);
+	void RestartGame();
 
 private:
 	//Test function, spawns items/Animals
@@ -91,8 +98,4 @@ private:
 
 	void UpdateSunDirection(float dt);
 
-private:
-	PhysicsEngine* zPhysicsEngine;
-	
-	std::map<std::string, Vector3> zCameraOffset;
 };

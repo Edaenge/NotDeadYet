@@ -6,8 +6,6 @@ ClientData::ClientData(MaloW::ClientChannel* cc)
 {
 	this->zClient = cc;
 	this->zLastRecivedPacketTime = 0.0f;
-
-	zReady = false;
 }
 
 ClientData::~ClientData()

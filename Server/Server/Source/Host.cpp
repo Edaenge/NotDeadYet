@@ -38,8 +38,6 @@ Host::Host() :
 
 Host::~Host()
 {
-	FreePhysics();
-
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 
@@ -52,6 +50,7 @@ Host::~Host()
 
 	SAFE_DELETE(this->zServerListener);
 
+
 	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
 	{
 		ClientData* data = it->second;
@@ -63,6 +62,21 @@ Host::~Host()
 
 	}
 	this->zClients.clear();
+
+	/*Free any still existing Event.*/
+	int counter = 0;
+	unsigned int nrOfMessages = this->GetEventQueueSize();
+	MaloW::ProcessEvent* pe;
+
+	while (counter < nrOfMessages)
+	{
+		pe = PeekEvent();
+		SAFE_DELETE( pe );
+
+		counter++;
+	}
+
+	FreePhysics();
 }
 
 void Host::SendMessageToClient( const std::string& message )
@@ -165,8 +179,32 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 {
 	this->zMaxClients = maxClients;
 
-	Restart(gameModeName, mapName);
+	//Restart(gameModeName, mapName);
+	
+	FreePhysics();
+	PhysicsInit();
+	
+	//Init ActorSycnher
+	if ( this->zSynchronizer ) 
+	{
+		delete zSynchronizer;
+		this->zSynchronizer->ClearAll();
+	}
 
+	this->zSynchronizer = new ActorSynchronizer();
+	
+
+	//Init game
+	if(this->zGame)
+	{
+		this->RemoveObserver(zGame);
+		delete zGame;
+	}
+
+	this->zGame = new Game(zSynchronizer, gameModeName, mapName);
+	this->AddObserver(zGame);
+	
+	//server Listener
 	if ( !zServerListener )
 	{
 		try
@@ -295,8 +333,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	//Handles ready from client.
 	else if(msgArray[0].find(M_READY_PLAYER.c_str()) == 0)
 	{
-		PlayerReadyEvent e;
-		cd->SetReady(true);
+		UserReadyEvent e;
 		e.clientData = cd;
 		NotifyObservers(&e);
 	}
@@ -643,44 +680,45 @@ void Host::SynchronizeAll()
 // TODO: Create GameMode Here
 void Host::Restart( const std::string& gameMode, const std::string& map )
 {
-	// Update
-	this->zGameMode = gameMode;
-	this->zMapName = map;
+// 	// Update
+// 	this->zGameMode = gameMode;
+// 	this->zMapName = map;
+// 
+// 	if ( this->zGame )
+// 	{
+// 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Server Restarting");
+// 		// Fake Disconnects
+// 		for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
+// 		{
+// 			i->second->Send(msg);
+// 			PlayerDisconnectedEvent PDE;
+// 			PDE.clientData = i->second;
+// 			zGame->OnEvent(&PDE);
+// 		}
+// 
+// 		// Delete Game
+// 		this->RemoveObserver(zGame);
+// 		delete zGame;
+// 		FreePhysics();
+// 	}
+// 
+// 	if ( this->zSynchronizer ) 
+// 		this->zSynchronizer->ClearAll();
+// 	if ( !this->zSynchronizer ) 
+// 		this->zSynchronizer = new ActorSynchronizer();
+// 
+// 	// Start New
+// 	PhysicsInit();
+// 	this->zGame = new Game(GetPhysics(), this->zSynchronizer, gameMode, map);
+// 	this->AddObserver(this->zGame);
+// 
+// 	// Fake Connects
+// 	for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
+// 	{
+// 		PlayerConnectedEvent PCE;
+// 		PCE.clientData = i->second;
+// 		zGame->OnEvent(&PCE);
+// 	}
 
-	if ( this->zGame )
-	{
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Server Restarting");
-		// Fake Disconnects
-		for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
-		{
-			i->second->Send(msg);
-			i->second->SetReady(false);
-			PlayerDisconnectedEvent PDE;
-			PDE.clientData = i->second;
-			zGame->OnEvent(&PDE);
-		}
 
-		// Delete Game
-		this->RemoveObserver(zGame);
-		delete zGame;
-		FreePhysics();
-	}
-
-	if ( this->zSynchronizer ) 
-		this->zSynchronizer->ClearAll();
-	if ( !this->zSynchronizer ) 
-		this->zSynchronizer = new ActorSynchronizer();
-
-	// Start New
-	PhysicsInit();
-	this->zGame = new Game(GetPhysics(), this->zSynchronizer, gameMode, map);
-	this->AddObserver(this->zGame);
-
-	// Fake Connects
-	for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
-	{
-		PlayerConnectedEvent PCE;
-		PCE.clientData = i->second;
-		zGame->OnEvent(&PCE);
-	}
 }

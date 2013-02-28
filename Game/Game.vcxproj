@@ -110,6 +110,7 @@
     <ClInclude Include="Include\World\WorldEvents.h" />
     <ClInclude Include="Include\World\WorldFile.h" />
     <ClInclude Include="Include\World\WorldRenderer.h" />
+    <ClInclude Include="Source\ActorEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Client\Source\KeyUtil\KeyBindConfig.cpp" />
