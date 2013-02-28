@@ -85,8 +85,6 @@ void GameModeFFA::OnEvent( Event* e )
 				}
 
 				this->OnPlayerHumanDeath(pActor);
-
-				this->zGame->ModifyLivingPlayers(1);
 			}
 			else
 			{
@@ -306,6 +304,8 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	Player* player = pActor->GetPlayer();
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
+	this->zGame->ModifyLivingPlayers(-1);
+
 
 	PhysicsObject* pObject = pActor->GetPhysicsObject();
 	if (pObject)
@@ -340,6 +340,8 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	
 	//Add the actor to the list
 	aManager->AddActor(gActor);
+
+	this->zGame->ModifyLivingPlayers(1);
 }
 
 void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
