@@ -7,7 +7,7 @@
 #include <Safe.h>
 #include <GraphicsEngine.h>
 #include <ServerChannel.h>
-#include <Inventory.h>
+#include "Inventory.h"
 #include "KeyHandler.h"
 #include "NetworkMessageConverter.h"
 #include "ClientActorManager.h"
@@ -153,6 +153,8 @@ private:
 	//			  		//
 	//////////////////////
 
+
+	Gui_Item_Data MakeGID(Item* item);
 	bool CreateItemFromMessage( std::vector<std::string> msgArray, int& Index, Item*& item, const unsigned int ID);
 	void SendLootItemMessage(const unsigned int ID, const unsigned int ItemID, const int Type, const int SubType);
 	void SendPickupItemMessage(const unsigned int ID);

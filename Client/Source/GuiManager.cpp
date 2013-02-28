@@ -2,7 +2,7 @@
 
 static const std::string DEATH_GUI_PATH						= "Media/Icons/Use_v02.png";
 static const std::string LOOTING_GUI_PATH					= "Media/Icons/Use_v02.png";
-static const std::string INVENTORY_GUI_PATH					= "Media/Icons/Inventory_Full.png";
+static const std::string INVENTORY_GUI_PATH					= "Media/InGameUI/Inventory_BG.png";
 static const std::string IN_GAME_MENU_GUI_PATH				= "Media/Icons/Use_v02.png";
 static const std::string INVENTORY_ITEM_SELECTION_GUI_PATH	= "Media/Icons/Menu_Circle.png";
 
@@ -306,9 +306,9 @@ Menu_select_data GuiManager::CheckCollisionInv()
 	return msd;
 }
 
-void GuiManager::EquipItem( int type, const Gui_Item_Data gid )
+void GuiManager::EquipItem( const Gui_Item_Data gid )
 {
-	this->zInvGui->EquipItem(type, gid, this->zInventoryOpen);
+	this->zInvGui->EquipItem(gid, this->zInventoryOpen);
 }
 
 void GuiManager::UnEquipItem( const Gui_Item_Data gid )
