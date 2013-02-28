@@ -7,6 +7,7 @@
 #include "iMesh.h"
 #include <AnimationStates.h>
 #include <string>
+#include <map>
 #include "Safe.h"
 
 /*! Base class for World Objects*/
@@ -18,7 +19,17 @@ public:
 		this->zMesh = 0; 
 		this->zID = ID;
 	}
-	virtual ~Actor(){}
+	virtual ~Actor()
+	{
+		if (this->zMesh)
+			GetGraphics()->DeleteMesh(this->zMesh);
+
+		for (auto it = this->zSubMeshes.begin(); it != this->zSubMeshes.end(); it++)
+		{
+			if(it->second)
+				GetGraphics()->DeleteMesh(it->second);
+		}
+	}
 	std::string GetModel() {return this->zModel;}
 	/*!	Returns Pointer to the Player Mesh*/
 	iMesh* GetMesh() const {return this->zMesh;}
@@ -49,9 +60,24 @@ public:
 	/*!  Sets the Client Id given from the server*/
 	void SetID(const int clientID) {this->zID = clientID;}
 
+	void AddSubMesh(std::string model, iMesh* mesh)
+	{
+		this->zSubMeshes[model] = mesh;
+	}
+	iMesh* GetSubMesh(std::string model)
+	{
+		auto it = this->zSubMeshes.find(model);
+		if (it != this->zSubMeshes.end())
+			return it->second;
+
+		return NULL;
+	}
+	void RemoveSubMesh(std::string model) {this->zSubMeshes.erase(model);}
 protected:
 	std::string zModel;
 	iMesh* zMesh;
+	//Used For FBX
+	std::map<std::string, iMesh*> zSubMeshes;
 	unsigned int zID;
 	Vector3 zPosition;
 };

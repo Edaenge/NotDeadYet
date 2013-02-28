@@ -1345,11 +1345,13 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 					if (mesh)
 					{
-						
 						if (iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(actor->GetMesh()))
 						{
 							mesh->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-							fbxMesh->BindMesh(boneName.c_str(), mesh);
+							if(fbxMesh->BindMesh(boneName.c_str(), mesh))
+							{
+								actor->AddSubMesh(model, mesh);
+							}
 						}
 					}
 				}
@@ -1369,17 +1371,15 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			{
 				if (iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(actor->GetMesh()))
 				{
-					iMesh* mesh = NULL;
+					iMesh* mesh = actor->GetSubMesh(model);
 
-					std::string substr = model.substr(model.length() - 4);
-					if (substr == ".obj")
-						mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
-					else if (substr == ".fbx")
-						mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
 					if (mesh)
 					{
 						mesh->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 						fbxMesh->UnbindMesh(mesh);
+						
+						this->zEng->DeleteMesh(mesh);
+						actor->RemoveSubMesh(model);
 					}
 				}
 			}

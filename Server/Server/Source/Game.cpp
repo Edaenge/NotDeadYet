@@ -762,7 +762,6 @@ void Game::OnEvent( Event* e )
 
 		std::set<Actor*> actors = this->zActorManager->GetActors();
 
-		//BioActor* thePlayerActor = dynamic_cast<BioActor*>(actor);
 		DeerActor* thePlayerActor;
 
 		ItemActor* toBeRemoved = NULL;
@@ -1963,7 +1962,7 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 	}
 	else
 	{
-		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Such_slot");
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No Such slot");
 		cd->Send(msg);
 		return;
 	}
