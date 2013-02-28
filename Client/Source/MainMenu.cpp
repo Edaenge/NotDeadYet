@@ -100,41 +100,41 @@ void MainMenu::Init()
 
 	temp = new SimpleButton(offSet + (350.0f / 1024.0f) * dx, (350.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Connect.png", 
 		(300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight, new ChangeSetEvent(GETIPADRESS), "Media/Menu/MainMenu/ConnectClick.png", 
-		"Media/Menu/MainMenu/ConnectOver.png", offSet + (350.0f / 768.0f) * dx, (350.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
+		"Media/Menu/MainMenu/ConnectOver.png", offSet + (350.0f / 1024.0f) * dx, (350.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
 	temp = new SimpleButton(offSet + (350.0f / 1024.0f) * dx, (430.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Options.png", 
 		(300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight, new ChangeSetEvent(OPTIONS), "Media/Menu/MainMenu/OptionsClick.png", 
-		"Media/Menu/MainMenu/OptionsOver.png", offSet + (350.0f / 768.0f) * dx, (430.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
+		"Media/Menu/MainMenu/OptionsOver.png", offSet + (350.0f / 1024.0f) * dx, (430.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
 	temp = new SimpleButton(offSet + (350.0f / 1024.0f) * dx, (510.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Quit.png", 
 		(300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight, new ChangeSetEvent(QUIT), "Media/Menu/MainMenu/QuitClick.png", 
-		"Media/Menu/MainMenu/QuitOver.png", offSet + (350.0f / 768.0f) * dx, (510.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
+		"Media/Menu/MainMenu/QuitOver.png", offSet + (350.0f / 1024.0f) * dx, (510.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
 	//Get IP
-	float AdressX = (offSet + (512.0f / 1024.0f) * dx) - (((200.0f / 1024.0f) * dx) / 2);
-	float AdressY = ((384.0f / 768.0f) * windowHeight) - (((100.0f / 768.0f) * windowHeight) / 2);
+	float AdressX = (offSet + (512.0f / 1024.0f) * dx) - (((564.0f / 1024.0f) * dx) / 2);
+	float AdressY = ((384.0f / 768.0f) * windowHeight) - (((137.0f / 768.0f) * windowHeight) / 2);
 	temp = new GUIPicture(AdressX, AdressY, 1, 
-		"Media/Icons/IP_Adress.png", (200.0f / 1024.0f) * dx, (100.0f / 768.0f) * windowHeight);
+		"Media/Menu/ConnectMenu/Connect_BG.png", (564.0f / 1024.0f) * dx, (137.0f / 768.0f) * windowHeight);
 	zSets[GETIPADRESS].AddElement(temp);
 
 	//IPAddress
-	temp = new TextBox(AdressX + (10.0f / 1024.0f) * dx, AdressY + (34.0f / 768.0f) * windowHeight, 1.0f, "", 
-		(180.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "127.0.0.1", "IPAdress", 1.0f, 16, NR_SPECIAL);
+	temp = new TextBox(AdressX + (20.0f / 1024.0f) * dx, AdressY + (60.0f / 768.0f) * windowHeight, 1.0f, "", 
+		(180.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "127.0.0.1", "IPAdress", 2.0f, 16, NR_SPECIAL);
 	zSets[GETIPADRESS].AddElement(temp);
 
-	temp = new SimpleButton(AdressX + (120.0f / 1024.0f) * dx, AdressY + (78.0f / 768.0f) * windowHeight, 1.0f, 
-		"Media/Icons/buton_ok.png", (75.0f / 1024.0f) * dx, (20.0f / 768.0f) * windowHeight, 
-		new ChangeSetEvent(FIND_SERVER), "", "", AdressX + (120.0f / 1024.0f) * dx
-		, AdressY + (78.0f / 768.0f) * windowHeight, (75.0f / 1024.0f) * dx, (20.0f / 768.0f) * windowHeight);
+	temp = new SimpleButton(AdressX + (472.0f / 1024.0f) * dx, AdressY + (104.0f / 768.0f) * windowHeight, 1.0f, 
+		"Media/Menu/ConnectMenu/Back.png", (67.0f / 1024.0f) * dx, (28.0f / 768.0f) * windowHeight, 
+		new ChangeSetEvent(MAINMENU), "Media/Menu/ConnectMenu/BackPress.png", "Media/Menu/ConnectMenu/BackOver.png", AdressX + (472.0f / 1024.0f) * dx
+		, AdressY + (104.0f / 768.0f) * windowHeight, (67.0f / 1024.0f) * dx, (28.0f / 768.0f) * windowHeight);
 	zSets[GETIPADRESS].AddElement(temp);
 
-	temp = new SimpleButton(AdressX + (45.0f / 1024.0f) * dx, AdressY + (78.0f / 768.0f) * windowHeight, 1.0f, 
-		"Media/Icons/buton_cancel.png", (75.0f / 1024.0f) * dx, (20.0f / 768.0f) * windowHeight, 
-		new ChangeTextAndMenuEvent(FIND_SERVER, "IPAdress"), "", "", AdressX + (45.0f / 1024.0f) * dx
-		, AdressY + (78.0f / 768.0f) * windowHeight, (75.0f / 1024.0f) * dx, (20.0f / 768.0f) * windowHeight);
+	temp = new SimpleButton(AdressX + (348.0f / 1024.0f) * dx, AdressY + (104.0f / 768.0f) * windowHeight, 1.0f, 
+		"Media/Menu/ConnectMenu/Connect.png", (111.0f / 1024.0f) * dx, (28.0f / 768.0f) * windowHeight, 
+		new ChangeTextAndMenuEvent(MAINMENU, "IPAdress"), "Media/Menu/ConnectMenu/ConnectPress.png", "Media/Menu/ConnectMenu/ConnectOver.png", AdressX + (348.0f / 1024.0f) * dx
+		, AdressY + (104.0f / 768.0f) * windowHeight, (111.0f / 1024.0f) * dx, (28.0f / 768.0f) * windowHeight);
 	zSets[GETIPADRESS].AddElement(temp);
 
 	//Options Menu
@@ -236,30 +236,30 @@ void MainMenu::Init()
 	//TextBox View Distance
 	temp = new TextBox(offSet + (278.0f / 1024.0f) * dx, (470.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
 		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString((float)GetGraphics()->GetEngineParameters().FarClip), 
-		"ViewDistance", 1.0f, 3, NR, 0, 9);
+		"ViewDistance", 2.0f, 3, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 	//TextBox Shadow
 	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (412.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
 		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString((float)GetGraphics()->GetEngineParameters().ShadowMapSettings), 
-		"ShadowQuality", 1.0f, 1, NR, 0, 9);
+		"ShadowQuality", 2.0f, 1, NR, 0, 9);
 	zSets[OPTIONS].AddElement(temp);
 
 
 	//Buttons options menu
 	//Back
-	temp = new SimpleButton(offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/FindServer/Back.png", 
-		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ChangeSetEvent(MAINMENU), "", "", 
+	temp = new SimpleButton(offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Back.png", 
+		(71.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ChangeSetEvent(MAINMENU), "Media/Menu/BackPress.png", "Media/Menu/BackOver.png", 
 		offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
-		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
+		(71.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Apply
-	temp = new SimpleButton(offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Apply.png", 
-		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ApplyOptionsAndChangeSetEvent(MAINMENU), "", "", 
-		offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
-		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
-	zSets[OPTIONS].AddElement(temp); 
+	temp = new SimpleButton(offSet + (148.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Apply.png", 
+		(71.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ApplyOptionsAndChangeSetEvent(MAINMENU), "Media/Menu/ApplyPress.png", "Media/Menu/ApplyOver.png", 
+		offSet + (148.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
+		(71.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
+	zSets[OPTIONS].AddElement(temp);
 
 
 	this->zPrimarySet = MAINMENU;
@@ -282,7 +282,7 @@ void MainMenu::StartTestRun()
 		Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
 
 		std::string errorMsg = "Error Code: " + MaloW::convertNrToString(errorCode) + ": " + errorMessage;
-		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/1");
+		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
 
 		Sleep(5000);
 
@@ -391,7 +391,7 @@ void MainMenu::Run()
 							Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
 
 							std::string errorMsg = "Error Code: " + MaloW::convertNrToString(errorCode) + ": " + errorMessage;
-							iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/1");
+							iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
 
 							Sleep(5000);
 

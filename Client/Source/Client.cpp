@@ -295,17 +295,17 @@ void Client::InitGraphics(const std::string& mapName)
 	if (this->zLatencyText)
 		this->zEng->DeleteText(this->zLatencyText);
 
-	this->zLatencyText = this->zEng->CreateText("", Vector2(1, 1), 0.7f, "Media/Fonts/1");
+	this->zLatencyText = this->zEng->CreateText("", Vector2(1, 1), 0.7f, "Media/Fonts/new");
 
 	if (this->zServerUpsText)
 		this->zEng->DeleteText(this->zServerUpsText);
 
-	this->zServerUpsText = this->zEng->CreateText("", Vector2(1, 25), 0.7f, "Media/Fonts/1");
+	this->zServerUpsText = this->zEng->CreateText("", Vector2(1, 25), 0.7f, "Media/Fonts/new");
 
 	if (this->zClientUpsText)
 		this->zEng->DeleteText(this->zClientUpsText);
 
-	this->zClientUpsText = this->zEng->CreateText("", Vector2(1, 49), 0.7f, "Media/Fonts/1");
+	this->zClientUpsText = this->zEng->CreateText("", Vector2(1, 49), 0.7f, "Media/Fonts/new");
 
 	//Go through entities (bush etc) and set render flag.
 	std::set<Entity*> entities;
@@ -1929,7 +1929,7 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 	}
 	std::string fontPath = "";
 	if (bError)
-		fontPath = "Media/Fonts/1";
+		fontPath = "Media/Fonts/new";
 	else
 		fontPath = "Media/Fonts/3";
 

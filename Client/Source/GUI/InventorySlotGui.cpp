@@ -42,7 +42,7 @@ bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)
 		GuiElement::AddToRenderer(ge); 
 
 		if(this->zGid.zCanStack && !this->zStackText)
-			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/1");
+			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/new");
 
 		if(!this->zSlotImage && this->zGid.zFilePath != "Unknown")
 			this->zSlotImage = ge->CreateImage(Vector2(this->zX, this->zY), this->GetDimension(), this->zGid.zFilePath.c_str());
@@ -143,7 +143,7 @@ void InventorySlotGui::AddItemToSlot( Gui_Item_Data gid, bool invOpen, GraphicsE
 	if(invOpen)
 	{
 		if(this->zGid.zCanStack && !this->zStackText)
-			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/1");
+			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/new");
 
 		if(!this->zSlotImage && this->zGid.zFilePath != "Unknown")
 			this->zSlotImage = ge->CreateImage(Vector2(this->zX, this->zY), this->GetDimension(), this->zGid.zFilePath.c_str());

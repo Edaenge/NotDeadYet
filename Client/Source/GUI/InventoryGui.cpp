@@ -204,7 +204,7 @@ bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
 
 		this->zWeightText = ge->CreateText((MaloW::convertNrToString(
 			this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str(), 
-			Vector2(this->zX + ((10.0f / 1024.0f) * dx), this->zY + ((10.0f / 768.0f) * windowHeight)), 1, "Media/Fonts/1");
+			Vector2(this->zX + ((10.0f / 1024.0f) * dx), this->zY + ((10.0f / 768.0f) * windowHeight)), 1, "Media/Fonts/new");
 	}
 
 	return true;
