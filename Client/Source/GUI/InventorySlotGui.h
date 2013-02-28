@@ -6,7 +6,12 @@
 #pragma once
 
 #include "GuiElement.h"
-
+struct Selected_Item_ReturnData
+{
+	int ID;
+	int type;
+	int inventory;
+};
 struct Gui_Item_Data
 {
 	Gui_Item_Data()

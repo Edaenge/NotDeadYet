@@ -29,7 +29,10 @@ InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, 
 
 InventorySlotGui::~InventorySlotGui()
 {
-	if ( zSlotImage ) throw("Image Memory Leak!");
+	if ( zSlotImage && GetGraphics()->IsRunning()) 
+		GetGraphics()->DeleteImage(this->zSlotImage);
+	else if( zSlotImage && !GetGraphics()->IsRunning())
+		throw("Image Memory Leak!");
 }
 
 bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)

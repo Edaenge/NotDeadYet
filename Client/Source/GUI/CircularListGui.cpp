@@ -87,6 +87,9 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 			case EQUIP:
 				texName = "Media/Icons/Equip.png";
 				break;
+			case LOOT:
+				texName = "Media/Icons/Loot.png";
+				break;
 			case NOTHING:
 				texName = "Media/Icons/Cancel.png";
 				break;
@@ -218,6 +221,11 @@ void CircularListGui::Adjust(int type, int inventory)
 	{
 		this->zOptions[0] = UNEQUIP;
 		this->zOptions[1] = DROP;
+		return;
+	}
+	else if(inventory == 2)
+	{
+		this->zOptions[0] = LOOT;
 		return;
 	}
 	switch(type)

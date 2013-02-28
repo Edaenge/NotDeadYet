@@ -45,6 +45,7 @@
     <ClCompile Include="Source\GUI\GUISet.cpp" />
     <ClCompile Include="Source\GUI\InventoryGui.cpp" />
     <ClCompile Include="Source\GUI\InventorySlotGui.cpp" />
+    <ClCompile Include="Source\GUI\LootInventoryGui.cpp" />
     <ClCompile Include="Source\GUI\NoEvent.cpp" />
     <ClCompile Include="Source\GUI\SimpleButton.cpp" />
     <ClCompile Include="Source\GUI\TextBox.cpp" />
@@ -81,6 +82,7 @@
     <ClInclude Include="Source\GUI\GUISet.h" />
     <ClInclude Include="Source\GUI\InventoryGui.h" />
     <ClInclude Include="Source\GUI\InventorySlotGui.h" />
+    <ClInclude Include="Source\GUI\LootInventoryGui.h" />
     <ClInclude Include="Source\GUI\NoEvent.h" />
     <ClInclude Include="Source\GUI\SimpleButton.h" />
     <ClInclude Include="Source\GUI\TextBox.h" />
