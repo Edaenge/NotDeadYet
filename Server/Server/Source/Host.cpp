@@ -54,13 +54,11 @@ Host::~Host()
 
 	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
 	{
-		ClientData* data = it->second;
-		if(data)
+		if(it->second)
 		{
-			delete data;
-			data = NULL;
+			delete it->second;
+			it->second = NULL;
 		}
-
 	}
 	this->zClients.clear();
 }
@@ -101,7 +99,7 @@ void Host::Life()
 
 	static float waitTimer = 0.0f;
 	static float counter = 0.0f;
-	static int updatesPerSec = 0.0f;
+	static int updatesPerSec = 0;
 
 	while(this->stayAlive)
 	{

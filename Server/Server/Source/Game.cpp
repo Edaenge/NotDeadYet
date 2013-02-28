@@ -17,7 +17,8 @@
 #include "BearActor.h"
 #include "GhostActor.h"
 #include "ItemActor.h"
-#include "PlayerWolfBehavior.h"
+#include "PlayerDeerBehavior.h"
+#include "PlayerBearBehavior.h"
 #include "AIDeerBehavior.h"
 #include "AIBearBehavior.h"
 #include "WorldActor.h"
@@ -681,9 +682,6 @@ void Game::OnEvent( Event* e )
 				}
 			}
 		}
-		
-
-
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{
@@ -771,7 +769,8 @@ void Game::OnEvent( Event* e )
 
 		Damage idiotDamage;
 
-		if(thePlayerActor = dynamic_cast<DeerActor*>(actor))
+		thePlayerActor = dynamic_cast<DeerActor*>(actor);
+		if(thePlayerActor)
 		{
 			for (auto it_actor = actors.begin(); it_actor != actors.end() && !bEaten; it_actor++)
 			{
@@ -1111,25 +1110,31 @@ void Game::HandleDisconnect( ClientData* cd )
 		auto playerBehavior = playerIterator->second->GetBehavior();
 		
 		// Create AI Behavior For Players That Disconnected
-	/*	if ( PlayerWolfBehavior* playerWolf = dynamic_cast<PlayerWolfBehavior*>(playerBehavior) )
+		if ( PlayerDeerBehavior* playerDeer = dynamic_cast<PlayerDeerBehavior*>(playerBehavior) )
 		{
-			AIWolfBehavior* aiWolf = new AIWolfBehavior(playerWolf->GetActor(), zWorld);
-			zBehaviors.insert(aiWolf);
+			AIDeerBehavior* aiDeer = new AIDeerBehavior(playerDeer->GetActor(), zWorld);
+			zBehaviors.insert(aiDeer);
+		}
+		else if ( PlayerBearBehavior* playerBear = dynamic_cast<PlayerBearBehavior*>(playerBehavior) )
+		{
+			AIBearBehavior* aiDeer = new AIBearBehavior(playerBear->GetActor(), zWorld);
+			zBehaviors.insert(aiDeer);
 		}
 		//Kills actor if human
-		else */if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
+		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
 		{
 			dynamic_cast<BioActor*>(pHuman->GetActor())->Kill();
 		}
 		
-		SetPlayerBehavior(playerIterator->second, 0);
+		this->SetPlayerBehavior(playerIterator->second, NULL);
 
 		/*PlayerRemoveEvent* PRE = new PlayerRemoveEvent();
 		PRE->player = i->second;
 		NotifyObservers(PRE);*/
 
 		Player* temp = playerIterator->second;
-		delete temp, temp = NULL;
+		delete temp;
+		temp = NULL;
 		zPlayers.erase(playerIterator);
 }
 
@@ -1264,7 +1269,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 			{
 				int slots = pActor->GetInventory()->CalcMaxAvailableSlots(item);
 
-				if(item->GetStackSize() > slots)
+				if(item->GetStackSize() > (unsigned int)slots)
 				{
 					Item* new_item = NULL;
 

@@ -60,6 +60,7 @@ Inventory::~Inventory()
 	{
 		SAFE_DELETE((*x));
 	}
+	this->zItems.clear();
 
 	for (auto x = this->zGear.begin(); x != this->zGear.end(); x++)
 	{
