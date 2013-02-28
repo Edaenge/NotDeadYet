@@ -4,6 +4,9 @@ BearActor::BearActor(PhysicsObject* pObj) :
 	AnimalActor()
 {
 	this->SetPhysicsObject(pObj);
+	this->SetCameraOffset(Vector3(0.0f, 2.0f, 0.0f) );
+	this->SetHealth(200.0f);
+	this->zHealthMax = 200.0f;
 	/*this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitBear();
 	*/

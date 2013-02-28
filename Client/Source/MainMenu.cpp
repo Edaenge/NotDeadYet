@@ -58,7 +58,7 @@ void MainMenu::Init()
 	const char* object[] = {
 		"Media/Models/Bush_01.ani",
 		"Media/Models/Fern_02.ani",
-		"Media/Models/Tree_01.ani",
+		"Media/Models/Tree_02.ani",
 		"Media/Models/Bigleaf_01.ani",
 		"Media/Models/GrassPlant_01.ani",
 		"Media/Models/WaterGrass_02.ani",
@@ -270,11 +270,7 @@ void MainMenu::StartTestRun()
 {
 	std::string errorMessage;
 	int errorCode = 0;
-	//zGame->InitGameClient("194.47.150.20", 11521); // Ediz
-	//zGame->InitGameClient("194.47.150.16", 11521, errorMessage, errorCode); // Server
-	//zGame->InitGameClient("194.47.150.12", 11521); // Crant
-	//zGame->InitGameClient("80.78.216.201", 11521);
-	zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
+	//zGame->InitGameClient("80.78.216.201", 11521);s	zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
 
 	if (errorMessage != "")
 	{

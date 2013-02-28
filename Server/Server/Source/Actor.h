@@ -72,6 +72,7 @@ private:
 
 protected:
 		unsigned int zType;
+		float zEnergy;
 
 public:
 	Actor();
@@ -96,4 +97,7 @@ public:
 	virtual const std::string& GetModel() const;
 	PhysicsObject* GetPhysicsObject() const {return this->zPhysicsObject;}
 	inline unsigned int GetType() const {return this->zType;}
+
+	float GetEnergy() {return this->zEnergy;}
+	void SetEnergy(float energy) {this->zEnergy = energy;}
 };

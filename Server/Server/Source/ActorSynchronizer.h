@@ -11,6 +11,7 @@
 #include <set>
 
 class Actor;
+class BioActor;
 class ServerFramePacket;
 class NewActorPacket;
 
@@ -44,7 +45,7 @@ private:
 
 	void RegisterActor(ClientData* cd);
 	void RemoveActor(ClientData* cd);
-
+	void AddAnimation(BioActor* bActor);
 public:
 	ActorSynchronizer();
 	virtual ~ActorSynchronizer();
@@ -55,4 +56,5 @@ public:
 
 protected:
 	virtual void OnEvent(Event* e);
+
 };

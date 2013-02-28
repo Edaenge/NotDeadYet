@@ -17,7 +17,7 @@
 #include <Packets/NewActorPacket.h>
 #include "InGameMenu.h"
 #include "PickAnimalMenu.h"
-#include "AnimationFileReader.h"
+#include <AnimationFileReader.h>
 
 using namespace MaloW;
 
@@ -75,7 +75,7 @@ private:
 	//////////////////////
 
 	/*! Pings client to check if server is still running*/
-	void Ping();
+	void PingAck(const float serverTime);
 	/*! Close the connection and print the reason to the client*/
 	void CloseConnection(const std::string& reason);
 	/*! Send Camera Info and Rotation to Server*/
@@ -233,8 +233,10 @@ private:
 	std::map<unsigned int, Vector3> zStateCameraOffset;
 	//Updates per second
 	int zUps;
-	iText* zUpsText;
+	
+	iText* zServerUpsText;
 	iText* zLatencyText;
+	iText* zClientUpsText;
 	//Error Text
 	std::vector<TextDisplay*> zDisplayedText;
 

@@ -445,16 +445,20 @@ bool AIDeerBehavior::Update( float dt )
 		else //No threat detected. Calming down.
 		{
 			this->SetFearLevel( this->GetFearLevel() - this->zFearDecrease);
+			if(this->GetFearLevel() <= 0.0f)
+			{
+				this->SetFearLevel(0.0f);
+			}
 		}
 	}
 
 	//Change state of mind.
-	if(this->GetFearLevel() == 0 && !nearbyPredatorsExist)
+	if(this->GetFearLevel() == 0.0f && !nearbyPredatorsExist)
 	{
 		this->SetMentalState(CALM);
 		//this->SetScale(Vector3(0.01f, 0.01f, 0.01f));
 	}
-	else if(this->GetFearLevel() > 0 && this->GetFearLevel() <= this->zSupspiciousToAggressiveThreshold)
+	else if(this->GetFearLevel() > 0.0f && this->GetFearLevel() <= this->zSupspiciousToAggressiveThreshold)
 	{
 		this->SetMentalState(SUSPICIOUS);
 		//this->SetScale(Vector3(0.03f, 0.03f, 0.03f));
@@ -478,6 +482,10 @@ bool AIDeerBehavior::Update( float dt )
 			this->SetMentalState(AFRAID);
 			//this->SetScale(Vector3(3.09f, 3.09f, 3.09f));
 		}
+	}
+	else
+	{
+		this->SetMentalState(SUSPICIOUS);
 	}
 	
 	//Act based on state of mind.

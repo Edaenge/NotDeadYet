@@ -27,10 +27,11 @@
 #include "ItemLookup.h"
 #include "PlayerGhostBehavior.h"
 #include <Packets\NewActorPacket.h>
+#include "AnimationFileReader.h"
 
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
-static const float TOTAL_SUN_DEGREE_SHIFT = 160 * PI / 180;
+static const float TOTAL_SUN_DEGREE_SHIFT = 140 * PI / 180;
 
 //Wait time in Seconds for sun Update. (5s atm)
 static const float SUN_UPDATE_DELAY = 0.5f;
@@ -98,6 +99,12 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 
 	this->zTotalSunRadiansShift = 0.0f;
 	this->zSunRadiansShiftPerUpdate = TOTAL_SUN_DEGREE_SHIFT / (SUN_UPDATE_DELAY * TOTAL_SUN_UPDATE_TIME);
+
+	//Fog Enclosement
+	this->zIncrementFogEnclosement = 100.0f;
+	this->zInitalFogEnclosement = 1000.0f;
+
+	this->zCurrentFogEnclosement = this->zInitalFogEnclosement + ( this->zIncrementFogEnclosement * this->zPlayers.size() );
 }
 
 Game::~Game()
@@ -186,7 +193,8 @@ void Game::SpawnItemsDebug()
 	const Material*		temp_material_S	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_SMALL_STICK);
 	const Material*		temp_material_M	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_MEDIUM_STICK);
 	const Material*		temp_material_T	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_THREAD);
-	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE);
+	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_POOR);
+	const Bandage*		temp_bandage_G	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT);
 
 	unsigned int increment = 0;
 	int maxPoints = 10;
@@ -291,6 +299,16 @@ void Game::SpawnItemsDebug()
 			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 			this->zActorManager->AddActor(actor);
 		}
+		if(temp_bandage_G)
+		{
+			Bandage* new_item = new Bandage((*temp_bandage_G));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
 		total += increment;
 		increment = 0;
 	}
@@ -363,75 +381,6 @@ bool Game::Update( float dt )
 					msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
 					this->SendToAll(msg);
 				}
-			}
-
-			KeyStates keys = cActor->GetPlayer()->GetKeys();
-			unsigned int state = cActor->GetState();
-			std::string animation = "";
-			if (state == STATE_IDLE)
-			{
-				srand((unsigned int)time(0));
-
-				int idle_Animation = (rand() % 350) + 1;
-				if (idle_Animation > 0 && idle_Animation <= 50)//High Chance
-				{
-					animation = "idle_01";
-				}
-				else if (idle_Animation > 50 && idle_Animation <= 90)//Low Chance
-				{
-					animation = "idle_02";
-				}
-				else if (idle_Animation > 90 && idle_Animation <= 100)//High Chance
-				{
-					animation = "idle_03";
-				}
-				else if (idle_Animation > 100 && idle_Animation <= 200)//Very High Chance
-				{
-					animation = "idle_04";
-				}
-				else if (idle_Animation > 200 && idle_Animation <= 300)//Very High Chance
-				{
-					animation = "idle_05";
-				}
-				else if (idle_Animation > 300 && idle_Animation <= 350)//Medium Chance
-				{
-					animation = "idle_06";
-				}
-				
-			}
-			else if (state == STATE_WALKING)
-			{
-				if(keys.GetKeyState(KEY_FORWARD))
-				{
-					animation = "walk_fwd";
-				}
-				else if (keys.GetKeyState(KEY_BACKWARD))
-				{
-					animation = "walk_bwd";
-				}
-				else if(keys.GetKeyState(KEY_LEFT))
-				{
-					animation = "walk_lwd";
-				}
-				else if (keys.GetKeyState(KEY_RIGHT))
-				{
-					animation = "walk_rwd";
-				}
-			}
-			//else if (state == STATE_JOG)
-			//{
-			//}
-			//else if (state == STATE_RUNNING)
-			//{
-			//	animation = "sprint";
-			//}
-
-			if (animation != "")
-			{
-				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, animation);
-				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)cActor->GetID());
-
-				this->SendToAll(msg);
 			}
 		}
 
@@ -644,7 +593,22 @@ void Game::OnEvent( Event* e )
 		if(BioActor* pActor = dynamic_cast<BioActor*>(actor))
 		{
 			Inventory* inv = pActor->GetInventory();
-			inv->SwapWeapon();
+			if(inv->SwapWeapon())
+			{
+				NetworkMessageConverter NMC;
+				std::string msg;
+
+				Item* item = inv->GetSecondaryEquip();
+
+				msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)pActor->GetID());
+				msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+				SEQWE->clientdData->Send(msg);
+
+				Item* newPrimary = inv->GetPrimaryEquip();
+
+				if (newPrimary)
+					this->HandleBindings(newPrimary, pActor->GetID());
+			}
 		}
 	}
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
@@ -692,28 +656,28 @@ void Game::OnEvent( Event* e )
 		float range = 0.0f;
 		Damage damage;
 		
-
-		//Use dynamic cast with if to determine what animal it is.
 		if(BearActor* bActor = dynamic_cast<BearActor*>(self))
 		{
 			if(player)
 			{
 				if(PAAE->mouseButton == MOUSE_LEFT_PRESS)
 				{
-					range = 2.0f;
+					range = 2.2f;
 					damage.blunt = 10.0f;
 				}
 				else if(PAAE->mouseButton == MOUSE_RIGHT_PRESS)
 				{
-					range = 1.4f;
+					range = 1.5f;
 					damage.piercing = 5.0f;
 					damage.slashing = 25.0f;
 				}
 				if(Actor* target = this->zActorManager->CheckCollisions(self, range))
 				{
 					BioActor* bActor = dynamic_cast<BioActor*>(target);
-					bActor->TakeDamage(damage,self);
-					//Dynamic cast actor into bioactor, use takedamage function.
+					if(bActor->IsAlive())
+					{
+						bActor->TakeDamage(damage,self);
+					}
 				}
 			}
 		}
@@ -817,7 +781,7 @@ void Game::OnEvent( Event* e )
 					//Check if the ID is the same.
 					if ((*it_ID) == (*it_actor)->GetID())
 					{
-						//Check if the distance between the actors are to far to be able to loot.
+						//Check if the distance between the actors are too far to be able to loot.
 						if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 5.0f)
 							continue;
 
@@ -899,7 +863,7 @@ void Game::OnEvent( Event* e )
 	{
 		// Create Player Actor
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
-		//pObject->SetModel("Media/Models/temp_guy_movement_anims.fbx");
+		pObject->SetModel("Media/Models/temp_guy_movement_anims.fbx");
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 
@@ -1191,7 +1155,7 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 			if ((*it_ID) == (*it_actor)->GetID())
 			{
 				//Check if the distance between the actors are to far to be able to loot.
-				if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 5.0f)
+				if ((actor->GetPosition() - (*it_actor)->GetPosition()).GetLength() > 7.0f)
 					continue;
 
 				//Check if the Actor is an ItemActor
@@ -1506,9 +1470,19 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 				else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
 				{
 					ID = bandage->GetID();
+					
 					if (bandage->Use())
 					{				
-						pActor->SetBleeding(false);
+						float bleedingLevel = pActor->GetBleeding();
+						if(bandage->GetItemSubType() == 0) //Used poor bandage
+						{
+							pActor->SetBleeding(bleedingLevel - 1);
+						}
+						else if(bandage->GetItemSubType() == 1) //Used great bandage
+						{
+							pActor->SetBleeding(bleedingLevel - 3);
+						}
+						//pActor->SetBleeding(false);
 						
 						//Sending Message to client And removing stack from inventory.
 						inv->RemoveItemStack(ID, 1);
@@ -1580,7 +1554,6 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 			Projectile* arrow = inventory->GetProjectile();
 			if(arrow && arrow->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
 			{
-				
 				//create projectileActor
 				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
 				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
@@ -1620,13 +1593,12 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
 
-				
 				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/BowShot.mp3");
 				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
 				this->SendToAll(msg);
 
 				//Send Message to client to Play Shot Bow Animation
-				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, "idle_01");
+				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, IDLE_O1);
 				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)pActor->GetID()); 
 				this->SendToAll(msg);
 			}
@@ -1895,12 +1867,17 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 
 	NetworkMessageConverter NMC;
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
-	BioActor* pActor = dynamic_cast<PlayerActor*>(actor);
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+	if (!pActor)
+	{
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Equipping items is something only humans can do");
+		cd->Send(msg);
+		return;
+	}
 	Inventory* inventory = pActor->GetInventory();
 	Item* item = inventory->SearchAndGetItem(itemID);
 	Item* ret = NULL;
 	bool success = false;
-
 
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
@@ -1929,11 +1906,15 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 
 	if(!success && slot != EQUIPMENT_SLOT_PROJECTILE)
 	{
-		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Cannot_Equip_Item");
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Cannot Equip Item");
 		cd->Send(msg);
 		return;
 	}
-
+	//Check if the Equipped Item is the Primary one Then Add it to the Mesh
+	Item* primaryWpn = inventory->GetPrimaryEquip();
+	if (primaryWpn == item)
+		this->HandleBindings(item, pActor->GetID());
+	
 	msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)item->GetID());
 	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)slot);
 	cd->Send(msg);
@@ -1944,13 +1925,21 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 	std::string msg;
 	NetworkMessageConverter NMC;
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
-	BioActor* pActor = dynamic_cast<BioActor*>(actor);
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+	if (!pActor)
+		return;
+
 	Inventory* inventory = pActor->GetInventory();
 	Item* item = inventory->SearchAndGetItem(itemID);
 
+	bool wasPrimary = false;
+
+	if (item == inventory->GetPrimaryEquip())
+		wasPrimary = true;
+	
 	if(!item)
 	{
-		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Item_Was_Not_Found");
+		msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Item Was Not Found");
 		cd->Send(msg);
 		return;
 	}
@@ -1974,9 +1963,64 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 		return;
 	}
 
+	if (wasPrimary)
+	{
+		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)pActor->GetID());
+		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+		cd->Send(msg);
+
+		Item* newPrimary = inventory->GetPrimaryEquip();
+
+		if (newPrimary)
+			this->HandleBindings(newPrimary, pActor->GetID());
+	}
+	
+
 	msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)itemID);
 	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)eq_slot);
 	cd->Send(msg);
+}
+
+void Game::HandleBindings(Item* item, const unsigned int ID)
+{
+	std::string msg;
+	NetworkMessageConverter NMC;
+
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
+	{
+		if (item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
+
+	}
+	else if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
+	{
+		if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
+		else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
+	}
+	else if (item->GetItemType() == ITEM_TYPE_PROJECTILE && item->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
+	{
+		msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+		msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+		this->SendToAll(msg);
+	}
 }
 
 void Game::SendToAll( std::string msg)

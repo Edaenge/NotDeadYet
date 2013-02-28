@@ -426,14 +426,20 @@ bool AIBearBehavior::Update( float dt )
 		else //No threat detected. Calming down.
 		{
 			this->SetFearLevel( this->GetFearLevel() - this->zFearDecrease);
+			if(this->GetFearLevel() <= 0.0f)
+			{
+				this->SetFearLevel(0.0f);
+			}
 		}
 	}
 		
 	
-	
+	float fear;
+	fear = this->GetFearLevel();
+	fear = 0.0f;
 	
 	//Change state of mind.
-	if(this->GetFearLevel() == 0)
+	if(this->GetFearLevel() == 0.0f)
 	{
 		this->SetMentalState(CALM);
 	}
@@ -448,6 +454,10 @@ bool AIBearBehavior::Update( float dt )
 	else if(this->zPanic == true)
 	{
 		this->SetMentalState(AFRAID);
+	}
+	else
+	{
+		this->SetMentalState(CALM);
 	}
 	
 	//Act based on state of mind.
@@ -531,6 +541,10 @@ bool AIBearBehavior::Update( float dt )
 					{
 						shortestDistance = distance;
 						mostLikelyTarget = this->zTargets[i];
+					}
+					if(distance < 1.0f)
+					{
+						int testing = 0;
 					}
 				}
 			}

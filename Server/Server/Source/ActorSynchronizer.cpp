@@ -4,7 +4,8 @@
 #include <Packets\ServerFramePacket.h>
 #include <Packets\NewActorPacket.h>
 #include "WorldActor.h"
-
+#include "AnimationFileReader.h"
+#include <time.h>
 
 ActorSynchronizer::ActorSynchronizer()
 {
@@ -16,6 +17,51 @@ ActorSynchronizer::~ActorSynchronizer()
 {
 	SAFE_DELETE(this->zFrameData);
 	SAFE_DELETE(this->zActorData);
+}
+
+void ActorSynchronizer::AddAnimation(BioActor* bActor)
+{
+	KeyStates keys = bActor->GetPlayer()->GetKeys();
+	unsigned int state = bActor->GetState();
+	std::string animation = "";
+	if (state == STATE_IDLE)
+	{
+		srand((unsigned int)time(0));
+
+		int idle_Animation = (rand() % 350) + 1;
+		if (idle_Animation > 0 && idle_Animation <= 50)//High Chance
+			animation = IDLE_O1;
+		else if (idle_Animation > 50 && idle_Animation <= 90)//Medium Chance
+			animation = IDLE_O2;
+		else if (idle_Animation > 90 && idle_Animation <= 100)//Low Chance
+			animation = IDLE_O3;
+		else if (idle_Animation > 100 && idle_Animation <= 200)//Very High Chance
+			animation = IDLE_O4;
+		else if (idle_Animation > 200 && idle_Animation <= 300)//Very High Chance
+			animation = IDLE_O5;
+		else if (idle_Animation > 300 && idle_Animation <= 350)//High Chance
+			animation = IDLE_O6;
+
+	}
+	else if (state == STATE_WALKING)
+	{
+		if(keys.GetKeyState(KEY_FORWARD))
+			animation = WALK_FORWARD;
+		else if (keys.GetKeyState(KEY_BACKWARD))
+			animation = WALK_BACKWARD;
+		else if(keys.GetKeyState(KEY_LEFT))
+			animation = WALK_LEFT;
+		else if (keys.GetKeyState(KEY_RIGHT))
+			animation = WALK_RIGHT;
+	}
+	//else if (state == STATE_JOG)
+	//{
+	//}
+	else if (state == STATE_RUNNING)
+		animation = SPRINT;
+
+	if (animation != "")
+		this->zFrameData->newAnimations[bActor->GetID()] = animation;
 }
 
 void ActorSynchronizer::OnEvent( Event* e )
@@ -34,7 +80,10 @@ void ActorSynchronizer::OnEvent( Event* e )
 	}
 	else if (BioActorStateEvent* BASE = dynamic_cast<BioActorStateEvent*>(e))
 	{
-		this->zFrameData->newStates[BASE->zBioActor->GetID()] = dynamic_cast<BioActor*>(BASE->zBioActor)->GetState();
+		BioActor* bActor =  dynamic_cast<BioActor*>(BASE->zBioActor);
+		this->zFrameData->newStates[BASE->zBioActor->GetID()] = bActor->GetState();
+	
+		this->AddAnimation(bActor);
 	}
 	else if (ActorAdded* AD = dynamic_cast<ActorAdded*>(e))
 	{
@@ -49,7 +98,6 @@ void ActorSynchronizer::OnEvent( Event* e )
 		if (BioActor* bActor = dynamic_cast<BioActor*>(AD->zActor))
 			this->zActorData->actorState[AD->zActor->GetID()] = bActor->GetState();
 		
-
 		AD->zActor->AddObserver(this);
 		//zNewActorSet.insert(AD->zActor);
 	}

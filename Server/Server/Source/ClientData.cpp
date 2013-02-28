@@ -1,14 +1,12 @@
 #include "ClientData.h"
 
+#define MAX_STORED_LATENCY 10
+
 ClientData::ClientData(MaloW::ClientChannel* cc)
 {
-	zClient = cc;
-	zPinged = false;
-	zCurrentPingTime = 0.0f;
-	zTotalPingTime = 0.0f;
-	zMaxPingTime = 0.0f;
-	zNrOfPings = 0;
-	zMaxPingTime = 10.0f;
+	this->zClient = cc;
+	this->zLastRecivedPacketTime = 0.0f;
+
 	zReady = false;
 }
 
@@ -17,29 +15,29 @@ ClientData::~ClientData()
 	SAFE_DELETE(this->zClient);
 }
 
-void ClientData::HandlePingMsg()
-{
-	if(zTotalPingTime > zMaxPingTime)
-		ResetPingCounter();
-
-	zTotalPingTime += zCurrentPingTime;
-	zNrOfPings++;
-
-	zPinged = false;
-	zCurrentPingTime = 0.0f;
-}
-
-bool ClientData::CalculateLatency( float& latencyOut )
-{
-	if( zNrOfPings == 0)
-		return false;
-
-	latencyOut = zTotalPingTime / zNrOfPings;
-
-	return true;
-}
-
 void ClientData::Kick()
 {
 	this->zClient->Disconnect();
+}
+
+float ClientData::GetAverageLatency()
+{
+	if( this->zLatency.empty() )
+		return 0.0f;
+
+	float total = 0.0f;
+	for(auto it = zLatency.begin(); it < zLatency.end(); it++)
+	{
+		total += (*it); 
+	}
+
+	return total / zLatency.size();
+}
+
+void ClientData::AddLatency( const float time )
+{
+	if( zLatency.size() == MAX_STORED_LATENCY )
+		this->zLatency.pop_back();
+
+	this->zLatency.push_back(time);
 }
