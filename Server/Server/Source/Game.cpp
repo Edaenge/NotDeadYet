@@ -1979,7 +1979,6 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 			this->HandleBindings(newPrimary, pActor->GetID());
 	}
 	
-
 	msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)itemID);
 	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)eq_slot);
 	cd->Send(msg);

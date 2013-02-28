@@ -5,6 +5,7 @@
 #pragma once
 
 #include "iMesh.h"
+#include "Graphics.h"
 #include <AnimationStates.h>
 #include <string>
 #include <map>

@@ -122,7 +122,7 @@ void MainMenu::Init()
 
 	//IPAddress
 	temp = new TextBox(AdressX + (10.0f / 1024.0f) * dx, AdressY + (34.0f / 768.0f) * windowHeight, 1.0f, "", 
-		(180.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "194.47.150.16", "IPAdress", 1.0f, 16, NR_SPECIAL);
+		(180.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "127.0.0.1", "IPAdress", 1.0f, 16, NR_SPECIAL);
 	zSets[GETIPADRESS].AddElement(temp);
 
 	temp = new SimpleButton(AdressX + (120.0f / 1024.0f) * dx, AdressY + (78.0f / 768.0f) * windowHeight, 1.0f, 

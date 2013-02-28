@@ -359,6 +359,9 @@ void Client::Life()
 				std::stringstream ss;
 				ss << this->zUps <<" CLIENT UPDATES PER SEC";
 				this->zClientUpsText->SetText(ss.str().c_str());
+
+				this->zActorManager->SetUpdatesPerSec(this->zUps);
+
 				this->zUps = 0;
 				counter = 0;
 			}
@@ -1273,6 +1276,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		ss << (int)latency <<" MS";
 		zLatencyText->SetText(ss.str().c_str());
+
+		this->zActorManager->SetLatency((int)latency);
 	}
 	else if (msgArray[0].find(M_SERVER_UPDATES_PER_SEC.c_str()) == 0)
 	{
