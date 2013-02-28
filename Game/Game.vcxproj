@@ -86,6 +86,7 @@
     <ClInclude Include="Include\ClientServerMessages.h" />
     <ClInclude Include="Include\Container.h" />
     <ClInclude Include="Include\Food.h" />
+    <ClInclude Include="Include\GameTimer.h" />
     <ClInclude Include="Include\Gear.h" />
     <ClInclude Include="Include\Inventory.h" />
     <ClInclude Include="Include\Item.h" />
@@ -120,6 +121,7 @@
     <ClCompile Include="Source\Bandage.cpp" />
     <ClCompile Include="Source\Container.cpp" />
     <ClCompile Include="Source\Food.cpp" />
+    <ClCompile Include="Source\GameTimer.cpp" />
     <ClCompile Include="Source\Gear.cpp" />
     <ClCompile Include="Source\Graphics.cpp" />
     <ClCompile Include="Source\Inventory.cpp" />

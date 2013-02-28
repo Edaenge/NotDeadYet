@@ -18,6 +18,7 @@
 #include "InGameMenu.h"
 #include "PickAnimalMenu.h"
 #include <AnimationFileReader.h>
+#include "GameTimer.h"
 
 using namespace MaloW;
 
@@ -62,9 +63,6 @@ private:
 	//			  		//
 	//////////////////////
 
-	/*! Initiates all the Client Data*/
-	void Init();
-
 	/*! Initializes the graphic stuff*/
 	void InitGraphics(const std::string& mapName);
 
@@ -90,7 +88,8 @@ private:
 	bool CheckHumanSpecificMessages(std::vector<std::string> msgArray);
 
 	void AddDisplayText(const std::string& msg, bool bError);
-	void RemoveUnderscore(std::string& msg);
+	void CheckMenus();
+
 	//////////////////////
 	//					//
 	//	   Input		//
@@ -115,12 +114,13 @@ private:
 	//			  		//
 	//////////////////////
 
+	void UpdateGame();
+
 	/*! Updates The Positions*/
-	void UpdateActors();
+	void Update();
 	/*! Updates the camera position to follow the mesh.*/
 	void UpdateMeshRotation();
-	/*! Updates The Clock and returns the DeltaTime*/
-	float Update();
+
 	//Updates the text timer and removes the text when timer reaches 0
 	void UpdateText();
 	/*! Checks Ray Vs Static/Dynamic Objects*/
@@ -130,14 +130,14 @@ private:
 
 	void UpdateCameraOffset(unsigned int state);
 
-	void IgnoreRender(const float& radius, Vector2& center);
+	void IgnoreRender(const float& radius, const Vector2& center);
 
 	//////////////////////
 	//					//
 	//	   Actors		//
 	//			  		//
 	//////////////////////
-	//Temporary Code
+	
 	void UpdateActors(ServerFramePacket* SFP);
 	void AddActor(NewActorPacket* NAP);
 	bool RemoveActor(const unsigned int ID);
@@ -181,11 +181,13 @@ private:
 	unsigned int zID;
 	int	zPort;
 
-	INT64 zStartime;
+	GameTimer* zGameTimer;
+
+	//INT64 zStartime;
 	float zDeltaTime;
 	/*! Total Runtime*/
 	float zFrameTime;
-	float zSecsPerCnt;
+	//float zSecsPerCnt;
 	float zTimeSinceLastPing;
 	/*! Counters*/
 	float zSendUpdateDelayTimer;
@@ -215,6 +217,7 @@ private:
 	iImage* zDamageIndicator;
 	float	zDamageOpacity;
 	
+
 	bool zGameStarted;
 	bool zReady;
 	iImage* zBlackImage;
@@ -231,8 +234,6 @@ private:
 	Vector3 zMeshOffset;
 	std::map<std::string, Vector3> zMeshCameraOffsets;
 	std::map<unsigned int, Vector3> zStateCameraOffset;
-	//Updates per second
-	int zUps;
 	
 	iText* zServerUpsText;
 	iText* zLatencyText;

@@ -22,18 +22,16 @@ Host::Host() :
 	MaloW::Debug("(DEBUG): Server: vld.h included.");
 #endif
 
+	this->zGameTimer = new GameTimer();
+
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
 	this->zMinClients = 0;
-
-	this->zStartime = 0;
-	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
-	this->zTotalTime = 0.0f;
 	this->zTimeOut = 10.0f;
 	this->zPingMessageInterval = 2.5f;
 	this->zTimeSinceLastPing = 0.0f;
-
+	this->zSendUpdateDelayTimer = 0.0f;
 	this->zGameStarted = false;
 }
 
@@ -48,6 +46,7 @@ Host::~Host()
 	this->WaitUntillDone();
 
 	SAFE_DELETE(this->zGame);
+	SAFE_DELETE(this->zGameTimer);
 
 	SAFE_DELETE(this->zSynchronizer);
 
@@ -91,74 +90,72 @@ void Host::Life()
 
 	this->zServerListener->Start();
 
-	INT64 frequency;
-	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
-	
-	this->zSecsPerCnt = 1.0f / (float)(frequency);
+	//INT64 frequency;
+	//QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
+	//
+	//this->zSecsPerCnt = 1.0f / (float)(frequency);
+	//QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
 
-	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
-
-	float waitTimer = 0.0f;
-	float counter = 0.0f;
-	int updatesPerSec = 0;
-
+	this->zGameTimer->Init();
 	while(this->stayAlive)
 	{
-		Update();
-		ReadMessages();
+		this->zDeltaTime = this->zGameTimer->Frame();
+
+		this->UpdateGame();
+		//Update();
 		
-		//if (!this->zGameStarted)
-		//{
-		//	//Check if All players Are Ready
-		//	unsigned int nrOfReadyPlayers = 0;
-		//	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
-		//	{
-		//		if (it->second->GetReady())
-		//		{
-		//			nrOfReadyPlayers++;
-		//		}
-		//	}
-		//	if (nrOfReadyPlayers == this->zClients.size())
-		//	{
-		//		this->zGameStarted = true;
-		//	}
-		//}
-		//else
-		//{
-			if ( !zGame )
-			{
-
-			}
-			else if(zGame->Update(this->zDeltaTime))
-			{
-				this->PingClients();
-
-				waitTimer += this->zDeltaTime;
-				counter += this->zDeltaTime;
-
-				if (waitTimer >= UPDATE_DELAY)
-				{
-					SynchronizeAll();
-
-					waitTimer = 0.0f;
-				}
-				if (counter >= 1.0f)
-				{
-					updatesPerSec = (int)(1.0f / this->zDeltaTime);
-
-					this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)updatesPerSec));
-					counter = 0.0f;
-				}
-			}
-			else
-			{
-				Restart(zGameMode, zMapName);		
-			}
-		//}
 
 		//Sleep(5);
 	}
 }
+
+void Host::UpdateGame()
+{
+	ReadMessages();
+
+	//if (!this->zGameStarted)
+	//{
+	//	//Check if All players Are Ready
+	//	unsigned int nrOfReadyPlayers = 0;
+	//	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
+	//	{
+	//		if (it->second->GetReady())
+	//		{
+	//			nrOfReadyPlayers++;
+	//		}
+	//	}
+	//	if (nrOfReadyPlayers == this->zClients.size())
+	//	{
+	//		this->zGameStarted = true;
+	//	}
+	//}
+	//else
+	//{
+	if ( !zGame )
+	{
+
+	}
+	else if(zGame->Update(this->zDeltaTime))
+	{
+		this->PingClients();
+
+		zSendUpdateDelayTimer += this->zDeltaTime;
+
+		if (zSendUpdateDelayTimer >= UPDATE_DELAY)
+		{
+			SynchronizeAll();
+
+			zSendUpdateDelayTimer = 0.0f;
+			this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()));
+		}
+	}
+	else
+	{
+		Restart(zGameMode, zMapName);		
+	}
+	//}
+}
+
 
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients,  const std::string& gameModeName, const std::string& mapName)
 {
@@ -249,7 +246,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		return;
 
 	//Sets last received packet time from this client.
-	cd->SetLastPacketTime(zTotalTime);
+	cd->SetLastPacketTime(this->zGameTimer->GetRunTime());
 
 	//Handles updates from client.
 	if(msgArray[0].find(M_CLIENT_DATA.c_str()) == 0)
@@ -281,12 +278,12 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	{
 		float latency = this->zMessageConverter.ConvertStringToFloat(M_PING, msgArray[0]);
 		
-		latency = (this->zTotalTime - latency) * 0.5f;
-
-		latency *= 1000.0f;
+		latency = (this->zGameTimer->GetRunTime() - latency) * 0.5f;
 
 		cd->AddLatency(latency);
 		latency = cd->GetAverageLatency();
+
+		latency *= 1000.0f;
 
 		cd->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_CLIENT_LATENCY, latency));
 	}
@@ -482,27 +479,27 @@ void Host::PingClients()
 	std::string message;
 	for(auto it = zClients.begin(); it != zClients.end(); it++)
 	{
-		(*it).first->Send( zMessageConverter.Convert(MESSAGE_TYPE_PING, zTotalTime) );
+		(*it).first->Send( zMessageConverter.Convert(MESSAGE_TYPE_PING, this->zGameTimer->GetRunTime()) );
 	}
 }
 
 float Host::Update()
 {
-	//Update Timer
-	INT64 currentTime;
-	float timeDifference;
+	////Update Timer
+	//INT64 currentTime;
+	//float timeDifference;
 
-	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
+	//QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
 
-	timeDifference = (float)(currentTime - this->zStartime);
+	//timeDifference = (float)(currentTime - this->zStartime);
 
-	this->zDeltaTime = timeDifference * this->zSecsPerCnt;
+	//this->zDeltaTime = timeDifference * this->zSecsPerCnt;
 
-	this->zStartime = currentTime;
+	//this->zStartime = currentTime;
 
-	this->zTotalTime += this->zDeltaTime;
+	
 
-	return this->zDeltaTime;
+	return 0.0f;
 }
 
 bool Host::IsAlive() const

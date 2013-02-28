@@ -72,6 +72,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Game\Source\GameTimer.cpp" />
     <ClCompile Include="Include\NetworkChannel.cpp" />
     <ClCompile Include="Source\ClientChannel.cpp" />
     <ClCompile Include="Source\FileReader.cpp" />
@@ -80,6 +81,7 @@
     <ClCompile Include="Source\ServerListener.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Game\Include\GameTimer.h" />
     <ClInclude Include="Include\Array.h" />
     <ClInclude Include="Include\ClientChannel.h" />
     <ClInclude Include="Include\ClientConnectedEvent.h" />
