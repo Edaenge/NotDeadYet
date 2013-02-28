@@ -7,11 +7,59 @@
 
 #include "GuiElement.h"
 
+struct Gui_Item_Data
+{
+	Gui_Item_Data()
+	{
+		this->zID = 0;
+
+		this->zType = 0;
+		this->zSubType = 0;
+
+		this->zWeight = 0;
+		this->zStacks = 0;
+		this->zCanStack = false;
+
+		this->zName = "Unknown";
+		this->zFilePath = "Unknown";
+		this->zDescription = "Unknown";
+	}
+	Gui_Item_Data(const unsigned int ID, const int Type, const int subType, const int weight, 
+		const int stack, const bool canStack, const std::string& name,const std::string& filePath, 
+		const std::string& description)
+	{
+		this->zID = ID;
+
+		this->zType = Type;
+		this->zSubType = subType;
+
+		this->zWeight = weight;
+		this->zStacks = stack;
+		this->zCanStack = canStack;
+
+		this->zName = name;
+		this->zFilePath = filePath;
+		this->zDescription = description;
+	}
+	unsigned int zID;
+
+	int zType;
+	int zSubType;
+
+	int zWeight;
+	int zStacks;
+	bool zCanStack;
+
+	std::string zName;
+	std::string zFilePath;
+	std::string zDescription;
+};
+
 class InventorySlotGui : public GuiElement
 {
 public:
 	InventorySlotGui();
-	InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID, int Type, int SubType, int Stacks);
+	InventorySlotGui(float x, float y, float width, float height, Gui_Item_Data gid);
 	virtual ~InventorySlotGui();
 
 	virtual bool AddToRenderer(GraphicsEngine* ge);
@@ -26,18 +74,25 @@ public:
 	void ShowGui();
 	void HideGui();
 
-	int GetID(){ return this->zID; }
+	inline Gui_Item_Data GetGid(){ return this->zGid; }
 
-	int GetType(){ return this->zType; }
-	int GetSubType(){return this->zSubType;}
-	int GetStacks(){ return this->zStacks; }
+	inline bool GetBlocked(){ return this->zBlocked; }
+	inline void SetBlocked(bool value){ this->zBlocked = value; }
 
-	void SetStacks(int stacks) { this->zStacks = stacks; if(this->zStackText) this->zStackText->SetText(MaloW::convertNrToString((float)this->zStacks).c_str()); }
+	inline bool GetEquipped(){ return this->zEquipped; }
+	inline void SetEquipped(bool value){ this->zEquipped = value; }
+
+	void SetStacks(int stacks) { this->zGid.zStacks = stacks; if(this->zStackText) this->zStackText->SetText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str()); }
+
+	void AddItemToSlot(Gui_Item_Data gid, bool invOpen, GraphicsEngine* ge);
+	void RemoveItemFromSlot(bool invOpen, GraphicsEngine* ge);
 private:
 	iImage* zSlotImage;
+
 	iText* zStackText;
-	int zID;
-	int zType;
-	int zStacks;
-	int zSubType;
+
+	Gui_Item_Data zGid;
+
+	bool zBlocked;
+	bool zEquipped;
 };

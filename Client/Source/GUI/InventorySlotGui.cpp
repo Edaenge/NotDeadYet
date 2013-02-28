@@ -6,15 +6,25 @@ InventorySlotGui::InventorySlotGui()
 	this->zSlotImage = NULL;
 }
 
-InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, std::string textureName, int ID, int Type, int SubType, int Stacks)
-	: GuiElement(x, y, width, height, textureName)
+InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, Gui_Item_Data gid)
+	: GuiElement(x, y, width, height, "Media/InGameUI/SlotBG.png")
 {
 	this->zSlotImage = NULL;
+
 	this->zStackText = NULL;
-	this->zID = ID;
-	this->zType = Type;
-	this->zStacks = Stacks;
-	this->zSubType = SubType;
+
+	this->zGid = gid;
+
+	if(this->zGid.zFilePath == "Unknown")
+	{
+		this->zBlocked = false;
+	}
+	else
+	{
+		this->zBlocked = true;
+	}
+
+	this->zEquipped = false;
 }
 
 InventorySlotGui::~InventorySlotGui()
@@ -26,9 +36,14 @@ bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)
 {
 	if (ge)
 	{
-		GuiElement::AddToRenderer(ge);
-		if(this->zStacks > 0 && !this->zStackText)
-			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/1");
+		GuiElement::AddToRenderer(ge); 
+
+		if(this->zGid.zCanStack && !this->zStackText)
+			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/1");
+
+		if(!this->zSlotImage && this->zGid.zFilePath != "Unknown")
+			this->zSlotImage = ge->CreateImage(Vector2(this->zX, this->zY), this->GetDimension(), this->zGid.zFilePath.c_str());
+
 		this->ShowGui();
 		return true;
 	}
@@ -37,19 +52,24 @@ bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)
 
 bool InventorySlotGui::RemoveFromRenderer(GraphicsEngine* ge)
 {
+	if(this->zStackText)
+	{
+		ge->DeleteText(this->zStackText);
+		this->zStackText = 0;
+	}
 	if (this->zGuiImage)
 	{
-		if(this->zStackText)
-		{
-			ge->DeleteText(this->zStackText);
-			this->zStackText = 0;
-		}
+		
 		ge->DeleteImage(this->zGuiImage);
 		this->zGuiImage = 0;
 		this->zHidden = true;
-		return true;
 	}
-	return false;
+	if(this->zSlotImage)
+	{
+		ge->DeleteImage(this->zSlotImage);
+		this->zSlotImage = 0;
+	}
+	return true;
 }
 
 bool InventorySlotGui::CheckCollision(float mouseX, float mouseY)
@@ -112,4 +132,37 @@ void InventorySlotGui::SetPosition( Vector2 pos )
 void InventorySlotGui::SetDimension( Vector2 dim )
 {
 	GuiElement::SetDimension(dim);
+}
+
+void InventorySlotGui::AddItemToSlot( Gui_Item_Data gid, bool invOpen, GraphicsEngine* ge )
+{
+	this->zGid = gid;
+	if(invOpen)
+	{
+		if(this->zGid.zCanStack && !this->zStackText)
+			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/1");
+
+		if(!this->zSlotImage && this->zGid.zFilePath != "Unknown")
+			this->zSlotImage = ge->CreateImage(Vector2(this->zX, this->zY), this->GetDimension(), this->zGid.zFilePath.c_str());
+	}
+	this->zBlocked = true;
+}
+
+void InventorySlotGui::RemoveItemFromSlot( bool invOpen, GraphicsEngine* ge )
+{
+	this->zGid = Gui_Item_Data();
+	if(invOpen)
+	{
+		if(this->zStackText)
+		{
+			ge->DeleteText(this->zStackText);
+			this->zStackText = 0;
+		}
+		if(this->zSlotImage)
+		{
+			ge->DeleteImage(this->zSlotImage);
+			this->zSlotImage = 0;
+		}
+	}
+	this->zBlocked = false;
 }

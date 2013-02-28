@@ -27,14 +27,21 @@ GuiElement::GuiElement(float x, float y, float width, float height, std::string 
 
 GuiElement::~GuiElement()
 {
-	if ( this->zGuiImage ) throw("Image leaked!");
+	if ( this->zGuiImage && GetGraphics()->IsRunning()) 
+	{
+		GetGraphics()->DeleteImage(this->zGuiImage);
+		this->zGuiImage = NULL;
+	}
+	else if(this->zGuiImage && !GetGraphics()->IsRunning())
+		throw("Image leaked!");
 }
 
 bool GuiElement::AddToRenderer(GraphicsEngine* ge)
 {
 	if (ge)
 	{
-		this->zGuiImage = ge->CreateImage(Vector2(this->zX , this->zY), this->GetDimension(), this->zTextureName.c_str());
+		if(!this->zGuiImage && this->zTextureName != "")
+			this->zGuiImage = ge->CreateImage(Vector2(this->zX , this->zY), this->GetDimension(), this->zTextureName.c_str());
 		this->ShowGui();
 		return true;
 	}
