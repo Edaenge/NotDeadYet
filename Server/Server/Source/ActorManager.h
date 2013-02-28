@@ -5,6 +5,7 @@
 class ActorSynchronizer;
 class Actor;
 class Vector2;
+class ActorAdded;
 
 class ActorManager : public Observed, public Observer
 {
@@ -15,7 +16,10 @@ public:
 	ActorManager( ActorSynchronizer* syncher );
 	virtual ~ActorManager();
 	void AddActor( Actor* actor );
+	/*! Removes The actor, physics object will NOT be freed.*/
 	void RemoveActor( Actor* actor );
+	/*! Removes all actors, physics objects WILL be freed.*/
+	void ClearAll();
 	std::set<Actor*>& GetActors() {return this->zActors;}
 	Actor* GetActor(const unsigned int ID) const;
 	/*! Adds all Actors within the circle to out. Returns total amount of actors found*/
@@ -26,4 +30,6 @@ public:
 	Actor* CheckCollisions(Actor* actor, float& range);
 	/*! Checks if this actor collides with BioActors/WorldActors in the game using distance calculations.*/
 	Actor* CheckCollisionsByDistance(Actor* actor, float& range);
+	/**/
+	virtual void OnEvent( Event* e);
 };

@@ -13,32 +13,35 @@
 #include "PlayerDeerBehavior.h"
 #include "PlayerWolfBehavior.h"
 #include "PlayerBearBehavior.h"
+#include "SupplyDrop.h"
+#include "ItemLookup.h"
+#include "World/world.h"
 
-GameModeFFA::GameModeFFA(Game* game) : GameMode(game)
+GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
 	srand((unsigned int)time(0));
+	this->zSupplyDrop = new SupplyDrop( game->GetActorManager(), game->GetWorld() );
+	this->zGameStarted = false;
+	this->zGameEnd = false;
 	//zKillLimit = killLimit;
 }
 
 GameModeFFA::~GameModeFFA()
 {
 	this->zGame->RemoveObserver(this);
+
+	delete this->zSupplyDrop;
+	this->zSupplyDrop = NULL;
 }
 
 bool GameModeFFA::Update( float dt )
 {
-//	for(auto it = zPlayers.begin(); it != zPlayers.end(); it++)
-//	{
-//		if(zScoreBoard[(*it)] >= zKillLimit)
-//		{
-//			for(auto i = zPlayers.begin(); i != zPlayers.end(); i++)
-//			{
-//				MaloW::Debug("Kills: " + MaloW::convertNrToString((float)zScoreBoard[(*i)]));
-//			}
-//			return false;
-//		}
-//	}
-	return true;
+	/*
+	if( !this->zGameStarted )
+		return true;
+		*/
+
+	return false;
 }
 
 void GameModeFFA::OnEvent( Event* e )
@@ -143,13 +146,33 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if( PlayerAddEvent* PAE = dynamic_cast<PlayerAddEvent*>(e) )
 	{
-		//this->zScoreBoard[PAE->player] = 0;
 		zPlayers.insert(PAE->player);
 	}
 	else if( PlayerRemoveEvent* PRE = dynamic_cast<PlayerRemoveEvent*>(e) )
 	{
-		//this->zScoreBoard.erase(PRE->player);
 		this->zPlayers.erase(PRE->player);
+	}
+	else if( PlayerReadyEvent* PLRE = dynamic_cast<PlayerReadyEvent*>(e) )
+	{
+		return;
+
+		if(!zGameStarted)
+		{
+			PLRE->player->SetReady(true);
+			//Check how many players are ready
+			int counter = 0;
+			for( auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+			{
+				if( (*it)->IsReady() )
+					counter++;
+			}
+
+			if( counter >= this->zPlayers.size() )
+			{
+				this->zGame->RestartGame();
+				StartGameMode();
+			}
+		}
 	}
 }
 
@@ -379,4 +402,36 @@ void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
 
 	//Add the actor to the list
 	aManager->AddActor(gActor);
+}
+
+bool GameModeFFA::StartGameMode()
+{
+	//Create Game 
+
+	if( zGameStarted )
+		return false;
+
+	this->zGameStarted = true;
+	
+	//Test
+	//ITEMS
+	std::set<Item*> items;
+
+	const Food*			temp_food		= GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
+	const RangedWeapon* temp_R_weapon	= GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
+	const Projectile*	temp_Arrow		= GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
+	const MeleeWeapon*	temp_M_weapon	= GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE);
+
+	Food* food = new Food(*temp_food);
+	RangedWeapon* ranged = new RangedWeapon(*temp_R_weapon);
+	Projectile* arrow = new Projectile(*temp_Arrow);
+	MeleeWeapon* melee = new MeleeWeapon(*temp_M_weapon);
+
+	items.insert(food);
+	items.insert(ranged);
+	items.insert(arrow);
+	items.insert(melee);
+
+	this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items);
+	
 }
