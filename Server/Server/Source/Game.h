@@ -45,6 +45,7 @@ class Game : public Observer, public Observed
 	float zInitalFogEnclosement;
 	float zIncrementFogEnclosement;
 	float zCurrentFogEnclosement;
+	int zPlayersAlive;
 
 public:
 	Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
@@ -69,7 +70,7 @@ public:
 	World* GetWorld() {return this->zWorld;}
 	
 	void SendToAll(std::string msg);
-
+	void ModifyLivingPlayers(const int value);
 private:
 	//Test function, spawns items/Animals
 	void SpawnItemsDebug();

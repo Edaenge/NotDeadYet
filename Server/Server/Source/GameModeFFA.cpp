@@ -85,6 +85,8 @@ void GameModeFFA::OnEvent( Event* e )
 				}
 
 				this->OnPlayerHumanDeath(pActor);
+
+				this->zGame->ModifyLivingPlayers(1);
 			}
 			else
 			{

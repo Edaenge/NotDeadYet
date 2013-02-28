@@ -42,6 +42,12 @@ static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zPhysicsEngine(phys)
 {
+	//Fog Enclosement
+	this->zPlayersAlive = 0;
+	this->zIncrementFogEnclosement = 200.0f;
+	this->zInitalFogEnclosement = 1000.0f;
+
+
 	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
@@ -100,12 +106,6 @@ Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, co
 
 	this->zTotalSunRadiansShift = 0.0f;
 	this->zSunRadiansShiftPerUpdate = TOTAL_SUN_DEGREE_SHIFT / (SUN_UPDATE_DELAY * TOTAL_SUN_UPDATE_TIME);
-
-	//Fog Enclosement
-	this->zIncrementFogEnclosement = 100.0f;
-	this->zInitalFogEnclosement = 1000.0f;
-
-	this->zCurrentFogEnclosement = this->zInitalFogEnclosement + ( this->zIncrementFogEnclosement * this->zPlayers.size() );
 }
 
 Game::~Game()
@@ -924,10 +924,24 @@ void Game::OnEvent( Event* e )
 		}
 		UDE->clientData->Send(*NAP);
 		SAFE_DELETE(NAP);
+
+		this->zPlayersAlive++;
+		this->zCurrentFogEnclosement = this->zInitalFogEnclosement + ( this->zIncrementFogEnclosement * this->zPlayersAlive);
+
+		message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
+		this->SendToAll(message);
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
+		Vector2 size = WLE->world->GetWorldSize();
 
+		float radius = (size.x + size.y) * 0.5f;
+
+		this->zInitalFogEnclosement = radius * 0.10f;
+
+		this->zIncrementFogEnclosement = radius * 0.03125f;
+
+		this->zCurrentFogEnclosement = this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive);
 	}
 	else if ( PlayerKillEvent* PKE = dynamic_cast<PlayerKillEvent*>(e) )
 	{
@@ -2032,4 +2046,15 @@ void Game::SendToAll( std::string msg)
 	{
 		it->first->Send(msg);
 	}
+}
+
+void Game::ModifyLivingPlayers( const int value )
+{
+	this->zPlayersAlive += 1;
+
+	this->zCurrentFogEnclosement = this->zInitalFogEnclosement + ( this->zIncrementFogEnclosement * this->zPlayersAlive);
+
+	NetworkMessageConverter NMC;
+	std::string message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
+	this->SendToAll(message);
 }
