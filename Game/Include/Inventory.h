@@ -28,7 +28,7 @@ enum EQUIPMENT_SLOT
 };
 
 /*! Class That keeps track of the inventory data*/
-class Inventory : public Observed
+class Inventory
 {
 public:
 	Inventory();

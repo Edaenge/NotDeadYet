@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "time.h"
+#include "Physics.h"
 #include "GameModeFFA.h"
 #include "BioActor.h"
 #include "DeerActor.h"
@@ -154,7 +155,6 @@ void GameModeFFA::OnEvent( Event* e )
 
 void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 {
-
 	Player* player = gActor->GetPlayer();
 	ClientData* cd = player->GetClientData();
 
@@ -272,22 +272,6 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 		//Bear
 		else if (animalType == 2)
 		{
-			/*Player* player = gActor->GetPlayer();
-			gActor->SetPlayer(NULL);
-
-			PlayerBearBehavior* playerBearBehavior = new PlayerBearBehavior(dActor, this->zGame->GetWorld(), player);
-			dActor->SetPlayer(player);
-
-			this->zGame->SetPlayerBehavior(player, playerBearBehavior);
-
-			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)dActor->GetID());
-			msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
-
-			cd->Send(msg);
-
-			this->zGame->GetActorManager()->RemoveActor(gActor);
-			found = true;*/
-
 			closestAnimal->SetEnergy(gActor->GetEnergy());
 
 			animalBehavior = new PlayerBearBehavior(closestAnimal, this->zGame->GetWorld(), player);
@@ -305,14 +289,10 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 			cd->Send(msg);
 
 			this->zGame->GetActorManager()->RemoveActor(gActor);
-
-
 		}
 	}
 	else
-	{
-		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_animal_of_the_type_is_close_by"));
-	}
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No animal of the type is close by"));
 
 }
 
@@ -325,17 +305,25 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 
+	PhysicsObject* pObject = pActor->GetPhysicsObject();
+	if (pObject)
+	{
+		GetPhysics()->DeletePhysicsObject(pObject);
+		pObject = NULL;
+	}
+
 	ClientData* cd = player->GetClientData();
 
 	//Create Spirit
 	Vector3 position = pActor->GetPosition();
 
 	Vector3 direction = pActor->GetDir();
-
+	float energy = pActor->GetEnergy();
 	GhostActor* gActor = new GhostActor(player);
 	gActor->SetPosition(position);
 	gActor->SetDir(direction);
-	
+	gActor->SetEnergy(energy + 25.0f);
+
 	//Create Ghost behavior
 	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);
 

@@ -22,10 +22,6 @@ ClientActorManager::~ClientActorManager()
 	{
 		if(it->second)
 		{
-			iMesh* mesh = it->second->GetMesh();
-			if (mesh)
-				ge->DeleteMesh(mesh);
-
 			delete it->second;
 			it->second = NULL;
 		}

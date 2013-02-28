@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "time.h"
+#include "Physics.h"
 #include "GameModeTest.h"
 #include "BioActor.h"
 #include "PlayerActor.h"
@@ -129,6 +130,12 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 
+	PhysicsObject* pObject = pActor->GetPhysicsObject();
+	if (pObject)
+	{
+		GetPhysics()->DeletePhysicsObject(pObject);
+		pObject = NULL;
+	}
 	ClientData* cd = player->GetClientData();
 
 	//Create new Player

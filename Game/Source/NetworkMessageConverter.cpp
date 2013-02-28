@@ -167,6 +167,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_MESH_BINDING:
 		ss << M_MESH_BINDING;
 		break;
+	case MESSAGE_TYPE_MESH_UNBIND:
+		ss << M_MESH_UNBIND;
+		break;
 	case MESSAGE_TYPE_ITEM_FINISHED:
 		ss << M_ITEM_FINISHED;
 		break;
@@ -311,9 +314,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 		break;
 	case MESSAGE_TYPE_ACTOR_KILL:
 		ss << M_ACTOR_KILL;
-		break;
-	case MESSAGE_TYPE_MESH_UNBIND:
-		ss << M_MESH_UNBIND;
 		break;
 	case MESSAGE_TYPE_LEAVE_ANIMAL:
 		ss << M_LEAVE_ANIMAL;

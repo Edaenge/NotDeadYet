@@ -26,12 +26,12 @@ float ClientData::GetAverageLatency()
 		return 0.0f;
 
 	float total = 0.0f;
-	for(auto it = zLatency.begin(); it < zLatency.end(); it++)
+	for(auto it = this->zLatency.begin(); it < this->zLatency.end(); it++)
 	{
 		total += (*it); 
 	}
 
-	return total / zLatency.size();
+	return total / this->zLatency.size();
 }
 
 void ClientData::AddLatency( const float time )
