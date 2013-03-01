@@ -58,6 +58,7 @@ static const std::string NAME					=	"NAME";
 static const std::string IS_RANGED				=	"IS_RANGED";
 static const std::string STACKS					=	"STACKS";
 static const std::string STACKING				=   "STACKING";
+static const std::string SLOTS					=	"SLOTS";
 
 static const std::string HUNGER					=	"HUNGER";
 static const std::string DAMAGE					=	"DAMAGE";
@@ -67,6 +68,8 @@ static const std::string CURRENT_USE			=	"CURRENT_USE";
 static const std::string SPEED					=	"SPEED";
 static const std::string CRAFTING_TYPE			=	"CRAFTING_TYPE";
 static const std::string STACKS_REQUIREMENT		=	"STACKS_REQUIREMENT";
+
+
 ItemLookup::ItemLookup()
 {
 	this->ReadFromFile();
@@ -337,6 +340,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, MeleeWeapon
 	{
 		wp->SetStackSize(MaloW::convertStringToInt(key));
 	}
+	else if(command == SLOTS)
+	{
+		wp->SetSlotSize(MaloW::convertStringToInt(key));
+	}
 	else if(command == STACKING)
 	{
 		if(MaloW::convertStringToInt(key))
@@ -399,6 +406,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, RangedWeapo
 	{
 		wp->SetStackSize(MaloW::convertStringToInt(key));
 	}
+	else if(command == SLOTS)
+	{
+		wp->SetSlotSize(MaloW::convertStringToInt(key));
+	}
 	else if(command == STACKING)
 	{
 		if(MaloW::convertStringToInt(key))
@@ -460,6 +471,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Food*& fd)
 	{
 		fd->SetStackSize(MaloW::convertStringToInt(key));
 	}
+	else if(command == SLOTS)
+	{
+		fd->SetSlotSize(MaloW::convertStringToInt(key));
+	}
 	else if(command == STACKING)
 	{
 		if(MaloW::convertStringToInt(key))
@@ -515,6 +530,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Container*&
 	else if(command == STACKS)
 	{
 		ct->SetStackSize(MaloW::convertStringToInt(key));
+	}
+	else if(command == SLOTS)
+	{
+		ct->SetSlotSize(MaloW::convertStringToInt(key));
 	}
 	else if(command == STACKING)
 	{
@@ -576,6 +595,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Material*& 
 	{
 		ma->SetStackSize(MaloW::convertStringToInt(key));
 	}
+	else if(command == SLOTS)
+	{
+		ma->SetSlotSize(MaloW::convertStringToInt(key));
+	}
 	else if(command == STACKING)
 	{
 		if(MaloW::convertStringToInt(key))
@@ -636,6 +659,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Projectile*
 	{
 		pa->SetStackSize(MaloW::convertStringToInt(key));
 	}
+	else if(command == SLOTS)
+	{
+		pa->SetSlotSize(MaloW::convertStringToInt(key));
+	}
 	else if(command == STACKING)
 	{
 		if(MaloW::convertStringToInt(key))
@@ -695,6 +722,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Bandage*& b
 	else if(command == STACKS)
 	{
 		ba->SetStackSize(MaloW::convertStringToInt(key));
+	}
+	else if(command == SLOTS)
+	{
+		ba->SetSlotSize(MaloW::convertStringToInt(key));
 	}
 	else if(command == STACKING)
 	{

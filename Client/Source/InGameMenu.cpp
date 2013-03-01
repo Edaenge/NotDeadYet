@@ -81,7 +81,7 @@ int InGameMenu::Run()
 					zSets[i].Resize((float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight, width, height);
 					i++;
 				}
-				GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
+				zEng->ResizeGraphicsEngine((int)width, (int)height);
 			}
 			else if(maximized)
 			{
@@ -107,7 +107,7 @@ int InGameMenu::Run()
 					zSets[i].Resize(oldWidth, oldHeight, width, height);
 					i++;
 				}
-				GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
+				zEng->ResizeGraphicsEngine((int)width, (int)height);
 			}
 			// Getting shadow
 			std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");
@@ -245,7 +245,7 @@ void InGameMenu::Init()
 	//Graphics
 	//DropDown list
 	temp = new DropDownList(offSet + (240.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/DropDownBG.png", 
-		(170.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, "ResolutionMenu");
+		(170.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, "Resolutions");
 	DropDownList* dropdownlist = (DropDownList*)temp;
 
 	this->AddResolutionsToDropBox(dropdownlist);
@@ -271,49 +271,50 @@ void InGameMenu::Init()
 	zSets[IGOPTIONS].AddElement(temp);
 
 	//TextBox View Distance
-	temp = new TextBox(offSet + (278.0f / 1024.0f) * dx, (470.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (278.0f / 1024.0f) * dx, (470.0f / 768.0f) * windowHeight, 2.0f, "Media/Menu/Options/TextBox4032.png", 
 		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString((float)GetGraphics()->GetEngineParameters().FarClip), 
-		"ViewDistance", 1.0f, 3, NR, 0, 9);
+		"ViewDistance", 2.0f, 3, NR, 0, 9);
 	zSets[IGOPTIONS].AddElement(temp);
 
 	//TextBox Shadow
-	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (412.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (412.0f / 768.0f) * windowHeight, 2.0f, "Media/Menu/Options/TextBox4032.png", 
 		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString((float)GetGraphics()->GetEngineParameters().ShadowMapSettings), 
-		"ShadowQuality", 1.0f, 1, NR, 0, 9);
+		"ShadowQuality", 2.0f, 1, NR, 0, 9);
 	zSets[IGOPTIONS].AddElement(temp);
 
 	//Sound tech
 	//Master volume
-	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 2.0f, "Media/Menu/Options/TextBox4032.png", 
 		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
-		"MasterVolume", 1.0f, 2, NR);
+		"MasterVolume", 2.0f, 2, NR);
 	zSets[IGOPTIONS].AddElement(temp);
 
 	//Music Volume
-	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 2.0f, "Media/Menu/Options/TextBox4032.png", 
 		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
-		"MusicVolume", 1.0f, 2, NR);
+		"MusicVolume", 2.0f, 2, NR);
 	zSets[IGOPTIONS].AddElement(temp);
 
 	//Normal Volume
-	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 2.0f, "Media/Menu/Options/TextBox4032.png", 
 		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
-		"NormalVolume", 1.0f, 2, NR);
+		"NormalVolume", 2.0f, 2, NR);
 	zSets[IGOPTIONS].AddElement(temp);
 
 
 	//Buttons IGOPTIONS menu
 	//Back
-	temp = new SimpleButton(offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/FindServer/Back.png", 
-		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ChangeSetEvent(INGAMEMAIN), "", "", 
+	temp = new SimpleButton(offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Back.png", 
+		(71.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ChangeSetEvent(INGAMEMAIN), "Media/Menu/BackPress.png", "Media/Menu/BackOver.png", 
 		offSet + (76.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
-		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
+		(71.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
 	zSets[IGOPTIONS].AddElement(temp);
 
-	temp = new SimpleButton(offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Apply.png", 
-		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ApplyOptionsAndChangeSetEvent(INGAMEMAIN), "", "", 
-		offSet + (143.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
-		(65.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
+	//Apply
+	temp = new SimpleButton(offSet + (148.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Apply.png", 
+		(71.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight, new ApplyOptionsAndChangeSetEvent(INGAMEMAIN), "Media/Menu/ApplyPress.png", "Media/Menu/ApplyOver.png", 
+		offSet + (148.0f / 1024.0f) * dx, (638.0f / 768.0f) * windowHeight,
+		(71.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
 	zSets[IGOPTIONS].AddElement(temp);
 }
 

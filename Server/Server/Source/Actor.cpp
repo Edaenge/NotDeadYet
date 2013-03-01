@@ -87,8 +87,18 @@ void Actor::SetPhysicsObject( PhysicsObject* object )
 const std::string& Actor::GetModel() const
 {
 	if ( zPhysicsObject )
-		return zPhysicsObject->GetModel();
+	{
+		std::string temp = zPhysicsObject->GetModel();
+		if (temp.substr(temp.length() - 4) == ".fbx")
+			temp = "Media/Models/temp_guy.obj";
 
-	static const std::string none = "Media/Models/Ball.obj";
-	return none;
+		return temp;
+	}
+	else
+	{
+		static const std::string none = "Media/Models/Ball.obj";
+		return none;
+	}
+	
+	
 }
