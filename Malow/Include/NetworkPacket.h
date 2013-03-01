@@ -11,14 +11,17 @@ namespace MaloW
 	private:
 		std::string zMessage;
 		MaloW::NetworkChannel* zChannel;
+		double zTimeTaken;
 
 	public:
-		NetworkPacket(const std::string& message, MaloW::NetworkChannel* channel) : 
+		NetworkPacket(const std::string& message, MaloW::NetworkChannel* channel, const double& timeTaken) : 
 			zMessage(message),
-			zChannel(channel)
+			zChannel(channel),
+			zTimeTaken(timeTaken)
 		{
 		}
 
+		const double& GetTimeTaken() const { zTimeTaken; }
 		const std::string& GetMessage() const { return zMessage; }
 		MaloW::NetworkChannel* GetChannel() const { return zChannel; }
 	};

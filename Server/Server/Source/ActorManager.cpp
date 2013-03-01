@@ -38,11 +38,14 @@ void ActorManager::AddActor( Actor* actor )
 
 void ActorManager::RemoveActor( Actor* actor )
 {
+	std::set<Actor*>::iterator ret = zActors.end();
+
 	if(!actor)
 		return;
 
+	this->zActors.find(actor);
 	this->zActors.erase(actor);
-
+	
 	ActorRemoved e;
 	e.zActor = actor;
 	NotifyObservers(&e);
@@ -211,4 +214,31 @@ unsigned int ActorManager::GetActorsInCircle( const Vector2& center, float radiu
 	}
 
 	return counter;
+}
+
+void ActorManager::OnEvent( Event* e )
+{
+	if( ActorAdded* AA = dynamic_cast<ActorAdded*>(e) )
+	{
+		AddActor(AA->zActor);
+	}
+
+}
+
+void ActorManager::ClearAll()
+{
+	PhysicsEngine* physics = GetPhysics();
+	auto it = zActors.begin();
+	while ( it != zActors.end())
+	{
+		PhysicsObject* pObj = (*it)->GetPhysicsObject();
+
+		if(pObj)
+			physics->DeletePhysicsObject(pObj);
+		
+		Actor* actor = (*it);
+		it = zActors.erase(it);
+		SAFE_DELETE(actor);
+	}
+	zActors.clear();
 }

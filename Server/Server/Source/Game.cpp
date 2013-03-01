@@ -42,11 +42,9 @@ static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 //Expected playtime
 static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
 
-Game::Game(PhysicsEngine* phys, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
-	zPhysicsEngine(phys)
-{
-	this->zCameraOffset["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
-	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
+Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
+	zSyncher(syncher){
+	this->zPhysicsEngine = GetPhysics();	this->zCameraOffset["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
 	
@@ -177,12 +175,30 @@ void Game::SpawnAnimalsDebug()
 	bActor->SetPosition(position2);
 	bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
 
-	const Food* temp_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
+	const Food* temp_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
 	
 	int lootSize = (rand() % 5) + 1;
 	Food* new_Food = NULL;
-	//Inventory* inv = dActor->GetInventory();
+
 	Inventory* inv = bActor->GetInventory();
+	bool stacked = false;
+	if (temp_food)
+	{
+		for (int i = 0; i < lootSize; i++)
+		{
+			new_Food = new Food((*temp_food));
+
+			inv->AddItem(new_Food, stacked);
+			if( stacked && new_Food->GetStackSize() == 0 )
+				SAFE_DELETE(new_Food);
+		}
+	}
+
+	const Food* temp_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
+
+	int lootSize = (rand() % 7) + 1;
+	Food* new_Food = NULL;
+	inv = dActor->GetInventory();
 	bool stacked = false;
 	if (temp_food)
 	{
@@ -451,7 +467,7 @@ bool Game::Update( float dt )
 	}
 
 	// Update Game Mode, Might Notify That GameMode is Finished
-	if ( !zGameMode->Update(dt) )
+	if ( this->zGameMode->Update(dt) )
 		return false;
 
 	// Update World
@@ -494,6 +510,7 @@ bool Game::Update( float dt )
 			
 			if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
 			{
+
 				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
 				{
 					//tempBehaviour->get_
@@ -632,6 +649,13 @@ void Game::OnEvent( Event* e )
 	{
 		HandleConnection(PCE->clientData);
 	}
+	else if( UserReadyEvent* URE = dynamic_cast<UserReadyEvent*>(e) )
+	{
+		PlayerReadyEvent playerReady;
+		playerReady.player = this->zPlayers[URE->clientData];
+		
+		NotifyObservers(&playerReady);
+	}
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
@@ -735,6 +759,7 @@ void Game::OnEvent( Event* e )
 				}
 			}
 		}
+
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{
@@ -906,6 +931,7 @@ void Game::OnEvent( Event* e )
 		auto i = zWorldActors.find(ERE->entity);
 		if ( i != zWorldActors.end() )
 		{
+			zPhysicsEngine->DeletePhysicsObject(i->second->GetPhysicsObject());
 			this->zActorManager->RemoveActor(i->second);
 			this->zWorldActors.erase(i);
 		}
@@ -914,9 +940,10 @@ void Game::OnEvent( Event* e )
 	{
 		// Create Player Actor
 		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
-		pObject->SetModel("Media/Models/temp_guy_movement_anims.fbx");
+		pObject->SetModel(UDE->playerModel);
 		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
+		zPlayers[UDE->clientData]->zUserModel = UDE->playerModel;
 
 		zActorManager->AddActor(actor);
 		actor->AddObserver(this->zGameMode);
@@ -1155,10 +1182,10 @@ void Game::HandleConnection( ClientData* cd )
 	message = NMC.Convert(MESSAGE_TYPE_LOAD_MAP, zWorld->GetFileName());
 	cd->Send(message);
 
-	// Send event to game so it knows what players there are.
-	// PlayerAddEvent* PAE = new PlayerAddEvent();
-	// PAE->player = player;
-	// NotifyObservers(PAE);
+	//Send event to game so it knows what players there are.
+	PlayerAddEvent PAE;
+	PAE.player = player;
+	NotifyObservers(&PAE);
 }
 
 void Game::HandleDisconnect( ClientData* cd )
@@ -1205,14 +1232,14 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 	auto playerBehavior = playerIterator->second->GetBehavior();
 	Actor* actor = playerBehavior->GetActor();
 	NetworkMessageConverter NMC;
-	std::string msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE);
+	std::string msg;
 	unsigned int ID = 0;
 	bool bLooted = false;
 	//Loop through all actors.
-	for (auto it_actor = actors.begin(); it_actor != actors.end(); it_actor++)
+	for (auto it_actor = actors.begin(); it_actor != actors.end() && !bLooted; it_actor++)
 	{
 		//Loop through all ID's of all actors the client tried to loot.
-		for (auto it_ID = actorID.begin(); it_ID != actorID.end(); it_ID++)
+		for (auto it_ID = actorID.begin(); it_ID != actorID.end() && !bLooted; it_ID++)
 		{
 			//Check if the ID is the same.
 			if ((*it_ID) == (*it_actor)->GetID())
@@ -1224,9 +1251,9 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 				//Check if the Actor is an ItemActor
 				if (ItemActor* iActor = dynamic_cast<ItemActor*>(*it_actor))
 				{
-					ID = iActor->GetID();
+					msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE, (float)iActor->GetID());
 					msg += iActor->GetItem()->ToMessageString(&NMC);
-					msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+					msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED);
 					bLooted = true;
 				}
 				//Check if the Actor is a PlayerActor
@@ -1239,14 +1266,17 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 						ID = pActor->GetID();
 
 						std::vector<Item*> items = inv->GetItems();
-						for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+						if (items.size() > 0)
 						{
-							msg += (*it_Item)->ToMessageString(&NMC);
-							msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+							msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE, (float)pActor->GetID());
+							for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+							{
+								msg += (*it_Item)->ToMessageString(&NMC);
+								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED);
+							}
 							bLooted = true;
 						}
-						if (items.size() == 0)
-							this->zActorManager->RemoveActor(pActor);
+						
 					}
 				}
 				//Check if the Actor is an AnimalActor.
@@ -1270,15 +1300,17 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 									ID = aActor->GetID();
 
 									std::vector<Item*> items = inv->GetItems();
-									for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+									if (items.size() > 0)
 									{
-										msg += (*it_Item)->ToMessageString(&NMC);
-										msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+										msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE, (float)aActor->GetID());
+										for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+										{
+											msg += (*it_Item)->ToMessageString(&NMC);
+											msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+										}
 										bLooted = true;
 									}
-
-									if (items.size() == 0)
-										this->zActorManager->RemoveActor(aActor);
+									
 								}
 							}
 						}
@@ -2102,4 +2134,60 @@ void Game::ModifyLivingPlayers( const int value )
 	NetworkMessageConverter NMC;
 	std::string message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 	this->SendToAll(message);
+}
+
+void Game::RestartGame()
+{
+	NetworkMessageConverter NMC;
+	std::string msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Server Restarting");
+
+	//Gather Actors
+	std::set<Actor*> actors = this->zActorManager->GetActors();
+	
+	//Delete All Actors
+	this->zActorManager->ClearAll();
+	
+	//Recreate Actors
+	std::string message = "";
+	int increment = 1;
+	for (auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+	{
+		/*Delete old Behavior*/
+		SetPlayerBehavior( (*it).second, 0 );
+
+		PhysicsObject* physObj = zPhysicsEngine->CreatePhysicsObject( (*it).second->GetModelPath() );
+		PlayerActor* pActor = new PlayerActor((*it).second, physObj);
+		PlayerHumanBehavior* pBehavior = new PlayerHumanBehavior(pActor, zWorld, (*it).second);
+
+		pActor->SetPosition(CalcPlayerSpawnPoint(32));
+		pActor->SetScale(pActor->GetScale());
+		pActor->AddObserver(this->zGameMode);
+		SetPlayerBehavior((*it).second, pBehavior);
+		this->zActorManager->AddActor(pActor);
+
+		//Should be changed Later
+		auto offsets = this->zCameraOffset.find("Media/Models/temp_guy.obj");
+
+		if(offsets != this->zCameraOffset.end())
+			dynamic_cast<PlayerActor*>(pActor)->SetCameraOffset(offsets->second);
+
+		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)pActor->GetID());
+		message += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, (float)1);
+		(*it).first->Send(message);
+	}
+	//Debug
+	//SpawnAnimalsDebug();
+
+	//Sends Existing Updates to Clients.
+	for (auto it = this->zPlayers.begin(); it != zPlayers.end(); it++)
+	{
+		zSyncher->SendUpdatesTo( (*it).first );
+	}
+	
+	//Set everyone to false
+	for (auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+	{
+		(*it).second->SetReady(false);
+	}
+
 }

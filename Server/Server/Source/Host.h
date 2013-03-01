@@ -11,6 +11,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "Game.h"
 #include "GameModeFFA.h"
 #include "GameEvents.h"
+#include "GameTimer.h"
 
 class ActorSynchronizer;
 
@@ -29,12 +30,14 @@ class Host : public MaloW::Process, public Observed
 	unsigned int zMinClients;
 	int zPort;
 	bool zGameStarted;
-	INT64 zStartime;
-	float zSecsPerCnt;
+	bool zRestartRequested;
+	//INT64 zStartime;
+	//float zSecsPerCnt;
 	float zDeltaTime;
-	float zTotalTime;
+	GameTimer* zGameTimer;
 	float zTimeOut;
 	float zTimeSinceLastPing;
+	float zSendUpdateDelayTimer;
 	float zPingMessageInterval;
 	std::string zGameMode;
 	std::string zMapName;
@@ -67,8 +70,10 @@ public:
 
 	/*! Updates the server clock.*/
 	float Update();
+	/*! Runs the Game Loop.*/
+	void UpdateGame();
 	/*! */
-	void SendToAllClients(const std::string& message);
+	void SendToAllClients(const std::string& message, bool important = true);
 
 	/*! Checks if the server is alive.*/
 	bool IsAlive() const;

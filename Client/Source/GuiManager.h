@@ -33,9 +33,7 @@ public:
 	GuiManager(GraphicsEngine* ge);
 	virtual ~GuiManager();
 	void ToggleInventoryGui();
-	void HideInventoryGui();
 	void ToggleLootGui(unsigned int lootActorId);
-	void HideLootGui();
 	void AddInventoryItemToGui(const Gui_Item_Data gid);
 	void AddLootItemToLootGui(const Gui_Item_Data gid);
 	void RemoveLootItemFromLootGui(const Gui_Item_Data gid);
@@ -45,11 +43,8 @@ public:
 	void ShowCircularItemGui();
 	void HideCircularItemGui();
 	void ShowLootingGui(std::vector<Looting_Gui_Data> gui_Item_Data);
-	void HideLootingGui();
-	void ShowDeathGui();
-	void HideDeathGui();
-	void ToggleIngameMenu();
-	bool IsGuiOpen();
+	bool IsLootingOpen() {return this->zLootOpen;}
+	bool IsInventoryOpen() {return this->zInventoryOpen;}
 	void Update(float deltaTime);
 	Menu_select_data CheckCollisionInv();
 	void UpdateInventoryWeight(float weight);
@@ -57,10 +52,8 @@ public:
 	void Resize(int width, int height);
 private:
 	bool zLooting;
-	bool zDeathGuiOpen;
 	bool zInventoryOpen;
 	bool zLootOpen;
-	bool zIngameMenuOpen;
 	bool zCircularInventorySelectionOpen;
 	
 	float zLootingGuiShowTimer;

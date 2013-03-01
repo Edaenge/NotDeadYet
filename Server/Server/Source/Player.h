@@ -22,6 +22,12 @@ class Player : public Observed
 	//The player Name
 	std::string zUserName;
 
+	//Player Model
+	std::string zUserModel;
+
+	//Ready state
+	bool zReady;
+
 private:
 	Player( ClientData* client );
 	virtual ~Player();
@@ -33,6 +39,8 @@ public:
 	// Disconnect This Player
 	void Kick();
 
+	//
+	void SetReady(bool flag) { this->zReady = flag;}
 	// Returns The Current Behavior Of Player
 	Behavior* GetBehavior() const { return zBehavior; }
 
@@ -41,6 +49,10 @@ public:
 
 	//Returns player name
 	std::string GetPlayerName() const {return this->zUserName;}
+	//
+	std::string GetModelPath() const {return this->zUserModel;}
+	//
+	bool IsReady() const {return this->zReady;}
 
 private:
 	friend class Game;

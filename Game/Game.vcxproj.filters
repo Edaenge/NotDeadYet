@@ -15,9 +15,6 @@
     <Filter Include="Header Files\World">
       <UniqueIdentifier>{3ae0a3bd-b76c-4fc4-82c6-cbe7082a447f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Packets">
-      <UniqueIdentifier>{670d44a1-a8df-49e5-8a73-bf365e742e58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Packets">
       <UniqueIdentifier>{c7999bcf-e402-4eb0-8d98-00fa7307521c}</UniqueIdentifier>
     </Filter>
@@ -125,6 +122,12 @@
     <ClInclude Include="Include\AnimationFileReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\GameTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ActorEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\World\Sector.cpp">
@@ -196,13 +199,13 @@
     <ClCompile Include="Source\ItemLookup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Packets\ServerFramePacket.cpp">
-      <Filter>Source Files\Packets</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Bandage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\AnimationFileReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -170,8 +170,8 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_MESH_UNBIND:
 		ss << M_MESH_UNBIND;
 		break;
-	case MESSAGE_TYPE_ITEM_FINISHED:
-		ss << M_ITEM_FINISHED;
+	case MESSAGE_TYPE_LOOT_OBJECT_RESPONSE:
+		ss << M_LOOT_OBJECT_RESPONSE;
 		break;
 	case MESSAGE_TYPE_PICKUP_ITEM:
 		ss << M_PICKUP_ITEM;
@@ -309,8 +309,8 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	case MESSAGE_TYPE_ADD_INVENTORY_ITEM:
 		ss << M_ADD_INVENTORY_ITEM;
 		break;
-	case MESSAGE_TYPE_LOOT_OBJECT_RESPONSE:
-		ss << M_LOOT_OBJECT_RESPONSE;
+	case MESSAGE_TYPE_ITEM_FINISHED:
+		ss << M_ITEM_FINISHED;
 		break;
 	case MESSAGE_TYPE_ACTOR_KILL:
 		ss << M_ACTOR_KILL;

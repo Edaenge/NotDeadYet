@@ -22,25 +22,22 @@ Host::Host() :
 	MaloW::Debug("(DEBUG): Server: vld.h included.");
 #endif
 
+	this->zGameTimer = new GameTimer();
+
 	this->zServerListener = NULL;
 	this->zMaxClients = 10;
 	this->zMinClients = 0;
-
-	this->zStartime = 0;
-	this->zSecsPerCnt = 0.0f;
 	this->zDeltaTime = 0.0f;
-	this->zTotalTime = 0.0f;
 	this->zTimeOut = 10.0f;
 	this->zPingMessageInterval = 2.5f;
 	this->zTimeSinceLastPing = 0.0f;
-
+	this->zSendUpdateDelayTimer = 0.0f;
 	this->zGameStarted = false;
+	this->zRestartRequested = false;
 }
 
 Host::~Host()
 {
-	FreePhysics();
-
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 
@@ -48,10 +45,12 @@ Host::~Host()
 	this->WaitUntillDone();
 
 	SAFE_DELETE(this->zGame);
+	SAFE_DELETE(this->zGameTimer);
 
 	SAFE_DELETE(this->zSynchronizer);
 
 	SAFE_DELETE(this->zServerListener);
+
 
 	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
 	{
@@ -62,6 +61,21 @@ Host::~Host()
 		}
 	}
 	this->zClients.clear();
+
+	/*Free any still existing Event.*/
+	int counter = 0;
+	unsigned int nrOfMessages = this->GetEventQueueSize();
+	MaloW::ProcessEvent* pe;
+
+	while (counter < nrOfMessages)
+	{
+		pe = PeekEvent();
+		SAFE_DELETE( pe );
+
+		counter++;
+	}
+
+	FreePhysics();
 }
 
 void Host::SendMessageToClient( const std::string& message )
@@ -73,14 +87,14 @@ void Host::SendMessageToClient( const std::string& message )
 		std::transform(msg.begin(), msg.end(), msg.begin(), ::tolower);
 		if (msg.find("restart") == 0)
 		{
-			Restart(this->zGameMode, this->zMapName);
+			this->zRestartRequested = true;
 		}
 	}
 	else
 	{
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, message);
 
-		this->SendToAllClients(msg);
+		this->SendToAllClients(msg, true);
 	}
 }
 
@@ -91,81 +105,108 @@ void Host::Life()
 
 	this->zServerListener->Start();
 
-	INT64 frequency;
-	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
-	
-	this->zSecsPerCnt = 1.0f / (float)(frequency);
+	//INT64 frequency;
+	//QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
+	//
+	//this->zSecsPerCnt = 1.0f / (float)(frequency);
+	//QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
 
-	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
-
-	float waitTimer = 0.0f;
-	float counter = 0.0f;
-	int updatesPerSec = 0;
-
+	this->zGameTimer->Init();
 	while(this->stayAlive)
 	{
-		Update();
-		ReadMessages();
+		this->zDeltaTime = this->zGameTimer->Frame();
+
+		this->UpdateGame();
+		//Update();
 		
-		//if (!this->zGameStarted)
-		//{
-		//	//Check if All players Are Ready
-		//	unsigned int nrOfReadyPlayers = 0;
-		//	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
-		//	{
-		//		if (it->second->GetReady())
-		//		{
-		//			nrOfReadyPlayers++;
-		//		}
-		//	}
-		//	if (nrOfReadyPlayers == this->zClients.size())
-		//	{
-		//		this->zGameStarted = true;
-		//	}
-		//}
-		//else
-		//{
-			if ( !zGame )
-			{
-
-			}
-			else if(zGame->Update(this->zDeltaTime))
-			{
-				this->PingClients();
-
-				waitTimer += this->zDeltaTime;
-				counter += this->zDeltaTime;
-
-				if (waitTimer >= UPDATE_DELAY)
-				{
-					SynchronizeAll();
-
-					waitTimer = 0.0f;
-				}
-				if (counter >= 1.0f)
-				{
-					updatesPerSec = (int)(1.0f / this->zDeltaTime);
-
-					this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)updatesPerSec));
-					counter = 0.0f;
-				}
-			}
-			else
-			{
-				Restart(zGameMode, zMapName);		
-			}
-		//}
 
 		//Sleep(5);
 	}
+}
+
+void Host::UpdateGame()
+{
+	ReadMessages();
+
+	//if (!this->zGameStarted)
+	//{
+	//	//Check if All players Are Ready
+	//	unsigned int nrOfReadyPlayers = 0;
+	//	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
+	//	{
+	//		if (it->second->GetReady())
+	//		{
+	//			nrOfReadyPlayers++;
+	//		}
+	//	}
+	//	if (nrOfReadyPlayers == this->zClients.size())
+	//	{
+	//		this->zGameStarted = true;
+	//	}
+	//}
+	//else
+	//{
+	if ( !this->zGame )
+	{
+
+	}
+	else if(this->zGame->Update(this->zDeltaTime))
+	{
+		this->PingClients();
+
+		this->zSendUpdateDelayTimer += this->zDeltaTime;
+
+		if (zSendUpdateDelayTimer >= UPDATE_DELAY)
+		{
+			this->SynchronizeAll();
+
+			this->zSendUpdateDelayTimer = 0.0f;
+
+			this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()), false);
+			
+		}
+	}
+	else
+	{
+		
+	}
+
+	if (this->zRestartRequested)
+		this->Restart(zGameMode, zMapName);
+
+	//}
 }
 
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients,  const std::string& gameModeName, const std::string& mapName)
 {
 	this->zMaxClients = maxClients;
 
-	Restart(gameModeName, mapName);
+	//Restart(gameModeName, mapName);
+	
+	FreePhysics();
+	PhysicsInit();
+	
+	//Init ActorSycnher
+	if ( this->zSynchronizer ) 
+	{
+		delete zSynchronizer;
+		this->zSynchronizer->ClearAll();
+	}
 
+	this->zSynchronizer = new ActorSynchronizer();
+	
+
+	//Init game
+	if(this->zGame)
+	{
+		this->RemoveObserver(zGame);
+		delete zGame;
+	}
+
+	this->zGame = new Game(zSynchronizer, gameModeName, mapName);
+	this->AddObserver(zGame);
+	
+	//server Listener
 	if ( !zServerListener )
 	{
 		try
@@ -182,14 +223,22 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	return 0;
 }
 
-void Host::SendToAllClients(const std::string& message)
+void Host::SendToAllClients(const std::string& message, bool bImportant)
 {
 	if(!HasClients())
 		return;
 
 	for (auto it = zClients.begin(); it != zClients.end(); it++)
 	{
-		it->first->Send(message);
+		if (bImportant)
+		{
+			it->first->Send(message);
+		}
+		else
+		{
+			it->first->TrySend(message);
+		}
+		
 	}
 }
 
@@ -249,7 +298,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		return;
 
 	//Sets last received packet time from this client.
-	cd->SetLastPacketTime(zTotalTime);
+	cd->SetLastPacketTime(this->zGameTimer->GetRunTime());
 
 	//Handles updates from client.
 	if(msgArray[0].find(M_CLIENT_DATA.c_str()) == 0)
@@ -281,20 +330,19 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	{
 		float latency = this->zMessageConverter.ConvertStringToFloat(M_PING, msgArray[0]);
 		
-		latency = (this->zTotalTime - latency) * 0.5f;
-
-		latency *= 1000.0f;
+		latency = (this->zGameTimer->GetRunTime() - latency) * 0.5f;
 
 		cd->AddLatency(latency);
 		latency = cd->GetAverageLatency();
+
+		latency *= 1000.0f;
 
 		cd->Send(this->zMessageConverter.Convert(MESSAGE_TYPE_CLIENT_LATENCY, latency));
 	}
 	//Handles ready from client.
 	else if(msgArray[0].find(M_READY_PLAYER.c_str()) == 0)
 	{
-		PlayerReadyEvent e;
-		cd->SetReady(true);
+		UserReadyEvent e;
 		e.clientData = cd;
 		NotifyObservers(&e);
 	}
@@ -445,7 +493,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	}
 	else if(msgArray[0].find(M_RESTART_GAME_REQUEST.c_str()) == 0)
 	{
-		this->Restart(this->zGameMode, this->zMapName);
+		this->zRestartRequested = true;
 	}
 	//Handles if client disconnects.
 	else if(msgArray[0].find(M_CONNECTION_CLOSED.c_str()) == 0)
@@ -463,7 +511,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 void Host::BroadCastServerShutdown()
 {
 	std::string mess = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_SHUTDOWN);
-	SendToAllClients(mess);
+	SendToAllClients(mess, true);
 }
 
 void Host::PingClients()
@@ -482,27 +530,27 @@ void Host::PingClients()
 	std::string message;
 	for(auto it = zClients.begin(); it != zClients.end(); it++)
 	{
-		(*it).first->Send( zMessageConverter.Convert(MESSAGE_TYPE_PING, zTotalTime) );
+		(*it).first->Send( zMessageConverter.Convert(MESSAGE_TYPE_PING, this->zGameTimer->GetRunTime()) );
 	}
 }
 
 float Host::Update()
 {
-	//Update Timer
-	INT64 currentTime;
-	float timeDifference;
+	////Update Timer
+	//INT64 currentTime;
+	//float timeDifference;
 
-	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
+	//QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
 
-	timeDifference = (float)(currentTime - this->zStartime);
+	//timeDifference = (float)(currentTime - this->zStartime);
 
-	this->zDeltaTime = timeDifference * this->zSecsPerCnt;
+	//this->zDeltaTime = timeDifference * this->zSecsPerCnt;
 
-	this->zStartime = currentTime;
+	//this->zStartime = currentTime;
 
-	this->zTotalTime += this->zDeltaTime;
+	
 
-	return this->zDeltaTime;
+	return 0.0f;
 }
 
 bool Host::IsAlive() const
@@ -643,44 +691,48 @@ void Host::SynchronizeAll()
 // TODO: Create GameMode Here
 void Host::Restart( const std::string& gameMode, const std::string& map )
 {
-	// Update
-	this->zGameMode = gameMode;
-	this->zMapName = map;
+// 	// Update
+// 	this->zGameMode = gameMode;
+// 	this->zMapName = map;
+// 
+// 	if ( this->zGame )
+// 	{
+// 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Server Restarting");
+// 		// Fake Disconnects
+// 		for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
+// 		{
+// 			i->second->Send(msg);
+// 			PlayerDisconnectedEvent PDE;
+// 			PDE.clientData = i->second;
+// 			zGame->OnEvent(&PDE);
+// 		}
+// 
+// 		// Delete Game
+// 		this->RemoveObserver(zGame);
+// 		delete zGame;
+// 		FreePhysics();
+// 	}
+// 
+// 	if ( this->zSynchronizer ) 
+// 		this->zSynchronizer->ClearAll();
+// 	if ( !this->zSynchronizer ) 
+// 		this->zSynchronizer = new ActorSynchronizer();
+// 
+// 	// Start New
+// 	PhysicsInit();
+// 	this->zGame = new Game(GetPhysics(), this->zSynchronizer, gameMode, map);
+// 	this->AddObserver(this->zGame);
+// 
+// 	// Fake Connects
+// 	for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
+// 	{
+// 		PlayerConnectedEvent PCE;
+// 		PCE.clientData = i->second;
+// 		zGame->OnEvent(&PCE);
+// 	}
 
-	if ( this->zGame )
-	{
-		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Server Restarting");
-		// Fake Disconnects
-		for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
-		{
-			i->second->Send(msg);
-			i->second->SetReady(false);
-			PlayerDisconnectedEvent PDE;
-			PDE.clientData = i->second;
-			zGame->OnEvent(&PDE);
-		}
+	this->zGame->RestartGame();
+	this->zRestartRequested = false;
 
-		// Delete Game
-		this->RemoveObserver(zGame);
-		delete zGame;
-		FreePhysics();
-	}
 
-	if ( this->zSynchronizer ) 
-		this->zSynchronizer->ClearAll();
-	if ( !this->zSynchronizer ) 
-		this->zSynchronizer = new ActorSynchronizer();
-
-	// Start New
-	PhysicsInit();
-	this->zGame = new Game(GetPhysics(), this->zSynchronizer, gameMode, map);
-	this->AddObserver(this->zGame);
-
-	// Fake Connects
-	for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
-	{
-		PlayerConnectedEvent PCE;
-		PCE.clientData = i->second;
-		zGame->OnEvent(&PCE);
-	}
 }

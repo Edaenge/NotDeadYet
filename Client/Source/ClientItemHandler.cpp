@@ -826,10 +826,12 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 			{
 				this->zGuiManager->RemoveInventoryItemFromGui(gid);
 				this->zGuiManager->EquipItem(gid);
+				this->zGuiManager->RemoveLootItemFromLootGui(gid);
 			}
 			else
 			{
 				this->zGuiManager->AddInventoryItemToGui(gid);
+				this->zGuiManager->RemoveLootItemFromLootGui(gid);
 			}
 
 			if(item->GetStackSize() == 0)
@@ -839,6 +841,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		{
 			Gui_Item_Data gid = this->MakeGID(item);
 			this->zGuiManager->AddInventoryItemToGui(gid);
+			this->zGuiManager->RemoveLootItemFromLootGui(gid);
 		}
 	}
 	else

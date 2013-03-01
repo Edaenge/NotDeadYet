@@ -14,14 +14,7 @@ public:
 	std::map< unsigned int, unsigned int> newStates;
 	std::map<unsigned int, std::string> newAnimations;
 
-	virtual ~ServerFramePacket() 
-	{
-		this->newPositions.clear();
-		this->newRotations.clear();
-		this->newScales.clear();
-		this->newStates.clear();
-		this->newAnimations.clear();
-	}
+	virtual ~ServerFramePacket() {}
 
 	virtual bool Serialize( std::ostream& ss ) const
 	{

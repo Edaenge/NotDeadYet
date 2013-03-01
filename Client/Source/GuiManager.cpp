@@ -18,9 +18,7 @@ static const float GUI_DISPLAY_TIMER					= 2.0f;
 GuiManager::GuiManager()
 {
 	this->zLooting = false;
-	this->zDeathGuiOpen = false;
 	this->zInventoryOpen = false;
-	this->zIngameMenuOpen = false;
 	this->zCircularInventorySelectionOpen = false;
 
 	this->zLootingGuiShowTimer = 0.0f;
@@ -40,10 +38,8 @@ GuiManager::GuiManager()
 GuiManager::GuiManager(GraphicsEngine* ge)
 {
 	this->zLooting = false;
-	this->zDeathGuiOpen = false;
 	this->zInventoryOpen = false;
 	this->zLootOpen = false;
-	this->zIngameMenuOpen = false;
 	this->zCircularInventorySelectionOpen = false;
 
 	this->zEng = ge;
@@ -108,16 +104,6 @@ GuiManager::~GuiManager()
 	//}
 }
 
-void GuiManager::HideInventoryGui()
-{
-	if (this->zInventoryOpen)
-	{
-		//Hide Inventory
-		this->zInventoryOpen = false;
-		//this->zInvGui->RemoveFromRenderer(this->zGraphicEngine);
-	}
-}
-
 void GuiManager::ToggleInventoryGui()
 {
 	if (!this->zInventoryOpen)
@@ -139,6 +125,7 @@ void GuiManager::ToggleInventoryGui()
 		}
 	}
 }
+
 void GuiManager::ToggleLootGui(unsigned int lootActorId)
 {
 	if (!this->zLootOpen)
@@ -162,16 +149,6 @@ void GuiManager::ToggleLootGui(unsigned int lootActorId)
 	}
 }
 
-
-void GuiManager::HideLootGui()
-{
-	if (this->zLootOpen)
-	{
-		//Hide LootInventory
-		this->zLootOpen = false;
-		//this->zLootGui->RemoveFromRenderer(this->zGraphicEngine);
-	}
-}
 void GuiManager::AddInventoryItemToGui(const Gui_Item_Data gid)
 {
 	this->zInvGui->AddItemToGui(gid, this->zInventoryOpen, this->zEng);
@@ -242,45 +219,6 @@ void GuiManager::ShowLootingGui(std::vector<Looting_Gui_Data> looting_gui_Data)
 	}
 }
 
-void GuiManager::HideLootingGui()
-{
-	if(this->zLooting)
-	{
-		//Hide Loot Gui
-		this->zLooting = false;
-		
-		//this->zLootingGui->RemoveFromRenderer(this->zGraphicEngine);
-	}
-}
-
-void GuiManager::ToggleIngameMenu()
-{
-	if (!this->zIngameMenuOpen)
-	{
-		this->zIngameMenuOpen = true;
-	}
-	else
-	{
-		this->zIngameMenuOpen = false;
-	}
-}
-
-void GuiManager::ShowDeathGui()
-{
-	if (!this->zDeathGuiOpen)
-	{
-		this->zDeathGuiOpen = true;
-	}
-}
-
-void GuiManager::HideDeathGui()
-{
-	if (this->zDeathGuiOpen)
-	{
-		this->zDeathGuiOpen = false;
-	}
-}
-
 void GuiManager::Update(float deltaTime)
 {
 	if (!this->zInventoryOpen)
@@ -292,7 +230,6 @@ void GuiManager::Update(float deltaTime)
 		}
 		else
 		{
-			this->HideInventoryGui();
 		}
 	}
 	//
@@ -307,11 +244,6 @@ void GuiManager::Update(float deltaTime)
 	//		this->HideLootingGui();
 	//	}
 	//}
-}
-
-bool GuiManager::IsGuiOpen()
-{
-	return (this->zInventoryOpen || this->zLooting || this->zDeathGuiOpen || this->zIngameMenuOpen);
 }
 
 Menu_select_data GuiManager::CheckCollisionInv()
@@ -396,7 +328,6 @@ void GuiManager::Resize( int width, int height )
 	this->zInvGui->Resize(width, height, dx);
 	this->zInvCircGui->Resize(width, height, dx);
 }
-
 void GuiManager::UpdateInventoryWeight( float weight )
 {
 	this->zInvGui->UpdateInventoryWeight(weight);
