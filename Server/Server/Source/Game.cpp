@@ -193,17 +193,17 @@ void Game::SpawnAnimalsDebug()
 		}
 	}
 
-	const Food* temp_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
+	const Food* temp_Deer_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
 
-	int lootSize = (rand() % 7) + 1;
-	Food* new_Food = NULL;
+	lootSize = (rand() % 7) + 1;
+	new_Food = NULL;
 	inv = dActor->GetInventory();
-	bool stacked = false;
-	if (temp_food)
+	stacked = false;
+	if (temp_Deer_Food)
 	{
 		for (int i = 0; i < lootSize; i++)
 		{
-			new_Food = new Food((*temp_food));
+			new_Food = new Food((*temp_Deer_Food));
 
 			inv->AddItem(new_Food, stacked);
 			if( stacked && new_Food->GetStackSize() == 0 )
