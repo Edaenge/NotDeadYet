@@ -33,6 +33,7 @@ Host::Host() :
 	this->zTimeSinceLastPing = 0.0f;
 	this->zSendUpdateDelayTimer = 0.0f;
 	this->zGameStarted = false;
+	this->zRestartRequested = false;
 }
 
 Host::~Host()
@@ -86,14 +87,14 @@ void Host::SendMessageToClient( const std::string& message )
 		std::transform(msg.begin(), msg.end(), msg.begin(), ::tolower);
 		if (msg.find("restart") == 0)
 		{
-			Restart(this->zGameMode, this->zMapName);
+			this->zRestartRequested = true;
 		}
 	}
 	else
 	{
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, message);
 
-		this->SendToAllClients(msg);
+		this->SendToAllClients(msg, true);
 	}
 }
 
@@ -145,31 +146,36 @@ void Host::UpdateGame()
 	//}
 	//else
 	//{
-	if ( !zGame )
+	if ( !this->zGame )
 	{
 
 	}
-	else if(zGame->Update(this->zDeltaTime))
+	else if(this->zGame->Update(this->zDeltaTime))
 	{
 		this->PingClients();
 
-		zSendUpdateDelayTimer += this->zDeltaTime;
+		this->zSendUpdateDelayTimer += this->zDeltaTime;
 
 		if (zSendUpdateDelayTimer >= UPDATE_DELAY)
 		{
-			SynchronizeAll();
+			this->SynchronizeAll();
 
-			zSendUpdateDelayTimer = 0.0f;
-			this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()));
+			this->zSendUpdateDelayTimer = 0.0f;
+
+			this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()), false);
+			
 		}
 	}
 	else
 	{
-		Restart(zGameMode, zMapName);		
+		
 	}
+
+	if (this->zRestartRequested)
+		this->Restart(zGameMode, zMapName);
+
 	//}
 }
-
 
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients,  const std::string& gameModeName, const std::string& mapName)
 {
@@ -217,14 +223,22 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	return 0;
 }
 
-void Host::SendToAllClients(const std::string& message)
+void Host::SendToAllClients(const std::string& message, bool bImportant)
 {
 	if(!HasClients())
 		return;
 
 	for (auto it = zClients.begin(); it != zClients.end(); it++)
 	{
-		it->first->Send(message);
+		if (bImportant)
+		{
+			it->first->Send(message);
+		}
+		else
+		{
+			it->first->TrySend(message);
+		}
+		
 	}
 }
 
@@ -482,7 +496,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	}
 	else if(msgArray[0].find(M_RESTART_GAME_REQUEST.c_str()) == 0)
 	{
-		this->Restart(this->zGameMode, this->zMapName);
+		this->zRestartRequested = true;
 	}
 	//Handles if client disconnects.
 	else if(msgArray[0].find(M_CONNECTION_CLOSED.c_str()) == 0)
@@ -500,7 +514,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 void Host::BroadCastServerShutdown()
 {
 	std::string mess = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_SHUTDOWN);
-	SendToAllClients(mess);
+	SendToAllClients(mess, true);
 }
 
 void Host::PingClients()
@@ -719,6 +733,9 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
 // 		PCE.clientData = i->second;
 // 		zGame->OnEvent(&PCE);
 // 	}
+
+	this->zGame->RestartGame();
+	this->zRestartRequested = false;
 
 
 }

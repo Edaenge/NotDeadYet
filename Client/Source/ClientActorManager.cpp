@@ -12,7 +12,7 @@ ClientActorManager::ClientActorManager()
 	for(int i = 0; i < MAXFOOTSTEPS; i++)
 		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_GRASS, this->zFootStep[i]);
 
-	this->zInterpolationVelocity = 50.0f;
+	this->zInterpolationVelocity = 100.0f;
 	this->zUpdatesPerSec = 0;
 	this->zLatency = 0;
 }

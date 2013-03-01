@@ -30,6 +30,7 @@ class Host : public MaloW::Process, public Observed
 	unsigned int zMinClients;
 	int zPort;
 	bool zGameStarted;
+	bool zRestartRequested;
 	//INT64 zStartime;
 	//float zSecsPerCnt;
 	float zDeltaTime;
@@ -72,7 +73,7 @@ public:
 	/*! Runs the Game Loop.*/
 	void UpdateGame();
 	/*! */
-	void SendToAllClients(const std::string& message);
+	void SendToAllClients(const std::string& message, bool important = true);
 
 	/*! Checks if the server is alive.*/
 	bool IsAlive() const;

@@ -23,7 +23,8 @@ Behavior::~Behavior()
 	if ( zAnchor && zWorld ) 
 		zWorld->DeleteAnchor(zAnchor);
 
-	zActor->RemoveObserver(this);
+	if (zActor)
+		zActor->RemoveObserver(this);
 }
 
 void Behavior::OnEvent(Event* e)

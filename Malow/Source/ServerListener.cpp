@@ -7,7 +7,6 @@ ServerListener::ServerListener( MaloW::Process *observer, const unsigned int &po
 	zObserver(observer), 
 	zPort(port)
 {
-
 	WSADATA wsaData;
 	if ( WSAStartup(MAKEWORD(2,2), &wsaData) )
 	{

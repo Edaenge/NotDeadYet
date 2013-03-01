@@ -13,14 +13,7 @@ public:
 	std::map<unsigned int, std::string> actorModel;
 	std::map<unsigned int, unsigned int> actorState;
 
-	virtual ~NewActorPacket()
-	{
-		actorPosition.clear();
-		actorRotation.clear();
-		actorScale.clear();
-		actorModel.clear();
-		actorState.clear();
-	}
+	virtual ~NewActorPacket(){}
 
 	virtual bool Serialize( std::ostream& ss ) const
 	{

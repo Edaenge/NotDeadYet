@@ -536,7 +536,7 @@ void Client::CheckMovementKeys()
 
 void Client::CheckPlayerSpecificKeys()
 {
-	if(this->zGuiManager->IsGuiOpen())
+	if(this->zGuiManager->IsInventoryOpen() || this->zGuiManager->IsLootingOpen())
 	{
 		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
@@ -561,6 +561,13 @@ void Client::CheckPlayerSpecificKeys()
 					if(item)
 						SendEquipItem(msd.zID);
 				}
+				else if (msd.zAction == LOOT)
+				{
+					if (item)
+					{
+						SendLootItemMessage(0, msd.zID, msd.zType, item->GetItemSubType());
+					}
+				}
 				else if (msd.zAction == DROP)
 				{
 					if(item)
@@ -579,15 +586,24 @@ void Client::CheckPlayerSpecificKeys()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
 		{
+			std::string msg =  "";
 			std::vector<unsigned int> collisionObjects = this->RayVsWorld();
 			if (collisionObjects.size() > 0)
 			{
-				std::string msg =  "";
 				for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
 				{
 					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (float)(*it));
 				}
 				this->zServerChannel->Send(msg);
+
+				this->zGuiManager->ToggleInventoryGui();
+				this->zGuiManager->ToggleLootGui(0);
+				this->zShowCursor = true;
+			}
+			else
+			{
+				msg = "No Lootable Objects Found.";
+				this->AddDisplayText(msg, true);
 			}
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
 		}
@@ -596,7 +612,9 @@ void Client::CheckPlayerSpecificKeys()
 	{
 		if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
 		{
-			this->zGuiManager->HideLootingGui();
+			this->zGuiManager->ToggleInventoryGui();
+			this->zGuiManager->ToggleLootGui(0);
+			this->zShowCursor = false;
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
 		}
 	}
@@ -626,7 +644,9 @@ void Client::CheckPlayerSpecificKeys()
 		if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY) && !this->zPam->GetShow())
 		{
 			this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
-			this->zShowCursor = !this->zShowCursor;
+			if (!this->zGuiManager->IsLootingOpen())
+				this->zShowCursor = !this->zShowCursor;
+
 			this->zGuiManager->ToggleInventoryGui();
 		}
 	}
@@ -636,7 +656,7 @@ void Client::CheckPlayerSpecificKeys()
 			this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
 	}
 
-	if (!this->zGuiManager->IsGuiOpen() && !zShowCursor)
+	if (!zShowCursor)
 	{
 		if (this->zEng->GetKeyListener()->IsClicked(1))
 		{
@@ -1484,7 +1504,8 @@ bool Client::CheckHumanSpecificMessages(std::vector<std::string> msgArray)
 {
 	if (msgArray[0].find(M_LOOT_OBJECT_RESPONSE.c_str()) == 0)
 	{
-		this->HandleDisplayLootData(msgArray);
+		unsigned int actorID = this->zMsgHandler.ConvertStringToInt(M_LOOT_OBJECT_RESPONSE, msgArray[0]);
+		this->HandleDisplayLootData(msgArray, actorID);
 	}
 	else if(msgArray[0].find(M_EQUIP_ITEM.c_str()) == 0)
 	{
@@ -1669,7 +1690,8 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 
 void Client::CloseConnection(const std::string& reason)
 {
-	MaloW::Debug("Client Shutdown: " + reason);
+	//MaloW::Debug("Client Shutdown: " + reason);
+	this->AddDisplayText("Client Shutdown: " + reason, false);
 	//Todo Skriv ut vilket reason som gavs
 	this->zServerChannel->TrySend(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID));
 	this->zServerChannel->Close();
@@ -1741,7 +1763,7 @@ void Client::DisplayMessageToClient(const std::string& msg, bool bError)
 {
 	this->AddDisplayText(msg, bError);
 
-	MaloW::Debug(msg);
+	//MaloW::Debug(msg);
 }
 
 void Client::OnEvent(Event* e)
@@ -1760,54 +1782,49 @@ void Client::OnEvent(Event* e)
 	}
 }
 
-void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
+void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsigned int ActorID)
 {
-	std::vector<Looting_Gui_Data> guiData;
-	Looting_Gui_Data lgd = Looting_Gui_Data();
+	Gui_Item_Data gid;
 	for (auto it_Item_Data = msgArray.begin() + 1; it_Item_Data != msgArray.end(); it_Item_Data++)
 	{
 		if((*it_Item_Data).find(M_OBJECT_ID.c_str()) == 0)
 		{
-			lgd.zGui_Data.zID = this->zMsgHandler.ConvertStringToInt(M_OBJECT_ID, (*it_Item_Data));
+			gid.zID = this->zMsgHandler.ConvertStringToInt(M_OBJECT_ID, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_TYPE.c_str()) == 0)
 		{
-			lgd.zGui_Data.zType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it_Item_Data));
+			gid.zType = this->zMsgHandler.ConvertStringToInt(M_ITEM_TYPE, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_SUB_TYPE.c_str()) == 0)
 		{
-			lgd.zGui_Data.zSubType = this->zMsgHandler.ConvertStringToInt(M_ITEM_SUB_TYPE, (*it_Item_Data));
+			gid.zSubType = this->zMsgHandler.ConvertStringToInt(M_ITEM_SUB_TYPE, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_DESCRIPTION.c_str()) == 0)
 		{
-			lgd.zGui_Data.zDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it_Item_Data), true);
+			gid.zDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it_Item_Data), true);
 		}
 		else if((*it_Item_Data).find(M_ITEM_NAME.c_str()) == 0)
 		{
-			lgd.zGui_Data.zName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it_Item_Data), true);
+			gid.zName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it_Item_Data), true);
 		}
 		else if((*it_Item_Data).find(M_ITEM_WEIGHT.c_str()) == 0)
 		{
-			lgd.zGui_Data.zWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it_Item_Data));
+			gid.zWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_STACK_SIZE.c_str()) == 0)
 		{
-			lgd.zGui_Data.zStacks = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, (*it_Item_Data));
+			gid.zStacks = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_ICON_PATH.c_str()) == 0)
 		{
-			lgd.zGui_Data.zFilePath = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it_Item_Data));
+			gid.zFilePath = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_ICON_PATH, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_FINISHED.c_str()) == 0)
 		{
-			lgd.zActorID = this->zMsgHandler.ConvertStringToInt(M_ITEM_FINISHED, (*it_Item_Data));
-			
-			guiData.push_back(lgd);
+			this->zGuiManager->AddLootItemToLootGui(gid);
 		}
 	}
-
-	this->SendLootItemMessage(guiData[0].zActorID, guiData[0].zGui_Data.zID, guiData[0].zGui_Data.zType, guiData[0].zGui_Data.zSubType);
-	this->zGuiManager->ShowLootingGui(guiData);
+	this->SendLootItemMessage(ActorID, gid.zID, gid.zType, gid.zSubType);
 }
 
 void Client::UpdateCameraOffset(unsigned int state)

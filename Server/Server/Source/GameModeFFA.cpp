@@ -160,7 +160,7 @@ void GameModeFFA::OnEvent( Event* e )
 		{
 			PLRE->player->SetReady(true);
 			//Check how many players are ready
-			int counter = 0;
+			unsigned int counter = 0;
 			for( auto it = zPlayers.begin(); it != zPlayers.end(); it++)
 			{
 				if( (*it)->IsReady() )

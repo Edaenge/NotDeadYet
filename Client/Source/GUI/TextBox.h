@@ -2,6 +2,7 @@
 
 #include "Element.h"
 #include "GraphicsEngine.h"
+
 enum TEXTBOX {NOTHINGALLOWED,
 	ALL,
 	NORMALCHAR,
@@ -10,6 +11,7 @@ enum TEXTBOX {NOTHINGALLOWED,
 	NR,
 	NR_SPECIAL,
 	SPECIAL};
+
 class TextBox : public Element
 {
 private:

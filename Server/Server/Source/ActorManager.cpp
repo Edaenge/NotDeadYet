@@ -228,14 +228,17 @@ void ActorManager::OnEvent( Event* e )
 void ActorManager::ClearAll()
 {
 	PhysicsEngine* physics = GetPhysics();
-	for (auto it = zActors.begin(); it != zActors.end(); it++)
+	auto it = zActors.begin();
+	while ( it != zActors.end())
 	{
 		PhysicsObject* pObj = (*it)->GetPhysicsObject();
 
 		if(pObj)
 			physics->DeletePhysicsObject(pObj);
 		
+		Actor* actor = (*it);
 		it = zActors.erase(it);
+		SAFE_DELETE(actor);
 	}
 	zActors.clear();
 }

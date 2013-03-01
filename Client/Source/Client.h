@@ -172,7 +172,7 @@ private:
 	void SendEquipItem(const unsigned int ID);
 	void HandleRemoveEquipment(const unsigned int ItemID, const int Slot);
 	void HandleWeaponUse(const unsigned int ID);
-	void HandleDisplayLootData(std::vector<std::string> msgArray);
+	void HandleDisplayLootData(std::vector<std::string> msgArray, const unsigned int ActorID);
 protected:
 	virtual void OnEvent(Event* e);
 
@@ -180,7 +180,6 @@ private:
 	/*! Current Client ID*/
 	unsigned int zID;
 	int	zPort;
-
 	GameTimer* zGameTimer;
 
 	//INT64 zStartime;

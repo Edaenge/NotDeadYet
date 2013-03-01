@@ -122,42 +122,51 @@ void Client::AddActor( NewActorPacket* NAP )
 				mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
 			else if (substring == ".fbx")
 				mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
-			
-			actor->SetStaticMesh(mesh);
-			actor->SetModel(model);
-
-			if (Messages::FileWrite())
-				Messages::Debug("Actor ID: " + MaloW::convertNrToString((float)ID) +" Added with Model: " + model);
-
-			this->zActorManager->AddActor(actor);
-
-			if (ID == this->zID)
+			else
 			{
-				if (this->zGuiManager)
-					SAFE_DELETE(this->zGuiManager);
+				int s = 0;
+			}
+			
+			if(mesh)
+			{
+				actor->SetStaticMesh(mesh);
+				actor->SetModel(model);
 
-				this->zGuiManager = new GuiManager(this->zEng);
-				this->zCreated = true;
+				if (Messages::FileWrite())
+					Messages::Debug("Actor ID: " + MaloW::convertNrToString((float)ID) +" Added with Model: " + model);
 
-				auto meshOffsetsIterator = this->zMeshCameraOffsets.find(model);
-				if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
-					this->zMeshOffset = meshOffsetsIterator->second;
-				else
-					this->zMeshOffset = Vector3(0.0f, 1.0f, 0.0f);
+				this->zActorManager->AddActor(actor);
 
-				this->zActorManager->SetCameraOffset(this->zMeshOffset);
-				this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
-				this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
-
-				if (this->zActorType == GHOST)
+				if (ID == this->zID)
 				{
-					this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
-					if(this->zPam->GetShow())
-						zShowCursor = true;
+					if (this->zGuiManager)
+						SAFE_DELETE(this->zGuiManager);
+
+					this->zGuiManager = new GuiManager(this->zEng);
+					this->zCreated = true;
+
+					auto meshOffsetsIterator = this->zMeshCameraOffsets.find(model);
+					if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
+						this->zMeshOffset = meshOffsetsIterator->second;
 					else
-						zShowCursor = false;
+						this->zMeshOffset = Vector3(0.0f, 1.0f, 0.0f);
+
+					this->zActorManager->SetCameraOffset(this->zMeshOffset);
+					this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+					this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
+
+					if (this->zActorType == GHOST)
+					{
+						this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
+						if(this->zPam->GetShow())
+							zShowCursor = true;
+						else
+							zShowCursor = false;
+					}
 				}
 			}
+			else
+				MaloW::Debug("Failed to load mesh with Model: " + model);
 		}
 		else
 			MaloW::Debug("Cant create a new Actor. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
