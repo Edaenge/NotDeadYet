@@ -205,6 +205,8 @@ bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
 		this->zWeightText = ge->CreateText((MaloW::convertNrToString(
 			this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str(), 
 			Vector2(this->zX + ((10.0f / 1024.0f) * dx), this->zY + ((10.0f / 768.0f) * windowHeight)), 1, "Media/Fonts/new");
+		if(this->zWeightText)
+			UpdateInventoryWeight(this->zCurrentWeight);
 	}
 
 	return true;
@@ -424,4 +426,32 @@ void InventoryGui::Resize(float windowWidth, float windowHeight, float dx)
 	}
 	for(int k = 0; k < WEAPONSLOTS; k++)
 		zWeaponSlots[k] = newWeaponSlots[k];
+}
+
+void InventoryGui::UpdateInventoryWeight( float weight )
+{
+	Vector3 zero = Vector3(0.0f, 0.0f, 0.0f);
+	Vector3 half = Vector3(0.0f, -127.5f, -255.0f);
+	Vector3 full = Vector3(0.0f, -255.0f, -255.0f);
+	Vector3 returnVector;
+	this->zCurrentWeight = weight;
+	if(this->zCurrentWeight < (this->zMaxWeight * 0.5))
+	{
+		returnVector = lerp(zero, half, (this->zCurrentWeight/this->zMaxWeight) * 2 );
+	}
+	else
+	{
+		returnVector = lerp(half, full, (this->zCurrentWeight/this->zMaxWeight) * 2 );
+	}
+
+	if(this->zWeightText)
+	{
+		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + "/" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
+		this->zWeightText->SetColor(returnVector);
+	}
+}
+
+Vector3 InventoryGui::lerp(Vector3 x, Vector3 y, float a)
+{
+	return x * (1.0 - a) + y * a;
 }

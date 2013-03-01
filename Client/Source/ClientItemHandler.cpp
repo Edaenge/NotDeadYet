@@ -625,9 +625,8 @@ void Client::HandleRemoveInventoryItem(const unsigned int ID)
 
 			delete item, item = NULL;
 		}
-
 	}
-	
+	this->zGuiManager->UpdateInventoryWeight(zPlayerInventory->GetTotalWeight());
 }
 
 void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
@@ -846,6 +845,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	{
 		SAFE_DELETE(item);
 	}
+	this->zGuiManager->UpdateInventoryWeight(zPlayerInventory->GetTotalWeight());
 }
 
 Gui_Item_Data Client::MakeGID( Item* item )

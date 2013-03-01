@@ -396,3 +396,8 @@ void GuiManager::Resize( int width, int height )
 	this->zInvGui->Resize(width, height, dx);
 	this->zInvCircGui->Resize(width, height, dx);
 }
+
+void GuiManager::UpdateInventoryWeight( float weight )
+{
+	this->zInvGui->UpdateInventoryWeight(weight);
+}

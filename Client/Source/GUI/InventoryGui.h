@@ -42,9 +42,12 @@ public:
 	void ShowGui();
 	void HideGui();
 	std::string GetImageName(unsigned int position);
+	void UpdateInventoryWeight(float weight);
 
 	void Resize(float windowWidth, float windowHeight, float dx);
 private:
+	Vector3 lerp(Vector3 x, Vector3 y, float a);
+
 	std::vector<InventorySlotGui*> zSlotGui;
 	std::map<int, InventorySlotGui*> zWeaponSlotGui;
 	Vector2 zSlotPositions[SLOTS];

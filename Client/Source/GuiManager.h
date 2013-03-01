@@ -52,6 +52,7 @@ public:
 	bool IsGuiOpen();
 	void Update(float deltaTime);
 	Menu_select_data CheckCollisionInv();
+	void UpdateInventoryWeight(float weight);
 
 	void Resize(int width, int height);
 private:
