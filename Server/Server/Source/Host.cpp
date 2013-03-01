@@ -33,6 +33,7 @@ Host::Host() :
 	this->zTimeSinceLastPing = 0.0f;
 	this->zSendUpdateDelayTimer = 0.0f;
 	this->zGameStarted = false;
+	this->zRestartRequested = false;
 }
 
 Host::~Host()
@@ -86,7 +87,7 @@ void Host::SendMessageToClient( const std::string& message )
 		std::transform(msg.begin(), msg.end(), msg.begin(), ::tolower);
 		if (msg.find("restart") == 0)
 		{
-			Restart(this->zGameMode, this->zMapName);
+			this->zRestartRequested = true;
 		}
 	}
 	else
@@ -167,8 +168,12 @@ void Host::UpdateGame()
 	}
 	else
 	{
-		this->Restart(zGameMode, zMapName);		
+		
 	}
+
+	if (this->zRestartRequested)
+		this->Restart(zGameMode, zMapName);
+
 	//}
 }
 
@@ -488,7 +493,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	}
 	else if(msgArray[0].find(M_RESTART_GAME_REQUEST.c_str()) == 0)
 	{
-		this->Restart(this->zGameMode, this->zMapName);
+		this->zRestartRequested = true;
 	}
 	//Handles if client disconnects.
 	else if(msgArray[0].find(M_CONNECTION_CLOSED.c_str()) == 0)
@@ -725,6 +730,9 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
 // 		PCE.clientData = i->second;
 // 		zGame->OnEvent(&PCE);
 // 	}
+
+	this->zGame->RestartGame();
+	this->zRestartRequested = false;
 
 
 }

@@ -167,7 +167,7 @@ void Game::SpawnAnimalsDebug()
 	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
 
 	zBehaviors.insert(aiDeerBehavior);
-	//zBehaviors.insert(aiBearBehavior);
+	zBehaviors.insert(aiBearBehavior);
 
 	dActor->SetPosition(position);
 	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
@@ -175,12 +175,30 @@ void Game::SpawnAnimalsDebug()
 	bActor->SetPosition(position2);
 	bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
 
-	const Food* temp_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
+	const Food* temp_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
 	
 	int lootSize = (rand() % 5) + 1;
 	Food* new_Food = NULL;
-	//Inventory* inv = dActor->GetInventory();
+
 	Inventory* inv = bActor->GetInventory();
+	bool stacked = false;
+	if (temp_food)
+	{
+		for (int i = 0; i < lootSize; i++)
+		{
+			new_Food = new Food((*temp_food));
+
+			inv->AddItem(new_Food, stacked);
+			if( stacked && new_Food->GetStackSize() == 0 )
+				SAFE_DELETE(new_Food);
+		}
+	}
+
+	const Food* temp_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
+
+	int lootSize = (rand() % 7) + 1;
+	Food* new_Food = NULL;
+	inv = dActor->GetInventory();
 	bool stacked = false;
 	if (temp_food)
 	{
@@ -195,7 +213,7 @@ void Game::SpawnAnimalsDebug()
 	}
 	
 	this->zActorManager->AddActor(dActor);
-	//this->zActorManager->AddActor(bActor);
+	this->zActorManager->AddActor(bActor);
 }
 
 void Game::SpawnItemsDebug()
@@ -2117,6 +2135,7 @@ void Game::ModifyLivingPlayers( const int value )
 	std::string message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 	this->SendToAll(message);
 }
+
 void Game::RestartGame()
 {
 	NetworkMessageConverter NMC;
@@ -2157,7 +2176,7 @@ void Game::RestartGame()
 		(*it).first->Send(message);
 	}
 	//Debug
-	SpawnAnimalsDebug();
+	//SpawnAnimalsDebug();
 
 	//Sends Existing Updates to Clients.
 	for (auto it = this->zPlayers.begin(); it != zPlayers.end(); it++)

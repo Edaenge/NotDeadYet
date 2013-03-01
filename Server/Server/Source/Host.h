@@ -30,6 +30,7 @@ class Host : public MaloW::Process, public Observed
 	unsigned int zMinClients;
 	int zPort;
 	bool zGameStarted;
+	bool zRestartRequested;
 	//INT64 zStartime;
 	//float zSecsPerCnt;
 	float zDeltaTime;

@@ -565,7 +565,6 @@ void Client::CheckPlayerSpecificKeys()
 				{
 					if (item)
 					{
-						
 						SendLootItemMessage(0, msd.zID, msd.zType, item->GetItemSubType());
 					}
 				}
@@ -1809,6 +1808,7 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsi
 			this->zGuiManager->AddLootItemToLootGui(gid);
 		}
 	}
+	this->SendLootItemMessage(ActorID, gid.zID, gid.zType, gid.zSubType);
 }
 
 void Client::UpdateCameraOffset(unsigned int state)
