@@ -2,49 +2,116 @@
 #include "Actor.h"
 #include "BioActor.h"
 #include <Packets\ServerFramePacket.h>
+#include <Packets\NewActorPacket.h>
 #include "WorldActor.h"
+#include "AnimationFileReader.h"
+#include <time.h>
 
-
-ActorSynchronizer::ActorSynchronizer() : 
-	zFrameData( new ServerFramePacket() )
+ActorSynchronizer::ActorSynchronizer()
 {
+	this->zFrameData = new ServerFramePacket();
+	this->zActorData = new NewActorPacket();
 }
 
 ActorSynchronizer::~ActorSynchronizer()
 {
 	SAFE_DELETE(this->zFrameData);
+	SAFE_DELETE(this->zActorData);
+}
+
+void ActorSynchronizer::AddAnimation(BioActor* bActor)
+{
+	KeyStates keys = bActor->GetPlayer()->GetKeys();
+	unsigned int state = bActor->GetState();
+	std::string animation = "";
+	if (state == STATE_IDLE)
+	{
+		srand((unsigned int)time(0));
+
+		int idle_Animation = (rand() % 1000) + 1;
+		if (idle_Animation > 0 && idle_Animation <= 160)//High Chance 16%
+			animation = IDLE_O1;
+		else if (idle_Animation > 160 && idle_Animation <= 270)//Medium Chance 11%
+			animation = IDLE_O2;
+		else if (idle_Animation > 270 && idle_Animation <= 340)//Low Chance 7%
+			animation = IDLE_O3;
+		else if (idle_Animation > 340 && idle_Animation <= 590)//Very High Chance 25%
+			animation = IDLE_O4;
+		else if (idle_Animation > 590 && idle_Animation <= 840)//Very High Chance 25%
+			animation = IDLE_O5;
+		else if (idle_Animation > 840 && idle_Animation <= 1000)//High Chance 16%
+			animation = IDLE_O6;
+
+	}
+	else if (state == STATE_WALKING)
+	{
+		if(keys.GetKeyState(KEY_FORWARD))
+			animation = JOG_FORWARD;
+		else if (keys.GetKeyState(KEY_BACKWARD))
+			animation = JOG_BACKWARD;
+		else if(keys.GetKeyState(KEY_LEFT))
+			animation = JOG_LEFT;
+		else if (keys.GetKeyState(KEY_RIGHT))
+			animation = JOG_RIGHT;
+	}
+	else if (state == STATE_CROUCHING)
+	{
+		if(keys.GetKeyState(KEY_FORWARD))
+			animation = WALK_FORWARD;
+		else if (keys.GetKeyState(KEY_BACKWARD))
+			animation = WALK_BACKWARD;
+		else if(keys.GetKeyState(KEY_LEFT))
+			animation = WALK_LEFT;
+		else if (keys.GetKeyState(KEY_RIGHT))
+			animation = WALK_RIGHT;
+	}
+	else if (state == STATE_RUNNING)
+		animation = SPRINT;
+
+	if (animation != "")
+		this->zFrameData->newAnimations[bActor->GetID()] = animation;
 }
 
 void ActorSynchronizer::OnEvent( Event* e )
 {
 	if (ActorPositionEvent* UPE = dynamic_cast<ActorPositionEvent*>(e))
 	{
-		zFrameData->newPositions[UPE->zActor->GetID()] = UPE->zActor->GetPosition();
+		this->zFrameData->newPositions[UPE->zActor->GetID()] = UPE->zActor->GetPosition();
 	}
 	else if (ActorRotationEvent* URE = dynamic_cast<ActorRotationEvent*>(e))
 	{
-		zFrameData->newRotations[URE->zActor->GetID()] = URE->zActor->GetRotation();
+		this->zFrameData->newRotations[URE->zActor->GetID()] = URE->zActor->GetRotation();
 	}
 	else if (ActorScaleEvent* USE = dynamic_cast<ActorScaleEvent*>(e))
 	{
-		zFrameData->newScales[USE->zActor->GetID()] = USE->zActor->GetScale();
+		this->zFrameData->newScales[USE->zActor->GetID()] = USE->zActor->GetScale();
 	}
 	else if (BioActorStateEvent* BASE = dynamic_cast<BioActorStateEvent*>(e))
 	{
-		zFrameData->newStates[BASE->zBioActor->GetID()] = dynamic_cast<BioActor*>(BASE->zBioActor)->GetState();
+		BioActor* bActor =  dynamic_cast<BioActor*>(BASE->zBioActor);
+		this->zFrameData->newStates[BASE->zBioActor->GetID()] = bActor->GetState();
+	
+		this->AddAnimation(bActor);
 	}
 	else if (ActorAdded* AD = dynamic_cast<ActorAdded*>(e))
 	{
-		// Do Not Synch World Actors
+		// Do Not Sync World Actors
 		if( WorldActor* WA = dynamic_cast<WorldActor*>(AD->zActor) )
 			return;
 
+		this->zActorData->actorPosition[AD->zActor->GetID()] = AD->zActor->GetPosition();
+		this->zActorData->actorRotation[AD->zActor->GetID()] = AD->zActor->GetRotation();
+		this->zActorData->actorScale[AD->zActor->GetID()] = AD->zActor->GetScale();
+		this->zActorData->actorModel[AD->zActor->GetID()] = AD->zActor->GetModel();
+		if (BioActor* bActor = dynamic_cast<BioActor*>(AD->zActor))
+			this->zActorData->actorState[AD->zActor->GetID()] = bActor->GetState();
+		
 		AD->zActor->AddObserver(this);
-		zNewActorSet.insert(AD->zActor);
+		//zNewActorSet.insert(AD->zActor);
 	}
 	else if(ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e))
 	{
-		// Do Not Synch World Actors
+		// Do Not Sync World Actors
 		if( WorldActor* WA = dynamic_cast<WorldActor*>(AR->zActor) )
 			return;
 
@@ -61,7 +128,9 @@ void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 	NetworkMessageConverter nmc;
 	std::string msg;
 
-	RegisterActor(cd);
+	cd->Send(*zActorData);
+
+	//RegisterActor(cd);
 	
 	cd->Send(*zFrameData);
 
@@ -100,9 +169,16 @@ void ActorSynchronizer::RemoveActor( ClientData* cd )
 
 void ActorSynchronizer::ClearAll()
 {
-	// Clear Frame Data
-	delete zFrameData;
+	// Clear packets
+	if (this->zFrameData)
+		delete this->zFrameData;
+
 	zFrameData = new ServerFramePacket();
+
+	if (this->zActorData)
+		delete this->zActorData;
+
+	zActorData = new NewActorPacket();
 
 	// Clear Sets
 	this->zUpdateSet.clear();

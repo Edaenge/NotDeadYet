@@ -15,34 +15,27 @@ class ClientData
 	ClientData(MaloW::ClientChannel* cc);
 	virtual ~ClientData();
 
-	bool zPinged;
-	float zCurrentPingTime;
-	float zTotalPingTime;
-	float zMaxPingTime;
-	int zNrOfPings;
-	bool zReady;
+	float zLastRecivedPacketTime;
+	std::vector<float> zLatency;
 
 	MaloW::ClientChannel* zClient;
 public:
 
-	inline float GetCurrentPingTime() const {return zCurrentPingTime;}
-	inline float GetTotalPingTime() const {return zTotalPingTime;}
-	inline int GetNrOfPings() const {return zNrOfPings;}
-	inline bool GetReady(){ return zReady; }
-	
-	inline void SetReady(bool ready){ zReady = ready; }
-	inline void SetPinged(const bool pinged) {zPinged = pinged;}
-	inline void SetCurrentPingTime(float const cpt) {zCurrentPingTime = cpt;}
-	inline bool HasBeenPinged() const {return zPinged;}
-	inline void IncPingTime(float dt) {zCurrentPingTime += dt;}
-	inline void ResetPingCounter() {zPinged = 0; zTotalPingTime = 0.0f;}
+	/*! Returns the time of the last packet received from the client.*/
+	inline float GetLastPacketTime() {return this->zLastRecivedPacketTime;}
+	/*! Calculates and returns the average latency.*/
+	float GetAverageLatency();
 
+	/*! Sets the time of the last packet received from the client.*/
+	inline void SetLastPacketTime(const float packet) {this->zLastRecivedPacketTime = packet;}
+	/*! Adds the latency to the list.*/
+	void AddLatency(const float time);
 	/*! Sends a message to the client.*/
 	inline void Send(const std::string& msg)
 	{
 		if ( zClient ) zClient->TrySend(msg);
 	}
-
+	/*! Sends a packet to the client.*/
 	inline void Send( const Packet& packet )
 	{
 		if ( zClient )
@@ -62,17 +55,13 @@ public:
 			ss.write( &typeName[0], typeNameSize );
 
 			// Write Packet Data
-			if ( !packet.Serialize(ss) ) throw("Failed Packet Serialization!");			
+			if ( !packet.Serialize(ss) ) 
+				throw("Failed Packet Serialization!");			
 
 			// Send
 			Send(ss.str());
 		}
 	}
-
-	/*! Handle the ping from client.*/
-	void HandlePingMsg();
-	/*! Updates the latency of this client.*/
-	bool CalculateLatency(float& latencyOut);
 	/*! kicks the client.*/
 	void Kick();
 

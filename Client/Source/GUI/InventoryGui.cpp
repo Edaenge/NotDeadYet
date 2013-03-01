@@ -2,13 +2,14 @@
 #include <Safe.h>
 
 
-static const float SLOTIMAGEWIDTH = 50.0f;
-static const float SLOTIMAGEHEIGHT = 50.0f;
-static const float PADDING = 12.0f;
-static const float XOFFSETINV = 32.0f;
-static const float YOFFSETINV = 206.0f;
-static const float YOFFSETEQ = 62.0f;
-static const float EQXPOS[] = {94, 280, 342};
+#define SLOTIMAGEWIDTH 50.0f
+#define SLOTIMAGEHEIGHT 50.0f
+#define PADDING 12.0f
+#define XOFFSETINV 32.0f
+#define YOFFSETINV 206.0f
+
+#define YOFFSETEQ 62.0f
+static const int EQXPOS[] = {94, 280, 342};
 
 InventoryGui::InventoryGui()
 {
@@ -56,113 +57,126 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 	xTemp = this->zX + (EQXPOS[2] / 1024.0f) * dx;
 	zWeaponSlots[2] = Vector2(xTemp, this->zY + startOffsetY);
 
+	for(int i = 0; i < SLOTS; i++)
+	{
+		InventorySlotGui* gui = new InventorySlotGui(zSlotPositions[i].x, zSlotPositions[i].y, zSlotImageWidth,
+			zSlotImageHeight, Gui_Item_Data());
+		this->zSlotGui.push_back(gui);
+	}
+
+	InventorySlotGui* gui = new InventorySlotGui(this->zWeaponSlots[0].x, this->zWeaponSlots[0].y, zSlotImageWidth,
+		zSlotImageHeight, Gui_Item_Data());
+	this->zWeaponSlotGui[ITEM_TYPE_WEAPON_MELEE] = gui;
+	
+	gui = new InventorySlotGui(this->zWeaponSlots[1].x, this->zWeaponSlots[1].y, zSlotImageWidth,
+		zSlotImageHeight, Gui_Item_Data());
+	this->zWeaponSlotGui[ITEM_TYPE_WEAPON_RANGED] = gui;
+
+	gui = new InventorySlotGui(this->zWeaponSlots[2].x, this->zWeaponSlots[2].y, zSlotImageWidth,
+		zSlotImageHeight, Gui_Item_Data());
+	this->zWeaponSlotGui[ITEM_TYPE_PROJECTILE] = gui;
+
 	this->zMaxWeight = 49.0f;
 	this->zCurrentWeight = 0.0f;
+	this->zNrOfItems = 0;
 	this->zWeightText = NULL;
-
-
 }
 
 InventoryGui::~InventoryGui()
 {
-	for (auto it = this->zSlotGui.begin(); it < this->zSlotGui.end(); it++)
+	for (auto it = this->zSlotGui.begin(); it != this->zSlotGui.end(); it++)
 	{
 		SAFE_DELETE((*it));
 	}
-	for (auto it = this->zWeaponSlotGui.begin(); it < this->zWeaponSlotGui.end(); it++)
+	for (auto it = this->zWeaponSlotGui.begin(); it != this->zWeaponSlotGui.end(); it++)
 	{
-		SAFE_DELETE((*it));
+		SAFE_DELETE(it->second);
 	}
+	if(this->zWeightText && GetGraphics()->IsRunning())
+		GetGraphics()->DeleteText(this->zWeightText);
+	if(this->zWeightText && !GetGraphics()->IsRunning())
+		throw("Memory leaks!");
 }
 
 bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
-	this->zCurrentWeight = gid.zWeight;
-
-	if(this->zWeightText)
-		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + 
-		MaloW::convertNrToString(this->zMaxWeight)).c_str());
-
-	int size = this->zSlotGui.size();
-	bool stacks = false;
-	if(size >=  SLOTS)
-		return false;
-	if(gid.zStacks > 0)
+	if(gid.zCanStack) // If item can stack
 	{
-		for(unsigned int i = 0; i < this->zSlotGui.size(); i++)
+		bool found = false;
+		Gui_Item_Data returnGid;
+		for(int i = 0; i < SLOTS; i++) // See if the Item exists
 		{
-			if(this->zSlotGui.at(i)->GetType() == gid.zType && this->zSlotGui.at(i)->GetSubType() == gid.zSubType)
+			returnGid = zSlotGui.at(i)->GetGid();
+			if(gid.zType == returnGid.zType) // If item is the same type
 			{
-				if(this->zSlotGui.at(i)->GetStacks() > 0)
+				if(gid.zSubType == returnGid.zSubType) // If item also is the same subtype
 				{
-					this->zSlotGui.at(i)->SetStacks(this->zSlotGui.at(i)->GetStacks() + gid.zStacks);
-					stacks = true;
+					zSlotGui.at(i)->SetStacks(returnGid.zStacks + gid.zStacks); // Add to stacks
+					i = SLOTS;
 					return true;
 				}
 			}
 		}
 	}
-	InventorySlotGui* gui = new InventorySlotGui(zSlotPositions[size].x, zSlotPositions[size].y, zSlotImageWidth
-		, zSlotImageHeight, gid.zFilePath, gid.zID, gid.zType, gid.zSubType, gid.zStacks);
-	this->zSlotGui.push_back(gui);
-
-	if(open)
-		gui->AddToRenderer(ge);
-
+	for(int i = 0; i < SLOTS; i++) // Find the next slot that is not blocked
+	{
+		if(!this->zSlotGui.at(i)->GetBlocked())
+		{
+			this->zSlotGui.at(i)->AddItemToSlot(gid, open, ge);
+			i = SLOTS;
+		}
+	}
 	return true;
 }
 
 bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
-	this->zCurrentWeight = gid.zWeight;
-
-	if(this->zWeightText)
-		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
-
-	int size = zSlotGui.size();
-	for (auto it = this->zSlotGui.begin(); it < this->zSlotGui.end(); it++)
+	for(int i = 0; i < SLOTS; i++)
 	{
-		if ((*it)->GetID() == gid.zID)
+		if(this->zSlotGui.at(i)->GetGid().zID == gid.zID) // If we find the item
 		{
-			if((*it)->GetStacks() > 0)
+			bool removed = false;
+			if(this->zSlotGui.at(i)->GetGid().zCanStack) // remove the stacks
 			{
-				(*it)->SetStacks((*it)->GetStacks() - gid.zStacks);
-				if((*it)->GetStacks() > 0)
-					return true;
-			}
-			if(this->zSlotGui.end()-- != it)
-			{
-				for(auto i = this->zSlotGui.begin(); i < this->zSlotGui.end(); i++)
+				this->zSlotGui.at(i)->SetStacks(this->zSlotGui.at(i)->GetGid().zStacks - gid.zStacks);
+
+				if(this->zSlotGui.at(i)->GetGid().zStacks <= 0) // Remove item if it has less than or zero stacks
 				{
-					if((*i)->GetPosition().x == zSlotPositions[size-1].x && (*i)->GetPosition().y == zSlotPositions[size].y)
-					{
-						(*i)->SetPosition((*it)->GetPosition());
-					}
+					this->zSlotGui.at(i)->RemoveItemFromSlot(open, ge);
+					removed = true;
 				}
 			}
-			(*it)->RemoveFromRenderer(GetGraphics());
-			this->zSlotGui.erase(it);
-
-			return true;
-		}
-	}
-	for (auto it = this->zWeaponSlotGui.begin(); it < this->zWeaponSlotGui.end(); it++)
-	{
-		if ((*it)->GetID() == gid.zID)
-		{
-			if((*it)->GetStacks() > 0)
+			else // Remove the item if it cant stack
 			{
-				(*it)->SetStacks((*it)->GetStacks() - gid.zStacks);
-				if((*it)->GetStacks() > 0)
-					return true;
+				this->zSlotGui.at(i)->RemoveItemFromSlot(open, ge);
+				removed = true;
 			}
-			(*it)->RemoveFromRenderer(GetGraphics());
-			this->zWeaponSlotGui.erase(it);
+			if(removed)
+			{
+				int atPos = i;
+				for(int k = i+1; k < SLOTS; k++) // Find the last one
+				{
+					if(this->zSlotGui.at(k)->GetBlocked())
+					{
+						atPos = k;
+					}
+					else
+					{
+						k = SLOTS;
+					}
+				}
+				this->zSlotGui.at(i)->AddItemToSlot(this->zSlotGui.at(atPos)->GetGid(), open, ge); // Move last one to the one that we removed 
+				this->zSlotGui.at(atPos)->RemoveItemFromSlot(open, ge);
+			}
 
+			i = SLOTS;
 			return true;
 		}
 	}
-	return false;
+	if(gid.zType == ITEM_TYPE_WEAPON_MELEE || gid.zType == ITEM_TYPE_WEAPON_MELEE || gid.zType == ITEM_TYPE_PROJECTILE)
+		this->zWeaponSlotGui[gid.zType]->RemoveItemFromSlot(open, ge); // If item isn't in inventory
+
+	return true;
 	
 }
 
@@ -176,12 +190,12 @@ bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
 
 		(*x)->AddToRenderer(ge);
 	}
-	for (auto x = this->zWeaponSlotGui.begin(); x < this->zWeaponSlotGui.end(); x++)
+	for (auto x = this->zWeaponSlotGui.begin(); x != this->zWeaponSlotGui.end(); x++)
 	{
 		if(x == this->zWeaponSlotGui.end())
 			break;
 
-		(*x)->AddToRenderer(ge);
+		x->second->AddToRenderer(ge);
 	}
 	if(!this->zWeightText)
 	{
@@ -190,7 +204,7 @@ bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
 
 		this->zWeightText = ge->CreateText((MaloW::convertNrToString(
 			this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str(), 
-			Vector2(this->zX + ((10.0f / 1024.0f) * dx), this->zY + ((10.0f / 768.0f) * windowHeight)), 1, "Media/Fonts/1");
+			Vector2(this->zX + ((10.0f / 1024.0f) * dx), this->zY + ((10.0f / 768.0f) * windowHeight)), 1, "Media/Fonts/new");
 	}
 
 	return true;
@@ -204,9 +218,9 @@ bool InventoryGui::RemoveFromRenderer(GraphicsEngine* ge)
 	{
 		(*x)->RemoveFromRenderer(ge);
 	}
-	for (auto x = this->zWeaponSlotGui.begin(); x < this->zWeaponSlotGui.end(); x++)
+	for (auto x = this->zWeaponSlotGui.begin(); x != this->zWeaponSlotGui.end(); x++)
 	{
-		(*x)->RemoveFromRenderer(ge);
+		x->second->RemoveFromRenderer(ge);
 	}
 	if(this->zWeightText)
 	{
@@ -226,36 +240,39 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 		{
 			if ((*x))
 			{
-				bCollision = (*x)->CheckCollision(mouseX, mouseY);
-				if (bCollision)
+				if((*x)->GetBlocked())
 				{
-					if(mousePressed)
+					bCollision = (*x)->CheckCollision(mouseX, mouseY);
+					if (bCollision)
 					{
-						Selected_Item_ReturnData sir;
-						sir.ID = (*x)->GetID();
-						sir.type = (*x)->GetType();
-						sir.inventory = 0;
-						return sir;
+						if(mousePressed)
+						{
+							Selected_Item_ReturnData sir;
+							sir.ID = (*x)->GetGid().zID;
+							sir.type = (*x)->GetGid().zType;
+							sir.inventory = 0;
+							return sir;
+						}
 					}
 				}
 			}
 		}
-		for (auto x = this->zWeaponSlotGui.begin(); x < this->zWeaponSlotGui.end() && !bCollision; x++)
+		for (auto x = this->zWeaponSlotGui.begin(); x != this->zWeaponSlotGui.end() && !bCollision; x++)
 		{
-			if ((*x))
+			if (x->second)
 			{
-				bCollision = (*x)->CheckCollision(mouseX, mouseY);
+				bCollision = x->second->CheckCollision(mouseX, mouseY);
 				if (bCollision)
 				{
 					if(mousePressed)
 					{
 						Selected_Item_ReturnData sir;
-						sir.ID = (*x)->GetID();
-						if(this->zWeaponSlots[MELEE] == (*x)->GetPosition())
+						sir.ID = x->second->GetGid().zID;
+						if(this->zWeaponSlots[MELEE] == x->second->GetPosition())
 							sir.type = MELEE;
-						if(this->zWeaponSlots[RANGED] == (*x)->GetPosition())
+						if(this->zWeaponSlots[RANGED] == x->second->GetPosition())
 							sir.type = RANGED;
-						if(this->zWeaponSlots[PROJECTILE] == (*x)->GetPosition())
+						if(this->zWeaponSlots[PROJECTILE] == x->second->GetPosition())
 							sir.type = PROJECTILE;
 
 						//sir.type = (*x)->GetType();
@@ -316,49 +333,19 @@ std::string InventoryGui::GetImageName( unsigned int position )
 	return ret;
 }
 
-void InventoryGui::EquipItem( int type, const Gui_Item_Data gid, bool guiOpen )
+void InventoryGui::EquipItem( const Gui_Item_Data gid, bool guiOpen )
 {
-	this->zCurrentWeight = gid.zWeight;
-
-	if(this->zWeightText)
-		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
-
-	int size = zWeaponSlotGui.size();
-	for(int i = 0; i < size; i++)
+	if(!this->zWeaponSlotGui.at(gid.zType)->GetBlocked())
 	{
-		if(zWeaponSlotGui.at(i)->GetType() == type)
-		{
-			return;
-		}
+		this->zWeaponSlotGui.at(gid.zType)->AddItemToSlot(gid, guiOpen, GetGraphics());
 	}
-	InventorySlotGui* gui = new InventorySlotGui(zWeaponSlots[type].x, zWeaponSlots[type].y, zSlotImageWidth, 
-		zSlotImageHeight, gid.zFilePath, gid.zID, type, gid.zSubType, gid.zStacks);
-
-	if(guiOpen)
-		gui->AddToRenderer(GetGraphics());
-
-	zWeaponSlotGui.push_back(gui);
-	
 }
 
 void InventoryGui::UnEquipItem(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
-	this->zCurrentWeight = gid.zWeight;
-	if(this->zWeightText)
-		this->zWeightText->SetText((MaloW::convertNrToString(this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str());
-
-	int size = zWeaponSlotGui.size();
-	for(int i = 0; i < size; i++)
+	if(this->zWeaponSlotGui.at(gid.zType)->GetBlocked())
 	{
-		if(zWeaponSlotGui.at(i)->GetID() == gid.zID)
-		{
-			InventorySlotGui* InvGui = this->zWeaponSlotGui.at(i);
-			InvGui->RemoveFromRenderer(GetGraphics());
-			this->zWeaponSlotGui.erase(zWeaponSlotGui.begin() + i);
-			delete InvGui;
-			InvGui = NULL;
-			return;
-		}
+		this->zWeaponSlotGui.at(gid.zType)->RemoveItemFromSlot(open, GetGraphics());
 	}
 }
 

@@ -4,10 +4,6 @@ using namespace MaloW;
 
 long Process::nextPID = 0;
 
-
-
-
-
 void DebugMtxInfo(DWORD res)
 {
 	if(res != WAIT_OBJECT_0)
@@ -37,11 +33,6 @@ void DebugMtxInfo(DWORD res)
 		MaloW::Debug(msg);
 	}
 }
-
-
-
-
-
 
 Process::Process()
 {
@@ -231,7 +222,7 @@ void Process::PutEvent(ProcessEvent* ev, bool important)
 
 void Process::WaitUntillDone()
 {
-	while(this->state != FINISHED)
+	while(this->state != FINISHED && this->state != NOT_STARTED)
 		Sleep(1);
 }
 

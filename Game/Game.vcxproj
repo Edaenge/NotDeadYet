@@ -80,11 +80,13 @@
     <ClInclude Include="..\Client\Source\KeyUtil\Keybinds.h" />
     <ClInclude Include="..\Client\Source\KeyUtil\KeyConverter.h" />
     <ClInclude Include="..\Client\Source\KeyUtil\KeyHandler.h" />
+    <ClInclude Include="Include\AnimationFileReader.h" />
     <ClInclude Include="Include\AnimationStates.h" />
     <ClInclude Include="Include\Bandage.h" />
     <ClInclude Include="Include\ClientServerMessages.h" />
     <ClInclude Include="Include\Container.h" />
     <ClInclude Include="Include\Food.h" />
+    <ClInclude Include="Include\GameTimer.h" />
     <ClInclude Include="Include\Gear.h" />
     <ClInclude Include="Include\Inventory.h" />
     <ClInclude Include="Include\Item.h" />
@@ -94,6 +96,7 @@
     <ClInclude Include="Include\Material.h" />
     <ClInclude Include="Include\MeleeWeapon.h" />
     <ClInclude Include="Include\NetworkMessageConverter.h" />
+    <ClInclude Include="Include\Packets\NewActorPacket.h" />
     <ClInclude Include="Include\Packets\Packet.h" />
     <ClInclude Include="Include\Packets\ServerFramePacket.h" />
     <ClInclude Include="Include\Projectile.h" />
@@ -108,15 +111,18 @@
     <ClInclude Include="Include\World\WorldEvents.h" />
     <ClInclude Include="Include\World\WorldFile.h" />
     <ClInclude Include="Include\World\WorldRenderer.h" />
+    <ClInclude Include="Source\ActorEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Client\Source\KeyUtil\KeyBindConfig.cpp" />
     <ClCompile Include="..\Client\Source\KeyUtil\Keybinds.cpp" />
     <ClCompile Include="..\Client\Source\KeyUtil\KeyConverter.cpp" />
     <ClCompile Include="..\Client\Source\KeyUtil\KeyHandler.cpp" />
+    <ClCompile Include="Source\AnimationFileReader.cpp" />
     <ClCompile Include="Source\Bandage.cpp" />
     <ClCompile Include="Source\Container.cpp" />
     <ClCompile Include="Source\Food.cpp" />
+    <ClCompile Include="Source\GameTimer.cpp" />
     <ClCompile Include="Source\Gear.cpp" />
     <ClCompile Include="Source\Graphics.cpp" />
     <ClCompile Include="Source\Inventory.cpp" />

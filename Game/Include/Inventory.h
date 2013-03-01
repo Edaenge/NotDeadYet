@@ -15,6 +15,7 @@
 #include "Bandage.h"
 #include <vector>
 #include "Observer.h"
+
 enum EQUIPMENT_SLOT
 {
 	EQUIPMENT_SLOT_MELEE_WEAPON,
@@ -27,7 +28,7 @@ enum EQUIPMENT_SLOT
 };
 
 /*! Class That keeps track of the inventory data*/
-class Inventory : public Observed
+class Inventory
 {
 public:
 	Inventory();
@@ -38,6 +39,10 @@ public:
 	int Search(Item* item) const;
 	/*! Adds an item to the array*/
 	bool AddItem(Item* item, bool &stacked);
+	/*! Calculate how many slots this item can use.*/
+	int CalcMaxAvailableSlots(Item* item);
+	/*! Check if the item will stack if added.*/
+	bool IsStacking(Item* item);
 	/*! Returns the item at the position */
 	Item* GetItem(const unsigned int index) const;
 	/*! Returns the Items*/

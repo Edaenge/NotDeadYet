@@ -6,9 +6,9 @@ static const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 
 ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world ) : Behavior(actor, world)
 {
-	this->zSpeed = 25.0f;
-	this->zVelocity = actor->GetDir();// * zSpeed;
-	this->zDamping = 0.99f;
+	this->zSpeed = 30.0f;
+	this->zVelocity = actor->GetDir();
+	this->zDamping = 0.01f;
 	this->zMoving = true;
 	//this->zLength = 16.396855f;
 
@@ -51,8 +51,13 @@ bool ProjectileArrowBehavior::Update( float dt )
 	this->zActor->SetRotation(around, angle);
 	this->zActor->SetDir(newDir);
 
+	/**Check If the arrow is outside the world.**/
+	if( !this->zWorld->IsInside(newPos.GetXZ()) )
+	{
+		Stop();
+		return true;
+	}
 	//**Check if the projectile has hit the ground**
-
 	float yValue = std::numeric_limits<float>::lowest();
 	try
 	{
@@ -60,6 +65,8 @@ bool ProjectileArrowBehavior::Update( float dt )
 	}
 	catch(...)
 	{
+		Stop();
+		return true;
 	}
 
 	// If true, stop the projectile and return.

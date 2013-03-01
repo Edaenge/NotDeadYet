@@ -2,9 +2,7 @@
 #include <time.h>
 
 
-//STILL NEED TO ADD TARGETS AND HANDLE THEM
-
-AIDeerBehavior::AIDeerBehavior( Actor* actor, World* world ) : Behavior(actor, world)
+AIDeerBehavior::AIDeerBehavior( Actor* actor, World* world ) : AIBehavior(actor, world)
 {
 	InitValues();
 }
@@ -271,7 +269,6 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 	int counter = 0; //Just for testing stuff
 	getEmergencyDirection = false;
 
-
 	while(foundPath == false)
 	{
 		getEmergencyDirection = false;
@@ -360,7 +357,7 @@ bool AIDeerBehavior::Update( float dt )
 	float zDistance = 0;
 	float finalDistance = 0;
 
-	int maximumNodesTest = 40;
+	int maximumNodesTest = 10;
 
 	//Determine closest threat/target
 	for(int i = 0; i < this->GetCurrentTargets(); i++)
@@ -448,16 +445,20 @@ bool AIDeerBehavior::Update( float dt )
 		else //No threat detected. Calming down.
 		{
 			this->SetFearLevel( this->GetFearLevel() - this->zFearDecrease);
+			if(this->GetFearLevel() <= 0.0f)
+			{
+				this->SetFearLevel(0.0f);
+			}
 		}
 	}
 
 	//Change state of mind.
-	if(this->GetFearLevel() == 0 && !nearbyPredatorsExist)
+	if(this->GetFearLevel() == 0.0f && !nearbyPredatorsExist)
 	{
 		this->SetMentalState(CALM);
 		//this->SetScale(Vector3(0.01f, 0.01f, 0.01f));
 	}
-	else if(this->GetFearLevel() > 0 && this->GetFearLevel() <= this->zSupspiciousToAggressiveThreshold)
+	else if(this->GetFearLevel() > 0.0f && this->GetFearLevel() <= this->zSupspiciousToAggressiveThreshold)
 	{
 		this->SetMentalState(SUSPICIOUS);
 		//this->SetScale(Vector3(0.03f, 0.03f, 0.03f));
@@ -481,6 +482,10 @@ bool AIDeerBehavior::Update( float dt )
 			this->SetMentalState(AFRAID);
 			//this->SetScale(Vector3(3.09f, 3.09f, 3.09f));
 		}
+	}
+	else
+	{
+		this->SetMentalState(SUSPICIOUS);
 	}
 	
 	//Act based on state of mind.
@@ -644,6 +649,8 @@ bool AIDeerBehavior::Update( float dt )
 	//Move the animal along path.
 	if(this->zCurrentPath.size() > 0)
 	{
+
+		this->zPreviousVelocity = dActor->GetVelocity();
 		this->zPanic = false;
 		
 		//this->zPreviousPos = this->GetPosition();
@@ -660,7 +667,7 @@ bool AIDeerBehavior::Update( float dt )
 			//reachedNode = false;
 		}
 
-		if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 || this->GetMentalState() == SUSPICIOUS && this->zCurrentPath.size() > 0) // && !this->zCurrentPath.empty() is necessary to be used again to avoid getting into an unlikely but posssible error.
+		if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 || this->GetMentalState() == SUSPICIOUS && this->zCurrentPath.size() > 0)
 		{
 			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
 
@@ -671,7 +678,17 @@ bool AIDeerBehavior::Update( float dt )
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
 			dActor->SetDir( direction ); 
+
+			/*if(dActor->GetVelocity() > this->zWalkingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
+			}
+			else if(dActor->GetVelocity() < this->zWalkingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
+			}*/
 			dActor->SetVelocity(this->zWalkingVelocity);
+			
 			//if(testInterval > 2.0) //Mainly for testing purposes.
 			//{
 			//	testInterval = 0;
@@ -692,6 +709,15 @@ bool AIDeerBehavior::Update( float dt )
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
 			dActor->SetDir( direction ); 
+			
+		/*	if(dActor->GetVelocity() > this->zAttackingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
+			}
+			else if(dActor->GetVelocity() < this->zAttackingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
+			}*/
 			dActor->SetVelocity(this->zAttackingVelocity);
 
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
@@ -708,6 +734,15 @@ bool AIDeerBehavior::Update( float dt )
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
 			dActor->SetDir( direction ); 
+
+			/*if(dActor->GetVelocity() > this->zFleeingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
+			}
+			else if(dActor->GetVelocity() < this->zFleeingVelocity)
+			{
+				dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
+			}*/
 			dActor->SetVelocity(this->zFleeingVelocity);
 
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());

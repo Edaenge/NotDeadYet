@@ -87,6 +87,9 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 			case EQUIP:
 				texName = "Media/Icons/Equip.png";
 				break;
+			case LOOT:
+				texName = "Media/Icons/Loot.png";
+				break;
 			case NOTHING:
 				texName = "Media/Icons/Cancel.png";
 				break;
@@ -130,7 +133,6 @@ bool CircularListGui::RemoveFromRenderer(GraphicsEngine* ge)
 int CircularListGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
 {
 	Vector2 dimension = this->GetDimension();
-
 	if(mousePressed)
 	{
 		if(mouseX < (this->zX + this->zWidth * 0.5f) && mouseY < (this->zY + this->zHeight * 0.5f))
@@ -219,6 +221,11 @@ void CircularListGui::Adjust(int type, int inventory)
 	{
 		this->zOptions[0] = UNEQUIP;
 		this->zOptions[1] = DROP;
+		return;
+	}
+	else if(inventory == 2)
+	{
+		this->zOptions[0] = LOOT;
 		return;
 	}
 	switch(type)

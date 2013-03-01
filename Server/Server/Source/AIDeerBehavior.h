@@ -1,38 +1,36 @@
 #pragma once
-#include <World/World.h>
-#include "Behavior.h"
-#include "Actor.h"
+
 #include "DeerActor.h"
-#include "AI.h"
+#include "AIBehavior.h"
 
-enum MentalState
-{
-	IDLE, 
-	CALM, 
-	SUSPICIOUS,
-	AGGRESSIVE, 
-	AFRAID
-};
+//enum MentalState
+//{
+//	IDLE, 
+//	CALM, 
+//	SUSPICIOUS,
+//	AGGRESSIVE, 
+//	AFRAID
+//};
+//
+//enum Type
+//{
+//	HUMAN,
+//	DEER,
+//	WOLF,
+//	BEAR
+//};
+//
+//struct Target //Supposed to represent an entity near the animal, like a player, or possibly other animal (removed until deemed necessary)
+//{
+//	Vector3 position;
+//	//float	threatLevel;
+//	float	health;
+//	float	movementNoise; //The velocity of movement, currently used here to determine how much an animal should hear.
+//	bool	valid;
+//	Type	kind;
+//};
 
-enum Type
-{
-	HUMAN,
-	DEER,
-	WOLF,
-	BEAR
-};
-
-struct Target //Supposed to represent an entity near the animal, like a player, or possibly other animal (removed until deemed necessary)
-{
-	Vector3 position;
-	//float	threatLevel;
-	float	health;
-	float	movementNoise; //The velocity of movement, currently used here to determine how much an animal should hear.
-	bool	valid;
-	Type	kind;
-};
-
-class AIDeerBehavior : public Behavior
+class AIDeerBehavior : public AIBehavior
 {
 private:
 	bool InitPathfinder();
@@ -113,6 +111,8 @@ private:
 		float		zWalkingVelocity;
 		float		zAttackingVelocity;
 		float		zFleeingVelocity;
+
+		float		zPreviousVelocity;
 
 
 		float		zPreviousHealth; //Used to detect if the deer has been wounded.

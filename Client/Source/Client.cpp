@@ -4,19 +4,16 @@
 #include <ClientServerMessages.h>
 #include <ClientServerMessages.h>
 #include <World/EntityList.h>
+#include <World/Entity.h>
 #include "DebugMessages.h"
 #include <DisconnectedEvent.h>
-#include "Sounds.h"
 #include "PlayerConfig/PlayerSettings.h"
+#include <algorithm>
 
 using namespace MaloW;
 
 // Timeout_value = 10 sek
 static const float TIMEOUT_VALUE = 10.0f;
-
-// 50 updates per second
-static const float UPDATE_DELAY = 0.020f;
-static const float MAX_DISTANCE_TO_OBJECT = 3.0f;
 
 Client::Client()
 {
@@ -28,6 +25,7 @@ Client::Client()
 	this->zActorType = NONE;
 	this->zRunning = true;
 	this->zCreated = false;
+	this->zReady = false;
 	this->zGameStarted = false;
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
@@ -35,18 +33,26 @@ Client::Client()
 	this->zMeshID	= GetPlayerSettings()->GetPlayerModel();
 	this->zName		= GetPlayerSettings()->GetPlayerName();
 
+	//Temporary Ghost Model
+	this->zMeshCameraOffsets["Media/Models/Ball.obj"] = Vector3();
 	this->zMeshCameraOffsets["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zMeshCameraOffsets["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
-	this->zMeshCameraOffsets["Media/Models/Ball.obj"] = Vector3();
+	this->zMeshCameraOffsets["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 2.5f, 0.0f);
 
 	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_WALKING] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_CROUCHING] = Vector3(0.0f, 1.0f, 0.0f);
 
+	this->zAnimationFileReader[0] = AnimationFileReader("Media/Models/temp_guy_movement_anims.txt");
+	this->zAnimationFileReader[0].ReadFromFile();
+
+	this->zModelToReaderMap["Media/Models/temp_guy_movement_anims.fbx"] = zAnimationFileReader[0];
+
 	this->zSendUpdateDelayTimer = 0.0f;
 
-	this->zEng = NULL;
+	this->zEng = GetGraphics();
+	
 	this->zGuiManager = NULL;
 	this->zActorManager = NULL;
 	this->zServerChannel = NULL;
@@ -56,6 +62,9 @@ Client::Client()
 	
 	this->zMsgHandler = NetworkMessageConverter();
 
+	this->zLatencyText = NULL;
+	this->zServerUpsText = NULL;
+	this->zClientUpsText = NULL;
 	this->zWorld = NULL;
 	this->zWorldRenderer = NULL;
 	this->zAnchor = NULL;
@@ -65,21 +74,17 @@ Client::Client()
 	
 	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
-	
-	GetSounds()->LoadMusicIntoSystem("Media/Sound/ForestAmbience.mp3", true);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Running_Breath_4.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/LeftStep.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/RightStep.mp3", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/Breath.wav", false);
-	GetSounds()->LoadSoundIntoSystem("Media/Sound/BowShot.mp3", false);
+
+	this->zGameTimer = new GameTimer();
 }
 
-void Client::Connect(const std::string &IPAddress, const unsigned int &port)
+void Client::Connect(const std::string &IPAddress, const unsigned int &port, std::string& errMsg, int& errorCode)
 {
 	this->zIP = IPAddress;
 	this->zPort = port;
-	this->zServerChannel = new ServerChannel(this, IPAddress, port);
-	this->zServerChannel->Start();
+	this->zServerChannel = new ServerChannel(this, IPAddress, port, errMsg, errorCode);
+	if (errMsg == "")
+		this->zServerChannel->Start();
 }
 
 Client::~Client()
@@ -89,9 +94,6 @@ Client::~Client()
 	this->Close();
 	this->WaitUntillDone();
 
-	if (this->zAnchor)
-		this->zWorld->DeleteAnchor(this->zAnchor);
-
 	SAFE_DELETE(this->zGuiManager);
 	SAFE_DELETE(this->zActorManager);
 	SAFE_DELETE(this->zServerChannel);
@@ -100,9 +102,9 @@ Client::~Client()
 	SAFE_DELETE(this->zIgm);
 	SAFE_DELETE(this->zPam);
 
-	SAFE_DELETE(this->zWorldRenderer);
 	SAFE_DELETE(this->zWorld);
-	
+	SAFE_DELETE(this->zGameTimer);
+
 	this->zMeshCameraOffsets.clear();
 	this->zStateCameraOffset.clear();
 
@@ -114,26 +116,35 @@ Client::~Client()
 
 	if (this->zCrossHair) 
 		this->zEng->DeleteImage(this->zCrossHair);
+	
+	if (this->zClientUpsText)
+		this->zEng->DeleteText(this->zClientUpsText);
 
-	GetSounds()->StopMusic();
+	if (this->zServerUpsText)
+		this->zEng->DeleteText(this->zServerUpsText);
+
+	if (this->zServerUpsText)
+		this->zEng->DeleteText(this->zLatencyText);
+
+	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
+	{
+		TextDisplay* temp = (*it);
+
+		this->zEng->DeleteText(temp->zText);
+		SAFE_DELETE(temp);
+	}
+
+	this->zDisplayedText.clear();
 }
 
-float Client::Update()
+void Client::Update()
 {
-	INT64 currentTime;
-	float timeDifference;
+	this->UpdateText();
 
-	QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
+	this->zActorManager->UpdateObjects(this->zGameTimer->GetDeltaTime(), this->zID);
 
-	timeDifference = (float)(currentTime - this->zStartime);
-
-	this->zDeltaTime = timeDifference * this->zSecsPerCnt;
-
-	this->zStartime = currentTime;
-
-	this->zFrameTime += this->zDeltaTime;
-
-	this->zGuiManager->Update(this->zDeltaTime);
+	if (this->zGuiManager)
+		this->zGuiManager->Update(this->zDeltaTime);
 
 	// Anchors with the world to decide what to render.
 	if(zWorld)
@@ -147,35 +158,93 @@ float Client::Update()
 
 			this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
 		}
-
 		this->zWorld->Update();
-		if ( zWorldRenderer ) zWorldRenderer->Update();
+		if ( zWorldRenderer ) 
+			zWorldRenderer->Update();
+
+		this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
-	
-	if(this->zDamageIndicator != NULL)
+
+	if(this->zDamageIndicator)
 	{
 		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
 	}
-	
+
 	if(this->zDamageOpacity < 0.0f)
 	{
 		this->zDamageOpacity = 0.0f;
-		if(this->zDamageIndicator != NULL)
+		if(this->zDamageIndicator)
 		{
 			this->zEng->DeleteImage(this->zDamageIndicator);
 			this->zDamageIndicator = NULL;
 		}
 	}
-	return this->zDeltaTime;
+}
+
+void Client::IgnoreRender( const float& radius, const Vector2& center )
+{
+	static std::set<Entity*> previousEntities;
+	std::set<Entity*> entities; 
+	std::set<Entity*> validEntities;
+
+	zWorld->GetEntitiesInCircle(center, radius, entities);
+
+	for (auto it = entities.begin(); it != entities.end(); it++)
+	{
+		if ( GetEntBlockRadius( (*it)->GetType() ) <= 0.0f )
+		{
+			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*it);
+			
+			if(mesh)
+			{
+				mesh->DontRender(false);
+				validEntities.insert(*it);
+			}
+		}
+	}
+
+	/*Check previous, if prev is not in valid, they should not be rendered.*/
+	for(auto it = previousEntities.begin(); it != previousEntities.end(); it++)
+	{
+		auto found = validEntities.find(*it);
+
+		if(found == validEntities.end())
+		{ 
+			iMesh* temp;
+			temp = this->zWorldRenderer->GetEntityMesh(*it);
+
+			if(temp)
+				temp->DontRender(true);
+		}
+	}
+
+	previousEntities.clear();
+	previousEntities = validEntities;
 }
 
 void Client::InitGraphics(const std::string& mapName)
 {
+	if (this->zActorManager)
+		delete this->zActorManager;
+
+	if (this->zPlayerInventory)
+		delete this->zPlayerInventory;
+
+	if (this->zGuiManager)
+		delete this->zGuiManager;
+
+	this->zActorManager = new ClientActorManager();
+	this->zActorManager->SetFBXMapping(this->zModelToReaderMap);
+	this->zGuiManager = new GuiManager(this->zEng);
+	this->zPlayerInventory = new Inventory();
+
 	LoadEntList("Entities.txt");
 
-	if ( zWorld ) delete zWorld, zWorld=0;
+	if ( zWorld ) 
+		delete zWorld, zWorld=0;
+
 	this->zWorld = new World(this, mapName, true);
 
 	Vector2 center = this->zWorld->GetWorldCenter();
@@ -187,7 +256,6 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zAnchor->position = center;
 	this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
 	
-
 	int windowWidth = this->zEng->GetEngineParameters().WindowWidth;
 	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;	
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
@@ -210,23 +278,35 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zCrossHair = this->zEng->CreateImage(Vector2(xPos, yPos), Vector2(length, length), "Media/Icons/cross.png");
 	this->zCrossHair->SetOpacity(0.5f);
 
-	GetSounds()->PlayMusic("Media/Sound/ForestAmbience.mp3");
-}
+	if (this->zLatencyText)
+		this->zEng->DeleteText(this->zLatencyText);
 
-void Client::Init()
-{
-	INT64 frequency;
-	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
+	this->zLatencyText = this->zEng->CreateText("", Vector2(1, 1), 1.0f, "Media/Fonts/new");
 
-	this->zSecsPerCnt = 1.0f / (float)(frequency);
+	if (this->zServerUpsText)
+		this->zEng->DeleteText(this->zServerUpsText);
 
-	QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
+	this->zServerUpsText = this->zEng->CreateText("", Vector2(1, 25), 1.0f, "Media/Fonts/new");
 
-	this->zEng = GetGraphics();
+	if (this->zClientUpsText)
+		this->zEng->DeleteText(this->zClientUpsText);
 
-	this->zActorManager = new ClientActorManager();
-	this->zGuiManager = new GuiManager(this->zEng);
-	this->zPlayerInventory = new Inventory();
+	this->zClientUpsText = this->zEng->CreateText("", Vector2(1, 49), 1.0f, "Media/Fonts/new");
+
+	//Go through entities (bush etc) and set render flag.
+	std::set<Entity*> entities;
+	Vector2 size = zWorld->GetWorldSize();
+	float radius = powf(size.x, 2.0f) + powf(size.y, 2.0f);
+	zWorld->GetEntitiesInCircle(center, (radius * 0.5f), entities);
+
+	for (auto i = entities.begin(); i != entities.end(); i++)
+	{
+		if ( GetEntBlockRadius( (*i)->GetType() ) <= 0.0f )
+		{
+			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*i);
+			mesh->DontRender(true);
+		}
+	}
 
 }
 
@@ -234,73 +314,95 @@ void Client::Life()
 {
 	MaloW::Debug("Client Process Started");
 
-	this->Init();
+	this->zGameTimer->Init();
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
-		this->Update();
+		this->zDeltaTime = this->zGameTimer->Frame();
+			
+		this->UpdateGame();
 
-		this->CheckKeyboardInput();
-		if(this->zCreated)
-		{
-			this->zSendUpdateDelayTimer += this->zDeltaTime;
-			this->zTimeSinceLastPing += this->zDeltaTime;
-
- 			if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
- 			{
-				this->zSendUpdateDelayTimer = 0.0f;
-
-				this->SendClientUpdate();
-			}
-
-			this->UpdateMeshRotation(); // Will manage the local model later.
-
-			this->UpdateActors();
-		}
-
-		this->ReadMessages();
-		if(this->zPam->GetShow())
-		{
-			int returnValue = this->zPam->Run();
-			if(returnValue == DEER)
-			{
-				this->zPam->ToggleMenu();
-				zShowCursor = this->zPam->GetShow();
-				// MAKE ME A DEER.
-
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
-				this->zServerChannel->Send(msg);
-			}
-			if(returnValue == BEAR)
-			{
-				this->zPam->ToggleMenu();
-				zShowCursor = this->zPam->GetShow();
-				// MAKE ME A BEAR.
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
-				this->zServerChannel->Send(msg);
-			}
-		}
-		if (this->zIgm->GetShow())
-		{
-			int returnValue = this->zIgm->Run();
-			if(returnValue == IGQUIT)
-			{
-				this->stayAlive = false;
-				this->CloseConnection("");
-			}
-			else if(returnValue == IGRESUME)
-			{
-				this->zIgm->SetShow(false);
-				zShowCursor = false;
-				this->zEng->GetKeyListener()->SetMousePosition(
-					Vector2((float)(this->zEng->GetEngineParameters().WindowWidth/2), 
-					(float)(this->zEng->GetEngineParameters().WindowHeight/2)));
-			}
-		}
-
-		Sleep(5);
+		//Sleep(5);
 	}
 
 	this->zRunning = false;
+}
+
+void Client::UpdateGame()
+{
+	// 50 updates per second
+	static const float UPDATE_DELAY = 0.020f;
+
+	this->CheckKeyboardInput();
+	if(this->zCreated)
+	{
+		this->zSendUpdateDelayTimer += this->zDeltaTime;
+		this->zTimeSinceLastPing += this->zDeltaTime;
+
+		this->zActorManager->SetUpdatesPerSec(this->zGameTimer->GetFPS());
+
+		if(this->zSendUpdateDelayTimer >= UPDATE_DELAY)
+		{
+			this->zSendUpdateDelayTimer = 0.0f;
+
+			this->SendClientUpdate();
+
+			std::stringstream ss;
+			ss << this->zGameTimer->GetFPS() <<" Client Frames Per Second";
+			this->zClientUpsText->SetText(ss.str().c_str());
+		}
+
+		this->Update();
+	}
+
+	AudioManager* am = AudioManager::GetInstance();
+	am->Update();
+
+	this->ReadMessages();
+
+	this->CheckMenus();
+}
+
+void Client::CheckMenus()
+{
+	if(this->zPam->GetShow())
+	{
+		int returnValue = this->zPam->Run();
+		if(returnValue == DEER)
+		{
+			this->zPam->ToggleMenu();
+			zShowCursor = this->zPam->GetShow();
+
+			// MAKE ME A DEER.
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
+			this->zServerChannel->Send(msg);
+		}
+		if(returnValue == BEAR)
+		{
+			this->zPam->ToggleMenu();
+			zShowCursor = this->zPam->GetShow();
+
+			// MAKE ME A BEAR.
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	if (this->zIgm->GetShow())
+	{
+		int returnValue = this->zIgm->Run();
+		if(returnValue == IGQUIT)
+		{
+			this->stayAlive = false;
+			this->CloseConnection("");
+		}
+		else if(returnValue == IGRESUME)
+		{
+			this->zIgm->SetShow(false);
+			zShowCursor = false;
+			this->zEng->GetKeyListener()->SetMousePosition(
+				Vector2((float)(this->zEng->GetEngineParameters().WindowWidth/2), 
+				(float)(this->zEng->GetEngineParameters().WindowHeight/2)));
+		}
+	}
 }
 
 void Client::ReadMessages()
@@ -333,6 +435,7 @@ void Client::ReadMessages()
 void Client::SendClientUpdate()
 {
 	std::string msg;
+
 	Vector3 dir = this->zEng->GetCamera()->GetForward();
 	Vector3 up = this->zEng->GetCamera()->GetUpVector();
 	Vector4 rot = Vector4(0, 0, 0, 0);
@@ -381,11 +484,6 @@ void Client::UpdateMeshRotation()
 
 	playerMesh->ResetRotation();
 	playerMesh->RotateAxis(around, angle);*/
-}
-
-void Client::UpdateActors()
-{
-	this->zActorManager->UpdateObjects(this->zDeltaTime, this->zID);
 }
 
 bool Client::IsAlive()
@@ -538,7 +636,7 @@ void Client::CheckPlayerSpecificKeys()
 			this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
 	}
 
-	if (!this->zGuiManager->IsGuiOpen())
+	if (!this->zGuiManager->IsGuiOpen() && !zShowCursor)
 	{
 		if (this->zEng->GetKeyListener()->IsClicked(1))
 		{
@@ -549,7 +647,7 @@ void Client::CheckPlayerSpecificKeys()
 				Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
 				if (!primaryWeapon)
 				{
-					this->DisplayMessageToClient("No Weapon is Equipped");
+					this->DisplayMessageToClient("No Weapon is Equipped", true);
 				}
 				else
 				{
@@ -625,6 +723,23 @@ void Client::CheckKeyboardInput()
 		return;
 	}
 
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL)  && this->zEng->GetKeyListener()->IsPressed(VK_MENU) && this->zEng->GetKeyListener()->IsPressed('R'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_RESTART))
+		{
+			this->zKeyInfo.SetKeyState(KEY_RESTART, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_RESTART_GAME_REQUEST);
+
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_RESTART))
+			this->zKeyInfo.SetKeyState(KEY_RESTART, false);
+	}
+
 	if (this->zActorType != NONE)
 	{
 		this->CheckMovementKeys();
@@ -648,23 +763,6 @@ void Client::CheckKeyboardInput()
 		this->CheckNonGhostInput();
 	}
 
-	else if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('R'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_RESTART))
-		{
-			this->zKeyInfo.SetKeyState(KEY_RESTART, true);
-
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_RESTART_GAME_REQUEST);
-
-			this->zServerChannel->Send(msg);
-		}
-	}
-	else
-	{
-		if(this->zKeyInfo.GetKeyState(KEY_RESTART))
-			this->zKeyInfo.SetKeyState(KEY_RESTART, false);
-	}
-
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 	{
 		if(!this->zKeyInfo.GetKeyState(KEY_MENU))
@@ -683,7 +781,6 @@ void Client::CheckKeyboardInput()
 			this->zKeyInfo.SetKeyState(KEY_MENU, false);
 	}
 
-
 	//Tell Server Client is Ready
 	if(this->zEng->GetKeyListener()->IsPressed('F'))
 	{
@@ -695,12 +792,26 @@ void Client::CheckKeyboardInput()
 
 			this->zServerChannel->Send(msg);
 		}
-		
 	}
 	else
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_READY))
 			this->zKeyInfo.SetKeyState(KEY_READY, false);
+	}
+
+	if (this->zEng->GetKeyListener()->IsPressed('Z'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+
+			this->zReady = true;
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_TEST))
+			this->zKeyInfo.SetKeyState(KEY_TEST, false);
 	}
 	
 	this->HandleDebugInfo();
@@ -711,7 +822,7 @@ void Client::CheckAnimalInput()
 	this->CheckKey(KEY_JUMP);
 
 	//Leave Animal An Become a Ghost again
-	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed(VK_MENU) && this->zEng->GetKeyListener()->IsPressed('G'))
+	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('G'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
@@ -751,6 +862,38 @@ void Client::CheckAnimalInput()
 		{
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
 		}
+	}
+
+	if (this->zEng->GetKeyListener()->IsClicked(1))
+	{
+		if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_LEFT_PRESS);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
+	}
+
+	if (this->zEng->GetKeyListener()->IsClicked(2))
+	{
+		if (!this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_RIGHT_PRESS);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, false);
 	}
 }
 
@@ -1021,10 +1164,10 @@ void Client::HandleDebugInfo()
 	}
 }
 
-void Client::Ping()
+void Client::PingAck(float serverTime)
 {
 	this->zTimeSinceLastPing = 0.0f;
-	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PING));
+	this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PING, serverTime));
 }
 
 void Client::HandleNetworkPacket( Packet* P )
@@ -1032,6 +1175,10 @@ void Client::HandleNetworkPacket( Packet* P )
 	if ( ServerFramePacket* SFP = dynamic_cast<ServerFramePacket*>(P) )
 	{
 		this->UpdateActors(SFP);	
+	}
+	else if (NewActorPacket* NPA = dynamic_cast<NewActorPacket*>(P))
+	{
+		this->AddActor(NPA);
 	}
 
 	delete P;
@@ -1061,8 +1208,13 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		{
 			packet = new ServerFramePacket();
 		}
+		else if (type == "NewActorPacket")
+		{
+			packet = new NewActorPacket();
+		}
 
-		if ( !packet ) throw("Unknown Packet Type");
+		if ( !packet ) 
+			throw("Unknown Packet Type");
 
 		// Deserialize
 		packet->Deserialize(ss);
@@ -1075,7 +1227,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 	std::vector<std::string> msgArray;
 	msgArray = this->zMsgHandler.SplitMessage(msg);
-	bool bFoundHumanMsg = false;
 
 	if (Messages::MsgFileWrite())
 		Messages::Debug(msg);
@@ -1083,10 +1234,107 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	//Checks what type of message was sent
 	if(msgArray[0].find(M_PING.c_str()) == 0)
 	{
-		this->Ping();
+		float time = this->zMsgHandler.ConvertStringToFloat(M_PING, msgArray[0]);
+		this->PingAck(time);
 	}
 	else if (msgArray[0].find(M_HEALTH) == 0)
 	{
+	}
+	else if (msgArray[0].find(M_CLIENT_LATENCY.c_str()) == 0)
+	{
+		float latency = this->zMsgHandler.ConvertStringToFloat(M_CLIENT_LATENCY, msgArray[0]);
+
+		std::stringstream ss;
+
+		ss << (int)latency <<" ms";
+		zLatencyText->SetText(ss.str().c_str());
+
+		this->zActorManager->SetLatency((int)latency);
+	}
+	else if (msgArray[0].find(M_SERVER_UPDATES_PER_SEC.c_str()) == 0)
+	{
+		int updatesPerSec = this->zMsgHandler.ConvertStringToInt(M_SERVER_UPDATES_PER_SEC, msgArray[0]);
+
+		std::stringstream ss;
+
+		ss << updatesPerSec <<" Server Frames Per Second";
+		this->zServerUpsText->SetText(ss.str().c_str());
+	}
+	else if (msgArray[0].find(M_FOG_ENCLOSEMENT.c_str()) == 0)
+	{
+		Vector2 center2D = this->zWorld->GetWorldCenter();
+		Vector3 center = Vector3(center2D.x, 0.0f, center2D.y);
+
+		float radius = this->zMsgHandler.ConvertStringToFloat(M_FOG_ENCLOSEMENT, msgArray[0]);
+		this->zEng->SetEnclosingFogEffect(center, radius, 0.2f);
+	}
+	else if (msgArray[0].find(M_MESH_BINDING.c_str()) == 0)
+	{
+		unsigned int bone = this->zMsgHandler.ConvertStringToInt(M_MESH_BINDING, msgArray[0]);
+		std::string model = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, msgArray[1]);
+		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_OBJECT_ID, msgArray[2]);
+
+		Actor* actor = this->zActorManager->GetActor(id);
+		
+		if (actor)
+		{
+			auto it = this->zModelToReaderMap.find(actor->GetModel());
+
+			if (it != this->zModelToReaderMap.end())
+			{
+				std::string boneName = it->second.GetBindingBone(bone);
+
+				if (boneName != "")
+				{
+					iMesh* mesh = NULL;
+
+					std::string substr = model.substr(model.length() - 4);
+					if (substr == ".obj")
+						mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
+					else if (substr == ".fbx")
+						mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
+
+					if (mesh)
+					{
+						if (iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(actor->GetMesh()))
+						{
+							mesh->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+							if(fbxMesh->BindMesh(boneName.c_str(), mesh))
+							{
+								actor->AddSubMesh(model, mesh);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	else if (msgArray[0].find(M_MESH_UNBIND.c_str()) == 0)
+	{
+		if (msgArray.size() > 1)
+		{
+			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_MESH_UNBIND, msgArray[0]);
+			std::string model = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, msgArray[1]);
+
+			Actor* actor = this->zActorManager->GetActor(id);
+
+			if (actor)
+			{
+				if (iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(actor->GetMesh()))
+				{
+					iMesh* mesh = actor->GetSubMesh(model);
+
+					if (mesh)
+					{
+						mesh->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+						fbxMesh->UnbindMesh(mesh);
+						
+						this->zEng->DeleteMesh(mesh);
+						actor->RemoveSubMesh(model);
+					}
+				}
+			}
+		}
 	}
 	//Actors
 	//else if(msg.find(M_UPDATE_ACTOR.c_str()) == 0)
@@ -1094,11 +1342,11 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_UPDATE_ACTOR, msgArray[0]);
 	//	this->UpdateActor(msgArray, id);
 	//}
-	else if(msgArray[0].find(M_NEW_ACTOR.c_str()) == 0)
-	{
-		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
-		this->AddActor(msgArray, id);
-	}
+	//else if(msgArray[0].find(M_NEW_ACTOR.c_str()) == 0)
+	//{
+	//	unsigned int id = this->zMsgHandler.ConvertStringToInt(M_NEW_ACTOR, msgArray[0]);
+	//	this->AddActor(msgArray, id);
+	//}
 	else if (msgArray[0].find(M_ACTOR_TAKE_DAMAGE.c_str()) == 0)
 	{
 		if (msgArray.size() > 1)
@@ -1107,6 +1355,13 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			float damageTaken = this->zMsgHandler.ConvertStringToFloat(M_HEALTH, msgArray[1]);
 			this->HandleTakeDamage(id, damageTaken);
 		}
+	}
+	else if (msgArray[0].find(M_SUN_DIRECTION.c_str()) == 0)
+	{
+		Vector3 sunLightDirection = this->zMsgHandler.ConvertStringToVector(M_SUN_DIRECTION, msgArray[0]);
+		Vector3 sunLightColor = this->zEng->GetSunLightColor();
+		float sunLightIntensity = this->zEng->GetSunLightIntensity();
+		this->zEng->SetSunLightProperties(sunLightDirection, sunLightColor, sunLightIntensity);
 	}
 	else if (msgArray[0].find(M_DEAD_ACTOR.c_str()) == 0)
 	{
@@ -1124,10 +1379,9 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		std::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
+		std	::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
 
-		GetSounds()->PlaySounds(&fileName[0], pos);
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
@@ -1168,6 +1422,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_USER_NAME, zName);
 
 		this->zServerChannel->Send(serverMessage);
+
+		this->zReady = false;
 	}
 	else if(msgArray[0].find(M_LOAD_MAP.c_str()) == 0)
 	{
@@ -1177,8 +1433,13 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_ERROR_MESSAGE.c_str()) == 0)
 	{
-		std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_ERROR_MESSAGE, msgArray[0]);
-		DisplayMessageToClient(error_Message);
+		std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_ERROR_MESSAGE, msgArray[0], true);
+		this->DisplayMessageToClient(error_Message, true);
+	}
+	else if(msgArray[0].find(M_SERVER_ANNOUNCEMENT.c_str()) == 0)
+	{
+		std::string error_Message = this->zMsgHandler.ConvertStringToSubstring(M_SERVER_ANNOUNCEMENT, msgArray[0], true);
+		this->DisplayMessageToClient(error_Message, false);
 	}
 	else if(msgArray[0].find(M_SERVER_FULL.c_str()) == 0)
 	{
@@ -1201,8 +1462,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[0] + " in HandleNetworkMessage");
 		MaloW::Debug("C: " + msg);
 	}
-	
-	
 }
 
 bool Client::CheckHumanSpecificMessages(std::vector<std::string> msgArray)
@@ -1279,6 +1538,7 @@ bool Client::CheckHumanSpecificMessages(std::vector<std::string> msgArray)
 	
 	return true;
 }
+
 bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 {
 	Actor* actor = this->zActorManager->GetActor(ID);
@@ -1387,7 +1647,6 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 		//Set the opacity
 		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
 
-		GetSounds()->PlaySounds("Media/Sound/Breath.wav", playerPos);
 	}
 	return true;
 }
@@ -1403,6 +1662,8 @@ void Client::CloseConnection(const std::string& reason)
 
 std::vector<unsigned int> Client::RayVsWorld()
 {
+	static const float MAX_DISTANCE_TO_OBJECT = 3.0f;
+
 	Vector3 origin = this->zEng->GetCamera()->GetPosition();
 	Vector3 camForward = this->zEng->GetCamera()->GetForward();
 
@@ -1460,8 +1721,10 @@ bool Client::GetCursorVisibility()
 	return this->zShowCursor;
 }
 
-void Client::DisplayMessageToClient(const std::string& msg)
+void Client::DisplayMessageToClient(const std::string& msg, bool bError)
 {
+	this->AddDisplayText(msg, bError);
+
 	MaloW::Debug(msg);
 }
 
@@ -1487,9 +1750,9 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 	Looting_Gui_Data lgd = Looting_Gui_Data();
 	for (auto it_Item_Data = msgArray.begin() + 1; it_Item_Data != msgArray.end(); it_Item_Data++)
 	{
-		if((*it_Item_Data).find(M_ITEM_ID.c_str()) == 0)
+		if((*it_Item_Data).find(M_OBJECT_ID.c_str()) == 0)
 		{
-			lgd.zGui_Data.zID = this->zMsgHandler.ConvertStringToInt(M_ITEM_ID, (*it_Item_Data));
+			lgd.zGui_Data.zID = this->zMsgHandler.ConvertStringToInt(M_OBJECT_ID, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_TYPE.c_str()) == 0)
 		{
@@ -1501,11 +1764,11 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray)
 		}
 		else if((*it_Item_Data).find(M_ITEM_DESCRIPTION.c_str()) == 0)
 		{
-			lgd.zGui_Data.zDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it_Item_Data));
+			lgd.zGui_Data.zDescription = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_DESCRIPTION, (*it_Item_Data), true);
 		}
 		else if((*it_Item_Data).find(M_ITEM_NAME.c_str()) == 0)
 		{
-			lgd.zGui_Data.zName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it_Item_Data));
+			lgd.zGui_Data.zName = this->zMsgHandler.ConvertStringToSubstring(M_ITEM_NAME, (*it_Item_Data), true);
 		}
 		else if((*it_Item_Data).find(M_ITEM_WEIGHT.c_str()) == 0)
 		{
@@ -1546,12 +1809,108 @@ void Client::UpdateCameraOffset(unsigned int state)
 
 		Vector3 offset = cameraPos->second;
 
-		this->zEng->GetCamera()->SetMesh(mesh, offset);
-		this->zActorManager->SetCameraOffset(offset);
+		//this->zEng->GetCamera()->SetMesh(mesh, offset, Vector3(0.0f, 0.0f, 1.0f));
+		//this->zActorManager->SetCameraOffset(offset);
 	}
 	else
 	{
-		this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset);
+		this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
 		this->zActorManager->SetCameraOffset(this->zMeshOffset);
 	}
+}
+
+void Client::UpdateText()
+{
+	Vector2 position;
+	auto it = this->zDisplayedText.begin();
+	while (it != this->zDisplayedText.end())
+	{
+		TextDisplay* text  = (*it);
+
+		text->zTimer -= this->zDeltaTime;
+
+		if (text->zTimer <= 0)
+		{
+			position = text->zText->GetPosition();
+
+			this->zEng->DeleteText(text->zText);
+
+			it = this->zDisplayedText.erase(it);
+
+			for (auto new_It = it; new_It != this->zDisplayedText.end(); new_It++)
+			{
+				Vector2 oldPos = (*new_It)->zText->GetPosition();
+
+				(*new_It)->zText->SetPosition(position);
+
+				position = oldPos;
+			}
+			
+			delete text;
+			text = NULL;
+		}
+		else
+		{
+			it++;
+		}
+	}	
+}
+
+void Client::AddDisplayText(const std::string& msg, bool bError)
+{
+	static const float START_TEXT_TIMER = 7.0f;
+
+	std::string newString = msg;
+
+	std::replace(newString.begin(), newString.end(), '_', ' ');
+
+	int arrSize = (int)this->zDisplayedText.size();
+	int windowHeight = this->zEng->GetEngineParameters().WindowHeight;
+
+	float yStartPosition = 80.0f;
+	float xPosition = 50.0f;
+	float textheight = 20.0f;
+
+	static const int MAX_ITEMS = (int)( (windowHeight - yStartPosition) * 0.05f );
+
+	Vector2 position;
+
+	float c = 0;
+	
+	if (arrSize >= MAX_ITEMS)
+	{
+		TextDisplay* temp = this->zDisplayedText[0];
+		this->zDisplayedText.erase(this->zDisplayedText.begin());
+
+		this->zEng->DeleteText(temp->zText);
+		SAFE_DELETE(temp);
+	}
+
+	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
+	{
+		float x = (*it)->zText->GetPosition().x;
+		position = Vector2(x, yStartPosition + c++ * textheight);
+		(*it)->zText->SetPosition(position);
+	}
+
+	if (arrSize == 0)
+	{
+		position = Vector2(xPosition, yStartPosition);
+	}
+	else
+	{
+
+		position = Vector2(xPosition, yStartPosition + c++ * textheight);
+	}
+	std::string fontPath = "";
+	if (bError)
+		fontPath = "Media/Fonts/new";
+	else
+		fontPath = "Media/Fonts/3";
+
+	iText* text = this->zEng->CreateText(newString.c_str(), position, 0.7f, fontPath.c_str());
+
+	TextDisplay* displayedText = new TextDisplay(text, START_TEXT_TIMER);
+
+	this->zDisplayedText.push_back(displayedText);
 }

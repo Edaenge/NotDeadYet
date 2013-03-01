@@ -8,7 +8,7 @@
 12    //zExtraFearWithCloseProximity
 4     //zExtraFearAtSight
 8     //zExtraFearAtThreatMovementSpeed
-2     //zFearDecrease
+6     //zFearDecrease
 30    //zFearAtDamageDone
 20    //zSupspiciousToAggressiveThreshold
 35    //zaggressiveToAfraidThreshold

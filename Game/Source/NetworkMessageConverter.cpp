@@ -1,13 +1,15 @@
 #include "NetworkMessageConverter.h"
 #include <sstream>
-
+#include <algorithm>
 
 NetworkMessageConverter::NetworkMessageConverter()
 {
 }
+
 NetworkMessageConverter::~NetworkMessageConverter()
 {
 }
+
 std::string NetworkMessageConverter::Convert(const unsigned int ID, const Vector3& vec)
 {
 	std::stringstream ss;
@@ -20,24 +22,28 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const Vector
 	switch (ID)
 	{
 	case MESSAGE_TYPE_UP:
-		ss << M_UP << " " << x << " " << y << " " << z <<"*";
+		ss << M_UP;
 		break;
 	case MESSAGE_TYPE_DIRECTION:
-		ss << M_DIRECTION << " " << x << " " << y << " " << z <<"*";
+		ss << M_DIRECTION;
 		break;
 	case MESSAGE_TYPE_POSITION:
-		ss << M_POSITION << " " << x << " " << y << " " << z <<"*";
+		ss << M_POSITION;
 		break;
 	case MESSAGE_TYPE_SCALE:
-		ss << M_SCALE << " " << x << " " << y << " " << z <<"*";
+		ss << M_SCALE; 
+		break;
+	case MESSAGE_TYPE_SUN_DIRECTION:
+		ss << M_SUN_DIRECTION;
 		break;
 	default:
 		ss << "";
 		break;
 	}
-
+	ss << " " << x << " " << y << " " << z <<"*";
 	return ss.str();
 }
+
 std::string NetworkMessageConverter::Convert(const unsigned int ID, const Vector4& vec)
 {
 	std::stringstream ss;
@@ -62,6 +68,7 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const Vector
 
 	return ss.str();
 }
+
 std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::string& word)
 {
 	std::stringstream ss;
@@ -77,8 +84,8 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	case MESSAGE_TYPE_KEY_UP:
 		ss << M_KEY_UP;
 		break;
-	case MESSAGE_TYPE_LOAD_MAP:
-		ss << M_LOAD_MAP;
+	case MESSAGE_TYPE_PLAY_ANIMATION:
+		ss << M_PLAY_ANIMATION;
 		break;
 	case MESSAGE_TYPE_ITEM_NAME:
 		ss << M_ITEM_NAME;
@@ -89,11 +96,11 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	case MESSAGE_TYPE_ITEM_DESCRIPTION:
 		ss << M_ITEM_DESCRIPTION;
 		break;
-	case MESSAGE_TYPE_KICKED:
-		ss << M_KICKED;
-		break;
 	case MESSAGE_TYPE_ERROR_MESSAGE:
 		ss << M_ERROR_MESSAGE;
+		break;
+	case MESSAGE_TYPE_SERVER_ANNOUNCEMENT:
+		ss << M_SERVER_ANNOUNCEMENT;
 		break;
 	case MESSAGE_TYPE_USER_NAME:
 		ss << M_USER_NAME;
@@ -101,13 +108,23 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	case MESSAGE_TYPE_PLAY_SOUND:
 		ss << M_PLAY_SOUND;
 		break;
+	case MESSAGE_TYPE_KICKED:
+		ss << M_KICKED;
+		break;
+	case MESSAGE_TYPE_LOAD_MAP:
+		ss << M_LOAD_MAP;
+		break;
 	default:
 		return "";
 		break;
 	}
-	ss << " " << word << "*";
+	std::string finalString = word;
+	std::replace(finalString.begin(), finalString.end(), ' ', '_');
+
+	ss << " " << finalString << "*";
 	return ss.str();
 }
+
 std::string NetworkMessageConverter::Convert(const unsigned int ID, const float fp)
 {
 	std::stringstream ss;
@@ -119,6 +136,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 		break;
 	case MESSAGE_TYPE_NEW_ACTOR:
 		ss << M_NEW_ACTOR;
+		break;
+	case MESSAGE_TYPE_CLIENT_LATENCY:
+		ss << M_CLIENT_LATENCY;
 		break;
 	case MESSAGE_TYPE_REMOVE_ACTOR:
 		ss << M_REMOVE_ACTOR;
@@ -132,11 +152,23 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_KEY_UP:
 		ss << M_KEY_UP;
 		break;
+	case MESSAGE_TYPE_SERVER_UPDATES_PER_SEC:
+		ss << M_SERVER_UPDATES_PER_SEC;
+		break;
 	case MESSAGE_TYPE_FRAME_TIME:
 		ss << M_FRAME_TIME;
 		break;
 	case MESSAGE_TYPE_STATE:
 		ss << M_STATE;
+		break;
+	case MESSAGE_TYPE_FOG_ENCLOSEMENT:
+		ss << M_FOG_ENCLOSEMENT;
+		break;
+	case MESSAGE_TYPE_MESH_BINDING:
+		ss << M_MESH_BINDING;
+		break;
+	case MESSAGE_TYPE_MESH_UNBIND:
+		ss << M_MESH_UNBIND;
 		break;
 	case MESSAGE_TYPE_ITEM_FINISHED:
 		ss << M_ITEM_FINISHED;
@@ -159,8 +191,8 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_ITEM_SUB_TYPE:
 		ss << M_ITEM_SUB_TYPE;
 		break;
-	case MESSAGE_TYPE_ITEM_ID:
-		ss << M_ITEM_ID;
+	case MESSAGE_TYPE_OBJECT_ID:
+		ss << M_OBJECT_ID;
 		break;
 	case MESSAGE_TYPE_ITEM_STACK_SIZE:
 		ss << M_ITEM_STACK_SIZE;
@@ -231,6 +263,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_PLAY_AS_ANIMAL:
 		ss << M_PLAY_AS_ANIMAL;
 		break;
+	case MESSAGE_TYPE_ANIMAL_ATTACK:
+		ss << M_ANIMAL_ATTACK;
+		break;
 	case MESSAGE_TYPE_STAMINA:
 		ss << M_STAMINA;
 		break;
@@ -252,6 +287,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_ACKNOWLEDGE:
 		ss << M_ACKNOWLEDGE_MESSAGE;
 		break;
+	case MESSAGE_TYPE_PING:
+		ss << M_PING;
+		break;
 	default:
 		return "";
 		break;
@@ -259,6 +297,7 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	ss << " " << fp << "*";
 	return ss.str();
 }
+
 std::string NetworkMessageConverter::Convert(const unsigned int ID)
 {
 	std::stringstream ss;
@@ -266,9 +305,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	{
 	case MESSAGE_TYPE_CLIENT_DATA:
 		ss << M_CLIENT_DATA;
-		break;
-	case MESSAGE_TYPE_PING:
-		ss << M_PING;
 		break;
 	case MESSAGE_TYPE_ADD_INVENTORY_ITEM:
 		ss << M_ADD_INVENTORY_ITEM;
@@ -313,6 +349,7 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	ss << "*";
 	return ss.str();
 }
+
 std::string NetworkMessageConverter::CombineMessage(const std::vector<std::string>& msgArray)
 {
 	std::string msg = "";
@@ -322,6 +359,7 @@ std::string NetworkMessageConverter::CombineMessage(const std::vector<std::strin
 	}
 	return msg;
 }
+
 std::vector<std::string> NetworkMessageConverter::SplitMessage(const std::string& msg)
 {
 	std::string subMsg = "";
@@ -337,6 +375,7 @@ std::vector<std::string> NetworkMessageConverter::SplitMessage(const std::string
 	}
 	return msgArray;
 }
+
 Vector3 NetworkMessageConverter::ConvertStringToVector(const std::string& type, const std::string& msg)
 {
 	float x = 0.0f;
@@ -349,6 +388,7 @@ Vector3 NetworkMessageConverter::ConvertStringToVector(const std::string& type, 
 	
 	return vec;
 }
+
 Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& type, const std::string& msg)
 {
 	float x = 0.0f;
@@ -361,22 +401,33 @@ Vector4 NetworkMessageConverter::ConvertStringToQuaternion(const std::string& ty
 
 	return quaternion;
 }
+
 int NetworkMessageConverter::ConvertStringToInt(const std::string& type, const std::string& msg)
 {
 	int value = 0;
 	sscanf_s(msg.c_str(), (type + "%d").c_str(), &value);
 	return value;
 }
+
 float NetworkMessageConverter::ConvertStringToFloat(const std::string& type, const std::string& msg)
 {
 	float value = 0.0f;
 	sscanf_s(msg.c_str(), (type + "%f").c_str(), &value);
 	return value;
 }
-std::string NetworkMessageConverter::ConvertStringToSubstring(const std::string& type, const std::string& msg)
+
+std::string NetworkMessageConverter::ConvertStringToSubstring( const std::string& type, const std::string& msg, bool bReplaceUnderscore /*= false*/ )
 {
 	char subString[100];
 	sscanf_s(msg.c_str(), (type + "%s").c_str(), &subString, sizeof(subString));
-	return subString;
 
+	if (bReplaceUnderscore)
+	{
+		std::string ret = subString;
+
+		std::replace(ret.begin(), ret.end(), '_', ' ');
+
+		return ret;
+	}
+	return subString;
 }

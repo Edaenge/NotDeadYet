@@ -11,7 +11,9 @@
 #include <set>
 
 class Actor;
+class BioActor;
 class ServerFramePacket;
+class NewActorPacket;
 
 /*Events when a new actor has been added in ActorManager*/
 class ActorAdded : public Event
@@ -35,6 +37,7 @@ class ActorSynchronizer : public Observer
 {
 private:
 	ServerFramePacket* zFrameData;
+	NewActorPacket* zActorData;
 
 	std::set<Actor*> zUpdateSet;
 	std::set<Actor*> zNewActorSet;
@@ -42,7 +45,7 @@ private:
 
 	void RegisterActor(ClientData* cd);
 	void RemoveActor(ClientData* cd);
-
+	void AddAnimation(BioActor* bActor);
 public:
 	ActorSynchronizer();
 	virtual ~ActorSynchronizer();
@@ -53,4 +56,5 @@ public:
 
 protected:
 	virtual void OnEvent(Event* e);
+
 };

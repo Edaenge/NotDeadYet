@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "time.h"
+#include "Physics.h"
 #include "GameModeFFA.h"
 #include "BioActor.h"
 #include "DeerActor.h"
@@ -11,32 +12,36 @@
 #include "PlayerGhostBehavior.h"
 #include "PlayerDeerBehavior.h"
 #include "PlayerWolfBehavior.h"
+#include "PlayerBearBehavior.h"
+#include "SupplyDrop.h"
+#include "ItemLookup.h"
+#include "World/world.h"
 
-GameModeFFA::GameModeFFA(Game* game) : GameMode(game)
+GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
 	srand((unsigned int)time(0));
+	this->zSupplyDrop = new SupplyDrop( game->GetActorManager(), game->GetWorld() );
+	this->zGameStarted = false;
+	this->zGameEnd = false;
 	//zKillLimit = killLimit;
 }
 
 GameModeFFA::~GameModeFFA()
 {
+	this->zGame->RemoveObserver(this);
 
+	delete this->zSupplyDrop;
+	this->zSupplyDrop = NULL;
 }
 
 bool GameModeFFA::Update( float dt )
 {
-//	for(auto it = zPlayers.begin(); it != zPlayers.end(); it++)
-//	{
-//		if(zScoreBoard[(*it)] >= zKillLimit)
-//		{
-//			for(auto i = zPlayers.begin(); i != zPlayers.end(); i++)
-//			{
-//				MaloW::Debug("Kills: " + MaloW::convertNrToString((float)zScoreBoard[(*i)]));
-//			}
-//			return false;
-//		}
-//	}
-	return true;
+	/*
+	if( !this->zGameStarted )
+		return true;
+		*/
+
+	return false;
 }
 
 void GameModeFFA::OnEvent( Event* e )
@@ -47,6 +52,41 @@ void GameModeFFA::OnEvent( Event* e )
 		{
 			if(pActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 			{
+				NetworkMessageConverter NMC;
+				std::string killsMsg = "";
+				std::string msg = "";
+				Player* player = pActor->GetPlayer();
+				if (ATD->zActor == ATD->zDealer)
+				{
+					killsMsg = "You killed yourself";
+					std::string msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
+				}
+				else if (PlayerActor* pDealer = dynamic_cast<PlayerActor*>(ATD->zDealer))
+				{
+					Player* dealer = pDealer->GetPlayer();
+					killsMsg = "You were killed by " + dealer->GetPlayerName();
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
+
+					killsMsg = "You killed " + player->GetPlayerName();
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					dealer->GetClientData()->Send(msg);
+
+				}
+				else if (AnimalActor* pDealer =dynamic_cast<AnimalActor*>(ATD->zDealer))
+				{
+					killsMsg = "You were killed by an Animal";
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
+				}
+				else
+				{
+					killsMsg = "You Were killed by the environment";
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
+				}
+
 				this->OnPlayerHumanDeath(pActor);
 			}
 			else
@@ -57,8 +97,14 @@ void GameModeFFA::OnEvent( Event* e )
 				NetworkMessageConverter NMC;
 				std::string msg = NMC.Convert(MESSAGE_TYPE_ACTOR_TAKE_DAMAGE, (float)ID);
 				msg += NMC.Convert(MESSAGE_TYPE_HEALTH, damage);
-				ClientData* cd = pActor->GetPlayer()->GetClientData();
-				cd->Send(msg);
+				Player* player = pActor->GetPlayer();
+
+				if(player)
+				{
+					ClientData* cd = player->GetClientData();
+					cd->Send(msg);
+				}
+				
 			}
 		}
 		else if( AnimalActor* aActor = dynamic_cast<AnimalActor*>(ATD->zActor) )
@@ -100,13 +146,33 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if( PlayerAddEvent* PAE = dynamic_cast<PlayerAddEvent*>(e) )
 	{
-		//this->zScoreBoard[PAE->player] = 0;
 		zPlayers.insert(PAE->player);
 	}
 	else if( PlayerRemoveEvent* PRE = dynamic_cast<PlayerRemoveEvent*>(e) )
 	{
-		//this->zScoreBoard.erase(PRE->player);
 		this->zPlayers.erase(PRE->player);
+	}
+	else if( PlayerReadyEvent* PLRE = dynamic_cast<PlayerReadyEvent*>(e) )
+	{
+		return;
+
+		if(!zGameStarted)
+		{
+			PLRE->player->SetReady(true);
+			//Check how many players are ready
+			int counter = 0;
+			for( auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+			{
+				if( (*it)->IsReady() )
+					counter++;
+			}
+
+			if( counter >= this->zPlayers.size() )
+			{
+				this->zGame->RestartGame();
+				StartGameMode();
+			}
+		}
 	}
 }
 
@@ -120,6 +186,17 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 	AnimalActor* closestAnimal = NULL;
 	float distance = 999999.9f;
 	
+	if(animalType == 0 && gActor->GetEnergy() < 50)
+	{
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_enough_energy_for_this_animal"));
+		return;
+	}
+	else if(animalType == 2 && gActor->GetEnergy() < 200)
+	{
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_enough_energy_for_this_animal"));
+		return;
+	}
+
 	Vector3 position = gActor->GetPosition();
 
 	float radius = 4000.0f;
@@ -197,6 +274,8 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 		//Deer
 		if (animalType == 0)
 		{
+			closestAnimal->SetEnergy(gActor->GetEnergy());
+
 			animalBehavior = new PlayerDeerBehavior(closestAnimal, this->zGame->GetWorld(), player);
 
 			gActor->SetPlayer(NULL);
@@ -216,27 +295,27 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 		//Bear
 		else if (animalType == 2)
 		{
-			/*Player* player = gActor->GetPlayer();
+			closestAnimal->SetEnergy(gActor->GetEnergy());
+
+			animalBehavior = new PlayerBearBehavior(closestAnimal, this->zGame->GetWorld(), player);
+
 			gActor->SetPlayer(NULL);
 
-			PlayerBearBehavior* playerBearBehavior = new PlayerBearBehavior(dActor, this->zGame->GetWorld(), player);
-			dActor->SetPlayer(player);
+			closestAnimal->SetPlayer(player);
 
-			this->zGame->SetPlayerBehavior(player, playerBearBehavior);
+			this->zGame->RemoveAIBehavior(closestAnimal);
+			this->zGame->SetPlayerBehavior(player, animalBehavior);
 
-			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)dActor->GetID());
+			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)closestAnimal->GetID());
 			msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
 
 			cd->Send(msg);
 
 			this->zGame->GetActorManager()->RemoveActor(gActor);
-			found = true;*/
 		}
 	}
 	else
-	{
-		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_animal_of_the_type_is_close_by"));
-	}
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No animal of the type is close by"));
 
 }
 
@@ -248,6 +327,15 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	Player* player = pActor->GetPlayer();
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
+	this->zGame->ModifyLivingPlayers(-1);
+
+
+	PhysicsObject* pObject = pActor->GetPhysicsObject();
+	if (pObject)
+	{
+		GetPhysics()->DeletePhysicsObject(pObject);
+		pObject = NULL;
+	}
 
 	ClientData* cd = player->GetClientData();
 
@@ -255,11 +343,12 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	Vector3 position = pActor->GetPosition();
 
 	Vector3 direction = pActor->GetDir();
-
+	float energy = pActor->GetEnergy();
 	GhostActor* gActor = new GhostActor(player);
 	gActor->SetPosition(position);
 	gActor->SetDir(direction);
-	
+	gActor->SetEnergy(energy + 25.0f);
+
 	//Create Ghost behavior
 	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);
 
@@ -274,6 +363,8 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	
 	//Add the actor to the list
 	aManager->AddActor(gActor);
+
+	this->zGame->ModifyLivingPlayers(1);
 }
 
 void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
@@ -295,6 +386,8 @@ void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
 	gActor->SetPosition(position);
 	gActor->SetDir(direction);
 
+	gActor->SetEnergy(aActor->GetEnergy());
+
 	//Create Ghost behavior
 	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);
 
@@ -309,4 +402,36 @@ void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
 
 	//Add the actor to the list
 	aManager->AddActor(gActor);
+}
+
+bool GameModeFFA::StartGameMode()
+{
+	//Create Game 
+
+	if( zGameStarted )
+		return false;
+
+	this->zGameStarted = true;
+	
+	//Test
+	//ITEMS
+	std::set<Item*> items;
+
+	const Food*			temp_food		= GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
+	const RangedWeapon* temp_R_weapon	= GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
+	const Projectile*	temp_Arrow		= GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
+	const MeleeWeapon*	temp_M_weapon	= GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE);
+
+	Food* food = new Food(*temp_food);
+	RangedWeapon* ranged = new RangedWeapon(*temp_R_weapon);
+	Projectile* arrow = new Projectile(*temp_Arrow);
+	MeleeWeapon* melee = new MeleeWeapon(*temp_M_weapon);
+
+	items.insert(food);
+	items.insert(ranged);
+	items.insert(arrow);
+	items.insert(melee);
+
+	this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items);
+	
 }

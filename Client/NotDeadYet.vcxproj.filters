@@ -30,18 +30,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\SoundEngine\SoundEffect.cpp">
-      <Filter>Source\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SoundEngine\SoundEngine.cpp">
-      <Filter>Source\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SoundEngine\SoundHandler.cpp">
-      <Filter>Source\Sound</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SoundEngine\SoundSong.cpp">
-      <Filter>Source\Sound</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Client.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -61,12 +49,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\MainMenu.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SoundReader.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Sounds.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\KeyUtil\KeyConverter.cpp">
@@ -150,23 +132,17 @@
     <ClCompile Include="Source\PlayerConfig\PlayerSettings.cpp">
       <Filter>Source\PlayerConfig</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SoundEngine\EventHandle.cpp">
+      <Filter>Source\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SoundEngine\AudioManager.cpp">
+      <Filter>Source\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\LootInventoryGui.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\SoundEngine\fmod.h">
-      <Filter>Source\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SoundEngine\SoundEffect.h">
-      <Filter>Source\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SoundEngine\SoundEngine.h">
-      <Filter>Source\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SoundEngine\SoundHandler.h">
-      <Filter>Source\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SoundEngine\SoundSong.h">
-      <Filter>Source\Sound</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Client.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -177,12 +153,6 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\MainMenu.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SoundReader.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Sounds.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\KeyUtil\Keybinds.h">
@@ -268,6 +238,33 @@
     </ClInclude>
     <ClInclude Include="Source\PlayerConfig\PlayerSettings.h">
       <Filter>Source\PlayerConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundEngine\EventHandle.h">
+      <Filter>Source\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundEngine\IAudioEvents.h">
+      <Filter>Source\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundEngine\IAudioLoader.h">
+      <Filter>Source\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundEngine\IAudioManager.h">
+      <Filter>Source\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundEngine\IAudioMusic.h">
+      <Filter>Source\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundEngine\IEventHandle.h">
+      <Filter>Source\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundEngine\AudioManager.h">
+      <Filter>Source\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundEngine\sounds.h">
+      <Filter>Source\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\LootInventoryGui.h">
+      <Filter>Source\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

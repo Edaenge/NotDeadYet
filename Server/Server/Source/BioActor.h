@@ -68,8 +68,6 @@ public:
 	float GetStaminaCof() const {return this->zStaminaCof;}
 	float GetHealthMax() const {return this->zHealthMax;}
 
-	bool  IsBleeding() const {return this->zBleeding;}
-
 	/*! Sets the player state.
 		Enum is defined in AnimationStates.h.
 	*/
@@ -82,7 +80,8 @@ public:
 	void SetStaminaMax(const float max) {this->zStaminaMax = max;}
 	void SetStaminaCof(const float cof) {this->zStaminaCof = cof;}
 
-	void SetBleeding(const bool isBleeding) {this->zBleeding = isBleeding;}
+	void SetBleeding(const float levelBleeding) {this->zBleedingLevel = levelBleeding; if(this->zBleedingLevel < 0){ this->zBleedingLevel = 0;}}
+	float GetBleeding() const {return this->zBleedingLevel;}
 
 	void StaminaHasChanged() {this->zStaminaChanged = true;}
 	void HealthHasChanged() {this->zHealthChanged = true;}
@@ -106,7 +105,7 @@ protected:
 	float	zStaminaMax;
 	float	zStaminaCof;
 
-	bool	zBleeding;
+	float	zBleedingLevel;
 
 	bool	zStaminaChanged;
 	bool	zHealthChanged;

@@ -7,40 +7,74 @@
 using namespace MaloW;
 
 
-ServerChannel::ServerChannel( MaloW::Process* observerProcess, const std::string &IP, const unsigned int &port ) :
-	zNotifier(observerProcess), 
-	NetworkChannel(0)
+ServerChannel::ServerChannel( MaloW::Process* observerProcess, const std::string &IP, const unsigned int &port,
+							 std::string& out, int& errorCode)
+	: zNotifier(observerProcess), NetworkChannel(0)
 {
-	WSADATA wsaData;
-	if(int errCode = WSAStartup(MAKEWORD(2,2), &wsaData)) 
+	try
 	{
-		throw( NetworkException("Failed Initializing Winsock!", WSAGetLastError()) );
+		WSADATA wsaData;
+		if(int errCode = WSAStartup(MAKEWORD(2,2), &wsaData)) 
+		{
+			out = "Failed To Initializing network connection!";
+			errorCode = WSAGetLastError();
+			throw( NetworkException("Failed Initializing Winsock!", WSAGetLastError()) );
+		}
+	}
+	catch (NetworkException* e)
+	{
+		out = e->errString;
+		errorCode = e->errCode;
 	}
 
-	// Open a socket
-	zSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
-	if(!zSocket) 
+	try
 	{
-		throw( NetworkException("Failed Opening Socket!", WSAGetLastError()) );
+		// Open a socket
+		zSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+		if(!zSocket) 
+		{
+			out = "Failed Opening Socket!";
+			errorCode = WSAGetLastError();
+			return;
+			//throw( NetworkException("Failed Opening Socket!", WSAGetLastError()) );
+		}
 	}
-
+	catch (NetworkException* e)
+	{
+		out = e->errString;
+		errorCode = e->errCode;
+	}
+	
 	// Connect
 	sockaddr_in saServer;
 	saServer.sin_port = htons((u_short)port);
 	saServer.sin_addr.s_addr = inet_addr(IP.c_str());
 	saServer.sin_family = AF_INET;
-	if( connect(zSocket, (sockaddr*)&saServer, sizeof(saServer)) == SOCKET_ERROR )
+	try
 	{
-		closesocket(zSocket);
-		throw( NetworkException("Failed Connecting Socket!", WSAGetLastError()) );
+		if( connect(zSocket, (sockaddr*)&saServer, sizeof(saServer)) == SOCKET_ERROR )
+		{
+			closesocket(zSocket);
+			out = "Failed Connecting To Server! Verify that the server is online";
+			errorCode = WSAGetLastError();
+			return;
+			//throw( NetworkException("Failed Connecting Socket!", WSAGetLastError()) );
+		}
 	}
+	catch (NetworkException* e)
+	{
+		out = e->errString;
+		errorCode = e->errCode;
+	}
+	
 }
 
 ServerChannel::~ServerChannel()
 {
 	this->Close();
 	this->WaitUntillDone();
-	if(zSocket) closesocket(zSocket);
+	if(zSocket) 
+		closesocket(zSocket);
 }
 
 void ServerChannel::Life()
@@ -66,9 +100,17 @@ void ServerChannel::CloseSpecific()
 {
 	if(zSocket)
 	{
-		if( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
+		try
 		{
-			throw( NetworkException("Failed Shutting Down Socket!", WSAGetLastError()) );
+			if( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
+			{
+				throw( NetworkException("Failed Shutting Down Socket!", WSAGetLastError()) );
+			}
 		}
+		catch (...)
+		{
+			
+		}
+		
 	}
 }

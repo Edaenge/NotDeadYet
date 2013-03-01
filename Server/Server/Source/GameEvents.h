@@ -53,7 +53,7 @@ class PlayerReadyEvent : public Event
 public:
 	virtual ~PlayerReadyEvent() {}
 
-	ClientData* clientData;
+	Player* player;
 };
 
 class PlayerLootObjectEvent : public Event
@@ -145,6 +145,14 @@ public:
 	unsigned int itemID;
 };
 
+class PlayerAnimalAttackEvent : public Event
+{
+public:
+	virtual ~PlayerAnimalAttackEvent() {}
+	ClientData* clientData;
+	unsigned int mouseButton;
+};
+
 /*Event when a player swaps his equipped weapons between primary and secondary.*/
 class PlayerSwapEquippedWeaponsEvent : public Event
 {
@@ -183,6 +191,14 @@ public:
 	Vector3 direction;
 };
 
+/*The user has sent a ready event*/
+class UserReadyEvent : public Event
+{
+public:
+	virtual ~UserReadyEvent() {}
+
+	ClientData* clientData;
+};
 /*Client hold a key down.*/
 class KeyDownEvent : public Event
 {

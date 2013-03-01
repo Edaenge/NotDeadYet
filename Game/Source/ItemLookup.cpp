@@ -1,6 +1,7 @@
 #include "ItemLookup.h"
 #include "MaloW.h"
 #include "Safe.h"
+#include <algorithm>
 
 namespace 
 {
@@ -320,6 +321,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, MeleeWeapon
 	}
 	else if(command == DESCRIPTION)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		wp->SetItemDescription(key);
 	}
 	else if(command == MODEL)
@@ -328,6 +330,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, MeleeWeapon
 	}
 	else if(command == NAME)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		wp->SetItemName(key);
 	}
 	else if(command == STACKS)
@@ -380,6 +383,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, RangedWeapo
 	}
 	else if(command == DESCRIPTION)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		wp->SetItemDescription(key);
 	}
 	else if(command == MODEL)
@@ -388,6 +392,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, RangedWeapo
 	}
 	else if(command == NAME)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		wp->SetItemName(key);
 	}
 	else if(command == STACKS)
@@ -439,6 +444,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Food*& fd)
 	}
 	else if(command == DESCRIPTION)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		fd->SetItemDescription(key);
 	}
 	else if(command == MODEL)
@@ -447,6 +453,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Food*& fd)
 	}
 	else if(command == NAME)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		fd->SetItemName(key);
 	}
 	else if(command == STACKS)
@@ -493,6 +500,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Container*&
 	}
 	else if(command == DESCRIPTION)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		ct->SetItemDescription(key);
 	}
 	else if(command == MODEL)
@@ -501,6 +509,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Container*&
 	}
 	else if(command == NAME)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		ct->SetItemName(key);
 	}
 	else if(command == STACKS)
@@ -551,6 +560,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Material*& 
 	}
 	else if(command == DESCRIPTION)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		ma->SetItemDescription(key);
 	}
 	else if(command == MODEL)
@@ -559,6 +569,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Material*& 
 	}
 	else if(command == NAME)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		ma->SetItemName(key);
 	}
 	else if(command == STACKS)
@@ -609,6 +620,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Projectile*
 	}
 	else if(command == DESCRIPTION)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		pa->SetItemDescription(key);
 	}
 	else if(command == MODEL)
@@ -617,6 +629,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Projectile*
 	}
 	else if(command == NAME)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		pa->SetItemName(key);
 	}
 	else if(command == STACKS)
@@ -667,6 +680,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Bandage*& b
 	}
 	else if(command == DESCRIPTION)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		ba->SetItemDescription(key);
 	}
 	else if(command == MODEL)
@@ -675,6 +689,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Bandage*& b
 	}
 	else if(command == NAME)
 	{
+		std::replace(key.begin(), key.end(), '_', ' ');
 		ba->SetItemName(key);
 	}
 	else if(command == STACKS)

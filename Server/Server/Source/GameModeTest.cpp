@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "time.h"
+#include "Physics.h"
 #include "GameModeTest.h"
 #include "BioActor.h"
 #include "PlayerActor.h"
@@ -17,7 +18,7 @@ GameModeTest::GameModeTest(Game* game, int killLimit) : GameMode(game)
 
 GameModeTest::~GameModeTest()
 {
-
+	this->zGame->RemoveObserver(this);
 }
 
 bool GameModeTest::Update( float dt )
@@ -50,6 +51,41 @@ void GameModeTest::OnEvent( Event* e )
 						zScoreBoard[dpa->GetPlayer()]++;
 					else if( dpa == pActor )
 						zScoreBoard[pActor->GetPlayer()]--;
+
+				NetworkMessageConverter NMC;
+				std::string killsMsg = "";
+				std::string msg = "";
+				Player* player = pActor->GetPlayer();
+				if (ATD->zActor == ATD->zDealer)
+				{
+					killsMsg = "You killed yourself";
+					std::string msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
+				}
+				else if (PlayerActor* pDealer = dynamic_cast<PlayerActor*>(ATD->zDealer))
+				{
+					Player* dealer = pDealer->GetPlayer();
+					killsMsg = "You were killed by " + dealer->GetPlayerName();
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
+
+					killsMsg = "You killed " + player->GetPlayerName();
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					dealer->GetClientData()->Send(msg);
+
+				}
+				else if (AnimalActor* pDealer =dynamic_cast<AnimalActor*>(ATD->zDealer))
+				{
+					killsMsg = "You were killed by an Animal";
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
+				}
+				else
+				{
+					killsMsg = "You Were killed by the environment";
+					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+					player->GetClientData()->Send(msg);
+				}
 
 				OnPlayerDeath(pActor);
 			}
@@ -94,6 +130,12 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 
+	PhysicsObject* pObject = pActor->GetPhysicsObject();
+	if (pObject)
+	{
+		GetPhysics()->DeletePhysicsObject(pObject);
+		pObject = NULL;
+	}
 	ClientData* cd = player->GetClientData();
 
 	//Create new Player

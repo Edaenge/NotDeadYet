@@ -33,12 +33,14 @@ Element::~Element()
 }
 bool Element::AddToRenderer(GraphicsEngine* ge)
 {
-	this->mImage = ge->CreateImage(Vector2(this->mX, this->mY), Vector2(this->mWidth, this->mHeight), this->mTextureName.c_str());
+	if(!this->mImage && this->mTextureName != "")
+		this->mImage = ge->CreateImage(Vector2(this->mX, this->mY), Vector2(this->mWidth, this->mHeight), this->mTextureName.c_str());
 	return true;
 }
 bool Element::RemoveFromRenderer(GraphicsEngine* ge)
 {
-	ge->DeleteImage(this->mImage);
+	if(this->mImage)
+		ge->DeleteImage(this->mImage);
 	this->mImage = NULL;
 
 	return true;

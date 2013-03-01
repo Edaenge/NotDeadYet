@@ -5,22 +5,11 @@
 #pragma once
 
 #include "iMesh.h"
+#include "Graphics.h"
 #include <AnimationStates.h>
 #include <string>
+#include <map>
 #include "Safe.h"
-
-class SoundChecker
-{
-private:
-	float zLeftFoot;
-	float zRightFoot;
-
-public:
-	SoundChecker(){ this->zLeftFoot = 0.0f; this->zRightFoot = 0.6f; }
-
-	bool CheckLeftFootPlaying(float deltaTime){ if(this->zLeftFoot <= 0.0f) { this->zLeftFoot = 1.0f; return false; } else{ this->zLeftFoot -= deltaTime; return true;} }
-	bool CheckRightFootPlaying(float deltaTime){ if(this->zRightFoot <= 0.0f) { this->zRightFoot = 1.0f; return false; } else{ this->zRightFoot -= deltaTime; return true;} }
-};
 
 /*! Base class for World Objects*/
 class Actor
@@ -30,25 +19,35 @@ public:
 	{
 		this->zMesh = 0; 
 		this->zID = ID;
-		this->zState = STATE_NONE;
-
-		this->zSoundChecker = new SoundChecker();
 	}
-	virtual ~Actor(){ if (this->zMesh){ this->zMesh = 0; } if(this->zSoundChecker) SAFE_DELETE(this->zSoundChecker);}
+	virtual ~Actor()
+	{
+		if (this->zMesh)
+			GetGraphics()->DeleteMesh(this->zMesh);
+
+		for (auto it = this->zSubMeshes.begin(); it != this->zSubMeshes.end(); it++)
+		{
+			if(it->second)
+				GetGraphics()->DeleteMesh(it->second);
+		}
+	}
 	std::string GetModel() {return this->zModel;}
 	/*!	Returns Pointer to the Player Mesh*/
 	iMesh* GetMesh() const {return this->zMesh;}
 	/*! Returns Object Model Scale*/
 	Vector3 GetScale() const {return this->zMesh->GetScaling();}
 	/*! Returns Object Model Position*/
-	inline Vector3 GetPosition() const {return this->zMesh->GetPosition();}
+	inline Vector3 GetPosition() const { return this->zMesh->GetPosition();}
 	/*! Returns Object Model Rotation*/
 	inline Vector4 GetRotation() const {return this->zMesh->GetRotationQuaternion();}
-	/*! Sets object Mesh data*/
-	inline unsigned int GetState() const {return this->zState;}
-
+	
+	/*! Sets Actor Mesh data*/
 	void SetModel(std::string model) {this->zModel = model;}
-	inline void SetPosition(const Vector3& pos) {this->zMesh->SetPosition(pos);}
+	inline void SetPosition(const Vector3& pos) 
+	{
+		if (this->zMesh)
+			this->zMesh->SetPosition(pos);
+	}
 	void SetScale(const Vector3& scale) {this->zMesh->SetScale(scale);}
 	inline void SetRotation(const Vector4& rot) 
 	{
@@ -61,14 +60,25 @@ public:
 	void SetStaticMesh(iMesh* mesh) {this->zMesh = mesh;}
 	/*!  Sets the Client Id given from the server*/
 	void SetID(const int clientID) {this->zID = clientID;}
-	void SetState(const unsigned int state) {this->zState = state;}
 
-	SoundChecker* GetSoundChecker(){ return this->zSoundChecker; }
+	void AddSubMesh(std::string model, iMesh* mesh)
+	{
+		this->zSubMeshes[model] = mesh;
+	}
+	iMesh* GetSubMesh(std::string model)
+	{
+		auto it = this->zSubMeshes.find(model);
+		if (it != this->zSubMeshes.end())
+			return it->second;
 
+		return NULL;
+	}
+	void RemoveSubMesh(std::string model) {this->zSubMeshes.erase(model);}
 protected:
-	SoundChecker* zSoundChecker;
 	std::string zModel;
 	iMesh* zMesh;
+	//Used For FBX
+	std::map<std::string, iMesh*> zSubMeshes;
 	unsigned int zID;
-	unsigned int zState;
+	Vector3 zPosition;
 };

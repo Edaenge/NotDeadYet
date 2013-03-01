@@ -25,6 +25,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_SERVER_FULL,
 	MESSAGE_TYPE_SERVER_SHUTDOWN,
 	MESSAGE_TYPE_ERROR_MESSAGE,
+	MESSAGE_TYPE_SERVER_ANNOUNCEMENT,
 	MESSAGE_TYPE_IMPORTANT_MESSAGE,
 	MESSAGE_TYPE_ACKNOWLEDGE,
 	MESSAGE_TYPE_NEW_ACTOR,
@@ -50,7 +51,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_HYDRATION,
 	MESSAGE_TYPE_STAMINA,
 	MESSAGE_TYPE_ITEM_TYPE,
-	MESSAGE_TYPE_ITEM_ID,
+	MESSAGE_TYPE_OBJECT_ID,
 	MESSAGE_TYPE_REMOVE_INVENTORY_ITEM,
 	MESSAGE_TYPE_ADD_INVENTORY_ITEM,
 	MESSAGE_TYPE_EQUIPMENT_SLOT,
@@ -95,9 +96,20 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_PLAY_AS_ANIMAL,
 	MESSAGE_TYPE_LEAVE_ANIMAL,
 	MESSAGE_TYPE_DEER_EAT_OBJECT,
-	MESSAGE_TYPE_PLAY_SOUND
+	MESSAGE_TYPE_PLAY_SOUND,
+	MESSAGE_TYPE_PLAY_ANIMATION,
+	MESSAGE_TYPE_SUN_DIRECTION,
+	MESSAGE_TYPE_ANIMAL_ATTACK,
+	MESSAGE_TYPE_CLIENT_LATENCY,
+	MESSAGE_TYPE_SERVER_UPDATES_PER_SEC,
+	MESSAGE_TYPE_MESH_BINDING,
+	MESSAGE_TYPE_MESH_UNBIND,
+	MESSAGE_TYPE_FOG_ENCLOSEMENT
 };
 
+static const std::string M_FOG_ENCLOSEMENT			= "FL";
+static const std::string M_MESH_UNBIND				= "MUB";
+static const std::string M_MESH_BINDING				= "MB";
 static const std::string M_UPDATE_ACTOR				= "UA";
 static const std::string M_REMOVE_ACTOR				= "RA";
 static const std::string M_DEAD_ACTOR				= "DA";
@@ -118,7 +130,8 @@ static const std::string M_RESTART_GAME_REQUEST		= "RGR";
 */
 static const std::string M_PLAY_AS_ANIMAL			= "PAD";
 static const std::string M_LEAVE_ANIMAL				= "LA";
-static const std::string M_DEER_EAT_OBJECT		= "AE";
+static const std::string M_DEER_EAT_OBJECT			= "AE";
+static const std::string M_SUN_DIRECTION			= "SD";
 //Data Messages
 static const std::string M_LOAD_MAP					= "LM";
 static const std::string M_CONNECTED				= "CON";
@@ -138,7 +151,7 @@ static const std::string M_STAMINA					= "STAM";
 static const std::string M_STATE					= "STAT";
 static const std::string M_ITEM_TYPE				= "IT";
 static const std::string M_ITEM_SUB_TYPE			= "IST";
-static const std::string M_ITEM_ID					= "IID";
+static const std::string M_OBJECT_ID				= "OID";
 static const std::string M_ITEM_NAME				= "IN";
 static const std::string M_ITEM_DESCRIPTION			= "IDE";
 static const std::string M_ITEM_ICON_PATH			= "IIP";
@@ -171,10 +184,7 @@ static const std::string M_ITEM_FINISHED			= "IF";
 static const std::string M_WEAPON_EQUIPMENT_SWAP	= "WEQS";
 
 //Animal Messages
-static const std::string M_ADD_DEAD_ANIMAL_ITEM		= "ADAI";
-static const std::string M_DEAD_ANIMAL_REMOVE_ITEM	= "DARI";
-static const std::string M_REMOVE_DEAD_ANIMAL_OBJECT= "RDAO";
-static const std::string M_DEAD_ANIMAL_ITEM_FINISHED= "DAIF";
+static const std::string M_ANIMAL_ATTACK			= "AA";
 //Key Messages
 static const std::string M_KEY_DOWN					= "KD";
 static const std::string M_KEY_UP					= "KU";
@@ -186,20 +196,24 @@ static const std::string M_SERVER_FULL				= "SF";
 static const std::string M_SERVER_SHUTDOWN			= "SS";
 //Error Message
 static const std::string M_ERROR_MESSAGE			= "EM";
+static const std::string M_SERVER_ANNOUNCEMENT		= "SA";
 //Important Message Tag
 static const std::string M_IMPORTANT_MESSAGE		= "IM";
 static const std::string M_ACKNOWLEDGE_MESSAGE		= "ACK";
 //Player Messages
 static const std::string M_CLIENT_DATA				= "CD";
-static const std::string M_NEW_ACTOR				= "NP";
+static const std::string M_NEW_ACTOR				= "NA";
 static const std::string M_READY_PLAYER				= "PRM";
 //Confirmation Message
 static const std::string M_SELF_ID					= "SELF";
 //Ping Message
 static const std::string M_PING						= "PING";
-
+static const std::string M_CLIENT_LATENCY			= "CL";
+static const std::string M_SERVER_UPDATES_PER_SEC	= "SUPC";
 static const std::string M_START_GAME				= "SG";
 static const std::string M_PLAY_SOUND				= "PS";
+static const std::string M_PLAY_ANIMATION			= "PLAN";
+
 /*
 	This class creates string messages used for communication
 	between sockets.
@@ -224,8 +238,8 @@ public:
 	Vector4 ConvertStringToQuaternion(const std::string& type, const std::string& msg);
 	int ConvertStringToInt(const std::string& type, const std::string& msg);
 	float ConvertStringToFloat(const std::string& type, const std::string& msg);
-	std::string ConvertStringToSubstring(const std::string& type, const std::string& msg);
-private:
+	std::string ConvertStringToSubstring(const std::string& type, const std::string& msg, bool bReplaceUnderscore = false);
 
+private:
 
 };
