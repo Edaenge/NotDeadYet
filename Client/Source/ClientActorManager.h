@@ -131,6 +131,9 @@ public:
 	void SetCameraOffset(Vector3 offset) {this->zCameraOffset = offset;}
 	Vector3 GetCameraOffset() {return this->zCameraOffset;}
 
+	/*! Deletes all actors and updates.*/
+	void ClearAll();
+
 private:
 	std::map<unsigned int, Actor*> zActors;
 	std::map<Actor*, unsigned int> zState;

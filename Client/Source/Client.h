@@ -200,6 +200,8 @@ private:
 	std::string zMeshID;
 	std::string zName;
 
+	std::set<Entity*> zPreviousEntities;
+
 	KeyHandler zKeyInfo;
 	GraphicsEngine* zEng;
 	GuiManager* zGuiManager;

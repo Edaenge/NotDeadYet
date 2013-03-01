@@ -237,7 +237,6 @@ void ActorManager::ClearAll()
 			physics->DeletePhysicsObject(pObj);
 		
 		Actor* actor = (*it);
-		it = zActors.erase(it);
 		SAFE_DELETE(actor);
 	}
 	zActors.clear();

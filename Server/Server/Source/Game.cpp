@@ -48,6 +48,23 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
 	
+// Create World
+	if(worldFile != "")
+		this->zWorld = new World(this, worldFile.c_str());
+	else
+		this->zWorld = new World(this, 10, 10);  // Handle Error.
+
+// Load Entities
+	LoadEntList("Entities.txt");
+
+// Actor Manager
+	this->zActorManager = new ActorManager(syncher);
+	
+	InitItemLookup();
+
+	this->zMaxNrOfPlayers = 32;
+	
+//Create GameMode
 	if (mode.find("FFA") == 0 )
 	{
 		this->zGameMode = new GameModeFFA(this);
@@ -60,31 +77,13 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	{
 		this->zGameMode = new GameModeFFA(this);
 	}
-
-// Load Entities
-	LoadEntList("Entities.txt");
-
 // Game Mode Observes
 	this->AddObserver(this->zGameMode);
 
-// Create World
-	if(worldFile != "")
-		this->zWorld = new World(this, worldFile.c_str());
-	else
-		this->zWorld = new World(this, 10, 10);  // Handle Error.
-
-// Actor Manager
-	this->zActorManager = new ActorManager(syncher);
-	
-	InitItemLookup();
-
-	this->zMaxNrOfPlayers = 32;
-	
 //DEBUG;
 	this->SpawnItemsDebug();
 	this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
-
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -2140,13 +2139,15 @@ void Game::RestartGame()
 {
 	NetworkMessageConverter NMC;
 	std::string msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Server Restarting");
+	SendToAll(msg);
+	msg = NMC.Convert(MESSAGE_TYPE_SERVER_RESTART);
+	SendToAll(msg);
 
-	//Gather Actors
-	std::set<Actor*> actors = this->zActorManager->GetActors();
-	
 	//Delete All Actors
 	this->zActorManager->ClearAll();
-	
+	//Remove old messages
+	this->zSyncher->ClearAll();
+
 	//Recreate Actors
 	std::string message = "";
 	int increment = 1;
@@ -2178,12 +2179,6 @@ void Game::RestartGame()
 	//Debug
 	//SpawnAnimalsDebug();
 
-	//Sends Existing Updates to Clients.
-	for (auto it = this->zPlayers.begin(); it != zPlayers.end(); it++)
-	{
-		zSyncher->SendUpdatesTo( (*it).first );
-	}
-	
 	//Set everyone to false
 	for (auto it = zPlayers.begin(); it != zPlayers.end(); it++)
 	{
