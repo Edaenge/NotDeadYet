@@ -59,14 +59,15 @@ int InGameMenu::Run()
 		}
 		else if(guiEvent->GetEventMessage() == "ApplyOptionsAndChangeSetEvent")
 		{
-			iGraphicsEngineParams& GEP = this->zEng->GetEngineParameters();
+			GraphicsEngine* ge = GetGraphics();
+			iGraphicsEngineParams& GEP = ge->GetEngineParameters();
 
-			ApplyOptionsAndChangeSetEvent* cEvent = (ApplyOptionsAndChangeSetEvent*) guiEvent;
+			ApplyOptionsAndChangeSetEvent* cEvent = (ApplyOptionsAndChangeSetEvent*)guiEvent;
 
 			//Maximized
 			bool maximized = this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn();
 			GEP.Maximized = !maximized;
-			if(maximized == false)
+			if(!maximized)
 			{
 				RECT desktop;
 				const HWND hDesktop = GetDesktopWindow();
@@ -81,18 +82,24 @@ int InGameMenu::Run()
 					i++;
 				}
 				GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
-
 			}
 			else if(maximized)
 			{
 				float oldWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
 				float oldHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
 
-				RECT desktop;
-				const HWND hDesktop = GetDesktopWindow();
-				GetWindowRect(hDesktop, &desktop);
-				float width = (float)desktop.right;
-				float height = (float)desktop.bottom;
+				float width = oldWidth;
+				float height = oldHeight;
+
+				GUIEvent* temp = this->zSets[this->zPrimarySet].GetEventFromDropDown("Resolutions");
+				if(ChangeResEvent *cre = dynamic_cast<ChangeResEvent *>(temp))
+				{
+					if (NULL != cre)
+					{
+						width = cre->GetWidth();
+						height = cre->GetHeight();
+					}
+				}
 
 				int i = IGNOMENU;
 				while(i != IGLASTMENU)
@@ -100,10 +107,11 @@ int InGameMenu::Run()
 					zSets[i].Resize(oldWidth, oldHeight, width, height);
 					i++;
 				}
+				GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
 			}
 			// Getting shadow
 			std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");
-			this->zEng->ChangeShadowQuality(MaloW::convertStringToInt(tbTemp));
+			ge->ChangeShadowQuality(MaloW::convertStringToInt(tbTemp));
 			GEP.ShadowMapSettings = MaloW::convertStringToInt(tbTemp);
 			//FXAA
 			CheckBox* cbTemp = this->zSets[this->zPrimarySet].GetCheckBox("FXAACheckBox");
@@ -122,6 +130,7 @@ int InGameMenu::Run()
 			GEP.SaveToFile("Config.cfg");
 
 			this->SwapMenus(cEvent->GetSet());
+			zPrimarySet = cEvent->GetSet();
 		}
 		else if(this->zEng->GetKeyListener()->IsPressed(VK_ESCAPE))
 		{

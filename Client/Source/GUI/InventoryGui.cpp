@@ -47,6 +47,13 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 
 		zSlotPositions[i] = Vector2(xTemp, yTemp);
 	}
+	for(int i = 0; i < SLOTS; i++)
+	{
+		InventorySlotGui* gui = new InventorySlotGui(zSlotPositions[i].x, zSlotPositions[i].y, zSlotImageWidth,
+			zSlotImageHeight, Gui_Item_Data());
+		this->zSlotGui.push_back(gui);
+	}
+
 	startOffsetY = (YOFFSETEQ / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight;
 	xTemp = this->zX + (EQXPOS[0] / 1024.0f) * dx;
 	zWeaponSlots[0] = Vector2(xTemp, this->zY + startOffsetY);
@@ -57,12 +64,7 @@ InventoryGui::InventoryGui(float x, float y, float width, float height, std::str
 	xTemp = this->zX + (EQXPOS[2] / 1024.0f) * dx;
 	zWeaponSlots[2] = Vector2(xTemp, this->zY + startOffsetY);
 
-	for(int i = 0; i < SLOTS; i++)
-	{
-		InventorySlotGui* gui = new InventorySlotGui(zSlotPositions[i].x, zSlotPositions[i].y, zSlotImageWidth,
-			zSlotImageHeight, Gui_Item_Data());
-		this->zSlotGui.push_back(gui);
-	}
+	
 
 	InventorySlotGui* gui = new InventorySlotGui(this->zWeaponSlots[0].x, this->zWeaponSlots[0].y, zSlotImageWidth,
 		zSlotImageHeight, Gui_Item_Data());
@@ -454,4 +456,21 @@ void InventoryGui::UpdateInventoryWeight( float weight )
 Vector3 InventoryGui::lerp(Vector3 x, Vector3 y, float a)
 {
 	return x * (1.0 - a) + y * a;
+}
+
+void InventoryGui::Reset(bool open)
+{
+	for (int i = 0; i < this->zSlotGui.size(); i++)
+	{
+		this->zSlotGui.at(i)->RemoveItemFromSlot(open, GetGraphics());
+	}
+	this->zWeaponSlotGui[ITEM_TYPE_WEAPON_MELEE]->RemoveItemFromSlot(open, GetGraphics());
+	this->zWeaponSlotGui[ITEM_TYPE_WEAPON_RANGED]->RemoveItemFromSlot(open, GetGraphics());
+	this->zWeaponSlotGui[ITEM_TYPE_PROJECTILE]->RemoveItemFromSlot(open, GetGraphics());
+
+	if(this->zWeightText && GetGraphics()->IsRunning())
+		GetGraphics()->DeleteText(this->zWeightText);
+
+	this->zCurrentWeight = 0;
+	this->zNrOfItems = 0;
 }

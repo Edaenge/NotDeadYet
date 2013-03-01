@@ -36,6 +36,7 @@ public:
 
 	void SetLootActor(unsigned int ID){ this->zActorLoot = ID; }
 	unsigned int GetLootActor(){ return this->zActorLoot; }
+	void Reset(bool open);
 
 	void Resize(float windowWidth, float windowHeight, float dx);
 private:
@@ -46,7 +47,5 @@ private:
 
 	unsigned int zActorLoot;
 
-	float zMaxWeight;
-	float zCurrentWeight;
 	int zNrOfItems;
 };

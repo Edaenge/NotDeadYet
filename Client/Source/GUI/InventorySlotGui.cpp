@@ -159,12 +159,12 @@ void InventorySlotGui::RemoveItemFromSlot( bool invOpen, GraphicsEngine* ge )
 		if(this->zStackText)
 		{
 			ge->DeleteText(this->zStackText);
-			this->zStackText = 0;
+			this->zStackText = NULL;
 		}
 		if(this->zSlotImage)
 		{
 			ge->DeleteImage(this->zSlotImage);
-			this->zSlotImage = 0;
+			this->zSlotImage = NULL;
 		}
 	}
 	this->zBlocked = false;

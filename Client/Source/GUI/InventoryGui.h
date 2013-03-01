@@ -43,6 +43,7 @@ public:
 	void HideGui();
 	std::string GetImageName(unsigned int position);
 	void UpdateInventoryWeight(float weight);
+	void Reset(bool open);
 
 	void Resize(float windowWidth, float windowHeight, float dx);
 private:

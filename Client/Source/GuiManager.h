@@ -48,6 +48,9 @@ public:
 	void Update(float deltaTime);
 	Menu_select_data CheckCollisionInv();
 	void UpdateInventoryWeight(float weight);
+	void ResetLoot();
+	void ResetInventory();
+	int GetLootingActor();
 
 	void Resize(int width, int height);
 private:

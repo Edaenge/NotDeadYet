@@ -8,9 +8,6 @@
 #define XOFFSETINV 32.0f
 #define YOFFSETINV 75.0f
 
-#define YOFFSETEQ 62.0f
-static const int EQXPOS[] = {94, 280, 342};
-
 LootInventoryGui::LootInventoryGui()
 {
 	zPressed = false;
@@ -56,8 +53,6 @@ LootInventoryGui::LootInventoryGui(float x, float y, float width, float height, 
 	}
 
 	this->zActorLoot = 0;
-	this->zMaxWeight = 49.0f;
-	this->zCurrentWeight = 0.0f;
 	this->zNrOfItems = 0;
 }
 
@@ -300,4 +295,15 @@ void LootInventoryGui::Resize(float windowWidth, float windowHeight, float dx)
 	}
 	for(int i = 0; i < SLOTS; i++)
 		zSlotPositions[i] = newSlotPositions[i];
+}
+
+void LootInventoryGui::Reset( bool open )
+{
+	for (int i = 0; i < this->zSlotGui.size(); i++)
+	{
+		this->zSlotGui.at(i)->RemoveItemFromSlot(open, GetGraphics());
+	}
+
+	this->zNrOfItems = 0;
+	this->zActorLoot = 0;
 }

@@ -332,3 +332,22 @@ void GuiManager::UpdateInventoryWeight( float weight )
 {
 	this->zInvGui->UpdateInventoryWeight(weight);
 }
+
+void GuiManager::ResetLoot()
+{
+	this->zInvGui->Reset(this->zInventoryOpen);
+}
+
+void GuiManager::ResetInventory()
+{
+	this->zLootGui->Reset(this->zLootOpen);
+}
+
+int GuiManager::GetLootingActor()
+{
+	if(this->zLootGui)
+	{
+		return this->zLootGui->GetLootActor();
+	}
+	return 0;
+}
