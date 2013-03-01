@@ -286,13 +286,17 @@ void ClientActorManager::ClearAll()
 {
 	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
-		Updates* temp = zUpdates[it->first];
-		SAFE_DELETE(temp);
+		auto ret = zUpdates.find(it->first);
+
+		if( ret != zUpdates.end() )
+			SAFE_DELETE(ret->second);
+		
 		SAFE_DELETE(it->second);
 	}
 
 	zActors.clear();
 	zUpdates.clear();
 	zState.clear();
+
 }
 

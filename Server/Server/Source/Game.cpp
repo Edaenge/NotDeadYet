@@ -150,6 +150,8 @@ Game::~Game()
 
 void Game::SpawnAnimalsDebug()
 {
+	return;
+
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);

@@ -321,7 +321,7 @@ void Client::Life()
 			
 		this->UpdateGame();
 
-		//Sleep(5);
+		Sleep(5);
 	}
 
 	this->zRunning = false;
@@ -1282,7 +1282,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if (msgArray[0].find(M_SERVER_RESTART.c_str()) == 0)
 	{
-		MaloW::Debug("Restart message!");
 		this->zActorManager->ClearAll();
 		
 		if(this->zPlayerInventory)
