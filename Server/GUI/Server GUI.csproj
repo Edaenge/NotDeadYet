@@ -69,6 +69,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Server CLI, Version=1.0.4808.25124, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Bin\Release\Server CLI.dll</HintPath>
+    </Reference>
     <Reference Include="Server CLID, Version=1.0.4804.20734, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Bin\Debug\Server CLID.dll</HintPath>
