@@ -590,124 +590,133 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 			//		
 			//	}
 
+			try
+			{
 				if(this->zWorld->IsBlockingAt(Vector2(nextX, nextY)))
 				{
 					continue;
 				}
-
-				Node theNextNode(nextX,nextY);
+			}
+			catch (...)
+			{
+				continue;
+			}
 			
-				//calculate the f cost.			
-				theNextNode.fCost = abs(goalX - nextX);//zNodes[nextNode].fCost = abs( goalX - zNodes[nextNode].x);
-				theNextNode.fCost += abs(goalY - nextY);//zNodes[nextNode].fCost += abs( goalY - zNodes[nextNode].y);
-
-				theNextNode.fCost *= 10;//zNodes[nextNode].fCost *= 10;
-
-				switch( i )
-				{
-				case( 1 ) :
-					if(currentNode == 0)
-					{
-						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
-					}
-					theNextNode.gCost = selected->gCost + 10;
-					theNextNode.fCost += theNextNode.gCost;
-					break;
-				case( 3 ) :
-					if(currentNode == 0)
-					{
-						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
-					}
-					theNextNode.gCost = selected->gCost + 10;
-					theNextNode.fCost += theNextNode.gCost;
-					break;
-				case( 4 ) :
-					if(currentNode == 0)
-					{
-						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
-					}
-					theNextNode.gCost = selected->gCost + 10;
-					theNextNode.fCost += theNextNode.gCost;
-					break;
-				case ( 6 ):
-					if(currentNode == 0)
-					{
-						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
-					}
-					theNextNode.gCost = selected->gCost + 10;
-					theNextNode.fCost += theNextNode.gCost;
-					break;
-				default:
-					if(currentNode == 0)
-					{
-						selected->gCost = 0;//zNodes[currentNode].gCost = 0;
-					}
-					theNextNode.gCost = selected->gCost + 14;
-					theNextNode.fCost += theNextNode.gCost;
-					break;
-
-				}
-
-				//if(i == 1 || i == 3 || i == 4 || i == 6)
-				//{
-				//	if(currentNode == 0)
-				//	{
-				//		selected->gCost = 0;//zNodes[currentNode].gCost = 0;
-				//	}
-				//	theNextNode.gCost = selected->gCost + 10;//zNodes[nextNode].gCost = zNodes[currentNode].gCost + 10;
-				//	theNextNode.fCost += theNextNode.gCost;//zNodes[nextNode].fCost += zNodes[nextNode].gCost;
-				//}
-				//else
-				//{	
-				//	if(currentNode == 0)
-				//	{
-				//		selected->gCost = 0;//zNodes[currentNode].gCost = 0;
-				//	}
-				//	theNextNode.gCost = selected->gCost + 14;//zNodes[nextNode].gCost = zNodes[currentNode].gCost + 14;
-				//	theNextNode.fCost += theNextNode.gCost;//zNodes[nextNode].fCost += zNodes[nextNode].gCost;
-				//}
-
-
-				add = true;
 				
 
-				for(auto iter = zOpenList.begin(); iter != zOpenList.end(); iter++)
-				{
-					if((*iter)->x == theNextNode.x && (*iter)->y == theNextNode.y)//if((*iter)->x == zNodes[nextNode].x && (*iter)->y == zNodes[nextNode].y)
-					{
-						add = false;
-						break;
-					}
-				}
+			Node theNextNode(nextX,nextY);
+			
+			//calculate the f cost.			
+			theNextNode.fCost = abs(goalX - nextX);//zNodes[nextNode].fCost = abs( goalX - zNodes[nextNode].x);
+			theNextNode.fCost += abs(goalY - nextY);//zNodes[nextNode].fCost += abs( goalY - zNodes[nextNode].y);
 
-				for(auto iter = zClosedList.begin(); iter != zClosedList.end(); iter++)
-				{
-					if((*iter)->x == theNextNode.x && (*iter)->y == theNextNode.y)//if((*iter)->x == zNodes[nextNode].x && (*iter)->y == zNodes[nextNode].y)
-					{
-						add = false;
-						break;
-					}
-				}
+			theNextNode.fCost *= 10;//zNodes[nextNode].fCost *= 10;
 
-				if(add)
+			switch( i )
+			{
+			case( 1 ) :
+				if(currentNode == 0)
 				{
+					selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+				}
+				theNextNode.gCost = selected->gCost + 10;
+				theNextNode.fCost += theNextNode.gCost;
+				break;
+			case( 3 ) :
+				if(currentNode == 0)
+				{
+					selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+				}
+				theNextNode.gCost = selected->gCost + 10;
+				theNextNode.fCost += theNextNode.gCost;
+				break;
+			case( 4 ) :
+				if(currentNode == 0)
+				{
+					selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+				}
+				theNextNode.gCost = selected->gCost + 10;
+				theNextNode.fCost += theNextNode.gCost;
+				break;
+			case ( 6 ):
+				if(currentNode == 0)
+				{
+					selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+				}
+				theNextNode.gCost = selected->gCost + 10;
+				theNextNode.fCost += theNextNode.gCost;
+				break;
+			default:
+				if(currentNode == 0)
+				{
+					selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+				}
+				theNextNode.gCost = selected->gCost + 14;
+				theNextNode.fCost += theNextNode.gCost;
+				break;
+
+			}
+
+			//if(i == 1 || i == 3 || i == 4 || i == 6)
+			//{
+			//	if(currentNode == 0)
+			//	{
+			//		selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+			//	}
+			//	theNextNode.gCost = selected->gCost + 10;//zNodes[nextNode].gCost = zNodes[currentNode].gCost + 10;
+			//	theNextNode.fCost += theNextNode.gCost;//zNodes[nextNode].fCost += zNodes[nextNode].gCost;
+			//}
+			//else
+			//{	
+			//	if(currentNode == 0)
+			//	{
+			//		selected->gCost = 0;//zNodes[currentNode].gCost = 0;
+			//	}
+			//	theNextNode.gCost = selected->gCost + 14;//zNodes[nextNode].gCost = zNodes[currentNode].gCost + 14;
+			//	theNextNode.fCost += theNextNode.gCost;//zNodes[nextNode].fCost += zNodes[nextNode].gCost;
+			//}
+
+
+			add = true;
+				
+
+			for(auto iter = zOpenList.begin(); iter != zOpenList.end(); iter++)
+			{
+				if((*iter)->x == theNextNode.x && (*iter)->y == theNextNode.y)//if((*iter)->x == zNodes[nextNode].x && (*iter)->y == zNodes[nextNode].y)
+				{
+					add = false;
+					break;
+				}
+			}
+
+			for(auto iter = zClosedList.begin(); iter != zClosedList.end(); iter++)
+			{
+				if((*iter)->x == theNextNode.x && (*iter)->y == theNextNode.y)//if((*iter)->x == zNodes[nextNode].x && (*iter)->y == zNodes[nextNode].y)
+				{
+					add = false;
+					break;
+				}
+			}
+
+			if(add)
+			{
 					
-				//Now we need to set the parent of the node.
-				theNextNode.parent = (&*selected); 
-				this->zNodeList.push_front(theNextNode);
+			//Now we need to set the parent of the node.
+			theNextNode.parent = (&*selected); 
+			this->zNodeList.push_front(theNextNode);
 				
-				//Add it to the open list. 
-				zOpenList.push_front(&this->zNodeList.front());//zOpenList.push_front(&zNodes[nextNode]);
+			//Add it to the open list. 
+			zOpenList.push_front(&this->zNodeList.front());//zOpenList.push_front(&zNodes[nextNode]);
 
 
-					if(zNodeList.front().x == goalX && zNodeList.front().y == goalY)
-					{
-						done = true;
-						break;
-					}
+				if(zNodeList.front().x == goalX && zNodeList.front().y == goalY)
+				{
+					done = true;
+					break;
 				}
+			}
 
-				currentNode++;
+			currentNode++;
 		}
 
 		if(done)
