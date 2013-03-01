@@ -12,13 +12,28 @@ NetworkChannel::NetworkChannel( SOCKET socket ) :
 	zNumBytesIn(0),
 	zNumBytesOut(0)
 {
-
+	QueryPerformanceCounter((LARGE_INTEGER*)&zChannelCreated);
 }
 
-bool NetworkChannel::Receive( std::string& msg )
+bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 {
 	// Error Code
 	int errCode;
+
+	// Receive Packet Time
+	__int64 packetSentTime;
+	if ( (errCode = recv(zSocket, reinterpret_cast<char*>(&packetSentTime), sizeof(__int64), 0)) <= 0 )
+	{
+		if ( errCode < 0 )
+		{
+			throw( NetworkException("Failed Receiving Packet Number!", WSAGetLastError()) );
+		}
+		else
+		{
+			// Connection Canceled
+			return false;
+		}
+	}
 
 	// Receive Packet Number
 	unsigned int packetNumber = 0;
@@ -74,6 +89,18 @@ bool NetworkChannel::Receive( std::string& msg )
 	// Count Bytes Received
 	zNumBytesIn += packetSize + sizeof(unsigned int) * 2;
 
+	// Counte Time Taken
+	__int64 curTime;
+	QueryPerformanceCounter((LARGE_INTEGER*)&curTime);
+	__int64 timeItTook = curTime - zChannelCreated - packetSentTime;
+
+	// Count Frequency
+	__int64 freqency;
+	QueryPerformanceCounter((LARGE_INTEGER*)&freqency);
+	
+	// Convert To Double
+	timeTaken = ( 1.0 / (double)freqency ) * (double)timeItTook;
+
 	return true;
 }
 
@@ -81,6 +108,23 @@ bool NetworkChannel::Send(const std::string& msg)
 {
 	// ErrorCode
 	int errCode;
+
+	// Send Packet Time
+	__int64 curTime;
+	QueryPerformanceCounter((LARGE_INTEGER*)&curTime);
+	__int64 relTime = curTime - zChannelCreated;
+	if ( (errCode = send(zSocket, reinterpret_cast<char*>(&relTime), sizeof(__int64), 0)) <= 0 )
+	{
+		if ( errCode < 0 )
+		{
+			throw( NetworkException("Failed Sending Packet Time!", WSAGetLastError()) );
+		}
+		else
+		{
+			// Connection Canceled
+			return false;
+		}
+	}
 
 	// Send Packet Number
 	unsigned int packetNumber = zPacketNumberOut++;

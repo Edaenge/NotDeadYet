@@ -49,10 +49,11 @@ void ServerChannel::Life()
 
 	try
 	{
+		double packetTime;
 		std::string msg;
-		while(this->stayAlive && Receive(msg))
+		while(this->stayAlive && Receive(msg, packetTime))
 		{
-			zNotifier->PutEvent(new NetworkPacket(msg, this));
+			zNotifier->PutEvent(new NetworkPacket(msg, this, packetTime));
 		}
 	}
 	catch(...)

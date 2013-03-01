@@ -9,15 +9,22 @@ namespace MaloW
 	{
 	protected:
 		SOCKET zSocket;
+		
+		// Counters
 		unsigned int zPacketNumberIn;
 		unsigned int zPacketNumberOut;
 		unsigned int zNumBytesIn;
 		unsigned int zNumBytesOut;
+		
+		// Timing
+		__int64 zChannelCreated;
+		__int64 zCounterFreq;
 
+		// Constructor
 		NetworkChannel( SOCKET socket );
 
 		// Receive Message
-		virtual bool Receive(std::string& msg) throw(...);
+		virtual bool Receive(std::string& msg, double& timeTaken) throw(...);
 
 	public:
 		// Amount of Packets Sent
