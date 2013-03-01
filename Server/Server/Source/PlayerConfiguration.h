@@ -10,7 +10,6 @@ class PlayerConfiguration
 	public:
 		PlayerConfiguration();
 		bool SetValuesFromFile();
-		
 
 	public:
 		float	zFullnessMax;
@@ -28,7 +27,6 @@ class PlayerConfiguration
 		float zDamageAtStarvationCof;
 		float zDamageAtThirstCof;
 
-	
 		float zStaminaDecreaseCofWithHunger;
 		float zStaminaDecreaseCofWithHydration;
 
@@ -51,9 +49,7 @@ class PlayerConfiguration
 		float zRegenerationHydrationAddition;
 		float zRegenerationStaminaAddition;
 
-
-
-
+		float zEnergyCoeff;
 };
 
 const PlayerConfiguration& GetPlayerConfiguration();

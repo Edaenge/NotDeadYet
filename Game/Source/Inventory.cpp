@@ -10,8 +10,7 @@ Inventory::Inventory()
 {
 	this->zInventoryCap = 49;
 	this->zWeightTotal = 0;
-	
-	this->zInventorySlotBlocked = std::vector<bool>();
+
 	this->zItems = std::vector<Item*>();
 
 	this->zSlotsAvailable = this->zInventoryCap;
@@ -33,7 +32,6 @@ Inventory::Inventory(const unsigned int inventorySize)
 	this->zInventoryCap = inventorySize;
 	this->zWeightTotal = 0;
 
-	this->zInventorySlotBlocked = std::vector<bool>();
 	this->zItems = std::vector<Item*>();
 
 	this->zSlotsAvailable = this->zInventoryCap;
@@ -262,16 +260,6 @@ Item* Inventory::Erase( const unsigned int Index )
 		return item;
 	}
 	return NULL;
-}
-
-std::vector<bool> Inventory::GetBlockedSlots() const
-{
-	return this->zInventorySlotBlocked;
-}
-
-bool Inventory::GetBlockedSlot(unsigned int index) const
-{
-	return this->zInventorySlotBlocked[index];
 }
 
 int Inventory::GetInventoryCapacity() const

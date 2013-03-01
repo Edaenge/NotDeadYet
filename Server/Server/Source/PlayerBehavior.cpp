@@ -2,7 +2,7 @@
 #include "PlayerBehavior.h"
 #include "Actor.h"
 #include "Player.h"
-
+#include "PlayerConfiguration.h"
 
 PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) : 
 	Behavior(actor, world)
@@ -25,3 +25,17 @@ bool PlayerBehavior::ProcessClientData( Vector3 direction, Vector4 rotation )
 	return true;
 }
 
+bool PlayerBehavior::Update(float dt)
+{
+	float energy = zActor->GetEnergy();
+
+	if (energy < 200.0f)
+		energy += GetPlayerConfiguration().zEnergyCoeff * dt;
+
+	if (energy >= 200.0f)
+		energy = 200.0f;
+
+	zActor->SetEnergy(energy);
+
+	return false;
+}

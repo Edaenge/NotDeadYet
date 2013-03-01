@@ -32,7 +32,7 @@ PlayerConfiguration::PlayerConfiguration()
 		this->zRegenerationHungerAddition = 0.8f;
 		this->zRegenerationHydrationAddition = 0.25f;
 		this->zRegenerationStaminaAddition = 0.20f;
-
+		this->zEnergyCoeff = 0.055555f;
 	}
 }
 
@@ -201,6 +201,12 @@ bool PlayerConfiguration::SetValuesFromFile()
 		infile.ignore(256, '\n');
 		numberFromFile = (float)atof(characters);
 		this->zRegenerationStaminaAddition = numberFromFile;
+
+		//Energy Regeneration
+		infile.getline(characters, 256,' ');
+		infile.ignore(256, '\n');
+		numberFromFile = (float)atof(characters);
+		this->zEnergyCoeff = numberFromFile;
 
 		valuesRetrieved = true;
 	}

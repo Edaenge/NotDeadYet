@@ -52,10 +52,7 @@ public:
 	/*! Removes the item from the list. Returns the removed item.*/
 	Item* RemoveItem(const unsigned int ID);
 	Item* RemoveItem(Item* item);
-	/*! Returns blocked slots*/
-	std::vector<bool> GetBlockedSlots() const;
-	/*! Get the status of the slot at Position*/
-	bool GetBlockedSlot(unsigned int index) const;
+
 	/*! Returns the Inventory Capacity == Max Weight allowed*/
 	int GetInventoryCapacity() const;
 	/*! Returns the total Weight.*/

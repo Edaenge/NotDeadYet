@@ -117,11 +117,17 @@ void Client::AddActor( NewActorPacket* NAP )
 			
 			iMesh* mesh = NULL;
 			//Creates a Mesh from the given Filename
-			std::string substring = model.substr(model.length() - 4);
-			if (substring == ".obj" || substring == ".ani")
-				mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
-			else if (substring == ".fbx")
-				mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
+			if (model.length() > 4)
+			{
+				std::string substring = model.substr(model.length() - 4);
+				if (substring == ".obj")
+					mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
+				else if (substring == ".fbx")
+					mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
+				else if (substring == ".ani")
+					mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
+			}
+			
 			else
 			{
 				int s = 0;

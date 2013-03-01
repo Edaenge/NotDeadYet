@@ -84,7 +84,7 @@ void Actor::SetPhysicsObject( PhysicsObject* object )
 	zPhysicsObject = object;
 }
 
-const std::string& Actor::GetModel() const
+const std::string Actor::GetModel() const
 {
 	if ( zPhysicsObject )
 	{

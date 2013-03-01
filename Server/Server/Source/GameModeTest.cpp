@@ -34,7 +34,7 @@ bool GameModeTest::Update( float dt )
 			return false;
 		}
 	}
-	return true;
+	return false;
 }
 
 void GameModeTest::OnEvent( Event* e )

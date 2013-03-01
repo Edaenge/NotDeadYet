@@ -18,6 +18,7 @@ public:
 	bool ProcessClientData(Vector3 direction, Vector4 rotation);
 	inline Player* GetPlayer() const {return this->zPlayer;}
 
+	bool Update(float dt);
 protected:
 	Player* zPlayer;
 	Vector3 zVelocity;

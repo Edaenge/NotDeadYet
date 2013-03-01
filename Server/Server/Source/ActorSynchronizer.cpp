@@ -103,6 +103,7 @@ void ActorSynchronizer::OnEvent( Event* e )
 		this->zActorData->actorRotation[AD->zActor->GetID()] = AD->zActor->GetRotation();
 		this->zActorData->actorScale[AD->zActor->GetID()] = AD->zActor->GetScale();
 		this->zActorData->actorModel[AD->zActor->GetID()] = AD->zActor->GetModel();
+		
 		if (BioActor* bActor = dynamic_cast<BioActor*>(AD->zActor))
 			this->zActorData->actorState[AD->zActor->GetID()] = bActor->GetState();
 		
