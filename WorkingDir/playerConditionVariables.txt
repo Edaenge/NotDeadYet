@@ -24,4 +24,4 @@
 0.8    	//zRegenerationHungerAddition;
 0.25   	//zRegenerationHydrationAddition;
 0.20   	//zRegenerationStaminaAddition;
-0.055	//zEnergyRegeneration
+0.055	//zEnergyRegeneration;

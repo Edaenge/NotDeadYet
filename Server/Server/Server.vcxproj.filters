@@ -147,6 +147,9 @@
     <ClCompile Include="Source\SupplyActor.cpp">
       <Filter>Source\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PlayerConfigReader.cpp">
+      <Filter>Source\Actors\Behavior</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -289,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="Source\SupplyActor.h">
       <Filter>Source\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerConfigReader.h">
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

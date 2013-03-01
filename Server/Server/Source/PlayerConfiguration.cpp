@@ -218,7 +218,6 @@ bool PlayerConfiguration::SetValuesFromFile()
 
 	return valuesRetrieved;
 
-
 }
 
 const PlayerConfiguration& GetPlayerConfiguration()
