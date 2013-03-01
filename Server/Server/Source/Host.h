@@ -15,10 +15,10 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 class ActorSynchronizer;
 
-#if defined(DEBUG) || defined(_DEBUG)
-//#include <vld.h>
-#define INCLUDE_MODEL_VIEWER
-#endif
+// #if defined(DEBUG) || defined(_DEBUG)
+// #include <vld.h>
+// #define INCLUDE_MODEL_VIEWER
+// #endif
 
 class Host : public MaloW::Process, public Observed
 {

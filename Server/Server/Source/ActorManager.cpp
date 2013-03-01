@@ -238,6 +238,8 @@ void ActorManager::ClearAll()
 		
 		Actor* actor = (*it);
 		SAFE_DELETE(actor);
+
+		it++;
 	}
 	zActors.clear();
 }
