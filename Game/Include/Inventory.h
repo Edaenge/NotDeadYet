@@ -100,13 +100,11 @@ private:
 	Item* Erase(const unsigned int Index);
 	/*! Array of items*/
 	std::vector<Item*> zItems;
-	/*! Array to keep track of Gui Representation*/
-	std::vector<bool> zInventorySlotBlocked;
-	/*! Nr of slots available in inventory == zInventorySlotBlocked array*/
+	/*! Nr of slots available in inventory.*/
 	unsigned int zSlotsAvailable;
-	/*! Max nr of slots in The zInventorySlotBlocked array*/
+	/*! Max nr of slots in The Inventory array.*/
 	unsigned int zInventoryCap;
-	/*! Nr of slots Occupied == Current Weight*/
+	/*! Nr of slots Occupied == Current Weight.*/
 	unsigned int zWeightTotal;
 
 	//Equipment Variables

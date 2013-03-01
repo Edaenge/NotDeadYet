@@ -14,10 +14,6 @@ Inventory::Inventory()
 	this->zInventorySlotBlocked = std::vector<bool>();
 	this->zItems = std::vector<Item*>();
 
-	for (unsigned int i = 0; i < this->zInventoryCap; i++)
-	{
-		this->zInventorySlotBlocked.push_back(false);
-	}
 	this->zSlotsAvailable = this->zInventoryCap;
 
 	this->zRangedWeapon = NULL;
@@ -40,10 +36,6 @@ Inventory::Inventory(const unsigned int inventorySize)
 	this->zInventorySlotBlocked = std::vector<bool>();
 	this->zItems = std::vector<Item*>();
 
-	for (unsigned int i = 0; i < this->zInventoryCap; i++)
-	{
-		this->zInventorySlotBlocked.push_back(false);
-	}
 	this->zSlotsAvailable = this->zInventoryCap;
 
 	this->zRangedWeapon = NULL;
@@ -86,6 +78,9 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 	if( available_slots <= 0 )
 		return false;
 
+	if (this->zSlotsAvailable - item->GetSlotSize() <= 0)
+		return false;
+
 	if ( item->GetStacking() )
 	{
 		if( IsStacking(item) )
@@ -115,7 +110,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 
 			stacked = true;
 			this->zWeightTotal += weight * stack;
-
+			this->zSlotsAvailable -= item->GetSlotSize();
 			return true;
 		}
 	}
@@ -128,7 +123,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 			Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
 
 		this->zWeightTotal += weight * item->GetStackSize();
-		
+		this->zSlotsAvailable -= item->GetSlotSize();
 		return true;
 	}
 
