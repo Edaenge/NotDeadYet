@@ -18,7 +18,6 @@ namespace MaloW
 		
 		// Timing
 		__int64 zChannelCreated;
-		__int64 zCounterFreq;
 
 		// Constructor
 		NetworkChannel( SOCKET socket );
