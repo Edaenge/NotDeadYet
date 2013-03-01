@@ -24,6 +24,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_LOAD_MAP,
 	MESSAGE_TYPE_SERVER_FULL,
 	MESSAGE_TYPE_SERVER_SHUTDOWN,
+	MESSAGE_TYPE_SERVER_RESTART,
 	MESSAGE_TYPE_ERROR_MESSAGE,
 	MESSAGE_TYPE_SERVER_ANNOUNCEMENT,
 	MESSAGE_TYPE_IMPORTANT_MESSAGE,
@@ -190,6 +191,8 @@ static const std::string M_KEY_DOWN					= "KD";
 static const std::string M_KEY_UP					= "KU";
 //Initial Data Message
 static const std::string M_USER_DATA				= "UD";
+//Restart Messages
+static const std::string M_SERVER_RESTART			= "SR";
 //Shutdown Messages
 static const std::string M_CONNECTION_CLOSED		= "CC";
 static const std::string M_SERVER_FULL				= "SF";

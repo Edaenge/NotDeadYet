@@ -162,7 +162,7 @@ void Client::Update()
 		if ( zWorldRenderer ) 
 			zWorldRenderer->Update();
 
-		this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
+	//	this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
@@ -185,12 +185,12 @@ void Client::Update()
 
 void Client::IgnoreRender( const float& radius, const Vector2& center )
 {
-	static std::set<Entity*> previousEntities;
+	std::set<Entity*> zPreviousEntities;
 	std::set<Entity*> entities; 
 	std::set<Entity*> validEntities;
 
 	zWorld->GetEntitiesInCircle(center, radius, entities);
-
+	
 	for (auto it = entities.begin(); it != entities.end(); it++)
 	{
 		if ( GetEntBlockRadius( (*it)->GetType() ) <= 0.0f )
@@ -206,7 +206,7 @@ void Client::IgnoreRender( const float& radius, const Vector2& center )
 	}
 
 	/*Check previous, if prev is not in valid, they should not be rendered.*/
-	for(auto it = previousEntities.begin(); it != previousEntities.end(); it++)
+	for(auto it = zPreviousEntities.begin(); it != zPreviousEntities.end(); it++)
 	{
 		auto found = validEntities.find(*it);
 
@@ -220,8 +220,8 @@ void Client::IgnoreRender( const float& radius, const Vector2& center )
 		}
 	}
 
-	previousEntities.clear();
-	previousEntities = validEntities;
+	zPreviousEntities.clear();
+	zPreviousEntities = validEntities;
 }
 
 void Client::InitGraphics(const std::string& mapName)
@@ -1259,6 +1259,22 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		ss << updatesPerSec <<" Server Frames Per Second";
 		this->zServerUpsText->SetText(ss.str().c_str());
+	}
+	else if (msgArray[0].find(M_SERVER_RESTART.c_str()) == 0)
+	{
+		MaloW::Debug("Restart message!");
+		this->zActorManager->ClearAll();
+		
+		if(this->zPlayerInventory)
+			delete this->zPlayerInventory;
+
+		this->zPlayerInventory = new Inventory();
+
+		//Could Crash
+		if(this->zGuiManager)
+			delete this->zGuiManager;
+
+		this->zGuiManager = new GuiManager(GetGraphics());
 	}
 	else if (msgArray[0].find(M_FOG_ENCLOSEMENT.c_str()) == 0)
 	{

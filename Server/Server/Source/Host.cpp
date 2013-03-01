@@ -276,6 +276,9 @@ void Host::ReadMessages()
 void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &message )
 {
 	std::vector<std::string> msgArray;
+	if(message.empty())
+		return;
+
 	msgArray = this->zMessageConverter.SplitMessage(message); 
 	ClientData* cd = zClients[cc];
 	

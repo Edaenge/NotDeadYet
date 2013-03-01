@@ -231,13 +231,13 @@ void Client::AddActor( NewActorPacket* NAP )
 			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
 	}
 
-	if (!this->zReady)
-	{
-		this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);
-		this->zReady = true;
-
-		this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PLAYER_READY));
-	}
+// 	if (!this->zReady)
+// 	{
+// 		this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);
+// 		this->zReady = true;
+// 
+// 		this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PLAYER_READY));
+// 	}
 }
 
 void Client::UpdateActors(ServerFramePacket* SFP)

@@ -281,3 +281,18 @@ FMOD_VECTOR ClientActorManager::ConvertToFmodVector( Vector3 v )
 	temp.y = v.y;
 	temp.z = v.z;
 	return temp;}
+
+void ClientActorManager::ClearAll()
+{
+	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
+	{
+		Updates* temp = zUpdates[it->first];
+		SAFE_DELETE(temp);
+		SAFE_DELETE(it->second);
+	}
+
+	zActors.clear();
+	zUpdates.clear();
+	zState.clear();
+}
+

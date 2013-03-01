@@ -342,6 +342,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 	case MESSAGE_TYPE_WEAPON_EQUIPMENT_SWAP:
 		ss << M_WEAPON_EQUIPMENT_SWAP;
 		break;
+	case MESSAGE_TYPE_SERVER_RESTART:
+		ss << M_SERVER_RESTART;
+		break;
 	default:
 		return "";
 		break;
