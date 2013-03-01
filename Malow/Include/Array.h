@@ -25,7 +25,7 @@ namespace MaloW
 
 		void add(const T& item);
 		T& get(int pos);
-		T& getAndRemove(int pos);
+		T getAndRemove(int pos);
 		bool isEmpty();
 		bool hasItem(const T& item);
 		bool remove(const T& item);
@@ -99,7 +99,7 @@ namespace MaloW
 	}
 
 	template <typename T>
-	T& Array<T>::getAndRemove(int pos)
+	T Array<T>::getAndRemove(int pos)
 	{
 		T retVal;
 		retVal = *this->items[pos];
