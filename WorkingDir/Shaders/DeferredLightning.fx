@@ -620,6 +620,14 @@ float4 PSScene(PSIn input) : SV_Target
 		
 	//}
 
+	//**TILLMAN todo: OPT**
+	//Skip shadow "lighting" and specular
+	if(WorldPosAndObjectType.w == OBJECT_TYPE_BILLBOARD)
+	{	
+		finalColor = float4(SceneAmbientLight * DiffuseColor + DiffuseColor, 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
+	
+		//finalColor = float4(AmbientLight.xyz * DiffuseColor + DiffuseColor * diffuseLighting, 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
+	}
 
 	///////////////////////////////////////////////////////////////////
 	//							Basic fog:							//
@@ -633,11 +641,7 @@ float4 PSScene(PSIn input) : SV_Target
 	}
 		
 	
-	//**TILLMAN todo: OPT**
-	if(WorldPosAndObjectType.w == OBJECT_TYPE_BILLBOARD)
-	{
-		return float4(AmbientLight.xyz * DiffuseColor + DiffuseColor * diffuseLighting, 1.0f);// = Texture.Sample(linearSampler, input.tex).xyz;	
-	}
+	
 
 	//**DEBUG NORMAL TEST**
 	/*if(WorldPosAndObjectType.w == OBJECT_TYPE_TERRAIN)

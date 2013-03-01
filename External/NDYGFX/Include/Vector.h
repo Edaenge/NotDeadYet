@@ -16,6 +16,7 @@
 // EDIT 2013-01-22 by Alexivan - Vector2 Multiply.
 // EDIT 2013-01-30 by Alexivan - Explicit Constructors, scalar addition and substraction
 // EDIT 2013-01-30 by Crant	- Added Vector3 == Operator
+// EDIT 2013-02-28 by Alexivan	- Added Vector3 != Operator
 
 #pragma warning ( push ) 
 #pragma warning ( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -242,7 +243,7 @@ public:
 		return sqrt(pow(this->x, 2) + pow(this->y, 2) + pow(this->z, 2));
 	}
 
-	inline void Normalize()
+	inline Vector3 Normalize()
 	{
 		float length = this->GetLength();
 			
@@ -252,6 +253,8 @@ public:
 			this->y /= length;
 			this->z /= length;
 		}
+
+		return *this;
 	}
 
 	inline float GetDotProduct(Vector3& compObj) const
@@ -328,9 +331,15 @@ public:
         y *= scalar;
         z *= scalar;
     }
+	
 	inline bool operator==(const Vector3& v)
 	{
 		return (x == v.x && y == v.y && z == v.z);
+	}
+	
+	inline bool operator!=(const Vector3& v)
+	{
+		return (x != v.x || y != v.y || z != v.z);
 	}
 
 	inline float GetLengthSquared()

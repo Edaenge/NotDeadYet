@@ -16,7 +16,7 @@ bool SoundsInit()
 {
 	sound_engine = new SoundHandler();
 
-	bool result =  sound_engine->Init();
+	bool result = sound_engine->Init();
 
 	return result;
 }
