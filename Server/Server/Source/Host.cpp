@@ -93,7 +93,7 @@ void Host::SendMessageToClient( const std::string& message )
 	{
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, message);
 
-		this->SendToAllClients(msg);
+		this->SendToAllClients(msg, true);
 	}
 }
 
@@ -145,31 +145,32 @@ void Host::UpdateGame()
 	//}
 	//else
 	//{
-	if ( !zGame )
+	if ( !this->zGame )
 	{
 
 	}
-	else if(zGame->Update(this->zDeltaTime))
+	else if(this->zGame->Update(this->zDeltaTime))
 	{
 		this->PingClients();
 
-		zSendUpdateDelayTimer += this->zDeltaTime;
+		this->zSendUpdateDelayTimer += this->zDeltaTime;
 
 		if (zSendUpdateDelayTimer >= UPDATE_DELAY)
 		{
-			SynchronizeAll();
+			this->SynchronizeAll();
 
-			zSendUpdateDelayTimer = 0.0f;
-			this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()));
+			this->zSendUpdateDelayTimer = 0.0f;
+
+			this->SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()), false);
+			
 		}
 	}
 	else
 	{
-		Restart(zGameMode, zMapName);		
+		this->Restart(zGameMode, zMapName);		
 	}
 	//}
 }
-
 
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients,  const std::string& gameModeName, const std::string& mapName)
 {
@@ -217,14 +218,22 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	return 0;
 }
 
-void Host::SendToAllClients(const std::string& message)
+void Host::SendToAllClients(const std::string& message, bool bImportant)
 {
 	if(!HasClients())
 		return;
 
 	for (auto it = zClients.begin(); it != zClients.end(); it++)
 	{
-		it->first->Send(message);
+		if (bImportant)
+		{
+			it->first->Send(message);
+		}
+		else
+		{
+			it->first->TrySend(message);
+		}
+		
 	}
 }
 
@@ -497,7 +506,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 void Host::BroadCastServerShutdown()
 {
 	std::string mess = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_SHUTDOWN);
-	SendToAllClients(mess);
+	SendToAllClients(mess, true);
 }
 
 void Host::PingClients()

@@ -167,7 +167,7 @@ void Game::SpawnAnimalsDebug()
 	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
 
 	zBehaviors.insert(aiDeerBehavior);
-	zBehaviors.insert(aiBearBehavior);
+	//zBehaviors.insert(aiBearBehavior);
 
 	dActor->SetPosition(position);
 	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
@@ -195,7 +195,7 @@ void Game::SpawnAnimalsDebug()
 	}
 	
 	this->zActorManager->AddActor(dActor);
-	this->zActorManager->AddActor(bActor);
+	//this->zActorManager->AddActor(bActor);
 }
 
 void Game::SpawnItemsDebug()
@@ -1214,14 +1214,14 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 	auto playerBehavior = playerIterator->second->GetBehavior();
 	Actor* actor = playerBehavior->GetActor();
 	NetworkMessageConverter NMC;
-	std::string msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE);
+	std::string msg;
 	unsigned int ID = 0;
 	bool bLooted = false;
 	//Loop through all actors.
-	for (auto it_actor = actors.begin(); it_actor != actors.end(); it_actor++)
+	for (auto it_actor = actors.begin(); it_actor != actors.end() && !bLooted; it_actor++)
 	{
 		//Loop through all ID's of all actors the client tried to loot.
-		for (auto it_ID = actorID.begin(); it_ID != actorID.end(); it_ID++)
+		for (auto it_ID = actorID.begin(); it_ID != actorID.end() && !bLooted; it_ID++)
 		{
 			//Check if the ID is the same.
 			if ((*it_ID) == (*it_actor)->GetID())
@@ -1233,9 +1233,9 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 				//Check if the Actor is an ItemActor
 				if (ItemActor* iActor = dynamic_cast<ItemActor*>(*it_actor))
 				{
-					ID = iActor->GetID();
+					msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE, (float)iActor->GetID());
 					msg += iActor->GetItem()->ToMessageString(&NMC);
-					msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+					msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED);
 					bLooted = true;
 				}
 				//Check if the Actor is a PlayerActor
@@ -1248,14 +1248,17 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 						ID = pActor->GetID();
 
 						std::vector<Item*> items = inv->GetItems();
-						for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+						if (items.size() > 0)
 						{
-							msg += (*it_Item)->ToMessageString(&NMC);
-							msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+							msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE, (float)pActor->GetID());
+							for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+							{
+								msg += (*it_Item)->ToMessageString(&NMC);
+								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED);
+							}
 							bLooted = true;
 						}
-						if (items.size() == 0)
-							this->zActorManager->RemoveActor(pActor);
+						
 					}
 				}
 				//Check if the Actor is an AnimalActor.
@@ -1279,15 +1282,17 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 									ID = aActor->GetID();
 
 									std::vector<Item*> items = inv->GetItems();
-									for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+									if (items.size() > 0)
 									{
-										msg += (*it_Item)->ToMessageString(&NMC);
-										msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+										msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE, (float)aActor->GetID());
+										for (auto it_Item = items.begin(); it_Item != items.end(); it_Item++)
+										{
+											msg += (*it_Item)->ToMessageString(&NMC);
+											msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED, (float)ID);
+										}
 										bLooted = true;
 									}
-
-									if (items.size() == 0)
-										this->zActorManager->RemoveActor(aActor);
+									
 								}
 							}
 						}
