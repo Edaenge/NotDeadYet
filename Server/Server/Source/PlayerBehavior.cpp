@@ -2,7 +2,6 @@
 #include "PlayerBehavior.h"
 #include "Actor.h"
 #include "Player.h"
-#include "PlayerConfiguration.h"
 
 PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) : 
 	Behavior(actor, world)
@@ -10,6 +9,7 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 	this->zPlayer = player;
 	this->zVelocity = Vector3(0.0f, 0.0f, 0.0f);
 	this->zVelDown = 0.0f;
+	this->zPlayerConfigReader = GetPlayerConfig();
 }
 
 PlayerBehavior::~PlayerBehavior()
@@ -30,7 +30,7 @@ bool PlayerBehavior::Update(float dt)
 	float energy = zActor->GetEnergy();
 
 	if (energy < 200.0f)
-		energy += GetPlayerConfiguration().zEnergyCoeff * dt;
+		energy += this->zPlayerConfigReader->GetVariable(ENERGY_COEFF) * dt;
 
 	if (energy >= 200.0f)
 		energy = 200.0f;

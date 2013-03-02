@@ -117,9 +117,6 @@
     <ClCompile Include="Source\PlayerGhostBehavior.cpp">
       <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
-    <ClCompile Include="Source\PlayerConfiguration.cpp">
-      <Filter>Source\Actors\Behavior</Filter>
-    </ClCompile>
     <ClCompile Include="Source\PhysicsEngine\ObjectDataResource.cpp">
       <Filter>Source\Physics</Filter>
     </ClCompile>
@@ -252,9 +249,6 @@
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\PlayerGhostBehavior.h">
-      <Filter>Source\Actors\Behavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PlayerConfiguration.h">
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\ItemActor.h">

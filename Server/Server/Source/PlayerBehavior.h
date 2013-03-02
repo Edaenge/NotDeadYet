@@ -2,6 +2,7 @@
 
 #include "Behavior.h"
 #include <Vector.h>
+#include "PlayerConfigReader.h"
 
 #define TODEGREES (180 / 3.1415f)
 
@@ -23,4 +24,5 @@ protected:
 	Player* zPlayer;
 	Vector3 zVelocity;
 	float	zVelDown;
+	PlayerConfigReader* zPlayerConfigReader;
 };

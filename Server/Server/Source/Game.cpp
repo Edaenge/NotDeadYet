@@ -29,6 +29,7 @@
 #include "PlayerGhostBehavior.h"
 #include <Packets\NewActorPacket.h>
 #include "AnimationFileReader.h"
+#include "PlayerConfigReader.h"
 
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
@@ -43,7 +44,8 @@ static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
 
 Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
-	zSyncher(syncher){
+	zSyncher(syncher)
+{
 	this->zPhysicsEngine = GetPhysics();	this->zCameraOffset["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
@@ -61,6 +63,9 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->zActorManager = new ActorManager(syncher);
 	
 	InitItemLookup();
+
+//Initialize Player Configuration file
+	InitPlayerConfig();
 
 	this->zMaxNrOfPlayers = 32;
 	
@@ -146,6 +151,7 @@ Game::~Game()
 	SAFE_DELETE(this->zGameMode);
 
 	FreeItemLookup();
+	FreePlayerConfig();
 }
 
 void Game::SpawnAnimalsDebug()

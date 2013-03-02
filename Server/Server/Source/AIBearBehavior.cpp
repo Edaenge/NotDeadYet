@@ -56,7 +56,6 @@ bool AIBearBehavior::InitValues()
 	BearActor* dActor = dynamic_cast<BearActor*>(this->zActor);
 	this->SetPreviousHealth( dActor->GetHealth());
 
-	
 	this->zFearIntervalCounter = 0.0f;
 	this->zIntervalCounter = 0.0f;
 
