@@ -83,7 +83,6 @@ bool ProjectileArrowBehavior::Update( float dt )
  		newPos.y = middle;
 
 		ProjectileActor* test = dynamic_cast<ProjectileActor*>(zActor);
-		float testDistance = (test->GetOwner()->GetPosition() - test->GetPosition()).GetLength();
 
 		this->zActor->SetPosition(newPos);
 		this->zMoving = false;
@@ -107,7 +106,10 @@ bool ProjectileArrowBehavior::Update( float dt )
 		if( BioActor* bioActor = dynamic_cast<BioActor*>(collide) )
 		{
 			if( ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(this->zActor) )
-				bioActor->TakeDamage( projActor->GetDamage(), projActor->GetOwner() );
+			{
+				if( bioActor->IsAlive() )
+					bioActor->TakeDamage( projActor->GetDamage(), projActor->GetOwner() );
+			}
 		}
 
 		return true;
@@ -133,7 +135,7 @@ bool ProjectileArrowBehavior::RefreshNearCollideableActors( const std::set<Actor
 
 	unsigned int size = actors.size();
 	// Increment 10%
-	unsigned int increment = size * 0.1;
+	unsigned int increment = (unsigned int)(size * 0.1);
 	unsigned int counter = 0;
 
 	Vector3 pos = this->zActor->GetPosition();
