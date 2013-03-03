@@ -56,6 +56,9 @@ bool PlayerBehavior::RefreshNearCollideableActors( const std::set<Actor*>& actor
 
 	Vector3 pos = this->zActor->GetPosition();
 
+	if(zNearActorsIndex >= size)
+		zNearActorsIndex = 0;
+
 	auto it = actors.begin();
 	std::advance(it, zNearActorsIndex);
 

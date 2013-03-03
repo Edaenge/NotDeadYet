@@ -44,7 +44,7 @@ PhysicsObject::~PhysicsObject()
 	if(this->indicies)
 		delete [] this->indicies;
 
-	GetPhysicsResourceManager()->UnloadObjectDataResource(this->file.c_str());
+	//GetPhysicsResourceManager()->UnloadObjectDataResource(this->file.c_str());
 }
 
 void PhysicsObject::SetQuaternion( const Vector4& quat )
@@ -221,7 +221,7 @@ bool PhysicsObject::LoadFromFile( string file )
 		{
 			verts[z] = tempverts[z];
 		}
-		delete tempverts;
+		delete [] tempverts;
 		this->SetVerts(verts);
 		
 		this->SetBoundingSphere(BoundingSphere(min, max));

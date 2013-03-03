@@ -464,6 +464,7 @@ bool Game::Update( float dt )
 			delete temp;
 			temp = NULL;
 			
+			this->zPhysicsEngine->DeletePhysicsObject(oldActor->GetPhysicsObject());
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
 		}
@@ -948,9 +949,9 @@ void Game::OnEvent( Event* e )
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
 	{
 		// Create Player Actor
-		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
-		pObject->SetModel(UDE->playerModel);
-		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
+		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
+		pObj->SetModel(UDE->playerModel);
+		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObj);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 		zPlayers[UDE->clientData]->zUserModel = UDE->playerModel;
 
@@ -1215,7 +1216,6 @@ void Game::HandleDisconnect( ClientData* cd )
 		{
 			Actor* pActor = pHuman->GetActor();
 			dynamic_cast<BioActor*>(pActor)->Kill();
-			this->zPhysicsEngine->DeletePhysicsObject( pActor->GetPhysicsObject() );
 		}
 		
 		this->SetPlayerBehavior(playerIterator->second, NULL);

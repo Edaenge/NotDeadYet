@@ -164,6 +164,7 @@
     <IncludePath>$(SolutionDir)\External\VLD\include\;$(SolutionDir)\Malow\Include\;$(SolutionDir)\External\NDYGFX\Include\;$(SolutionDir)\Game\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\External\VLD\lib\Win32;$(SolutionDir)\Malow\Bin\Debug;$(SolutionDir)\Game\Bin\Debug;$(SolutionDir)\External\NDYGFX\Lib\;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)D</TargetName>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)..\Bin\x64\</OutDir>
@@ -183,6 +184,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;CCLI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir)\Source\PhysicsEngine;$(ProjectDir)\Source\WorldFiles;$(ProjectDir)\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

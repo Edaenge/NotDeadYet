@@ -138,6 +138,9 @@ bool ProjectileArrowBehavior::RefreshNearCollideableActors( const std::set<Actor
 
 	Vector3 pos = this->zActor->GetPosition();
 
+	if(zNearActorsIndex >= size)
+		zNearActorsIndex = 0;
+
 	auto it = actors.begin();
 	std::advance(it, zNearActorsIndex);
 
@@ -193,7 +196,7 @@ bool ProjectileArrowBehavior::RefreshNearCollideableActors( const std::set<Actor
 
 Actor* ProjectileArrowBehavior::CheckCollision()
 {
-	if( !this->zActor && !this->zActor->CanCollide() )
+	if( !this->zActor || !this->zActor->CanCollide() )
 		return NULL;
 
 	float range = this->zLength;
