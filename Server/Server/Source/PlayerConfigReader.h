@@ -38,7 +38,49 @@ public:
 	virtual ~PlayerConfigReader();
 	bool ReadFromFile();
 
+	//void InterpCommand(std::string key, float value);
 	float GetVariable(std::string mappedName);
+	void WriteToFile();
+
+/*public:
+	float	zFullnessMax;
+	float	zHungerCof;
+	float	zHungerSprintingCof;
+	float	zHydrationMax;
+	float	zHydrationCof;
+	float	zHydrationSprintingCof;
+
+	float	zStaminaSprintingCof;
+
+	//bool zHydrationChanged;
+	//bool zHungerChanged;
+
+	float zDamageAtStarvationCof;
+	float zDamageAtThirstCof;
+
+	float zStaminaDecreaseCofWithHunger;
+	float zStaminaDecreaseCofWithHydration;
+
+	float zStaminaDecreaseWithBleedingCof;
+	float zHungerDecreaseWithBleedingCof;
+	float zHydrationDecreaseWithBleedingCof;
+
+	float zHungerForStaminaCof;
+	float zHydrationForStaminaCof;
+
+	float zUpperHunger;
+	float zLowerHunger;
+	float zUpperHydration;
+	float zLowerHydration;
+	float zUpperStamina;
+	float zLowerStamina;
+
+	float zRegenerationScale;
+	float zRegenerationHungerAddition;
+	float zRegenerationHydrationAddition;
+	float zRegenerationStaminaAddition;
+
+	float zEnergyCoeff;*/
 private:
 	std::map<std::string, float> zVariables;
 };

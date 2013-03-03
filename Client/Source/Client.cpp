@@ -44,7 +44,7 @@ Client::Client()
 	this->zStateCameraOffset[STATE_WALKING] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_CROUCHING] = Vector3(0.0f, 1.0f, 0.0f);
 
-	this->zAnimationFileReader[0] = AnimationFileReader("Media/Models/temp_guy_movement_anims.txt");
+	this->zAnimationFileReader[0] = AnimationFileReader("Media/Models/temp_guy_movement_anims.cfg");
 	this->zAnimationFileReader[0].ReadFromFile();
 
 	this->zModelToReaderMap["Media/Models/temp_guy_movement_anims.fbx"] = zAnimationFileReader[0];

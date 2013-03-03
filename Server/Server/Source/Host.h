@@ -106,5 +106,4 @@ private:
 	void ReadMessages(); 
 	/*! */
 	void PingClients();
-
 };

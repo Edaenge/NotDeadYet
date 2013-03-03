@@ -2,6 +2,7 @@
 
 #include "Behavior.h"
 #include <Vector.h>
+#include "PlayerConfigReader.h"
 
 #define TODEGREES (180 / 3.1415f)
 
@@ -32,8 +33,6 @@ protected:
 	Player* zPlayer;
 	Vector3 zVelocity;
 	float	zVelDown;
-	float zCollisionRadius;
+	PlayerConfigReader* zPlayerConfigReader;	float zCollisionRadius;
 	unsigned int zNearActorsIndex;
-	std::set<Actor*> zNearActors;
-
-};
+	std::set<Actor*> zNearActors;};

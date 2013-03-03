@@ -563,10 +563,23 @@ bool Host::IsAlive() const
 
 void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 {
+	//DON'T call ClientChannel->Kick in here! For fuck sakes
+	//The kick command will push a ClientDisonnected event, again.
+
+	if( !channel )
+		return;
+
 	PlayerDisconnectedEvent e;
 	auto i = zClients.find(channel);
+
+	if( i == zClients.end() )
+	{
+		delete channel;
+
+		return;
+	}
+
 	ClientData* cd = i->second;
-	cd->Kick();
 	e.clientData = cd;
 
 	NotifyObservers(&e);
