@@ -573,11 +573,8 @@ void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 	auto i = zClients.find(channel);
 
 	if( i == zClients.end() )
-	{
-		delete channel;
-
 		return;
-	}
+	
 
 	ClientData* cd = i->second;
 	e.clientData = cd;
