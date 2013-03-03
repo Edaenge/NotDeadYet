@@ -102,3 +102,11 @@ const std::string Actor::GetModel() const
 	
 	
 }
+
+bool Actor::CanCollide() const
+{
+	if( zPhysicsObject )
+		return true;
+
+	return false;
+}

@@ -83,7 +83,7 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 //DEBUG;
 	this->SpawnItemsDebug();
 	//this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -150,8 +150,6 @@ Game::~Game()
 
 void Game::SpawnAnimalsDebug()
 {
-	return;
-
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
@@ -440,12 +438,15 @@ bool Game::Update( float dt )
 			}
 		}
 
-		//if (BioActor* bActor = dynamic_cast<BioActor*>((*i)->GetActor()))
-		//{
-		//	
-		//	
-		//}
-
+		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
+		{
+			playerBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+		}
+		else if( ProjectileArrowBehavior* projectileArrowBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i) )
+		{
+			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+		}
+		
 		if ( (*i)->Update(dt) )
 		{
 			Behavior* temp = (*i);
@@ -553,7 +554,7 @@ bool Game::Update( float dt )
 		}
 	}
 
-	// Collisions Tests
+/*	// Collisions Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
 		//*** Projectiles ***
@@ -637,6 +638,7 @@ bool Game::Update( float dt )
 			}
 		}
 	}
+	*/
 
 	// Game Still Active
 	return true;
@@ -1046,7 +1048,12 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 
 	// Set New Behavior
 	if ( behavior )	
+	{
 		zBehaviors.insert(behavior);
+		std::set<Actor*> actors;
+		this->zActorManager->GetCollideableActorsInCircle(behavior->GetActor()->GetPosition().GetXZ(), behavior->GetCollisionRadius(), actors);
+		behavior->SetNearActors(actors);
+	}
 
 	player->zBehavior = behavior;
 }
@@ -1667,6 +1674,11 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 
 				//Create behavior
 				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
+		
+				//Set Nearby actors
+				std::set<Actor*> actors;
+				this->zActorManager->GetCollideableActorsInCircle(actor->GetPosition().GetXZ(), projBehavior->GetCollisionRadius(), actors);
+				projBehavior->SetNearActors(actors);
 
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);

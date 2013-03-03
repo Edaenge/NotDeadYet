@@ -87,7 +87,7 @@ public:
 	void SetPhysicsObject( PhysicsObject* object );
 	void SetScale(const Vector3& scale);
 	void SetDir(const Vector3& dir);
-
+	bool CanCollide() const;
 	// Get Transformation Functions
 	inline const Vector3& GetPosition() const { return zPos; }
 	inline const Vector3& GetPreviousPos() const { return zPreviousPos; }

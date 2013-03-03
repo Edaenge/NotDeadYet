@@ -42,6 +42,7 @@ bool PlayerHumanBehavior::Update( float dt )
 		return true;
 
 	KeyStates keyStates = this->zPlayer->GetKeys();
+
 	Vector3 curPosition = this->zActor->GetPosition();
 
 	// Movement Keys
@@ -204,6 +205,22 @@ bool PlayerHumanBehavior::Update( float dt )
 	}
 
 	//PhysicalConditionCalculator(dt);
+	Actor* collide = CheckCollision();
+
+	if(collide)
+	{
+		Vector3 pActor_rewind_dir = (collide->GetPosition() - zActor->GetPosition());
+		pActor_rewind_dir.Normalize();
+		Vector3 target_rewind_dir = pActor_rewind_dir * -1;
+
+		if( BioActor* bioA = dynamic_cast<BioActor*>(collide) )
+		{
+			if( bioA->HasMoved() )
+				bioA->SetPosition( bioA->GetPosition() - (target_rewind_dir * 0.25f) );
+		}
+
+		zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+	}
 
 	return false;
 }
