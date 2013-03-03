@@ -18,7 +18,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 	char key[512];
 	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", key, sizeof(key));
 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{

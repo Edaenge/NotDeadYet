@@ -175,7 +175,8 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 			return true;
 		}
 	}
-	if(gid.zType == ITEM_TYPE_WEAPON_MELEE || gid.zType == ITEM_TYPE_WEAPON_MELEE || gid.zType == ITEM_TYPE_PROJECTILE)
+
+	if(gid.zType == ITEM_TYPE_WEAPON_MELEE || gid.zType == ITEM_TYPE_WEAPON_RANGED || gid.zType == ITEM_TYPE_PROJECTILE)
 		this->zWeaponSlotGui[gid.zType]->RemoveItemFromSlot(open, ge); // If item isn't in inventory
 
 	return true;

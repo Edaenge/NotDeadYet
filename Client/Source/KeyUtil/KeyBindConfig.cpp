@@ -142,7 +142,7 @@ bool KeyBindConfig::ReadFromFile(const std::string path, char* data)
 
 		std::getline(read, line);
 		TrimAndSet(line);
-		sscanf_s(line.c_str(), "%s = ", &key, sizeof(key));
+		sscanf_s(line.c_str(), "%s = ", key, sizeof(key));
 		sscanf_s(line.c_str(), (std::string(key) + " = %s").c_str(), &command, sizeof(command));
 
 		index = GetKeyValue(command);

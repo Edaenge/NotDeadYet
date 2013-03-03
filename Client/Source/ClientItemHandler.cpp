@@ -651,7 +651,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	char key[256];
 	for (auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", key, sizeof(key));
 
 		if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
 		{
@@ -802,6 +802,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		break;
 	default:
 		MaloW::Debug("Items wasn't found in the switch case type: " + MaloW::convertNrToString((float)itemType));
+		return;
 		break;
 	}
 

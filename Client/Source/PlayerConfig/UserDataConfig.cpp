@@ -42,7 +42,7 @@ bool UserDataConfig::ReadFromFile()
 		if(line.empty())
 			continue;
 
-		sscanf_s(line.c_str(), "%s", &command, sizeof(command));
+		sscanf_s(line.c_str(), "%s", command, sizeof(command));
 
 		if(strcmp(command, player_Settings.c_str()) == 0)
 		{
@@ -51,7 +51,7 @@ bool UserDataConfig::ReadFromFile()
 				std::getline(read, line);
 				TrimAndSet(line);
 
-				sscanf_s(line.c_str(), "%s = %s", &command, sizeof(command), &key, sizeof(key));
+				sscanf_s(line.c_str(), "%s = %s", command, sizeof(command), key, sizeof(key));
 
 				if(command != END)
 					InterpCommand(command, key);
