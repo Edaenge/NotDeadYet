@@ -484,7 +484,7 @@ bool Game::Update( float dt )
 		return false;
 
 	// Update World
-	zWorld->Update();
+	this->zWorld->Update();
 
 	//Updating animals and Check fog.
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
@@ -520,10 +520,8 @@ bool Game::Update( float dt )
 		int counter = 0;
 		for(auto j = zBehaviors.begin(); j != zBehaviors.end(); j++)
 		{
-			
 			if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
 			{
-
 				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
 				{
 					//tempBehaviour->get_
