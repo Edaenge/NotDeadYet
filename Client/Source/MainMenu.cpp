@@ -122,7 +122,7 @@ void MainMenu::Init()
 
 	//IPAddress
 	temp = new TextBox(AdressX + (20.0f / 1024.0f) * dx, AdressY + (60.0f / 768.0f) * windowHeight, 1.0f, "", 
-		(180.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "127.0.0.1", "IPAdress", 2.0f, 16, ALL);
+		(530.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "127.0.0.1", "IPAdress", 2.0f, 16, ALL);
 	zSets[GETIPADRESS].AddElement(temp);
 
 	temp = new SimpleButton(AdressX + (472.0f / 1024.0f) * dx, AdressY + (104.0f / 768.0f) * windowHeight, 1.0f, 
@@ -272,10 +272,10 @@ void MainMenu::StartTestRun()
 	int errorCode = 0;
 	//zGame->InitGameClient("80.78.216.201", 11521);s	zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
 	//zGame->InitGameClient("80.78.216.201", 11521); //Simon hem
-	zGame->InitGameClient("194.47.150.16", 11521, errorMessage, errorCode); //server
+	//zGame->InitGameClient("194.47.150.16", 11521, errorMessage, errorCode); //server
 	//zGame->InitGameClient("194.47.150.20", 11521, errorMessage, errorCode); //Simon
 	//zGame->InitGameClient("194.47.150.12", 11521, errorMessage, errorCode); //Christopher
-	//zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
+	zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
 	if (errorMessage != "")
 	{
 		GraphicsEngine* gEng = GetGraphics();
@@ -306,7 +306,7 @@ void MainMenu::Run()
 		zSets[zPrimarySet].AddSetToRenderer(GetGraphics());
 		GraphicsEngine* eng = GetGraphics();
 
-		eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);
+		//eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);
 		bool run = true;
 
 		eng->GetCamera()->SetUpdateCamera(false);

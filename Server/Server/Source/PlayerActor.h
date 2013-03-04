@@ -25,14 +25,16 @@ public:
 
 	float GetFullnessMax() {return this->zFullnessMax;}
 	float GetHydrationMax() {return this->zHydrationMax;}
+	bool GetExhausted(){ return this->zExhausted; }
+	bool GetHasSprinted(){ return this->zHasSprinted; }
 
 	void SetFullness(float fullness);
 	void SetHydration(float hydration);
+	void SetExhausted(bool exhausted){ this->zExhausted = exhausted; }
+	void SetHasSprinted(bool hasSprinted){ this->zHasSprinted = hasSprinted; }
 
 	void HungerHasChanged() {this->zHungerChanged = true;}
 	void HydrationHasChanged() {this->zHydrationChanged = true;}
-
-	bool UpdateBreathSoundTimer(float dt);
 
 	/*! Returns The dropped item.
 	Doesn't deallocate Item.*/
@@ -49,7 +51,8 @@ private:
 	float zFullnessMax;
 	float zHydrationMax;
 
-	float zBreathSoundTimer;
+	bool zExhausted;
+	bool zHasSprinted;
 };
 
 //class PlayerUpdatedEvent : public Event

@@ -31,6 +31,7 @@
 #include "AnimationFileReader.h"
 #include "PlayerConfigReader.h"
 #include "CraftingManager.h"
+#include "sounds.h"
 
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
@@ -92,8 +93,7 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 
 //DEBUG;
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
-	this->SpawnHumanDebug();
+	//this->SpawnAnimalsDebug();	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -436,15 +436,21 @@ bool Game::Update( float dt )
 	{
 		if(PlayerActor* cActor = dynamic_cast<PlayerActor*>((*i)->GetActor()))
 		{
-			if(cActor->GetStamina() < 25.0f)
+			if(cActor->GetExhausted())
 			{
-				if(cActor->UpdateBreathSoundTimer(dt))
+				NetworkMessageConverter NMC;
+				std::string msg = "";
+				if(cActor->GetModel().find("female"))
 				{
-					NetworkMessageConverter NMC;
-					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/Running_Breath_4.mp3");
-					msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
-					this->SendToAll(msg);
+					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENT_NOTDEADYET_WOMAN_BREATHEAFTERRUN);
 				}
+				else
+				{
+					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENT_NOTDEADYET_MAN_BREATHEAFTERRUN);
+				}
+
+				msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
+				this->SendToAll(msg);
 			}
 		}
 
@@ -1830,10 +1836,13 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 								for (auto it = item_stack_out.begin(); it != item_stack_out.end(); it++)
 								{
 									inv->RemoveItem(it->first);
-									
+									cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, it->first->GetID()));
 									it->first->IncreaseStackSize(it->second);
 									if(inv->AddItem(it->first, stacked))
 									{
+										std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+										msg += craftedItem->ToMessageString(&NMC);
+										cd->Send(msg);
 										if (stacked)
 										{
 											MaloW::Debug("Weird Error When Crafting, item stacked but shouldn't have");

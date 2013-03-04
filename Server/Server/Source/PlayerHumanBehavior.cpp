@@ -21,8 +21,6 @@ PlayerHumanBehavior::PlayerHumanBehavior( Actor* actor, World* world, Player* pl
 	PlayerBehavior(actor, world, player)
 {
 	this->zIntervalCounter = 0.0f;
-	this->zExhausted = false;
-	this->zHasSprinted = false;
 }
 
 PlayerHumanBehavior::~PlayerHumanBehavior()
@@ -126,6 +124,7 @@ bool PlayerHumanBehavior::Update( float dt )
 		this->zVelDown += -9.82f * dt; // Gravity
 
 	BioActor* bActor = dynamic_cast<BioActor*>(zActor);
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(zActor);
 	// Check Max Speeds
 	if(keyStates.GetKeyState(KEY_DUCK))
 	{
@@ -144,9 +143,9 @@ bool PlayerHumanBehavior::Update( float dt )
 			}
 		}
 	}
-	else if(keyStates.GetKeyState(KEY_SPRINT) && !this->zExhausted)
+	else if(keyStates.GetKeyState(KEY_SPRINT) && !pActor->GetExhausted())
 	{
-		zHasSprinted = true;
+		pActor->SetHasSprinted(true);
 
 		if(this->zVelocity.GetLength() > MAX_VELOCITY_SPRINT)
 		{
@@ -203,7 +202,7 @@ bool PlayerHumanBehavior::Update( float dt )
 		zActor->SetPosition(center);
 	}
 
-	//PhysicalConditionCalculator(dt);
+	PhysicalConditionCalculator(dt);
 	Actor* collide = CheckCollision();
 
 	if(collide)
@@ -231,9 +230,9 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 	
 	if(this->zIntervalCounter >= 1.0f)
 	{
-		//std::stringstream tester; 
-		//tester<<"Fullness: "<<pActor->GetFullness()<<"   "<<"Hydration: "<<pActor->GetHydration()<<"    "<<"Stamina: "<<pActor->GetStamina()<<"    "<<"Health: "<<pActor->GetHealth()<<std::endl;
-		//OutputDebugString(tester.str().c_str());
+		std::stringstream tester; 
+		tester<<"Fullness: "<<pActor->GetFullness()<<"   "<<"Hydration: "<<pActor->GetHydration()<<"    "<<"Stamina: "<<pActor->GetStamina()<<"    "<<"Health: "<<pActor->GetHealth()<<std::endl;
+		OutputDebugString(tester.str().c_str());
 	
 		float regeneratedHealth = 100;
 		
@@ -252,14 +251,14 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		if(pActor->GetState() == STATE_RUNNING)
 		{
 			
-			if(this->zExhausted == false)
+			if(pActor->GetExhausted() == false)
 			{
 				if(pActor->GetStamina() <= 0.0)
 				{
-					this->zExhausted = true;
+					pActor->SetExhausted(true);
 				}
 			}
-			if(this->zExhausted == false)
+			if(pActor->GetExhausted() == false)
 			{
 				float fullness; 
 				float hydration;
@@ -271,7 +270,7 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 				pActor->SetFullness(fullness);
 				pActor->SetHydration(hydration);
 
-				if(this->zHasSprinted)
+				if(pActor->GetHasSprinted())
 				{
 					float stamina = pActor->GetStamina();
 					stamina -= this->zPlayerConfigReader->GetVariable(STAMINA_SPRINT_COEFF);//zStaminaSprintingCof;
@@ -280,14 +279,14 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 					{
 						pActor->SetStamina(0.0f);
 					}
-					this->zHasSprinted = false;
+					pActor->SetHasSprinted(false);
 				}
 			}
 		}
 
-		if(pActor->GetStamina() >= 20.0f && this->zExhausted == true)
+		if(pActor->GetStamina() >= 20.0f && pActor->GetExhausted() == true)
 		{
-			this->zExhausted = false;
+			pActor->SetExhausted(false);
 		}
 	
 		float fullness = pActor->GetFullness();

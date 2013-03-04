@@ -126,17 +126,14 @@ void ProjectileArrowBehavior::SetNearActors( std::set<Actor*> actors )
 
 bool ProjectileArrowBehavior::RefreshNearCollideableActors( const std::set<Actor*>& actors )
 {
-	if( !this->zActor )
-		return false;
-
 	bool canCollide = this->zActor->CanCollide();
+
 	if(!canCollide)
 		return false;
 
 	unsigned int size = actors.size();
-	// Increment 10%
-	unsigned int increment = (unsigned int)(size * 0.1);
-	unsigned int counter = 0;
+	// Increment 5%
+	unsigned int increment = (unsigned int)(size * 0.05);
 
 	Vector3 pos = this->zActor->GetPosition();
 
@@ -159,38 +156,19 @@ bool ProjectileArrowBehavior::RefreshNearCollideableActors( const std::set<Actor
 		if( (*it) != this->zActor && (*it)->CanCollide() )
 		{
 			Vector3 vec = (*it)->GetPosition() - pos;
-			auto found = zNearActors.find(*it);
-
-			if( found == zNearActors.end() && vec.GetLength() <= zCollisionRadius )
+			if( vec.GetLength() <= zCollisionRadius )
 			{
-				counter++;
 				zNearActors.insert(*it);
+			}
+			else
+			{
+				if( zNearActors.find(*it) != zNearActors.end() )
+					zNearActors.erase(*it);
 			}
 		}
 
 		zNearActorsIndex++;
 		it++;
-	}
-
-	//Remove old actors that is not nearBy
-	auto begin = zNearActors.begin();
-	std::advance(begin, counter);
-
-	while( begin != zNearActors.end() )
-	{
-		if(!(*begin))
-		{
-			begin = zNearActors.erase(begin);
-			continue;
-		}
-
-		Vector3 vec = (*begin)->GetPosition() - pos;
-		if( vec.GetLength() > zCollisionRadius)
-			begin = zNearActors.erase(begin);
-		else
-		{
-			begin++;
-		}
 	}
 
 	return true;

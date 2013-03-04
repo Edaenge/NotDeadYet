@@ -25,6 +25,7 @@ InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, 
 	}
 
 	this->zEquipped = false;
+	this->zBlocker = false;
 }
 
 InventorySlotGui::~InventorySlotGui()
@@ -149,6 +150,7 @@ void InventorySlotGui::AddItemToSlot( Gui_Item_Data gid, bool invOpen, GraphicsE
 			this->zSlotImage = ge->CreateImage(Vector2(this->zX, this->zY), this->GetDimension(), this->zGid.zFilePath.c_str());
 	}
 	this->zBlocked = true;
+	this->zBlocker = false;
 }
 
 void InventorySlotGui::RemoveItemFromSlot( bool invOpen, GraphicsEngine* ge )
@@ -168,4 +170,6 @@ void InventorySlotGui::RemoveItemFromSlot( bool invOpen, GraphicsEngine* ge )
 		}
 	}
 	this->zBlocked = false;
+	this->zBlocker = false;
 }
+
