@@ -369,12 +369,18 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	//Handle Item crafting in Inventory
 	else if(msgArray[0].find(M_ITEM_CRAFT.c_str()) == 0)
 	{
-		PlayerCraftItemEvent e;
-		int _itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_CRAFT, msgArray[0]);
-
-		e.clientData = cd;
-		e.itemID = _itemID;
-		NotifyObservers(&e);
+		if (msgArray.size() > 2)
+		{
+			PlayerCraftItemEvent e;
+			int _itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_CRAFT, msgArray[0]);
+			unsigned int _itemType = this->zMessageConverter.ConvertStringToInt(M_ITEM_TYPE, msgArray[1]);
+			unsigned int _itemSubType = this->zMessageConverter.ConvertStringToInt(M_ITEM_SUB_TYPE, msgArray[2]);
+			e.clientData = cd;
+			e.itemID = _itemID;
+			e.craftedItemType = _itemType;
+			e.craftedItemSubType = _itemSubType;
+			NotifyObservers(&e);
+		}
 	}
 	//Handle Equip Item
 	else if (msgArray[0].find(M_EQUIP_ITEM.c_str()) == 0)

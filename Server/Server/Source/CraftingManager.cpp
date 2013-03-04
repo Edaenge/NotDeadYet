@@ -81,7 +81,7 @@ bool CraftingManager::Craft( Inventory* inv, CraftedTypes* types, std::map<Item*
 				return false;
 			}
 
-			if (item->GetStackSize() < material_Stacks)
+			if (item->GetStackSize() - material_Stacks < 0)
 				return false;
 
 			mapOut[item] = material_Stacks;

@@ -106,7 +106,7 @@ public:
 	void HandleDropItem(ClientData* cd, unsigned int objectID);
 	void HandleUseItem(ClientData* cd, unsigned int itemID);
 	void HandleUseWeapon(ClientData* cd, unsigned int itemID);
-	void HandleCraftItem(ClientData* cd, unsigned int itemID);
+	void HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsigned int itemType, const unsigned int itemSubType);
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID, int eq_slot);
 	void HandleBindings(Item* item, const unsigned int ID);
