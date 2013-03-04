@@ -91,8 +91,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	//this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
+	this->SpawnItemsDebug();
+	//this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -484,7 +484,7 @@ bool Game::Update( float dt )
 		return false;
 
 	// Update World
-	zWorld->Update();
+	this->zWorld->Update();
 
 	//Updating animals and Check fog.
 	static float testUpdater = 0.0f;
@@ -1472,6 +1472,7 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 	actor = new ItemActor(item);
 	this->zActorManager->AddActor(actor);
 	actor->SetPosition(pActor->GetPosition());
+
 	NetworkMessageConverter NMC;
 	cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
 }
@@ -1795,15 +1796,14 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 								}
 								
 							}
+							//Send Add Inventory Msg to the Player.
+							std::string add_msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+							add_msg += craftedItem->ToMessageString(&NMC);
+
 							//Try to add the crafted item to the inventory.
 							bool stacked = false;
 							if (inv->AddItem(craftedItem, stacked))
-							{
-								//Send Add Inventory Msg to the Player.
-								std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-								msg += craftedItem->ToMessageString(&NMC);
-								cd->Send(msg);
-
+							{					
 								if (stacked)
 								{
 									if (craftedItem->GetStackSize() <= 0)
@@ -1822,6 +1822,8 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 										SAFE_DELETE(temp);
 									}
 								}
+
+								cd->Send(add_msg);
 							}
 							else
 							{
@@ -2040,11 +2042,11 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
-		int weigth = inventory->GetTotalWeight();
+		int weight = inventory->GetTotalWeight();
 
 		ret = inventory->EquipProjectile(proj);
 		
-		if(weigth > inventory->GetTotalWeight())
+		if(weight > inventory->GetTotalWeight())
 		{
 			Item* temp = inventory->RemoveItem(proj);
 			SAFE_DELETE(temp);

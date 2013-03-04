@@ -1,5 +1,5 @@
 #include "BioActor.h"
-
+#include "Physics.h"
 
 BioActor::BioActor() : Actor()
 {
@@ -85,8 +85,15 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 		around.Normalize();
 		float angle = 3.14f * 0.5f;
 		
-		this->GetPhysicsObject()->SetQuaternion(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-		this->SetRotation(around,angle);
+		PhysicsObject* pObject = this->GetPhysicsObject();
+		if (pObject)
+		{
+			this->GetPhysicsObject()->SetQuaternion(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+			this->SetRotation(around,angle);
+
+			GetPhysics()->DeletePhysicsObject(pObject);
+			this->SetPhysicsObject(NULL);
+		}
 	}
 	
 	return this->zAlive;

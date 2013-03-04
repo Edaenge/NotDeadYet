@@ -95,7 +95,7 @@ public:
 	inline const Vector3& GetScale() const { return zScale; }
 	inline const Vector3& GetDir() const { return zDir; }
 	virtual const std::string GetModel() const;
-	PhysicsObject* GetPhysicsObject() const {return this->zPhysicsObject;}
+	PhysicsObject* GetPhysicsObject() {return this->zPhysicsObject;}
 	inline unsigned int GetType() const {return this->zType;}
 
 	float GetEnergy() {return this->zEnergy;}
