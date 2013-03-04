@@ -554,8 +554,38 @@ void Client::CheckPlayerSpecificKeys()
 			}
 			if (msd.zAction == CRAFT)
 			{
+				
 				if (item)
-					SendCraftItemMessage(item->GetID());
+				{
+					unsigned int type = 1000;
+					unsigned int subType = 1000;
+
+					if (item->GetItemSubType() == ITEM_SUB_TYPE_THREAD || item->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK)
+					{
+						type = ITEM_TYPE_WEAPON_RANGED;
+						subType = ITEM_SUB_TYPE_BOW;
+					}
+					else if (item->GetItemSubType() == ITEM_SUB_TYPE_SMALL_STICK)
+					{
+						type = ITEM_TYPE_PROJECTILE;
+						subType = ITEM_SUB_TYPE_ARROW;
+					}
+					else if (item->GetItemSubType() == ITEM_SUB_TYPE_LARGE_STICK)
+					{
+						type = ITEM_TYPE_MISC;
+						subType = ITEM_SUB_TYPE_REGULAR_TRAP;
+					}
+					else if (item->GetItemSubType() == ITEM_SUB_TYPE_DISENFECTANT_LEAF)
+					{
+						type = ITEM_TYPE_BANDAGE;
+						subType = ITEM_SUB_TYPE_BANDAGE_POOR;
+					}
+					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_CRAFT, (float)item->GetID());
+					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)type);
+					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_SUB_TYPE, (float)subType);
+					this->zServerChannel->Send(msg);
+					//SendCraftItemMessage(item->GetID());
+				}
 			}
 			else if(msd.zAction == EQUIP)
 			{
@@ -1747,9 +1777,7 @@ std::vector<unsigned int> Client::RayVsWorld()
 					Collisions.push_back(ID);
 				}
 			}
-			
 		}
-		
 	}
 
 	return Collisions;
