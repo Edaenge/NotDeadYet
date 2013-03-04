@@ -92,7 +92,7 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	//this->SpawnItemsDebug();
+	this->SpawnItemsDebug();
 	this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
 

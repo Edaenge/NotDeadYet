@@ -7,14 +7,22 @@
 class AudioHandler
 {
 private:
-	float zBreathCounter;
-	float zFootStepCounter;
-
-	IEventHandle* zFootStepHandler;
-public:
 	AudioHandler();
-	virtual ~AudioHandler();
-	void PlaySound(int eventId, Vector3 pos);
 
 	FMOD_VECTOR ConvertToFmodVector( Vector3 v );
+
+
+	static AudioHandler* pnk;
+	static bool isInit;
+	AudioManager* zAm;
+
+	int zBreathCounter;
+	int zFootStepCounter;
+
+	IEventHandle* zFootStepHandler[];
+public:
+	static AudioHandler* getInstance();
+	virtual ~AudioHandler();
+	virtual void PlaySound(int eventId, Vector3 pos);
+
 };

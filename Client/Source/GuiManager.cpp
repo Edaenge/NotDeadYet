@@ -291,7 +291,7 @@ Menu_select_data GuiManager::CheckCollisionInv()
 		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
 		this->zSelectedCircMenu = this->zInvCircGui->CheckCollision(mousePos.x, mousePos.y, (zEng->GetKeyListener()->IsClicked(1) || !zEng->GetKeyListener()->IsClicked(2)), zEng);
 
-		if(this->zSelectedCircMenu != -1)
+		if(this->zSelectedCircMenu != -1 || !zEng->GetKeyListener()->IsClicked(2))
 		{
 			this->HideCircularItemGui();
 			Menu_select_data msd;

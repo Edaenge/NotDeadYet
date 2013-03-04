@@ -131,6 +131,9 @@
     <ClInclude Include="Include\Misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\sounds.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\World\Sector.cpp">
