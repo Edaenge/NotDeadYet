@@ -52,7 +52,7 @@ std::string Item::ToMessageString(NetworkMessageConverter* NMC)
 	msg += NMC->Convert(MESSAGE_TYPE_ITEM_WEIGHT, (float) this->zWeight);
 	msg += NMC->Convert(MESSAGE_TYPE_ITEM_STACK_SIZE, (float) this->zStacks);
 	msg += NMC->Convert(MESSAGE_TYPE_ITEM_ICON_PATH, this->zIconPath);
-
+	msg += NMC->Convert(MESSAGE_TYPE_ITEM_SLOT_SIZE, this->zSlotSize);
 	return msg;
 }
 

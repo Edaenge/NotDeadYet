@@ -37,26 +37,11 @@ MeleeWeapon::MeleeWeapon(const MeleeWeapon& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zStacking = other.zStacking;
+	this->zSlotSize = other.zSlotSize;
 	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
-	this->zStacking = other.zStacking;
-}
-
-MeleeWeapon::MeleeWeapon(const MeleeWeapon* other)
-{
-	this->zID = other->zID;
-	this->zRange = other->zRange;
-	this->zStacks = other->zStacks;
-	this->zWeight = other->zWeight;
-	this->zDamage = other->zDamage;
-	this->zItemName = other->zItemName;
-	this->zIconPath = other->zIconPath;
-	this->zItemType = other->zItemType;
-	this->zMeshModel = other->zMeshModel;
-	this->zItemSubType = other->zItemSubType;
-	this->zItemDescription = other->zItemDescription;
-	this->zStacking = other->zStacking;
 }
 
 void MeleeWeapon::UseWeapon(float& range, float& damage)

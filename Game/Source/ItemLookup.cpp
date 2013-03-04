@@ -13,15 +13,11 @@ void FreeItemLookup()
 	SAFE_DELETE(itemLookup);
 }
 
-
 ItemLookup::~ItemLookup()
 {
 	for( unsigned int i = 0; i < this->zItems.size(); i++ )
 	{
-		if (this->zItems.at(i))
-		{
-			delete this->zItems.at(i);
-		}
+		SAFE_DELETE(this->zItems[i]);
 	}
 	this->zItems.clear();
 }
@@ -46,6 +42,7 @@ static const std::string OBJECT_GEAR			=	"[Object.Gear]";
 static const std::string OBJECT_PROJECTILE		=	"[Object.Projectile]";
 static const std::string OBJECT_MATERIAL		=	"[Object.Material]";
 static const std::string OBJECT_BANDAGE			=	"[Object.Bandage]";
+static const std::string OBJECT_MISC			=	"[Object.Misc]";
 
 static const std::string END					=	"#END";
 static const std::string TYPE					=	"TYPE";
@@ -58,6 +55,7 @@ static const std::string NAME					=	"NAME";
 static const std::string IS_RANGED				=	"IS_RANGED";
 static const std::string STACKS					=	"STACKS";
 static const std::string STACKING				=   "STACKING";
+static const std::string SLOTS					=	"SLOTS";
 
 static const std::string HUNGER					=	"HUNGER";
 static const std::string DAMAGE					=	"DAMAGE";
@@ -67,6 +65,8 @@ static const std::string CURRENT_USE			=	"CURRENT_USE";
 static const std::string SPEED					=	"SPEED";
 static const std::string CRAFTING_TYPE			=	"CRAFTING_TYPE";
 static const std::string STACKS_REQUIREMENT		=	"STACKS_REQUIREMENT";
+
+
 ItemLookup::ItemLookup()
 {
 	this->ReadFromFile();
@@ -151,6 +151,18 @@ const Bandage* ItemLookup::GetBandage( const unsigned int SubType )
 		if ((*it)->GetItemType() == ITEM_TYPE_BANDAGE && (*it)->GetItemSubType() == SubType)
 		{
 			return dynamic_cast<Bandage*>((*it));
+		}
+	}
+	return NULL;
+}
+
+const Misc* ItemLookup::GetTrap( const unsigned int SubType )
+{
+	for (auto it = this->zItems.begin(); it != this->zItems.end(); it++)
+	{
+		if ((*it)->GetItemType() == ITEM_TYPE_MISC && (*it)->GetItemSubType() == SubType)
+		{
+			return dynamic_cast<Misc*>((*it));
 		}
 	}
 	return NULL;
@@ -290,6 +302,22 @@ bool ItemLookup::ReadFromFile()
 	
 			this->zItems.push_back(ba);
 		}
+		else if(strcmp(key, OBJECT_MISC.c_str()) == 0)
+		{
+			Misc* tp = new Misc();
+			while(!read.eof() && strcmp(command, END.c_str()) != 0)
+			{
+				std::getline(read, line);
+				TrimAndSet(line);
+
+				sscanf_s(line.c_str(), "%s = %s" , &command, sizeof(command), &key, sizeof(key));
+
+				if(command != END)
+					InterpCommand(command, key, tp);
+			}
+
+			this->zItems.push_back(tp);
+		}
 	}
 	read.close();
 	return true;
@@ -336,6 +364,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, MeleeWeapon
 	else if(command == STACKS)
 	{
 		wp->SetStackSize(MaloW::convertStringToInt(key));
+	}
+	else if(command == SLOTS)
+	{
+		wp->SetSlotSize(MaloW::convertStringToInt(key));
 	}
 	else if(command == STACKING)
 	{
@@ -399,6 +431,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, RangedWeapo
 	{
 		wp->SetStackSize(MaloW::convertStringToInt(key));
 	}
+	else if(command == SLOTS)
+	{
+		wp->SetSlotSize(MaloW::convertStringToInt(key));
+	}
 	else if(command == STACKING)
 	{
 		if(MaloW::convertStringToInt(key))
@@ -460,6 +496,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Food*& fd)
 	{
 		fd->SetStackSize(MaloW::convertStringToInt(key));
 	}
+	else if(command == SLOTS)
+	{
+		fd->SetSlotSize(MaloW::convertStringToInt(key));
+	}
 	else if(command == STACKING)
 	{
 		if(MaloW::convertStringToInt(key))
@@ -515,6 +555,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Container*&
 	else if(command == STACKS)
 	{
 		ct->SetStackSize(MaloW::convertStringToInt(key));
+	}
+	else if(command == SLOTS)
+	{
+		ct->SetSlotSize(MaloW::convertStringToInt(key));
 	}
 	else if(command == STACKING)
 	{
@@ -576,6 +620,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Material*& 
 	{
 		ma->SetStackSize(MaloW::convertStringToInt(key));
 	}
+	else if(command == SLOTS)
+	{
+		ma->SetSlotSize(MaloW::convertStringToInt(key));
+	}
 	else if(command == STACKING)
 	{
 		if(MaloW::convertStringToInt(key))
@@ -635,6 +683,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Projectile*
 	else if(command == STACKS)
 	{
 		pa->SetStackSize(MaloW::convertStringToInt(key));
+	}
+	else if(command == SLOTS)
+	{
+		pa->SetSlotSize(MaloW::convertStringToInt(key));
 	}
 	else if(command == STACKING)
 	{
@@ -696,6 +748,10 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Bandage*& b
 	{
 		ba->SetStackSize(MaloW::convertStringToInt(key));
 	}
+	else if(command == SLOTS)
+	{
+		ba->SetSlotSize(MaloW::convertStringToInt(key));
+	}
 	else if(command == STACKING)
 	{
 		if(MaloW::convertStringToInt(key))
@@ -707,3 +763,58 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Bandage*& b
 	return true;
 }
 
+bool ItemLookup::InterpCommand( std::string command, std::string key, Misc*& tp )
+{
+	if(key.empty())
+		return false;
+
+	std::transform(command.begin(), command.end(), command.begin(), ::toupper);
+
+	if(command == TYPE)
+	{
+		tp->SetItemType(MaloW::convertStringToInt(key));
+	}
+	else if(command == SUBTYPE)
+	{
+		tp->SetItemSubType(MaloW::convertStringToInt(key));
+	}
+	else if(command == WEIGHT)
+	{
+		tp->SetItemWeight(MaloW::convertStringToInt(key));
+	}
+	else if(command == PATH)
+	{
+		tp->SetIconPath(key);
+	}
+	else if(command == DESCRIPTION)
+	{
+		std::replace(key.begin(), key.end(), '_', ' ');
+		tp->SetItemDescription(key);
+	}
+	else if(command == MODEL)
+	{
+		tp->SetModel(key);
+	}
+	else if(command == NAME)
+	{
+		std::replace(key.begin(), key.end(), '_', ' ');
+		tp->SetItemName(key);
+	}
+	else if(command == STACKS)
+	{
+		tp->SetStackSize(MaloW::convertStringToInt(key));
+	}
+	else if(command == SLOTS)
+	{
+		tp->SetSlotSize(MaloW::convertStringToInt(key));
+	}
+	else if(command == STACKING)
+	{
+		if(MaloW::convertStringToInt(key))
+			tp->SetStacking(true);
+		else
+			tp->SetStacking(false);
+	}
+
+	return true;
+}

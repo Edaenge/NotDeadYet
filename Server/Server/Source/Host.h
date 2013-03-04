@@ -16,7 +16,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 class ActorSynchronizer;
 
 #if defined(DEBUG) || defined(_DEBUG)
-#include <vld.h>
+//#include <vld.h>
 #define INCLUDE_MODEL_VIEWER
 #endif
 
@@ -68,8 +68,6 @@ public:
 	/*! Pings the clients.*/
 	//void PingClients();
 
-	/*! Updates the server clock.*/
-	float Update();
 	/*! Runs the Game Loop.*/
 	void UpdateGame();
 	/*! */
@@ -106,5 +104,4 @@ private:
 	void ReadMessages(); 
 	/*! */
 	void PingClients();
-
 };

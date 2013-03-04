@@ -11,7 +11,7 @@ ItemActor::~ItemActor()
 	this->zType = ACTOR_TYPE_ITEM;
 }
 
-const std::string& ItemActor::GetModel() const
+const std::string ItemActor::GetModel() const
 {
 	if(zItem)
 		return this->zItem->GetModel();

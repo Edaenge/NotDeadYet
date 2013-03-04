@@ -10,14 +10,9 @@ Inventory::Inventory()
 {
 	this->zInventoryCap = 49;
 	this->zWeightTotal = 0;
-	
-	this->zInventorySlotBlocked = std::vector<bool>();
+
 	this->zItems = std::vector<Item*>();
 
-	for (unsigned int i = 0; i < this->zInventoryCap; i++)
-	{
-		this->zInventorySlotBlocked.push_back(false);
-	}
 	this->zSlotsAvailable = this->zInventoryCap;
 
 	this->zRangedWeapon = NULL;
@@ -37,13 +32,8 @@ Inventory::Inventory(const unsigned int inventorySize)
 	this->zInventoryCap = inventorySize;
 	this->zWeightTotal = 0;
 
-	this->zInventorySlotBlocked = std::vector<bool>();
 	this->zItems = std::vector<Item*>();
 
-	for (unsigned int i = 0; i < this->zInventoryCap; i++)
-	{
-		this->zInventorySlotBlocked.push_back(false);
-	}
 	this->zSlotsAvailable = this->zInventoryCap;
 
 	this->zRangedWeapon = NULL;
@@ -115,11 +105,14 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 
 			stacked = true;
 			this->zWeightTotal += weight * stack;
-
+			this->zSlotsAvailable -= item->GetSlotSize();
 			return true;
 		}
 	}
 	
+	if (this->zSlotsAvailable - item->GetSlotSize() <= 0)
+		return false;
+
 	if( available_slots >= item->GetStackSize() )
 	{
 		this->zItems.push_back(item);
@@ -128,7 +121,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 			Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
 
 		this->zWeightTotal += weight * item->GetStackSize();
-		
+		this->zSlotsAvailable -= item->GetSlotSize();
 		return true;
 	}
 
@@ -267,16 +260,6 @@ Item* Inventory::Erase( const unsigned int Index )
 		return item;
 	}
 	return NULL;
-}
-
-std::vector<bool> Inventory::GetBlockedSlots() const
-{
-	return this->zInventorySlotBlocked;
-}
-
-bool Inventory::GetBlockedSlot(unsigned int index) const
-{
-	return this->zInventorySlotBlocked[index];
 }
 
 int Inventory::GetInventoryCapacity() const
@@ -561,7 +544,6 @@ bool Inventory::SwapWeapon()
 	else if(!this->zSecondaryEquip)
 		return false;
 
-	
 	Item* item = this->zPrimaryEquip;
 
 	this->zPrimaryEquip = this->zSecondaryEquip;
@@ -570,4 +552,18 @@ bool Inventory::SwapWeapon()
 	return true;
 }
 
+void Inventory::ClearAll()
+{
+	//Remove Item Arrays
+	for (auto x = this->zItems.begin(); x != this->zItems.end(); x++)
+	{
+		SAFE_DELETE((*x));
+	}
+	this->zItems.clear();
+
+	for (auto x = this->zGear.begin(); x != this->zGear.end(); x++)
+	{
+		SAFE_DELETE((*x));
+	}
+}
 

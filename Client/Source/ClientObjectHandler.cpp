@@ -18,7 +18,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 	char key[512];
 	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", key, sizeof(key));
 
 		if(strcmp(key, M_POSITION.c_str()) == 0)
 		{
@@ -117,14 +117,15 @@ void Client::AddActor( NewActorPacket* NAP )
 			
 			iMesh* mesh = NULL;
 			//Creates a Mesh from the given Filename
-			std::string substring = model.substr(model.length() - 4);
-			if (substring == ".obj" || substring == ".ani")
-				mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
-			else if (substring == ".fbx")
-				mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
-			else
+			if (model.length() > 4)
 			{
-				int s = 0;
+				std::string substring = model.substr(model.length() - 4);
+				if (substring == ".obj")
+					mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
+				else if (substring == ".fbx")
+					mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
+				else if (substring == ".ani")
+					mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
 			}
 			
 			if(mesh)
@@ -139,10 +140,9 @@ void Client::AddActor( NewActorPacket* NAP )
 
 				if (ID == this->zID)
 				{
-					if (this->zGuiManager)
-						SAFE_DELETE(this->zGuiManager);
+					this->zGuiManager->ResetGui();
+					this->zPlayerInventory->ClearAll();
 
-					this->zGuiManager = new GuiManager(this->zEng);
 					this->zCreated = true;
 
 					auto meshOffsetsIterator = this->zMeshCameraOffsets.find(model);

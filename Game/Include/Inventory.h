@@ -13,6 +13,7 @@
 #include "Container.h"
 #include "Material.h"
 #include "Bandage.h"
+#include "Misc.h"
 #include <vector>
 #include "Observer.h"
 
@@ -52,10 +53,7 @@ public:
 	/*! Removes the item from the list. Returns the removed item.*/
 	Item* RemoveItem(const unsigned int ID);
 	Item* RemoveItem(Item* item);
-	/*! Returns blocked slots*/
-	std::vector<bool> GetBlockedSlots() const;
-	/*! Get the status of the slot at Position*/
-	bool GetBlockedSlot(unsigned int index) const;
+
 	/*! Returns the Inventory Capacity == Max Weight allowed*/
 	int GetInventoryCapacity() const;
 	/*! Returns the total Weight.*/
@@ -95,18 +93,18 @@ public:
 
 	/*! Swaps between the Primary and secondary Weapons.*/
 	bool SwapWeapon();
+
+	void ClearAll();
 private:
 	/*Removes the item from the list.*/
 	Item* Erase(const unsigned int Index);
 	/*! Array of items*/
 	std::vector<Item*> zItems;
-	/*! Array to keep track of Gui Representation*/
-	std::vector<bool> zInventorySlotBlocked;
-	/*! Nr of slots available in inventory == zInventorySlotBlocked array*/
+	/*! Nr of slots available in inventory.*/
 	unsigned int zSlotsAvailable;
-	/*! Max nr of slots in The zInventorySlotBlocked array*/
+	/*! Max nr of slots in The Inventory array.*/
 	unsigned int zInventoryCap;
-	/*! Nr of slots Occupied == Current Weight*/
+	/*! Nr of slots Occupied == Current Weight.*/
 	unsigned int zWeightTotal;
 
 	//Equipment Variables

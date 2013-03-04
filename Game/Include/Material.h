@@ -12,7 +12,8 @@ static const enum M_MATERIAL_ITEM_SUB_TYPE
 	ITEM_SUB_TYPE_SMALL_STICK,
 	ITEM_SUB_TYPE_MEDIUM_STICK,
 	ITEM_SUB_TYPE_LARGE_STICK,
-	ITEM_SUB_TYPE_THREAD
+	ITEM_SUB_TYPE_THREAD,
+	ITEM_SUB_TYPE_DISENFECTANT_LEAF
 };
 
 class Material : public Item
@@ -24,7 +25,6 @@ public:
 	Material(const unsigned int itemType, const unsigned int itemSubType, 
 			const unsigned int craftingType, const unsigned int stacksRequiredToCraft);	
 	Material(const Material& other);
-	Material(const Material* other);
 	virtual ~Material();
 
 	unsigned int GetCraftingType() const {return this->zCraftingType;}

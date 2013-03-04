@@ -87,14 +87,14 @@ public:
 	void SetPhysicsObject( PhysicsObject* object );
 	void SetScale(const Vector3& scale);
 	void SetDir(const Vector3& dir);
-
+	bool CanCollide() const;
 	// Get Transformation Functions
 	inline const Vector3& GetPosition() const { return zPos; }
 	inline const Vector3& GetPreviousPos() const { return zPreviousPos; }
 	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
 	inline const Vector3& GetDir() const { return zDir; }
-	virtual const std::string& GetModel() const;
+	virtual const std::string GetModel() const;
 	PhysicsObject* GetPhysicsObject() const {return this->zPhysicsObject;}
 	inline unsigned int GetType() const {return this->zType;}
 

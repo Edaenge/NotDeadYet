@@ -34,7 +34,7 @@ bool GameModeTest::Update( float dt )
 			return false;
 		}
 	}
-	return true;
+	return false;
 }
 
 void GameModeTest::OnEvent( Event* e )
@@ -127,6 +127,7 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	std::string msg;
 
 	Player* player = pActor->GetPlayer();
+	player->GetKeys().ClearStates();
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 
@@ -144,8 +145,15 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	Vector3 position = this->zGame->CalcPlayerSpawnPoint(rand);
 
 	Vector3 direction = pActor->GetDir();
+	std::string model = pActor->GetModel();
+	if (model.length() > 4)
+	{
+		if (model.substr(model.length() - 4) == ".fbx")
+			model = "Media/Models/temp_guy.obj";
+	}
 
-	PhysicsObject* pObj = GetPhysics()->CreatePhysicsObject(pActor->GetModel(), position);
+	PhysicsObject* pObj = GetPhysics()->CreatePhysicsObject(model, position);
+	pObj->SetModel(pActor->GetModel());
 
 	PlayerActor* newPActor = new PlayerActor(player, pObj);
 	newPActor->SetPosition(position);

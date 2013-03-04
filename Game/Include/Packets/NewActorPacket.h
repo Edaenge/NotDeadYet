@@ -13,6 +13,7 @@ public:
 	std::map<unsigned int, std::string> actorModel;
 	std::map<unsigned int, unsigned int> actorState;
 
+	NewActorPacket() {};
 	virtual ~NewActorPacket(){}
 
 	virtual bool Serialize( std::ostream& ss ) const

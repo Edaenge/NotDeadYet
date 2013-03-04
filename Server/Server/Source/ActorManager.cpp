@@ -216,6 +216,26 @@ unsigned int ActorManager::GetActorsInCircle( const Vector2& center, float radiu
 	return counter;
 }
 
+unsigned int ActorManager::GetCollideableActorsInCircle( const Vector2& center, float radius, std::set<Actor*>& out )
+{
+	unsigned int counter=0;
+
+	for(auto i = zActors.cbegin(); i != zActors.cend(); i++)
+	{
+		if( (*i)->CanCollide() )
+		{
+			Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );
+			if( Vector2(center-pos).GetLength() < radius)
+			{
+				out.insert(*i);
+				counter++;
+			}
+		}
+	}
+
+	return counter;
+}
+
 void ActorManager::OnEvent( Event* e )
 {
 	if( ActorAdded* AA = dynamic_cast<ActorAdded*>(e) )
@@ -238,6 +258,8 @@ void ActorManager::ClearAll()
 		
 		Actor* actor = (*it);
 		SAFE_DELETE(actor);
+
+		it++;
 	}
 	zActors.clear();
 }

@@ -88,15 +88,15 @@ void Client::HandleUseItem(const unsigned int ID)
 			return;
 		}
 		this->zPlayerInventory->RemoveItemStack(food->GetID(), 1);
-		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 
 		Gui_Item_Data gid = this->MakeGID(food);
 		gid.zStacks = 1; // Stacks to be removed
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
-	}
-	else if (item->GetItemType() == ITEM_TYPE_MATERIAL)
-	{
 
+		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
+	}
+	/*else if (item->GetItemType() == ITEM_TYPE_MATERIAL)
+	{
 		Material* material = dynamic_cast<Material*>(item);
 
 		if (!material)
@@ -117,12 +117,13 @@ void Client::HandleUseItem(const unsigned int ID)
 
 		this->zPlayerInventory->RemoveItemStack(material->GetID(), removedStacks);
 
-		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
-
 		Gui_Item_Data gid = this->MakeGID(material);
 		gid.zStacks = removedStacks; // Stacks to be removed
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
-	}
+
+		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
+		this->zGuiManager->UpdateInventoryWeight(totalWeight);
+	}*/
 	else if (item->GetItemType() == ITEM_TYPE_BANDAGE)
 	{
 		Bandage* bandage = dynamic_cast<Bandage*>(item);
@@ -141,11 +142,32 @@ void Client::HandleUseItem(const unsigned int ID)
 
 		this->zPlayerInventory->RemoveItemStack(bandage->GetID(), 1);
 
-		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
-
 		Gui_Item_Data gid = this->MakeGID(bandage);
 		gid.zStacks = 1; // Stacks to be removed
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
+
+		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
+	}
+}
+
+void Client::HandleCraftItem( const unsigned int ID, const unsigned int Stacks )
+{
+	Item* item = this->zPlayerInventory->SearchAndGetItem(ID);
+
+	if (item)
+	{
+		item->DecreaseStackSize(Stacks);
+		this->zPlayerInventory->RemoveItemStack(ID, Stacks);
+
+		Gui_Item_Data gid = this->MakeGID(item);
+		gid.zStacks = Stacks;
+
+		this->zGuiManager->RemoveInventoryItemFromGui(gid);
+		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
+	}
+	else
+	{
+		 MaloW::Debug("Failed to find item in inventory");
 	}
 }
 
@@ -615,8 +637,6 @@ void Client::HandleRemoveInventoryItem(const unsigned int ID)
 
 		if(item)
 		{
-			unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
-
 			Gui_Item_Data gid = this->MakeGID(item);
 
 			this->zGuiManager->RemoveInventoryItemFromGui(gid);
@@ -641,6 +661,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	unsigned int itemSubType = 10;
 	float weaponDamage = 0.0f;
 	float weaponRange = 0.0f;
+	unsigned int itemSlotSize = 1000;
 	float projectileDamage = 0.0f;
 	float projectileVelocity = 0.0f;
 	int craftingType = -1;
@@ -651,7 +672,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	char key[256];
 	for (auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
-		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", key, sizeof(key));
 
 		if(strcmp(key, M_ITEM_NAME.c_str()) == 0)
 		{
@@ -672,6 +693,10 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		else if(strcmp(key, M_ITEM_STACK_SIZE.c_str()) == 0)
 		{
 			itemStackSize = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, (*it));
+		}
+		else if(strcmp(key, M_ITEM_SLOT_SIZE.c_str()) == 0)
+		{
+			itemSlotSize = this->zMsgHandler.ConvertStringToInt(M_ITEM_SLOT_SIZE, (*it));
 		}
 		else if(strcmp(key, M_ITEM_TYPE.c_str()) == 0)
 		{
@@ -735,6 +760,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		item = new Food(ID, itemType, itemSubType, hunger);
 		item->SetStacking(true);
 		item->SetItemName(itemName);
+		item->SetSlotSize(itemSlotSize);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
 		item->SetIconPath(itemIconFilePath);
@@ -743,6 +769,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	case ITEM_TYPE_WEAPON_RANGED:
 		item = new RangedWeapon(ID, itemType, itemSubType, weaponDamage, weaponRange);
 		item->SetItemName(itemName);
+		item->SetSlotSize(itemSlotSize);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
 		item->SetIconPath(itemIconFilePath);
@@ -752,6 +779,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		item = new MeleeWeapon(ID, itemType, itemSubType, weaponDamage, weaponRange);
 		item->SetStacking(false);
 		item->SetItemName(itemName);
+		item->SetSlotSize(itemSlotSize);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
 		item->SetIconPath(itemIconFilePath);
@@ -761,6 +789,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		item = new Container(ID, itemType, itemSubType, maxUse, currUse);
 		item->SetStacking(false);
 		item->SetItemName(itemName);
+		item->SetSlotSize(itemSlotSize);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
 		item->SetIconPath(itemIconFilePath);
@@ -770,6 +799,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		item = new Projectile(ID, itemType, itemSubType, projectileVelocity, projectileDamage);
 		item->SetStacking(true);
 		item->SetItemName(itemName);
+		item->SetSlotSize(itemSlotSize);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
 		item->SetIconPath(itemIconFilePath);
@@ -779,6 +809,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		item = new Material(ID, itemType, itemSubType, craftingType, stacksRequired);
 		item->SetStacking(true);
 		item->SetItemName(itemName);
+		item->SetSlotSize(itemSlotSize);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
 		item->SetIconPath(itemIconFilePath);
@@ -787,6 +818,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	case ITEM_TYPE_GEAR:
 		item = new Gear(ID, itemSubType, itemType);
 		item->SetItemName(itemName);
+		item->SetSlotSize(itemSlotSize);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
 		item->SetIconPath(itemIconFilePath);
@@ -795,6 +827,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	case ITEM_TYPE_BANDAGE:
 		item = new Bandage(ID, itemType, itemSubType);
 		item->SetItemName(itemName);
+		item->SetSlotSize(itemSlotSize);
 		item->SetItemWeight(itemWeight);
 		item->SetStackSize(itemStackSize);
 		item->SetIconPath(itemIconFilePath);
@@ -802,6 +835,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		break;
 	default:
 		MaloW::Debug("Items wasn't found in the switch case type: " + MaloW::convertNrToString((float)itemType));
+		return;
 		break;
 	}
 
@@ -854,7 +888,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 Gui_Item_Data Client::MakeGID( Item* item )
 {
 	Gui_Item_Data gid = Gui_Item_Data(item->GetID(), item->GetItemType(), item->GetItemSubType() , item->GetWeight(),
-		item->GetStackSize(), item->GetStacking(), item->GetItemName(), item->GetIconPath(), item->GetItemDescription());
+		item->GetStackSize(), item->GetSlotSize(), item->GetStacking(), item->GetItemName(), item->GetIconPath(), item->GetItemDescription());
 
 	return gid;
 }

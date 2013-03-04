@@ -3,9 +3,7 @@
 KeyStates::KeyStates()
 {
 	for (unsigned int i = 0; i < KEY_CAP; i++)
-	{
 		this->zKeyState[i] = false;
-	}
 }
 KeyStates::~KeyStates()
 {
@@ -21,4 +19,9 @@ void KeyStates::SetKeyState(const unsigned int key, const bool value)
 {
 	if (key < KEY_CAP)
 		this->zKeyState[key] = value;
+}
+void KeyStates::ClearStates()
+{
+	for (unsigned int i = 0; i < KEY_CAP; i++)
+		this->zKeyState[i] = false;
 }

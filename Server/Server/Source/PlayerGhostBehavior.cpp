@@ -6,7 +6,6 @@
 
 static const float MAX_VELOCITY = 7.0f;
 static const float ACCELERATION = 5.0f;
-static const float ENERGY_REGEN_COEEFFICENCY = 1.55f;
 
 PlayerGhostBehavior::PlayerGhostBehavior( Actor* actor, World* world, Player* player ) : PlayerBehavior(actor, world, player)
 {
@@ -87,20 +86,6 @@ bool PlayerGhostBehavior::Update( float dt )
 
 		zActor->SetPosition(newPlayerPos);
 	}
-	GhostActor* gActor = dynamic_cast<GhostActor*>(zActor);
-
-	float energy = gActor->GetEnergy();
-
-	if (energy < 200.0f)
-	{
-		energy += ENERGY_REGEN_COEEFFICENCY * dt;
-	}
-	
-	if (energy >= 200.0f)
-	{
-		energy = 200.0f;
-	}
-	gActor->SetEnergy(energy);
 
 	return false;
 }

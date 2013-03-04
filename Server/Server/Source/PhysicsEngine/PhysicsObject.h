@@ -39,7 +39,6 @@ private:
 	Vector3 pos;
 	Vector4 rotQuat;
 	Vector3 scale;
-	Vector3 forceAccum;
 
 	Matrix4 worldMatrix;
 
@@ -47,9 +46,6 @@ private:
 	int nrOfVerts;
 	int nrOfIndicies;
 	int* indicies;
-
-	float damping;
-	float inverseMass;
 
 	BoundingSphere bs;
 	std::string zModel;
@@ -62,12 +58,7 @@ public:
 	// Access Physics Engine
 	inline PhysicsEngine* GetPhysicsEngine() const { return zEngine; }
 
-	void SetMass(const float mass);
-	void SetInverseMass(const float mass){inverseMass = mass;}
-	void SetDamping(const float damping) {this->damping = damping;}
-	void SetAcceleration(const Vector3& acc){acceleration = acc;}
 	inline void SetPosition(const Vector3& pos){this->pos = pos; this->RecreateWorldMatrix();}
-	void SetVelocity(Vector3& vel){velocity = vel;}
 	void SetQuaternion(const Vector4& quat);
 	void MoveBy(const Vector3& moveby);
 	void Rotate(const Vector4& quat);
@@ -84,16 +75,7 @@ public:
 	Matrix4 GetWorldMatrix() const;
 
 	virtual bool LoadFromFile(string file);
-	bool HasInfiniteMass() const {return inverseMass >= 0.0f;}
-	void ClearAccumulator();
-	void AddForce(const Vector3& force) {forceAccum += force;}
-	void Integrate(float dt);
 
-	float GetMass() const;
-	float GetInverseMass() const {return inverseMass;}
-	float GetDamping() const {return damping;}
-	Vector3 GetVelocity() const{return velocity;}
-	Vector3 GetAcceleration() const {return acceleration;}
 	Vertex* getVerts() const { return this->mesh; }
 	void SetVerts(Vertex* verts) { this->mesh = verts; }
 	int getNrOfVerts() const { return this->nrOfVerts; }

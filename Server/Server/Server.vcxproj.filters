@@ -117,9 +117,6 @@
     <ClCompile Include="Source\PlayerGhostBehavior.cpp">
       <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
-    <ClCompile Include="Source\PlayerConfiguration.cpp">
-      <Filter>Source\Actors\Behavior</Filter>
-    </ClCompile>
     <ClCompile Include="Source\PhysicsEngine\ObjectDataResource.cpp">
       <Filter>Source\Physics</Filter>
     </ClCompile>
@@ -146,6 +143,12 @@
     </ClCompile>
     <ClCompile Include="Source\SupplyActor.cpp">
       <Filter>Source\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerConfigReader.cpp">
+      <Filter>Source\Actors\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CraftingManager.cpp">
+      <Filter>Source\Handlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -251,9 +254,6 @@
     <ClInclude Include="Source\PlayerGhostBehavior.h">
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
-    <ClInclude Include="Source\PlayerConfiguration.h">
-      <Filter>Source\Actors\Behavior</Filter>
-    </ClInclude>
     <ClInclude Include="Source\ItemActor.h">
       <Filter>Source\Actors</Filter>
     </ClInclude>
@@ -289,6 +289,12 @@
     </ClInclude>
     <ClInclude Include="Source\SupplyActor.h">
       <Filter>Source\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerConfigReader.h">
+      <Filter>Source\Actors\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CraftingManager.h">
+      <Filter>Source\Handlers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

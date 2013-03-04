@@ -154,8 +154,6 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if( PlayerReadyEvent* PLRE = dynamic_cast<PlayerReadyEvent*>(e) )
 	{
-		return;
-
 		if(!zGameStarted)
 		{
 			PLRE->player->SetReady(true);
@@ -325,6 +323,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	std::string msg = "";
 
 	Player* player = pActor->GetPlayer();
+	player->GetKeys().ClearStates();
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 	this->zGame->ModifyLivingPlayers(-1);
@@ -333,7 +332,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	PhysicsObject* pObject = pActor->GetPhysicsObject();
 	if (pObject)
 	{
-		GetPhysics()->DeletePhysicsObject(pObject);
+//		GetPhysics()->DeletePhysicsObject(pObject);
 		pObject = NULL;
 	}
 

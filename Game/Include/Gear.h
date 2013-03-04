@@ -21,7 +21,6 @@ public:
 	Gear(const unsigned int ID, const unsigned int Type, const unsigned int SubType);
 	Gear(const unsigned int Type, const unsigned int SubType);
 	Gear(const Gear& other);
-	Gear(const Gear* other);
 	virtual ~Gear();
 	virtual bool Use();
 	virtual std::string ToMessageString(NetworkMessageConverter* NMC);

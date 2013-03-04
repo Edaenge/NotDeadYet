@@ -17,7 +17,8 @@ static const enum M_ITEM_TYPE
 	ITEM_TYPE_FOOD,
 	ITEM_TYPE_MATERIAL,
 	ITEM_TYPE_GEAR,
-	ITEM_TYPE_BANDAGE
+	ITEM_TYPE_BANDAGE,
+	ITEM_TYPE_MISC
 };
 /*! Abstract class for Items*/
 class Item
@@ -40,7 +41,7 @@ public:
 	std::string GetItemDescription() const {return this->zItemDescription;}
 	/*! Returns number of stacks the item has.*/
 	unsigned int GetStackSize() const {return this->zStacks;}
-	
+	unsigned int GetSlotSize() const {return this->zSlotSize;}
 	std::string GetIconPath() const {return this->zIconPath;}
 
 	void SetIconPath(const std::string& path) {this->zIconPath = path;}
@@ -59,6 +60,7 @@ public:
 	void SetModel(const std::string& model) {this->zMeshModel = model;}
 	/*! Sets the Item Stack Size.*/
 	void SetStackSize(const unsigned int size) {this->zStacks = size;}
+	void SetSlotSize(const unsigned int size) {this->zSlotSize = size;}
 	void SetStacking(bool value) {this->zStacking = value;}
 	void IncreaseStackSize(const unsigned int size) {this->zStacks += size;}
 	void DecreaseStackSize(const unsigned int size) {this->zStacks -= size;}
@@ -76,6 +78,7 @@ protected:
 	unsigned int zStacks;
 	unsigned int zID;
 	int zWeight;
+	unsigned int zSlotSize;
 	unsigned int zItemType;
 	unsigned int zItemSubType;
 	std::string zItemDescription;

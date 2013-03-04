@@ -84,11 +84,19 @@ void Actor::SetPhysicsObject( PhysicsObject* object )
 	zPhysicsObject = object;
 }
 
-const std::string& Actor::GetModel() const
+const std::string Actor::GetModel() const
 {
 	if ( zPhysicsObject )
 		return zPhysicsObject->GetModel();
 
 	static const std::string none = "Media/Models/Ball.obj";
 	return none;
+}
+
+bool Actor::CanCollide() const
+{
+	if( zPhysicsObject )
+		return true;
+
+	return false;
 }
