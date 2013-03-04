@@ -25,11 +25,14 @@ private:
 	float zSizedForWidth;
 	float zSizedForHeight;
 
+	iText* zEnergyText;
+	Vector2 zTextPos;
+
 public:
 	PickAnimalMenu();
 	virtual ~PickAnimalMenu();
 
-	int Run();
+	int Run(int energy);
 
 	void ToggleMenu();
 
