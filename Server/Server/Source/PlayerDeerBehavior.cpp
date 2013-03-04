@@ -227,6 +227,10 @@ bool PlayerDeerBehavior::Update( float dt )
 
 	}
 
+	
+
+	
+
 	try
 	{
 		float groundHeight = zWorld->CalcHeightAtWorldPos(curPosition.GetXZ());
@@ -243,6 +247,7 @@ bool PlayerDeerBehavior::Update( float dt )
 	{
 
 	}
+
 
 	// Apply Velocity
 	Vector3 newPosition = curPosition + (zVelocity * dt) + Vector3(0.0f, this->zVelDown, 0.0f) + (groundNormal * dt);
