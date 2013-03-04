@@ -133,6 +133,8 @@ public:
 	ClientData* clientData;
 
 	unsigned int itemID;
+	unsigned int craftedItemType;
+	unsigned int craftedItemSubType;
 };
 
 /*Event when a player wants to use his equipped weapon.*/
