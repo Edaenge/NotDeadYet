@@ -299,7 +299,7 @@ void LootInventoryGui::Resize(float windowWidth, float windowHeight, float dx)
 
 void LootInventoryGui::Reset( bool open )
 {
-	for (int i = 0; i < this->zSlotGui.size(); i++)
+	for (unsigned int i = 0; i < this->zSlotGui.size(); i++)
 	{
 		this->zSlotGui.at(i)->RemoveItemFromSlot(open, GetGraphics());
 	}

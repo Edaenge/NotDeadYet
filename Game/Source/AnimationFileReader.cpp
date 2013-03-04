@@ -17,6 +17,7 @@ static const std::string OFFSET_DIST	= "Offset";
 AnimationFileReader::AnimationFileReader( const std::string& filename )
 {
 	this->zFileName = filename;
+	this->ReadFromFile();
 }
 
 AnimationFileReader::~AnimationFileReader()
@@ -93,6 +94,7 @@ bool AnimationFileReader::ReadFromFile()
 			}
 		}
 	}
+	return true;
 }
 
 unsigned int AnimationFileReader::InterpCommand( const std::string& key )
@@ -116,7 +118,8 @@ const std::string& AnimationFileReader::GetAnimation(const std::string& animatio
 	if (it != this->zAnimationNames.end())
 		return it->second;
 
-	return "";
+	static const std::string emptyString = "";
+	return emptyString;
 }
 
 const std::string& AnimationFileReader::GetBindingBone( const unsigned int bone ) const
@@ -125,5 +128,6 @@ const std::string& AnimationFileReader::GetBindingBone( const unsigned int bone 
 	if (it != this->zBindingBones.end())
 		return it->second;
 
-	return "";
+	static const std::string emptyString = "";
+	return emptyString;
 }

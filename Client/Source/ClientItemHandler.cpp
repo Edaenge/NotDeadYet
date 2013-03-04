@@ -346,8 +346,6 @@ bool Client::HandleUnEquipItem(const unsigned int ItemID, const int Slot)
 		{
 			if (wpn->GetID() == ItemID)
 			{
-				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
-
 				Gui_Item_Data gid = this->MakeGID(wpn);
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -372,8 +370,6 @@ bool Client::HandleUnEquipItem(const unsigned int ItemID, const int Slot)
 		{
 			if (wpn->GetID() == ItemID)
 			{
-				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
-
 				Gui_Item_Data gid = this->MakeGID(wpn);
 
 				this->zGuiManager->AddInventoryItemToGui(gid);

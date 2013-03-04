@@ -6,7 +6,7 @@ Player::Player( ClientData* client ) :
 	zClient(client),
 	zBehavior(0)
 {
-	bool zReady = false;
+	this->zReady = false;
 }
 
 Player::~Player()

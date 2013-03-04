@@ -131,7 +131,7 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 
  void TextBox::CheckString(GraphicsEngine* ge)
  {
-	if(strlen(this->mPointText->GetText()) < this->mMaxNrOfChars)
+	if((int)strlen(this->mPointText->GetText()) < this->mMaxNrOfChars)
 	{
 		string pushString = "";
 		const int NROFLETTERS = 27;

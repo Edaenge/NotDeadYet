@@ -281,7 +281,7 @@ void MainMenu::StartTestRun()
 		GraphicsEngine* gEng = GetGraphics();
 		Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
 
-		std::string errorMsg = "Error Code: " + MaloW::convertNrToString(errorCode) + ": " + errorMessage;
+		std::string errorMsg = "Error Code: " + MaloW::convertNrToString((float)errorCode) + ": " + errorMessage;
 		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
 
 		Sleep(5000);
@@ -391,7 +391,7 @@ void MainMenu::Run()
 							GraphicsEngine* gEng = GetGraphics();
 							Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
 
-							std::string errorMsg = "Error Code: " + MaloW::convertNrToString(errorCode) + ": " + errorMessage;
+							std::string errorMsg = "Error Code: " + MaloW::convertNrToString((float)errorCode) + ": " + errorMessage;
 							iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
 
 							Sleep(5000);
@@ -469,8 +469,8 @@ void MainMenu::Run()
 							{
 								if (NULL != cre)
 								{
-									width = cre->GetWidth();
-									height = cre->GetHeight();
+									width = (float)cre->GetWidth();
+									height = (float)cre->GetHeight();
 								}
 							}
 
@@ -670,10 +670,10 @@ void MainMenu::Resize()
 		this->zSizedForHeight == GetGraphics()->GetEngineParameters().WindowHeight)
 		return;
 
-	this->zSets[MAINSET].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
-	this->zSets[FIND_SERVER].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
-	this->zSets[OPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
-	this->zSets[GETIPADRESS].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
+	this->zSets[MAINSET].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
+	this->zSets[FIND_SERVER].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
+	this->zSets[OPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
+	this->zSets[GETIPADRESS].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
 
 
 	this->zSizedForWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;

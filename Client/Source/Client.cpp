@@ -45,7 +45,6 @@ Client::Client()
 	this->zStateCameraOffset[STATE_CROUCHING] = Vector3(0.0f, 1.0f, 0.0f);
 
 	this->zAnimationFileReader[0] = AnimationFileReader("Media/Models/temp_guy_movement_anims.cfg");
-	this->zAnimationFileReader[0].ReadFromFile();
 
 	this->zModelToReaderMap["Media/Models/temp_guy_movement_anims.fbx"] = zAnimationFileReader[0];
 
@@ -312,14 +311,24 @@ void Client::Life()
 {
 	MaloW::Debug("Client Process Started");
 	
+	static const float FRAME_TIME = 120.0f;
+	static const float TARGET_DT = 1.0f / FRAME_TIME;
+
 	this->zGameTimer->Init();
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->zDeltaTime = this->zGameTimer->Frame();
-
+		
 		this->UpdateGame();
 
-		Sleep(5);
+		if (FRAME_TIME > 0)
+		{
+			if (this->zDeltaTime < TARGET_DT)
+			{
+				float sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
+				Sleep(sleepTime);
+			}
+		}
 	}
 
 	this->zRunning = false;

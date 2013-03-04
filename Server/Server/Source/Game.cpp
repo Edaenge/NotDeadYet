@@ -1836,7 +1836,7 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 								for (auto it = item_stack_out.begin(); it != item_stack_out.end(); it++)
 								{
 									inv->RemoveItem(it->first);
-									cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, it->first->GetID()));
+									cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)it->first->GetID()));
 									it->first->IncreaseStackSize(it->second);
 									if(inv->AddItem(it->first, stacked))
 									{

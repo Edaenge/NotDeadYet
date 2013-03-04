@@ -130,7 +130,7 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 				if(!this->zSlotGui.at(k)->GetBlocked())
 				{
 					Gui_Item_Data blockedGid = Gui_Item_Data(0, -1, -1, 0, 0, 0, false, "Blocked", "Media/InGameUI/Unavailable.png", "");
-					for(int m = 0; m < gid.zSlots - 1; m++)
+					for(unsigned int m = 0; m < gid.zSlots - 1; m++)
 					{
 						this->zSlotGui.at(k-m)->AddItemToSlot(blockedGid, open, ge);
 						this->zSlotGui.at(k-m)->SetBlocker(true);
@@ -481,7 +481,7 @@ Vector3 InventoryGui::lerp(Vector3 x, Vector3 y, float a)
 
 void InventoryGui::Reset(bool open)
 {
-	for (int i = 0; i < this->zSlotGui.size(); i++)
+	for (unsigned int i = 0; i < this->zSlotGui.size(); i++)
 	{
 		this->zSlotGui.at(i)->RemoveItemFromSlot(open, GetGraphics());
 	}
@@ -505,7 +505,7 @@ void InventoryGui::RemoveBlockers(int m, bool open, GraphicsEngine* ge, int inve
 			int slots = this->zSlotGui.at(m)->GetGid().zSlots;
 			if(inventory == 1)
 				slots = this->zWeaponSlotGui.at(m)->GetGid().zSlots;
-			for(int k = 1; k < this->zSlotGui.at(m)->GetGid().zSlots; k++)
+			for(unsigned int k = 1; k < this->zSlotGui.at(m)->GetGid().zSlots; k++)
 			{
 				this->zSlotGui.at(i+k)->RemoveItemFromSlot(open, ge);
 			}
