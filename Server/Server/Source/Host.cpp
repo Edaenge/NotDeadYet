@@ -117,7 +117,6 @@ void Host::Life()
 		this->zDeltaTime = this->zGameTimer->Frame();
 
 		this->UpdateGame();
-		//Update();
 		
 
 		//Sleep(5);
@@ -535,25 +534,6 @@ void Host::PingClients()
 	{
 		(*it).first->Send( zMessageConverter.Convert(MESSAGE_TYPE_PING, this->zGameTimer->GetRunTime()) );
 	}
-}
-
-float Host::Update()
-{
-	////Update Timer
-	//INT64 currentTime;
-	//float timeDifference;
-
-	//QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
-
-	//timeDifference = (float)(currentTime - this->zStartime);
-
-	//this->zDeltaTime = timeDifference * this->zSecsPerCnt;
-
-	//this->zStartime = currentTime;
-
-	
-
-	return 0.0f;
 }
 
 bool Host::IsAlive() const

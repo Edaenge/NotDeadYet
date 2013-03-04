@@ -7,6 +7,7 @@
 #include "Material.h"
 #include "MeleeWeapon.h"
 #include "Bandage.h"
+#include "Misc.h"
 #include "FileReader.h"
 
 #include <string>
@@ -28,7 +29,7 @@ public:
 	const Material* GetMaterial(const unsigned int SubType);
 	const Container* GetContainer(const unsigned int SubType);
 	const Bandage* GetBandage(const unsigned int SubType);
-	
+	const Misc* GetTrap(const unsigned int SubType);
 private:
 	bool ReadFromFile();
 	bool InterpCommand(std::string command, std::string key, MeleeWeapon*& wp);
@@ -38,6 +39,7 @@ private:
 	bool InterpCommand(std::string command, std::string key, Material*& ma);
 	bool InterpCommand(std::string command, std::string key, Projectile*& pa);
 	bool InterpCommand(std::string command, std::string key, Bandage*& ba);
+	bool InterpCommand(std::string command, std::string key, Misc*& tp);
 private:
 	std::vector<Item*> zItems;
 };

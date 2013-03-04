@@ -31,6 +31,7 @@
     <ClCompile Include="Source\Behavior.cpp" />
     <ClCompile Include="Source\BioActor.cpp" />
     <ClCompile Include="Source\ClientData.cpp" />
+    <ClCompile Include="Source\CraftingManager.cpp" />
     <ClCompile Include="Source\DeerActor.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\GameModeFFA.cpp" />
@@ -76,6 +77,7 @@
     <ClInclude Include="Source\Behavior.h" />
     <ClInclude Include="Source\BioActor.h" />
     <ClInclude Include="Source\ClientData.h" />
+    <ClInclude Include="Source\CraftingManager.h" />
     <ClInclude Include="Source\Damage.h" />
     <ClInclude Include="Source\DeerActor.h" />
     <ClInclude Include="Source\Game.h" />

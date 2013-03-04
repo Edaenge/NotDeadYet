@@ -165,6 +165,7 @@ private:
 	void HandleAddInventoryItem(const std::vector<std::string>& msgArray);
 	/*! Uses the Selected Item*/
 	void HandleUseItem(const unsigned int ID);
+	void HandleCraftItem(const unsigned int ID, const unsigned int Stacks);
 	void DisplayMessageToClient(const std::string& msg, bool bError);
 	void HandleEquipItem(const unsigned int ItemID, const int Slot);
 	bool HandleUnEquipItem(const unsigned int ItemID, const int Slot);

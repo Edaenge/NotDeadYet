@@ -13,6 +13,7 @@
 #include "Container.h"
 #include "Material.h"
 #include "Bandage.h"
+#include "Misc.h"
 #include <vector>
 #include "Observer.h"
 
@@ -92,6 +93,8 @@ public:
 
 	/*! Swaps between the Primary and secondary Weapons.*/
 	bool SwapWeapon();
+
+	void ClearAll();
 private:
 	/*Removes the item from the list.*/
 	Item* Erase(const unsigned int Index);

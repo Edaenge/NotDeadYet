@@ -128,11 +128,6 @@ void Client::AddActor( NewActorPacket* NAP )
 					mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
 			}
 			
-			else
-			{
-				int s = 0;
-			}
-			
 			if(mesh)
 			{
 				actor->SetStaticMesh(mesh);
@@ -145,10 +140,9 @@ void Client::AddActor( NewActorPacket* NAP )
 
 				if (ID == this->zID)
 				{
-					if (this->zGuiManager)
-						SAFE_DELETE(this->zGuiManager);
+					this->zGuiManager->ResetGui();
+					this->zPlayerInventory->ClearAll();
 
-					this->zGuiManager = new GuiManager(this->zEng);
 					this->zCreated = true;
 
 					auto meshOffsetsIterator = this->zMeshCameraOffsets.find(model);

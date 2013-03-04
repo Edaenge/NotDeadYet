@@ -41,28 +41,13 @@ Material::Material(const Material& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zStacking = other.zStacking;
+	this->zSlotSize = other.zSlotSize;
 	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zCraftingType = other.zCraftingType;
 	this->zItemDescription = other.zItemDescription;
 	this->zRequiredStackToCraft = other.zRequiredStackToCraft;
-	this->zStacking = other.zStacking;
-}
-
-Material::Material(const Material* other)
-{
-	this->zID = other->zID;
-	this->zStacks = other->zStacks;
-	this->zWeight = other->zWeight;
-	this->zItemName = other->zItemName;
-	this->zIconPath = other->zIconPath;
-	this->zItemType = other->zItemType;
-	this->zMeshModel = other->zMeshModel;
-	this->zItemSubType = other->zItemSubType;
-	this->zCraftingType = other->zCraftingType;
-	this->zItemDescription = other->zItemDescription;
-	this->zRequiredStackToCraft = other->zRequiredStackToCraft;
-	this->zStacking = other->zStacking;
 }
 
 bool Material::Use()

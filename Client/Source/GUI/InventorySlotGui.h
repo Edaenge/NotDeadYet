@@ -17,6 +17,7 @@ struct Gui_Item_Data
 	Gui_Item_Data()
 	{
 		this->zID = 0;
+		this->zSlots = 0;
 
 		this->zType = 0;
 		this->zSubType = 0;
@@ -29,11 +30,12 @@ struct Gui_Item_Data
 		this->zFilePath = "Unknown";
 		this->zDescription = "Unknown";
 	}
-	Gui_Item_Data(const unsigned int ID, const int Type, const int subType, const int weight, 
-		const int stack, const bool canStack, const std::string& name,const std::string& filePath, 
+	Gui_Item_Data(const unsigned int ID, const unsigned int Type, const unsigned int subType, const unsigned int weight, 
+		const unsigned int stack, const unsigned int Slots, const bool canStack, const std::string& name,const std::string& filePath, 
 		const std::string& description)
 	{
 		this->zID = ID;
+		this->zSlots = Slots;
 
 		this->zType = Type;
 		this->zSubType = subType;
@@ -47,12 +49,12 @@ struct Gui_Item_Data
 		this->zDescription = description;
 	}
 	unsigned int zID;
+	unsigned int zSlots;
+	unsigned int zType;
+	unsigned int zSubType;
 
-	int zType;
-	int zSubType;
-
-	int zWeight;
-	int zStacks;
+	unsigned int zWeight;
+	unsigned int zStacks;
 	bool zCanStack;
 
 	std::string zName;

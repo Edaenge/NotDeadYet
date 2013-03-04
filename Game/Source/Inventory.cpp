@@ -76,9 +76,6 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 	if( available_slots <= 0 )
 		return false;
 
-	if (this->zSlotsAvailable - item->GetSlotSize() <= 0)
-		return false;
-
 	if ( item->GetStacking() )
 	{
 		if( IsStacking(item) )
@@ -113,6 +110,9 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 		}
 	}
 	
+	if (this->zSlotsAvailable - item->GetSlotSize() <= 0)
+		return false;
+
 	if( available_slots >= item->GetStackSize() )
 	{
 		this->zItems.push_back(item);
@@ -544,7 +544,6 @@ bool Inventory::SwapWeapon()
 	else if(!this->zSecondaryEquip)
 		return false;
 
-	
 	Item* item = this->zPrimaryEquip;
 
 	this->zPrimaryEquip = this->zSecondaryEquip;
@@ -553,4 +552,18 @@ bool Inventory::SwapWeapon()
 	return true;
 }
 
+void Inventory::ClearAll()
+{
+	//Remove Item Arrays
+	for (auto x = this->zItems.begin(); x != this->zItems.end(); x++)
+	{
+		SAFE_DELETE((*x));
+	}
+	this->zItems.clear();
+
+	for (auto x = this->zGear.begin(); x != this->zGear.end(); x++)
+	{
+		SAFE_DELETE((*x));
+	}
+}
 

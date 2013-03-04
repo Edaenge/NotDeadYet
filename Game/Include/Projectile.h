@@ -20,7 +20,6 @@ public:
 	Projectile(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType, float velocity, float damage);	
 	Projectile(const unsigned int itemType, const unsigned int itemSubType, float velocity, float damage);		
 	Projectile(const Projectile& other);
-	Projectile(const Projectile* other);
 	virtual ~Projectile();
 
 	void SetVelocity(float vel) {this->zVelocity = vel;}

@@ -226,19 +226,22 @@ void Client::IgnoreRender( const float& radius, const Vector2& center )
 
 void Client::InitGraphics(const std::string& mapName)
 {
-	if (this->zActorManager)
-		delete this->zActorManager;
+	if (!this->zActorManager)
+		this->zActorManager = new ClientActorManager();
+	else
+		this->zActorManager->ClearAll();
 
-	if (this->zPlayerInventory)
-		delete this->zPlayerInventory;
+	if (!this->zPlayerInventory)
+		this->zPlayerInventory = new Inventory();
+	else
+		this->zPlayerInventory->ClearAll();
 
-	if (this->zGuiManager)
-		delete this->zGuiManager;
-
-	this->zActorManager = new ClientActorManager();
+	if (!this->zGuiManager)
+		this->zGuiManager = new GuiManager(this->zEng);
+	else
+		this->zGuiManager->ResetGui();
+	
 	this->zActorManager->SetFBXMapping(this->zModelToReaderMap);
-	this->zGuiManager = new GuiManager(this->zEng);
-	this->zPlayerInventory = new Inventory();
 
 	LoadEntList("Entities.txt");
 
@@ -313,15 +316,15 @@ void Client::InitGraphics(const std::string& mapName)
 void Client::Life()
 {
 	MaloW::Debug("Client Process Started");
-
+	
 	this->zGameTimer->Init();
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->zDeltaTime = this->zGameTimer->Frame();
-			
+
 		this->UpdateGame();
 
-		Sleep(5);
+		Sleep(1);
 	}
 
 	this->zRunning = false;
@@ -541,43 +544,39 @@ void Client::CheckPlayerSpecificKeys()
 		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
 
-		if (msd.zAction != -1)
+		if (msd.zAction != -1 && msd.zID != -1)
 		{
-			if (msd.zID != -1)
+			Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
+			if (msd.zAction == USE)
 			{
-				Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
-				if (msd.zAction == USE)
-				{
-					if (item)
-						SendUseItemMessage(item->GetID());
-				}
-				if (msd.zAction == CRAFT)
-				{
-					if (item)
-						SendCraftItemMessage(item->GetID());
-				}
-				else if(msd.zAction == EQUIP)
-				{
-					if(item)
-						SendEquipItem(msd.zID);
-				}
-				else if (msd.zAction == LOOT)
-				{
-					if (item)
-					{
-						SendLootItemMessage(0, msd.zID, msd.zType, item->GetItemSubType());
-					}
-				}
-				else if (msd.zAction == DROP)
-				{
-					if(item)
-						this->SendDropItemMessage(msd.zID);
-				}
-				else if (msd.zAction == UNEQUIP)
-				{
-					if(item)
-						this->SendUnEquipItem(msd.zID, (msd.zType));
-				}
+				if (item)
+					SendUseItemMessage(item->GetID());
+			}
+			if (msd.zAction == CRAFT)
+			{
+				if (item)
+					SendCraftItemMessage(item->GetID());
+			}
+			else if(msd.zAction == EQUIP)
+			{
+				if(item)
+					SendEquipItem(msd.zID);
+			}
+			else if (msd.zAction == LOOT)
+			{
+				unsigned int id = this->zGuiManager->GetLootingActor();
+				if (id != 0)
+					SendLootItemMessage(id, msd.zID, msd.zType, msd.zSubType);
+			}
+			else if (msd.zAction == DROP)
+			{
+				if(item)
+					this->SendDropItemMessage(msd.zID);
+			}
+			else if (msd.zAction == UNEQUIP)
+			{
+				if(item)
+					this->SendUnEquipItem(msd.zID, (msd.zType));
 			}
 		}
 	}
@@ -595,10 +594,6 @@ void Client::CheckPlayerSpecificKeys()
 					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (float)(*it));
 				}
 				this->zServerChannel->Send(msg);
-
-				this->zGuiManager->ToggleInventoryGui();
-				this->zGuiManager->ToggleLootGui(0);
-				this->zShowCursor = true;
 			}
 			else
 			{
@@ -614,6 +609,7 @@ void Client::CheckPlayerSpecificKeys()
 		{
 			this->zGuiManager->ToggleInventoryGui();
 			this->zGuiManager->ToggleLootGui(0);
+			this->zGuiManager->ResetLoot();
 			this->zShowCursor = false;
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
 		}
@@ -1285,15 +1281,15 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		this->zActorManager->ClearAll();
 		
 		if(this->zPlayerInventory)
-			delete this->zPlayerInventory;
-
-		this->zPlayerInventory = new Inventory();
+			this->zPlayerInventory->ClearAll();
+		else
+			this->zPlayerInventory = new Inventory();
 
 		//Could Crash
 		if(this->zGuiManager)
-			delete this->zGuiManager;
-
-		this->zGuiManager = new GuiManager(GetGraphics());
+			this->zGuiManager->ResetGui();
+		else
+			this->zGuiManager = new GuiManager(GetGraphics());
 	}
 	else if (msgArray[0].find(M_FOG_ENCLOSEMENT.c_str()) == 0)
 	{
@@ -1323,12 +1319,17 @@ void Client::HandleNetworkMessage( const std::string& msg )
 				{
 					iMesh* mesh = NULL;
 
-					std::string substr = model.substr(model.length() - 4);
-					if (substr == ".obj")
-						mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
-					else if (substr == ".fbx")
-						mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
+					if (model.length() > 4)
+					{
+						std::string substr = model.substr(model.length() - 4);
+						
+						if (substr == ".obj")
+							mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
+						else if (substr == ".fbx")
+							mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
 
+					}
+					
 					if (mesh)
 					{
 						if (iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(actor->GetMesh()))
@@ -1494,7 +1495,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else
 	{
-		MaloW::Debug("C: Unknown Message Was sent from server " + msgArray[0] + " in HandleNetworkMessage");
+		MaloW::Debug("C: Unknown Message Header Was sent from server " + msgArray[0] + " in HandleNetworkMessage");
 		MaloW::Debug("C: " + msg);
 	}
 }
@@ -1519,6 +1520,17 @@ bool Client::CheckHumanSpecificMessages(std::vector<std::string> msgArray)
 			MaloW::Debug("Forgot Slot Type in Equip Item");
 		}
 		this->HandleEquipItem(id, slot);
+	}
+	else if (msgArray[0].find(M_ITEM_CRAFT) == 0)
+	{
+		if (msgArray.size() > 1)
+		{
+			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_CRAFT, msgArray[0]);
+			unsigned int stacks = this->zMsgHandler.ConvertStringToInt(M_ITEM_STACK_SIZE, msgArray[1]);
+
+			this->HandleCraftItem(id, stacks);
+		}
+		
 	}
 	else if(msgArray[0].find(M_ITEM_USE.c_str()) == 0)
 	{
@@ -1721,13 +1733,16 @@ std::vector<unsigned int> Client::RayVsWorld()
 				MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 				continue;
 			}
-
-			data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
-
-			if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+			if (!dynamic_cast<iFBXMesh*>(mesh))
 			{
-				Collisions.push_back(ID);
+				data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
+
+				if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+				{
+					Collisions.push_back(ID);
+				}
 			}
+			
 		}
 		
 	}
@@ -1823,7 +1838,10 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsi
 			this->zGuiManager->AddLootItemToLootGui(gid);
 		}
 	}
-	this->SendLootItemMessage(ActorID, gid.zID, gid.zType, gid.zSubType);
+	this->zGuiManager->ToggleInventoryGui();
+	this->zGuiManager->ToggleLootGui(ActorID);
+	this->zShowCursor = true;
+	//this->SendLootItemMessage(ActorID, gid.zID, gid.zType, gid.zSubType);
 }
 
 void Client::UpdateCameraOffset(unsigned int state)
@@ -1934,13 +1952,13 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 
 		position = Vector2(xPosition, yStartPosition + c++ * textheight);
 	}
-	std::string fontPath = "";
-	if (bError)
-		fontPath = "Media/Fonts/new";
-	else
-		fontPath = "Media/Fonts/3";
+	iText* text = NULL;
 
-	iText* text = this->zEng->CreateText(newString.c_str(), position, 0.7f, fontPath.c_str());
+	text = this->zEng->CreateText(newString.c_str(), position, 0.7f, "Media/Fonts/new");
+	if (bError)
+		text->SetColor(Vector3(0.0f, 0.0f, 255.0f));
+	else
+		text->SetColor(Vector3(255.0f, 0.0f, 0.0f));
 
 	TextDisplay* displayedText = new TextDisplay(text, START_TEXT_TIMER);
 

@@ -323,6 +323,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	std::string msg = "";
 
 	Player* player = pActor->GetPlayer();
+	player->GetKeys().ClearStates();
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 	this->zGame->ModifyLivingPlayers(-1);

@@ -38,25 +38,11 @@ Food::Food(const Food& other)
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
+	this->zStacking = other.zStacking;
+	this->zSlotSize = other.zSlotSize;
 	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
-	this->zStacking = other.zStacking;
-}
-
-Food::Food(const Food* other)
-{
-	this->zID = other->zID;
-	this->zStacks = other->zStacks;
-	this->zWeight = other->zWeight;
-	this->zHunger = other->zHunger;
-	this->zItemName = other->zItemName;
-	this->zIconPath = other->zIconPath;
-	this->zItemType = other->zItemType;
-	this->zMeshModel = other->zMeshModel;
-	this->zItemSubType = other->zItemSubType;
-	this->zItemDescription = other->zItemDescription;
-	this->zStacking = other->zStacking;
 }
 
 bool Food::Use()

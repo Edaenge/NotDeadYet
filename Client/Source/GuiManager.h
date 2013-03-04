@@ -14,6 +14,7 @@ struct Menu_select_data
 	CIRCMENU zAction;
 	int zID;
 	int zType;
+	int zSubType;
 };
 
 struct Looting_Gui_Data
@@ -50,6 +51,7 @@ public:
 	void UpdateInventoryWeight(float weight);
 	void ResetLoot();
 	void ResetInventory();
+	void ResetGui();
 	int GetLootingActor();
 
 	void Resize(int width, int height);

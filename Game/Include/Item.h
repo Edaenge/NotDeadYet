@@ -17,7 +17,8 @@ static const enum M_ITEM_TYPE
 	ITEM_TYPE_FOOD,
 	ITEM_TYPE_MATERIAL,
 	ITEM_TYPE_GEAR,
-	ITEM_TYPE_BANDAGE
+	ITEM_TYPE_BANDAGE,
+	ITEM_TYPE_MISC
 };
 /*! Abstract class for Items*/
 class Item

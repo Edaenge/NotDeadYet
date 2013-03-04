@@ -68,8 +68,6 @@ public:
 	/*! Pings the clients.*/
 	//void PingClients();
 
-	/*! Updates the server clock.*/
-	float Update();
 	/*! Runs the Game Loop.*/
 	void UpdateGame();
 	/*! */

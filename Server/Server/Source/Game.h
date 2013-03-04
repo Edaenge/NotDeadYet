@@ -20,6 +20,7 @@ class Entity;
 class WorldActor;
 class ItemActor;
 class AnimalActor;
+class CraftingManager;
 
 class Game : public Observer, public Observed
 {
@@ -28,6 +29,7 @@ private:
 	ActorManager* zActorManager;
 	GameMode* zGameMode;
 	World* zWorld;
+	CraftingManager* zCraftingManager;
 
 	PhysicsEngine* zPhysicsEngine;
 	ActorSynchronizer* zSyncher;

@@ -4,7 +4,8 @@
 
 static const std::string FILENAME = "PlayerConditionConfig.cfg";
 
-namespace {
+namespace 
+{
 	static PlayerConfigReader* playerConfig = NULL;
 }
 PlayerConfigReader* GetPlayerConfig()

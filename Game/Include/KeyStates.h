@@ -14,6 +14,7 @@ public:
 	bool GetKeyState(const unsigned int key) const;
 	/*! Change the value for the Key State*/
 	void SetKeyState(const unsigned int key, const bool value);
+	void ClearStates();
 private:
 	bool zKeyState[KEY_CAP];
 };
