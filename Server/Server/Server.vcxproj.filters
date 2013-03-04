@@ -296,5 +296,8 @@
     <ClInclude Include="Source\CraftingManager.h">
       <Filter>Source\Handlers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Game\Include\sounds.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

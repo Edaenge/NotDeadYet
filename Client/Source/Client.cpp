@@ -1447,8 +1447,20 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		std	::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
+		float eventId = this->zMsgHandler.ConvertStringToInt(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
+
+		AudioManager* am = AudioManager::GetInstance();
+		IEventHandle* tempHandle;
+		if(am->GetEventHandle(eventId, tempHandle) == FMOD_OK)
+		{
+			FMOD_VECTOR* temp = new FMOD_VECTOR;
+			temp->x = pos.x;
+			temp->y = pos.y;
+			temp->z = pos.z;
+			tempHandle->Setposition(temp);
+			tempHandle->Play();
+		}
 
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)

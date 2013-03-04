@@ -31,6 +31,7 @@
 #include "AnimationFileReader.h"
 #include "PlayerConfigReader.h"
 #include "CraftingManager.h"
+#include "sounds.h"
 
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
@@ -436,15 +437,21 @@ bool Game::Update( float dt )
 	{
 		if(PlayerActor* cActor = dynamic_cast<PlayerActor*>((*i)->GetActor()))
 		{
-			if(cActor->GetStamina() < 25.0f)
+			if(cActor->GetExhausted())
 			{
-				if(cActor->UpdateBreathSoundTimer(dt))
+				NetworkMessageConverter NMC;
+				std::string msg = "";
+				if(cActor->GetModel().find("female"))
 				{
-					NetworkMessageConverter NMC;
-					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/Running_Breath_4.mp3");
-					msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
-					this->SendToAll(msg);
+					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENT_NOTDEADYET_WOMAN_BREATHEAFTERRUN);
 				}
+				else
+				{
+					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENT_NOTDEADYET_MAN_BREATHEAFTERRUN);
+				}
+
+				msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
+				this->SendToAll(msg);
 			}
 		}
 
