@@ -87,14 +87,19 @@ void PickAnimalMenu::Init()
 
 	float buttonSize = (150.0f / 768.0f) * windowHeight;
 
-	temp = new SimpleButton(offSet + (340.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/UI/PickDeer.png", 
-		buttonSize, buttonSize, new ChangeSetEvent(DEER), "", "", offSet + (340.0f / 1024.0f) * dx, 
-		(235.0f / 768.0f) * windowHeight, buttonSize, buttonSize);
+	temp = new SimpleButton(offSet + (210.0f / 1024.0f) * dx, (325.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/UI/PickSpirit.png", 
+		buttonSize, buttonSize, new ChangeSetEvent(SPIRIT), "", "", offSet + (210.0f / 1024.0f) * dx, 
+		(325.0f / 768.0f) * windowHeight, buttonSize, buttonSize);
 	zSets[MAINSET].AddElement(temp);
 
-	temp = new SimpleButton(offSet + (540.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/UI/PickBear.png", 
-		buttonSize, buttonSize, new ChangeSetEvent(BEAR), "", "", offSet + (540.0f / 1024.0f) * dx, 
-		(235.0f / 768.0f) * windowHeight, buttonSize, buttonSize);
+	temp = new SimpleButton(offSet + (410.0f / 1024.0f) * dx, (325.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/UI/PickDeer.png", 
+		buttonSize, buttonSize, new ChangeSetEvent(DEER), "", "", offSet + (410.0f / 1024.0f) * dx, 
+		(325.0f / 768.0f) * windowHeight, buttonSize, buttonSize);
+	zSets[MAINSET].AddElement(temp);
+
+	temp = new SimpleButton(offSet + (610.0f / 1024.0f) * dx, (325.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/UI/PickBear.png", 
+		buttonSize, buttonSize, new ChangeSetEvent(BEAR), "", "", offSet + (610.0f / 1024.0f) * dx, 
+		(325.0f / 768.0f) * windowHeight, buttonSize, buttonSize);
 	zSets[MAINSET].AddElement(temp);
 
 	this->zPrimarySet = MAINSET;

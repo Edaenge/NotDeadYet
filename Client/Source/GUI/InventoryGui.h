@@ -48,6 +48,7 @@ public:
 	void Resize(float windowWidth, float windowHeight, float dx);
 private:
 	Vector3 lerp(Vector3 x, Vector3 y, float a);
+	void RemoveBlockers(int m, bool open, GraphicsEngine* ge, int inventory);
 
 	std::vector<InventorySlotGui*> zSlotGui;
 	std::map<int, InventorySlotGui*> zWeaponSlotGui;
