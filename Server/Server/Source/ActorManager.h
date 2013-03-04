@@ -11,6 +11,7 @@ class ActorManager : public Observed, public Observer
 {
 	ActorSynchronizer *zSynch;
 	std::set<Actor*> zActors;
+	std::set<Actor*> zCollideableActors;
 
 public:
 	ActorManager( ActorSynchronizer* syncher );
@@ -21,6 +22,7 @@ public:
 	/*! Removes all actors, physics objects WILL be freed.*/
 	void ClearAll();
 	std::set<Actor*>& GetActors() {return this->zActors;}
+	std::set<Actor*>& GetCollideableActors() {return this->zCollideableActors;}
 	Actor* GetActor(const unsigned int ID) const;
 	/*! Adds all Actors within the circle to out. Returns total amount of actors found*/
 	unsigned int GetActorsInCircle(const Vector2& center, float radius, std::set<Actor*>& out) const;

@@ -91,8 +91,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	//this->SpawnItemsDebug();
+	this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -450,11 +450,11 @@ bool Game::Update( float dt )
 
 		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
 		{
-			playerBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+			playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 		}
 		else if( ProjectileArrowBehavior* projectileArrowBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i) )
 		{
-			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 		}
 		
 		if ( (*i)->Update(dt) )
@@ -467,8 +467,8 @@ bool Game::Update( float dt )
 			
 			delete temp;
 			temp = NULL;
-			
-			this->zPhysicsEngine->DeletePhysicsObject(oldActor->GetPhysicsObject());
+			PhysicsObject* pObject = oldActor->GetPhysicsObject();
+			this->zPhysicsEngine->DeletePhysicsObject(pObject);
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
 		}
@@ -487,82 +487,48 @@ bool Game::Update( float dt )
 	zWorld->Update();
 
 	//Updating animals and Check fog.
-	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+	static float testUpdater = 0.0f;
+
+	testUpdater += dt;
+
+	if(testUpdater > 4.0f)
 	{
-		if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>( (*i) ))
+		//Creating targets to insert into the animals' behaviors
+		std::set<Actor*> aSet;
+
+		for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 		{
-			animalBehavior->SetCurrentTargets(counter);
-		}
-		else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>( (*i) ))
-		{
-			animalBehavior->SetCurrentTargets(counter);
-		}
-		else if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
-		{
-			if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
+			if(dynamic_cast<BioActor*>((*i)->GetActor()))
 			{
-				Vector2 center = this->zWorld->GetWorldCenter();
+				aSet.insert( (*i)->GetActor());
+			}
+		}
 
-				float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
-
-				if (radiusFromCenter > this->zCurrentFogEnclosement)
+		//Updating animals' targets and Check if Players Are in Fog.
+		for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+		{
+			if(AIBehavior* animalBehavior = dynamic_cast<AIBehavior*>( (*i) ))
+			{
+				animalBehavior->SetTargets(aSet);
+			}
+			else if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
+			{
+				if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
 				{
-					Damage dmg;
-					dmg.fogDamage = 1.0f * dt;
-					bActor->TakeDamage(dmg, bActor);
+					Vector2 center = this->zWorld->GetWorldCenter();
+
+					float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
+
+					if (radiusFromCenter > this->zCurrentFogEnclosement)
+					{
+						Damage dmg;
+						dmg.fogDamage = 1.0f * dt;
+						bActor->TakeDamage(dmg, bActor);
+					}
 				}
 			}
 		}
-	}
-
-	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
-	{
-		int counter = 0;
-		for(auto j = zBehaviors.begin(); j != zBehaviors.end(); j++)
-		{
-			
-			if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
-			{
-
-				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
-				{
-					//tempBehaviour->get_
-					//Actor* oldActor = NULL;
-					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
-				}
-				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
-				{
-					//Actor* oldActor = NULL;
-					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
-				}
-				else if(AIBearBehavior* tempBehaviour = dynamic_cast<AIBearBehavior*>(*j))
-				{
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, BEAR);
-				}
-			}
-			else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>(*i))
-			{
-				//animalBehavior->SetTargetInfo(counter,(*j)
-				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
-				{
-					//tempBehaviour->get_
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
-				}
-				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
-				{
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
-				}
-				else if(AIBearBehavior* tempBehaviour = dynamic_cast<AIBearBehavior*>(*j))
-				{
-					//Actor* oldActor = NULL;
-					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, BEAR);
-				}
-			}
-			counter++;
-		}
+		testUpdater = 0.0f;
 	}
 
 /*	// Collisions Tests
@@ -732,7 +698,7 @@ void Game::OnEvent( Event* e )
 	}
 	else if (PlayerCraftItemEvent* PCIE = dynamic_cast<PlayerCraftItemEvent*>(e))
 	{
-		HandleCraftItem(PCIE->clientData, PCIE->itemID);
+		HandleCraftItem(PCIE->clientData, PCIE->itemID, PCIE->craftedItemType, PCIE->craftedItemSubType);
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
@@ -880,24 +846,31 @@ void Game::OnEvent( Event* e )
 						{
 							ID = iActor->GetID();
 							Item* theItem = iActor->GetItem();
-							if(theItem->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+							if(theItem->GetItemType() == ITEM_TYPE_WEAPON_MELEE && theItem->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
 							{
 								idiotDamage.piercing = 25.0f;
 						
 								thePlayerActor->TakeDamage(idiotDamage,actor);
 							}
-							else if(theItem->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+							else if(theItem->GetItemType() == ITEM_TYPE_WEAPON_MELEE && theItem->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
 							{
 								Damage idiotDamage;
 								idiotDamage.piercing = 10.0f;
 						
 								thePlayerActor->TakeDamage(idiotDamage,actor);
 							}
-							else if(theItem->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
+							else if(theItem->GetItemType() == ITEM_TYPE_PROJECTILE && theItem->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
 							{
 								Damage idiotDamage;
 								idiotDamage.piercing = 5.0f;
 						
+								thePlayerActor->TakeDamage(idiotDamage,actor);
+							}
+							else if(theItem->GetItemType() == ITEM_TYPE_PROJECTILE && theItem->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+							{
+								Damage idiotDamage;
+								idiotDamage.piercing = 5.0f;
+
 								thePlayerActor->TakeDamage(idiotDamage,actor);
 							}
 							toBeRemoved = iActor;
@@ -945,7 +918,8 @@ void Game::OnEvent( Event* e )
 		auto i = zWorldActors.find(ERE->entity);
 		if ( i != zWorldActors.end() )
 		{
-			zPhysicsEngine->DeletePhysicsObject(i->second->GetPhysicsObject());
+			PhysicsObject* Pobj = i->second->GetPhysicsObject();
+			zPhysicsEngine->DeletePhysicsObject(Pobj);
 			this->zActorManager->RemoveActor(i->second);
 			this->zWorldActors.erase(i);
 		}
@@ -1054,9 +1028,9 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	if ( behavior )	
 	{
 		zBehaviors.insert(behavior);
-		std::set<Actor*> actors;
-		this->zActorManager->GetCollideableActorsInCircle(behavior->GetActor()->GetPosition().GetXZ(), behavior->GetCollisionRadius(), actors);
-		behavior->SetNearActors(actors);
+		//std::set<Actor*> actors;
+		//this->zActorManager->GetCollideableActorsInCircle(behavior->GetActor()->GetPosition().GetXZ(), behavior->GetCollisionRadius(), actors);
+		//behavior->SetNearActors(actors);
 	}
 
 	player->zBehavior = behavior;
@@ -1202,38 +1176,38 @@ void Game::HandleConnection( ClientData* cd )
 
 void Game::HandleDisconnect( ClientData* cd )
 {
-		// Delete Player Behavior
-		auto playerIterator = zPlayers.find(cd);
-		auto playerBehavior = playerIterator->second->GetBehavior();
+	// Delete Player Behavior
+	auto playerIterator = zPlayers.find(cd);
+	auto playerBehavior = playerIterator->second->GetBehavior();
 		
-		// Create AI Behavior For Players That Disconnected
-		if ( PlayerDeerBehavior* playerDeer = dynamic_cast<PlayerDeerBehavior*>(playerBehavior) )
-		{
-			AIDeerBehavior* aiDeer = new AIDeerBehavior(playerDeer->GetActor(), zWorld);
-			zBehaviors.insert(aiDeer);
-		}
-		else if ( PlayerBearBehavior* playerBear = dynamic_cast<PlayerBearBehavior*>(playerBehavior) )
-		{
-			AIBearBehavior* aiDeer = new AIBearBehavior(playerBear->GetActor(), zWorld);
-			zBehaviors.insert(aiDeer);
-		}
-		//Kills actor if human
-		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
-		{
-			Actor* pActor = pHuman->GetActor();
-			dynamic_cast<BioActor*>(pActor)->Kill();
-		}
+	// Create AI Behavior For Players That Disconnected
+	if ( PlayerDeerBehavior* playerDeer = dynamic_cast<PlayerDeerBehavior*>(playerBehavior) )
+	{
+		AIDeerBehavior* aiDeer = new AIDeerBehavior(playerDeer->GetActor(), zWorld);
+		zBehaviors.insert(aiDeer);
+	}
+	else if ( PlayerBearBehavior* playerBear = dynamic_cast<PlayerBearBehavior*>(playerBehavior) )
+	{
+		AIBearBehavior* aiDeer = new AIBearBehavior(playerBear->GetActor(), zWorld);
+		zBehaviors.insert(aiDeer);
+	}
+	//Kills actor if human
+	else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
+	{
+		Actor* pActor = pHuman->GetActor();
+		dynamic_cast<BioActor*>(pActor)->Kill();
+	}
 		
-		this->SetPlayerBehavior(playerIterator->second, NULL);
+	this->SetPlayerBehavior(playerIterator->second, NULL);
 
-		PlayerRemoveEvent PRE;
-		PRE.player = playerIterator->second;
-		NotifyObservers(&PRE);
+	PlayerRemoveEvent PRE;
+	PRE.player = playerIterator->second;
+	NotifyObservers(&PRE);
 
-		Player* temp = playerIterator->second;
-		delete temp;
-		temp = NULL;
-		zPlayers.erase(playerIterator);
+	Player* temp = playerIterator->second;
+	delete temp;
+	temp = NULL;
+	zPlayers.erase(playerIterator);
 }
 
 void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID )
@@ -1338,7 +1312,7 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No Lootable Objects Found."));
 }
 
-void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType )
+void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType )
 {
 	Actor* actor = this->zActorManager->GetActor(objID);
 	NetworkMessageConverter NMC;
@@ -1346,7 +1320,7 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 	bool stacked = false;
 	bool itemScattered = false;
 	auto playerActor = this->zPlayers.find(cd);
-	auto* pBehaviour = playerActor->second->GetBehavior();
+	auto pBehaviour = playerActor->second->GetBehavior();
 
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(pBehaviour->GetActor());
 	
@@ -1471,12 +1445,11 @@ void Game::HandleLootItem( ClientData* cd, unsigned int itemID, unsigned int ite
 
 				cd->Send(msg);
 			}
-			
 		}
 	}
 }
 
-void Game::HandleDropItem( ClientData* cd, unsigned int objectID )
+void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 {
 	Actor* actor  = NULL;
 	PlayerActor* pActor = NULL;
@@ -1503,7 +1476,7 @@ void Game::HandleDropItem( ClientData* cd, unsigned int objectID )
 	cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
 }
 
-void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
+void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 {
 	auto playerIterator = this->zPlayers.find(cd);
 	auto playerBehavior = playerIterator->second->GetBehavior();
@@ -1622,7 +1595,7 @@ void Game::HandleUseItem( ClientData* cd, unsigned int itemID )
 	}
 }
 
-void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
+void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 {
 	Actor* actor = NULL;
 
@@ -1683,9 +1656,7 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
 		
 				//Set Nearby actors
-				std::set<Actor*> actors;
-				this->zActorManager->GetCollideableActorsInCircle(actor->GetPosition().GetXZ(), projBehavior->GetCollisionRadius(), actors);
-				projBehavior->SetNearActors(actors);
+				projBehavior->SetNearActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearActors() );
 
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
@@ -1751,14 +1722,14 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 	}
 }
 
-void Game::HandleCraftItem( ClientData* cd, unsigned int itemID )
+void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsigned int itemType, const unsigned int itemSubType)
 {
 	auto playerIterator = this->zPlayers.find(cd);
 	auto playerBehavior = playerIterator->second->GetBehavior();
 
 	Actor* actor = playerBehavior->GetActor();
-	unsigned int craftType = ITEM_TYPE_PROJECTILE;
-	unsigned int craftSubType = ITEM_SUB_TYPE_ARROW;
+	unsigned int craftType = itemType;
+	unsigned int craftSubType = itemSubType;
 	if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
 	{
 		if (Inventory* inv = pActor->GetInventory())

@@ -11,7 +11,7 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 	this->zVelDown = 0.0f;
 
 	this->zNearActorsIndex = 0;
-	this->zCollisionRadius = 30.0f;
+	this->zCollisionRadius = 100.0f;
 	this->zPlayerConfigReader = GetPlayerConfig();}
 
 PlayerBehavior::~PlayerBehavior()
@@ -46,13 +46,13 @@ bool PlayerBehavior::Update(float dt)
 bool PlayerBehavior::RefreshNearCollideableActors( const std::set<Actor*>& actors )
 {
 	bool canCollide = this->zActor->CanCollide();
+
 	if(!canCollide)
 		return false;
 
 	unsigned int size = actors.size();
-	// Increment 10%
-	unsigned int increment = (unsigned int)(size * 0.1);
-	unsigned int counter = 0;
+	// Increment 5%
+	unsigned int increment = (unsigned int)(size * 0.05);
 
 	Vector3 pos = this->zActor->GetPosition();
 
@@ -75,12 +75,14 @@ bool PlayerBehavior::RefreshNearCollideableActors( const std::set<Actor*>& actor
 		if( (*it) != this->zActor && (*it)->CanCollide() )
 		{
 			Vector3 vec = (*it)->GetPosition() - pos;
-			auto found = zNearActors.find(*it);
-
-			if( found == zNearActors.end() && vec.GetLength() <= zCollisionRadius )
+			if( vec.GetLength() <= zCollisionRadius )
 			{
-				counter++;
 				zNearActors.insert(*it);
+			}
+			else
+			{
+				if( zNearActors.find(*it) != zNearActors.end() )
+					zNearActors.erase(*it);
 			}
 		}
 
@@ -88,7 +90,7 @@ bool PlayerBehavior::RefreshNearCollideableActors( const std::set<Actor*>& actor
 		it++;
 	}
 
-	//Remove old actors that is not nearBy
+/*	//Remove old actors that is not nearBy
 	auto begin = zNearActors.begin();
 	std::advance(begin, counter);
 
@@ -107,7 +109,7 @@ bool PlayerBehavior::RefreshNearCollideableActors( const std::set<Actor*>& actor
 		{
 			begin++;
 		}
-	}
+	}*/
 
 	return true;
 }

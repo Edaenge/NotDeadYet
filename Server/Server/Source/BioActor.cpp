@@ -20,6 +20,7 @@ BioActor::BioActor() : Actor()
 	this->zStaminaChanged = true;
 
 	this->zBleedingLevel = 0;
+	this->zValid = false;
 }
 
 BioActor::BioActor(Player* player) : Actor()
@@ -41,6 +42,7 @@ BioActor::BioActor(Player* player) : Actor()
 	this->zStaminaChanged = true;
 
 	this->zBleedingLevel = 0;
+	this->zValid = false;
 }
 
 BioActor::~BioActor()
@@ -59,7 +61,6 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 
 	this->zHealth -= dmg.GetTotal();
 	this->zHealthChanged = true;
-	MaloW::Debug("Damage Taken " + MaloW::convertNrToString(dmg.GetTotal()));
 
 	if(this->zHealth <= 0.0f)
 	{

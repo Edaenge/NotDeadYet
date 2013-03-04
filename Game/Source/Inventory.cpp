@@ -88,11 +88,11 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 			if(available_slots < max_stack)
 				max_stack = available_slots;
 
-			if( max_stack < item->GetStackSize() )
+			if((unsigned int)max_stack < item->GetStackSize())
 			{
 				stack = max_stack;
 			}
-			else if( max_stack >= item->GetStackSize() )
+			else if((unsigned int)max_stack >= item->GetStackSize())
 			{
 				stack = item->GetStackSize();
 			}

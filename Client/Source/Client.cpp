@@ -123,7 +123,7 @@ Client::~Client()
 	if (this->zServerUpsText)
 		this->zEng->DeleteText(this->zServerUpsText);
 
-	if (this->zServerUpsText)
+	if (this->zLatencyText)
 		this->zEng->DeleteText(this->zLatencyText);
 
 	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
@@ -324,7 +324,7 @@ void Client::Life()
 
 		this->UpdateGame();
 
-		Sleep(1);
+		Sleep(5);
 	}
 
 	this->zRunning = false;
@@ -423,11 +423,13 @@ void Client::ReadMessages()
 			//Check if Client has received a Message
 			if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(ev) )
 			{
-				HandleNetworkMessage(np->GetMessage());
+				this->HandleNetworkMessage(np->GetMessage());
 			}
 			else if ( DisconnectedEvent* np = dynamic_cast<DisconnectedEvent*>(ev) )
 			{
-				CloseConnection("Disconnected");
+				this->AddDisplayText("Connection Closed", true);
+				Sleep(5000);
+				this->CloseConnection("Disconnected");
 			}
 
 			SAFE_DELETE(ev);
@@ -554,8 +556,38 @@ void Client::CheckPlayerSpecificKeys()
 			}
 			if (msd.zAction == CRAFT)
 			{
+				
 				if (item)
-					SendCraftItemMessage(item->GetID());
+				{
+					unsigned int type = 1000;
+					unsigned int subType = 1000;
+
+					if (item->GetItemSubType() == ITEM_SUB_TYPE_THREAD || item->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK)
+					{
+						type = ITEM_TYPE_WEAPON_RANGED;
+						subType = ITEM_SUB_TYPE_BOW;
+					}
+					else if (item->GetItemSubType() == ITEM_SUB_TYPE_SMALL_STICK)
+					{
+						type = ITEM_TYPE_PROJECTILE;
+						subType = ITEM_SUB_TYPE_ARROW;
+					}
+					else if (item->GetItemSubType() == ITEM_SUB_TYPE_LARGE_STICK)
+					{
+						type = ITEM_TYPE_MISC;
+						subType = ITEM_SUB_TYPE_REGULAR_TRAP;
+					}
+					else if (item->GetItemSubType() == ITEM_SUB_TYPE_DISENFECTANT_LEAF)
+					{
+						type = ITEM_TYPE_BANDAGE;
+						subType = ITEM_SUB_TYPE_BANDAGE_POOR;
+					}
+					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_CRAFT, (float)item->GetID());
+					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)type);
+					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_SUB_TYPE, (float)subType);
+					this->zServerChannel->Send(msg);
+					//SendCraftItemMessage(item->GetID());
+				}
 			}
 			else if(msd.zAction == EQUIP)
 			{
@@ -1747,9 +1779,7 @@ std::vector<unsigned int> Client::RayVsWorld()
 					Collisions.push_back(ID);
 				}
 			}
-			
 		}
-		
 	}
 
 	return Collisions;

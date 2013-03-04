@@ -117,6 +117,13 @@ void GameModeTest::OnEvent( Event* e )
 	else if( PlayerRemoveEvent* PRE = dynamic_cast<PlayerRemoveEvent*>(e) )
 	{
 		this->zScoreBoard.erase(PRE->player);
+		auto playerBehavior = PRE->player->GetBehavior();
+		if (playerBehavior)
+		{
+			Actor* actor = playerBehavior->GetActor();
+
+			this->zGame->GetActorManager()->RemoveActor(actor);
+		}
 		this->zPlayers.erase(PRE->player);
 	}
 }
@@ -131,12 +138,7 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 
-	PhysicsObject* pObject = pActor->GetPhysicsObject();
-	if (pObject)
-	{
-		GetPhysics()->DeletePhysicsObject(pObject);
-		pObject = NULL;
-	}
+	
 	ClientData* cd = player->GetClientData();
 
 	//Create new Player
@@ -146,10 +148,18 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 
 	Vector3 direction = pActor->GetDir();
 	std::string model = pActor->GetModel();
+
 	if (model.length() > 4)
 	{
 		if (model.substr(model.length() - 4) == ".fbx")
 			model = "Media/Models/temp_guy.obj";
+	}
+
+	PhysicsObject* pObject = pActor->GetPhysicsObject();
+	if (pObject)
+	{
+		GetPhysics()->DeletePhysicsObject(pObject);
+		pObject = NULL;
 	}
 
 	PhysicsObject* pObj = GetPhysics()->CreatePhysicsObject(model, position);
