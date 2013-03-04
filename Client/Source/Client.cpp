@@ -123,7 +123,7 @@ Client::~Client()
 	if (this->zServerUpsText)
 		this->zEng->DeleteText(this->zServerUpsText);
 
-	if (this->zServerUpsText)
+	if (this->zLatencyText)
 		this->zEng->DeleteText(this->zLatencyText);
 
 	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
@@ -350,7 +350,7 @@ void Client::UpdateGame()
 			this->SendClientUpdate();
 
 			std::stringstream ss;
-			ss << this->zGameTimer->GetFPS() <<" Client Frames Per Second";
+			ss << this->zGameTimer->GetFPS() <<" CLIENT FPS";
 			this->zClientUpsText->SetText(ss.str().c_str());
 		}
 
@@ -369,7 +369,7 @@ void Client::CheckMenus()
 {
 	if(this->zPam->GetShow())
 	{
-		int returnValue = this->zPam->Run();
+		int returnValue = this->zPam->Run(0);
 		if(returnValue == DEER)
 		{
 			this->zPam->ToggleMenu();
@@ -423,11 +423,13 @@ void Client::ReadMessages()
 			//Check if Client has received a Message
 			if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(ev) )
 			{
-				HandleNetworkMessage(np->GetMessage());
+				this->HandleNetworkMessage(np->GetMessage());
 			}
 			else if ( DisconnectedEvent* np = dynamic_cast<DisconnectedEvent*>(ev) )
 			{
-				CloseConnection("Disconnected");
+				this->AddDisplayText("Connection Closed", true);
+				Sleep(5000);
+				this->CloseConnection("Disconnected");
 			}
 
 			SAFE_DELETE(ev);
@@ -1292,7 +1294,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		std::stringstream ss;
 
-		ss << (int)latency <<" ms";
+		ss << (int)latency <<" MS";
 		zLatencyText->SetText(ss.str().c_str());
 
 		this->zActorManager->SetLatency((int)latency);
@@ -1303,7 +1305,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		std::stringstream ss;
 
-		ss << updatesPerSec <<" Server Frames Per Second";
+		ss << updatesPerSec <<" SERVER FPS";
 		this->zServerUpsText->SetText(ss.str().c_str());
 	}
 	else if (msgArray[0].find(M_SERVER_RESTART.c_str()) == 0)

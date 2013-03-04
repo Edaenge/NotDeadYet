@@ -119,5 +119,5 @@ protected:
 
 	Player* zPlayer;
 public:
-		bool zValid;
+	bool zValid;
 };

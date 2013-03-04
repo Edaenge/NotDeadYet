@@ -52,7 +52,7 @@ public:
 	virtual ~PhysicsEngine();
 
 	PhysicsObject* CreatePhysicsObject(const std::string& path, Vector3 pos = Vector3(0.0f, 0.0f, 0.0f));
-	void DeletePhysicsObject(PhysicsObject* obj);
+	void DeletePhysicsObject(PhysicsObject*& obj);
 
 	// Functions
 	virtual PhysicsCollisionData GetCollisionRayMesh(Vector3 rayOrigin, Vector3 rayDirection, PhysicsObject* imesh);

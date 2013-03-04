@@ -182,6 +182,39 @@ void GuiManager::ShowCircularItemGui()
 
 			float x = mousePosition.x - dimension.x * 0.5f;
 			float y = mousePosition.y - dimension.y * 0.5f;
+
+			float windowWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
+			float windowHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
+
+			bool changeYPos = false;
+			bool changeXPos = false;
+
+			if(x  > windowWidth - dimension.x)
+			{
+				x = windowWidth - dimension.x;
+				changeXPos = true;
+			}
+			else if(x < 0)
+			{
+				x = 0;
+				changeXPos = true;
+			}
+
+			if(y > windowHeight - dimension.y)
+			{
+				y = windowHeight - dimension.y;
+				changeYPos = true;
+			}
+			else if(y < 0)
+			{
+				y = 0;
+				changeYPos = true;
+			}
+
+			if(changeXPos || changeYPos)
+			{
+				GetGraphics()->GetKeyListener()->SetMousePosition(Vector2(x + (dimension.x * 0.5f), y + (dimension.y * 0.5f)));
+			}
 			this->zInvCircGui->SetPosition(Vector2(x, y));
 
 			//Show Gui

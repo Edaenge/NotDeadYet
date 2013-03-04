@@ -89,10 +89,14 @@ public:
 	inline bool GetEquipped(){ return this->zEquipped; }
 	inline void SetEquipped(bool value){ this->zEquipped = value; }
 
+	inline bool GetBlocker() { return this->zBlocker; }
+	inline void SetBlocker(bool value){ this->zBlocker = value; }
+
 	void SetStacks(int stacks) { this->zGid.zStacks = stacks; if(this->zStackText) this->zStackText->SetText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str()); }
 
 	void AddItemToSlot(Gui_Item_Data gid, bool invOpen, GraphicsEngine* ge);
 	void RemoveItemFromSlot(bool invOpen, GraphicsEngine* ge);
+;
 private:
 	iImage* zSlotImage;
 
@@ -102,4 +106,5 @@ private:
 
 	bool zBlocked;
 	bool zEquipped;
+	bool zBlocker;
 };
