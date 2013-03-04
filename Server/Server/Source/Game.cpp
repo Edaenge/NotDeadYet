@@ -450,11 +450,11 @@ bool Game::Update( float dt )
 
 		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
 		{
-			playerBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+			playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 		}
 		else if( ProjectileArrowBehavior* projectileArrowBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i) )
 		{
-			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 		}
 		
 		if ( (*i)->Update(dt) )
@@ -1054,9 +1054,9 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	if ( behavior )	
 	{
 		zBehaviors.insert(behavior);
-		std::set<Actor*> actors;
-		this->zActorManager->GetCollideableActorsInCircle(behavior->GetActor()->GetPosition().GetXZ(), behavior->GetCollisionRadius(), actors);
-		behavior->SetNearActors(actors);
+		//std::set<Actor*> actors;
+		//this->zActorManager->GetCollideableActorsInCircle(behavior->GetActor()->GetPosition().GetXZ(), behavior->GetCollisionRadius(), actors);
+		//behavior->SetNearActors(actors);
 	}
 
 	player->zBehavior = behavior;
@@ -1683,9 +1683,7 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
 		
 				//Set Nearby actors
-				std::set<Actor*> actors;
-				this->zActorManager->GetCollideableActorsInCircle(actor->GetPosition().GetXZ(), projBehavior->GetCollisionRadius(), actors);
-				projBehavior->SetNearActors(actors);
+				projBehavior->SetNearActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearActors() );
 
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);

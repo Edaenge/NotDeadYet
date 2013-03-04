@@ -324,7 +324,7 @@ void Client::Life()
 
 		this->UpdateGame();
 
-		Sleep(1);
+		Sleep(5);
 	}
 
 	this->zRunning = false;
