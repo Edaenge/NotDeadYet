@@ -119,7 +119,7 @@ void Host::Life()
 		this->UpdateGame();
 		
 
-		Sleep(5);
+		Sleep(10);
 	}
 }
 
