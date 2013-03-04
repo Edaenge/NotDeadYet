@@ -11,7 +11,7 @@ bool AIDeerBehavior::InitValues()
 {
 	this->InitPathfinder();
 
-	Target vectorFilling; 
+	/*Target vectorFilling; 
 	vectorFilling.health = 0;
 	vectorFilling.movementNoise = 0;
 	vectorFilling.position = Vector3(0,0,0);
@@ -20,7 +20,7 @@ bool AIDeerBehavior::InitValues()
 	for(int i = 0; i < 32; i++)
 	{
 		this->zTargets.push_back(vectorFilling);
-	}
+	}*/
 
 	this->zIntervalCounter = 0;
 
@@ -257,7 +257,8 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 
 	Vector3 dest;
 	//We make a check to see if the position is available, to avoid wasting time in the pathfinder functions.
-	dest = this->zMainTarget.position - dActor->GetPosition();
+	//dest = this->zMainTarget.position - dActor->GetPosition();
+	dest = this->zMainActorTarget->GetPosition() - dActor->GetPosition();
 	dest.Normalize();
 	dest = dest * -1;
 	dest *= (float)this->zFleeDistance;
@@ -324,13 +325,13 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 	}
 }
 
-void AIDeerBehavior::SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind)
-{
-	this->zTargets[number].position = pos;
-	this->zTargets[number].movementNoise = velocity;
-	this->zTargets[number].health = health;
-	this->zTargets[number].kind = kind;
-}
+//void AIDeerBehavior::SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind)
+//{
+//	this->zTargets[number].position = pos;
+//	this->zTargets[number].movementNoise = velocity;
+//	this->zTargets[number].health = health;
+//	this->zTargets[number].kind = kind;
+//}
 
 bool AIDeerBehavior::Update( float dt )
 {
@@ -339,8 +340,8 @@ bool AIDeerBehavior::Update( float dt )
 
 	DeerActor* dActor = dynamic_cast<DeerActor*>(this->zActor);
 
-	static float testInterval = 0; //Just for debugging.
-	testInterval += dt;
+	//static float testInterval = 0; //Just for debugging.
+	//testInterval += dt;
 	this->zIntervalCounter += dt;
 	//this->zIntervalCounter += dt;
 	this->zFearIntervalCounter += dt;
@@ -357,30 +358,55 @@ bool AIDeerBehavior::Update( float dt )
 	float zDistance = 0;
 	float finalDistance = 0;
 
-	int maximumNodesTest = 10;
+	int maximumNodesTest = 5;
 
 	//Determine closest threat/target
-	for(int i = 0; i < this->GetCurrentTargets(); i++)
+	
+	auto i = this->GetTargets().begin();
+	for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
 	{
-		xDistance = dActor->GetPosition().x - this->zTargets[i].position.x; //Math, could use optimization, I think.
+		xDistance = dActor->GetPosition().x - (*i)->GetPosition().x; //Math, could use optimization, I think.
 		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
-		zDistance = dActor->GetPosition().z - this->zTargets[i].position.z;
+		zDistance = dActor->GetPosition().z - (*i)->GetPosition().z;
 		finalDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
-		if( finalDistance < this->zMinimumDistance && this->zTargets[i].kind != DEER) 
-		{
-			this->zTargets[i].valid = true;
-			if(finalDistance < shortestDistance)
-			{
-				shortestDistance = finalDistance;
-				this->zMainTarget = this->zTargets[i]; //Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.
-			}
-			nrOfPredators++;
+		if( finalDistance < this->zMinimumDistance && !dynamic_cast<DeerActor*>((*i)) && dynamic_cast<BioActor*>((*i))) 
+		{	
+				dynamic_cast<BioActor*>((*i))->zValid = true;
+				if(finalDistance < shortestDistance)
+				{
+					shortestDistance = finalDistance;
+					this->zMainActorTarget = (*i); //Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.
+				}
+				nrOfPredators++;
 		}
-		else
+		else if(dynamic_cast<BioActor*>((*i)))
 		{
-			this->zTargets[i].valid = false;
+			dynamic_cast<BioActor*>((*i))->zValid = false;
 		}
 	}
+
+	
+	//for(int i = 0; i < this->GetCurrentTargets(); i++)
+	//{
+	//	xDistance = dActor->GetPosition().x - this->zTargets[i].position.x; //Math, could use optimization, I think.
+	//	//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
+	//	zDistance = dActor->GetPosition().z - this->zTargets[i].position.z;
+	//	finalDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
+	//	if( finalDistance < this->zMinimumDistance && this->zTargets[i].kind != DEER) 
+	//	{
+	//		this->zTargets[i].valid = true;
+	//		if(finalDistance < shortestDistance)
+	//		{
+	//			shortestDistance = finalDistance;
+	//			this->zMainTarget = this->zTargets[i]; //Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.
+	//		}
+	//		nrOfPredators++;
+	//	}
+	//	else
+	//	{
+	//		this->zTargets[i].valid = false;
+	//	}
+	//}
 	if(nrOfPredators > 0)
 	{
 		nearbyPredatorsExist = true;
@@ -415,29 +441,33 @@ bool AIDeerBehavior::Update( float dt )
 			{
 				fear += zExtraFearWithCloseProximity;
 			}
-
-			for(int i = 0; i < this->GetCurrentTargets(); i++)
+			
+			auto i = this->GetTargets().begin();
+			for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
 			{
-				if(this->zTargets[i].valid == true)
+				if(dynamic_cast<BioActor*>((*i)))
 				{
-				//Do a mathematical check, see if anyone is right in front of the deer. But... how? http://www.youtube.com/watch?v=gENVB6tjq_M
-					Vector3 actorPosition = dActor->GetPosition();
-					float dotProduct = dActor->GetDir().GetDotProduct( this->zTargets[i].position - actorPosition );
-					if(dotProduct > this->zFieldOfView)//This sight is relatively wide, since it is a deer. If this is true, then the deer sees a player.
+					if(dynamic_cast<BioActor*>((*i))->zValid == true)
 					{
-						//Which means, it is even more afraid.
-						fear += zExtraFearAtSight;
-					}
-					if(this->zTargets[i].movementNoise > this->zThreatMovementSpeedThreshold)
-					{
-						fear += this->zExtraFearAtThreatMovementSpeed;
-					}
+					//Do a mathematical check, see if anyone is right in front of the deer. But... how? http://www.youtube.com/watch?v=gENVB6tjq_M
+						Vector3 actorPosition = dActor->GetPosition();
+						float dotProduct = dActor->GetDir().GetDotProduct( (*i)->GetPosition() - actorPosition );
+						if(dotProduct > this->zFieldOfView)//This sight is relatively wide, since it is a deer. If this is true, then the deer sees a player.
+						{
+							//Which means, it is even more afraid.
+							fear += zExtraFearAtSight;
+						}
+						if(dynamic_cast<BioActor*>((*i))->GetVelocity() > this->zThreatMovementSpeedThreshold)
+						{
+							fear += this->zExtraFearAtThreatMovementSpeed;
+						}
 
-					if(this->zTargets[i].health != 0) // No dbz here!
-					{
-						fear -= (dActor->GetHealth() / this->zTargets[i].health) / nrOfPredators; //If the animal is faced with a very weak player(s), it gets some confidence. This is reduced with each player present.
+						if(dynamic_cast<BioActor*>((*i))->GetHealth() != 0) // No dbz here!
+						{
+							fear -= (dActor->GetHealth() / dynamic_cast<BioActor*>((*i))->GetHealth()) / nrOfPredators; //If the animal is faced with a very weak player(s), it gets some confidence. This is reduced with each player present.
+						}
 					}
-				}
+				}	
 			}			
 
 			this->SetFearLevel( this->GetFearLevel() + fear * this->zConfidenceKoef); //5 is unrelated to the movementNoise. Probably not good enough math. The theory is that the animal is constantly getting more afraid.
@@ -523,15 +553,15 @@ bool AIDeerBehavior::Update( float dt )
 	{
 		this->zCurrentDistanceFled = 0;
 		this->zPanic = false;
-		xDistance = dActor->GetPosition().x - this->zMainTarget.position.x;
+		xDistance = dActor->GetPosition().x - this->zMainActorTarget->GetPosition().x;
 		//yDistance = this->GetPosition().y - this->zMainTarget.position.y;
-		zDistance = dActor->GetPosition().z - this->zMainTarget.position.z;
+		zDistance = dActor->GetPosition().z - this->zMainActorTarget->GetPosition().z;
 		float lastDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
 		if( this->GetIfNeedPath() == true )
 		{
 			this->SetIfNeedPath(false);
 			this->zCurrentPath.clear();
-			if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, maximumNodesTest) == false ) //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large. //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40) == false
+			if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zMainActorTarget->GetPosition().x,  this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest) == false ) //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large. //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40) == false
 			{
 				this->SetIfNeedPath(true);
 			}
@@ -544,7 +574,7 @@ bool AIDeerBehavior::Update( float dt )
 			if( lastDistance < this->GetLastDistanceCheck() / 2) // The animal has traveled towards its goal halfway, at this point, it is safe to asume the goal has moved.
 			{
 				this->zCurrentPath.clear();
-				this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, maximumNodesTest);
+				this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z,  this->zMainActorTarget->GetPosition().x,  this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest);
 				//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40);
 			}
 
@@ -553,28 +583,32 @@ bool AIDeerBehavior::Update( float dt )
 			zDistance = 0;
 			float distance;
 			float shortestDistance = 99999;
-			Target mostLikelyTarget = this->zMainTarget;
+			Actor* mostLikelyTarget = this->zMainActorTarget;
 
-			for(int i = 0; i < this->GetCurrentTargets(); i++)
+			auto i = this->GetTargets().begin();
+			for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
 			{
-				if(this->zTargets[i].valid == true)
+				if(dynamic_cast<BioActor*>((*i)))
 				{
-					xDistance = dActor->GetPosition().x - this->zTargets[i].position.x;
-					//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
-					zDistance = dActor->GetPosition().z - this->zTargets[i].position.z;
-					distance = sqrt(xDistance * xDistance + zDistance * zDistance);
-					
-					if(distance < shortestDistance) //Something that is a larger threat is based on distance.
+					if(dynamic_cast<BioActor*>((*i))->zValid == true)
 					{
-						shortestDistance = distance;
-						mostLikelyTarget = this->zTargets[i];
+						xDistance = dActor->GetPosition().x - (*i)->GetPosition().x;
+						//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
+						zDistance = dActor->GetPosition().z - (*i)->GetPosition().z;
+						distance = sqrt(xDistance * xDistance + zDistance * zDistance);
+					
+						if(distance < shortestDistance) //Something that is a larger threat is based on distance.
+						{
+							shortestDistance = distance;
+							mostLikelyTarget = (*i);
+						}
 					}
 				}
 			}
 			if(shortestDistance < this->GetLastDistanceCheck() / this->zNewTargetCloseByAFactorOf) // The animal has gotten closer to a larger threat, and is now following that target instead.
 			{
 				this->SetIfNeedPath(true);
-				this->zMainTarget = mostLikelyTarget;
+				this->zMainActorTarget = mostLikelyTarget;
 			}
 		}
 	}
@@ -704,6 +738,8 @@ bool AIDeerBehavior::Update( float dt )
 
 			result = result;
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
+
+			
 
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - dActor->GetPosition();

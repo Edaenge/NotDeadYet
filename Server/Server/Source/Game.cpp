@@ -91,8 +91,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	//this->SpawnItemsDebug();
+	this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -487,17 +487,44 @@ bool Game::Update( float dt )
 	zWorld->Update();
 
 	//Updating animals and Check fog.
+	static float testUpdater = 0.0f;
+
+	testUpdater += dt;
+
+
+	if(testUpdater > 4.0f)
+	{
+		//Creating targets to insert into the animals' behaviors
+		std::set<Actor*> aSet;
+
+		for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+		{
+			if(dynamic_cast<BioActor*>((*i)->GetActor()))
+			{
+				aSet.insert( (*i)->GetActor());
+			}
+		}
+
+		//Updating animals' targets.
+		for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+		{
+			if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>( (*i) ))
+			{
+				animalBehavior->SetTargets(aSet);
+			}
+			else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>( (*i) ))
+			{
+				animalBehavior->SetTargets(aSet);
+			}
+		}
+		testUpdater = 0.0f;
+	}
+
+
+
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
-		if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>( (*i) ))
-		{
-			animalBehavior->SetCurrentTargets(counter);
-		}
-		else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>( (*i) ))
-		{
-			animalBehavior->SetCurrentTargets(counter);
-		}
-		else if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
+		if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
 		{
 			if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
 			{
@@ -515,55 +542,6 @@ bool Game::Update( float dt )
 		}
 	}
 
-	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
-	{
-		int counter = 0;
-		for(auto j = zBehaviors.begin(); j != zBehaviors.end(); j++)
-		{
-			
-			if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
-			{
-
-				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
-				{
-					//tempBehaviour->get_
-					//Actor* oldActor = NULL;
-					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
-				}
-				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
-				{
-					//Actor* oldActor = NULL;
-					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
-				}
-				else if(AIBearBehavior* tempBehaviour = dynamic_cast<AIBearBehavior*>(*j))
-				{
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, BEAR);
-				}
-			}
-			else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>(*i))
-			{
-				//animalBehavior->SetTargetInfo(counter,(*j)
-				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
-				{
-					//tempBehaviour->get_
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
-				}
-				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
-				{
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
-				}
-				else if(AIBearBehavior* tempBehaviour = dynamic_cast<AIBearBehavior*>(*j))
-				{
-					//Actor* oldActor = NULL;
-					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, BEAR);
-				}
-			}
-			counter++;
-		}
-	}
 
 /*	// Collisions Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)

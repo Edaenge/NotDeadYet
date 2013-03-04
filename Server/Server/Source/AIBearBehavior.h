@@ -56,9 +56,9 @@ public:
 	inline float GetLastDistanceCheck() {return this->zLastDistanceCheck;}
 	inline void SetLastDistanceCheck(float distance) {this->zLastDistanceCheck = distance;}
 	
-	void SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind = HUMAN);
-	inline int	GetCurrentTargets() {return this->zCurrentNrOfTargets;}
-	inline void SetCurrentTargets(int number) {this->zCurrentNrOfTargets = number;}
+	//void SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind = HUMAN);
+	//inline int	GetCurrentTargets() {return this->zCurrentNrOfTargets;}
+	//inline void SetCurrentTargets(int number) {this->zCurrentNrOfTargets = number;}
 
 	inline std::vector<Vector2>& GetPath() {return this->zCurrentPath;}
 
@@ -71,8 +71,9 @@ private:
 		AI		zPathfinder;
 
 		std::vector<Vector2>	zCurrentPath;
-		std::vector<Target>		zTargets; //Humans and other animals
-		Target					zMainTarget;
+		//std::vector<Target>		zTargets; //Humans and other animals
+		//Target					zMainTarget;
+		Actor*					zMainActorTarget;
 
 		float	zCalmActionInterval;
 
