@@ -551,7 +551,6 @@ void Client::CheckPlayerSpecificKeys()
 			}
 			if (msd.zAction == CRAFT)
 			{
-				
 				if (item)
 				{
 					unsigned int type = 1000;
@@ -634,8 +633,12 @@ void Client::CheckPlayerSpecificKeys()
 	{
 		if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
 		{
-			this->zGuiManager->ToggleInventoryGui();
-			this->zGuiManager->ToggleLootGui(0);
+			if(this->zGuiManager->IsInventoryOpen())
+				this->zGuiManager->ToggleInventoryGui();
+
+			if(this->zGuiManager->IsLootingOpen())
+				this->zGuiManager->ToggleLootGui(0);
+			
 			this->zGuiManager->ResetLoot();
 			this->zShowCursor = false;
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);

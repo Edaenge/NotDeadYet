@@ -1835,10 +1835,13 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 								for (auto it = item_stack_out.begin(); it != item_stack_out.end(); it++)
 								{
 									inv->RemoveItem(it->first);
-									
+									cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, it->first->GetID()));
 									it->first->IncreaseStackSize(it->second);
 									if(inv->AddItem(it->first, stacked))
 									{
+										std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+										msg += craftedItem->ToMessageString(&NMC);
+										cd->Send(msg);
 										if (stacked)
 										{
 											MaloW::Debug("Weird Error When Crafting, item stacked but shouldn't have");

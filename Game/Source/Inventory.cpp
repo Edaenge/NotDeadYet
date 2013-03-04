@@ -3,8 +3,8 @@
 #include <MaloWFileDebug.h>
 #include <Safe.h>
 
-const unsigned int GEAR_SLOTS = 4;
-const unsigned int MAX_QUIVER_SLOTS = 30;
+static const unsigned int GEAR_SLOTS = 4;
+static const unsigned int MAX_QUIVER_SLOTS = 50;
 
 Inventory::Inventory()
 {
@@ -113,7 +113,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 	if (this->zSlotsAvailable - item->GetSlotSize() <= 0)
 		return false;
 
-	if( available_slots >= item->GetStackSize() )
+	if((unsigned int)available_slots >= item->GetStackSize() )
 	{
 		this->zItems.push_back(item);
 
