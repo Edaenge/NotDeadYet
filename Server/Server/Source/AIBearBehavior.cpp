@@ -11,7 +11,7 @@ bool AIBearBehavior::InitValues()
 {
 	this->InitPathfinder();
 
-	Target vectorFilling; 
+	/*Target vectorFilling; 
 	vectorFilling.health = 0;
 	vectorFilling.movementNoise = 0;
 	vectorFilling.position = Vector3(0,0,0);
@@ -20,7 +20,7 @@ bool AIBearBehavior::InitValues()
 	for(int i = 0; i < 32; i++)
 	{
 		this->zTargets.push_back(vectorFilling);
-	}
+	}*/
 
 	this->zIntervalCounter = 0;
 
@@ -56,6 +56,7 @@ bool AIBearBehavior::InitValues()
 	BearActor* dActor = dynamic_cast<BearActor*>(this->zActor);
 	this->SetPreviousHealth( dActor->GetHealth());
 
+	
 	this->zFearIntervalCounter = 0.0f;
 	this->zIntervalCounter = 0.0f;
 
@@ -235,7 +236,7 @@ Vector3 AIBearBehavior::ExaminePathfindingArea()
 
 	Vector3 dest;
 	//We make a check to see if the position is available, to avoid wasting time in the pathfinder functions.
-	dest = this->zMainTarget.position - dActor->GetPosition();
+	dest = this->zMainActorTarget->GetPosition() - dActor->GetPosition();
 	dest.Normalize();
 	dest = dest * -1;
 	dest *= (float)this->zFleeDistance;
@@ -302,13 +303,13 @@ Vector3 AIBearBehavior::ExaminePathfindingArea()
 	}
 }
 
-void AIBearBehavior::SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind)
-{
-	this->zTargets[number].position = pos;
-	this->zTargets[number].movementNoise = velocity;
-	this->zTargets[number].health = health;
-	this->zTargets[number].kind = kind;
-}
+//void AIBearBehavior::SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind)
+//{
+//	this->zTargets[number].position = pos;
+//	this->zTargets[number].movementNoise = velocity;
+//	this->zTargets[number].health = health;
+//	this->zTargets[number].kind = kind;
+//}
 
 bool AIBearBehavior::Update( float dt )
 {
@@ -332,32 +333,59 @@ bool AIBearBehavior::Update( float dt )
 	float zDistance = 0;
 	float finalDistance = 0;
 
-	int maximumNodesTest = 10;
+	int maximumNodesTest = 5;
 	
 	//Determine closest threat/target
-	for(int i = 0; i < this->GetCurrentTargets(); i++)
+	//for(int i = 0; i < this->GetCurrentTargets(); i++)
+	//{
+	//	xDistance = bActor->GetPosition().x - this->zTargets[i].position.x; //Math, could use optimization, I think.
+	//	//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
+	//	zDistance = bActor->GetPosition().z - this->zTargets[i].position.z;
+	//	finalDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
+	//	if( finalDistance < this->zMinimumDistance && bActor->GetPosition().x != this->zTargets[i].position.x && bActor->GetPosition().z != this->zTargets[i].position.z)  //Since everything could be prey to a bear, even other bears, this check is needed to make sure he does not make himself his enemy.
+	//	{
+	//		this->zTargets[i].valid = true;
+	//
+	//		if(finalDistance < shortestDistance)
+	//		{
+	//			shortestDistance = finalDistance;
+	//			this->zMainTarget = this->zTargets[i]; //Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.
+	//		}
+	//		nrOfPredators++;
+	//	}
+	//	else
+	//	{
+	//		this->zTargets[i].valid = false;
+	//	}
+	//	
+	//}
+
+
+	auto i = this->GetTargets().begin();
+	for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
 	{
-		xDistance = bActor->GetPosition().x - this->zTargets[i].position.x; //Math, could use optimization, I think.
+		xDistance = bActor->GetPosition().x - (*i)->GetPosition().x; //Math, could use optimization, I think.
 		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
-		zDistance = bActor->GetPosition().z - this->zTargets[i].position.z;
+		zDistance = bActor->GetPosition().z - (*i)->GetPosition().z;
 		finalDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
-		if( finalDistance < this->zMinimumDistance && bActor->GetPosition().x != this->zTargets[i].position.x && bActor->GetPosition().z != this->zTargets[i].position.z)  //Since everything could be prey to a bear, even other bears, this check is needed to make sure he does not make himself his enemy.
+		if( finalDistance < this->zMinimumDistance && bActor->GetPosition().x != (*i)->GetPosition().x && bActor->GetPosition().z != (*i)->GetPosition().z && dynamic_cast<BioActor*>((*i)))  //Since everything could be prey to a bear, even other bears, this check is needed to make sure he does not make himself his enemy.
 		{
-			this->zTargets[i].valid = true;
+			dynamic_cast<BioActor*>((*i))->zValid = true;
 
 			if(finalDistance < shortestDistance)
 			{
 				shortestDistance = finalDistance;
-				this->zMainTarget = this->zTargets[i]; //Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.
+				this->zMainActorTarget = (*i);//Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.		 
 			}
 			nrOfPredators++;
 		}
-		else
+		else if( dynamic_cast<BioActor*>((*i)) )
 		{
-			this->zTargets[i].valid = false;
+			dynamic_cast<BioActor*>((*i))->zValid = false;
 		}
 		
 	}
+
 	if(nrOfPredators > 0)
 	{
 		nearbyPredatorsExist = true;
@@ -396,28 +424,55 @@ bool AIBearBehavior::Update( float dt )
 				fear += this->zExtraFearWithCloseProximity;
 			}
 
-			for(int i = 0; i < this->GetCurrentTargets(); i++)
+			auto i = this->GetTargets().begin();
+			for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
 			{
-				if(this->zTargets[i].valid == true)
+				if(dynamic_cast<BioActor*>((*i)))
 				{
-				//Do a mathematical check, see if anyone is right in front of the bear. But... how? http://www.youtube.com/watch?v=gENVB6tjq_M
-					float dotProduct = bActor->GetDir().GetDotProduct( this->zTargets[i].position - bActor->GetPosition() );
-					if(dotProduct > this->zFieldOfView)//This sight is relatively narrrow, since it is a bear. If this is true, then the bear sees a target.
+					if(dynamic_cast<BioActor*>((*i))->zValid == true)
 					{
-						//Which means, it is even more likely to target someone.
-						fear += this->zExtraFearAtSight;
-					}
-					if(this->zTargets[i].movementNoise > this->zThreatMovementSpeedThreshold) //5 is just a temporary number right now. It is supposed to be the speed of a running target.
-					{
-						fear += this->zExtraFearAtThreatMovementSpeed;
-					}
+					//Do a mathematical check, see if anyone is right in front of the bear. But... how? http://www.youtube.com/watch?v=gENVB6tjq_M
+						float dotProduct = bActor->GetDir().GetDotProduct( (*i)->GetPosition() - bActor->GetPosition() );
+						if(dotProduct > this->zFieldOfView)//This sight is relatively narrrow, since it is a bear. If this is true, then the bear sees a target.
+						{
+							//Which means, it is even more likely to target someone.
+							fear += this->zExtraFearAtSight;
+						}
+						if(dynamic_cast<BioActor*>((*i))->GetVelocity() > this->zThreatMovementSpeedThreshold) //5 is just a temporary number right now. It is supposed to be the speed of a running target.
+						{
+							fear += this->zExtraFearAtThreatMovementSpeed;
+						}
 
-					if(this->zTargets[i].health != 0) // No dbz here!
-					{
-						fear -= (bActor->GetHealth() / this->zTargets[i].health) / nrOfPredators; //If the animal is faced with a very weak player(s), it is actually less likely to attack. Like it's prey is unworthy or something.
+						if(dynamic_cast<BioActor*>((*i))->GetHealth() != 0) // No dbz here!
+						{
+							fear -= (bActor->GetHealth() / dynamic_cast<BioActor*>((*i))->GetHealth()) / nrOfPredators; //If the animal is faced with a very weak player(s), it is actually less likely to attack. Like it's prey is unworthy or something.
+						}
 					}
 				}
 			}			
+
+			//for(int i = 0; i < this->GetCurrentTargets(); i++)
+			//{
+			//	if(this->zTargets[i].valid == true)
+			//	{
+			//	//Do a mathematical check, see if anyone is right in front of the bear. But... how? http://www.youtube.com/watch?v=gENVB6tjq_M
+			//		float dotProduct = bActor->GetDir().GetDotProduct( this->zTargets[i].position - bActor->GetPosition() );
+			//		if(dotProduct > this->zFieldOfView)//This sight is relatively narrrow, since it is a bear. If this is true, then the bear sees a target.
+			//		{
+			//			//Which means, it is even more likely to target someone.
+			//			fear += this->zExtraFearAtSight;
+			//		}
+			//		if(this->zTargets[i].movementNoise > this->zThreatMovementSpeedThreshold) //5 is just a temporary number right now. It is supposed to be the speed of a running target.
+			//		{
+			//			fear += this->zExtraFearAtThreatMovementSpeed;
+			//		}
+			//
+			//		if(this->zTargets[i].health != 0) // No dbz here!
+			//		{
+			//			fear -= (bActor->GetHealth() / this->zTargets[i].health) / nrOfPredators; //If the animal is faced with a very weak player(s), it is actually less likely to attack. Like it's prey is unworthy or something.
+			//		}
+			//	}
+			//}			
 
 			this->SetFearLevel( this->GetFearLevel() + fear * this->zConfidenceKoef); //Possibly not good enough math. The theory is that the animal is constantly getting angrier
 	
@@ -493,19 +548,19 @@ bool AIBearBehavior::Update( float dt )
 	{
 		this->zCurrentDistanceFled = 0;
 		this->zPanic = false;
-		xDistance = bActor->GetPosition().x - this->zMainTarget.position.x;
+		xDistance = bActor->GetPosition().x - this->zMainActorTarget->GetPosition().x;
 		//yDistance = this->GetPosition().y - this->zMainTarget.position.y;
-		zDistance = bActor->GetPosition().z - this->zMainTarget.position.z;
+		zDistance = bActor->GetPosition().z - this->zMainActorTarget->GetPosition().z;
 		float lastDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
 		if( this->GetIfNeedPath() == true )
 		{
 			this->SetIfNeedPath(false);
 			this->zCurrentPath.clear();
-			if( !this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, maximumNodesTest) == false ) //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large. //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40) == false
-			{
-				this->SetIfNeedPath(true);
-			}
-			//this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, maximumNodesTest);
+			//if( !this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainActorTarget->GetPosition().x, this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest) == false ) //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large. //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40) == false
+			//{
+			//	this->SetIfNeedPath(true);
+			//}
+			this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainActorTarget->GetPosition().x, this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest);
 			this->SetLastDistanceCheck( lastDistance );
 		}
 		if( this->zIntervalCounter > 1.5 && this->GetIfNeedPath() == false )
@@ -515,7 +570,7 @@ bool AIBearBehavior::Update( float dt )
 			if( lastDistance < this->GetLastDistanceCheck() / 2) // The animal has traveled towards its goal halfway, at this point, it is safe to asume the goal has moved.
 			{
 				this->zCurrentPath.clear();
-				this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, maximumNodesTest);
+				this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainActorTarget->GetPosition().x, this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest);
 				//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40);
 			}
 
@@ -524,33 +579,74 @@ bool AIBearBehavior::Update( float dt )
 			zDistance = 0;
 			float distance;
 			float shortestDistance = 99999;
-			Target mostLikelyTarget = this->zMainTarget;
+			//Target mostLikelyTarget = this->zMainTarget;
+			Actor* mostLikelyTarget = this->zMainActorTarget; 
 
-			for(int i = 0; i < this->GetCurrentTargets(); i++)
+
+			auto i = this->GetTargets().begin();
+			for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
 			{
-				
-				if(this->zTargets[i].valid == true)
+				if(dynamic_cast<BioActor*>((*i)))
 				{
-					xDistance = bActor->GetPosition().x - this->zTargets[i].position.x;
-					//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
-					zDistance = bActor->GetPosition().z - this->zTargets[i].position.z;
-					distance = sqrt(xDistance * xDistance + zDistance * zDistance);
+				
+					if(dynamic_cast<BioActor*>((*i))->zValid == true)
+					{
+						xDistance = bActor->GetPosition().x - (*i)->GetPosition().x;
+						//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
+						zDistance = bActor->GetPosition().z - (*i)->GetPosition().z;
+						distance = sqrt(xDistance * xDistance + zDistance * zDistance);
 					
-					if(distance < shortestDistance) //Something that is a larger threat is based on distance.
-					{
-						shortestDistance = distance;
-						mostLikelyTarget = this->zTargets[i];
-					}
-					if(distance < 1.0f)
-					{
-						int testing = 0;
+						if(distance < shortestDistance) //Something that is a larger threat is based on distance.
+						{
+							shortestDistance = distance;
+							mostLikelyTarget = (*i);
+						}
+						if(distance < 1.5f)
+						{
+							Vector3 direction = (*i)->GetPosition() - bActor->GetPosition();
+							direction.Normalize();
+							bActor->SetDir( direction ); 
+
+							float dotProduct = bActor->GetDir().GetDotProduct( (*i)->GetPosition() - bActor->GetPosition() );
+
+							if(dotProduct > this->zFieldOfView)//It is looking at the target.
+							{
+								//Attack!
+								Damage bearAttack;
+								bearAttack.slashing = 15;
+								dynamic_cast<BioActor*>(this->zMainActorTarget)->TakeDamage(bearAttack,this->GetActor());
+							}
+							
+						}
 					}
 				}
 			}
+			//for(int i = 0; i < this->GetCurrentTargets(); i++)
+			//{
+			//	
+			//	if(this->zTargets[i].valid == true)
+			//	{
+			//		xDistance = bActor->GetPosition().x - this->zTargets[i].position.x;
+			//		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
+			//		zDistance = bActor->GetPosition().z - this->zTargets[i].position.z;
+			//		distance = sqrt(xDistance * xDistance + zDistance * zDistance);
+			//		
+			//		if(distance < shortestDistance) //Something that is a larger threat is based on distance.
+			//		{
+			//			shortestDistance = distance;
+			//			mostLikelyTarget = this->zTargets[i];
+			//		}
+			//		if(distance < 1.0f)
+			//		{
+			//			int testing = 0;
+			//		}
+			//	}
+			//}
 			if(shortestDistance < this->GetLastDistanceCheck() / this->zNewTargetCloseByAFactorOf) // The animal has gotten closer to another threat and is following that now.
 			{
 				this->SetIfNeedPath(true);
-				this->zMainTarget = mostLikelyTarget;
+				//this->zMainTarget = mostLikelyTarget;
+				this->zMainActorTarget = mostLikelyTarget;
 			}
 		}
 		
@@ -632,6 +728,26 @@ bool AIBearBehavior::Update( float dt )
 
 			result = result;
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
+
+
+			//Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+			//
+			//Vector3 ADirection = bActor->GetDir();
+			//Vector3 BDirection = goal - bActor->GetPosition();
+			//BDirection.Normalize();
+
+			//float factor = 0.98f;
+			////float factorTwo = 0.0f;
+
+			////factor = ADirection.GetDotProduct(BDirection);
+			////factorTwo = BDirection.GetDotProduct(ADirection);
+
+
+			//Vector3 CDirection = ADirection * (1.0 - factor) + BDirection * factor;
+
+			//CDirection.Normalize();
+
+			//bActor->SetDir( CDirection ); 
 
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - bActor->GetPosition();

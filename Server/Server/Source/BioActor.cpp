@@ -20,6 +20,7 @@ BioActor::BioActor() : Actor()
 	this->zStaminaChanged = true;
 
 	this->zBleedingLevel = 0;
+	this->zValid = false;
 }
 
 BioActor::BioActor(Player* player) : Actor()
@@ -41,6 +42,7 @@ BioActor::BioActor(Player* player) : Actor()
 	this->zStaminaChanged = true;
 
 	this->zBleedingLevel = 0;
+	this->zValid = false;
 }
 
 BioActor::~BioActor()

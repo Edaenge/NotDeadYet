@@ -118,4 +118,6 @@ protected:
 	Inventory* zInventory;
 
 	Player* zPlayer;
+public:
+	bool zValid;
 };

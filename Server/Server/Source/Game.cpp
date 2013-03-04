@@ -91,8 +91,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	//this->SpawnItemsDebug();
+	this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -450,11 +450,11 @@ bool Game::Update( float dt )
 
 		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
 		{
-			playerBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+			playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 		}
 		else if( ProjectileArrowBehavior* projectileArrowBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i) )
 		{
-			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 		}
 		
 		if ( (*i)->Update(dt) )
@@ -487,82 +487,48 @@ bool Game::Update( float dt )
 	zWorld->Update();
 
 	//Updating animals and Check fog.
-	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+	static float testUpdater = 0.0f;
+
+	testUpdater += dt;
+
+	if(testUpdater > 4.0f)
 	{
-		if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>( (*i) ))
+		//Creating targets to insert into the animals' behaviors
+		std::set<Actor*> aSet;
+
+		for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 		{
-			animalBehavior->SetCurrentTargets(counter);
-		}
-		else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>( (*i) ))
-		{
-			animalBehavior->SetCurrentTargets(counter);
-		}
-		else if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
-		{
-			if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
+			if(dynamic_cast<BioActor*>((*i)->GetActor()))
 			{
-				Vector2 center = this->zWorld->GetWorldCenter();
+				aSet.insert( (*i)->GetActor());
+			}
+		}
 
-				float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
-
-				if (radiusFromCenter > this->zCurrentFogEnclosement)
+		//Updating animals' targets and Check if Players Are in Fog.
+		for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+		{
+			if(AIBehavior* animalBehavior = dynamic_cast<AIBehavior*>( (*i) ))
+			{
+				animalBehavior->SetTargets(aSet);
+			}
+			else if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
+			{
+				if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
 				{
-					Damage dmg;
-					dmg.fogDamage = 1.0f * dt;
-					bActor->TakeDamage(dmg, bActor);
+					Vector2 center = this->zWorld->GetWorldCenter();
+
+					float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
+
+					if (radiusFromCenter > this->zCurrentFogEnclosement)
+					{
+						Damage dmg;
+						dmg.fogDamage = 1.0f * dt;
+						bActor->TakeDamage(dmg, bActor);
+					}
 				}
 			}
 		}
-	}
-
-	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
-	{
-		int counter = 0;
-		for(auto j = zBehaviors.begin(); j != zBehaviors.end(); j++)
-		{
-			
-			if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>(*i))
-			{
-
-				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
-				{
-					//tempBehaviour->get_
-					//Actor* oldActor = NULL;
-					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
-				}
-				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
-				{
-					//Actor* oldActor = NULL;
-					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
-				}
-				else if(AIBearBehavior* tempBehaviour = dynamic_cast<AIBearBehavior*>(*j))
-				{
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, BEAR);
-				}
-			}
-			else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>(*i))
-			{
-				//animalBehavior->SetTargetInfo(counter,(*j)
-				if(AIDeerBehavior* tempBehaviour = dynamic_cast<AIDeerBehavior*>(*j))
-				{
-					//tempBehaviour->get_
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, DEER);
-				}
-				else if(PlayerHumanBehavior* tempBehaviour = dynamic_cast<PlayerHumanBehavior*>(*j))
-				{
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, HUMAN);
-				}
-				else if(AIBearBehavior* tempBehaviour = dynamic_cast<AIBearBehavior*>(*j))
-				{
-					//Actor* oldActor = NULL;
-					//ItemActor* newActor = ConvertToItemActor(tempBehaviour, oldActor);
-					animalBehavior->SetTargetInfo(counter, tempBehaviour->GetActor()->GetPosition(), 1.0f, 100.0f, BEAR);
-				}
-			}
-			counter++;
-		}
+		testUpdater = 0.0f;
 	}
 
 /*	// Collisions Tests
@@ -1062,9 +1028,9 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	if ( behavior )	
 	{
 		zBehaviors.insert(behavior);
-		std::set<Actor*> actors;
-		this->zActorManager->GetCollideableActorsInCircle(behavior->GetActor()->GetPosition().GetXZ(), behavior->GetCollisionRadius(), actors);
-		behavior->SetNearActors(actors);
+		//std::set<Actor*> actors;
+		//this->zActorManager->GetCollideableActorsInCircle(behavior->GetActor()->GetPosition().GetXZ(), behavior->GetCollisionRadius(), actors);
+		//behavior->SetNearActors(actors);
 	}
 
 	player->zBehavior = behavior;
@@ -1690,9 +1656,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
 		
 				//Set Nearby actors
-				std::set<Actor*> actors;
-				this->zActorManager->GetCollideableActorsInCircle(actor->GetPosition().GetXZ(), projBehavior->GetCollisionRadius(), actors);
-				projBehavior->SetNearActors(actors);
+				projBehavior->SetNearActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearActors() );
 
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
