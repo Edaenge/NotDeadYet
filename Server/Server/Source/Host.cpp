@@ -538,7 +538,7 @@ void Host::PingClients()
 	std::string message;
 	for(auto it = zClients.begin(); it != zClients.end(); it++)
 	{
-		(*it).first->Send( zMessageConverter.Convert(MESSAGE_TYPE_PING, this->zGameTimer->GetRunTime()) );
+		(*it).first->TrySend( zMessageConverter.Convert(MESSAGE_TYPE_PING, this->zGameTimer->GetRunTime()) );
 	}
 }
 

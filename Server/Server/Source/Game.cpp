@@ -467,8 +467,8 @@ bool Game::Update( float dt )
 			
 			delete temp;
 			temp = NULL;
-			
-			this->zPhysicsEngine->DeletePhysicsObject(oldActor->GetPhysicsObject());
+			PhysicsObject* pObject = oldActor->GetPhysicsObject();
+			this->zPhysicsEngine->DeletePhysicsObject(pObject);
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
 		}
@@ -880,24 +880,31 @@ void Game::OnEvent( Event* e )
 						{
 							ID = iActor->GetID();
 							Item* theItem = iActor->GetItem();
-							if(theItem->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+							if(theItem->GetItemType() == ITEM_TYPE_WEAPON_MELEE && theItem->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
 							{
 								idiotDamage.piercing = 25.0f;
 						
 								thePlayerActor->TakeDamage(idiotDamage,actor);
 							}
-							else if(theItem->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+							else if(theItem->GetItemType() == ITEM_TYPE_WEAPON_MELEE && theItem->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
 							{
 								Damage idiotDamage;
 								idiotDamage.piercing = 10.0f;
 						
 								thePlayerActor->TakeDamage(idiotDamage,actor);
 							}
-							else if(theItem->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
+							else if(theItem->GetItemType() == ITEM_TYPE_PROJECTILE && theItem->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
 							{
 								Damage idiotDamage;
 								idiotDamage.piercing = 5.0f;
 						
+								thePlayerActor->TakeDamage(idiotDamage,actor);
+							}
+							else if(theItem->GetItemType() == ITEM_TYPE_PROJECTILE && theItem->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+							{
+								Damage idiotDamage;
+								idiotDamage.piercing = 5.0f;
+
 								thePlayerActor->TakeDamage(idiotDamage,actor);
 							}
 							toBeRemoved = iActor;
@@ -945,7 +952,8 @@ void Game::OnEvent( Event* e )
 		auto i = zWorldActors.find(ERE->entity);
 		if ( i != zWorldActors.end() )
 		{
-			zPhysicsEngine->DeletePhysicsObject(i->second->GetPhysicsObject());
+			PhysicsObject* Pobj = i->second->GetPhysicsObject();
+			zPhysicsEngine->DeletePhysicsObject(Pobj);
 			this->zActorManager->RemoveActor(i->second);
 			this->zWorldActors.erase(i);
 		}
@@ -1202,38 +1210,38 @@ void Game::HandleConnection( ClientData* cd )
 
 void Game::HandleDisconnect( ClientData* cd )
 {
-		// Delete Player Behavior
-		auto playerIterator = zPlayers.find(cd);
-		auto playerBehavior = playerIterator->second->GetBehavior();
+	// Delete Player Behavior
+	auto playerIterator = zPlayers.find(cd);
+	auto playerBehavior = playerIterator->second->GetBehavior();
 		
-		// Create AI Behavior For Players That Disconnected
-		if ( PlayerDeerBehavior* playerDeer = dynamic_cast<PlayerDeerBehavior*>(playerBehavior) )
-		{
-			AIDeerBehavior* aiDeer = new AIDeerBehavior(playerDeer->GetActor(), zWorld);
-			zBehaviors.insert(aiDeer);
-		}
-		else if ( PlayerBearBehavior* playerBear = dynamic_cast<PlayerBearBehavior*>(playerBehavior) )
-		{
-			AIBearBehavior* aiDeer = new AIBearBehavior(playerBear->GetActor(), zWorld);
-			zBehaviors.insert(aiDeer);
-		}
-		//Kills actor if human
-		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
-		{
-			Actor* pActor = pHuman->GetActor();
-			dynamic_cast<BioActor*>(pActor)->Kill();
-		}
+	// Create AI Behavior For Players That Disconnected
+	if ( PlayerDeerBehavior* playerDeer = dynamic_cast<PlayerDeerBehavior*>(playerBehavior) )
+	{
+		AIDeerBehavior* aiDeer = new AIDeerBehavior(playerDeer->GetActor(), zWorld);
+		zBehaviors.insert(aiDeer);
+	}
+	else if ( PlayerBearBehavior* playerBear = dynamic_cast<PlayerBearBehavior*>(playerBehavior) )
+	{
+		AIBearBehavior* aiDeer = new AIBearBehavior(playerBear->GetActor(), zWorld);
+		zBehaviors.insert(aiDeer);
+	}
+	//Kills actor if human
+	else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
+	{
+		Actor* pActor = pHuman->GetActor();
+		dynamic_cast<BioActor*>(pActor)->Kill();
+	}
 		
-		this->SetPlayerBehavior(playerIterator->second, NULL);
+	this->SetPlayerBehavior(playerIterator->second, NULL);
 
-		PlayerRemoveEvent PRE;
-		PRE.player = playerIterator->second;
-		NotifyObservers(&PRE);
+	PlayerRemoveEvent PRE;
+	PRE.player = playerIterator->second;
+	NotifyObservers(&PRE);
 
-		Player* temp = playerIterator->second;
-		delete temp;
-		temp = NULL;
-		zPlayers.erase(playerIterator);
+	Player* temp = playerIterator->second;
+	delete temp;
+	temp = NULL;
+	zPlayers.erase(playerIterator);
 }
 
 void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID )

@@ -150,6 +150,14 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if( PlayerRemoveEvent* PRE = dynamic_cast<PlayerRemoveEvent*>(e) )
 	{
+		auto playerBehavior = PRE->player->GetBehavior();
+		if (playerBehavior)
+		{
+			Actor* actor = playerBehavior->GetActor();
+
+			this->zGame->GetActorManager()->RemoveActor(actor);
+		}
+
 		this->zPlayers.erase(PRE->player);
 	}
 	else if( PlayerReadyEvent* PLRE = dynamic_cast<PlayerReadyEvent*>(e) )
@@ -333,7 +341,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	if (pObject)
 	{
 //		GetPhysics()->DeletePhysicsObject(pObject);
-		pObject = NULL;
+		//pObject = NULL;
 	}
 
 	ClientData* cd = player->GetClientData();
