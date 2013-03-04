@@ -6,6 +6,9 @@ namespace {
 
 bool PhysicsInit()
 {
+	if(engine)
+		FreePhysics();
+
 	engine = new PhysicsEngine();
 	return (engine != 0);
 }
@@ -24,6 +27,7 @@ bool FreePhysics()
 		return 0;
 
 	delete engine;
+	engine = NULL;
 
 	return true;
 }

@@ -543,10 +543,20 @@ bool Host::IsAlive() const
 
 void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 {
+	//DON'T call ClientChannel->Kick in here! For fuck sakes
+	//The kick command will push a ClientDisonnected event, again.
+
+	if( !channel )
+		return;
+
 	PlayerDisconnectedEvent e;
 	auto i = zClients.find(channel);
+
+	if( i == zClients.end() )
+		return;
+	
+
 	ClientData* cd = i->second;
-	cd->Kick();
 	e.clientData = cd;
 
 	NotifyObservers(&e);
@@ -575,7 +585,7 @@ void Host::HandleClientUpdate(const std::vector<std::string> &msgArray, ClientDa
 	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
 	{
 		char key[512];
-		sscanf_s((*it).c_str(), "%s ", &key, sizeof(key));
+		sscanf_s((*it).c_str(), "%s ", key, sizeof(key));
 
 		if(strcmp(key, M_DIRECTION.c_str()) == 0)
 		{

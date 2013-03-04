@@ -28,8 +28,6 @@ PhysicsObject::PhysicsObject(PhysicsEngine* engine, const std::string& model, co
 {
 	this->file = "";
 	this->pos = position;
-	this->forceAccum = Vector3(0,0,0);
-	this->damping = 0.0f;
 	this->indicies = NULL;
 	this->mesh = NULL;
 	this->nrOfIndicies = 0;
@@ -44,7 +42,8 @@ PhysicsObject::~PhysicsObject()
 	if(this->indicies)
 		delete [] this->indicies;
 
-	GetPhysicsResourceManager()->UnloadObjectDataResource(this->file.c_str());
+	//Should not remove the instance?
+	//GetPhysicsResourceManager()->UnloadObjectDataResource(this->file.c_str());
 }
 
 void PhysicsObject::SetQuaternion( const Vector4& quat )
@@ -221,7 +220,7 @@ bool PhysicsObject::LoadFromFile( string file )
 		{
 			verts[z] = tempverts[z];
 		}
-		delete tempverts;
+		delete [] tempverts;
 		this->SetVerts(verts);
 		
 		this->SetBoundingSphere(BoundingSphere(min, max));
@@ -246,54 +245,6 @@ void PhysicsObject::SetScaling( const float scale )
 {
 	this->scale = Vector3(scale, scale, scale);
 	RecreateWorldMatrix();
-}
-
-void PhysicsObject::SetMass( const float mass )
-{
-	assert(mass != 0);
-	this->inverseMass = ((float)1.0)/mass;
-}
-
-float PhysicsObject::GetMass() const
-{
-	if(inverseMass == 0)
-	{
-		return std::numeric_limits<float>::infinity();
-	}
-	else
-	{
-		return ((float)1.0f)/inverseMass;
-	}
-}
-
-void PhysicsObject::ClearAccumulator()
-{
-	forceAccum = Vector3(.0f, .0f, .0f);
-}
-
-void PhysicsObject::Integrate( float dt )
-{
-	// We don't integrate things with zero mass.
-	if (inverseMass <= 0.0f)
-		return;
-
-	assert(dt > 0.0);
-
-	// Update linear position.
-	pos += (velocity* dt);
-
-	// Work out the acceleration from the force
-	Vector3 resultingAcc = acceleration;
-	resultingAcc += (forceAccum * inverseMass);
-
-	// Update linear velocity from the acceleration.
-	velocity += (resultingAcc * dt);
-
-	// Impose drag.
-	velocity *= pow(damping, dt);
-
-	// Clear the forces.
-	ClearAccumulator();
 }
 
 const std::string& PhysicsObject::GetModel() const

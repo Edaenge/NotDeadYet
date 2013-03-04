@@ -161,8 +161,6 @@ Game::~Game()
 
 void Game::SpawnAnimalsDebug()
 {
-	return;
-
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
@@ -450,12 +448,15 @@ bool Game::Update( float dt )
 			}
 		}
 
-		//if (BioActor* bActor = dynamic_cast<BioActor*>((*i)->GetActor()))
-		//{
-		//	
-		//	
-		//}
-
+		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
+		{
+			playerBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+		}
+		else if( ProjectileArrowBehavior* projectileArrowBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i) )
+		{
+			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+		}
+		
 		if ( (*i)->Update(dt) )
 		{
 			Behavior* temp = (*i);
@@ -467,6 +468,7 @@ bool Game::Update( float dt )
 			delete temp;
 			temp = NULL;
 			
+			this->zPhysicsEngine->DeletePhysicsObject(oldActor->GetPhysicsObject());
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
 		}
@@ -563,7 +565,7 @@ bool Game::Update( float dt )
 		}
 	}
 
-	// Collisions Tests
+/*	// Collisions Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 	{
 		//*** Projectiles ***
@@ -647,6 +649,7 @@ bool Game::Update( float dt )
 			}
 		}
 	}
+	*/
 
 	// Game Still Active
 	return true;
@@ -950,9 +953,9 @@ void Game::OnEvent( Event* e )
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
 	{
 		// Create Player Actor
-		PhysicsObject* pObject = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
-		pObject->SetModel(UDE->playerModel);
-		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObject);
+		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
+		pObj->SetModel(UDE->playerModel);
+		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObj);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 		zPlayers[UDE->clientData]->zUserModel = UDE->playerModel;
 
@@ -1005,15 +1008,6 @@ void Game::OnEvent( Event* e )
 
 			if (BioActor* bActor = dynamic_cast<BioActor*>( (*it) ))
 				NAP->actorState[bActor->GetID()] = bActor->GetState();
-
-			//message =  NMC.Convert(MESSAGE_TYPE_NEW_ACTOR, (float)(*it)->GetID());
-			//message += NMC.Convert(MESSAGE_TYPE_POSITION, (*it)->GetPosition());
-			//message += NMC.Convert(MESSAGE_TYPE_ROTATION, (*it)->GetRotation());
-			//message += NMC.Convert(MESSAGE_TYPE_SCALE, (*it)->GetScale());
-			//message += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, (*it)->GetModel());
-
-			//Sends this Actor to the new player
-			//UDE->clientData->Send(message);
 		}
 		UDE->clientData->Send(*NAP);
 		SAFE_DELETE(NAP);
@@ -1058,7 +1052,12 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 
 	// Set New Behavior
 	if ( behavior )	
+	{
 		zBehaviors.insert(behavior);
+		std::set<Actor*> actors;
+		this->zActorManager->GetCollideableActorsInCircle(behavior->GetActor()->GetPosition().GetXZ(), behavior->GetCollisionRadius(), actors);
+		behavior->SetNearActors(actors);
+	}
 
 	player->zBehavior = behavior;
 }
@@ -1221,14 +1220,15 @@ void Game::HandleDisconnect( ClientData* cd )
 		//Kills actor if human
 		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
 		{
-			dynamic_cast<BioActor*>(pHuman->GetActor())->Kill();
+			Actor* pActor = pHuman->GetActor();
+			dynamic_cast<BioActor*>(pActor)->Kill();
 		}
 		
 		this->SetPlayerBehavior(playerIterator->second, NULL);
 
-		/*PlayerRemoveEvent* PRE = new PlayerRemoveEvent();
-		PRE->player = i->second;
-		NotifyObservers(PRE);*/
+		PlayerRemoveEvent PRE;
+		PRE.player = playerIterator->second;
+		NotifyObservers(&PRE);
 
 		Player* temp = playerIterator->second;
 		delete temp;
@@ -1681,6 +1681,11 @@ void Game::HandleUseWeapon( ClientData* cd, unsigned int itemID )
 
 				//Create behavior
 				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
+		
+				//Set Nearby actors
+				std::set<Actor*> actors;
+				this->zActorManager->GetCollideableActorsInCircle(actor->GetPosition().GetXZ(), projBehavior->GetCollisionRadius(), actors);
+				projBehavior->SetNearActors(actors);
 
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);

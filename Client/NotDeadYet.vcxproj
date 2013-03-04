@@ -163,6 +163,7 @@
     <LibraryPath>$(SolutionDir)\External\FMOD\Lib\x86;$(SolutionDir)\External\NDYGFX\lib\;$(SolutionDir)\External\VLD\lib\Win32\;$(SolutionDir)\Game\bin\Debug\;$(SolutionDir)\Malow\bin\Debug\;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)</TargetName>
     <ExecutablePath>..\Source\External\D3D\Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -200,6 +201,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)\Source\SoundEngine\;$(ProjectDir)\Source\GUI\;$(ProjectDir)\Source\KeyUtil\</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

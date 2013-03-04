@@ -1592,7 +1592,12 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 	Actor* actor = this->zActorManager->GetActor(ID);
 	Actor* player = this->zActorManager->GetActor(this->zID);
 
-	if (!actor && !player)
+	if(!player)
+	{
+		MaloW::Debug("Failed to find this Player in Client::HandleTakeDamage");
+		return false;
+	}
+	if (!actor)
 	{
 		MaloW::Debug("Failed to find Attacker in Client::HandleTakeDamage");
 		return false;

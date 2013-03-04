@@ -332,7 +332,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	PhysicsObject* pObject = pActor->GetPhysicsObject();
 	if (pObject)
 	{
-		GetPhysics()->DeletePhysicsObject(pObject);
+//		GetPhysics()->DeletePhysicsObject(pObject);
 		pObject = NULL;
 	}
 

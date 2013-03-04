@@ -92,3 +92,11 @@ const std::string Actor::GetModel() const
 	static const std::string none = "Media/Models/Ball.obj";
 	return none;
 }
+
+bool Actor::CanCollide() const
+{
+	if( zPhysicsObject )
+		return true;
+
+	return false;
+}
