@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Observer.h>
+#include "Observer.h"
 
 class World;
 class Actor;
 class WorldAnchor;
 
-class Behavior : public Observer
+class Behavior : public Observer, Observed
 {
 protected:
 	Actor* zActor;

@@ -2,6 +2,7 @@
 #include "EntityList.h"
 #include "Entity.h"
 #include "WaterQuad.h"
+#include <limits>
 
 
 WorldRenderer::WorldRenderer( World* world, GraphicsEngine* graphics ) : 
@@ -268,7 +269,7 @@ WaterCollisionData WorldRenderer::GetCollisionWithWaterBoxes()
 	// Default Settings
 	result.quad = 0; 
 
-	float curDistance = std::numeric_limits<float>::max();
+	float curDistance = std::numeric_limits<float>::infinity(); //Change from max to infinity
 
 	iCamera* cam = zGraphics->GetCamera();
 	Vector3 camPos = cam->GetPosition();
@@ -335,7 +336,7 @@ CollisionData WorldRenderer::Get3DRayCollisionDataWithGround()
 	zWorld->GetSectorsInCicle( zGraphics->GetCamera()->GetPosition().GetXZ(), zGraphics->GetEngineParameters().FarClip, sectors );
 
 	CollisionData returnData;
-	returnData.distance = std::numeric_limits<float>::max();
+	returnData.distance = std::numeric_limits<float>::infinity(); //Change from max to infinity
 
 	// Check For Collision
 	for( auto i = sectors.begin(); i != sectors.end(); ++i )
@@ -368,7 +369,7 @@ Entity* WorldRenderer::Get3DRayCollisionWithMesh()
 	std::set<Entity*> closeEntities;
 	zWorld->GetEntitiesInCircle(Vector2(cam->GetPosition().x, cam->GetPosition().z), 200.0f, closeEntities);
 
-	float curDistance = std::numeric_limits<float>::max();
+	float curDistance = std::numeric_limits<float>::infinity(); //Change from max to infinity
 	returnPointer = 0;
 
 	for( auto i = closeEntities.begin(); i != closeEntities.end(); ++i )

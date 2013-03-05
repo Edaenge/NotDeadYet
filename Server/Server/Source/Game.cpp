@@ -1662,7 +1662,8 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 				//Create behavior
 				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
-		
+				projBehavior->AddObserver(this->zSoundHandler);
+
 				//Set Nearby actors
 				projBehavior->SetNearActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearActors() );
 

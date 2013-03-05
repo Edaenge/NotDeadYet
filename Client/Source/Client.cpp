@@ -199,7 +199,7 @@ void Client::Update()
 
 void Client::IgnoreRender( const float& radius, const Vector2& center )
 {
-	std::set<Entity*> zPreviousEntities;
+	/*std::set<Entity*> zPreviousEntities;
 	std::set<Entity*> entities; 
 	std::set<Entity*> validEntities;
 
@@ -219,7 +219,7 @@ void Client::IgnoreRender( const float& radius, const Vector2& center )
 		}
 	}
 
-	/*Check previous, if prev is not in valid, they should not be rendered.*/
+	Check previous, if prev is not in valid, they should not be rendered.
 	for(auto it = zPreviousEntities.begin(); it != zPreviousEntities.end(); it++)
 	{
 		auto found = validEntities.find(*it);
@@ -235,7 +235,7 @@ void Client::IgnoreRender( const float& radius, const Vector2& center )
 	}
 
 	zPreviousEntities.clear();
-	zPreviousEntities = validEntities;
+	zPreviousEntities = validEntities;*/
 }
 
 void Client::InitGraphics(const std::string& mapName)
@@ -315,8 +315,8 @@ void Client::InitGraphics(const std::string& mapName)
 	{
 		if ( GetEntBlockRadius( (*i)->GetType() ) <= 0.0f )
 		{
-			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*i);
-			mesh->DontRender(true);
+			//iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*i);
+			//mesh->DontRender(true);
 		}
 	}
 
