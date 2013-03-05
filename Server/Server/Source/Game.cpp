@@ -66,8 +66,12 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 // Load Entities
 	LoadEntList("Entities.txt");
 
+	// Create soundhandler and let it observe game.
+	this->zSoundHandler = new SoundHandler();
+	this->AddObserver(this->zSoundHandler);
+
 // Actor Manager
-	this->zActorManager = new ActorManager(syncher);
+	this->zActorManager = new ActorManager(syncher, this->zSoundHandler);
 	
 	InitItemLookup();
 
@@ -93,8 +97,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	//this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
+	this->SpawnItemsDebug();
+	//this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -132,7 +136,6 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 
 	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
 
-	this->zSoundHandler = new SoundHandler();
 }
 
 Game::~Game()
@@ -1684,7 +1687,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
 
-				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/BowShot.mp3");
+				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_BOW_BOWSHOT);
 				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
 				this->SendToAll(msg);
 

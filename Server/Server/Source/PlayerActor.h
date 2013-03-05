@@ -7,6 +7,13 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "BioActor.h"
 #include <World/WorldEvents.h>
+class PlayerExhausted : public Event
+{
+public:
+	virtual ~PlayerExhausted() {}
+
+	Vector3 zPos;
+};
 
 
 class PlayerActorPhysicalConditionHungerEvent : public Event
@@ -44,13 +51,11 @@ public:
 	float GetFullnessMax() {return this->zFullnessMax;}
 	float GetHydrationMax() {return this->zHydrationMax;}
 	bool GetExhausted(){ return this->zExhausted; }
-	bool GetHasSentExhausted(){ return this->zHasSentExhausted; }
 	bool GetHasSprinted(){ return this->zHasSprinted; }
 
 	void SetFullness(float fullness, const bool notify = true);
 	void SetHydration(float hydration, const bool notify = true);
-	void SetExhausted(bool exhausted){ this->zExhausted = exhausted; this->zHasSentExhausted = false;}
-	void SetHasSentExhausted(bool hasSentExhausted){ this->zHasSentExhausted = hasSentExhausted; }
+	void SetExhausted(bool exhausted);
 	void SetHasSprinted(bool hasSprinted){ this->zHasSprinted = hasSprinted; }
 
 	/*! Returns The dropped item.
@@ -66,7 +71,6 @@ private:
 	float zHydrationMax;
 
 	bool zExhausted;
-	bool zHasSentExhausted;
 	bool zHasSprinted;
 };
 
