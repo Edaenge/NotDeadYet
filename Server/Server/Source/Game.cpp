@@ -92,8 +92,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 
 //DEBUG;
 	//this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
-	this->SpawnHumanDebug();
+	//this->SpawnAnimalsDebug();
+	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
