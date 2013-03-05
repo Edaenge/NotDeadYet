@@ -19,6 +19,7 @@ PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj )
 	this->zType = ACTOR_TYPE_PLAYER;
 	
 	this->zExhausted = false;
+	this->zHasSentExhausted = false;
 	this->zHasSprinted = false;
 }
 //

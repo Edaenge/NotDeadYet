@@ -1467,6 +1467,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			temp->z = pos.z;
 			tempHandle->Setposition(temp);
 			tempHandle->Play();
+			delete temp;
 		}
 
 	}

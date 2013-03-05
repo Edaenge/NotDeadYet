@@ -26,11 +26,13 @@ public:
 	float GetFullnessMax() {return this->zFullnessMax;}
 	float GetHydrationMax() {return this->zHydrationMax;}
 	bool GetExhausted(){ return this->zExhausted; }
+	bool GetHasSentExhausted(){ return this->zHasSentExhausted; }
 	bool GetHasSprinted(){ return this->zHasSprinted; }
 
 	void SetFullness(float fullness);
 	void SetHydration(float hydration);
-	void SetExhausted(bool exhausted){ this->zExhausted = exhausted; }
+	void SetExhausted(bool exhausted){ this->zExhausted = exhausted; this->zHasSentExhausted = false;}
+	void SetHasSentExhausted(bool hasSentExhausted){ this->zHasSentExhausted = hasSentExhausted; }
 	void SetHasSprinted(bool hasSprinted){ this->zHasSprinted = hasSprinted; }
 
 	void HungerHasChanged() {this->zHungerChanged = true;}
@@ -52,6 +54,7 @@ private:
 	float zHydrationMax;
 
 	bool zExhausted;
+	bool zHasSentExhausted;
 	bool zHasSprinted;
 };
 

@@ -436,8 +436,9 @@ bool Game::Update( float dt )
 	{
 		if(PlayerActor* cActor = dynamic_cast<PlayerActor*>((*i)->GetActor()))
 		{
-			if(cActor->GetExhausted())
+			if(cActor->GetExhausted() && cActor->GetHasSentExhausted())
 			{
+				cActor->SetHasSentExhausted(true);
 				NetworkMessageConverter NMC;
 				std::string msg = "";
 				if(cActor->GetModel().find("female"))
