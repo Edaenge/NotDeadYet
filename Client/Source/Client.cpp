@@ -1785,7 +1785,7 @@ void Client::UpdateHealthAndBleedingImage()
 
 		//float pulseLimit = 4.0f;
 		this->zHealth = 100.0f;
-		this->zBleedingLevel = 2.0f;
+		this->zBleedingLevel = 0.0f;
 
 		this->zHealthOpacity = this->zHealth / 100;
 		float goalOffset = 500.0f * this->zHealthOpacity;

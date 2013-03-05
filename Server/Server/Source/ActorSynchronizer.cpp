@@ -21,6 +21,11 @@ ActorSynchronizer::~ActorSynchronizer()
 
 void ActorSynchronizer::AddAnimation(BioActor* bActor)
 {
+	Player* player = bActor->GetPlayer();
+	if(player == NULL)
+	{
+		return;
+	}
 	KeyStates keys = bActor->GetPlayer()->GetKeys();
 	unsigned int state = bActor->GetState();
 	std::string animation = "";

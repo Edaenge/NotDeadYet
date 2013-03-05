@@ -19,7 +19,7 @@ BioActor::BioActor() : Actor()
 	this->zStaminaCof = 2.2f;
 	this->zStaminaChanged = true;
 
-	this->zBleedingLevel = 0;
+	this->zBleedingLevel = 0.0f;
 	this->zValid = false;
 }
 
