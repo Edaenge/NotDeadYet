@@ -150,7 +150,7 @@ void Client::HandleUseItem(const unsigned int ID)
 	}
 }
 
-void Client::HandleCraftItem( const unsigned int ID, const unsigned int Stacks )
+void Client::HandleCraftItem(const unsigned int ID, const unsigned int Stacks)
 {
 	Item* item = this->zPlayerInventory->SearchAndGetItem(ID);
 
@@ -346,8 +346,6 @@ bool Client::HandleUnEquipItem(const unsigned int ItemID, const int Slot)
 		{
 			if (wpn->GetID() == ItemID)
 			{
-				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
-
 				Gui_Item_Data gid = this->MakeGID(wpn);
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -372,8 +370,6 @@ bool Client::HandleUnEquipItem(const unsigned int ItemID, const int Slot)
 		{
 			if (wpn->GetID() == ItemID)
 			{
-				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
-
 				Gui_Item_Data gid = this->MakeGID(wpn);
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -833,6 +829,15 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		item->SetIconPath(itemIconFilePath);
 		item->SetItemDescription(itemDescription);
 		break;
+	case ITEM_TYPE_MISC:
+		item = new Misc(ID, itemType, itemSubType);
+		item->SetItemName(itemName);
+		item->SetSlotSize(itemSlotSize);
+		item->SetItemWeight(itemWeight);
+		item->SetStackSize(itemStackSize);
+		item->SetIconPath(itemIconFilePath);
+		item->SetItemDescription(itemDescription);
+		break;
 	default:
 		MaloW::Debug("Items wasn't found in the switch case type: " + MaloW::convertNrToString((float)itemType));
 		return;
@@ -845,10 +850,9 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	}
 	bool stacked = false;
 	
+	Gui_Item_Data unstacked_Gid = this->MakeGID(item);
 	if (this->zPlayerInventory->AddItem(item, stacked))
 	{
-		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
-
 		if(stacked)
 		{
 			Item* existingItem = zPlayerInventory->SearchAndGetItemFromType(item->GetItemType(), item->GetItemSubType());
@@ -856,7 +860,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 			Gui_Item_Data gid = this->MakeGID(existingItem);
 
 			Projectile* projItem = dynamic_cast<Projectile*>(existingItem);
-			if( projItem && projItem == zPlayerInventory->GetProjectile() )
+			if( projItem != NULL && projItem == zPlayerInventory->GetProjectile() )
 			{
 				this->zGuiManager->RemoveInventoryItemFromGui(gid);
 				this->zGuiManager->EquipItem(gid);
@@ -864,8 +868,8 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 			}
 			else
 			{
-				this->zGuiManager->AddInventoryItemToGui(gid);
-				this->zGuiManager->RemoveLootItemFromLootGui(gid);
+				this->zGuiManager->AddInventoryItemToGui(unstacked_Gid);
+				this->zGuiManager->RemoveLootItemFromLootGui(unstacked_Gid);
 			}
 
 			if(item->GetStackSize() == 0)

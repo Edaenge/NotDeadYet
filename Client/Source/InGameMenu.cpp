@@ -96,8 +96,8 @@ int InGameMenu::Run()
 				{
 					if (NULL != cre)
 					{
-						width = cre->GetWidth();
-						height = cre->GetHeight();
+						width = (float)cre->GetWidth();
+						height = (float)cre->GetHeight();
 					}
 				}
 
@@ -159,8 +159,8 @@ void InGameMenu::Init()
 	float offSet = (float)(windowWidth - dx) / 2.0f;
 
 	//Ingame Main
-	float buttonWidth = (300.f / 1024.0f) * dx;
-	float buttonHeight = (100.f / 768.0f) * windowHeight;
+	float buttonWidth = (216.f / 1024.0f) * dx;
+	float buttonHeight = (75.f / 768.0f) * windowHeight;
 	float MainXPos = (windowWidth / 2) - (buttonWidth / 2);
 
 	Element* temp = new SimpleButton(MainXPos, (200.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/InGameMenu/ResumeButton.png", 
@@ -404,8 +404,8 @@ void InGameMenu::Resize()
 		this->zSizedForHeight == this->zEng->GetEngineParameters().WindowHeight)
 		return;
 
-	this->zSets[INGAMEMAIN].Resize(this->zSizedForWidth, this->zSizedForHeight, this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight);
-	this->zSets[IGOPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight);
+	this->zSets[INGAMEMAIN].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)this->zEng->GetEngineParameters().WindowWidth, (float)this->zEng->GetEngineParameters().WindowHeight);
+	this->zSets[IGOPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)this->zEng->GetEngineParameters().WindowWidth, (float)this->zEng->GetEngineParameters().WindowHeight);
 
 	this->zSizedForWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
 	this->zSizedForHeight = (float)this->zEng->GetEngineParameters().WindowHeight;

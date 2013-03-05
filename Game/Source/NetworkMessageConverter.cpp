@@ -105,9 +105,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const std::s
 	case MESSAGE_TYPE_USER_NAME:
 		ss << M_USER_NAME;
 		break;
-	case MESSAGE_TYPE_PLAY_SOUND:
-		ss << M_PLAY_SOUND;
-		break;
 	case MESSAGE_TYPE_KICKED:
 		ss << M_KICKED;
 		break;
@@ -160,6 +157,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 		break;
 	case MESSAGE_TYPE_STATE:
 		ss << M_STATE;
+		break;
+	case MESSAGE_TYPE_PLAY_SOUND:
+		ss << M_PLAY_SOUND;
 		break;
 	case MESSAGE_TYPE_FOG_ENCLOSEMENT:
 		ss << M_FOG_ENCLOSEMENT;

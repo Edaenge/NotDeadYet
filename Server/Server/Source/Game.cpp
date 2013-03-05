@@ -31,6 +31,7 @@
 #include "AnimationFileReader.h"
 #include "PlayerConfigReader.h"
 #include "CraftingManager.h"
+#include "sounds.h"
 
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
@@ -91,9 +92,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	//this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnItemsDebug();
+	//this->SpawnAnimalsDebug();	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -436,25 +436,31 @@ bool Game::Update( float dt )
 	{
 		if(PlayerActor* cActor = dynamic_cast<PlayerActor*>((*i)->GetActor()))
 		{
-			if(cActor->GetStamina() < 25.0f)
+			if(cActor->GetExhausted())
 			{
-				if(cActor->UpdateBreathSoundTimer(dt))
+				NetworkMessageConverter NMC;
+				std::string msg = "";
+				if(cActor->GetModel().find("female"))
 				{
-					NetworkMessageConverter NMC;
-					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/Running_Breath_4.mp3");
-					msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
-					this->SendToAll(msg);
+					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENT_NOTDEADYET_WOMAN_BREATHEAFTERRUN);
 				}
+				else
+				{
+					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENT_NOTDEADYET_MAN_BREATHEAFTERRUN);
+				}
+
+				msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
+				this->SendToAll(msg);
 			}
 		}
 
 		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
 		{
-			playerBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+			playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 		}
 		else if( ProjectileArrowBehavior* projectileArrowBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i) )
 		{
-			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetActors());
+			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 		}
 		
 		if ( (*i)->Update(dt) )
@@ -467,8 +473,8 @@ bool Game::Update( float dt )
 			
 			delete temp;
 			temp = NULL;
-			
-			this->zPhysicsEngine->DeletePhysicsObject(oldActor->GetPhysicsObject());
+			PhysicsObject* pObject = oldActor->GetPhysicsObject();
+			this->zPhysicsEngine->DeletePhysicsObject(pObject);
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
 		}
@@ -484,13 +490,12 @@ bool Game::Update( float dt )
 		return false;
 
 	// Update World
-	zWorld->Update();
+	this->zWorld->Update();
 
 	//Updating animals and Check fog.
 	static float testUpdater = 0.0f;
 
 	testUpdater += dt;
-
 
 	if(testUpdater > 4.0f)
 	{
@@ -505,43 +510,32 @@ bool Game::Update( float dt )
 			}
 		}
 
-		//Updating animals' targets.
+		//Updating animals' targets and Check if Players Are in Fog.
 		for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
 		{
-			if(AIDeerBehavior* animalBehavior = dynamic_cast<AIDeerBehavior*>( (*i) ))
+			if(AIBehavior* animalBehavior = dynamic_cast<AIBehavior*>( (*i) ))
 			{
 				animalBehavior->SetTargets(aSet);
 			}
-			else if(AIBearBehavior* animalBehavior = dynamic_cast<AIBearBehavior*>( (*i) ))
+			else if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
 			{
-				animalBehavior->SetTargets(aSet);
+				if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
+				{
+					Vector2 center = this->zWorld->GetWorldCenter();
+
+					float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
+
+					if (radiusFromCenter > this->zCurrentFogEnclosement)
+					{
+						Damage dmg;
+						dmg.fogDamage = 1.0f * dt;
+						bActor->TakeDamage(dmg, bActor);
+					}
+				}
 			}
 		}
 		testUpdater = 0.0f;
 	}
-
-
-
-	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
-	{
-		if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
-		{
-			if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
-			{
-				Vector2 center = this->zWorld->GetWorldCenter();
-
-				float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
-
-				if (radiusFromCenter > this->zCurrentFogEnclosement)
-				{
-					Damage dmg;
-					dmg.fogDamage = 1.0f * dt;
-					bActor->TakeDamage(dmg, bActor);
-				}
-			}
-		}
-	}
-
 
 /*	// Collisions Tests
 	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
@@ -858,24 +852,31 @@ void Game::OnEvent( Event* e )
 						{
 							ID = iActor->GetID();
 							Item* theItem = iActor->GetItem();
-							if(theItem->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+							if(theItem->GetItemType() == ITEM_TYPE_WEAPON_MELEE && theItem->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
 							{
 								idiotDamage.piercing = 25.0f;
 						
 								thePlayerActor->TakeDamage(idiotDamage,actor);
 							}
-							else if(theItem->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+							else if(theItem->GetItemType() == ITEM_TYPE_WEAPON_MELEE && theItem->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
 							{
 								Damage idiotDamage;
 								idiotDamage.piercing = 10.0f;
 						
 								thePlayerActor->TakeDamage(idiotDamage,actor);
 							}
-							else if(theItem->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
+							else if(theItem->GetItemType() == ITEM_TYPE_PROJECTILE && theItem->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
 							{
 								Damage idiotDamage;
 								idiotDamage.piercing = 5.0f;
 						
+								thePlayerActor->TakeDamage(idiotDamage,actor);
+							}
+							else if(theItem->GetItemType() == ITEM_TYPE_PROJECTILE && theItem->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+							{
+								Damage idiotDamage;
+								idiotDamage.piercing = 5.0f;
+
 								thePlayerActor->TakeDamage(idiotDamage,actor);
 							}
 							toBeRemoved = iActor;
@@ -923,7 +924,8 @@ void Game::OnEvent( Event* e )
 		auto i = zWorldActors.find(ERE->entity);
 		if ( i != zWorldActors.end() )
 		{
-			zPhysicsEngine->DeletePhysicsObject(i->second->GetPhysicsObject());
+			PhysicsObject* Pobj = i->second->GetPhysicsObject();
+			zPhysicsEngine->DeletePhysicsObject(Pobj);
 			this->zActorManager->RemoveActor(i->second);
 			this->zWorldActors.erase(i);
 		}
@@ -1032,9 +1034,9 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	if ( behavior )	
 	{
 		zBehaviors.insert(behavior);
-		std::set<Actor*> actors;
-		this->zActorManager->GetCollideableActorsInCircle(behavior->GetActor()->GetPosition().GetXZ(), behavior->GetCollisionRadius(), actors);
-		behavior->SetNearActors(actors);
+		//std::set<Actor*> actors;
+		//this->zActorManager->GetCollideableActorsInCircle(behavior->GetActor()->GetPosition().GetXZ(), behavior->GetCollisionRadius(), actors);
+		//behavior->SetNearActors(actors);
 	}
 
 	player->zBehavior = behavior;
@@ -1180,38 +1182,38 @@ void Game::HandleConnection( ClientData* cd )
 
 void Game::HandleDisconnect( ClientData* cd )
 {
-		// Delete Player Behavior
-		auto playerIterator = zPlayers.find(cd);
-		auto playerBehavior = playerIterator->second->GetBehavior();
+	// Delete Player Behavior
+	auto playerIterator = zPlayers.find(cd);
+	auto playerBehavior = playerIterator->second->GetBehavior();
 		
-		// Create AI Behavior For Players That Disconnected
-		if ( PlayerDeerBehavior* playerDeer = dynamic_cast<PlayerDeerBehavior*>(playerBehavior) )
-		{
-			AIDeerBehavior* aiDeer = new AIDeerBehavior(playerDeer->GetActor(), zWorld);
-			zBehaviors.insert(aiDeer);
-		}
-		else if ( PlayerBearBehavior* playerBear = dynamic_cast<PlayerBearBehavior*>(playerBehavior) )
-		{
-			AIBearBehavior* aiDeer = new AIBearBehavior(playerBear->GetActor(), zWorld);
-			zBehaviors.insert(aiDeer);
-		}
-		//Kills actor if human
-		else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
-		{
-			Actor* pActor = pHuman->GetActor();
-			dynamic_cast<BioActor*>(pActor)->Kill();
-		}
+	// Create AI Behavior For Players That Disconnected
+	if ( PlayerDeerBehavior* playerDeer = dynamic_cast<PlayerDeerBehavior*>(playerBehavior) )
+	{
+		AIDeerBehavior* aiDeer = new AIDeerBehavior(playerDeer->GetActor(), zWorld);
+		zBehaviors.insert(aiDeer);
+	}
+	else if ( PlayerBearBehavior* playerBear = dynamic_cast<PlayerBearBehavior*>(playerBehavior) )
+	{
+		AIBearBehavior* aiDeer = new AIBearBehavior(playerBear->GetActor(), zWorld);
+		zBehaviors.insert(aiDeer);
+	}
+	//Kills actor if human
+	else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
+	{
+		Actor* pActor = pHuman->GetActor();
+		dynamic_cast<BioActor*>(pActor)->Kill();
+	}
 		
-		this->SetPlayerBehavior(playerIterator->second, NULL);
+	this->SetPlayerBehavior(playerIterator->second, NULL);
 
-		PlayerRemoveEvent PRE;
-		PRE.player = playerIterator->second;
-		NotifyObservers(&PRE);
+	PlayerRemoveEvent PRE;
+	PRE.player = playerIterator->second;
+	NotifyObservers(&PRE);
 
-		Player* temp = playerIterator->second;
-		delete temp;
-		temp = NULL;
-		zPlayers.erase(playerIterator);
+	Player* temp = playerIterator->second;
+	delete temp;
+	temp = NULL;
+	zPlayers.erase(playerIterator);
 }
 
 void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID )
@@ -1476,6 +1478,7 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 	actor = new ItemActor(item);
 	this->zActorManager->AddActor(actor);
 	actor->SetPosition(pActor->GetPosition());
+
 	NetworkMessageConverter NMC;
 	cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
 }
@@ -1660,9 +1663,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
 		
 				//Set Nearby actors
-				std::set<Actor*> actors;
-				this->zActorManager->GetCollideableActorsInCircle(actor->GetPosition().GetXZ(), projBehavior->GetCollisionRadius(), actors);
-				projBehavior->SetNearActors(actors);
+				projBehavior->SetNearActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearActors() );
 
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
@@ -1801,15 +1802,14 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 								}
 								
 							}
+							//Send Add Inventory Msg to the Player.
+							std::string add_msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+							add_msg += craftedItem->ToMessageString(&NMC);
+
 							//Try to add the crafted item to the inventory.
 							bool stacked = false;
 							if (inv->AddItem(craftedItem, stacked))
-							{
-								//Send Add Inventory Msg to the Player.
-								std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-								msg += craftedItem->ToMessageString(&NMC);
-								cd->Send(msg);
-
+							{					
 								if (stacked)
 								{
 									if (craftedItem->GetStackSize() <= 0)
@@ -1828,16 +1828,21 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 										SAFE_DELETE(temp);
 									}
 								}
+
+								cd->Send(add_msg);
 							}
 							else
 							{
 								for (auto it = item_stack_out.begin(); it != item_stack_out.end(); it++)
 								{
 									inv->RemoveItem(it->first);
-									
+									cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)it->first->GetID()));
 									it->first->IncreaseStackSize(it->second);
 									if(inv->AddItem(it->first, stacked))
 									{
+										std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+										msg += craftedItem->ToMessageString(&NMC);
+										cd->Send(msg);
 										if (stacked)
 										{
 											MaloW::Debug("Weird Error When Crafting, item stacked but shouldn't have");
@@ -2046,11 +2051,11 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
-		int weigth = inventory->GetTotalWeight();
+		int weight = inventory->GetTotalWeight();
 
 		ret = inventory->EquipProjectile(proj);
 		
-		if(weigth > inventory->GetTotalWeight())
+		if(weight > inventory->GetTotalWeight())
 		{
 			Item* temp = inventory->RemoveItem(proj);
 			SAFE_DELETE(temp);

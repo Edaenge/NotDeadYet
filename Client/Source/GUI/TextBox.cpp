@@ -119,6 +119,9 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 			{
 				this->mPressed = false;
 				this->mFocused = true;
+				this->mText = "";
+				if(this->mPointText)
+					this->mPointText->SetText(this->mText.c_str());
 				return;
 			}
 		}
@@ -128,7 +131,7 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 
  void TextBox::CheckString(GraphicsEngine* ge)
  {
-	if(strlen(this->mPointText->GetText()) < this->mMaxNrOfChars)
+	if((int)strlen(this->mPointText->GetText()) < this->mMaxNrOfChars)
 	{
 		string pushString = "";
 		const int NROFLETTERS = 27;
@@ -140,7 +143,7 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 		int moreSpecialChars[NROFMORESPECIALCHARS] = {VK_OEM_PERIOD, VK_OEM_COMMA, VK_OEM_1, VK_OEM_2, VK_OEM_3};
 		char charMoreSpecialChars[NROFMORESPECIALCHARS] = {'.' , ',', ':', '/', '?'};
 		char numbers[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-		
+		int numbersNum[10] = {VK_NUMPAD0, VK_NUMPAD1, VK_NUMPAD2, VK_NUMPAD3, VK_NUMPAD4, VK_NUMPAD5, VK_NUMPAD6, VK_NUMPAD7, VK_NUMPAD8, VK_NUMPAD9};
 		/*Check if a char is pressed*/
 		if(this->mAllowedChars == ALL || this->mAllowedChars == NORMALCHAR || this->mAllowedChars == NORMALCHAR_NR ||
 			this->mAllowedChars == NORMALCHAR_SPECIAL)
@@ -166,13 +169,14 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 		{
 			for(int i = this->mFrom; i < this->mTo+1; i++)
 			{
-				if(ge->GetKeyListener()->IsPressed(numbers[i]))
+				if(ge->GetKeyListener()->IsPressed(numbers[i]) || ge->GetKeyListener()->IsPressed(numbersNum[i]))
 				{
 					pushString = numbers[i];
 
 					this->mPointText->AppendText(pushString.c_str());
 					this->mText += pushString;
 					ge->GetKeyListener()->KeyUp(numbers[i]);
+					ge->GetKeyListener()->KeyUp(numbersNum[i]);
 				}
 			}
 		}

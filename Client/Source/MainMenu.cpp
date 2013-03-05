@@ -122,7 +122,7 @@ void MainMenu::Init()
 
 	//IPAddress
 	temp = new TextBox(AdressX + (20.0f / 1024.0f) * dx, AdressY + (60.0f / 768.0f) * windowHeight, 1.0f, "", 
-		(180.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "127.0.0.1", "IPAdress", 2.0f, 16, ALL);
+		(530.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "127.0.0.1", "IPAdress", 2.0f, 16, ALL);
 	zSets[GETIPADRESS].AddElement(temp);
 
 	temp = new SimpleButton(AdressX + (472.0f / 1024.0f) * dx, AdressY + (104.0f / 768.0f) * windowHeight, 1.0f, 
@@ -272,16 +272,16 @@ void MainMenu::StartTestRun()
 	int errorCode = 0;
 	//zGame->InitGameClient("80.78.216.201", 11521);s	zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
 	//zGame->InitGameClient("80.78.216.201", 11521); //Simon hem
-	zGame->InitGameClient("194.47.150.16", 11521, errorMessage, errorCode); //server
+	//zGame->InitGameClient("194.47.150.16", 11521, errorMessage, errorCode); //server
 	//zGame->InitGameClient("194.47.150.20", 11521, errorMessage, errorCode); //Simon
 	//zGame->InitGameClient("194.47.150.12", 11521, errorMessage, errorCode); //Christopher
-	//zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
+	zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
 	if (errorMessage != "")
 	{
 		GraphicsEngine* gEng = GetGraphics();
 		Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
 
-		std::string errorMsg = "Error Code: " + MaloW::convertNrToString(errorCode) + ": " + errorMessage;
+		std::string errorMsg = "Error Code: " + MaloW::convertNrToString((float)errorCode) + ": " + errorMessage;
 		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
 
 		Sleep(5000);
@@ -306,7 +306,7 @@ void MainMenu::Run()
 		zSets[zPrimarySet].AddSetToRenderer(GetGraphics());
 		GraphicsEngine* eng = GetGraphics();
 
-		eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);
+		//eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);
 		bool run = true;
 
 		eng->GetCamera()->SetUpdateCamera(false);
@@ -391,7 +391,7 @@ void MainMenu::Run()
 							GraphicsEngine* gEng = GetGraphics();
 							Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
 
-							std::string errorMsg = "Error Code: " + MaloW::convertNrToString(errorCode) + ": " + errorMessage;
+							std::string errorMsg = "Error Code: " + MaloW::convertNrToString((float)errorCode) + ": " + errorMessage;
 							iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
 
 							Sleep(5000);
@@ -469,8 +469,8 @@ void MainMenu::Run()
 							{
 								if (NULL != cre)
 								{
-									width = cre->GetWidth();
-									height = cre->GetHeight();
+									width = (float)cre->GetWidth();
+									height = (float)cre->GetHeight();
 								}
 							}
 
@@ -670,10 +670,10 @@ void MainMenu::Resize()
 		this->zSizedForHeight == GetGraphics()->GetEngineParameters().WindowHeight)
 		return;
 
-	this->zSets[MAINSET].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
-	this->zSets[FIND_SERVER].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
-	this->zSets[OPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
-	this->zSets[GETIPADRESS].Resize(this->zSizedForWidth, this->zSizedForHeight, GetGraphics()->GetEngineParameters().WindowWidth, GetGraphics()->GetEngineParameters().WindowHeight);
+	this->zSets[MAINSET].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
+	this->zSets[FIND_SERVER].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
+	this->zSets[OPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
+	this->zSets[GETIPADRESS].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
 
 
 	this->zSizedForWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;

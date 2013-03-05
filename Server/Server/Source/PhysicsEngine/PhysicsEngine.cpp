@@ -1,7 +1,6 @@
 #include "PhysicsEngine.h"
 #include "MaloWFileDebug.h"
 
-
 PhysicsEngine::PhysicsEngine()
 {
 
@@ -30,7 +29,7 @@ PhysicsObject* PhysicsEngine::CreatePhysicsObject(const std::string& path, Vecto
 	return obj;
 }
 
-void PhysicsEngine::DeletePhysicsObject( PhysicsObject* obj )
+void PhysicsEngine::DeletePhysicsObject( PhysicsObject*& obj )
 {
 	for(int i = 0; i < this->objects.size(); i++)
 	{

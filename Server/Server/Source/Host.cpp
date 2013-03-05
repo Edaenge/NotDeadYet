@@ -63,7 +63,7 @@ Host::~Host()
 	this->zClients.clear();
 
 	/*Free any still existing Event.*/
-	int counter = 0;
+	unsigned int counter = 0;
 	unsigned int nrOfMessages = this->GetEventQueueSize();
 	MaloW::ProcessEvent* pe;
 
@@ -105,11 +105,8 @@ void Host::Life()
 
 	this->zServerListener->Start();
 
-	//INT64 frequency;
-	//QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
-	//
-	//this->zSecsPerCnt = 1.0f / (float)(frequency);
-	//QueryPerformanceCounter((LARGE_INTEGER*)&this->zStartime);
+	static const float FRAME_TIME = 240.0f;
+	static const float TARGET_DT = 1.0f / FRAME_TIME;
 
 	this->zGameTimer->Init();
 	while(this->stayAlive)
@@ -118,8 +115,14 @@ void Host::Life()
 
 		this->UpdateGame();
 		
-
-		//Sleep(5);
+		if (FRAME_TIME > 0)
+		{
+			if (this->zDeltaTime < TARGET_DT)
+			{
+				DWORD sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
+				Sleep(sleepTime);
+			}
+		}
 	}
 }
 
@@ -538,7 +541,7 @@ void Host::PingClients()
 	std::string message;
 	for(auto it = zClients.begin(); it != zClients.end(); it++)
 	{
-		(*it).first->Send( zMessageConverter.Convert(MESSAGE_TYPE_PING, this->zGameTimer->GetRunTime()) );
+		(*it).first->TrySend( zMessageConverter.Convert(MESSAGE_TYPE_PING, this->zGameTimer->GetRunTime()) );
 	}
 }
 

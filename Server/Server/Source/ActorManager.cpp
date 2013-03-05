@@ -31,6 +31,9 @@ void ActorManager::AddActor( Actor* actor )
 
 	zActors.insert(actor);
 
+	if( actor->CanCollide() )
+		this->zCollideableActors.insert(actor);
+
 	ActorAdded e;
 	e.zActor = actor;
 	NotifyObservers(&e);
@@ -43,9 +46,13 @@ void ActorManager::RemoveActor( Actor* actor )
 	if(!actor)
 		return;
 
-	this->zActors.find(actor);
 	this->zActors.erase(actor);
 	
+	if( actor->CanCollide() )
+	{
+		this->zCollideableActors.erase(actor);
+	}
+
 	ActorRemoved e;
 	e.zActor = actor;
 	NotifyObservers(&e);
@@ -220,17 +227,16 @@ unsigned int ActorManager::GetCollideableActorsInCircle( const Vector2& center, 
 {
 	unsigned int counter=0;
 
-	for(auto i = zActors.cbegin(); i != zActors.cend(); i++)
+	for(auto i = zCollideableActors.cbegin(); i != zCollideableActors.cend(); i++)
 	{
-		if( (*i)->CanCollide() )
+
+		Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );
+		if( Vector2(center-pos).GetLength() < radius)
 		{
-			Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );
-			if( Vector2(center-pos).GetLength() < radius)
-			{
-				out.insert(*i);
-				counter++;
-			}
+			out.insert(*i);
+			counter++;
 		}
+		
 	}
 
 	return counter;
@@ -262,4 +268,6 @@ void ActorManager::ClearAll()
 		it++;
 	}
 	zActors.clear();
+	zCollideableActors.clear();
+
 }

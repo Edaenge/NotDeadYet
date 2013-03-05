@@ -45,7 +45,6 @@ Client::Client()
 	this->zStateCameraOffset[STATE_CROUCHING] = Vector3(0.0f, 1.0f, 0.0f);
 
 	this->zAnimationFileReader[0] = AnimationFileReader("Media/Models/temp_guy_movement_anims.cfg");
-	this->zAnimationFileReader[0].ReadFromFile();
 
 	this->zModelToReaderMap["Media/Models/temp_guy_movement_anims.fbx"] = zAnimationFileReader[0];
 
@@ -135,7 +134,7 @@ Client::~Client()
 	if (this->zServerUpsText)
 		this->zEng->DeleteText(this->zServerUpsText);
 
-	if (this->zServerUpsText)
+	if (this->zLatencyText)
 		this->zEng->DeleteText(this->zLatencyText);
 
 	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
@@ -284,11 +283,6 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zWorld->Update();
 	this->zWorldRenderer->Update();
 	
-	this->zEng->DeleteImage(this->zBlackImage);
-	this->zBlackImage = NULL;
-
-	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);	//this->zEng->StartRendering();
-	
 	if (this->zCrossHair)
 		this->zEng->DeleteImage(this->zCrossHair);
 
@@ -331,14 +325,24 @@ void Client::Life()
 {
 	MaloW::Debug("Client Process Started");
 	
+	static const float FRAME_TIME = 120.0f;
+	static const float TARGET_DT = 1.0f / FRAME_TIME;
+
 	this->zGameTimer->Init();
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->zDeltaTime = this->zGameTimer->Frame();
-
+		
 		this->UpdateGame();
 
-		Sleep(1);
+		if (FRAME_TIME > 0)
+		{
+			if (this->zDeltaTime < TARGET_DT)
+			{
+				float sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
+				Sleep(sleepTime);
+			}
+		}
 	}
 
 	this->zRunning = false;
@@ -364,7 +368,7 @@ void Client::UpdateGame()
 			this->SendClientUpdate();
 
 			std::stringstream ss;
-			ss << this->zGameTimer->GetFPS() <<" Client Frames Per Second";
+			ss << this->zGameTimer->GetFPS() <<" CLIENT FPS";
 			this->zClientUpsText->SetText(ss.str().c_str());
 		}
 
@@ -383,7 +387,7 @@ void Client::CheckMenus()
 {
 	if(this->zPam->GetShow())
 	{
-		int returnValue = this->zPam->Run();
+		int returnValue = this->zPam->Run(0);
 		if(returnValue == DEER)
 		{
 			this->zPam->ToggleMenu();
@@ -437,11 +441,13 @@ void Client::ReadMessages()
 			//Check if Client has received a Message
 			if ( MaloW::NetworkPacket* np = dynamic_cast<MaloW::NetworkPacket*>(ev) )
 			{
-				HandleNetworkMessage(np->GetMessage());
+				this->HandleNetworkMessage(np->GetMessage());
 			}
 			else if ( DisconnectedEvent* np = dynamic_cast<DisconnectedEvent*>(ev) )
 			{
-				CloseConnection("Disconnected");
+				this->AddDisplayText("Connection Closed", true);
+				Sleep(5000);
+				this->CloseConnection("Disconnected");
 			}
 
 			SAFE_DELETE(ev);
@@ -568,7 +574,6 @@ void Client::CheckPlayerSpecificKeys()
 			}
 			if (msd.zAction == CRAFT)
 			{
-				
 				if (item)
 				{
 					unsigned int type = 1000;
@@ -651,8 +656,12 @@ void Client::CheckPlayerSpecificKeys()
 	{
 		if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
 		{
-			this->zGuiManager->ToggleInventoryGui();
-			this->zGuiManager->ToggleLootGui(0);
+			if(this->zGuiManager->IsInventoryOpen())
+				this->zGuiManager->ToggleInventoryGui();
+
+			if(this->zGuiManager->IsLootingOpen())
+				this->zGuiManager->ToggleLootGui(0);
+			
 			this->zGuiManager->ResetLoot();
 			this->zShowCursor = false;
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
@@ -1306,7 +1315,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		std::stringstream ss;
 
-		ss << (int)latency <<" ms";
+		ss << (int)latency <<" MS";
 		zLatencyText->SetText(ss.str().c_str());
 
 		this->zActorManager->SetLatency((int)latency);
@@ -1317,7 +1326,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		std::stringstream ss;
 
-		ss << updatesPerSec <<" Server Frames Per Second";
+		ss << updatesPerSec <<" SERVER FPS";
 		this->zServerUpsText->SetText(ss.str().c_str());
 	}
 	else if (msgArray[0].find(M_SERVER_RESTART.c_str()) == 0)
@@ -1459,8 +1468,20 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		std	::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
+		float eventId = this->zMsgHandler.ConvertStringToInt(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
+
+		AudioManager* am = AudioManager::GetInstance();
+		IEventHandle* tempHandle;
+		if(am->GetEventHandle(eventId, tempHandle) == FMOD_OK)
+		{
+			FMOD_VECTOR* temp = new FMOD_VECTOR;
+			temp->x = pos.x;
+			temp->y = pos.y;
+			temp->z = pos.z;
+			tempHandle->Setposition(temp);
+			tempHandle->Play();
+		}
 
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)

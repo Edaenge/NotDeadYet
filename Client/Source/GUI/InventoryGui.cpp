@@ -125,6 +125,20 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 		if(!this->zSlotGui.at(i)->GetBlocked())
 		{
 			this->zSlotGui.at(i)->AddItemToSlot(gid, open, ge);
+			for(int k = SLOTS - 1; k > i; k--)
+			{
+				if(!this->zSlotGui.at(k)->GetBlocked())
+				{
+					Gui_Item_Data blockedGid = Gui_Item_Data(0, -1, -1, 0, 0, 0, false, "Blocked", "Media/InGameUI/Unavailable.png", "");
+					for(unsigned int m = 0; m < gid.zSlots - 1; m++)
+					{
+						this->zSlotGui.at(k-m)->AddItemToSlot(blockedGid, open, ge);
+						this->zSlotGui.at(k-m)->SetBlocker(true);
+					}
+					k = i;
+				}
+			}
+
 			i = SLOTS;
 		}
 	}
@@ -144,12 +158,14 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 
 				if(this->zSlotGui.at(i)->GetGid().zStacks <= 0) // Remove item if it has less than or zero stacks
 				{
+					this->RemoveBlockers(i, open, ge, 0);
 					this->zSlotGui.at(i)->RemoveItemFromSlot(open, ge);
 					removed = true;
 				}
 			}
 			else // Remove the item if it cant stack
 			{
+				this->RemoveBlockers(i, open, ge, 0);
 				this->zSlotGui.at(i)->RemoveItemFromSlot(open, ge);
 				removed = true;
 			}
@@ -169,6 +185,7 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 				}
 				this->zSlotGui.at(i)->AddItemToSlot(this->zSlotGui.at(atPos)->GetGid(), open, ge); // Move last one to the one that we removed 
 				this->zSlotGui.at(atPos)->RemoveItemFromSlot(open, ge);
+				
 			}
 
 			i = SLOTS;
@@ -177,7 +194,10 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 	}
 
 	if(gid.zType == ITEM_TYPE_WEAPON_MELEE || gid.zType == ITEM_TYPE_WEAPON_RANGED || gid.zType == ITEM_TYPE_PROJECTILE)
+	{
+		this->RemoveBlockers(gid.zType, open, ge, 1);
 		this->zWeaponSlotGui[gid.zType]->RemoveItemFromSlot(open, ge); // If item isn't in inventory
+	}
 
 	return true;
 	
@@ -461,7 +481,7 @@ Vector3 InventoryGui::lerp(Vector3 x, Vector3 y, float a)
 
 void InventoryGui::Reset(bool open)
 {
-	for (int i = 0; i < this->zSlotGui.size(); i++)
+	for (unsigned int i = 0; i < this->zSlotGui.size(); i++)
 	{
 		this->zSlotGui.at(i)->RemoveItemFromSlot(open, GetGraphics());
 	}
@@ -474,4 +494,21 @@ void InventoryGui::Reset(bool open)
 
 	this->zCurrentWeight = 0;
 	this->zNrOfItems = 0;
+}
+
+void InventoryGui::RemoveBlockers(int m, bool open, GraphicsEngine* ge, int inventory)
+{
+	for(int i = SLOTS-1; i > 0; i--) // Find the last one
+	{
+		if(!this->zSlotGui.at(i)->GetBlocker())
+		{
+			int slots = this->zSlotGui.at(m)->GetGid().zSlots;
+			if(inventory == 1)
+				slots = this->zWeaponSlotGui.at(m)->GetGid().zSlots;
+			for(unsigned int k = 1; k < this->zSlotGui.at(m)->GetGid().zSlots; k++)
+			{
+				this->zSlotGui.at(i+k)->RemoveItemFromSlot(open, ge);
+			}
+		}
+	}
 }
