@@ -103,6 +103,10 @@ bool ProjectileArrowBehavior::Update( float dt )
 	if(collide)
 	{
 		this->zMoving = false;
+		ProjectileArrowCollide PAC;
+		PAC.zActor = collide;
+		NotifyObservers(&PAC);
+
 		if( BioActor* bioActor = dynamic_cast<BioActor*>(collide) )
 		{
 			if( ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(this->zActor) )

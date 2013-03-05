@@ -38,3 +38,9 @@ class ActorPhysicalConditionEnergyEvent : public Event
 public:
 	Actor *zActor;
 };
+
+class ProjectileArrowCollide : public Event
+{
+public:
+	Actor *zActor;
+};

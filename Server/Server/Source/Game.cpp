@@ -87,7 +87,7 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	}
 	else if (mode.find("TestMode") == 0)
 	{
-		this->zGameMode = new GameModeTest(this, 10);	
+		this->zGameMode = new GameModeTest(this, 10);
 	}
 	else
 	{
@@ -246,6 +246,7 @@ void Game::SpawnItemsDebug()
 	const Material*		temp_material_T	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_THREAD);
 	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_POOR);
 	const Bandage*		temp_bandage_G	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT);
+	const Container*	temp_waterBottle= GetItemLookup()->GetContainer(ITEM_SUB_TYPE_CANTEEN);
 
 	unsigned int increment = 0;
 	int maxPoints = 10;
@@ -363,6 +364,15 @@ void Game::SpawnItemsDebug()
 		total += increment;
 		increment = 0;
 	}
+	Container* new_item = new Container((*temp_waterBottle));
+	new_item->SetRemainingUses(3);
+	ItemActor* actor = new ItemActor(new_item);
+	//center = CalcPlayerSpawnPoint(increment++);
+	Vector2 tempVetc = this->zWorld->GetWorldCenter();
+	position = Vector3(tempVetc.x, 0, tempVetc.y);
+	actor->SetPosition(position);
+	actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	this->zActorManager->AddActor(actor);
 }
 
 void Game::SpawnHumanDebug()

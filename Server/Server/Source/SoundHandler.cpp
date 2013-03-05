@@ -48,6 +48,17 @@ void SoundHandler::OnEvent( Event* e )
 			}
 		}
 	}
+	
+	else if(ProjectileArrowCollide *PAE = dynamic_cast<ProjectileArrowCollide *>(e))
+	{
+		NetworkMessageConverter NMC;
+		std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENT_NOTDEADYET_BOW_ARROWTREE);
+		msg += NMC.Convert(MESSAGE_TYPE_POSITION, PAE->zActor->GetPosition());
+		for(auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+		{
+			(*it)->GetClientData()->Send(msg);
+		}
+	}
 	else if(PlayerAddEvent *PAE = dynamic_cast<PlayerAddEvent *>(e))
 	{
 		zPlayers.insert(PAE->player);
