@@ -1201,6 +1201,24 @@ void Client::HandleDebugInfo()
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
+	//Water debug
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_F10))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
+		{
+			std::stringstream ss;
+			Vector3 position = this->zEng->GetCamera()->GetPosition();
+			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Water Error at " << std::endl;
+			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
+			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
+			ss << std::endl;
+
+			DebugMsg::Debug(ss.str());
+
+			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
+		}
+	}
 	else if (this->zEng->GetKeyListener()->IsPressed(VK_DELETE))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -1314,6 +1332,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		ss << updatesPerSec <<" SERVER FPS";
 		this->zServerUpsText->SetText(ss.str().c_str());
+		this->zActorManager->SetUpdatesPerSec(updatesPerSec);
 	}
 	else if (msgArray[0].find(M_SERVER_RESTART.c_str()) == 0)
 	{

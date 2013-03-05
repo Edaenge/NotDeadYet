@@ -347,6 +347,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	gActor->SetPosition(position);
 	gActor->SetDir(direction);
 	gActor->SetEnergy(energy + 25.0f);
+	gActor->AddObserver(this);
 
 	//Create Ghost behavior
 	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);

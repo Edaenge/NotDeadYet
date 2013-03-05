@@ -270,7 +270,6 @@ void MainMenu::StartTestRun()
 {
 	std::string errorMessage;
 	int errorCode = 0;
-	//zGame->InitGameClient("80.78.216.201", 11521);s	zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
 	//zGame->InitGameClient("80.78.216.201", 11521); //Simon hem
 	//zGame->InitGameClient("194.47.150.16", 11521, errorMessage, errorCode); //server
 	//zGame->InitGameClient("194.47.150.20", 11521, errorMessage, errorCode); //Simon
