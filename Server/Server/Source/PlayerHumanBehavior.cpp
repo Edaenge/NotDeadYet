@@ -202,22 +202,26 @@ bool PlayerHumanBehavior::Update( float dt )
 		zActor->SetPosition(center);
 	}
 
-	PhysicalConditionCalculator(dt);
-	Actor* collide = CheckCollision();
-
-	if(collide)
+	if(bActor->IsAlive())
 	{
-		Vector3 pActor_rewind_dir = (collide->GetPosition() - zActor->GetPosition());
-		pActor_rewind_dir.Normalize();
-		Vector3 target_rewind_dir = pActor_rewind_dir * -1;
 
-		if( BioActor* bioA = dynamic_cast<BioActor*>(collide) )
+		PhysicalConditionCalculator(dt);
+		Actor* collide = CheckCollision();
+
+		if(collide)
 		{
-			if( bioA->HasMoved() )
-				bioA->SetPosition( bioA->GetPosition() - (target_rewind_dir * 0.25f) );
-		}
+			Vector3 pActor_rewind_dir = (collide->GetPosition() - zActor->GetPosition());
+			pActor_rewind_dir.Normalize();
+			Vector3 target_rewind_dir = pActor_rewind_dir * -1;
 
-		zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+			if( BioActor* bioA = dynamic_cast<BioActor*>(collide) )
+			{
+				if( bioA->HasMoved() )
+					bioA->SetPosition( bioA->GetPosition() - (target_rewind_dir * 0.25f) );
+			}
+
+			zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+		}
 	}
 
 	return false;
@@ -295,6 +299,8 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		pActor->SetFullness(fullness);
 		hydration -= this->zPlayerConfigReader->GetVariable(HYDRATION_COEFF);//zHydrationCof;
 		pActor->SetHydration(hydration);
+
+		//float testBleeding = pActor->GetBleeding();
 
 		if(pActor->GetBleeding() > 0)//Player is bleeding.
 		{
