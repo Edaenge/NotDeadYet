@@ -5,6 +5,8 @@
 #include <sstream>
 #include <math.h>
 #include "Entity.h"
+#include "WaterQuad.h"
+#include "WorldPhysics.h"
 
 
 World::World( Observer* observer, const std::string& fileName, bool readOnly) throw(...) : 
@@ -12,7 +14,8 @@ World::World( Observer* observer, const std::string& fileName, bool readOnly) th
 	zSectors(NULL), 
 	zNrOfSectorsWidth(0), 
 	zNrOfSectorsHeight(0),
-	zReadOnly(readOnly)
+	zReadOnly(readOnly),
+	zWaterQuadsEdited(0)
 {
 	if ( zReadOnly )
 	{
@@ -70,13 +73,27 @@ World::~World()
 	// Close File
 	if ( zFile ) delete zFile, zFile=0;
 
+	// Delete Anchors
+	for( auto i = zAnchors.cbegin(); i != zAnchors.cend(); ++i )
+	{
+		delete *i;
+	}
+	zAnchors.clear();
+
 	// Delete Entities
-	for( auto i = zEntities.begin(); i != zEntities.end(); )
+	for( auto i = zEntities.cbegin(); i != zEntities.cend(); ++i )
 	{
 		NotifyObservers( &EntityRemovedEvent(this,*i));
 		delete *i;
-		i = zEntities.erase(i);
 	}
+	zEntities.clear();
+
+	// Delete Water Quads
+	for( auto i = zWaterQuads.cbegin(); i != zWaterQuads.cend(); ++i )
+	{
+		delete *i;
+	}
+	zWaterQuads.clear();
 
 	// Delete the zSectors pointers.
 	if ( this->zSectors )
@@ -104,7 +121,7 @@ World::~World()
 Entity* World::CreateEntity( unsigned int entityType )
 {
 	Entity* temp = new Entity(entityType);
-	zEntities.push_back(temp);
+	zEntities.insert(temp);
 	NotifyObservers( &EntityLoadedEvent(this, temp) );
 	temp->SetEdited(true);
 	return temp;
@@ -145,7 +162,7 @@ void World::SetHeightAt( float x, float y, float val )
 	{
 		float border = (float)(SECTOR_HEIGHT_SIZE-1)/(float)SECTOR_HEIGHT_SIZE;
 		GetSector(sectorX, sectorY-1)->SetHeightAt(snapX, border, val);
-		NotifyObservers( &SectorHeightMapChanged(this, sectorX, sectorY-1, snapX, border) );
+		NotifyObservers(&SectorHeightMapChanged(this, sectorX, sectorY-1, snapX, border));
 	}
 
 	// Overlap Left Up Corner
@@ -153,7 +170,7 @@ void World::SetHeightAt( float x, float y, float val )
 	{
 		float border = (float)(SECTOR_HEIGHT_SIZE-1)/(float)SECTOR_HEIGHT_SIZE;
 		GetSector(sectorX-1, sectorY-1)->SetHeightAt(border, border, val);
-		NotifyObservers( &SectorHeightMapChanged(this, sectorX-1, sectorY-1, border, border) );
+		NotifyObservers(&SectorHeightMapChanged(this, sectorX-1, sectorY-1, border, border));
 	}
 }
 
@@ -176,10 +193,32 @@ void World::SaveFile()
 {
 	if ( zFile )
 	{
+		// Settings
 		zFile->SetStartCamera(zStartCamPos, zStartCamRot);
 		zFile->SetWorldAmbient(zAmbient);
 		zFile->SetSunProperties(zSunDir,zSunColor,zSunIntensity);
 
+		// Save Waters
+		if ( zWaterQuadsEdited )
+		{
+			// Compile Water Quads
+			std::vector<Vector3> quads;
+			quads.resize(zWaterQuads.size()*4);
+
+			unsigned int x = 0;
+			for( auto i = zWaterQuads.begin(); i != zWaterQuads.end(); ++i )
+			{
+				for( auto y = 0; y < 4; ++y )
+				{
+					quads[x++] = (*i)->GetPosition(y);
+				}
+			}
+
+			zFile->WriteWater(quads);
+			zWaterQuadsEdited = false;
+		}
+
+		// Per Sector
 		if ( zSectors )
 		{
 			for(unsigned int x=0; x<GetNumSectorsWidth(); ++x)
@@ -422,7 +461,7 @@ Sector* World::GetSector( unsigned int x, unsigned int y ) throw(...)
 
 					Entity* ent = new Entity(e->type, pos, rot, scale);
 					ent->SetEdited(false);
-					zEntities.push_back(ent);
+					zEntities.insert(ent);
 					NotifyObservers( &EntityLoadedEvent(this,ent) );
 
 					counter++;
@@ -470,8 +509,40 @@ void World::OnEvent( Event* e )
 		zSunColor = zFile->GetSunColor();
 		zSunIntensity = zFile->GetSunIntensity();
 
+		// Load Waters
+		std::vector<Vector3> positions;
+		if ( zFile->ReadWater(positions) )
+		{
+			for( unsigned int x=0; x<positions.size()/4; ++x )
+			{
+				WaterQuad* quad = new WaterQuad();
+				
+				for( unsigned int y=0; y<4; ++y )
+				{
+					quad->SetPosition(y, positions[x*4+y]);
+				}
+
+				// Add Observer
+				quad->AddObserver(this);
+
+				// Insert Quad
+				zWaterQuads.insert(quad);
+
+				// Notify Observers
+				WaterQuadLoadedEvent WQLE;
+				WQLE.zQuad = quad;
+				NotifyObservers(&WQLE);
+			}
+			
+			zWaterQuadsEdited = false;
+		}
+
 		// World Has Been Loaded
-		NotifyObservers( &WorldLoadedEvent(this) );
+		NotifyObservers( &WorldLoadedEvent(this) );	
+	}
+	else if ( WaterQuadEditedEvent* WQEE = dynamic_cast<WaterQuadEditedEvent*>(e) )
+	{
+		zWaterQuadsEdited = true;
 	}
 	else if ( WorldHeaderCreateEvent* WHCE = dynamic_cast<WorldHeaderCreateEvent*>(e) )
 	{
@@ -521,17 +592,17 @@ unsigned int World::GetSectorsInCicle( const Vector2& center, float radius, std:
 
 	unsigned int counter=0;
 	
-	unsigned int xMin = ( ( center.x - radius ) < 0 ? 0 : center.x - radius  ) / FSECTOR_WORLD_SIZE;
-	unsigned int xMax = ( ( center.x + radius ) > (float)zNrOfSectorsWidth * FSECTOR_WORLD_SIZE? (float)zNrOfSectorsWidth * FSECTOR_WORLD_SIZE : ( center.x + radius ) ) / FSECTOR_WORLD_SIZE;
+	unsigned int xMin = (unsigned int)(((center.x - radius) < 0.0f? 0.0f : center.x - radius) / FSECTOR_WORLD_SIZE);
+	unsigned int xMax = (unsigned int)(((center.x + radius) > (float)zNrOfSectorsWidth * FSECTOR_WORLD_SIZE? (float)zNrOfSectorsWidth * FSECTOR_WORLD_SIZE : (center.x + radius)) / FSECTOR_WORLD_SIZE);
 
-	unsigned int yMin = ( ( center.y - radius ) < 0 ? 0 : center.y - radius ) / FSECTOR_WORLD_SIZE;
-	unsigned int yMax = ( ( center.y + radius ) > (float)zNrOfSectorsHeight * FSECTOR_WORLD_SIZE? (float)zNrOfSectorsHeight * FSECTOR_WORLD_SIZE : ( center.y + radius ) ) / FSECTOR_WORLD_SIZE; 
+	unsigned int yMin = (unsigned int)(((center.y - radius) < 0.0f? 0.0f : center.y - radius) / FSECTOR_WORLD_SIZE);
+	unsigned int yMax = (unsigned int)(((center.y + radius) > (float)zNrOfSectorsHeight * FSECTOR_WORLD_SIZE? (float)zNrOfSectorsHeight * FSECTOR_WORLD_SIZE : (center.y + radius)) / FSECTOR_WORLD_SIZE); 
 
 	for( unsigned int x=xMin; x<xMax; ++x )
 	{
 		for( unsigned int y=yMin; y<yMax; ++y )
 		{
-			Rect sectorRect( Vector2(x * FSECTOR_WORLD_SIZE, y * FSECTOR_WORLD_SIZE ), Vector2(32,32) );
+			Rect sectorRect(Vector2(x * FSECTOR_WORLD_SIZE, y * FSECTOR_WORLD_SIZE), Vector2(32,32));
 			if ( DoesIntersect(sectorRect, Circle(center,radius)) )
 			{
 				counter++;
@@ -548,7 +619,7 @@ unsigned int World::GetHeightNodesInCircle( const Vector2& center, float radius,
 	unsigned int counter=0;
 
 	// Calculate Height Node Density
-	float density = (float)SECTOR_WORLD_SIZE / (float)(SECTOR_HEIGHT_SIZE-1);
+	float density = FSECTOR_WORLD_SIZE / (FSECTOR_HEIGHT_SIZE-1.0f);
 
 	for( float x = center.x - radius; x < center.x + radius; x+=density )
 	{
@@ -600,7 +671,7 @@ unsigned int World::GetNumSectorsHeight() const
 
 void World::RemoveEntity( Entity* entity )
 {
-	NotifyObservers(&EntityRemovedEvent(this,entity));
+	NotifyObservers(&EntityRemovedEvent(this, entity));
 	auto i = std::find(zEntities.begin(), zEntities.end(), entity);
 	zEntities.erase(i);
 	delete entity;
@@ -834,7 +905,7 @@ float World::CalcHeightAtWorldPos( const Vector2& worldPos ) throw(...)
 	if ( worldPos.x >= GetWorldSize().x ||
 		worldPos.y >= GetWorldSize().y ||
 		worldPos.x < 0.0f ||
-		worldPos.y < 0.0f ) return 0.0f;
+		worldPos.y < 0.0f ) throw("Out Of Bounds!");
 
 	// Height Nodes Density
 	float density = (float)SECTOR_WORLD_SIZE / (float)(SECTOR_HEIGHT_SIZE-1);
@@ -1010,7 +1081,7 @@ void World::SetNormalAt( const Vector2& worldPos, const Vector3& val ) throw(...
 void World::GenerateSectorNormals( const Vector2UINT& sectorCoords )
 {
 	// Density
-	float density = FSECTOR_WORLD_SIZE / (FSECTOR_NORMALS_SIZE-1.0);
+	float density = FSECTOR_WORLD_SIZE / (FSECTOR_NORMALS_SIZE-1.0f);
 
 	// Sector Cornera
 	Vector2 start;
@@ -1088,6 +1159,62 @@ bool World::IsInside( const Vector2& worldPos )
 	if ( worldPos.x >= GetWorldSize().x ) return false;
 	if ( worldPos.y >= GetWorldSize().y ) return false;
 	return true;
+}
+
+WaterQuad* World::CreateWaterQuad()
+{
+	WaterQuad* WQ = new WaterQuad();
+
+	WQ->AddObserver(this);
+	zWaterQuads.insert(WQ);
+	zWaterQuadsEdited = true;
+
+	// Notify Observers
+	WaterQuadCreatedEvent WQCE;
+	WQCE.zQuad = WQ;
+	NotifyObservers(&WQCE);
+
+	return WQ;
+}
+
+void World::DeleteWaterQuad( WaterQuad* quad )
+{
+	delete quad;
+	zWaterQuads.erase(quad);
+	zWaterQuadsEdited = false;
+}
+
+float World::GetWaterDepthAt( const Vector2& worldPos )
+{
+	float curDistance = 0.0f;
+
+	// Calc Ground Height At Position
+	Vector3 groundPos( worldPos.x, GetHeightAt(worldPos), worldPos.y );
+
+	// Ray VS Water Quads
+	for( auto i = zWaterQuads.begin(); i != zWaterQuads.end(); ++i )
+	{
+		WorldPhysics::CollisionData coll;
+
+		if ( WorldPhysics::RayVSTriangle(groundPos, Vector3(0.0f, 1.0f, 0.0f), (*i)->GetPosition(0), (*i)->GetPosition(1), (*i)->GetPosition(2), coll) )
+		{
+
+		}
+		else if ( WorldPhysics::RayVSTriangle(groundPos, Vector3(0.0f, 1.0f, 0.0f), (*i)->GetPosition(2), (*i)->GetPosition(3), (*i)->GetPosition(1), coll) )
+		{
+
+		}
+
+		if ( coll.collision )
+		{
+			if ( coll.distance > curDistance )
+			{
+				curDistance = coll.distance;
+			}
+		}
+	}
+
+	return curDistance;
 }
 
 Vector2 World::GetWorldCenter() const

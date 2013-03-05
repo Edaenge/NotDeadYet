@@ -1,14 +1,14 @@
 #include "WorldRenderer.h"
 #include "EntityList.h"
 #include "Entity.h"
+#include "WaterQuad.h"
 
-#undef min
-#undef max
 
 WorldRenderer::WorldRenderer( World* world, GraphicsEngine* graphics ) : 
 	zWorld(world),
 	zGraphics(graphics),
-	zShowAIMap(false)
+	zShowAIMap(false),
+	zShowWaterBoxes(false)
 {
 	zWorld->AddObserver(this);
 
@@ -17,7 +17,7 @@ WorldRenderer::WorldRenderer( World* world, GraphicsEngine* graphics ) :
 		zWorld->GetSunColor(),
 		zWorld->GetSunIntensity() );
 
-	// Render Loaded SEctors
+	// Render Loaded Sectors
 	auto loadedSectors = zWorld->GetLoadedSectors();
 	if ( !loadedSectors.empty() )
 	{
@@ -26,6 +26,25 @@ WorldRenderer::WorldRenderer( World* world, GraphicsEngine* graphics ) :
 		{
 			CreateTerrain(*i);
 		}
+	}
+
+	// Render Waters
+	for( auto i = zWorld->GetWaterQuads().cbegin(); i != zWorld->GetWaterQuads().cend(); ++i )
+	{
+		(*i)->AddObserver(this);
+
+		zWaterQuads[*i] = zGraphics->CreateWaterPlane(Vector3(0.0f, 0.0f, 0.0f), "Media/WaterTexture.png");
+		
+		auto i2 = zWaterQuads.find(*i);
+		if ( i2 != zWaterQuads.end() )
+		{
+			for( unsigned int x=0; x<4; ++x )
+			{
+				i2->second->SetVertexPosition((*i)->GetPosition(x), x);
+			}
+		}
+
+		UpdateWaterBoxes(*i);
 	}
 }
 
@@ -49,8 +68,25 @@ WorldRenderer::~WorldRenderer()
 		i->first->RemoveObserver(this);
 		zGraphics->DeleteMesh( i->second );
 	}
-
 	zEntities.clear();
+
+	// Clean Water Boxes
+	for( auto i = zWaterBoxes.begin(); i != zWaterBoxes.end(); ++i )
+	{
+		for( unsigned int x=0; x<4; ++x )
+		{
+			zGraphics->DeleteMesh( i->second.zCubes[x] );
+		}
+	}
+	zWaterBoxes.clear();
+
+	// Clean Water Quads
+	for( auto i = zWaterQuads.begin(); i != zWaterQuads.end(); ++i )
+	{
+		i->first->RemoveObserver(this);
+		zGraphics->DeleteMesh(i->second);
+	}
+	zWaterQuads.clear();
 }
 
 
@@ -64,6 +100,53 @@ void WorldRenderer::OnEvent( Event* e )
 				WLE->world->GetSunDir(),
 				WLE->world->GetSunColor(),
 				WLE->world->GetSunIntensity() );
+		}
+	}
+	else if ( WaterQuadCreatedEvent* WQCE = dynamic_cast<WaterQuadCreatedEvent*>(e) )
+	{
+		zWaterQuads[WQCE->zQuad] = zGraphics->CreateWaterPlane(Vector3(0.0f, 0.0f, 0.0f), "Media/WaterTexture.png");
+		WQCE->zQuad->AddObserver(this);
+		UpdateWaterBoxes(WQCE->zQuad);
+	}
+	else if ( WaterQuadLoadedEvent* WQLE = dynamic_cast<WaterQuadLoadedEvent*>(e) )
+	{
+		zWaterQuads[WQLE->zQuad] = zGraphics->CreateWaterPlane(Vector3(0.0f, 0.0f, 0.0f), "Media/WaterTexture.png");
+		WQLE->zQuad->AddObserver(this);
+
+		for( unsigned int x=0; x<4; ++x )
+		{
+			zWaterQuads[WQLE->zQuad]->SetVertexPosition(WQLE->zQuad->GetPosition(x), x);
+		}
+		
+		UpdateWaterBoxes(WQLE->zQuad);
+	}
+	else if ( WaterQuadEditedEvent* WQEE = dynamic_cast<WaterQuadEditedEvent*>(e) )
+	{
+		auto i = zWaterQuads.find(WQEE->zQuad);
+		if ( i != zWaterQuads.end() )
+		{
+			for( unsigned int x=0; x<4; ++x )
+			{
+				i->second->SetVertexPosition(WQEE->zQuad->GetPosition(x), x);
+			}
+		}
+		UpdateWaterBoxes(WQEE->zQuad);
+	}
+	else if ( WaterQuadDeletedEvent* WQDE = dynamic_cast<WaterQuadDeletedEvent*>(e) )
+	{
+		auto i = zWaterQuads.find(WQDE->zQuad);
+		zGraphics->DeleteWaterPlane(i->second);
+		zWaterQuads.erase(i);
+
+		// Delete Boxes
+		auto boxI = zWaterBoxes.find(WQDE->zQuad);
+		if ( boxI != zWaterBoxes.end() ) 
+		{
+			zGraphics->DeleteMesh(boxI->second.zCubes[0]);
+			zGraphics->DeleteMesh(boxI->second.zCubes[1]);
+			zGraphics->DeleteMesh(boxI->second.zCubes[2]);
+			zGraphics->DeleteMesh(boxI->second.zCubes[3]);
+			zWaterBoxes.erase(boxI);
 		}
 	}
 	else if ( SectorUnloadedEvent* SUE = dynamic_cast<SectorUnloadedEvent*>(e) )
@@ -178,6 +261,73 @@ float WorldRenderer::GetYPosFromHeightMap( float x, float y )
 	return std::numeric_limits<float>::infinity();
 }
 
+WaterCollisionData WorldRenderer::GetCollisionWithWaterBoxes()
+{
+	WaterCollisionData result;
+
+	// Default Settings
+	result.quad = 0; 
+
+	float curDistance = std::numeric_limits<float>::max();
+
+	iCamera* cam = zGraphics->GetCamera();
+	Vector3 camPos = cam->GetPosition();
+	Vector3 pickDir = cam->Get3DPickingRay();
+
+	// Test Terrain To Pick Stuff Above Terrain Only
+	CollisionData terrainColl = this->Get3DRayCollisionDataWithGround();
+	if ( terrainColl.collision )
+	{
+		curDistance = terrainColl.distance;
+	}
+
+	// Water Boxes
+	for( auto i = zWaterBoxes.begin(); i != zWaterBoxes.end(); ++i )
+	{
+		for( unsigned int x=0; x<4; ++x )
+		{
+			CollisionData cd = zGraphics->GetPhysicsEngine()->GetCollisionRayMesh(
+				camPos, 
+				pickDir, 
+				i->second.zCubes[x]);
+
+			if(cd.collision)
+			{
+				float thisDistance = (Vector3(cd.posx, cd.posy, cd.posz) - camPos).GetLength();
+
+				if(thisDistance < curDistance)
+				{
+					result.quad = i->first;
+					result.cornerIndex = x;
+					result.position = Vector3(cd.posx, cd.posy, cd.posz);
+					curDistance = thisDistance;
+				}
+			}
+		}
+
+		// Test Collision With Water Quad
+		CollisionData cd = zGraphics->GetPhysicsEngine()->GetCollisionRayMesh(
+			camPos, 
+			pickDir,
+			zWaterQuads[i->first]);
+
+		if(cd.collision)
+		{
+			float thisDistance = (Vector3(cd.posx, cd.posy, cd.posz) - camPos).GetLength();
+
+			if(thisDistance < curDistance)
+			{
+				result.quad = i->first;
+				result.cornerIndex = 4;
+				result.position = Vector3(cd.posx, cd.posy, cd.posz);
+				curDistance = thisDistance;
+			}
+		}
+	}
+
+	return result;
+}
+
 CollisionData WorldRenderer::Get3DRayCollisionDataWithGround()
 {
 	// Get Applicable Sectors
@@ -192,13 +342,16 @@ CollisionData WorldRenderer::Get3DRayCollisionDataWithGround()
 	{
 		unsigned int sectorIndex = i->y * zWorld->GetNumSectorsWidth() + i->x;
 
-		CollisionData cd = zGraphics->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(
-			zGraphics->GetCamera()->GetPosition(), 
-			zGraphics->GetCamera()->Get3DPickingRay(), 
-			zTerrain[sectorIndex],
-			(float)SECTOR_WORLD_SIZE / (float)(SECTOR_HEIGHT_SIZE-1));
-		
-		if ( cd.collision && cd.distance < returnData.distance ) returnData = cd;
+		if ( zTerrain[sectorIndex] )
+		{
+			CollisionData cd = zGraphics->GetPhysicsEngine()->GetSpecialCollisionRayTerrain(
+				zGraphics->GetCamera()->GetPosition(), 
+				zGraphics->GetCamera()->Get3DPickingRay(), 
+				zTerrain[sectorIndex],
+				(float)SECTOR_WORLD_SIZE / (float)(SECTOR_HEIGHT_SIZE-1));
+			
+			if ( cd.collision && cd.distance < returnData.distance ) returnData = cd;
+		}
 	}
 
 	// Return default collision
@@ -229,7 +382,7 @@ Entity* WorldRenderer::Get3DRayCollisionWithMesh()
 		{
 			float thisDistance = (Vector3(cd.posx,cd.posy,cd.posz) - camPos).GetLength();
 
-			if( cam->Get3DPickingRay().GetDotProduct(Vector3(cd.posx,cd.posy,cd.posz) - camPos) > 0.0f && thisDistance < curDistance)
+			if(thisDistance < curDistance)
 			{
 				returnPointer = *i;
 				curDistance = thisDistance;
@@ -284,6 +437,7 @@ void WorldRenderer::UpdateSectorTextures( const Vector2UINT& sectorCoords )
 	}
 }
 
+
 void WorldRenderer::Update()
 {
 	while ( !zUpdatesRequired.empty() )
@@ -304,9 +458,27 @@ void WorldRenderer::Update()
 
 		zUpdatesRequired.erase(i);
 	}
+
+	// Ents To Update
+	std::set<Entity*> entsToUpdate;
+
+	// Update Current Entities LOD
+	for( auto i = zEntities.cbegin(); i != zEntities.cend(); ++i )
+	{
+		entsToUpdate.insert(i->first);
+	}
+
+	// New Entities LOD
+	if ( zWorld ) zWorld->GetEntitiesInCircle( zGraphics->GetCamera()->GetPosition().GetXZ(), zGraphics->GetEngineParameters().FarClip, entsToUpdate);
+
+	// Update Entities
+	for ( auto i = entsToUpdate.cbegin(); i != entsToUpdate.cend(); ++i )
+	{
+		SetEntityGraphics(*i);
+	}
 }
 
-void WorldRenderer::ToggleAIGrid( bool state )
+void WorldRenderer::ToggleAIGrid(bool state)
 {
 	zShowAIMap = state;
 
@@ -323,7 +495,37 @@ void WorldRenderer::ToggleAIGrid( bool state )
 	}
 }
 
-void WorldRenderer::UpdateSectorAIGrid( const Vector2UINT& sectorCoords )
+void WorldRenderer::ToggleWaterBoxes(bool flag)
+{
+	if ( zShowWaterBoxes != flag )
+	{
+		zShowWaterBoxes = flag;
+
+		if ( zShowWaterBoxes )
+		{
+			// Create Water Boxes
+			for( auto i = zWaterQuads.begin(); i != zWaterQuads.end(); ++i )
+			{
+				UpdateWaterBoxes(i->first);
+			}
+		}
+		else
+		{
+			// Delete Water Boxes
+			for( auto i = zWaterBoxes.begin(); i != zWaterBoxes.end(); ++i )
+			{
+				for( unsigned int x=0; x<4; ++x )
+				{
+					zGraphics->DeleteMesh(zWaterBoxes[i->first].zCubes[x]);
+				}
+			}
+
+			zWaterBoxes.clear();
+		}
+	}
+}
+
+void WorldRenderer::UpdateSectorAIGrid(const Vector2UINT& sectorCoords)
 {
 	if ( iTerrain* T = GetTerrain(sectorCoords) )
 	{
@@ -349,11 +551,6 @@ iTerrain* WorldRenderer::GetTerrain( const Vector2UINT& sectorCoords )
 	if ( zTerrain.empty() ) return 0;
 	unsigned int tIndex = sectorCoords.y * zWorld->GetNumSectorsWidth() + sectorCoords.x;
 	return zTerrain[tIndex];
-}
-
-iMesh* WorldRenderer::GetEntityMesh( Entity* entity )
-{
-	return this->zEntities[entity];
 }
 
 void WorldRenderer::CreateTerrain( const Vector2UINT& sectorCoords )
@@ -386,43 +583,61 @@ void WorldRenderer::CreateEntity( Entity* e )
 
 void WorldRenderer::SetEntityGraphics( Entity* e )
 {
-	// Delete Old Graphics
-	auto i = zEntities.find(e);
-	if ( i != zEntities.end() )
-	{
-		zGraphics->DeleteMesh(i->second);
-	}
+	// Camera Distance
+	Vector3 camPos = zGraphics->GetCamera()->GetPosition();
+	float distanceToCam = (camPos - e->GetPosition()).GetLength();
 
 	// New Graphics
-	const std::string& model = GetEntModel(e->GetType());
-	if ( model == "water" )
+	const std::string& model = GetEntModel(e->GetType(), distanceToCam);
+
+	// Find Old Graphics
+	auto i = zEntities.find(e);
+
+	if ( !model.empty() && i == zEntities.end() )
 	{
-		zEntities[e] = zGraphics->CreateWaterPlane(e->GetPosition(), "Media/WaterTexture.png");
+		zEntities[e] = 0;
+		i = zEntities.find(e);
 	}
-	else
+
+	std::string file;
+	if ( i != zEntities.end() && i->second ) file = i->second->GetFilePath();
+
+	if ( i != zEntities.end() && (!i->second || strcmp(model.c_str(), i->second->GetFilePath())) )
 	{
-		float billboardDistance = GetEntBillboardDistance(e->GetType());
-		if ( billboardDistance > 0.0f )
+		// Delete Old Graphics
+		if ( i->second ) zGraphics->DeleteMesh(i->second);
+
+		// Create New
+		if ( !model.empty() )
 		{
-			zEntities[e] = zGraphics->CreateMesh(
-				model.c_str(), 
-				e->GetPosition(), 
-				GetEntBillboard(e->GetType()).c_str(),
-				billboardDistance);
+			float billboardDistance = GetEntBillboardDistance(e->GetType());
+
+			if ( billboardDistance > 0.0f )
+			{
+				i->second = zGraphics->CreateMesh(
+					model.c_str(), 
+					e->GetPosition(), 
+					GetEntBillboard(e->GetType()).c_str(),
+					billboardDistance);
+			}
+			else
+			{
+				i->second = zGraphics->CreateMesh(model.c_str(), e->GetPosition());
+			}
+
+			SetEntityTransformation(e);
 		}
 		else
 		{
-			zEntities[e] = zGraphics->CreateMesh(model.c_str(), e->GetPosition());
+			zEntities.erase(i);
 		}
 	}
-
-	SetEntityTransformation(e);
 }
 
 void WorldRenderer::SetEntityTransformation( Entity* e )
 {
 	auto i = zEntities.find(e);
-	if ( i != zEntities.end() )
+	if ( i != zEntities.end() && i->second != 0 )
 	{
 		i->second->SetPosition(e->GetPosition());
 		i->second->SetQuaternion(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -442,5 +657,65 @@ void WorldRenderer::DeleteEntity( Entity* e )
 		e->RemoveObserver(this);
 		zGraphics->DeleteMesh(i->second);
 		zEntities.erase(i);
+	}
+}
+
+void WorldRenderer::UpdateWaterBoxes( WaterQuad* quad )
+{
+	// Create Boxes
+	if ( zShowWaterBoxes )
+	{
+		auto i = zWaterBoxes.find(quad);
+
+		if ( i != zWaterBoxes.end() )
+		{
+			// Calculate Positions
+			for( unsigned int x=0; x<4; ++x )
+			{
+				Vector3 position;
+				position = quad->GetPosition(x);
+
+				// Terrain Height Minimum
+				try
+				{
+					float terrainHeight = zWorld->GetHeightAt(position.GetXZ());
+					if ( position.y < terrainHeight ) position.y = terrainHeight;
+				}
+				catch(...)
+				{
+				}
+
+				i->second.zCubes[x]->SetPosition(position);
+			}
+		}
+		else
+		{
+			// Calculate Positions
+			Vector3 positions[4];
+			for( unsigned int x=0; x<4; ++x )
+			{
+				positions[x] = quad->GetPosition(x);
+
+				// Terrain Height Minimum
+				try
+				{
+					float terrainHeight = zWorld->GetHeightAt(positions[x].GetXZ());
+					if ( positions[x].y < terrainHeight ) positions[x].y = terrainHeight;
+				}
+				catch(...)
+				{
+				}
+			}
+			
+			zWaterBoxes[quad].zCubes[0] = zGraphics->CreateMesh("Media/Models/Cube_1.obj", positions[0]);
+			zWaterBoxes[quad].zCubes[1] = zGraphics->CreateMesh("Media/Models/Cube_2.obj", positions[1]);
+			zWaterBoxes[quad].zCubes[2] = zGraphics->CreateMesh("Media/Models/Cube_3.obj", positions[2]);
+			zWaterBoxes[quad].zCubes[3] = zGraphics->CreateMesh("Media/Models/Cube_4.obj", positions[3]);
+
+			for( unsigned int x=0; x<4; ++x )
+			{
+				zWaterBoxes[quad].zCubes[x]->SetScale(1.0f/20.0f);
+			}
+		}
 	}
 }
