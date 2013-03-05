@@ -58,6 +58,7 @@
     <ClCompile Include="Source\ProjectileArrowBehavior.cpp" />
     <ClCompile Include="Source\ServerEngine.cpp" />
     <ClCompile Include="Source\ServerEngineWrapper.cpp" />
+    <ClCompile Include="Source\SoundHandler.cpp" />
     <ClCompile Include="Source\SupplyActor.cpp" />
     <ClCompile Include="Source\SupplyDrop.cpp" />
     <ClCompile Include="Source\WolfActor.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="Source\ProjectileActor.h" />
     <ClInclude Include="Source\ProjectileArrowBehavior.h" />
     <ClInclude Include="Source\ServerEngine.h" />
+    <ClInclude Include="Source\SoundHandler.h" />
     <ClInclude Include="Source\SupplyActor.h" />
     <ClInclude Include="Source\SupplyDrop.h" />
     <ClInclude Include="Source\WolfActor.h" />

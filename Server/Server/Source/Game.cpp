@@ -129,6 +129,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->zFogTimer = 0.0f;
 
 	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
+
+	this->zSoundHandler = new SoundHandler();
 }
 
 Game::~Game()
@@ -154,6 +156,7 @@ Game::~Game()
 	SAFE_DELETE(this->zWorld);
 	SAFE_DELETE(this->zActorManager);
 	SAFE_DELETE(this->zGameMode);
+	SAFE_DELETE(this->zSoundHandler);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -434,27 +437,6 @@ bool Game::Update( float dt )
 	int counter = 0;
 	while( i != zBehaviors.end() )
 	{
-		if(PlayerActor* cActor = dynamic_cast<PlayerActor*>((*i)->GetActor()))
-		{
-			if(cActor->GetExhausted() && cActor->GetHasSentExhausted())
-			{
-				cActor->SetHasSentExhausted(true);
-				NetworkMessageConverter NMC;
-				std::string msg = "";
-				if(cActor->GetModel().find("female"))
-				{
-					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENT_NOTDEADYET_WOMAN_BREATHEAFTERRUN);
-				}
-				else
-				{
-					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENT_NOTDEADYET_MAN_BREATHEAFTERRUN);
-				}
-
-				msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
-				this->SendToAll(msg);
-			}
-		}
-
 		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
 		{
 			playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
