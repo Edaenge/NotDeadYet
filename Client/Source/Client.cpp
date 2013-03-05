@@ -1468,7 +1468,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		/*float eventId = this->zMsgHandler.ConvertStringToInt(M_PLAY_SOUND, msgArray[0]);
+		float eventId = this->zMsgHandler.ConvertStringToInt(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
 
 		AudioManager* am = AudioManager::GetInstance();
@@ -1482,8 +1482,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			tempHandle->Setposition(temp);
 			tempHandle->Play();
 			delete temp;
-		}*/
-
+		}
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{

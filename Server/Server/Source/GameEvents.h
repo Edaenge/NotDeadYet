@@ -3,6 +3,7 @@
 #include <Observer.h>
 #include <vector.h>
 #include "ClientData.h"
+#include "Actor.h"
 
 /*Event when a player has connected.*/
 class PlayerConnectedEvent : public Event
@@ -241,6 +242,7 @@ public:
 	Actor* zActor;
 	int zAnimalType;
 };
+
 class PlayerLeaveAnimalEvent : public Event
 {
 public:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Observer.h>
+#include "SoundHandler.h"
 
 class ActorSynchronizer;
 class Actor;
@@ -10,11 +11,12 @@ class ActorAdded;
 class ActorManager : public Observed, public Observer
 {
 	ActorSynchronizer *zSynch;
+	SoundHandler* zSoundHandler;
 	std::set<Actor*> zActors;
 	std::set<Actor*> zCollideableActors;
 
 public:
-	ActorManager( ActorSynchronizer* syncher );
+	ActorManager( ActorSynchronizer* syncher, SoundHandler* sh);
 	virtual ~ActorManager();
 	void AddActor( Actor* actor );
 	/*! Removes The actor, physics object will NOT be freed.*/
