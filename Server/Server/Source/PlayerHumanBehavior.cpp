@@ -203,7 +203,7 @@ bool PlayerHumanBehavior::Update( float dt )
 		zActor->SetPosition(center);
 	}
 
-	//PhysicalConditionCalculator(dt);
+	PhysicalConditionCalculator(dt);
 	Actor* collide = CheckCollision();
 
 	if(collide)
@@ -246,7 +246,6 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 			if(pActor->GetStamina() > pActor->GetStaminaMax())
 				pActor->SetStamina(pActor->GetStaminaMax());
 
-			pActor->StaminaHasChanged();
 		}
 
 		if(pActor->GetState() == STATE_RUNNING)
@@ -297,9 +296,6 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		pActor->SetFullness(fullness);
 		hydration -= this->zPlayerConfigReader->GetVariable(HYDRATION_COEFF);//zHydrationCof;
 		pActor->SetHydration(hydration);
-
-		pActor->HungerHasChanged();
-		pActor->HydrationHasChanged();
 
 		if(pActor->GetBleeding() > 0)//Player is bleeding.
 		{

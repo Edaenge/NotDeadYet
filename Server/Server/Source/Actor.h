@@ -53,6 +53,12 @@ public:
 	Actor *zActor;
 };
 
+class ActorPhysicalConditionEnergyEvent : public Event
+{
+public:
+	Actor *zActor;
+};
+
 /* 
    Every time an actor is created, an ID will be generated in this class. This id should be used for this actor.
    An exception is Players. They have the same ID as the ClientChannel.
@@ -81,13 +87,16 @@ public:
 	inline unsigned int GetID() const { return this->zID; }
 
 	// Set Transformation Functions
-	void SetPosition(const Vector3& pos);
-	void SetRotation(const Vector4& rot);
-	void SetRotation(const Vector3& around, const float angle);
+	void SetPosition(const Vector3& pos, const bool notify = true);
+	void SetRotation(const Vector4& rot, const bool notify = true);
+	void SetRotation(const Vector3& around, const float angle, const bool notify = true);
 	void SetPhysicsObject( PhysicsObject* object );
-	void SetScale(const Vector3& scale);
-	void SetDir(const Vector3& dir);
+	void SetScale(const Vector3& scale, const bool notify = true);
+	void SetDir(const Vector3& dir, const bool notify = true);
+	void SetEnergy(float energy, const bool notify = true);
+
 	bool CanCollide() const;
+
 	// Get Transformation Functions
 	inline const Vector3& GetPosition() const { return zPos; }
 	inline const Vector3& GetPreviousPos() const { return zPreviousPos; }
@@ -97,7 +106,6 @@ public:
 	virtual const std::string GetModel() const;
 	PhysicsObject* GetPhysicsObject() const {return this->zPhysicsObject;}
 	inline unsigned int GetType() const {return this->zType;}
-
-	float GetEnergy() {return this->zEnergy;}
-	void SetEnergy(float energy) {this->zEnergy = energy;}
+	inline float GetEnergy() {return this->zEnergy;}
+	
 };

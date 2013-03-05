@@ -8,6 +8,24 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "BioActor.h"
 #include <World/WorldEvents.h>
 
+
+class PlayerActorPhysicalConditionHungerEvent : public Event
+{
+public:
+	virtual ~PlayerActorPhysicalConditionHungerEvent() {}
+
+	Actor* zPlayerActor;
+};
+
+class PlayerActorPhysicalConditionHydrationEvent : public Event
+{
+public:
+	virtual ~PlayerActorPhysicalConditionHydrationEvent() {}
+
+	Actor* zPlayerActor;
+};
+
+
 /*This class is used to save player information such as position and states.
   This information is sent to clients.
 */
@@ -26,11 +44,8 @@ public:
 	float GetFullnessMax() {return this->zFullnessMax;}
 	float GetHydrationMax() {return this->zHydrationMax;}
 
-	void SetFullness(float fullness);
-	void SetHydration(float hydration);
-
-	void HungerHasChanged() {this->zHungerChanged = true;}
-	void HydrationHasChanged() {this->zHydrationChanged = true;}
+	void SetFullness(float fullness, const bool notify = true);
+	void SetHydration(float hydration, const bool notify = true);
 
 	bool UpdateBreathSoundTimer(float dt);
 
@@ -43,9 +58,6 @@ private:
 	float zFullness;
 	float zHydration;
 	
-	bool zHydrationChanged;
-	bool zHungerChanged;
-
 	float zFullnessMax;
 	float zHydrationMax;
 

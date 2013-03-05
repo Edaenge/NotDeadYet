@@ -939,10 +939,8 @@ void Game::OnEvent( Event* e )
 
 		// Start Position
 		center = this->CalcPlayerSpawnPoint(32, zWorld->GetWorldCenter());
-		actor->SetPosition(center);
-		actor->SetScale(actor->GetScale());
-		
-		zActorManager->AddActor(actor);
+		actor->SetPosition(center, false);
+		actor->SetScale(actor->GetScale(), false);
 
 		auto offsets = this->zCameraOffset.find(UDE->playerModel);
 		
@@ -951,6 +949,9 @@ void Game::OnEvent( Event* e )
 
 		// Apply Default Player Behavior
 		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));
+
+		//Add actor
+		zActorManager->AddActor(actor);
 
 		//Tells the client which Actor he owns.
 		std::string message;
@@ -1139,10 +1140,10 @@ ItemActor* Game::ConvertToItemActor(Behavior* behavior, Actor*& oldActorOut)
 	projectile->SetStackSize(1);
 
 	ItemActor* itemActor = new ItemActor(projectile);
-	itemActor->SetPosition(projActor->GetPosition());
-	itemActor->SetRotation(projActor->GetRotation());
-	itemActor->SetScale(projActor->GetScale());
-	itemActor->SetDir(projActor->GetDir());
+	itemActor->SetPosition(projActor->GetPosition(), false);
+	itemActor->SetRotation(projActor->GetRotation(), false);
+	itemActor->SetScale(projActor->GetScale(), false);
+	itemActor->SetDir(projActor->GetDir(), false);
 	oldActorOut = projActor;
 
 	return itemActor;
@@ -1470,8 +1471,8 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 
 	actor = NULL;
 	actor = new ItemActor(item);
+	actor->SetPosition(pActor->GetPosition(), false);
 	this->zActorManager->AddActor(actor);
-	actor->SetPosition(pActor->GetPosition());
 	NetworkMessageConverter NMC;
 	cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
 }
@@ -1506,7 +1507,6 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 						float fullness = pActor->GetFullness();
 
 						pActor->SetFullness(fullness + value);
-						pActor->HungerHasChanged();
 
 						//Sending Message to client And removing stack from inventory.
 						inv->RemoveItemStack(ID, 1);
@@ -1648,9 +1648,9 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				damage.piercing = ranged->GetDamage() + arrow->GetDamage();
 				projActor->SetDamage(damage);
 				//Set other values
-				projActor->SetScale(projActor->GetScale());
-				projActor->SetPosition( pActor->GetPosition() + pActor->GetCameraOffset());
-				projActor->SetDir(pActor->GetDir());
+				projActor->SetScale(projActor->GetScale(), false);
+				projActor->SetPosition( pActor->GetPosition() + pActor->GetCameraOffset(), false);
+				projActor->SetDir(pActor->GetDir(), false);
 
 				//Create behavior
 				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
@@ -1791,7 +1791,7 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 								else
 								{
 									inv->RemoveItem(it->first);
-									cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, it->first->GetID()));
+									cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)it->first->GetID()));
 								}
 								
 							}

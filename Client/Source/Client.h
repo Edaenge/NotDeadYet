@@ -15,6 +15,7 @@
 #include <World/WorldRenderer.h>
 #include <Packets/ServerFramePacket.h>
 #include <Packets/NewActorPacket.h>
+#include <Packets/PhysicalConditionPacket.h>
 #include "InGameMenu.h"
 #include "PickAnimalMenu.h"
 #include <AnimationFileReader.h>
@@ -123,6 +124,9 @@ private:
 
 	//Updates the text timer and removes the text when timer reaches 0
 	void UpdateText();
+	/*! Updates conditions*/
+	void UpdatePhysicalCondition(PhysicalConditionPacket* PCP);
+
 	/*! Checks Ray Vs Static/Dynamic Objects*/
 	std::vector<unsigned int> RayVsWorld();
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
@@ -231,7 +235,8 @@ private:
 	float zStamina;
 	float zHunger;
 	float zHydration;
-
+	float zEnergy;
+	float zBleedingLevel;
 	
 	Vector3 zMeshOffset;
 	std::map<std::string, Vector3> zMeshCameraOffsets;

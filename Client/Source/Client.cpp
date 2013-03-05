@@ -71,7 +71,13 @@ Client::Client()
 	this->zCrossHair = NULL;
 	this->zDamageIndicator = NULL;
 	this->zDamageOpacity = 0.0f;
-	
+
+	this->zEnergy = 100.0f;
+	this->zStamina = 100.0f;
+	this->zHealth = 100.0f;
+	this->zHydration = 100.0f;
+	this->zHunger = 100.0f;
+
 	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
 
@@ -1228,6 +1234,10 @@ void Client::HandleNetworkPacket( Packet* P )
 	{
 		this->AddActor(NPA);
 	}
+	else if (PhysicalConditionPacket* PCP = dynamic_cast<PhysicalConditionPacket*>(P))
+	{
+		this->UpdatePhysicalCondition(PCP);
+	}
 
 	delete P;
 	P = NULL;
@@ -1259,6 +1269,10 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		else if (type == "NewActorPacket")
 		{
 			packet = new NewActorPacket();
+		}
+		else if ( type == "PhysicalConditionPacket")
+		{
+			packet = new PhysicalConditionPacket();
 		}
 
 		if ( !packet ) 
@@ -1998,4 +2012,25 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 	TextDisplay* displayedText = new TextDisplay(text, START_TEXT_TIMER);
 
 	this->zDisplayedText.push_back(displayedText);
+}
+
+void Client::UpdatePhysicalCondition( PhysicalConditionPacket* PCP )
+{
+	if(PCP->zHealth != -1.0f)
+		this->zHealth = PCP->zHealth;
+
+	if(PCP->zEnergy != -1.0f)
+		this->zEnergy = PCP->zEnergy;
+
+	if(PCP->zBleedingLevel != -1.0f)
+		this->zBleedingLevel = PCP->zBleedingLevel;
+
+	if(PCP->zHunger != -1.0f)
+		this->zHunger = PCP->zHunger;
+
+	if(PCP->zHydration != -1.0f)
+		this->zHydration = PCP->zHydration;
+
+	if(PCP->zStamina != -1.0f)
+		this->zStamina = PCP->zStamina;
 }

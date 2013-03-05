@@ -52,8 +52,6 @@ public:
 	void		SetWorldPointer(World* theWorld);
 	/*
 
-	/*! Returns Pos, Rot, Scale, Stamina, Health, State.*/
-	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
 	/*
 protected:
 	Vector3		ExaminePathfindingArea();

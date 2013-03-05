@@ -131,6 +131,9 @@
     <ClInclude Include="Include\Misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Packets\PhysicalConditionPacket.h">
+      <Filter>Header Files\Packets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\World\Sector.cpp">
