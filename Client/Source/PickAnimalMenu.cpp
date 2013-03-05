@@ -26,7 +26,7 @@ PickAnimalMenu::~PickAnimalMenu()
 int PickAnimalMenu::Run(int energy)
 {
 	if(this->zEnergyText)
-		this->zEnergyText->SetText((YOURENERGYTEXT + MaloW::convertNrToString(energy) + "\200").c_str());
+		this->zEnergyText->SetText((YOURENERGYTEXT + MaloW::convertNrToString((float)energy) + "\200").c_str());
 
 	this->Resize();
 	int returnValue = PICKNOTHING;

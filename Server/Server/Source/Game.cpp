@@ -46,7 +46,7 @@ static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 //Expected playtime
 static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
 
-Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
+Game::Game(const int maxClients, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
 	zSyncher(syncher)
 {
 	this->zPhysicsEngine = GetPhysics();	
@@ -74,11 +74,11 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->zActorManager = new ActorManager(syncher, this->zSoundHandler);
 	
 	InitItemLookup();
-
+	//InitCraftingRecipes();
 //Initialize Player Configuration file
 	InitPlayerConfig();
 
-	this->zMaxNrOfPlayers = 32;
+	this->zMaxNrOfPlayers = maxClients;
 	
 //Create GameMode
 	if (mode.find("FFA") == 0 )
@@ -98,9 +98,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 
 //DEBUG;
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
-
+	//this->SpawnAnimalsDebug();		//this->SpawnAnimalsDebug();
+	this->SpawnHumanDebug();
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
 
@@ -126,10 +125,14 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 
 	radius = (worldSize.x + worldSize.y) * 0.5f;
 
-	this->zInitalFogEnclosement = radius * 0.2f;
-	this->zIncrementFogEnclosement = (radius * 2) / this->zMaxNrOfPlayers;
+	float percent = 0.1f;
+	if (worldFile.find("3x3.map"))
+		percent = 0.5f;
 
-	this->zFogUpdateDelay = 60.0f;
+	this->zInitalFogEnclosement = radius * percent;
+	this->zIncrementFogEnclosement = (radius - this->zInitalFogEnclosement) / this->zMaxNrOfPlayers;
+
+	this->zFogUpdateDelay = 30.0f;
 	this->zFogDecreaseCoeff = this->zFogUpdateDelay / EXPECTED_PLAYTIME;
 	this->zFogTotalDecreaseCoeff = 1.0f;
 	this->zFogTimer = 0.0f;
@@ -165,6 +168,7 @@ Game::~Game()
 
 	FreeItemLookup();
 	FreePlayerConfig();
+	FreeCraftingRecipes();
 }
 
 void Game::SpawnAnimalsDebug()
@@ -244,14 +248,16 @@ void Game::SpawnItemsDebug()
 	const Material*		temp_material_S	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_SMALL_STICK);
 	const Material*		temp_material_M	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_MEDIUM_STICK);
 	const Material*		temp_material_T	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_THREAD);
+	const Material*		temp_material_L	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_LARGE_STICK);
+	const Material*		temp_material_D	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_DISENFECTANT_LEAF);
 	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_POOR);
 	const Bandage*		temp_bandage_G	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT);
 	const Container*	temp_waterBottle= GetItemLookup()->GetContainer(ITEM_SUB_TYPE_CANTEEN);
-
+	const Misc*			temp_Trap		= GetItemLookup()->GetMisc(ITEM_SUB_TYPE_REGULAR_TRAP);
 	unsigned int increment = 0;
 	int maxPoints = 10;
 	float radius = 3.5f;
-	int numberOfObjects = 8;
+	int numberOfObjects = 10;
 	int total = 0;
 	Vector3 center;
 	Vector3 position;
@@ -329,6 +335,28 @@ void Game::SpawnItemsDebug()
 			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 			this->zActorManager->AddActor(actor);
 		}
+		//Large Stick
+		if(temp_material_L)
+		{
+			Material* new_item = new Material((*temp_material_L));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+		//Disenfectant Leaf
+		if(temp_material_D)
+		{
+			Material* new_item = new Material((*temp_material_D));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
 		//Thread
 		if(temp_material_T)
 		{
@@ -361,6 +389,18 @@ void Game::SpawnItemsDebug()
 			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 			this->zActorManager->AddActor(actor);
 		}
+
+		if(temp_Trap)
+		{
+			Misc* new_item = new Misc((*temp_Trap));
+			ItemActor* actor = new ItemActor(new_item);
+			//center = CalcPlayerSpawnPoint(increment++);
+			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
+			actor->SetPosition(position);
+			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+			this->zActorManager->AddActor(actor);
+		}
+
 		total += increment;
 		increment = 0;
 	}
@@ -427,7 +467,7 @@ void Game::UpdateFogEnclosement( float dt )
 
 	if (this->zFogTimer >= this->zFogUpdateDelay)
 	{
-		if (this->zCurrentFogEnclosement > this->zInitalFogEnclosement)
+		if (this->zCurrentFogEnclosement > 10.0f)
 		{
 			this->zFogTotalDecreaseCoeff -= this->zFogDecreaseCoeff;
 
@@ -1777,14 +1817,19 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 						const RangedWeapon* temp_Item = GetItemLookup()->GetRangedWeapon(craftSubType);
 						craftedItem = new RangedWeapon((*temp_Item));
 					}
+					else if (craftedType.type == ITEM_TYPE_BANDAGE && craftedType.subType == ITEM_SUB_TYPE_BANDAGE_POOR)
+					{
+						const Bandage* temp_Item = GetItemLookup()->GetBandage(craftedType.subType);
+						craftedItem = new Bandage((*temp_Item));
+					}
 					else if (craftedType.type == ITEM_TYPE_MISC && craftedType.subType == ITEM_SUB_TYPE_REGULAR_TRAP)
 					{
-						const Misc* temp_Item = GetItemLookup()->GetTrap(craftSubType);
+						const Misc* temp_Item = GetItemLookup()->GetMisc(craftSubType);
 						craftedItem = new Misc((*temp_Item));
 					}
 					else if (craftedType.type == ITEM_TYPE_MISC && craftedType.subType == ITEM_SUB_TYPE_CAMPFIRE)
 					{
-						const Misc* temp_Item = GetItemLookup()->GetTrap(craftSubType);
+						const Misc* temp_Item = GetItemLookup()->GetMisc(craftSubType);
 						craftedItem = new Misc((*temp_Item));
 					}
 					if (craftedItem)

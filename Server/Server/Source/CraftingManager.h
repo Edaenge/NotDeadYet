@@ -1,19 +1,10 @@
 #pragma once
 
 #include "Inventory.h"
+#include "CraftingReader.h"
 #include <map>
 
-struct CraftedTypes
-{
-	unsigned int subType;
-	unsigned int type;
 
-	CraftedTypes(unsigned int type, unsigned int subType)
-	{
-		this->type = type;
-		this->subType = subType;
-	}
-};
 
 /*********************************************************
 *														 *

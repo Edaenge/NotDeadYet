@@ -205,7 +205,7 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 		delete zGame;
 	}
 
-	this->zGame = new Game(zSynchronizer, gameModeName, mapName);
+	this->zGame = new Game(maxClients, zSynchronizer, gameModeName, mapName);
 	this->AddObserver(zGame);
 	
 	//server Listener

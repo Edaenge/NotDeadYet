@@ -28,6 +28,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 		return 1;
 	}
 	AudioManager* am = AudioManager::GetInstance();
+
 	// IMPLEMENT MAIN PROGRAM HERE.
 	MainMenu* menu = new MainMenu();
 	menu->Init();
