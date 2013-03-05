@@ -223,6 +223,19 @@ bool AIBearBehavior::SetValuesFromFile()
 
 }
 
+void AIBearBehavior::SetFearLevel(float fear)
+{
+	this->zFearLevel = fear;
+	if(this->zFearLevel > this->zFearMax)
+	{
+		this->zFearLevel = this->zFearMax;
+	}
+	else if(this->zFearLevel < 0.0f)
+	{
+		this->zFearLevel = 0.0f;
+	}
+}
+
 bool AIBearBehavior::InitPathfinder()
 {
 	this->zPathfinder.InitAI(0.5,95);
@@ -614,7 +627,10 @@ bool AIBearBehavior::Update( float dt )
 								//Attack!
 								Damage bearAttack;
 								bearAttack.slashing = 15;
-								dynamic_cast<BioActor*>(this->zMainActorTarget)->TakeDamage(bearAttack,this->GetActor());
+								if(dynamic_cast<BioActor*>(this->zMainActorTarget)->IsAlive())
+								{
+									dynamic_cast<BioActor*>(this->zMainActorTarget)->TakeDamage(bearAttack,this->GetActor());
+								}
 							}
 							
 						}

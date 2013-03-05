@@ -30,6 +30,7 @@ private:
 	void PrintToScreen(const std::string msg);
 
 	void StartTestRun();
+	void StartGameWithIPField();
 	void SwapMenus(SET primary, SET secondary);
 	void EnableMouse(bool value);
 

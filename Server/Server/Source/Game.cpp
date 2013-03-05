@@ -66,8 +66,12 @@ Game::Game(const int maxClients, ActorSynchronizer* syncher, std::string mode, c
 // Load Entities
 	LoadEntList("Entities.txt");
 
+	// Create soundhandler and let it observe game.
+	this->zSoundHandler = new SoundHandler();
+	this->AddObserver(this->zSoundHandler);
+
 // Actor Manager
-	this->zActorManager = new ActorManager(syncher);
+	this->zActorManager = new ActorManager(syncher, this->zSoundHandler);
 	
 	InitItemLookup();
 	//InitCraftingRecipes();
@@ -83,7 +87,7 @@ Game::Game(const int maxClients, ActorSynchronizer* syncher, std::string mode, c
 	}
 	else if (mode.find("TestMode") == 0)
 	{
-		this->zGameMode = new GameModeTest(this, 10);	
+		this->zGameMode = new GameModeTest(this, 10);
 	}
 	else
 	{
@@ -94,9 +98,8 @@ Game::Game(const int maxClients, ActorSynchronizer* syncher, std::string mode, c
 
 //DEBUG;
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();	
+	//this->SpawnAnimalsDebug();		//this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
-
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
 
@@ -136,7 +139,6 @@ Game::Game(const int maxClients, ActorSynchronizer* syncher, std::string mode, c
 
 	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
 
-	this->zSoundHandler = new SoundHandler();
 }
 
 Game::~Game()
@@ -250,8 +252,8 @@ void Game::SpawnItemsDebug()
 	const Material*		temp_material_D	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_DISENFECTANT_LEAF);
 	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_POOR);
 	const Bandage*		temp_bandage_G	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT);
+	const Container*	temp_waterBottle= GetItemLookup()->GetContainer(ITEM_SUB_TYPE_CANTEEN);
 	const Misc*			temp_Trap		= GetItemLookup()->GetMisc(ITEM_SUB_TYPE_REGULAR_TRAP);
-
 	unsigned int increment = 0;
 	int maxPoints = 10;
 	float radius = 3.5f;
@@ -402,6 +404,15 @@ void Game::SpawnItemsDebug()
 		total += increment;
 		increment = 0;
 	}
+	Container* new_item = new Container((*temp_waterBottle));
+	new_item->SetRemainingUses(3);
+	ItemActor* actor = new ItemActor(new_item);
+	//center = CalcPlayerSpawnPoint(increment++);
+	Vector2 tempVetc = this->zWorld->GetWorldCenter();
+	position = Vector3(tempVetc.x, 0, tempVetc.y);
+	actor->SetPosition(position);
+	actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	this->zActorManager->AddActor(actor);
 }
 
 void Game::SpawnHumanDebug()
@@ -1701,7 +1712,8 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 				//Create behavior
 				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
-		
+				projBehavior->AddObserver(this->zSoundHandler);
+
 				//Set Nearby actors
 				projBehavior->SetNearActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearActors() );
 
@@ -1726,7 +1738,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
 
-				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/BowShot.mp3");
+				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_BOW_BOWSHOT);
 				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
 				this->SendToAll(msg);
 

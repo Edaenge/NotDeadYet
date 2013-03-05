@@ -111,6 +111,7 @@
     <ClInclude Include="Include\World\EntityList.h" />
     <ClInclude Include="Include\World\Observer.h" />
     <ClInclude Include="Include\World\Sector.h" />
+    <ClInclude Include="Include\World\WaterQuad.h" />
     <ClInclude Include="Include\World\World.h" />
     <ClInclude Include="Include\World\WorldEvents.h" />
     <ClInclude Include="Include\World\WorldFile.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="Source\World\Entity.cpp" />
     <ClCompile Include="Source\World\EntityList.cpp" />
     <ClCompile Include="Source\World\Sector.cpp" />
+    <ClCompile Include="Source\World\WaterQuad.cpp" />
     <ClCompile Include="Source\World\World.cpp" />
     <ClCompile Include="Source\World\WorldFile.cpp" />
     <ClCompile Include="Source\World\WorldRenderer.cpp" />

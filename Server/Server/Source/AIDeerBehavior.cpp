@@ -244,6 +244,19 @@ bool AIDeerBehavior::SetValuesFromFile()
 
 }
 
+void AIDeerBehavior::SetFearLevel(float fear)
+{
+	this->zFearLevel = fear;
+	if(this->zFearLevel > this->zFearMax)
+	{
+		this->zFearLevel = this->zFearMax;
+	}
+	else if(this->zFearLevel < 0.0f)
+	{
+		this->zFearLevel = 0.0f;
+	}
+}
+
 bool AIDeerBehavior::InitPathfinder()
 {
 	this->zPathfinder.InitAI(0.5,95);
@@ -469,16 +482,11 @@ bool AIDeerBehavior::Update( float dt )
 					}
 				}	
 			}			
-
 			this->SetFearLevel( this->GetFearLevel() + fear * this->zConfidenceKoef); //5 is unrelated to the movementNoise. Probably not good enough math. The theory is that the animal is constantly getting more afraid.
 		}
 		else //No threat detected. Calming down.
 		{
 			this->SetFearLevel( this->GetFearLevel() - this->zFearDecrease);
-			if(this->GetFearLevel() <= 0.0f)
-			{
-				this->SetFearLevel(0.0f);
-			}
 		}
 	}
 
@@ -708,6 +716,9 @@ bool AIDeerBehavior::Update( float dt )
 			result = result;
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
 
+			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_WALKING);
+
+
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
@@ -739,7 +750,7 @@ bool AIDeerBehavior::Update( float dt )
 			result = result;
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
 
-			
+			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
 
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - dActor->GetPosition();
@@ -766,6 +777,8 @@ bool AIDeerBehavior::Update( float dt )
 			result = result;
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
 
+			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
+
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
@@ -789,6 +802,12 @@ bool AIDeerBehavior::Update( float dt )
 		{
 			this->SetIfNeedPath(true);
 		}
+
+		if(dActor->GetVelocity() == 0.0f)
+		{
+			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_IDLE);
+		}
+
 	}
 	else
 	{

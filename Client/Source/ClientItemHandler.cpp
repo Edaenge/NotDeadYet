@@ -64,7 +64,19 @@ void Client::HandleUseItem(const unsigned int ID)
 	if(item->GetItemType() == ITEM_TYPE_CONTAINER)
 	{
 		Container* container = dynamic_cast<Container*>(item);
+		AudioManager* am = AudioManager::GetInstance();
+		IEventHandle* temp;
+		Actor* tActor = this->zActorManager->GetActor(this->zID);
+		int FMOD_RESULT_TEMP;
+		if(tActor->GetModel().find("female"))
+			FMOD_RESULT_TEMP = am->GetEventHandle(EVENTID_NOTDEADYET_WOMAN_DRINKWATER, temp);
+		else
+			FMOD_RESULT_TEMP = am->GetEventHandle(EVENTID_NOTDEADYET_MAN_DRINKWATER, temp);
 
+		if(FMOD_RESULT_TEMP == FMOD_OK)
+		{
+			temp->Play();
+		}
 		if (!container)
 		{
 			MaloW::Debug("dynamic cast Failed in Client::UseItem (Container)");

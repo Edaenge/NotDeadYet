@@ -2,7 +2,7 @@
 30    //zMinimumDistance
 0.4   //zFieldOfView
 2     //zThreatMovementSpeedThreshold
-0.2   //zConfidenceKoef
+0.4   //zConfidenceKoef
 10    //zTooCloseInDistance
 10    //zExtraFearWithNumberOfPlayers
 12    //zExtraFearWithCloseProximity
