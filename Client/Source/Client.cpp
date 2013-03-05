@@ -1378,7 +1378,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		Vector3 center = Vector3(center2D.x, 0.0f, center2D.y);
 
 		float radius = this->zMsgHandler.ConvertStringToFloat(M_FOG_ENCLOSEMENT, msgArray[0]);
-		this->zEng->SetEnclosingFogEffect(center, radius, 0.2f);
+		this->zEng->SetEnclosingFogEffect(center, radius, 0.4f);
 	}
 	else if (msgArray[0].find(M_MESH_BINDING.c_str()) == 0)
 	{
@@ -1891,7 +1891,6 @@ void Client::UpdateHealthAndBleedingImage()
 
 
 }
-
 
 void Client::CloseConnection(const std::string& reason)
 {

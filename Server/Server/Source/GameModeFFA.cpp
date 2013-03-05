@@ -434,5 +434,7 @@ bool GameModeFFA::StartGameMode()
 	items.insert(melee);
 
 	this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items);
+
+	return true;
 	
 }

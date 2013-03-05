@@ -58,7 +58,6 @@ bool CraftingManager::Craft( Inventory* inv, CraftedTypes* types, std::map<Item*
 		}
 	}
 
-
 	auto map_It = this->zMappedTypesToMaterialsReq.find(types);
 
 	if (map_It != this->zMappedTypesToMaterialsReq.end())
@@ -80,8 +79,8 @@ bool CraftingManager::Craft( Inventory* inv, CraftedTypes* types, std::map<Item*
 				mapOut.clear();
 				return false;
 			}
-
-			if (item->GetStackSize() - material_Stacks < 0)
+			int newStacks = item->GetStackSize() - material_Stacks;
+			if (newStacks < 0)
 				return false;
 
 			mapOut[item] = material_Stacks;
