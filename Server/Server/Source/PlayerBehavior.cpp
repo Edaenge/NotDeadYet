@@ -2,6 +2,8 @@
 #include "PlayerBehavior.h"
 #include "Actor.h"
 #include "Player.h"
+#include "BioActor.h"
+#include "WorldActor.h"
 
 PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) : 
 	Behavior(actor, world)
@@ -11,8 +13,25 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 	this->zVelDown = 0.0f;
 
 	this->zNearActorsIndex = 0;
-	this->zCollisionRadius = 100.0f;
-	this->zPlayerConfigReader = GetPlayerConfig();}
+	this->zNearByRadius = 100.0f;
+	this->zCollisionRadius = 0.5f;
+	this->zPlayerConfigReader = GetPlayerConfig();
+
+// 	Vector3 centerPos;
+// 	float humanRadius = 0.5f;//m
+// 	float distanceInAxes;
+// 	//Pythagoras theorem x2 = y2 + z2
+// 	//both distances are the same, therefore x2 = y2 + y2 = 2y2
+// 	//(distanceInAxes = y)
+// 	distanceInAxes = sqrtf(powf(humanRadius, 2.0f) / 2); //use * 0.5f instead.
+// 	//Build vectors going clockwise
+// 
+// 	Vector2 one = Vector2(distanceInAxes, distanceInAxes);//+X+Z
+// 	Vector2 two = Vector2(distanceInAxes, -distanceInAxes);//+X-Z
+// 	Vector2 one = Vector2(-distanceInAxes, -distanceInAxes);//-X-Z
+// 	Vector2 one = Vector2(-distanceInAxes, distanceInAxes);//-X+Z
+
+}
 
 PlayerBehavior::~PlayerBehavior()
 {
@@ -75,14 +94,32 @@ bool PlayerBehavior::RefreshNearCollideableActors( const std::set<Actor*>& actor
 		if( (*it) != this->zActor && (*it)->CanCollide() )
 		{
 			Vector3 vec = (*it)->GetPosition() - pos;
-			if( vec.GetLength() <= zCollisionRadius )
+			BioActor* bioActor = dynamic_cast<BioActor*>(*it);
+			WorldActor* worldActor = dynamic_cast<WorldActor*>(*it);
+
+			auto found = this->zNearActors.find(*it);
+
+			if( vec.GetLength() <= zNearByRadius )
 			{
-				zNearActors.insert(*it);
+				if( found == zNearActors.end() )
+					zNearActors.insert(*it);
+
+				if(bioActor && zNearBioActors.find(*it) == zNearBioActors.end())
+					this->zNearBioActors.insert(*it);
+
+				else if(worldActor && zNearWorldActors.find(*it) == zNearWorldActors.end())
+					this->zNearWorldActors.insert(*it);
 			}
 			else
 			{
-				if( zNearActors.find(*it) != zNearActors.end() )
+				if( found != zNearActors.end() )
 					zNearActors.erase(*it);
+
+				if( bioActor && zNearBioActors.find(*it) != zNearBioActors.end() )
+					this->zNearBioActors.erase(*it);
+
+				else if( worldActor && zNearWorldActors.find(*it) != zNearWorldActors.end() )
+					this->zNearWorldActors.erase(*it);
 			}
 		}
 
@@ -90,38 +127,38 @@ bool PlayerBehavior::RefreshNearCollideableActors( const std::set<Actor*>& actor
 		it++;
 	}
 
-/*	//Remove old actors that is not nearBy
-	auto begin = zNearActors.begin();
-	std::advance(begin, counter);
-
-	while( begin != zNearActors.end() )
-	{
-		if(!(*begin))
-		{
-			begin = zNearActors.erase(begin);
-			continue;
-		}
-
-		Vector3 vec = (*begin)->GetPosition() - pos;
-		if( vec.GetLength() > zCollisionRadius)
-			begin = zNearActors.erase(begin);
-		else
-		{
-			begin++;
-		}
-	}*/
-
 	return true;
 }
 
-Actor* PlayerBehavior::CheckCollision()
+Actor* PlayerBehavior::CheckBioActorCollision()
 {
+	const Vector3 thisActorPosition = this->zActor->GetPosition();
+
 	if( !this->zActor->CanCollide() )
 		return NULL;
 
-	for(auto it = this->zNearActors.begin(); it != this->zNearActors.end(); it++)
+	return CheckCollision(thisActorPosition, zNearBioActors);
+}
+
+Actor* PlayerBehavior::CheckWorldActorCollision()
+{
+	const Vector3 thisActorPosition = this->zActor->GetPosition();
+
+	if( !this->zActor->CanCollide() )
+		return NULL;
+
+	if( !this->zWorld->IsBlockingAt(thisActorPosition.GetXZ()) )
+		return NULL;
+
+	return CheckCollision(thisActorPosition, zNearWorldActors);
+}
+
+Actor* PlayerBehavior::CheckCollision(const Vector3& pos, const std::set<Actor*>& actors )
+{
+	auto it_end = actors.end();
+	for(auto it = actors.begin(); it != it_end; it++)
 	{
-		float distance = (this->zActor->GetPosition() - (*it)->GetPosition()).GetLength();
+		float distance = ( pos - (*it)->GetPosition() ).GetLength();
 		if(distance <= 1.0f)
 			return (*it);
 	}
@@ -133,4 +170,17 @@ void PlayerBehavior::SetNearActors( std::set<Actor*> actors )
 {
 	this->zNearActors = actors;
 	this->zNearActors.erase(this->zActor);
+
+	auto it_end = zNearActors.end();
+	for (auto it = this->zNearActors.begin(); it != it_end; it++)
+	{
+		if( dynamic_cast<WorldActor*>(*it) )
+		{
+			this->zNearWorldActors.insert(*it);
+		}
+		else if ( dynamic_cast<BioActor*>(*it) )
+		{
+			this->zNearBioActors.insert(*it);
+		}
+	}
 }

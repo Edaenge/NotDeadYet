@@ -188,7 +188,7 @@ bool PlayerHumanBehavior::Update( float dt )
 	if ( zWorld->IsInside(newPosition.GetXZ()) )
 	{
 		if(!(newPosition == zActor->GetPosition()))
-			zActor->SetPosition(newPosition);
+			zActor->SetPosition(newPosition, false);
 	}
 	else
 	{
@@ -203,21 +203,47 @@ bool PlayerHumanBehavior::Update( float dt )
 	}
 
 	PhysicalConditionCalculator(dt);
-	Actor* collide = CheckCollision();
 
-	if(collide)
+	Vector3 pActor_rewind_dir;
+	Actor* collide = NULL;
+	
+	/* Check Collisions against BioActors */
+	collide = CheckBioActorCollision();
+
+	if( collide )
 	{
-		Vector3 pActor_rewind_dir = (collide->GetPosition() - zActor->GetPosition());
+		BioActor* bioActor = dynamic_cast<BioActor*>(collide);
+		pActor_rewind_dir = (bioActor->GetPosition() - zActor->GetPosition());
 		pActor_rewind_dir.Normalize();
 		Vector3 target_rewind_dir = pActor_rewind_dir * -1;
 
-		if( BioActor* bioA = dynamic_cast<BioActor*>(collide) )
+		if( bioActor->IsAlive() )
 		{
-			if( bioA->HasMoved() )
-				bioA->SetPosition( bioA->GetPosition() - (target_rewind_dir * 0.25f) );
+			if( bioActor->HasMoved() )
+				bioActor->SetPosition( bioActor->GetPosition() - (target_rewind_dir * 0.25f) );
+
+			zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+			zVelocity = Vector3(.0f, .0f, .0f);
 		}
 
+		return false;
+	}
+
+	/* Check Collisions against WorldActors */
+	collide = CheckWorldActorCollision();
+
+	if( collide )
+	{
+		pActor_rewind_dir = (collide->GetPosition() - zActor->GetPosition());
+		pActor_rewind_dir.Normalize();
+
 		zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+		zVelocity = Vector3(.0f, .0f, .0f);
+	}
+	else
+	{
+		//Sets position and notifies
+		zActor->SetPosition(newPosition);
 	}
 
 	return false;

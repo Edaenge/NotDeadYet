@@ -50,7 +50,7 @@ bool ProjectileArrowBehavior::Update( float dt )
 	float angle = acos(ProjectileStartDirection.GetDotProduct(ProjectileMoveDirection));
 
 	//Set Values
-	this->zActor->SetPosition(newPos);
+	this->zActor->SetPosition(newPos, false);
 	this->zActor->SetRotation(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 	this->zActor->SetRotation(around, angle);
 	this->zActor->SetDir(newDir);
@@ -59,6 +59,8 @@ bool ProjectileArrowBehavior::Update( float dt )
 	if( !this->zWorld->IsInside(newPos.GetXZ()) )
 	{
 		Stop();
+		this->zActor->SetPosition(newPos);
+
 		return true;
 	}
 	//**Check if the projectile has hit the ground**
@@ -70,6 +72,8 @@ bool ProjectileArrowBehavior::Update( float dt )
 	catch(...)
 	{
 		Stop();
+		this->zActor->SetPosition(newPos);
+
 		return true;
 	}
 
@@ -84,8 +88,8 @@ bool ProjectileArrowBehavior::Update( float dt )
 
 		ProjectileActor* test = dynamic_cast<ProjectileActor*>(zActor);
 
+		this->Stop();
 		this->zActor->SetPosition(newPos);
-		this->zMoving = false;
 		
 		return true;
 	}
@@ -97,12 +101,15 @@ bool ProjectileArrowBehavior::Update( float dt )
 
 	// Impose drag.
 	this->zVelocity *= pow(zDamping, dt);
+	
+	//Update-Notify Position
+	this->zActor->SetPosition(newPos);
 
 	//Check collisions
 	Actor* collide = CheckCollision();
 	if(collide)
 	{
-		this->zMoving = false;
+		this->Stop();
 		if( BioActor* bioActor = dynamic_cast<BioActor*>(collide) )
 		{
 			if( ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(this->zActor) )
@@ -196,6 +203,8 @@ Actor* ProjectileArrowBehavior::CheckCollision()
 		if( *it == this->zActor )
 			continue;
 		if( *it == owner )
+			continue;
+		if( !(*it)->CanCollide() )
 			continue;
 		
 		float distance = ( this->zActor->GetPosition() - (*it)->GetPosition() ).GetLength();
