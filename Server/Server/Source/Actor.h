@@ -42,7 +42,7 @@ private:
 protected:
 		unsigned int zType;
 		float zEnergy;
-
+		std::string zModel;
 public:
 	Actor();
 	virtual ~Actor();
@@ -57,7 +57,7 @@ public:
 	void SetScale(const Vector3& scale, const bool notify = true);
 	void SetDir(const Vector3& dir, const bool notify = true);
 	void SetEnergy(float energy, const bool notify = true);
-
+	virtual void SetModel(const std::string& model);
 	bool CanCollide() const;
 
 	// Get Transformation Functions

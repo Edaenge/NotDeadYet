@@ -117,11 +117,19 @@ void Actor::SetEnergy( float energy, const bool notify /*= true*/ )
 
 const std::string Actor::GetModel() const
 {
-	if ( zPhysicsObject )
+	if (zPhysicsObject)
 		return zPhysicsObject->GetModel();
 
-	static const std::string none = "Media/Models/Ball.obj";
-	return none;
+
+	return this->zModel;
+}
+
+void Actor::SetModel( const std::string& model )
+{
+	this->zModel = model;
+
+	if (zPhysicsObject)
+		this->zPhysicsObject->SetModel(model);
 }
 
 bool Actor::CanCollide() const

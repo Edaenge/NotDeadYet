@@ -40,7 +40,6 @@ CraftingReader::CraftingReader()
 {
 	if(!this->ReadFromFile())
 	{
-		
 		CraftedTypes* craft_Bow = new CraftedTypes(ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW);
 
 		std::map<unsigned int, unsigned int> Bow_Materials;
@@ -84,7 +83,14 @@ CraftingReader::CraftingReader()
 
 CraftingReader::~CraftingReader()
 {
-
+	auto it_end = this->zMappedTypesToMaterialsReq.end();
+	for (auto it = this->zMappedTypesToMaterialsReq.begin(); it != it_end; it++)
+	{
+		CraftedTypes* temp = it->first;
+		SAFE_DELETE(temp);
+	}
+	this->zMappedTypesToMaterialsReq.clear();
+	this->zCraftingList.clear();
 }
 
 bool CraftingReader::ReadFromFile()
@@ -122,7 +128,7 @@ bool CraftingReader::ReadFromFile()
 		}
 
 	}
-
+	return true;
 }
 
 void CraftingReader::WriteToFile()
@@ -135,14 +141,16 @@ void CraftingReader::WriteToFile()
 
 	for (auto it = this->zMappedTypesToMaterialsReq.begin(); it != this->zMappedTypesToMaterialsReq.end(); it++)
 	{
+		write << RECIPE << "\n";
+
 		write << CRAFTING_TYPE << "=" << it->first->type << "," << it->first->subType << "\n";
 
-		for (auto it_m = it->second.begin(); it_m != it->second.end(); it_m)
+		for (auto it_m = it->second.begin(); it_m != it->second.end(); it_m++)
 		{
 			write << MATERIAL_REQ << "=" << it_m->first << "," << it_m->second << "\n";
 		}
 
-		write << END;
+		write << END << "\n \n";
 	}
 	
 }

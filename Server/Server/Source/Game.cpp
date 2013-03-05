@@ -74,7 +74,7 @@ Game::Game(const int maxClients, ActorSynchronizer* syncher, std::string mode, c
 	this->zActorManager = new ActorManager(syncher, this->zSoundHandler);
 	
 	InitItemLookup();
-	//InitCraftingRecipes();
+	InitCraftingRecipes();
 //Initialize Player Configuration file
 	InitPlayerConfig();
 
@@ -421,8 +421,8 @@ void Game::SpawnHumanDebug()
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/temp_guy.obj");
-	humanPhysics->SetModel("Media/Models/temp_guy_movement_anims.fbx");
 	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics);
+	pActor->SetModel("Media/Models/temp_guy_movement_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
 	pActor->SetHealth(5000);
@@ -973,8 +973,9 @@ void Game::OnEvent( Event* e )
 	{
 		// Create Player Actor
 		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
-		pObj->SetModel(UDE->playerModel);
+		
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj);
+		pActor->SetModel(UDE->playerModel);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 		zPlayers[UDE->clientData]->zUserModel = UDE->playerModel;
 
@@ -2291,9 +2292,10 @@ void Game::RestartGame()
 		(*it).second->GetKeys().ClearStates();
 
 		PhysicsObject* physObj = zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
-		physObj->SetModel( (*it).second->GetModelPath() );
+		
 
 		PlayerActor* pActor = new PlayerActor((*it).second, physObj);
+		pActor->SetModel( (*it).second->GetModelPath() );
 		PlayerHumanBehavior* pBehavior = new PlayerHumanBehavior(pActor, zWorld, (*it).second);
 
 		pActor->SetPosition(CalcPlayerSpawnPoint(32));
