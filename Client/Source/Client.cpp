@@ -199,7 +199,7 @@ void Client::Update()
 
 void Client::IgnoreRender( const float& radius, const Vector2& center )
 {
-	std::set<Entity*> zPreviousEntities;
+	/*std::set<Entity*> zPreviousEntities;
 	std::set<Entity*> entities; 
 	std::set<Entity*> validEntities;
 
@@ -219,7 +219,7 @@ void Client::IgnoreRender( const float& radius, const Vector2& center )
 		}
 	}
 
-	/*Check previous, if prev is not in valid, they should not be rendered.*/
+	Check previous, if prev is not in valid, they should not be rendered.
 	for(auto it = zPreviousEntities.begin(); it != zPreviousEntities.end(); it++)
 	{
 		auto found = validEntities.find(*it);
@@ -235,7 +235,7 @@ void Client::IgnoreRender( const float& radius, const Vector2& center )
 	}
 
 	zPreviousEntities.clear();
-	zPreviousEntities = validEntities;
+	zPreviousEntities = validEntities;*/
 }
 
 void Client::InitGraphics(const std::string& mapName)
@@ -315,8 +315,8 @@ void Client::InitGraphics(const std::string& mapName)
 	{
 		if ( GetEntBlockRadius( (*i)->GetType() ) <= 0.0f )
 		{
-			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*i);
-			mesh->DontRender(true);
+			//iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*i);
+			//mesh->DontRender(true);
 		}
 	}
 
@@ -1477,7 +1477,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		/*float eventId = this->zMsgHandler.ConvertStringToInt(M_PLAY_SOUND, msgArray[0]);
+		float eventId = this->zMsgHandler.ConvertStringToInt(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
 
 		AudioManager* am = AudioManager::GetInstance();
@@ -1491,8 +1491,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			tempHandle->Setposition(temp);
 			tempHandle->Play();
 			delete temp;
-		}*/
-
+		}
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{

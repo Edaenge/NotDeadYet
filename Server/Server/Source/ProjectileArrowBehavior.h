@@ -2,8 +2,11 @@
 
 #include "Behavior.h"
 #include <Vector.h>
+#include "Observer.h"
 
-class ProjectileArrowBehavior : public Behavior
+
+
+class ProjectileArrowBehavior : public Behavior, public Observed
 {
 private:
 	Vector3 zVelocity;

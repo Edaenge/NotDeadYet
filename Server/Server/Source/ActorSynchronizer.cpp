@@ -24,6 +24,11 @@ ActorSynchronizer::~ActorSynchronizer()
 
 void ActorSynchronizer::AddAnimation(BioActor* bActor)
 {
+	Player* player = bActor->GetPlayer();
+	if(player == NULL)
+	{
+		return;
+	}
 	KeyStates keys = bActor->GetPlayer()->GetKeys();
 	unsigned int state = bActor->GetState();
 	std::string animation = "";
@@ -227,7 +232,7 @@ void ActorSynchronizer::OnEvent( Event* e )
 		if( found == this->zIndividualPhysicalConditions.end() )
 			this->zIndividualPhysicalConditions[cd] = new PhysicalConditionPacket();
 
-		this->zIndividualPhysicalConditions[cd]->zBleedingLevel;
+		this->zIndividualPhysicalConditions[cd]->zBleedingLevel = bioActor->GetBleeding();
 
 	}
 	else if( PlayerActorPhysicalConditionHungerEvent* PAPCH = dynamic_cast<PlayerActorPhysicalConditionHungerEvent*>(e) )

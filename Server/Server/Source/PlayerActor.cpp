@@ -14,8 +14,9 @@ PlayerActor::PlayerActor( Player* player, PhysicsObject* physObj )
 	this->zFullnessMax = 100;
 	this->zHydrationMax = 100;
 
-	this->zType = ACTOR_TYPE_PLAYER;	this->zExhausted = false;
-	this->zHasSentExhausted = false;
+	this->zType = ACTOR_TYPE_PLAYER;
+	
+	this->zExhausted = false;
 	this->zHasSprinted = false;
 }
 
@@ -98,5 +99,17 @@ void PlayerActor::SetHydration(float hydration, const bool notify /*notify = tru
 			e.zPlayerActor = this;
 			NotifyObservers(&e);
 		}
+	}
+}
+
+void PlayerActor::SetExhausted( bool exhausted )
+{
+	this->zExhausted = exhausted;
+
+	if(this->zExhausted)
+	{
+		PlayerExhausted e;
+		e.zPos = this->GetPosition();
+		NotifyObservers(&e);
 	}
 }

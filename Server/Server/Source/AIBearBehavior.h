@@ -49,7 +49,7 @@ public:
 	inline bool GetIfNeedPath() {return this->zNeedPath;}
 	inline void SetIfNeedPath(bool needPath) {this->zNeedPath = needPath;}
 	inline float GetFearLevel() {return this->zFearLevel;}
-	inline void	SetFearLevel(float fear) {this->zFearLevel = fear;}
+	void SetFearLevel(float fear);
 	inline float GetFearMax() {return this->zFearMax;}
 	inline void	SetFearMax(float max) {this->zFearMax = max;}
 
