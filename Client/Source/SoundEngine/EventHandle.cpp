@@ -8,10 +8,6 @@ EventHandle::EventHandle(FMOD::Event* eventI)
 
 int EventHandle::Play()
 {
-	FMOD_EVENT_STATE state;
-	eventInstance->getState(&state);
-
-	if(state != FMOD_EVENT_STATE_READY)
 		return eventInstance->start();
 }
 

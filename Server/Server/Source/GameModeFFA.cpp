@@ -56,6 +56,7 @@ void GameModeFFA::OnEvent( Event* e )
 				std::string killsMsg = "";
 				std::string msg = "";
 				Player* player = pActor->GetPlayer();
+
 				if (ATD->zActor == ATD->zDealer)
 				{
 					killsMsg = "You killed yourself";

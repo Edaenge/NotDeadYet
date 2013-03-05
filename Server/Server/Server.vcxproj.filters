@@ -150,6 +150,9 @@
     <ClCompile Include="Source\CraftingManager.cpp">
       <Filter>Source\Handlers</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SoundHandler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -295,6 +298,9 @@
     </ClInclude>
     <ClInclude Include="Source\CraftingManager.h">
       <Filter>Source\Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundHandler.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

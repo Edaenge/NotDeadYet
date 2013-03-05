@@ -257,11 +257,3 @@ AnimalActor::~AnimalActor()
 //		}
 //	}
 //}
-
-std::string AnimalActor::ToMessageString( NetworkMessageConverter* NMC )
-{
-	std::string msg;
-	msg = BioActor::ToMessageString(NMC);
-
-	return msg;
-}

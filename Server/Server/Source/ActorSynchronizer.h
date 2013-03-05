@@ -9,11 +9,13 @@
 #include "NetworkMessageConverter.h"
 
 #include <set>
+#include <map>
 
 class Actor;
 class BioActor;
 class ServerFramePacket;
 class NewActorPacket;
+class PhysicalConditionPacket;
 
 /*Events when a new actor has been added in ActorManager*/
 class ActorAdded : public Event
@@ -42,6 +44,8 @@ private:
 	std::set<Actor*> zUpdateSet;
 	std::set<Actor*> zNewActorSet;
 	std::set<unsigned int> zRemoveActorSet;
+
+	std::map<ClientData*, PhysicalConditionPacket*> zIndividualPhysicalConditions;
 
 	void RegisterActor(ClientData* cd);
 	void RemoveActor(ClientData* cd);

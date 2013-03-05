@@ -8,6 +8,24 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "BioActor.h"
 #include <World/WorldEvents.h>
 
+
+class PlayerActorPhysicalConditionHungerEvent : public Event
+{
+public:
+	virtual ~PlayerActorPhysicalConditionHungerEvent() {}
+
+	Actor* zPlayerActor;
+};
+
+class PlayerActorPhysicalConditionHydrationEvent : public Event
+{
+public:
+	virtual ~PlayerActorPhysicalConditionHydrationEvent() {}
+
+	Actor* zPlayerActor;
+};
+
+
 /*This class is used to save player information such as position and states.
   This information is sent to clients.
 */
@@ -26,15 +44,14 @@ public:
 	float GetFullnessMax() {return this->zFullnessMax;}
 	float GetHydrationMax() {return this->zHydrationMax;}
 	bool GetExhausted(){ return this->zExhausted; }
+	bool GetHasSentExhausted(){ return this->zHasSentExhausted; }
 	bool GetHasSprinted(){ return this->zHasSprinted; }
 
-	void SetFullness(float fullness);
-	void SetHydration(float hydration);
-	void SetExhausted(bool exhausted){ this->zExhausted = exhausted; }
+	void SetFullness(float fullness, const bool notify = true);
+	void SetHydration(float hydration, const bool notify = true);
+	void SetExhausted(bool exhausted){ this->zExhausted = exhausted; this->zHasSentExhausted = false;}
+	void SetHasSentExhausted(bool hasSentExhausted){ this->zHasSentExhausted = hasSentExhausted; }
 	void SetHasSprinted(bool hasSprinted){ this->zHasSprinted = hasSprinted; }
-
-	void HungerHasChanged() {this->zHungerChanged = true;}
-	void HydrationHasChanged() {this->zHydrationChanged = true;}
 
 	/*! Returns The dropped item.
 	Doesn't deallocate Item.*/
@@ -45,13 +62,11 @@ private:
 	float zFullness;
 	float zHydration;
 	
-	bool zHydrationChanged;
-	bool zHungerChanged;
-
 	float zFullnessMax;
 	float zHydrationMax;
 
 	bool zExhausted;
+	bool zHasSentExhausted;
 	bool zHasSprinted;
 };
 

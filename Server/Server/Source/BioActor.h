@@ -30,6 +30,31 @@ public:
 	Actor* zBioActor;
 };
 
+class BioActorPhysicalConditionHealthEvent : public Event
+{
+public:
+	virtual ~BioActorPhysicalConditionHealthEvent() {}
+
+	Actor* zBioActor;
+};
+
+class BioActorPhysicalConditionStaminaEvent : public Event
+{
+public:
+	virtual ~BioActorPhysicalConditionStaminaEvent() {}
+
+	Actor* zBioActor;
+};
+
+class BioActorPhysicalConditionBleedingEvent : public Event
+{
+public:
+	virtual ~BioActorPhysicalConditionBleedingEvent() {}
+
+	Actor* zBioActor;
+};
+
+
 /*This class is Abstract, this class is used to create living creatures such as humans, animals etc. */
 class BioActor : public Actor
 {
@@ -44,8 +69,6 @@ public:
 	/*! Returns true if BioActor dies from the damage done.*/
 	virtual bool TakeDamage(Damage& dmg, Actor* dealer);
 
-	/*! Returns false if player cannot sprint, due to stamina.*/
-	virtual bool Sprint(float dt);
 	/*! Returns false if player is dead.*/
 	virtual bool IsAlive() const;
 	/*! Check if the player has moved after last update.
@@ -60,7 +83,7 @@ public:
 		The parameter string is a network message string.
 	*/
 
-	int GetState() const {return this->zState;}
+	int	GetState() const {return this->zState;}
 	float GetVelocity() const {return this->zVelocity;}
 	float GetStamina() const {return this->zStamina;}
 	float GetHealth() const {return this->zHealth;}
@@ -71,20 +94,15 @@ public:
 	/*! Sets the player state.
 		Enum is defined in AnimationStates.h.
 	*/
-	void SetState(const int state);
+	void SetState(const int state, const bool notify = true);
 	void SetVelocity(const float velocity) {this->zVelocity = velocity;}
-	void SetHealth(const float health) {this->zHealth = health; this->zHealthChanged = true;}
-	void SetStamina(const float stamina) {this->zStamina = stamina; this->zStaminaChanged = true;}
-	/*! Returns Pos, Rot, Scale, Stamina, Health, State.*/
-	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
+	void SetHealth(const float health, const bool notify = true); 
+	void SetStamina(const float stamina, const bool notify = true); 
 	void SetStaminaMax(const float max) {this->zStaminaMax = max;}
 	void SetStaminaCof(const float cof) {this->zStaminaCof = cof;}
 
-	void SetBleeding(const float levelBleeding) {this->zBleedingLevel = levelBleeding; if(this->zBleedingLevel < 0){ this->zBleedingLevel = 0;}}
-	float GetBleeding() const {return this->zBleedingLevel;}
-
-	void StaminaHasChanged() {this->zStaminaChanged = true;}
-	void HealthHasChanged() {this->zHealthChanged = true;}
+	void SetBleeding(const float levelBleeding, const bool notify = true);
+	inline float GetBleeding() const {return this->zBleedingLevel;}
 
 	Inventory* GetInventory() const {return this->zInventory;}
 
@@ -106,9 +124,6 @@ protected:
 	float	zStaminaCof;
 
 	float	zBleedingLevel;
-
-	bool	zStaminaChanged;
-	bool	zHealthChanged;
 
 	bool	zAlive;
 

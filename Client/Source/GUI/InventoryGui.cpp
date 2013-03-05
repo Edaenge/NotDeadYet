@@ -183,8 +183,8 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 						k = SLOTS;
 					}
 				}
-				this->zSlotGui.at(i)->AddItemToSlot(this->zSlotGui.at(atPos)->GetGid(), open, ge); // Move last one to the one that we removed 
-				this->zSlotGui.at(atPos)->RemoveItemFromSlot(open, ge);
+				this->zSlotGui.at(i)->AddItemToSlot(this->zSlotGui.at(atPos)->GetGid(), open, ge); // Copy last one to the one that we removed 
+				this->zSlotGui.at(atPos)->RemoveItemFromSlot(open, ge); // Remove last one
 				
 			}
 
@@ -498,17 +498,18 @@ void InventoryGui::Reset(bool open)
 
 void InventoryGui::RemoveBlockers(int m, bool open, GraphicsEngine* ge, int inventory)
 {
-	for(int i = SLOTS-1; i > 0; i--) // Find the last one
+	for(int i = SLOTS-1; i > 0; i--) // Find the last one that isnt blocker
 	{
 		if(!this->zSlotGui.at(i)->GetBlocker())
 		{
 			int slots = this->zSlotGui.at(m)->GetGid().zSlots;
 			if(inventory == 1)
 				slots = this->zWeaponSlotGui.at(m)->GetGid().zSlots;
-			for(unsigned int k = 1; k < this->zSlotGui.at(m)->GetGid().zSlots; k++)
+			for(unsigned int k = 1; k < slots; k++)
 			{
 				this->zSlotGui.at(i+k)->RemoveItemFromSlot(open, ge);
 			}
+			i = 0;
 		}
 	}
 }
