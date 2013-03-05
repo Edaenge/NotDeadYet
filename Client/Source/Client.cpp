@@ -69,7 +69,16 @@ Client::Client()
 	this->zAnchor = NULL;
 	this->zCrossHair = NULL;
 	this->zDamageIndicator = NULL;
+	this->zBleedingAndHealthIndicator = NULL;
 	this->zDamageOpacity = 0.0f;
+	this->zPulseCounter = 0.0f;
+	this->zPulsingTime = 8.0f;
+	this->zHealthOpacity = 0.0f;
+	this->zBleedingOpacity = 0.0f;
+	this->zBleedingLevel = 0.0f;
+	this->zDroppingPulse = false;
+
+	this->zHealth = 100.0f;
 	
 	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
@@ -112,6 +121,9 @@ Client::~Client()
 	
 	if (this->zDamageIndicator)
 		this->zEng->DeleteImage(this->zDamageIndicator);
+
+	if (this->zBleedingAndHealthIndicator)
+		this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
 
 	if (this->zCrossHair) 
 		this->zEng->DeleteImage(this->zCrossHair);
@@ -163,6 +175,8 @@ void Client::Update()
 
 	//	this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
+
+	this->UpdateHealthAndBleedingImage();
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
 
@@ -1644,6 +1658,12 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 	Actor* actor = this->zActorManager->GetActor(ID);
 	Actor* player = this->zActorManager->GetActor(this->zID);
 
+	this->zHealth -= damageTaken;
+	if(this->zHealth < 0.0f)
+	{
+		this->zHealth = 100.0f;
+	}
+
 	if(!player)
 	{
 		MaloW::Debug("Failed to find this Player in Client::HandleTakeDamage");
@@ -1755,6 +1775,104 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 	}
 	return true;
 }
+
+void Client::UpdateHealthAndBleedingImage()
+{
+
+		
+		//this->zPulseCounter += this->zDeltaTime;
+
+		//this->zPulsingTime = 4.0f;
+
+		//float pulseLimit = 4.0f;
+		this->zHealth = 100.0f;
+		this->zBleedingLevel = 2.0f;
+
+		this->zHealthOpacity = this->zHealth / 100;
+		float goalOffset = 500.0f * this->zHealthOpacity;
+		static float currentOffset = 0.0f;
+
+		if(currentOffset < goalOffset)
+		{
+			currentOffset += 20.0f * zDeltaTime;
+		}
+		else if(currentOffset > goalOffset)
+		{
+			currentOffset -= 20.0f * zDeltaTime;
+		}
+
+
+		this->zHealthOpacity = 1 - this->zHealthOpacity;
+		if(this->zHealthOpacity > 0.44f)
+		{
+			this->zHealthOpacity = 0.44f;
+		}
+
+		//this->zHealthOpacity = 0.5f;
+
+		
+		float windowHeight = (float)this->zEng->GetEngineParameters().WindowHeight;
+		float windowWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
+
+		if(this->zBleedingAndHealthIndicator == NULL)
+		{
+			this->zBleedingAndHealthIndicator = this->zEng->CreateImage(Vector2(0 - currentOffset,0 - currentOffset), Vector2(windowWidth + currentOffset*2, windowHeight + currentOffset*2), "Media/Icons/HealthAndBleeding_Small_Temp.png" );
+		}
+
+
+
+		if(this->zBleedingLevel > 1)
+		{
+			if(!this->zDroppingPulse)
+			{
+				this->zBleedingOpacity += this->zDeltaTime * 0.14 * (this->zBleedingLevel - 1.0f);
+			}
+			else
+			{
+				this->zBleedingOpacity -= this->zDeltaTime * 0.14 * (this->zBleedingLevel - 1.0f);
+			}
+		}
+		else
+		{
+			this->zBleedingOpacity = 0.0f;
+		}
+		//this->zHealthOpacity += testBleed;
+
+		if(this->zBleedingOpacity >= 0.22f || this->zBleedingOpacity <= 0.0f)
+		{
+			if(!this->zDroppingPulse)
+			{
+				this->zDroppingPulse = true;
+			}
+			else 
+			{
+				this->zDroppingPulse = false;
+			}
+		}
+
+
+		/*if(this->zPulseCounter > pulseLimit)
+		{
+			this->zPulseCounter = 0.0f;
+			if(!this->zDroppingPulse)
+			{
+				this->zDroppingPulse = true;
+			}
+			else
+			{
+				this->zDroppingPulse = false;
+			}
+		}*/
+
+
+
+		this->zBleedingAndHealthIndicator->SetOpacity(this->zHealthOpacity + this->zBleedingOpacity);
+		this->zBleedingAndHealthIndicator->SetPosition(Vector2(0 - currentOffset,0 - currentOffset) );
+		this->zBleedingAndHealthIndicator->SetDimensions(Vector2(windowWidth + currentOffset*2, windowHeight + currentOffset*2));
+
+
+}
+
 
 void Client::CloseConnection(const std::string& reason)
 {

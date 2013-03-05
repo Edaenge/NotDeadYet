@@ -123,6 +123,10 @@ private:
 
 	//Updates the text timer and removes the text when timer reaches 0
 	void UpdateText();
+	//Updates the health and bleeding indicator.
+	void UpdateHealthAndBleedingImage();
+
+
 	/*! Checks Ray Vs Static/Dynamic Objects*/
 	std::vector<unsigned int> RayVsWorld();
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
@@ -218,6 +222,14 @@ private:
 	
 	iImage* zDamageIndicator;
 	float	zDamageOpacity;
+
+	iImage* zBleedingAndHealthIndicator;
+	float	zPulsingTime;
+	float	zPulseCounter;
+	float	zHealthOpacity;
+	float	zBleedingLevel;
+	float	zBleedingOpacity;
+	bool	zDroppingPulse;
 	
 
 	bool zGameStarted;
