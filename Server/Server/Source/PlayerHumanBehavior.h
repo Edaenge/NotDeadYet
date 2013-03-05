@@ -6,8 +6,6 @@ class PlayerHumanBehavior : public PlayerBehavior
 private:
 
 	float zIntervalCounter;
-	bool zExhausted;
-	bool zHasSprinted;
 
 public:
 	PlayerHumanBehavior(Actor* actor, World* world, Player* player);

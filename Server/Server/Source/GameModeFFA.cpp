@@ -337,14 +337,6 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	pActor->SetPlayer(NULL);
 	this->zGame->ModifyLivingPlayers(-1);
 
-
-	PhysicsObject* pObject = pActor->GetPhysicsObject();
-	if (pObject)
-	{
-//		GetPhysics()->DeletePhysicsObject(pObject);
-		//pObject = NULL;
-	}
-
 	ClientData* cd = player->GetClientData();
 
 	//Create Spirit

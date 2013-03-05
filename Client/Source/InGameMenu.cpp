@@ -96,8 +96,8 @@ int InGameMenu::Run()
 				{
 					if (NULL != cre)
 					{
-						width = cre->GetWidth();
-						height = cre->GetHeight();
+						width = (float)cre->GetWidth();
+						height = (float)cre->GetHeight();
 					}
 				}
 
@@ -404,8 +404,8 @@ void InGameMenu::Resize()
 		this->zSizedForHeight == this->zEng->GetEngineParameters().WindowHeight)
 		return;
 
-	this->zSets[INGAMEMAIN].Resize(this->zSizedForWidth, this->zSizedForHeight, this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight);
-	this->zSets[IGOPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, this->zEng->GetEngineParameters().WindowWidth, this->zEng->GetEngineParameters().WindowHeight);
+	this->zSets[INGAMEMAIN].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)this->zEng->GetEngineParameters().WindowWidth, (float)this->zEng->GetEngineParameters().WindowHeight);
+	this->zSets[IGOPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)this->zEng->GetEngineParameters().WindowWidth, (float)this->zEng->GetEngineParameters().WindowHeight);
 
 	this->zSizedForWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
 	this->zSizedForHeight = (float)this->zEng->GetEngineParameters().WindowHeight;

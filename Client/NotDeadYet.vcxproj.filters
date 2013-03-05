@@ -260,9 +260,6 @@
     <ClInclude Include="Source\SoundEngine\AudioManager.h">
       <Filter>Source\Sound</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SoundEngine\sounds.h">
-      <Filter>Source\Sound</Filter>
-    </ClInclude>
     <ClInclude Include="Source\GUI\LootInventoryGui.h">
       <Filter>Source\GUI</Filter>
     </ClInclude>

@@ -28,9 +28,11 @@
 #include "ItemLookup.h"
 #include "PlayerGhostBehavior.h"
 #include <Packets\NewActorPacket.h>
+#include <Packets\PhysicalConditionPacket.h>
 #include "AnimationFileReader.h"
 #include "PlayerConfigReader.h"
 #include "CraftingManager.h"
+#include "sounds.h"
 
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
@@ -91,9 +93,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	//this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
-	this->SpawnHumanDebug();
+	this->SpawnItemsDebug();
+	//this->SpawnAnimalsDebug();	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -129,6 +130,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 	this->zFogTimer = 0.0f;
 
 	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
+
+	this->zSoundHandler = new SoundHandler();
 }
 
 Game::~Game()
@@ -154,6 +157,7 @@ Game::~Game()
 	SAFE_DELETE(this->zWorld);
 	SAFE_DELETE(this->zActorManager);
 	SAFE_DELETE(this->zGameMode);
+	SAFE_DELETE(this->zSoundHandler);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -434,19 +438,6 @@ bool Game::Update( float dt )
 	int counter = 0;
 	while( i != zBehaviors.end() )
 	{
-		if(PlayerActor* cActor = dynamic_cast<PlayerActor*>((*i)->GetActor()))
-		{
-			if(cActor->GetStamina() < 25.0f)
-			{
-				if(cActor->UpdateBreathSoundTimer(dt))
-				{
-					NetworkMessageConverter NMC;
-					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, "Media/Sound/Running_Breath_4.mp3");
-					msg += NMC.Convert(MESSAGE_TYPE_POSITION, cActor->GetPosition());
-					this->SendToAll(msg);
-				}
-			}
-		}
 
 		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
 		{
@@ -484,7 +475,7 @@ bool Game::Update( float dt )
 		return false;
 
 	// Update World
-	zWorld->Update();
+	this->zWorld->Update();
 
 	//Updating animals and Check fog.
 	static float testUpdater = 0.0f;
@@ -929,48 +920,60 @@ void Game::OnEvent( Event* e )
 		// Create Player Actor
 		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
 		pObj->SetModel(UDE->playerModel);
-		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObj);
+		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 		zPlayers[UDE->clientData]->zUserModel = UDE->playerModel;
 
 		
-		actor->AddObserver(this->zGameMode);
+		pActor->AddObserver(this->zGameMode);
 		Vector3 center;
 
 		// Start Position
 		center = this->CalcPlayerSpawnPoint(32, zWorld->GetWorldCenter());
-		actor->SetPosition(center, false);
-		actor->SetScale(actor->GetScale(), false);
+		pActor->SetPosition(center, false);
+		pActor->SetScale(pActor->GetScale(), false);
 
 		auto offsets = this->zCameraOffset.find(UDE->playerModel);
 		
 		if(offsets != this->zCameraOffset.end())
-			dynamic_cast<PlayerActor*>(actor)->SetCameraOffset(offsets->second);
+			pActor->SetCameraOffset(offsets->second);
 
 		// Apply Default Player Behavior
-		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));
+		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(pActor, zWorld, zPlayers[UDE->clientData]));
 
 		//Add actor
-		zActorManager->AddActor(actor);
+		zActorManager->AddActor(pActor);
 
 		//Tells the client which Actor he owns.
 		std::string message;
 		NetworkMessageConverter NMC;
 		unsigned int selfID;
 
-		selfID = actor->GetID();
+		selfID = pActor->GetID();
 		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)selfID);
 		message += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, (float)1);
 
 		UDE->clientData->Send(message);
 
 		NewActorPacket* NAP = new NewActorPacket();
+		PhysicalConditionPacket* PCP = new PhysicalConditionPacket();
+
+		//Gather Actor Physical Conditions
+		PCP->zBleedingLevel = pActor->GetBleeding();
+		PCP->zEnergy = pActor->GetEnergy();
+		PCP->zHealth = pActor->GetHealth();
+		PCP->zHunger = pActor->GetFullness();
+		PCP->zHydration = pActor->GetHydration();
+		PCP->zStamina = pActor->GetStamina();
+
+		UDE->clientData->Send(*PCP);
+		delete PCP;
 
 		//Gather Actors Information and send to client
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		for (auto it = actors.begin(); it != actors.end(); it++)
 		{
-			if(actor == (*it))
+			if(pActor == (*it))
 				continue;
 
 			if(dynamic_cast<WorldActor*>(*it))
@@ -985,7 +988,7 @@ void Game::OnEvent( Event* e )
 				NAP->actorState[bActor->GetID()] = bActor->GetState();
 		}
 		UDE->clientData->Send(*NAP);
-		SAFE_DELETE(NAP);
+		delete NAP;
 
 		this->zPlayersAlive++;
 		this->zCurrentFogEnclosement = this->zInitalFogEnclosement + ( this->zIncrementFogEnclosement * this->zPlayersAlive);
@@ -1473,6 +1476,7 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 	actor = new ItemActor(item);
 	actor->SetPosition(pActor->GetPosition(), false);
 	this->zActorManager->AddActor(actor);
+
 	NetworkMessageConverter NMC;
 	cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
 }
@@ -1795,15 +1799,14 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 								}
 								
 							}
+							//Send Add Inventory Msg to the Player.
+							std::string add_msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+							add_msg += craftedItem->ToMessageString(&NMC);
+
 							//Try to add the crafted item to the inventory.
 							bool stacked = false;
 							if (inv->AddItem(craftedItem, stacked))
-							{
-								//Send Add Inventory Msg to the Player.
-								std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-								msg += craftedItem->ToMessageString(&NMC);
-								cd->Send(msg);
-
+							{					
 								if (stacked)
 								{
 									if (craftedItem->GetStackSize() <= 0)
@@ -1822,16 +1825,21 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 										SAFE_DELETE(temp);
 									}
 								}
+
+								cd->Send(add_msg);
 							}
 							else
 							{
 								for (auto it = item_stack_out.begin(); it != item_stack_out.end(); it++)
 								{
 									inv->RemoveItem(it->first);
-									
+									cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)it->first->GetID()));
 									it->first->IncreaseStackSize(it->second);
 									if(inv->AddItem(it->first, stacked))
 									{
+										std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+										msg += craftedItem->ToMessageString(&NMC);
+										cd->Send(msg);
 										if (stacked)
 										{
 											MaloW::Debug("Weird Error When Crafting, item stacked but shouldn't have");
@@ -2040,11 +2048,11 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
-		int weigth = inventory->GetTotalWeight();
+		int weight = inventory->GetTotalWeight();
 
 		ret = inventory->EquipProjectile(proj);
 		
-		if(weigth > inventory->GetTotalWeight())
+		if(weight > inventory->GetTotalWeight())
 		{
 			Item* temp = inventory->RemoveItem(proj);
 			SAFE_DELETE(temp);

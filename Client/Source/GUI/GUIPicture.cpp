@@ -27,5 +27,5 @@ bool GUIPicture::RemoveFromRenderer(GraphicsEngine* ge)
 
 void GUIPicture::Resize( int oldWindowWidth, int oldWindowHeight, int windowWidth, int windowHeight )
 {
-	Element::Resize( oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
+	Element::Resize( (float)oldWindowWidth, (float)oldWindowHeight, (float)windowWidth, (float)windowHeight);
 }

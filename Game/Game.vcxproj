@@ -103,6 +103,7 @@
     <ClInclude Include="Include\Projectile.h" />
     <ClInclude Include="Include\RangedWeapon.h" />
     <ClInclude Include="Include\Misc.h" />
+    <ClInclude Include="Include\sounds.h" />
     <ClInclude Include="Include\Weapon.h" />
     <ClInclude Include="Include\World\CircleAndRect.h" />
     <ClInclude Include="Include\World\Entity.h" />
@@ -113,7 +114,6 @@
     <ClInclude Include="Include\World\WorldEvents.h" />
     <ClInclude Include="Include\World\WorldFile.h" />
     <ClInclude Include="Include\World\WorldRenderer.h" />
-    <ClInclude Include="Source\ActorEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Client\Source\KeyUtil\KeyBindConfig.cpp" />

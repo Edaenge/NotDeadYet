@@ -138,7 +138,6 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 
-	
 	ClientData* cd = player->GetClientData();
 
 	//Create new Player
@@ -153,13 +152,6 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	{
 		if (model.substr(model.length() - 4) == ".fbx")
 			model = "Media/Models/temp_guy.obj";
-	}
-
-	PhysicsObject* pObject = pActor->GetPhysicsObject();
-	if (pObject)
-	{
-		GetPhysics()->DeletePhysicsObject(pObject);
-		pObject = NULL;
 	}
 
 	PhysicsObject* pObj = GetPhysics()->CreatePhysicsObject(model, position);

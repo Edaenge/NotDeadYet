@@ -124,10 +124,10 @@ private:
 
 	//Updates the text timer and removes the text when timer reaches 0
 	void UpdateText();
-	/*! Updates conditions*/
-	void UpdatePhysicalCondition(PhysicalConditionPacket* PCP);
 
-	/*! Checks Ray Vs Static/Dynamic Objects*/
+	//Updates the health and bleeding indicator.
+	void UpdateHealthAndBleedingImage();	/*! Updates conditions*/
+	void UpdatePhysicalCondition(PhysicalConditionPacket* PCP);	/*! Checks Ray Vs Static/Dynamic Objects*/
 	std::vector<unsigned int> RayVsWorld();
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
 	bool CheckCollision();
@@ -222,6 +222,14 @@ private:
 	
 	iImage* zDamageIndicator;
 	float	zDamageOpacity;
+
+	iImage* zBleedingAndHealthIndicator;
+	float	zPulsingTime;
+	float	zPulseCounter;
+	float	zHealthOpacity;
+	float	zBleedingLevel;
+	float	zBleedingOpacity;
+	bool	zDroppingPulse;
 	
 
 	bool zGameStarted;
@@ -236,7 +244,6 @@ private:
 	float zHunger;
 	float zHydration;
 	float zEnergy;
-	float zBleedingLevel;
 	
 	Vector3 zMeshOffset;
 	std::map<std::string, Vector3> zMeshCameraOffsets;

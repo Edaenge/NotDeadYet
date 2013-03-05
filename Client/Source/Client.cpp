@@ -45,7 +45,6 @@ Client::Client()
 	this->zStateCameraOffset[STATE_CROUCHING] = Vector3(0.0f, 1.0f, 0.0f);
 
 	this->zAnimationFileReader[0] = AnimationFileReader("Media/Models/temp_guy_movement_anims.cfg");
-	this->zAnimationFileReader[0].ReadFromFile();
 
 	this->zModelToReaderMap["Media/Models/temp_guy_movement_anims.fbx"] = zAnimationFileReader[0];
 
@@ -70,15 +69,19 @@ Client::Client()
 	this->zAnchor = NULL;
 	this->zCrossHair = NULL;
 	this->zDamageIndicator = NULL;
+	this->zBleedingAndHealthIndicator = NULL;
 	this->zDamageOpacity = 0.0f;
 
-	this->zEnergy = 100.0f;
+	this->zPulseCounter = 0.0f;
+	this->zPulsingTime = 8.0f;
+	this->zHealthOpacity = 0.0f;
+	this->zBleedingOpacity = 0.0f;
+	this->zBleedingLevel = 0.0f;
+	this->zDroppingPulse = false;	this->zEnergy = 100.0f;
 	this->zStamina = 100.0f;
 	this->zHealth = 100.0f;
 	this->zHydration = 100.0f;
-	this->zHunger = 100.0f;
-
-	this->zIgm = new InGameMenu();
+	this->zHunger = 100.0f;	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
 
 	this->zGameTimer = new GameTimer();
@@ -119,6 +122,9 @@ Client::~Client()
 	
 	if (this->zDamageIndicator)
 		this->zEng->DeleteImage(this->zDamageIndicator);
+
+	if (this->zBleedingAndHealthIndicator)
+		this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
 
 	if (this->zCrossHair) 
 		this->zEng->DeleteImage(this->zCrossHair);
@@ -170,6 +176,8 @@ void Client::Update()
 
 	//	this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
+
+	this->UpdateHealthAndBleedingImage();
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
 
@@ -276,11 +284,6 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zWorld->Update();
 	this->zWorldRenderer->Update();
 	
-	this->zEng->DeleteImage(this->zBlackImage);
-	this->zBlackImage = NULL;
-
-	this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);	//this->zEng->StartRendering();
-	
 	if (this->zCrossHair)
 		this->zEng->DeleteImage(this->zCrossHair);
 
@@ -323,14 +326,24 @@ void Client::Life()
 {
 	MaloW::Debug("Client Process Started");
 	
+	static const float FRAME_TIME = 120.0f;
+	static const float TARGET_DT = 1.0f / FRAME_TIME;
+
 	this->zGameTimer->Init();
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
 		this->zDeltaTime = this->zGameTimer->Frame();
-
+		
 		this->UpdateGame();
 
-		Sleep(5);
+		if (FRAME_TIME > 0)
+		{
+			if (this->zDeltaTime < TARGET_DT)
+			{
+				float sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
+				Sleep(sleepTime);
+			}
+		}
 	}
 
 	this->zRunning = false;
@@ -562,7 +575,6 @@ void Client::CheckPlayerSpecificKeys()
 			}
 			if (msd.zAction == CRAFT)
 			{
-				
 				if (item)
 				{
 					unsigned int type = 1000;
@@ -645,8 +657,12 @@ void Client::CheckPlayerSpecificKeys()
 	{
 		if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
 		{
-			this->zGuiManager->ToggleInventoryGui();
-			this->zGuiManager->ToggleLootGui(0);
+			if(this->zGuiManager->IsInventoryOpen())
+				this->zGuiManager->ToggleInventoryGui();
+
+			if(this->zGuiManager->IsLootingOpen())
+				this->zGuiManager->ToggleLootGui(0);
+			
 			this->zGuiManager->ResetLoot();
 			this->zShowCursor = false;
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
@@ -1461,8 +1477,21 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		std	::string fileName = this->zMsgHandler.ConvertStringToSubstring(M_PLAY_SOUND, msgArray[0]);
+		/*float eventId = this->zMsgHandler.ConvertStringToInt(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
+
+		AudioManager* am = AudioManager::GetInstance();
+		IEventHandle* tempHandle;
+		if(am->GetEventHandle(eventId, tempHandle) == FMOD_OK)
+		{
+			FMOD_VECTOR* temp = new FMOD_VECTOR;
+			temp->x = pos.x;
+			temp->y = pos.y;
+			temp->z = pos.z;
+			tempHandle->Setposition(temp);
+			tempHandle->Play();
+			delete temp;
+		}*/
 
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
@@ -1638,6 +1667,12 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 	Actor* actor = this->zActorManager->GetActor(ID);
 	Actor* player = this->zActorManager->GetActor(this->zID);
 
+	this->zHealth -= damageTaken;
+	if(this->zHealth < 0.0f)
+	{
+		this->zHealth = 100.0f;
+	}
+
 	if(!player)
 	{
 		MaloW::Debug("Failed to find this Player in Client::HandleTakeDamage");
@@ -1749,6 +1784,95 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 	}
 	return true;
 }
+
+void Client::UpdateHealthAndBleedingImage()
+{
+
+	this->zHealthOpacity = this->zHealth / 100;
+	float goalOffset = 500.0f * this->zHealthOpacity;
+	static float currentOffset = 0.0f;
+
+	if(currentOffset < goalOffset)
+	{
+		currentOffset += 20.0f * zDeltaTime;
+	}
+	else if(currentOffset > goalOffset)
+	{
+		currentOffset -= 20.0f * zDeltaTime;
+	}
+
+
+	this->zHealthOpacity = 1 - this->zHealthOpacity;
+	if(this->zHealthOpacity > 0.44f)
+	{
+		this->zHealthOpacity = 0.44f;
+	}
+
+	//this->zHealthOpacity = 0.5f;
+
+		
+	float windowHeight = (float)this->zEng->GetEngineParameters().WindowHeight;
+	float windowWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
+
+	if(this->zBleedingAndHealthIndicator == NULL)
+	{
+		this->zBleedingAndHealthIndicator = this->zEng->CreateImage(Vector2(0 - currentOffset,0 - currentOffset), Vector2(windowWidth + currentOffset*2, windowHeight + currentOffset*2), "Media/Icons/HealthAndBleeding_Small_Temp.png" );
+	}
+
+
+
+	if(this->zBleedingLevel > 1)
+	{
+		if(!this->zDroppingPulse)
+		{
+			this->zBleedingOpacity += this->zDeltaTime * 0.14 * (this->zBleedingLevel - 1.0f);
+		}
+		else
+		{
+			this->zBleedingOpacity -= this->zDeltaTime * 0.14 * (this->zBleedingLevel - 1.0f);
+		}
+	}
+	else
+	{
+		this->zBleedingOpacity = 0.0f;
+	}
+	//this->zHealthOpacity += testBleed;
+
+	if(this->zBleedingOpacity >= 0.22f || this->zBleedingOpacity <= 0.0f)
+	{
+		if(!this->zDroppingPulse)
+		{
+			this->zDroppingPulse = true;
+		}
+		else 
+		{
+			this->zDroppingPulse = false;
+		}
+	}
+
+
+	/*if(this->zPulseCounter > pulseLimit)
+	{
+		this->zPulseCounter = 0.0f;
+		if(!this->zDroppingPulse)
+		{
+			this->zDroppingPulse = true;
+		}
+		else
+		{
+			this->zDroppingPulse = false;
+		}
+	}*/
+
+
+
+	this->zBleedingAndHealthIndicator->SetOpacity(this->zHealthOpacity + this->zBleedingOpacity);
+	this->zBleedingAndHealthIndicator->SetPosition(Vector2(0 - currentOffset,0 - currentOffset) );
+	this->zBleedingAndHealthIndicator->SetDimensions(Vector2(windowWidth + currentOffset*2, windowHeight + currentOffset*2));
+
+
+}
+
 
 void Client::CloseConnection(const std::string& reason)
 {

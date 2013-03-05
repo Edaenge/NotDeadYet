@@ -3,7 +3,7 @@
 #include "Graphics.h"
 
 #define PI 3.14159265358979323846f
-#define MAXFOOTSTEPS 32
+#define MAXFOOTSTEPS 6
 
 ClientActorManager::ClientActorManager()
 {
@@ -12,6 +12,7 @@ ClientActorManager::ClientActorManager()
 	for(int i = 0; i < MAXFOOTSTEPS; i++)
 		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_GRASS, this->zFootStep[i]);
 
+
 	this->zInterpolationVelocity = 100.0f;
 	this->zUpdatesPerSec = 0;
 	this->zLatency = 0;
@@ -19,7 +20,6 @@ ClientActorManager::ClientActorManager()
 
 ClientActorManager::~ClientActorManager()
 {
-	GraphicsEngine* ge = GetGraphics();
 	for(auto it = this->zActors.begin(); it != this->zActors.end(); it++)
 	{
 		if(it->second)
@@ -44,6 +44,7 @@ ClientActorManager::~ClientActorManager()
 		this->zFootStep[i]->Release();
 
 	delete this->zFootStep;
+
 }
 
 void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
@@ -79,8 +80,8 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 					position = this->InterpolatePosition(gEng->GetCamera()->GetPosition() - this->zCameraOffset, update->GetPosition(), t);
 					
 					AudioManager::GetInstance()->SetPlayerPosition(&ConvertToFmodVector(position), &ConvertToFmodVector(gEng->GetCamera()->GetForward()), &ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
-					
-					this->zFootStep[MAXFOOTSTEPS-1]->Setposition(&ConvertToFmodVector(Vector3(48.0f, 0.0f, 48.0f)));
+
+					this->zFootStep[MAXFOOTSTEPS-1]->Setposition(&ConvertToFmodVector(position));
 					this->zFootStep[MAXFOOTSTEPS-1]->Play();
 
 					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
@@ -89,6 +90,7 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				{
 					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
 					actor->SetPosition(position);
+
 					if(stepsPlayedThisUpdate < MAXFOOTSTEPS)
 					{
 						this->zFootStep[stepsPlayedThisUpdate]->Setposition(&ConvertToFmodVector(position));
@@ -121,6 +123,8 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			{
 				it_Update++;
 				stepsPlayedThisUpdate++;
+				if(stepsPlayedThisUpdate >= MAXFOOTSTEPS)
+					stepsPlayedThisUpdate = 0;
 			}
 		}
 		else
@@ -274,14 +278,6 @@ Vector4 ClientActorManager::InterpolateRotation( const Vector4& currentRotation,
 	return returnRotation;
 }
 
-FMOD_VECTOR ClientActorManager::ConvertToFmodVector( Vector3 v )
-{
-	FMOD_VECTOR temp;
-	temp.x = v.x;
-	temp.y = v.y;
-	temp.z = v.z;
-	return temp;}
-
 void ClientActorManager::ClearAll()
 {
 	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
@@ -300,3 +296,11 @@ void ClientActorManager::ClearAll()
 
 }
 
+FMOD_VECTOR ClientActorManager::ConvertToFmodVector( Vector3 v )
+{
+	FMOD_VECTOR temp;
+	temp.x = v.x;
+	temp.y = v.y;
+	temp.z = v.z;
+	return temp;
+}
