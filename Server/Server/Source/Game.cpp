@@ -28,6 +28,7 @@
 #include "ItemLookup.h"
 #include "PlayerGhostBehavior.h"
 #include <Packets\NewActorPacket.h>
+#include <Packets\PhysicalConditionPacket.h>
 #include "AnimationFileReader.h"
 #include "PlayerConfigReader.h"
 #include "CraftingManager.h"
@@ -97,7 +98,8 @@ Game::Game( ActorSynchronizer* syncher, std::string mode, const std::string& wor
 
 //DEBUG;
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();	this->SpawnHumanDebug();
+	//this->SpawnAnimalsDebug();
+	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -440,6 +442,7 @@ bool Game::Update( float dt )
 	int counter = 0;
 	while( i != zBehaviors.end() )
 	{
+
 		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
 		{
 			playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
@@ -921,47 +924,60 @@ void Game::OnEvent( Event* e )
 		// Create Player Actor
 		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
 		pObj->SetModel(UDE->playerModel);
-		Actor* actor = new PlayerActor(zPlayers[UDE->clientData], pObj);
+		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 		zPlayers[UDE->clientData]->zUserModel = UDE->playerModel;
 
 		
-		actor->AddObserver(this->zGameMode);
+		pActor->AddObserver(this->zGameMode);
 		Vector3 center;
 
 		// Start Position
 		center = this->CalcPlayerSpawnPoint(32, zWorld->GetWorldCenter());
-		actor->SetPosition(center);
-		actor->SetScale(actor->GetScale());
-		
-		zActorManager->AddActor(actor);
+		pActor->SetPosition(center, false);
+		pActor->SetScale(pActor->GetScale(), false);
 
 		auto offsets = this->zCameraOffset.find(UDE->playerModel);
 		
 		if(offsets != this->zCameraOffset.end())
-			dynamic_cast<PlayerActor*>(actor)->SetCameraOffset(offsets->second);
+			pActor->SetCameraOffset(offsets->second);
 
 		// Apply Default Player Behavior
-		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(actor, zWorld, zPlayers[UDE->clientData]));
+		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(pActor, zWorld, zPlayers[UDE->clientData]));
+
+		//Add actor
+		zActorManager->AddActor(pActor);
 
 		//Tells the client which Actor he owns.
 		std::string message;
 		NetworkMessageConverter NMC;
 		unsigned int selfID;
 
-		selfID = actor->GetID();
+		selfID = pActor->GetID();
 		message = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)selfID);
 		message += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, (float)1);
 
 		UDE->clientData->Send(message);
 
 		NewActorPacket* NAP = new NewActorPacket();
+		PhysicalConditionPacket* PCP = new PhysicalConditionPacket();
+
+		//Gather Actor Physical Conditions
+		PCP->zBleedingLevel = pActor->GetBleeding();
+		PCP->zEnergy = pActor->GetEnergy();
+		PCP->zHealth = pActor->GetHealth();
+		PCP->zHunger = pActor->GetFullness();
+		PCP->zHydration = pActor->GetHydration();
+		PCP->zStamina = pActor->GetStamina();
+
+		UDE->clientData->Send(*PCP);
+		delete PCP;
 
 		//Gather Actors Information and send to client
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		for (auto it = actors.begin(); it != actors.end(); it++)
 		{
-			if(actor == (*it))
+			if(pActor == (*it))
 				continue;
 
 			if(dynamic_cast<WorldActor*>(*it))
@@ -976,7 +992,7 @@ void Game::OnEvent( Event* e )
 				NAP->actorState[bActor->GetID()] = bActor->GetState();
 		}
 		UDE->clientData->Send(*NAP);
-		SAFE_DELETE(NAP);
+		delete NAP;
 
 		this->zPlayersAlive++;
 		this->zCurrentFogEnclosement = this->zInitalFogEnclosement + ( this->zIncrementFogEnclosement * this->zPlayersAlive);
@@ -1131,10 +1147,10 @@ ItemActor* Game::ConvertToItemActor(Behavior* behavior, Actor*& oldActorOut)
 	projectile->SetStackSize(1);
 
 	ItemActor* itemActor = new ItemActor(projectile);
-	itemActor->SetPosition(projActor->GetPosition());
-	itemActor->SetRotation(projActor->GetRotation());
-	itemActor->SetScale(projActor->GetScale());
-	itemActor->SetDir(projActor->GetDir());
+	itemActor->SetPosition(projActor->GetPosition(), false);
+	itemActor->SetRotation(projActor->GetRotation(), false);
+	itemActor->SetScale(projActor->GetScale(), false);
+	itemActor->SetDir(projActor->GetDir(), false);
 	oldActorOut = projActor;
 
 	return itemActor;
@@ -1462,8 +1478,8 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 
 	actor = NULL;
 	actor = new ItemActor(item);
+	actor->SetPosition(pActor->GetPosition(), false);
 	this->zActorManager->AddActor(actor);
-	actor->SetPosition(pActor->GetPosition());
 
 	NetworkMessageConverter NMC;
 	cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
@@ -1499,7 +1515,6 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 						float fullness = pActor->GetFullness();
 
 						pActor->SetFullness(fullness + value);
-						pActor->HungerHasChanged();
 
 						//Sending Message to client And removing stack from inventory.
 						inv->RemoveItemStack(ID, 1);
@@ -1641,9 +1656,9 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				damage.piercing = ranged->GetDamage() + arrow->GetDamage();
 				projActor->SetDamage(damage);
 				//Set other values
-				projActor->SetScale(projActor->GetScale());
-				projActor->SetPosition( pActor->GetPosition() + pActor->GetCameraOffset());
-				projActor->SetDir(pActor->GetDir());
+				projActor->SetScale(projActor->GetScale(), false);
+				projActor->SetPosition( pActor->GetPosition() + pActor->GetCameraOffset(), false);
+				projActor->SetDir(pActor->GetDir(), false);
 
 				//Create behavior
 				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
@@ -1784,7 +1799,7 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 								else
 								{
 									inv->RemoveItem(it->first);
-									cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, it->first->GetID()));
+									cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)it->first->GetID()));
 								}
 								
 							}

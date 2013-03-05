@@ -98,6 +98,7 @@
     <ClInclude Include="Include\NetworkMessageConverter.h" />
     <ClInclude Include="Include\Packets\NewActorPacket.h" />
     <ClInclude Include="Include\Packets\Packet.h" />
+    <ClInclude Include="Include\Packets\PhysicalConditionPacket.h" />
     <ClInclude Include="Include\Packets\ServerFramePacket.h" />
     <ClInclude Include="Include\Projectile.h" />
     <ClInclude Include="Include\RangedWeapon.h" />
@@ -113,7 +114,6 @@
     <ClInclude Include="Include\World\WorldEvents.h" />
     <ClInclude Include="Include\World\WorldFile.h" />
     <ClInclude Include="Include\World\WorldRenderer.h" />
-    <ClInclude Include="Source\ActorEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Client\Source\KeyUtil\KeyBindConfig.cpp" />

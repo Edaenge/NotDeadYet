@@ -1,8 +1,11 @@
 #include "ActorSynchronizer.h"
 #include "Actor.h"
 #include "BioActor.h"
+#include "GhostActor.h"
+#include "PlayerActor.h"
 #include <Packets\ServerFramePacket.h>
 #include <Packets\NewActorPacket.h>
+#include <Packets\PhysicalConditionPacket.h>
 #include "WorldActor.h"
 #include "AnimationFileReader.h"
 #include <time.h>
@@ -21,6 +24,11 @@ ActorSynchronizer::~ActorSynchronizer()
 
 void ActorSynchronizer::AddAnimation(BioActor* bActor)
 {
+	Player* player = bActor->GetPlayer();
+	if(player == NULL)
+	{
+		return;
+	}
 	KeyStates keys = bActor->GetPlayer()->GetKeys();
 	unsigned int state = bActor->GetState();
 	std::string animation = "";
@@ -122,14 +130,170 @@ void ActorSynchronizer::OnEvent( Event* e )
 		zNewActorSet.erase(AR->zActor);
 		zRemoveActorSet.insert(AR->zActor->GetID());
 	}
+	//Condition Events
+	else if(ActorPhysicalConditionEnergyEvent* APCE = dynamic_cast<ActorPhysicalConditionEnergyEvent*>(e))
+	{
+		ClientData* cd = NULL;
+		Player* player = NULL;
+
+		if( BioActor* bioActor = dynamic_cast<BioActor*>(APCE->zActor) )
+		{
+			player = bioActor->GetPlayer();
+
+			if( !player )
+				return;
+
+			cd = player->GetClientData();
+		}
+		else if( GhostActor* ghostActor = dynamic_cast<GhostActor*>(APCE->zActor) )
+			cd = ghostActor->GetPlayer()->GetClientData();
+		
+
+		if( !cd )
+			return;
+
+		auto found = this->zIndividualPhysicalConditions.find(cd);
+		if( found == this->zIndividualPhysicalConditions.end() )
+			this->zIndividualPhysicalConditions[cd] = new PhysicalConditionPacket();
+
+		this->zIndividualPhysicalConditions[cd]->zEnergy = APCE->zActor->GetEnergy();
+
+	}
+	else if( BioActorPhysicalConditionHealthEvent* BAPCH = dynamic_cast<BioActorPhysicalConditionHealthEvent*>(e) )
+	{
+		ClientData* cd = NULL;
+		Player* player = NULL;
+		BioActor* bioActor = dynamic_cast<BioActor*>(BAPCH->zBioActor);
+
+		if( bioActor )
+		{
+			player = bioActor->GetPlayer();
+
+			if( !player )
+				return;
+
+			cd = player->GetClientData();
+		}
+		
+		if( !cd )
+			return;
+		
+		auto found = this->zIndividualPhysicalConditions.find(cd);
+		if( found == this->zIndividualPhysicalConditions.end() )
+			this->zIndividualPhysicalConditions[cd] = new PhysicalConditionPacket();
+
+		this->zIndividualPhysicalConditions[cd]->zHealth = bioActor->GetHealth();
+	}
+	else if ( BioActorPhysicalConditionStaminaEvent* BAPCS = dynamic_cast<BioActorPhysicalConditionStaminaEvent*>(e) )
+	{
+		ClientData* cd = NULL;
+		Player* player = NULL;
+		BioActor* bioActor = dynamic_cast<BioActor*>(BAPCS->zBioActor);
+
+		if( bioActor )
+		{
+			player = bioActor->GetPlayer();
+
+			if( !player )
+				return;
+
+			cd = player->GetClientData();
+		}
+		
+		if( !cd )
+			return;
+
+		auto found = this->zIndividualPhysicalConditions.find(cd);
+		if( found == this->zIndividualPhysicalConditions.end() )
+			this->zIndividualPhysicalConditions[cd] = new PhysicalConditionPacket();
+
+		this->zIndividualPhysicalConditions[cd]->zStamina = bioActor->GetStamina();
+	}
+	else if ( BioActorPhysicalConditionBleedingEvent* BAPCB = dynamic_cast<BioActorPhysicalConditionBleedingEvent*>(e) )
+	{
+		ClientData* cd = NULL;
+		Player* player = NULL;
+		BioActor* bioActor = dynamic_cast<BioActor*>(BAPCB->zBioActor);
+
+		if( bioActor )
+		{
+			player = bioActor->GetPlayer();
+
+			if( !player )
+				return;
+
+			cd = player->GetClientData();
+		}
+
+		if( !cd )
+			return;
+
+		auto found = this->zIndividualPhysicalConditions.find(cd);
+		if( found == this->zIndividualPhysicalConditions.end() )
+			this->zIndividualPhysicalConditions[cd] = new PhysicalConditionPacket();
+
+		this->zIndividualPhysicalConditions[cd]->zBleedingLevel;
+
+	}
+	else if( PlayerActorPhysicalConditionHungerEvent* PAPCH = dynamic_cast<PlayerActorPhysicalConditionHungerEvent*>(e) )
+	{
+		ClientData* cd = NULL;
+		Player* player = NULL;
+		PlayerActor* playerActor = dynamic_cast<PlayerActor*>(PAPCH->zPlayerActor);
+
+		if( playerActor )
+		{
+			player = playerActor->GetPlayer();
+
+			if( !player )
+				return;
+
+			cd = player->GetClientData();
+		}
+
+		if( !cd )
+			return;
+
+		auto found = this->zIndividualPhysicalConditions.find(cd);
+		if( found == this->zIndividualPhysicalConditions.end() )
+			this->zIndividualPhysicalConditions[cd] = new PhysicalConditionPacket();
+
+		this->zIndividualPhysicalConditions[cd]->zHunger = playerActor->GetFullness();
+	}
+	else if( PlayerActorPhysicalConditionHydrationEvent* PAPCHe = dynamic_cast<PlayerActorPhysicalConditionHydrationEvent*>(e) )
+	{
+		ClientData* cd = NULL;
+		Player* player = NULL;
+		PlayerActor* playerActor = dynamic_cast<PlayerActor*>(PAPCHe->zPlayerActor);
+
+		if( playerActor )
+		{
+			player = playerActor->GetPlayer();
+
+			if( !player )
+				return;
+
+			cd = player->GetClientData();
+		}
+
+		if( !cd )
+			return;
+
+		auto found = this->zIndividualPhysicalConditions.find(cd);
+		if( found == this->zIndividualPhysicalConditions.end() )
+			this->zIndividualPhysicalConditions[cd] = new PhysicalConditionPacket();
+
+		this->zIndividualPhysicalConditions[cd]->zHydration = playerActor->GetHydration();
+	}
 }
 
 void ActorSynchronizer::SendUpdatesTo( ClientData* cd )
 {
-	NetworkMessageConverter nmc;
-	std::string msg;
-
 	cd->Send(*zActorData);
+
+	auto found = zIndividualPhysicalConditions.find(cd);
+	if( found != zIndividualPhysicalConditions.end() )
+		cd->Send(*found->second);
 
 	//RegisterActor(cd);
 	
@@ -181,9 +345,15 @@ void ActorSynchronizer::ClearAll()
 
 	zActorData = new NewActorPacket();
 
+	for ( auto it = zIndividualPhysicalConditions.begin(); it != zIndividualPhysicalConditions.end(); it++ )
+	{
+		if( it->second )
+			delete it->second;
+	}
+
 	// Clear Sets
+	this->zIndividualPhysicalConditions.clear();
 	this->zUpdateSet.clear();
 	this->zNewActorSet.clear();
 	this->zRemoveActorSet.clear();
 }
-
