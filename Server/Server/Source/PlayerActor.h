@@ -7,30 +7,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 
 #include "BioActor.h"
 #include <World/WorldEvents.h>
-class PlayerExhausted : public Event
-{
-public:
-	virtual ~PlayerExhausted() {}
-
-	Vector3 zPos;
-};
-
-
-class PlayerActorPhysicalConditionHungerEvent : public Event
-{
-public:
-	virtual ~PlayerActorPhysicalConditionHungerEvent() {}
-
-	Actor* zPlayerActor;
-};
-
-class PlayerActorPhysicalConditionHydrationEvent : public Event
-{
-public:
-	virtual ~PlayerActorPhysicalConditionHydrationEvent() {}
-
-	Actor* zPlayerActor;
-};
+#include "PlayerEvent.h"
 
 
 /*This class is used to save player information such as position and states.

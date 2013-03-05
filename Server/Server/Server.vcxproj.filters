@@ -19,6 +19,9 @@
     <Filter Include="Source\Actors\Behavior">
       <UniqueIdentifier>{89d052e5-f5c9-4937-bc7c-e0d8f27606de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Events">
+      <UniqueIdentifier>{a080a8bb-9dd2-451f-8cdb-12448dab6d61}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PhysicsEngine\Physics.cpp">
@@ -248,9 +251,6 @@
     <ClInclude Include="Source\ActorManager.h">
       <Filter>Source\Handlers</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GameEvents.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\PlayerHumanBehavior.h">
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
@@ -301,6 +301,15 @@
     </ClInclude>
     <ClInclude Include="Source\SoundHandler.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PlayerEvent.h">
+      <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameEvents.h">
+      <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ActorEvent.h">
+      <Filter>Source\Events</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
