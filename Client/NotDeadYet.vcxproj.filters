@@ -141,9 +141,6 @@
     <ClCompile Include="Source\GUI\LootInventoryGui.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AudioHandler.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Client.h">
@@ -265,9 +262,6 @@
     </ClInclude>
     <ClInclude Include="Source\GUI\LootInventoryGui.h">
       <Filter>Source\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AudioHandler.h">
-      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -125,14 +125,14 @@
     <ClInclude Include="Include\GameTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ActorEvents.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\sounds.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Packets\PhysicalConditionPacket.h">
+      <Filter>Header Files\Packets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

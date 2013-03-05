@@ -12,12 +12,10 @@ BioActor::BioActor() : Actor()
 	this->zAlive = true;
 	this->zHealthMax = 100;
 	this->zHealth = zHealthMax;
-	this->zHealthChanged = true;
 
 	this->zStaminaMax = 100;
 	this->zStamina = zStaminaMax;
 	this->zStaminaCof = 2.2f;
-	this->zStaminaChanged = true;
 
 	this->zBleedingLevel = 0.0f;
 	this->zValid = false;
@@ -34,14 +32,12 @@ BioActor::BioActor(Player* player) : Actor()
 	this->zAlive = true;
 	this->zHealthMax = 100;
 	this->zHealth = zHealthMax;
-	this->zHealthChanged = true;
 
 	this->zStaminaMax = 100;
 	this->zStamina = zStaminaMax;
 	this->zStaminaCof = 2.2f;
-	this->zStaminaChanged = true;
 
-	this->zBleedingLevel = 0;
+	this->zBleedingLevel = 0.0f;
 	this->zValid = false;
 }
 
@@ -60,7 +56,6 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 	NotifyObservers(&BATD);
 
 	this->zHealth -= dmg.GetTotal();
-	this->zHealthChanged = true;
 
 	if(this->zHealth <= 0.0f)
 	{
@@ -70,7 +65,7 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 
 	if(dmg.GetTotal() / this->zHealth > 0.20 && dmg.GetBleedFactor() > 0.6)
 	{
-		float currentBleeding = this->GetBleeding();
+		float currentBleeding = this->zBleedingLevel;
 		this->SetBleeding( currentBleeding + 1 );
 	}
 
@@ -112,21 +107,6 @@ bool BioActor::IsAlive() const
 	return this->zAlive;
 }
 
-bool BioActor::Sprint(float dt)
-{
-	float temp = this->zStamina;
-	temp -= dt * this->zStaminaCof;
-
-	if(temp < 0.0f)
-		return false;
-	else
-		this->zStamina = temp;
-	
-	this->zStaminaChanged = true;
-
-	return true;
-}
-
 bool BioActor::HasMoved()
 {
 	Vector3 curPos = GetPosition();
@@ -137,34 +117,65 @@ bool BioActor::HasMoved()
 	return true;
 }
 
-std::string BioActor::ToMessageString( NetworkMessageConverter* NMC )
-{
-	string msg = "";
-	msg += NMC->Convert(MESSAGE_TYPE_STATE, (float)this->zState);
-
-	if(zHealthChanged)
-	{
-		msg += NMC->Convert(MESSAGE_TYPE_HEALTH, this->zHealth);
-		this->zHealthChanged = false;
-	}
-
-	if(zStaminaChanged)
-	{
-		msg += NMC->Convert(MESSAGE_TYPE_STAMINA, this->zStamina);
-		this->zStaminaChanged = false;
-	}
-
-	return msg;
-}
-
-void BioActor::SetState( const int state )
+void BioActor::SetState( const int state, const bool notify /*= true*/ )
 {
 	if (state != this->zState)
 	{
 		this->zState = state;
 
-		BioActorStateEvent BASE;
-		BASE.zBioActor = this;
-		NotifyObservers(&BASE);
+		if(notify)
+		{
+			BioActorStateEvent BASE;
+			BASE.zBioActor = this;
+			NotifyObservers(&BASE);
+		}
+	}
+}
+
+void BioActor::SetBleeding( const float levelBleeding, const bool notify /*= true*/ )
+{
+	if( levelBleeding != this->zBleedingLevel )
+	{
+		this->zBleedingLevel = levelBleeding;
+
+		if(this->zBleedingLevel < 0)
+			this->zBleedingLevel = 0;
+
+		if(notify)
+		{
+			BioActorPhysicalConditionBleedingEvent e;
+			e.zBioActor = this;
+			NotifyObservers(&e);
+		}
+	}
+}
+
+void BioActor::SetHealth( const float health, const bool notify /*= true*/)
+{
+	if(this->zHealth != health)
+	{
+		this->zHealth = health;
+
+		if(notify)
+		{
+			BioActorPhysicalConditionHealthEvent e;
+			e.zBioActor = this;
+			NotifyObservers(&e);
+		}
+	}
+}
+
+void BioActor::SetStamina( const float stamina, const bool notify /*= true*/ )
+{
+	if(this->zStamina != stamina )
+	{
+		this->zStamina = stamina;
+
+		if(notify)
+		{
+			BioActorPhysicalConditionStaminaEvent e;
+			e.zBioActor = this;
+			NotifyObservers(&e);
+		}
 	}
 }

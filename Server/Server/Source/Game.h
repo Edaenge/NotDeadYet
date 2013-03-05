@@ -7,6 +7,7 @@
 #include "ActorSynchronizer.h"
 #include "Physics.h"
 #include "Item.h"
+#include "SoundHandler.h"
 
 class ClientData;
 class World;
@@ -30,6 +31,7 @@ private:
 	GameMode* zGameMode;
 	World* zWorld;
 	CraftingManager* zCraftingManager;
+	SoundHandler* zSoundHandler;
 
 	PhysicsEngine* zPhysicsEngine;
 	ActorSynchronizer* zSyncher;
