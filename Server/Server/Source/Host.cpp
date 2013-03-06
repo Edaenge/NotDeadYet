@@ -51,7 +51,8 @@ Host::~Host()
 
 	SAFE_DELETE(this->zServerListener);
 
-	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
+	auto it_zClients_end = this->zClients.end();
+	for (auto it = this->zClients.begin(); it != it_zClients_end; it++)
 	{
 		if(it->second)
 		{
@@ -228,8 +229,8 @@ void Host::SendToAllClients(const std::string& message, bool bImportant)
 {
 	if(!HasClients())
 		return;
-
-	for (auto it = zClients.begin(); it != zClients.end(); it++)
+	auto it_zClients_end = zClients.end();
+	for (auto it = zClients.begin(); it != it_zClients_end; it++)
 	{
 		if (bImportant)
 		{
@@ -434,7 +435,8 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	{
 		PlayerLootObjectEvent e;
 		e.clientData = cd;
-		for (auto it = msgArray.begin(); it != msgArray.end(); it++)
+		auto it_string_end = msgArray.end();
+		for (auto it = msgArray.begin(); it != it_string_end; it++)
 		{
 			unsigned int id = this->zMessageConverter.ConvertStringToInt(M_LOOT_OBJECT, (*it));
 
@@ -481,7 +483,8 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		PlayerDeerEatObjectEvent e;
 
 		e.clientData = cd;
-		for (auto it = msgArray.begin(); it != msgArray.end(); it++)
+		auto it_string_end = msgArray.end();
+		for (auto it = msgArray.begin(); it != it_string_end; it++)
 		{
 			unsigned int id = this->zMessageConverter.ConvertStringToInt(M_DEER_EAT_OBJECT, (*it));
 
@@ -547,7 +550,8 @@ void Host::PingClients()
 
 	this->zTimeSinceLastPing = 0.0f;
 	std::string message;
-	for(auto it = zClients.begin(); it != zClients.end(); it++)
+	auto it_zClients_end = zClients.end();
+	for(auto it = zClients.begin(); it != it_zClients_end; it++)
 	{
 		(*it).first->TrySend( zMessageConverter.Convert(MESSAGE_TYPE_PING, this->zGameTimer->GetRunTime()) );
 	}
@@ -599,7 +603,8 @@ void Host::HandleClientUpdate(const std::vector<std::string> &msgArray, ClientDa
 	ClientDataEvent e;
 	e.clientData = cd;
 
-	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
+	auto it_string_end = msgArray.end();
+	for(auto it = msgArray.begin() + 1; it != it_string_end; it++)
 	{
 		char key[512];
 		sscanf_s((*it).c_str(), "%s ", key, sizeof(key));
@@ -664,8 +669,8 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 {
 	UserDataEvent e;
 	e.clientData = cd;
-
-	for (auto it_m = msgArray.begin() + 1; it_m < msgArray.end(); it_m++)
+	auto it_string_end = msgArray.end();
+	for (auto it_m = msgArray.begin() + 1; it_m < it_string_end; it_m++)
 	{
 		if(it_m->find(M_MESH_MODEL) == 0)
 		{

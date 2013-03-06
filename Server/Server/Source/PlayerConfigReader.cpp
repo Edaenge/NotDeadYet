@@ -68,7 +68,8 @@ void PlayerConfigReader::WriteToFile()
 	std::string key;
 	float value;
 
-	for(auto it = this->zVariables.begin(); it != this->zVariables.end(); it++)
+	auto it_zVariables_end = this->zVariables.end();
+	for(auto it = this->zVariables.begin(); it != it_zVariables_end; it++)
 	{
 		key = it->first;
 		value = it->second;

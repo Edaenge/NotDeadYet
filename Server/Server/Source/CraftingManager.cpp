@@ -21,7 +21,8 @@ bool CraftingManager::Craft(Inventory* inv, CraftedTypes* types, std::map<Item*,
 		unsigned int material_Stacks;
 		Item* item = NULL;
 
-		for (auto it = map_It->begin(); it != map_It->end(); it++)
+		auto it_map_end = map_It->end();
+		for (auto it = map_It->begin(); it != it_map_end; it++)
 		{
 			material_SubType = it->first;
 			material_Stacks = it->second;
