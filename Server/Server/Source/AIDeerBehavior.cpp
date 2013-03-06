@@ -336,6 +336,7 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 			return dest;
 		}
 	}
+	return dest;
 }
 
 //void AIDeerBehavior::SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind)

@@ -300,7 +300,7 @@ void ClientActorManager::ClearAll()
 
 }
 
-FMOD_VECTOR ClientActorManager::ConvertToFmodVector( Vector3 v )
+FMOD_VECTOR ClientActorManager::ConvertToFmodVector( const Vector3& v ) const
 {
 	FMOD_VECTOR temp;
 	temp.x = v.x;

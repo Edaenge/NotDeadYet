@@ -1,4 +1,6 @@
 #include "InGameMenu.h"
+#include <MaloW.h>
+
 
 InGameMenu::InGameMenu()
 {
