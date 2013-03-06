@@ -304,9 +304,7 @@ Vector3 AIBearBehavior::ExaminePathfindingArea()
 			dest.x = cos(angle) * oldX - sin(angle) * oldY;
 			dest.z = cos(angle) * oldY + sin(angle) * oldX;
 			dest.Normalize();
-			dest = dest * (float)zFleeDistance;
-
-					
+			dest = dest * (float)zFleeDistance;			
 		}
 		else
 		{
