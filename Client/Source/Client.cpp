@@ -138,7 +138,8 @@ Client::~Client()
 	if (this->zLatencyText)
 		this->zEng->DeleteText(this->zLatencyText);
 
-	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
+	auto it_text_end = this->zDisplayedText.end();
+	for (auto it = this->zDisplayedText.begin(); it != it_text_end; it++)
 	{
 		TextDisplay* temp = (*it);
 
@@ -583,7 +584,8 @@ void Client::CheckPlayerSpecificKeys()
 			std::vector<unsigned int> collisionObjects = this->RayVsWorld();
 			if (collisionObjects.size() > 0)
 			{
-				for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
+				auto it_collision_end = collisionObjects.end();
+				for (auto it = collisionObjects.begin(); it != it_collision_end; it++)
 				{
 					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (float)(*it));
 				}
@@ -861,6 +863,7 @@ void Client::CheckAnimalInput()
 			if (collisionObjects.size() > 0)
 			{
 				std::string msg = "";
+				auto it_collision_end = collisionObjects.end();
 				for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
 				{
 					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DEER_EAT_OBJECT, (float)(*it));
@@ -1867,7 +1870,8 @@ std::vector<unsigned int> Client::RayVsWorld()
 	//Static objects
 	std::map<unsigned int, Actor*> actors = this->zActorManager->GetActors();
 	iMesh* mesh = NULL;
-	for(auto it = actors.begin(); it != actors.end(); it++)
+	auto it_actors_end = actors.end();
+	for(auto it = actors.begin(); it != it_actors_end; it++)
 	{
 		Actor* actor = it->second;
 		unsigned int ID = it->first;
@@ -1943,7 +1947,8 @@ void Client::OnEvent(Event* e)
 void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsigned int ActorID)
 {
 	Gui_Item_Data gid;
-	for (auto it_Item_Data = msgArray.begin() + 1; it_Item_Data != msgArray.end(); it_Item_Data++)
+	auto it_string_end = msgArray.end();
+	for (auto it_Item_Data = msgArray.begin() + 1; it_Item_Data != it_string_end; it_Item_Data++)
 	{
 		if((*it_Item_Data).find(M_OBJECT_ID.c_str()) == 0)
 		{
@@ -2031,7 +2036,8 @@ void Client::UpdateText()
 
 			it = this->zDisplayedText.erase(it);
 
-			for (auto new_It = it; new_It != this->zDisplayedText.end(); new_It++)
+			auto it_text_end = this->zDisplayedText.end();
+			for (auto new_It = it; new_It != it_text_end; new_It++)
 			{
 				Vector2 oldPos = (*new_It)->zText->GetPosition();
 
@@ -2079,8 +2085,8 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 		this->zEng->DeleteText(temp->zText);
 		SAFE_DELETE(temp);
 	}
-
-	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
+	auto it_text_end = this->zDisplayedText.end();
+	for (auto it = this->zDisplayedText.begin(); it != it_text_end; it++)
 	{
 		float x = (*it)->zText->GetPosition().x;
 		position = Vector2(x, yStartPosition + c++ * textheight);

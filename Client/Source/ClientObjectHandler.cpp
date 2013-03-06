@@ -106,7 +106,8 @@ void Client::AddActor( NewActorPacket* NAP )
 	unsigned int ID = 0;
 	
 	std::string model;
-	for (auto it = NAP->actorModel.begin(); it != NAP->actorModel.end(); it++)
+	auto it_actorModel_end = NAP->actorModel.end();
+	for (auto it = NAP->actorModel.begin(); it != it_actorModel_end; it++)
 	{
 		ID = it->first;
 		model = it->second;
@@ -173,7 +174,8 @@ void Client::AddActor( NewActorPacket* NAP )
 	}
 
 	Vector3 position;
-	for (auto it = NAP->actorPosition.begin(); it != NAP->actorPosition.end(); it++)
+	auto it_actorPosition_end = NAP->actorPosition.end();
+	for (auto it = NAP->actorPosition.begin(); it != it_actorPosition_end; it++)
 	{
 		ID = it->first;
 		position = it->second;
@@ -192,7 +194,8 @@ void Client::AddActor( NewActorPacket* NAP )
 	}
 
 	Vector4 rotation;
-	for (auto it = NAP->actorRotation.begin(); it != NAP->actorRotation.end(); it++)
+	auto it_actorRotation_end = NAP->actorRotation.end();
+	for (auto it = NAP->actorRotation.begin(); it != it_actorRotation_end; it++)
 	{
 		ID = it->first;
 		rotation = it->second;
@@ -210,7 +213,8 @@ void Client::AddActor( NewActorPacket* NAP )
 	}
 
 	Vector3 scale;
-	for (auto it = NAP->actorScale.begin(); it != NAP->actorScale.end(); it++)
+	auto it_actorScale_end = NAP->actorScale.end();
+	for (auto it = NAP->actorScale.begin(); it != it_actorScale_end; it++)
 	{
 		ID = it->first;
 		scale = it->second;
@@ -228,7 +232,8 @@ void Client::AddActor( NewActorPacket* NAP )
 	}
 
 	unsigned int state;
-	for (auto it = NAP->actorState.begin(); it != NAP->actorState.end(); it++)
+	auto it_actorState_end = NAP->actorState.end();
+	for (auto it = NAP->actorState.begin(); it != it_actorState_end; it++)
 	{
 		ID = it->first;
 		state = it->second;
@@ -258,7 +263,8 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 	unsigned int ID = 0;
 
 	Vector3 actorPosition;
-	for(auto positionIterator = SFP->newPositions.begin(); positionIterator != SFP->newPositions.end(); positionIterator++)
+	auto it_position_end = SFP->newPositions.end();
+	for(auto positionIterator = SFP->newPositions.begin(); positionIterator != it_position_end; positionIterator++)
 	{
 		ID = positionIterator->first;
 		actorPosition = positionIterator->second;
@@ -279,7 +285,8 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 	}
 
 	Vector4 actorRotation;
-	for(auto rotationIterator = SFP->newRotations.begin(); rotationIterator != SFP->newRotations.end(); rotationIterator++)
+	auto it_rotation_end = SFP->newRotations.end();
+	for(auto rotationIterator = SFP->newRotations.begin(); rotationIterator != it_rotation_end; rotationIterator++)
 	{
 		ID = rotationIterator->first;
 		actorRotation = rotationIterator->second;
@@ -290,7 +297,8 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 	}
 
 	Vector3 actorScale;
-	for(auto scaleIterator = SFP->newScales.begin(); scaleIterator != SFP->newScales.end(); scaleIterator++)
+	auto it_scale_end = SFP->newScales.end();
+	for(auto scaleIterator = SFP->newScales.begin(); scaleIterator != it_scale_end; scaleIterator++)
 	{
 		ID = scaleIterator->first;
 		actorScale = scaleIterator->second;
@@ -301,7 +309,8 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 	}
 
 	unsigned int actorState;
-	for (auto stateIterator = SFP->newStates.begin(); stateIterator != SFP->newStates.end(); stateIterator++)
+	auto it_state_end = SFP->newStates.end();
+	for (auto stateIterator = SFP->newStates.begin(); stateIterator != it_state_end; stateIterator++)
 	{
 		ID = stateIterator->first;
 		actorState = stateIterator->second;
@@ -326,7 +335,8 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		}
 	}
 
-	for (auto animIterator = SFP->newAnimations.begin(); animIterator != SFP->newAnimations.end(); animIterator++)
+	auto it_animation_end = SFP->newAnimations.end();
+	for (auto animIterator = SFP->newAnimations.begin(); animIterator != it_animation_end; animIterator++)
 	{
 		if (this->zReady)
 		{
