@@ -111,6 +111,7 @@ bool PlayerConfigReader::ReadFromFile()
 		//this->InterpCommand(key, fValue);
 		this->zVariables[key] = fValue;
 	}
+	return true;
 }
 
 float PlayerConfigReader::GetVariable( std::string mappedName )

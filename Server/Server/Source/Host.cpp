@@ -51,7 +51,6 @@ Host::~Host()
 
 	SAFE_DELETE(this->zServerListener);
 
-
 	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
 	{
 		if(it->second)
@@ -385,6 +384,15 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 			NotifyObservers(&e);
 		}
 	}
+	else if (msgArray[0].find(M_ITEM_FILL.c_str()) == 0)
+	{
+		PlayerFillItemEvent e;
+		unsigned int id = this->zMessageConverter.ConvertStringToInt(M_ITEM_FILL, msgArray[0]);
+
+		e.clientData = cd;
+		e.itemID = id;
+		NotifyObservers(&e);
+	}
 	//Handle Equip Item
 	else if (msgArray[0].find(M_EQUIP_ITEM.c_str()) == 0)
 	{
@@ -682,12 +690,12 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 
 void Host::SynchronizeAll()
 {
-	for( auto i = zClients.begin(); i != zClients.end(); ++i )
+	for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
 	{
-		zSynchronizer->SendUpdatesTo(i->second);
+		this->zSynchronizer->SendUpdatesTo(i->second);
 	}
 
-	zSynchronizer->ClearAll();
+	this->zSynchronizer->ClearAll();
 }
 
 // TODO: Create GameMode Here

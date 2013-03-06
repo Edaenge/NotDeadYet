@@ -143,7 +143,7 @@ private:
 	int zLatency;
 	Vector3 zCameraOffset;
 
-	FMOD_VECTOR ConvertToFmodVector(Vector3 v);
+	FMOD_VECTOR ConvertToFmodVector(const Vector3& v) const;
 	IEventHandle** zFootStep;
 
 	std::map<std::string, AnimationFileReader> zModelToReaderMap;

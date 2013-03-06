@@ -273,8 +273,7 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 						if(mousePressed)
 						{
 							Selected_Item_ReturnData sir;
-							sir.ID = (*x)->GetGid().zID;
-							sir.type = (*x)->GetGid().zType;
+							sir.gid= (*x)->GetGid();
 							sir.inventory = 0;
 							return sir;
 						}
@@ -292,15 +291,7 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 					if(mousePressed)
 					{
 						Selected_Item_ReturnData sir;
-						sir.ID = x->second->GetGid().zID;
-						if(this->zWeaponSlots[MELEE] == x->second->GetPosition())
-							sir.type = MELEE;
-						if(this->zWeaponSlots[RANGED] == x->second->GetPosition())
-							sir.type = RANGED;
-						if(this->zWeaponSlots[PROJECTILE] == x->second->GetPosition())
-							sir.type = PROJECTILE;
-
-						//sir.type = (*x)->GetType();
+						sir.gid = x->second->GetGid();
 						sir.inventory = 1;
 						return sir;
 					}
@@ -309,8 +300,8 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 		}
 	}
 	Selected_Item_ReturnData sir;
-	sir.ID = -1;
-	sir.type = -1;
+	sir.gid.zID = -1;
+	sir.gid.zType = -1;
 	sir.inventory = -1;
 	return sir;
 }
@@ -363,6 +354,19 @@ void InventoryGui::EquipItem( const Gui_Item_Data gid, bool guiOpen )
 	if(!this->zWeaponSlotGui.at(gid.zType)->GetBlocked())
 	{
 		this->zWeaponSlotGui.at(gid.zType)->AddItemToSlot(gid, guiOpen, GetGraphics());
+		for(int k = SLOTS - 1; k > 0; k--)
+		{
+			if(!this->zSlotGui.at(k)->GetBlocked())
+			{
+				Gui_Item_Data blockedGid = Gui_Item_Data(0, -1, -1, 0, 0, 0, false, "Blocked", "Media/InGameUI/Unavailable.png", "");
+				for(unsigned int m = 0; m < gid.zSlots - 1; m++)
+				{
+					this->zSlotGui.at(k-m)->AddItemToSlot(blockedGid, guiOpen, GetGraphics());
+					this->zSlotGui.at(k-m)->SetBlocker(true);
+				}
+				k = 0;
+			}
+		}
 	}
 }
 
@@ -370,6 +374,7 @@ void InventoryGui::UnEquipItem(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
 	if(this->zWeaponSlotGui.at(gid.zType)->GetBlocked())
 	{
+		this->RemoveBlockers(gid.zType, open, ge, 1);
 		this->zWeaponSlotGui.at(gid.zType)->RemoveItemFromSlot(open, GetGraphics());
 	}
 }

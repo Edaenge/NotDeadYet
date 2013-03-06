@@ -74,7 +74,7 @@ Game::Game(const int maxClients, ActorSynchronizer* syncher, std::string mode, c
 	this->zActorManager = new ActorManager(syncher, this->zSoundHandler);
 	
 	InitItemLookup();
-	//InitCraftingRecipes();
+	InitCraftingRecipes();
 //Initialize Player Configuration file
 	InitPlayerConfig();
 
@@ -165,6 +165,7 @@ Game::~Game()
 	SAFE_DELETE(this->zActorManager);
 	SAFE_DELETE(this->zGameMode);
 	SAFE_DELETE(this->zSoundHandler);
+	SAFE_DELETE(this->zCraftingManager);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -421,8 +422,8 @@ void Game::SpawnHumanDebug()
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/temp_guy.obj");
-	humanPhysics->SetModel("Media/Models/temp_guy_movement_anims.fbx");
 	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics);
+	pActor->SetModel("Media/Models/temp_guy_movement_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
 	pActor->SetHealth(5000);
@@ -745,6 +746,10 @@ void Game::OnEvent( Event* e )
 	{
 		HandleCraftItem(PCIE->clientData, PCIE->itemID, PCIE->craftedItemType, PCIE->craftedItemSubType);
 	}
+	else if (PlayerFillItemEvent* PFIE = dynamic_cast<PlayerFillItemEvent*>(e))
+	{
+		HandleFillItem(PFIE->clientData, PFIE->itemID);
+	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
 		HandleUseWeapon(PUEWE->clientData, PUEWE->itemID);
@@ -972,8 +977,9 @@ void Game::OnEvent( Event* e )
 	{
 		// Create Player Actor
 		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
-		pObj->SetModel(UDE->playerModel);
+		
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj);
+		pActor->SetModel(UDE->playerModel);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 		zPlayers[UDE->clientData]->zUserModel = UDE->playerModel;
 
@@ -1742,10 +1748,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
 				this->SendToAll(msg);
 
-				//Send Message to client to Play Shot Bow Animation
-				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, IDLE_O1);
-				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)pActor->GetID()); 
-				this->SendToAll(msg);
+				pActor->SetState(STATE_ATTACK_BOW);
 			}
 			else
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
@@ -1773,10 +1776,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 			victim->TakeDamage(dmg, pActor);
 
-			//Send Message to client to Play Cut Animation
-			std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, "idle_01");
-			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)pActor->GetID()); 
-			this->SendToAll(msg);
+			pActor->SetState(STATE_ATTACK_MACHETE);
 		}
 	}
 }
@@ -1796,7 +1796,6 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 			NetworkMessageConverter NMC;
 			Item* item = inv->SearchAndGetItem(itemID);
 			std::string msg;
-			int stackRemoved = 0;
 			if (item)
 			{
 				CraftedTypes craftedType = CraftedTypes(craftType, craftSubType);
@@ -2087,6 +2086,37 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 	}
 }
 
+void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
+{
+	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+
+	if (!pActor)
+		return;
+
+	Item* item = pActor->GetInventory()->SearchAndGetItem(itemID);
+
+	if (!item)
+	{
+		MaloW::Debug("Failed to find item in Game::HandleFillItem");
+		return;
+	}
+
+	//Logic for filling container here.
+
+
+
+	//Sending Message to client
+	NetworkMessageConverter NMC;
+	std::string msg = NMC.Convert(MESSAGE_TYPE_ITEM_FILL, (float)itemID);
+
+	if (Container* container = dynamic_cast<Container*>(item))
+	{
+		msg += NMC.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)container->GetRemainingUses());
+		cd->Send(msg);
+	}
+}
+
 void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 {
 	std::string msg;
@@ -2283,7 +2313,6 @@ void Game::RestartGame()
 
 	//Recreate Actors
 	std::string message = "";
-	int increment = 1;
 	for (auto it = zPlayers.begin(); it != zPlayers.end(); it++)
 	{
 		/*Delete old Behavior*/
@@ -2291,9 +2320,9 @@ void Game::RestartGame()
 		(*it).second->GetKeys().ClearStates();
 
 		PhysicsObject* physObj = zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
-		physObj->SetModel( (*it).second->GetModelPath() );
-
+		
 		PlayerActor* pActor = new PlayerActor((*it).second, physObj);
+		pActor->SetModel( (*it).second->GetModelPath() );
 		PlayerHumanBehavior* pBehavior = new PlayerHumanBehavior(pActor, zWorld, (*it).second);
 
 		pActor->SetPosition(CalcPlayerSpawnPoint(32));

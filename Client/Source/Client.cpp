@@ -388,7 +388,7 @@ void Client::CheckMenus()
 {
 	if(this->zPam->GetShow())
 	{
-		int returnValue = this->zPam->Run(0);
+		int returnValue = this->zPam->Run(this->zEnergy);
 		if(returnValue == DEER)
 		{
 			this->zPam->ToggleMenu();
@@ -565,13 +565,13 @@ void Client::CheckPlayerSpecificKeys()
 		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
 
-		if (msd.zAction != -1 && msd.zID != -1)
+		if (msd.zAction != -1 && msd.gid.zID != -1)
 		{
-			Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
+			Item* item = this->zPlayerInventory->SearchAndGetItem(msd.gid.zID);
 			if (msd.zAction == USE)
 			{
 				if (item)
-					SendUseItemMessage(item->GetID());
+					SendUseItemMessage(msd.gid.zID);
 			}
 			if (msd.zAction == CRAFT)
 			{
@@ -600,33 +600,34 @@ void Client::CheckPlayerSpecificKeys()
 						type = ITEM_TYPE_BANDAGE;
 						subType = ITEM_SUB_TYPE_BANDAGE_POOR;
 					}
-					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_CRAFT, (float)item->GetID());
-					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)type);
-					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_SUB_TYPE, (float)subType);
-					this->zServerChannel->Send(msg);
-					//SendCraftItemMessage(item->GetID());
+					
+					SendCraftItemMessage(msd.gid.zID, type, subType);
 				}
 			}
 			else if(msd.zAction == EQUIP)
 			{
 				if(item)
-					SendEquipItem(msd.zID);
+					SendEquipItem(msd.gid.zID);
 			}
 			else if (msd.zAction == LOOT)
 			{
 				unsigned int id = this->zGuiManager->GetLootingActor();
 				if (id != 0)
-					SendLootItemMessage(id, msd.zID, msd.zType, msd.zSubType);
+					SendLootItemMessage(id, msd.gid.zID, msd.gid.zType, msd.gid.zSubType);
+			}
+			else if (msd.zAction == FILL)
+			{
+				this->SendItemFill(msd.gid.zID);
 			}
 			else if (msd.zAction == DROP)
 			{
 				if(item)
-					this->SendDropItemMessage(msd.zID);
+					this->SendDropItemMessage(msd.gid.zID);
 			}
 			else if (msd.zAction == UNEQUIP)
 			{
 				if(item)
-					this->SendUnEquipItem(msd.zID, (msd.zType));
+					this->SendUnEquipItem(msd.gid.zID, (msd.gid.zType));
 			}
 		}
 	}
@@ -1629,6 +1630,16 @@ bool Client::CheckHumanSpecificMessages(std::vector<std::string> msgArray)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
 		this->HandleUseItem(id);
+	}
+	else if(msgArray[0].find(M_ITEM_FILL.c_str()) == 0)
+	{
+		if (msgArray.size() > 2)
+		{
+			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_FILL, msgArray[0]);
+			unsigned int currentUses = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_CURRENT, msgArray[1]);
+
+			this->HandleFillItem(id, currentUses);
+		}
 	}
 	else if(msgArray[0].find(M_REMOVE_EQUIPMENT.c_str()) == 0)
 	{

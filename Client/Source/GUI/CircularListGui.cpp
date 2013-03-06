@@ -64,7 +64,7 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 		float imageWidth;
 		float imageHeight;
 		int value;
-		string texName = "";
+		std::string texName = "";
 		for(int i = 0; i < 4; i++)
 		{
 			value = this->zOptions[i];
@@ -89,6 +89,9 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 				break;
 			case LOOT:
 				texName = "Media/Icons/Loot.png";
+				break;
+			case FILL:
+				texName = "Media/Icons/Fill.png";
 				break;
 			case NOTHING:
 				texName = "Media/Icons/Cancel.png";
@@ -242,7 +245,8 @@ void CircularListGui::Adjust(int type, int inventory)
 		break;
 	case ITEM_TYPE_CONTAINER:
 		this->zOptions[0] = USE;
-		this->zOptions[1] = DROP;
+		this->zOptions[1] = FILL;
+		this->zOptions[2] = DROP;
 		break;
 	case ITEM_TYPE_FOOD:
 		this->zOptions[0] = USE;
@@ -257,6 +261,10 @@ void CircularListGui::Adjust(int type, int inventory)
 		this->zOptions[1] = DROP;
 		break;
 	case ITEM_TYPE_BANDAGE:
+		this->zOptions[0] = USE;
+		this->zOptions[1] = DROP;
+		break;
+	case ITEM_TYPE_MISC:
 		this->zOptions[0] = USE;
 		this->zOptions[1] = DROP;
 		break;

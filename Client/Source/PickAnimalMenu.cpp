@@ -1,6 +1,8 @@
 #include "PickAnimalMenu.h"
+#include <MaloW.h>
 
 #define YOURENERGYTEXT "YOUR ENERGY: "
+
 
 PickAnimalMenu::PickAnimalMenu()
 {
@@ -21,7 +23,6 @@ PickAnimalMenu::~PickAnimalMenu()
 	delete [] zSets;
 	zSets = 0;
 }
-
 
 int PickAnimalMenu::Run(int energy)
 {

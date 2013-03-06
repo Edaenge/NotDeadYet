@@ -2,7 +2,6 @@
 #include "EntityList.h"
 #include "Entity.h"
 #include "WaterQuad.h"
-#include <limits>
 
 
 WorldRenderer::WorldRenderer( World* world, GraphicsEngine* graphics ) : 
@@ -269,7 +268,7 @@ WaterCollisionData WorldRenderer::GetCollisionWithWaterBoxes()
 	// Default Settings
 	result.quad = 0; 
 
-	float curDistance = std::numeric_limits<float>::infinity(); //Change from max to infinity
+	float curDistance = std::numeric_limits<float>::max();
 
 	iCamera* cam = zGraphics->GetCamera();
 	Vector3 camPos = cam->GetPosition();
@@ -336,7 +335,7 @@ CollisionData WorldRenderer::Get3DRayCollisionDataWithGround()
 	zWorld->GetSectorsInCicle( zGraphics->GetCamera()->GetPosition().GetXZ(), zGraphics->GetEngineParameters().FarClip, sectors );
 
 	CollisionData returnData;
-	returnData.distance = std::numeric_limits<float>::infinity(); //Change from max to infinity
+	returnData.distance = std::numeric_limits<float>::max();
 
 	// Check For Collision
 	for( auto i = sectors.begin(); i != sectors.end(); ++i )
@@ -369,7 +368,7 @@ Entity* WorldRenderer::Get3DRayCollisionWithMesh()
 	std::set<Entity*> closeEntities;
 	zWorld->GetEntitiesInCircle(Vector2(cam->GetPosition().x, cam->GetPosition().z), 200.0f, closeEntities);
 
-	float curDistance = std::numeric_limits<float>::infinity(); //Change from max to infinity
+	float curDistance = std::numeric_limits<float>::max();
 	returnPointer = 0;
 
 	for( auto i = closeEntities.begin(); i != closeEntities.end(); ++i )
@@ -464,7 +463,8 @@ void WorldRenderer::Update()
 	std::set<Entity*> entsToUpdate;
 
 	// Update Current Entities LOD
-	for( auto i = zEntities.cbegin(); i != zEntities.cend(); ++i )
+	auto zEntities_end = zEntities.cend();
+	for( auto i = zEntities.cbegin(); i != zEntities_end; ++i )
 	{
 		entsToUpdate.insert(i->first);
 	}
@@ -473,7 +473,8 @@ void WorldRenderer::Update()
 	if ( zWorld ) zWorld->GetEntitiesInCircle( zGraphics->GetCamera()->GetPosition().GetXZ(), zGraphics->GetEngineParameters().FarClip, entsToUpdate);
 
 	// Update Entities
-	for ( auto i = entsToUpdate.cbegin(); i != entsToUpdate.cend(); ++i )
+	auto entsToUpdate_end = entsToUpdate.cend();
+	for ( auto i = entsToUpdate.cbegin(); i != entsToUpdate_end; ++i )
 	{
 		SetEntityGraphics(*i);
 	}

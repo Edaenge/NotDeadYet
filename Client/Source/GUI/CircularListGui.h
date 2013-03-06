@@ -16,6 +16,7 @@ enum CIRCMENU
 	UNEQUIP,
 	EQUIP,
 	LOOT,
+	FILL,
 	NOTHING
 };
 

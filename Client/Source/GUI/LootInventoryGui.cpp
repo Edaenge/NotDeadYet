@@ -187,9 +187,8 @@ Selected_Item_ReturnData LootInventoryGui::CheckCollision(float mouseX, float mo
 						if(mousePressed)
 						{
 							Selected_Item_ReturnData sir;
-							sir.ID = (*x)->GetGid().zID;
-							sir.type = (*x)->GetGid().zType;
-							sir.inventory = 2;
+							sir.gid = (*x)->GetGid();
+							sir.inventory = 1;
 							return sir;
 						}
 					}
@@ -198,8 +197,8 @@ Selected_Item_ReturnData LootInventoryGui::CheckCollision(float mouseX, float mo
 		}
 	}
 	Selected_Item_ReturnData sir;
-	sir.ID = -1;
-	sir.type = -1;
+	sir.gid.zID = -1;
+	sir.gid.zType = -1;
 	sir.inventory = -1;
 	return sir;
 }
