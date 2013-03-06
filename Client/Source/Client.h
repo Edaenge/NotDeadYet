@@ -164,7 +164,7 @@ private:
 	void SendPickupItemMessage(const unsigned int ID);
 	void SendDropItemMessage(const unsigned int ID);
 	void SendUseItemMessage(const unsigned int ID);
-	void SendCraftItemMessage(const unsigned int ID);
+	void SendCraftItemMessage(const unsigned int ID, const int Type, const int SubType);
 	void HandleRemoveInventoryItem(const unsigned int ID);
 	void HandleAddInventoryItem(const std::vector<std::string>& msgArray);
 	/*! Uses the Selected Item*/
@@ -175,6 +175,8 @@ private:
 	bool HandleUnEquipItem(const unsigned int ItemID, const int Slot);
 	void SendUnEquipItem(const unsigned int ID, const int Slot);
 	void SendEquipItem(const unsigned int ID);
+	void SendItemFill(const unsigned int ID);
+	void HandleFillItem(const unsigned int ID, const int currentUses);
 	void HandleRemoveEquipment(const unsigned int ItemID, const int Slot);
 	void HandleWeaponUse(const unsigned int ID);
 	void HandleDisplayLootData(std::vector<std::string> msgArray, const unsigned int ActorID);
