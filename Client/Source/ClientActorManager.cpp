@@ -14,8 +14,8 @@ ClientActorManager::ClientActorManager()
 
 
 	this->zInterpolationVelocity = 1.0f;
-	this->zUpdatesPerSec = 0;
-	this->zLatency = 0;
+	this->zUpdatesPerSec = 1;
+	this->zLatency = 1;
 }
 
 ClientActorManager::~ClientActorManager()

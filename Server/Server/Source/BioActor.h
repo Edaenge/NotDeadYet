@@ -103,9 +103,7 @@ public:
 
 	void SetBleeding(const float levelBleeding, const bool notify = true);
 	inline float GetBleeding() const {return this->zBleedingLevel;}
-
 	Inventory* GetInventory() const {return this->zInventory;}
-
 	Vector3 GetCameraOffset() {return this->zCameraOffset;}
 	void SetCameraOffset(Vector3 offset) {this->zCameraOffset = offset;}
 
@@ -129,7 +127,6 @@ protected:
 
 	Vector3 zDirection;
 	Vector3 zCameraOffset;
-
 	Inventory* zInventory;
 
 	Player* zPlayer;

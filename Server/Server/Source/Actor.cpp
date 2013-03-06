@@ -7,6 +7,7 @@ Actor::Actor() :
 	zPhysicsObject(NULL)
 {
 	this->zEnergy = 0.0f;
+	this->zCollisionRadius = 0.0f;
 	SetScale(Vector3(0.05f, 0.05f, 0.05f), false);
 }
 
@@ -130,4 +131,26 @@ bool Actor::CanCollide() const
 		return true;
 
 	return false;
+}
+
+void Actor::CalculateCollisionPoints()
+{
+	// 	Vector3 centerPos;
+	// 	float humanRadius = 0.5f;//m
+	// 	float distanceInAxes;
+	// 	//Pythagoras theorem x2 = y2 + z2
+	// 	//both distances are the same, therefore x2 = y2 + y2 = 2y2
+	// 	//(distanceInAxes = y)
+	float distanceInAxes = sqrtf(powf(zCollisionRadius, 2.0f) * 0.5f); //use * 0.5f instead.
+	// 	//Build vectors going clockwise
+	// 
+	Vector2 one = Vector2(distanceInAxes, distanceInAxes);//+X+Z
+	Vector2 two = Vector2(distanceInAxes, -distanceInAxes);//+X-Z
+	Vector2 three = Vector2(-distanceInAxes, -distanceInAxes);//-X-Z
+	Vector2 four = Vector2(-distanceInAxes, distanceInAxes);//-X+Z
+
+	zCollisionPoints[0] = one;
+	zCollisionPoints[1] = two;
+	zCollisionPoints[2] = three;
+	zCollisionPoints[3] = four;
 }
