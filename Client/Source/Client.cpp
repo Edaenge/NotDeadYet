@@ -197,47 +197,6 @@ void Client::Update()
 	}
 }
 
-void Client::IgnoreRender( const float& radius, const Vector2& center )
-{
-	/*std::set<Entity*> zPreviousEntities;
-	std::set<Entity*> entities; 
-	std::set<Entity*> validEntities;
-
-	zWorld->GetEntitiesInCircle(center, radius, entities);
-	
-	for (auto it = entities.begin(); it != entities.end(); it++)
-	{
-		if ( GetEntBlockRadius( (*it)->GetType() ) <= 0.0f )
-		{
-			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*it);
-			
-			if(mesh)
-			{
-				mesh->DontRender(false);
-				validEntities.insert(*it);
-			}
-		}
-	}
-
-	Check previous, if prev is not in valid, they should not be rendered.
-	for(auto it = zPreviousEntities.begin(); it != zPreviousEntities.end(); it++)
-	{
-		auto found = validEntities.find(*it);
-
-		if(found == validEntities.end())
-		{ 
-			iMesh* temp;
-			temp = this->zWorldRenderer->GetEntityMesh(*it);
-
-			if(temp)
-				temp->DontRender(true);
-		}
-	}
-
-	zPreviousEntities.clear();
-	zPreviousEntities = validEntities;*/
-}
-
 void Client::InitGraphics(const std::string& mapName)
 {
 	if (!this->zActorManager)
@@ -304,22 +263,6 @@ void Client::InitGraphics(const std::string& mapName)
 		this->zEng->DeleteText(this->zClientUpsText);
 
 	this->zClientUpsText = this->zEng->CreateText("", Vector2(1, 49), 1.0f, "Media/Fonts/new");
-
-	//Go through entities (bush etc) and set render flag.
-	std::set<Entity*> entities;
-	Vector2 size = zWorld->GetWorldSize();
-	float radius = powf(size.x, 2.0f) + powf(size.y, 2.0f);
-	zWorld->GetEntitiesInCircle(center, (radius * 0.5f), entities);
-
-	for (auto i = entities.begin(); i != entities.end(); i++)
-	{
-		if ( GetEntBlockRadius( (*i)->GetType() ) <= 0.0f )
-		{
-			//iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*i);
-			//mesh->DontRender(true);
-		}
-	}
-
 }
 
 void Client::Life()

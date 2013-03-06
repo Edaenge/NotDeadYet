@@ -22,13 +22,33 @@ public:
 	}
 	virtual ~Actor()
 	{
+		GraphicsEngine* graphics = GetGraphics();
+
 		if (this->zMesh)
-			GetGraphics()->DeleteMesh(this->zMesh);
+		{
+			zMesh->DontRender(true);
+			zMesh->UseInvisibilityEffect(true);
+
+			if ( iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(this->zMesh) )
+					graphics->DeleteFBXMesh( fbxMesh );
+			
+			else
+				graphics->DeleteMesh(this->zMesh);
+		}
+
+		this->zMesh = NULL;
 
 		for (auto it = this->zSubMeshes.begin(); it != this->zSubMeshes.end(); it++)
 		{
 			if(it->second)
-				GetGraphics()->DeleteMesh(it->second);
+			{
+				if( iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(this->zMesh) )
+					graphics->DeleteFBXMesh(fbxMesh);
+				else
+					graphics->DeleteMesh(it->second);
+			}
+
+			it->second = NULL;
 		}
 	}
 	std::string GetModel() {return this->zModel;}
