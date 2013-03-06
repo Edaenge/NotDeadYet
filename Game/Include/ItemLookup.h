@@ -29,7 +29,7 @@ public:
 	const Material* GetMaterial(const unsigned int SubType);
 	const Container* GetContainer(const unsigned int SubType);
 	const Bandage* GetBandage(const unsigned int SubType);
-	const Misc* GetTrap(const unsigned int SubType);
+	const Misc* GetMisc(const unsigned int SubType);
 private:
 	bool ReadFromFile();
 	bool InterpCommand(std::string command, std::string key, MeleeWeapon*& wp);

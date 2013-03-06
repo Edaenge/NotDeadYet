@@ -9,7 +9,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include <Safe.h>
 #include <Observer.h>
 #include "PhysicsObject.h"
-
+#include "ActorEvent.h"
 static const enum ACTOR_TYPE
 {
 	ACTOR_TYPE_NONE,
@@ -22,43 +22,6 @@ static const enum ACTOR_TYPE
 };
 
 class Actor;
-
-class ActorPositionEvent : public Event
-{
-public:
-	Actor *zActor;
-};
-
-class ActorRotationEvent : public Event
-{
-public:
-	Actor *zActor;
-};
-
-class ActorScaleEvent : public Event
-{
-public:
-	Actor *zActor;
-};
-
-class ActorDeleteEvent : public Event
-{
-public:
-	Actor* zActor;
-};
-
-class ActorDirEvent : public Event
-{
-public:
-	Actor *zActor;
-};
-
-class ActorPhysicalConditionEnergyEvent : public Event
-{
-public:
-	Actor *zActor;
-};
-
 /* 
    Every time an actor is created, an ID will be generated in this class. This id should be used for this actor.
    An exception is Players. They have the same ID as the ClientChannel.
@@ -79,7 +42,7 @@ private:
 protected:
 		unsigned int zType;
 		float zEnergy;
-
+		std::string zModel;
 public:
 	Actor();
 	virtual ~Actor();
@@ -94,7 +57,7 @@ public:
 	void SetScale(const Vector3& scale, const bool notify = true);
 	void SetDir(const Vector3& dir, const bool notify = true);
 	void SetEnergy(float energy, const bool notify = true);
-
+	virtual void SetModel(const std::string& model);
 	bool CanCollide() const;
 
 	// Get Transformation Functions

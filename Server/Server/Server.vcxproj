@@ -67,6 +67,7 @@
   <ItemGroup>
     <ClInclude Include="Include\ServerEngineWrapper.h" />
     <ClInclude Include="Source\Actor.h" />
+    <ClInclude Include="Source\ActorEvent.h" />
     <ClInclude Include="Source\ActorManager.h" />
     <ClInclude Include="Source\ActorSynchronizer.h" />
     <ClInclude Include="Source\AI.h" />
@@ -92,6 +93,7 @@
     <ClInclude Include="Source\PhysicsEngine\ReferenceCounted.h" />
     <ClInclude Include="Source\PlayerBearBehavior.h" />
     <ClInclude Include="Source\PlayerConfigReader.h" />
+    <ClInclude Include="Source\PlayerEvent.h" />
     <ClInclude Include="Source\PlayerGhostBehavior.h" />
     <ClInclude Include="Source\Host.h" />
     <ClInclude Include="Source\ItemActor.h" />

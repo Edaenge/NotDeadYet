@@ -155,9 +155,9 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	}
 
 	PhysicsObject* pObj = GetPhysics()->CreatePhysicsObject(model, position);
-	pObj->SetModel(pActor->GetModel());
-
+	
 	PlayerActor* newPActor = new PlayerActor(player, pObj);
+	newPActor->SetModel(pActor->GetModel());
 	newPActor->SetPosition(position);
 	newPActor->SetDir(direction);
 	newPActor->AddObserver(this);

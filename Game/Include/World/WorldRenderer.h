@@ -15,6 +15,19 @@ enum UPDATEENUM
 	UPDATE_ALL=15
 };
 
+
+struct WaterCollisionData
+{
+	// Specifies the quad hit
+	WaterQuad* quad;
+	
+	// Specifies the corner hit
+	unsigned int cornerIndex;
+
+	// Position of collision
+	Vector3 position;
+};
+
 class WorldRenderer : Observer
 {
 	std::vector< iTerrain* > zTerrain;
@@ -26,19 +39,29 @@ class WorldRenderer : Observer
 
 	std::map< Vector2UINT, UPDATEENUM > zUpdatesRequired;
 	bool zShowAIMap;
+	
+	std::map< WaterQuad*, iWaterPlane* > zWaterQuads;
+
+	struct WaterCubes
+	{
+		iMesh* zCubes[4];
+	};
+
+	std::map< WaterQuad*, WaterCubes > zWaterBoxes;
+	bool zShowWaterBoxes;
 
 public:
 	WorldRenderer(World* world, GraphicsEngine* graphics);
 	virtual ~WorldRenderer();
 
-	CollisionData GetCollisionDataWithGround();
+	WaterCollisionData GetCollisionWithWaterBoxes();
 	CollisionData Get3DRayCollisionDataWithGround();
 	Entity* Get3DRayCollisionWithMesh();
-	iMesh* GetEntityMesh(Entity* entity);
 	float GetYPosFromHeightMap(float x, float y);
 
 	void Update();
-	void ToggleAIGrid( bool state );
+	void ToggleAIGrid(bool state);
+	void ToggleWaterBoxes(bool flag);
 
 	virtual void OnEvent( Event* e );
 
@@ -50,6 +73,8 @@ protected:
 	void UpdateSectorAIGrid( const Vector2UINT& sectorCoords );
 	void CreateTerrain( const Vector2UINT& sectorCoords );
 	iTerrain* GetTerrain( const Vector2UINT& sectorCoords );
+
+	void UpdateWaterBoxes( WaterQuad* water );
 
 	void CreateEntity( Entity* e );
 	void SetEntityGraphics( Entity* e );

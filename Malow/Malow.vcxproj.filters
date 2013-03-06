@@ -33,6 +33,9 @@
     <ClCompile Include="Source\Process.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Game\Source\GameTimer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Winsock.h">
@@ -93,6 +96,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\ClientDroppedEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Game\Include\GameTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

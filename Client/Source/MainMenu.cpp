@@ -270,7 +270,6 @@ void MainMenu::StartTestRun()
 {
 	std::string errorMessage;
 	int errorCode = 0;
-	//zGame->InitGameClient("80.78.216.201", 11521);s	zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
 	//zGame->InitGameClient("80.78.216.201", 11521); //Simon hem
 	zGame->InitGameClient("194.47.150.16", 11521, errorMessage, errorCode); //server
 	//zGame->InitGameClient("194.47.150.20", 11521, errorMessage, errorCode); //Simon
@@ -374,43 +373,7 @@ void MainMenu::Run()
 					}
 					else if(retEvent->GetEventMessage() == "ChangeTextAndMenuEvent")
 					{
-						ChangeTextAndMenuEvent* cEvent = (ChangeTextAndMenuEvent*)retEvent;
-
-						string temp = zSets[this->zPrimarySet].GetTextFromField(cEvent->GetTextBoxName());
-
-						this->SwapMenus(NOMENU, NOMENU);
-
-						this->EnableMouse(false);
-
-						std::string errorMessage;
-						int errorCode = 0;
-
-						zGame->InitGameClient(temp, 11521, errorMessage, errorCode);	 // Save to connect IP
-						if (errorMessage != "")
-						{
-							GraphicsEngine* gEng = GetGraphics();
-							Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
-
-							std::string errorMsg = "Error Code: " + MaloW::convertNrToString((float)errorCode) + ": " + errorMessage;
-							iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
-
-							Sleep(5000);
-
-							gEng->DeleteText(errorText);
-						}
-						else
-						{
-							zGame->Run();
-						}
-
-
-						delete this->zGame;
-
-						this->zGame = new Game();
-
-						this->EnableMouse(true);
-
-						this->SwapMenus(MAINMENU, this->zSecondarySet);
+						this->StartGameWithIPField();
 					}
 					/*else if(retEvent->GetEventMessage() == "ChangeResEvent")
 					{
@@ -504,6 +467,13 @@ void MainMenu::Run()
 
 						this->SwapMenus((SET)cEvent->GetSet(), NOMENU);
 						zPrimarySet = (SET)cEvent->GetSet();
+					}
+				}
+				else if(this->zPrimarySet == GETIPADRESS)
+				{
+					if(GetGraphics()->GetKeyListener()->IsPressed(VK_RETURN))
+					{
+						this->StartGameWithIPField();
 					}
 				}
 				else
@@ -678,4 +648,43 @@ void MainMenu::Resize()
 
 	this->zSizedForWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
 	this->zSizedForHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
+}
+
+void MainMenu::StartGameWithIPField()
+{
+	string temp = zSets[this->zPrimarySet].GetTextFromField("IPAdress");
+
+	this->SwapMenus(NOMENU, NOMENU);
+
+	this->EnableMouse(false);
+
+	std::string errorMessage;
+	int errorCode = 0;
+
+	zGame->InitGameClient(temp, 11521, errorMessage, errorCode);	 // Save to connect IP
+	if (errorMessage != "")
+	{
+		GraphicsEngine* gEng = GetGraphics();
+		Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
+
+		std::string errorMsg = "Error Code: " + MaloW::convertNrToString((float)errorCode) + ": " + errorMessage;
+		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
+
+		Sleep(5000);
+
+		gEng->DeleteText(errorText);
+	}
+	else
+	{
+		zGame->Run();
+	}
+
+
+	delete this->zGame;
+
+	this->zGame = new Game();
+
+	this->EnableMouse(true);
+
+	this->SwapMenus(MAINMENU, this->zSecondarySet);
 }

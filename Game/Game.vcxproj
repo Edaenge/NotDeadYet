@@ -85,6 +85,7 @@
     <ClInclude Include="Include\Bandage.h" />
     <ClInclude Include="Include\ClientServerMessages.h" />
     <ClInclude Include="Include\Container.h" />
+    <ClInclude Include="Include\CraftingReader.h" />
     <ClInclude Include="Include\Food.h" />
     <ClInclude Include="Include\GameTimer.h" />
     <ClInclude Include="Include\Gear.h" />
@@ -110,6 +111,7 @@
     <ClInclude Include="Include\World\EntityList.h" />
     <ClInclude Include="Include\World\Observer.h" />
     <ClInclude Include="Include\World\Sector.h" />
+    <ClInclude Include="Include\World\WaterQuad.h" />
     <ClInclude Include="Include\World\World.h" />
     <ClInclude Include="Include\World\WorldEvents.h" />
     <ClInclude Include="Include\World\WorldFile.h" />
@@ -123,6 +125,7 @@
     <ClCompile Include="Source\AnimationFileReader.cpp" />
     <ClCompile Include="Source\Bandage.cpp" />
     <ClCompile Include="Source\Container.cpp" />
+    <ClCompile Include="Source\CraftingReader.cpp" />
     <ClCompile Include="Source\Food.cpp" />
     <ClCompile Include="Source\GameTimer.cpp" />
     <ClCompile Include="Source\Gear.cpp" />
@@ -140,6 +143,7 @@
     <ClCompile Include="Source\World\Entity.cpp" />
     <ClCompile Include="Source\World\EntityList.cpp" />
     <ClCompile Include="Source\World\Sector.cpp" />
+    <ClCompile Include="Source\World\WaterQuad.cpp" />
     <ClCompile Include="Source\World\World.cpp" />
     <ClCompile Include="Source\World\WorldFile.cpp" />
     <ClCompile Include="Source\World\WorldRenderer.cpp" />

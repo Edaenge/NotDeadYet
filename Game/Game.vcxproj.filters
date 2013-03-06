@@ -134,6 +134,12 @@
     <ClInclude Include="Include\Packets\PhysicalConditionPacket.h">
       <Filter>Header Files\Packets</Filter>
     </ClInclude>
+    <ClInclude Include="Include\World\WaterQuad.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CraftingReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\World\Sector.cpp">
@@ -215,6 +221,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Misc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\World\WaterQuad.cpp">
+      <Filter>Source Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CraftingReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

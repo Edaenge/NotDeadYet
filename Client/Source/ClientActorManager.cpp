@@ -13,9 +13,9 @@ ClientActorManager::ClientActorManager()
 		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_GRASS, this->zFootStep[i]);
 
 
-	this->zInterpolationVelocity = 100.0f;
-	this->zUpdatesPerSec = 0;
-	this->zLatency = 0;
+	this->zInterpolationVelocity = 1.0f;
+	this->zUpdatesPerSec = 1;
+	this->zLatency = 1;
 }
 
 ClientActorManager::~ClientActorManager()
@@ -49,8 +49,10 @@ ClientActorManager::~ClientActorManager()
 
 void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 {
-	vector<Actor*> actors;
-	float t = GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
+	//std::vector<Actor*> actors;
+	float latency = 1.0f / (float)this->zLatency;
+	float server_DeltaTime = 1.0f / (float)this->zUpdatesPerSec;
+	float t = deltaTime - server_DeltaTime + latency;//GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
 	static GraphicsEngine* gEng = GetGraphics();
 	int stepsPlayedThisUpdate = 1;
 
@@ -253,13 +255,15 @@ Vector3 ClientActorManager::InterpolatePosition(const Vector3& currentPosition, 
 	//if (totalDelay < 10.0f)
 	//	totalDelay = this->zInterpolationVelocity;
 
-	Vector3 returnPosition = currentPosition + (newPosition - currentPosition) * t * this->zInterpolationVelocity;
+	//float step = 100 / this->zLatency * t;
+	//float delta = 1 - step * t;
+	Vector3 diff = newPosition - currentPosition;
+	Vector3 returnPosition = currentPosition + diff * t * this->zInterpolationVelocity;
 
 	float newLength = (returnPosition - newPosition).GetLength();
 
 	if (newLength > oldlength)
 		returnPosition = newPosition;
-
 
 	return returnPosition;
 }

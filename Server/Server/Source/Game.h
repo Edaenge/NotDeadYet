@@ -71,7 +71,7 @@ private:
 	float zFogTimer;
 
 public:
-	Game(ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
+	Game(const int maxClients, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile);
 	virtual ~Game();
 
 	// Returns false if game has finished

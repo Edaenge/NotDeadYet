@@ -13,15 +13,6 @@ void FreeItemLookup()
 	SAFE_DELETE(itemLookup);
 }
 
-ItemLookup::~ItemLookup()
-{
-	for( unsigned int i = 0; i < this->zItems.size(); i++ )
-	{
-		SAFE_DELETE(this->zItems[i]);
-	}
-	this->zItems.clear();
-}
-
 void InitItemLookup()
 {
 	itemLookup = new ItemLookup();
@@ -70,6 +61,15 @@ static const std::string STACKS_REQUIREMENT		=	"STACKS_REQUIREMENT";
 ItemLookup::ItemLookup()
 {
 	this->ReadFromFile();
+}
+
+ItemLookup::~ItemLookup()
+{
+	for( unsigned int i = 0; i < this->zItems.size(); i++ )
+	{
+		SAFE_DELETE(this->zItems[i]);
+	}
+	this->zItems.clear();
 }
 
 const Projectile* ItemLookup::GetProjectile( const unsigned int SubType )
@@ -156,7 +156,7 @@ const Bandage* ItemLookup::GetBandage( const unsigned int SubType )
 	return NULL;
 }
 
-const Misc* ItemLookup::GetTrap( const unsigned int SubType )
+const Misc* ItemLookup::GetMisc( const unsigned int SubType )
 {
 	for (auto it = this->zItems.begin(); it != this->zItems.end(); it++)
 	{
