@@ -99,8 +99,9 @@ const std::string& GetEntModel( unsigned int entIndex, float distance ) throw(..
 	// Find Best Match
 	auto selected = entities[entIndex-1].models.rbegin();
 
-	auto it_end = entities[entIndex-1].models.rend();
-	for( auto i = entities[entIndex-1].models.rbegin(); i != it_end; ++i )
+	auto ents_end = entities[entIndex-1].models.rend();
+
+	for( auto i = entities[entIndex-1].models.rbegin(); i != ents_end; ++i )
 	{
 		if ( distance < i->first )
 		{
