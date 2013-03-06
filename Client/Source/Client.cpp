@@ -571,7 +571,7 @@ void Client::CheckPlayerSpecificKeys()
 			if (msd.zAction == USE)
 			{
 				if (item)
-					SendUseItemMessage(item->GetID());
+					SendUseItemMessage(msd.zID);
 			}
 			if (msd.zAction == CRAFT)
 			{
@@ -600,11 +600,8 @@ void Client::CheckPlayerSpecificKeys()
 						type = ITEM_TYPE_BANDAGE;
 						subType = ITEM_SUB_TYPE_BANDAGE_POOR;
 					}
-					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_CRAFT, (float)item->GetID());
-					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)type);
-					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_SUB_TYPE, (float)subType);
-					this->zServerChannel->Send(msg);
-					//SendCraftItemMessage(item->GetID());
+					
+					SendCraftItemMessage(msd.zID, type, subType);
 				}
 			}
 			else if(msd.zAction == EQUIP)
@@ -617,6 +614,10 @@ void Client::CheckPlayerSpecificKeys()
 				unsigned int id = this->zGuiManager->GetLootingActor();
 				if (id != 0)
 					SendLootItemMessage(id, msd.zID, msd.zType, msd.zSubType);
+			}
+			else if (msd.zAction == FILL)
+			{
+				this->SendItemFill(msd.zID);
 			}
 			else if (msd.zAction == DROP)
 			{
@@ -1629,6 +1630,16 @@ bool Client::CheckHumanSpecificMessages(std::vector<std::string> msgArray)
 	{
 		unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_USE, msgArray[0]);
 		this->HandleUseItem(id);
+	}
+	else if(msgArray[0].find(M_ITEM_FILL.c_str()) == 0)
+	{
+		if (msgArray.size() > 2)
+		{
+			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_FILL, msgArray[0]);
+			unsigned int currentUses = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_CURRENT, msgArray[1]);
+
+			this->HandleFillItem(id, currentUses);
+		}
 	}
 	else if(msgArray[0].find(M_REMOVE_EQUIPMENT.c_str()) == 0)
 	{

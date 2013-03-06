@@ -126,6 +126,17 @@ public:
 	unsigned int itemID;
 };
 
+/*Event when a player wants to Fill an item.*/
+class PlayerFillItemEvent : public Event
+{
+public:
+	virtual ~PlayerFillItemEvent() {}
+
+	ClientData* clientData;
+
+	unsigned int itemID;
+};
+
 class PlayerCraftItemEvent : public Event
 {
 public:

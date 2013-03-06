@@ -183,6 +183,28 @@ void Client::HandleCraftItem(const unsigned int ID, const unsigned int Stacks)
 	}
 }
 
+void Client::HandleFillItem(const unsigned int ID, const int currentUses)
+{
+	Item* item = this->zPlayerInventory->SearchAndGetItem(ID);
+
+	if (!item)
+	{
+		MaloW::Debug("Failed to find item in Client::HandleFillItem");
+		return;
+	}
+
+	if (Container* container = dynamic_cast<Container*>(item))
+	{
+		Gui_Item_Data gid = this->MakeGID(container);
+
+		this->zGuiManager->RemoveInventoryItemFromGui(gid);
+
+		container->SetRemainingUses(currentUses);
+
+		this->zGuiManager->AddInventoryItemToGui(gid);
+	}
+}
+
 //Todo Remove old projectile before adding new one(arrows)
 void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 {
@@ -614,9 +636,17 @@ void Client::SendLootItemMessage(const unsigned int ID, const unsigned int ItemI
 	this->zServerChannel->Send(msg);
 }
 
-void Client::SendCraftItemMessage( const unsigned int ID )
+void Client::SendCraftItemMessage(const unsigned int ID, const int Type, const int SubType)
 {
 	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_CRAFT, (float)ID);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)Type);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_SUB_TYPE, (float)SubType);
+	this->zServerChannel->Send(msg);
+}
+
+void Client::SendItemFill(const unsigned int ID)
+{
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_FILL, ID);
 	this->zServerChannel->Send(msg);
 }
 
