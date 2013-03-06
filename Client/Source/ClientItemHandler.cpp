@@ -640,7 +640,6 @@ void Client::HandleRemoveInventoryItem(const unsigned int ID)
 	Item* item = this->zPlayerInventory->SearchAndGetItem(ID);
 	if (item)
 	{
-		int stackSize = item->GetStackSize();
 		item = this->zPlayerInventory->RemoveItem(item);
 
 		if(item)
