@@ -12,9 +12,7 @@
 struct Menu_select_data
 {
 	CIRCMENU zAction;
-	int zID;
-	int zType;
-	int zSubType;
+	Gui_Item_Data gid;
 };
 
 struct Looting_Gui_Data
@@ -64,8 +62,7 @@ private:
 	float zLootingGuiShowTimer;
 	float zInventoryGuiShowTimer;
 
-	int zSelectedItem;
-	int zSelectedType;
+	Selected_Item_ReturnData zSir;
 	int zSelectedCircMenu;
 	bool zMinorFix;
 

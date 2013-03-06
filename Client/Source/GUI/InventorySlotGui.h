@@ -8,13 +8,6 @@
 #include "GuiElement.h"
 #include <MaloW.h>
 
-struct Selected_Item_ReturnData
-{
-	int ID;
-	int type;
-	int inventory;
-};
-
 struct Gui_Item_Data
 {
 	Gui_Item_Data()
@@ -63,6 +56,12 @@ struct Gui_Item_Data
 	std::string zName;
 	std::string zFilePath;
 	std::string zDescription;
+};
+
+struct Selected_Item_ReturnData
+{
+	Gui_Item_Data gid;
+	int inventory;
 };
 
 class InventorySlotGui : public GuiElement

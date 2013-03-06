@@ -565,13 +565,13 @@ void Client::CheckPlayerSpecificKeys()
 		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
 
-		if (msd.zAction != -1 && msd.zID != -1)
+		if (msd.zAction != -1 && msd.gid.zID != -1)
 		{
-			Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
+			Item* item = this->zPlayerInventory->SearchAndGetItem(msd.gid.zID);
 			if (msd.zAction == USE)
 			{
 				if (item)
-					SendUseItemMessage(msd.zID);
+					SendUseItemMessage(msd.gid.zID);
 			}
 			if (msd.zAction == CRAFT)
 			{
@@ -601,33 +601,33 @@ void Client::CheckPlayerSpecificKeys()
 						subType = ITEM_SUB_TYPE_BANDAGE_POOR;
 					}
 					
-					SendCraftItemMessage(msd.zID, type, subType);
+					SendCraftItemMessage(msd.gid.zID, type, subType);
 				}
 			}
 			else if(msd.zAction == EQUIP)
 			{
 				if(item)
-					SendEquipItem(msd.zID);
+					SendEquipItem(msd.gid.zID);
 			}
 			else if (msd.zAction == LOOT)
 			{
 				unsigned int id = this->zGuiManager->GetLootingActor();
 				if (id != 0)
-					SendLootItemMessage(id, msd.zID, msd.zType, msd.zSubType);
+					SendLootItemMessage(id, msd.gid.zID, msd.gid.zType, msd.gid.zSubType);
 			}
 			else if (msd.zAction == FILL)
 			{
-				this->SendItemFill(msd.zID);
+				this->SendItemFill(msd.gid.zID);
 			}
 			else if (msd.zAction == DROP)
 			{
 				if(item)
-					this->SendDropItemMessage(msd.zID);
+					this->SendDropItemMessage(msd.gid.zID);
 			}
 			else if (msd.zAction == UNEQUIP)
 			{
 				if(item)
-					this->SendUnEquipItem(msd.zID, (msd.zType));
+					this->SendUnEquipItem(msd.gid.zID, (msd.gid.zType));
 			}
 		}
 	}
