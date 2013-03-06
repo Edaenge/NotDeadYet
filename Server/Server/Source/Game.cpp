@@ -1404,7 +1404,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 
 		std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 
-		if (item->GetID() == itemID && item->GetItemType() == itemType && item->GetItemSubType() == subType)
+		if (item->GetID() == itemID && item->GetItemType() == itemType)// && item->GetItemSubType() == subType)
 		{
 			if( item->GetStacking() && !pActor->GetInventory()->IsStacking(item) )
 			{
@@ -1485,7 +1485,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 				return;
 		
 			std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-			if (item->GetItemType() == itemType && item->GetItemSubType() == subType)
+			if (item->GetItemType() == itemType)// && item->GetItemSubType() == subType)
 			{
 				msg += item->ToMessageString(&NMC);
 				//Add item
