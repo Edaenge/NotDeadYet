@@ -12,7 +12,9 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 
 	this->zNearActorsIndex = 0;
 	this->zCollisionRadius = 100.0f;
-	this->zPlayerConfigReader = GetPlayerConfig();}
+	this->zPlayerConfigReader = GetPlayerConfig();
+
+}
 
 PlayerBehavior::~PlayerBehavior()
 {

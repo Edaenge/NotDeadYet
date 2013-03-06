@@ -31,10 +31,10 @@ PlayerConfigReader::PlayerConfigReader()
 		this->zVariables[HUNGER_COEFF] = 0.1f;
 		this->zVariables[HUNGER_SPRINT_COEFF] = 0.3f;
 		this->zVariables[HYDRATION_MAX] = 100;
-		this->zVariables[HYDRATION_COEFF] = 0.12f;
+		this->zVariables[HYDRATION_COEFF] = 0.14f;
 		this->zVariables[HYDRATION_SPRINT_COEFF] = 0.6f;
 		this->zVariables[STAMINA_SPRINT_COEFF] = 2.0f;
-		this->zVariables[DAMAGE_AT_STARVATON_COEFF] = 0.1f;
+		this->zVariables[DAMAGE_AT_STARVATON_COEFF] = 0.4f;
 		this->zVariables[DAMAGE_AT_THIRST_COEFF] = 0.4f;
 		this->zVariables[STAMINA_DECREASE_COEFF_HUNGER] = 0.6f;
 		this->zVariables[STAMINA_DECREASE_COEFF_HYDRATION] = 0.8f;

@@ -205,7 +205,7 @@ bool PlayerHumanBehavior::Update( float dt )
 	if(bActor->IsAlive())
 	{
 
-		PhysicalConditionCalculator(dt);
+		
 		Actor* collide = CheckCollision();
 
 		if(collide)
@@ -222,170 +222,194 @@ bool PlayerHumanBehavior::Update( float dt )
 
 			zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
 		}
+
+		/*if(!PhysicalConditionCalculator(dt))
+		{
+			return false;
+		}*/
+
 	}
 
 	return false;
 }
 
-void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
+bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 {
 	//BioActor* bActor = dynamic_cast<BioActor*>(this->zActor);
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActor);
+
+	Damage starvationBleedAndThirstDamage;
 	
 	if(this->zIntervalCounter >= 1.0f)
 	{
-		std::stringstream tester; 
-		tester<<"Fullness: "<<pActor->GetFullness()<<"   "<<"Hydration: "<<pActor->GetHydration()<<"    "<<"Stamina: "<<pActor->GetStamina()<<"    "<<"Health: "<<pActor->GetHealth()<<std::endl;
-		OutputDebugString(tester.str().c_str());
+
+		
+
+
+
+		if(pActor->IsAlive())
+		{
+
+			std::stringstream tester; 
+			tester<<"Fullness: "<<pActor->GetFullness()<<"   "<<"Hydration: "<<pActor->GetHydration()<<"    "<<"Stamina: "<<pActor->GetStamina()<<"    "<<"Health: "<<pActor->GetHealth()<<std::endl;
+			OutputDebugString(tester.str().c_str());
 	
-		float regeneratedHealth = 100;
+			float regeneratedHealth = 100;
 		
-		//Regaining stamina (if not running and not bleeding)
-		if(pActor->GetState() != STATE_RUNNING && pActor->GetStamina() < pActor->GetStaminaMax() /*&& pActor->GetBleeding() == 0*/)
-		{
-			float stamina = pActor->GetStamina();
-			pActor->SetStamina(stamina += 1.0f);
+			//Regaining stamina (if not running and not bleeding)
+			if(pActor->GetState() != STATE_RUNNING && pActor->GetStamina() < pActor->GetStaminaMax() /*&& pActor->GetBleeding() == 0*/)
+			{
+				float stamina = pActor->GetStamina();
+				pActor->SetStamina(stamina += 1.0f);
 		
-			if(pActor->GetStamina() > pActor->GetStaminaMax())
-				pActor->SetStamina(pActor->GetStaminaMax());
+				if(pActor->GetStamina() > pActor->GetStaminaMax())
+					pActor->SetStamina(pActor->GetStaminaMax());
 
-		}
+			}
 
-		if(pActor->GetState() == STATE_RUNNING)
-		{
+			if(pActor->GetState() == STATE_RUNNING)
+			{
 			
-			if(pActor->GetExhausted() == false)
-			{
-				if(pActor->GetStamina() <= 0.0)
+				if(pActor->GetExhausted() == false)
 				{
-					pActor->SetExhausted(true);
-				}
-			}
-			if(pActor->GetExhausted() == false)
-			{
-				float fullness; 
-				float hydration;
-				fullness = pActor->GetFullness(); 
-				hydration = pActor->GetHydration();
-
-				fullness -= this->zPlayerConfigReader->GetVariable(HUNGER_SPRINT_COEFF);//zHungerSprintingCof;
-				hydration -= this->zPlayerConfigReader->GetVariable(HYDRATION_SPRINT_COEFF);//zHydrationSprintingCof;
-				pActor->SetFullness(fullness);
-				pActor->SetHydration(hydration);
-
-				if(pActor->GetHasSprinted())
-				{
-					float stamina = pActor->GetStamina();
-					stamina -= this->zPlayerConfigReader->GetVariable(STAMINA_SPRINT_COEFF);//zStaminaSprintingCof;
-					pActor->SetStamina(stamina);
-					if(stamina < 0.0f)
+					if(pActor->GetStamina() <= 0.0)
 					{
-						pActor->SetStamina(0.0f);
+						pActor->SetExhausted(true);
 					}
-					pActor->SetHasSprinted(false);
+				}
+				if(pActor->GetExhausted() == false)
+				{
+					float fullness; 
+					float hydration;
+					fullness = pActor->GetFullness(); 
+					hydration = pActor->GetHydration();
+
+					fullness -= this->zPlayerConfigReader->GetVariable(HUNGER_SPRINT_COEFF);//zHungerSprintingCof;
+					hydration -= this->zPlayerConfigReader->GetVariable(HYDRATION_SPRINT_COEFF);//zHydrationSprintingCof;
+					pActor->SetFullness(fullness);
+					pActor->SetHydration(hydration);
+
+					if(pActor->GetHasSprinted())
+					{
+						float stamina = pActor->GetStamina();
+						stamina -= this->zPlayerConfigReader->GetVariable(STAMINA_SPRINT_COEFF);//zStaminaSprintingCof;
+						pActor->SetStamina(stamina);
+						if(stamina < 0.0f)
+						{
+							pActor->SetStamina(0.0f);
+						}
+						pActor->SetHasSprinted(false);
+					}
 				}
 			}
-		}
 
-		if(pActor->GetStamina() >= 20.0f && pActor->GetExhausted() == true)
-		{
-			pActor->SetExhausted(false);
-		}
+			if(pActor->GetStamina() >= 20.0f && pActor->GetExhausted() == true)
+			{
+				pActor->SetExhausted(false);
+			}
 	
-		float fullness = pActor->GetFullness();
-		float hydration = pActor->GetHydration();
-
-		fullness -= this->zPlayerConfigReader->GetVariable(HUNGER_COEFF);//zHungerCof;
-		pActor->SetFullness(fullness);
-		hydration -= this->zPlayerConfigReader->GetVariable(HYDRATION_COEFF);//zHydrationCof;
-		pActor->SetHydration(hydration);
-
-		//float testBleeding = pActor->GetBleeding();
-
-		if(pActor->GetBleeding() > 0)//Player is bleeding.
-		{
-			regeneratedHealth -= (regeneratedHealth/3) * pActor->GetBleeding();
-			/*float stamina = pActor->GetStamina();
-			fullness = pActor->GetFullness();
-			hydration = pActor->GetHydration();
-
-			stamina -= GetPlayerConfiguration().zStaminaDecreaseWithBleedingCof;
-			pActor->SetStamina(stamina);
-			fullness -= GetPlayerConfiguration().zHungerDecreaseWithBleedingCof;
-			pActor->SetFullness(fullness);
-			hydration -= GetPlayerConfiguration().zHydrationDecreaseWithBleedingCof;
-			pActor->SetHydration(hydration);*/
-		
-		}
-	
-		/*if(pActor->GetFullness() / GetPlayerConfiguration().zFullnessMax > GetPlayerConfiguration().zUpperHunger && !pActor->IsBleeding()) //The hunger is at a good level
-		{
-			regeneratedHealth += GetPlayerConfiguration().zRegenerationHungerAddition;
-		}
-		else */if(pActor->GetFullness() / this->zPlayerConfigReader->GetVariable(FULLNESS_MAX) < this->zPlayerConfigReader->GetVariable(LOWER_HUNGER))//zLowerHunger) //The hunger is at a bad level
-		{
-			float stamina = pActor->GetStamina();
-			stamina -= this->zPlayerConfigReader->GetVariable(STAMINA_DECREASE_COEFF_HUNGER);//zStaminaDecreaseCofWithHunger;
-			pActor->SetStamina(stamina);
-		}
-
-		/*if(pActor->GetHydration() / GetPlayerConfiguration().zHydrationMax > GetPlayerConfiguration().zUpperHydration && !pActor->IsBleeding()) //The thirst is at a good level
-		{
-			regeneratedHealth += GetPlayerConfiguration().zRegenerationHydrationAddition;
-		}
-		else*/ if(pActor->GetHydration() / this->zPlayerConfigReader->GetVariable(HYDRATION_MAX) < this->zPlayerConfigReader->GetVariable(LOWER_HYDRATION)) //The thirst is at a bad level.
-		{
-			float stamina = pActor->GetStamina();
-			stamina -= this->zPlayerConfigReader->GetVariable(STAMINA_DECREASE_COEFF_HYDRATION);
-			pActor->SetStamina(stamina);
-		}
-
-		/*if(pActor->GetStamina() / pActor->GetStaminaMax() > GetPlayerConfiguration().zUpperStamina && !pActor->IsBleeding())
-		{
-			regeneratedHealth += GetPlayerConfiguration().zRegenerationStaminaAddition;
-		}
-		else */if(pActor->GetStamina() / pActor->GetStaminaMax() < this->zPlayerConfigReader->GetVariable(LOWER_STAMINA))
-		{
 			float fullness = pActor->GetFullness();
 			float hydration = pActor->GetHydration();
-			fullness -= this->zPlayerConfigReader->GetVariable(HUNGER_FOR_STAMINA_COEFF);
+
+			fullness -= this->zPlayerConfigReader->GetVariable(HUNGER_COEFF);//zHungerCof;
 			pActor->SetFullness(fullness);
-			hydration -= this->zPlayerConfigReader->GetVariable(HYDRATION_FOR_STAMINA_COEFF);
+			hydration -= this->zPlayerConfigReader->GetVariable(HYDRATION_COEFF);//zHydrationCof;
 			pActor->SetHydration(hydration);
-		}
 
-		Damage hurting;
-		if(pActor->GetFullness() < 0)
-		{
-			pActor->SetFullness(0.0f);
-			hurting.blunt = this->zPlayerConfigReader->GetVariable(DAMAGE_AT_STARVATON_COEFF);
-			pActor->TakeDamage(hurting, pActor);
-		}
-		if(pActor->GetHydration() < 0)
-		{
-			pActor->SetHydration(0.0f);
-			hurting.blunt = this->zPlayerConfigReader->GetVariable(DAMAGE_AT_THIRST_COEFF);
-			pActor->TakeDamage(hurting, pActor);
-		}
+			//float testBleeding = pActor->GetBleeding();
 
-		float health = pActor->GetHealth();
+			if(pActor->GetBleeding() > 0)//Player is bleeding.
+			{
+				regeneratedHealth -= (regeneratedHealth/3) * pActor->GetBleeding();
+				/*float stamina = pActor->GetStamina();
+				fullness = pActor->GetFullness();
+				hydration = pActor->GetHydration();
 
-		if(regeneratedHealth < 0.0f)
-		{
-			Damage bleedingDamage;
-			bleedingDamage.blunt = -(regeneratedHealth / this->zPlayerConfigReader->GetVariable(REGEN_SCALE));
-			pActor->TakeDamage(bleedingDamage,pActor);
-		}
-		else
-		{
-			health += regeneratedHealth / this->zPlayerConfigReader->GetVariable(REGEN_SCALE);
-			pActor->SetHealth(health);  
-		}
+				stamina -= GetPlayerConfiguration().zStaminaDecreaseWithBleedingCof;
+				pActor->SetStamina(stamina);
+				fullness -= GetPlayerConfiguration().zHungerDecreaseWithBleedingCof;
+				pActor->SetFullness(fullness);
+				hydration -= GetPlayerConfiguration().zHydrationDecreaseWithBleedingCof;
+				pActor->SetHydration(hydration);*/
 		
-		if(pActor->GetHealth() > pActor->GetHealthMax())
-		{
-			pActor->SetHealth(pActor->GetHealthMax()); 
+			}
+	
+			/*if(pActor->GetFullness() / GetPlayerConfiguration().zFullnessMax > GetPlayerConfiguration().zUpperHunger && !pActor->IsBleeding()) //The hunger is at a good level
+			{
+				regeneratedHealth += GetPlayerConfiguration().zRegenerationHungerAddition;
+			}
+			else */if(pActor->GetFullness() / this->zPlayerConfigReader->GetVariable(FULLNESS_MAX) < this->zPlayerConfigReader->GetVariable(LOWER_HUNGER))//zLowerHunger) //The hunger is at a bad level
+			{
+				float stamina = pActor->GetStamina();
+				stamina -= this->zPlayerConfigReader->GetVariable(STAMINA_DECREASE_COEFF_HUNGER);//zStaminaDecreaseCofWithHunger;
+				pActor->SetStamina(stamina);
+			}
+
+			/*if(pActor->GetHydration() / GetPlayerConfiguration().zHydrationMax > GetPlayerConfiguration().zUpperHydration && !pActor->IsBleeding()) //The thirst is at a good level
+			{
+				regeneratedHealth += GetPlayerConfiguration().zRegenerationHydrationAddition;
+			}
+			else*/ if(pActor->GetHydration() / this->zPlayerConfigReader->GetVariable(HYDRATION_MAX) < this->zPlayerConfigReader->GetVariable(LOWER_HYDRATION)) //The thirst is at a bad level.
+			{
+				float stamina = pActor->GetStamina();
+				stamina -= this->zPlayerConfigReader->GetVariable(STAMINA_DECREASE_COEFF_HYDRATION);
+				pActor->SetStamina(stamina);
+			}
+
+			/*if(pActor->GetStamina() / pActor->GetStaminaMax() > GetPlayerConfiguration().zUpperStamina && !pActor->IsBleeding())
+			{
+				regeneratedHealth += GetPlayerConfiguration().zRegenerationStaminaAddition;
+			}
+			else */if(pActor->GetStamina() / pActor->GetStaminaMax() < this->zPlayerConfigReader->GetVariable(LOWER_STAMINA))
+			{
+				float fullness = pActor->GetFullness();
+				float hydration = pActor->GetHydration();
+				fullness -= this->zPlayerConfigReader->GetVariable(HUNGER_FOR_STAMINA_COEFF);
+				pActor->SetFullness(fullness);
+				hydration -= this->zPlayerConfigReader->GetVariable(HYDRATION_FOR_STAMINA_COEFF);
+				pActor->SetHydration(hydration);
+			}
+
+			//Damage hurting;
+			if(pActor->GetFullness() < 0)
+			{
+				pActor->SetFullness(0.0f);
+				starvationBleedAndThirstDamage.blunt += this->zPlayerConfigReader->GetVariable(DAMAGE_AT_STARVATON_COEFF);
+				//pActor->TakeDamage(hurting, pActor);
+			}
+			if(pActor->GetHydration() < 0)
+			{
+				pActor->SetHydration(0.0f);
+				starvationBleedAndThirstDamage.blunt = this->zPlayerConfigReader->GetVariable(DAMAGE_AT_THIRST_COEFF);
+				//pActor->TakeDamage(hurting, pActor);
+			}
+
+			float health = pActor->GetHealth();
+
+			if(regeneratedHealth < 0.0f)
+			{
+				//Damage bleedingDamage;
+				starvationBleedAndThirstDamage.blunt = -(regeneratedHealth / this->zPlayerConfigReader->GetVariable(REGEN_SCALE));
+				//pActor->TakeDamage(bleedingDamage,pActor);
+			}
+			else
+			{
+				health = regeneratedHealth / this->zPlayerConfigReader->GetVariable(REGEN_SCALE);
+				pActor->SetHealth(pActor->GetHealth() + health);  
+			}
+		
+			if(pActor->GetHealth() > pActor->GetHealthMax())
+			{
+				pActor->SetHealth(pActor->GetHealthMax()); 
+			}
+
 		}
 		this->zIntervalCounter = 0.0f;
 	}
+	if(starvationBleedAndThirstDamage.GetTotal() > 0.0f)
+	{
+		pActor->TakeDamage(starvationBleedAndThirstDamage,pActor);
+	}
+
+	return pActor->IsAlive();
 }
