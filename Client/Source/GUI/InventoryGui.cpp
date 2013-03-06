@@ -363,6 +363,19 @@ void InventoryGui::EquipItem( const Gui_Item_Data gid, bool guiOpen )
 	if(!this->zWeaponSlotGui.at(gid.zType)->GetBlocked())
 	{
 		this->zWeaponSlotGui.at(gid.zType)->AddItemToSlot(gid, guiOpen, GetGraphics());
+		for(int k = SLOTS - 1; k > 0; k--)
+		{
+			if(!this->zSlotGui.at(k)->GetBlocked())
+			{
+				Gui_Item_Data blockedGid = Gui_Item_Data(0, -1, -1, 0, 0, 0, false, "Blocked", "Media/InGameUI/Unavailable.png", "");
+				for(unsigned int m = 0; m < gid.zSlots - 1; m++)
+				{
+					this->zSlotGui.at(k-m)->AddItemToSlot(blockedGid, guiOpen, GetGraphics());
+					this->zSlotGui.at(k-m)->SetBlocker(true);
+				}
+				k = 0;
+			}
+		}
 	}
 }
 
@@ -370,6 +383,7 @@ void InventoryGui::UnEquipItem(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 {
 	if(this->zWeaponSlotGui.at(gid.zType)->GetBlocked())
 	{
+		this->RemoveBlockers(gid.zType, open, ge, 1);
 		this->zWeaponSlotGui.at(gid.zType)->RemoveItemFromSlot(open, GetGraphics());
 	}
 }
