@@ -953,14 +953,13 @@ void Game::OnEvent( Event* e )
 	else if ( EntityLoadedEvent* ELE = dynamic_cast<EntityLoadedEvent*>(e) )
 	{
 		PhysicsObject* phys = NULL;
-		
-		if ( GetEntBlockRadius(ELE->entity->GetType()) > 0.0f )
+		float blockRadius = GetEntBlockRadius(ELE->entity->GetType());
+		if ( blockRadius > 0.0f )
 		{
 			// Create Physics Object
 			phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(ELE->entity->GetType()));
 		}
-
-		WorldActor* actor = new WorldActor(phys);
+		WorldActor* actor = new WorldActor(phys, blockRadius);
 		actor->SetPosition(ELE->entity->GetPosition());
 		actor->SetScale(actor->GetScale());
 		actor->AddObserver(this->zGameMode);
@@ -1738,7 +1737,8 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				projBehavior->AddObserver(this->zSoundHandler);
 
 				//Set Nearby actors
-				projBehavior->SetNearActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearActors() );
+				projBehavior->SetNearBioActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearBioActors() );
+				projBehavior->SetNearWorldActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearWorldActors() );
 
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);

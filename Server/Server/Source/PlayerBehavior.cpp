@@ -14,22 +14,7 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 
 	this->zNearActorsIndex = 0;
 	this->zNearByRadius = 100.0f;
-	this->zCollisionRadius = 0.5f;
 	this->zPlayerConfigReader = GetPlayerConfig();
-
-// 	Vector3 centerPos;
-// 	float humanRadius = 0.5f;//m
-// 	float distanceInAxes;
-// 	//Pythagoras theorem x2 = y2 + z2
-// 	//both distances are the same, therefore x2 = y2 + y2 = 2y2
-// 	//(distanceInAxes = y)
-// 	distanceInAxes = sqrtf(powf(humanRadius, 2.0f) / 2); //use * 0.5f instead.
-// 	//Build vectors going clockwise
-// 
-// 	Vector2 one = Vector2(distanceInAxes, distanceInAxes);//+X+Z
-// 	Vector2 two = Vector2(distanceInAxes, -distanceInAxes);//+X-Z
-// 	Vector2 one = Vector2(-distanceInAxes, -distanceInAxes);//-X-Z
-// 	Vector2 one = Vector2(-distanceInAxes, distanceInAxes);//-X+Z
 
 }
 
@@ -137,50 +122,47 @@ Actor* PlayerBehavior::CheckBioActorCollision()
 	if( !this->zActor->CanCollide() )
 		return NULL;
 
-	return CheckCollision(thisActorPosition, zNearBioActors);
+	return CheckCollision(thisActorPosition, this->zActor->GetCollisionRadius(), zNearBioActors);
 }
 
 Actor* PlayerBehavior::CheckWorldActorCollision()
 {
-	const Vector3 thisActorPosition = this->zActor->GetPosition();
+	if( !this->zActor )
+		return NULL;
 
 	if( !this->zActor->CanCollide() )
 		return NULL;
+	
+	const Vector3 thisActorPosition = this->zActor->GetPosition();
+	const Vector2 thisActorPositionXZ = thisActorPosition.GetXZ();
 
-	if( !this->zWorld->IsBlockingAt(thisActorPosition.GetXZ()) )
+	//Check all collision points
+	const Vector2* collidePoints = this->zActor->GetCollisionPoints();
+	Vector2 blockedPos;
+	bool isBlocking = false;
+
+	for( int i = 0; i < 4 && !isBlocking; i++)
+	{
+		blockedPos = thisActorPositionXZ + collidePoints[i];
+		if( this->zWorld->IsBlockingAt(blockedPos) )
+			isBlocking = true;
+	}
+
+	if( !isBlocking )
 		return NULL;
 
-	return CheckCollision(thisActorPosition, zNearWorldActors);
+	return CheckCollision(thisActorPosition, this->zActor->GetCollisionRadius(), zNearWorldActors);
 }
 
-Actor* PlayerBehavior::CheckCollision(const Vector3& pos, const std::set<Actor*>& actors )
+Actor* PlayerBehavior::CheckCollision(const Vector3& pos, const float& radius, const std::set<Actor*>& actors )
 {
 	auto it_end = actors.end();
 	for(auto it = actors.begin(); it != it_end; it++)
 	{
 		float distance = ( pos - (*it)->GetPosition() ).GetLength();
-		if(distance <= 1.0f)
+		if( distance < radius + (*it)->GetCollisionRadius() )
 			return (*it);
 	}
 
 	return NULL;
-}
-
-void PlayerBehavior::SetNearActors( std::set<Actor*> actors )
-{
-	this->zNearActors = actors;
-	this->zNearActors.erase(this->zActor);
-
-	auto it_end = zNearActors.end();
-	for (auto it = this->zNearActors.begin(); it != it_end; it++)
-	{
-		if( dynamic_cast<WorldActor*>(*it) )
-		{
-			this->zNearWorldActors.insert(*it);
-		}
-		else if ( dynamic_cast<BioActor*>(*it) )
-		{
-			this->zNearBioActors.insert(*it);
-		}
-	}
 }

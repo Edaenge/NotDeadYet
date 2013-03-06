@@ -42,7 +42,11 @@ private:
 protected:
 		unsigned int zType;
 		float zEnergy;
-		std::string zModel;
+		float	zCollisionRadius;
+		Vector2 zCollisionPoints[4];		std::string zModel;
+protected:
+	virtual void CalculateCollisionPoints();
+
 public:
 	Actor();
 	virtual ~Actor();
@@ -57,8 +61,7 @@ public:
 	void SetScale(const Vector3& scale, const bool notify = true);
 	void SetDir(const Vector3& dir, const bool notify = true);
 	void SetEnergy(float energy, const bool notify = true);
-	virtual void SetModel(const std::string& model);
-	bool CanCollide() const;
+	virtual void SetModel(const std::string& model);	void SetCollisionRadius(const float radius) {this->zCollisionRadius = radius;}	bool CanCollide() const;
 
 	// Get Transformation Functions
 	inline const Vector3& GetPosition() const { return zPos; }
@@ -70,5 +73,9 @@ public:
 	PhysicsObject* GetPhysicsObject() {return this->zPhysicsObject;}
 	inline unsigned int GetType() const {return this->zType;}
 	inline float GetEnergy() {return this->zEnergy;}
-	
+
+	inline float GetCollisionRadius() const {return this->zCollisionRadius;}
+	/*!Returns an array of CollisionPoints. There are 4 points.*/
+	inline const Vector2* GetCollisionPoints() {return this->zCollisionPoints;}
+
 };

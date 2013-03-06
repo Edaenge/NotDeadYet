@@ -202,7 +202,7 @@ bool PlayerHumanBehavior::Update( float dt )
 		zActor->SetPosition(center);
 	}
 
-	PhysicalConditionCalculator(dt);
+	//PhysicalConditionCalculator(dt);
 
 	Vector3 pActor_rewind_dir;
 	Actor* collide = NULL;

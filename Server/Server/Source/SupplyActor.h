@@ -16,10 +16,8 @@ public:
 	Item* DropItem( Item* item );
 	Item* DropItem( const unsigned int itemID );
 	
-
 	inline Inventory* GetInventory() const {return this->zInventory;}
 	
-
 private:
 	Inventory* zInventory;
 

@@ -19,6 +19,4 @@ protected:
 	Actor* zOwner;
 	Damage zDamage;
 
-private:
-
 };

@@ -327,7 +327,7 @@ void Client::Life()
 {
 	MaloW::Debug("Client Process Started");
 	
-	static const float FRAME_TIME = 120.0f;
+	static const float FRAME_TIME = 60.0f;
 	static const float TARGET_DT = 1.0f / FRAME_TIME;
 
 	this->zGameTimer->Init();
