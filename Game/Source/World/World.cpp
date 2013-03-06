@@ -566,7 +566,8 @@ unsigned int World::GetEntitiesInCircle( const Vector2& center, float radius, st
 {
 	unsigned int counter=0;
 
-	for(auto i = zEntities.cbegin(); i != zEntities.cend(); i++)
+	auto it_end =  zEntities.cend();
+	for(auto i = zEntities.cbegin(); i != it_end; i++)
 	{
 		if ( !typeFilter || ( typeFilter && typeFilter == (*i)->GetType() ) )
 		{

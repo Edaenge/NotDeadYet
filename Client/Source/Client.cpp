@@ -388,7 +388,7 @@ void Client::CheckMenus()
 {
 	if(this->zPam->GetShow())
 	{
-		int returnValue = this->zPam->Run(0);
+		int returnValue = this->zPam->Run(this->zEnergy);
 		if(returnValue == DEER)
 		{
 			this->zPam->ToggleMenu();

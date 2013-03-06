@@ -165,6 +165,7 @@ Game::~Game()
 	SAFE_DELETE(this->zActorManager);
 	SAFE_DELETE(this->zGameMode);
 	SAFE_DELETE(this->zSoundHandler);
+	SAFE_DELETE(this->zCraftingManager);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -1743,10 +1744,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
 				this->SendToAll(msg);
 
-				//Send Message to client to Play Shot Bow Animation
-				msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, IDLE_O1);
-				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)pActor->GetID()); 
-				this->SendToAll(msg);
+				pActor->SetState(STATE_ATTACK_BOW);
 			}
 			else
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
@@ -1774,10 +1772,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 			victim->TakeDamage(dmg, pActor);
 
-			//Send Message to client to Play Cut Animation
-			std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_ANIMATION, "idle_01");
-			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)pActor->GetID()); 
-			this->SendToAll(msg);
+			pActor->SetState(STATE_ATTACK_MACHETE);
 		}
 	}
 }

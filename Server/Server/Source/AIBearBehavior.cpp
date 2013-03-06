@@ -314,6 +314,7 @@ Vector3 AIBearBehavior::ExaminePathfindingArea()
 			return dest;
 		}
 	}
+	return dest;
 }
 
 //void AIBearBehavior::SetTargetInfo(int number, Vector3 pos, float velocity, float health, Type kind)

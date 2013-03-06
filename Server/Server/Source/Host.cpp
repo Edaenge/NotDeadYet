@@ -51,7 +51,6 @@ Host::~Host()
 
 	SAFE_DELETE(this->zServerListener);
 
-
 	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
 	{
 		if(it->second)
@@ -682,12 +681,12 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 
 void Host::SynchronizeAll()
 {
-	for( auto i = zClients.begin(); i != zClients.end(); ++i )
+	for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
 	{
-		zSynchronizer->SendUpdatesTo(i->second);
+		this->zSynchronizer->SendUpdatesTo(i->second);
 	}
 
-	zSynchronizer->ClearAll();
+	this->zSynchronizer->ClearAll();
 }
 
 // TODO: Create GameMode Here

@@ -63,7 +63,7 @@ bool ServerListener::Accept( SOCKET &newConnection, sockaddr_in &client )
 
 void ServerListener::Life()
 {
-	MaloW::Debug("ClientChannel Listener Started");
+	MaloW::Debug("Client Listener Started");
 
 	SOCKET newConnection;
 	sockaddr_in client = { 0 };
@@ -73,7 +73,8 @@ void ServerListener::Life()
 		this->stayAlive = Accept(newConnection, client);
 		char *connected_ip = inet_ntoa(client.sin_addr);
 		std::string ip(connected_ip);
-
-		zObserver->PutEvent(new ClientConnectedEvent(new MaloW::ClientChannel(zObserver, newConnection, ip)));
+		if (this->stayAlive)
+			zObserver->PutEvent(new ClientConnectedEvent(new MaloW::ClientChannel(zObserver, newConnection, ip)));
+		
 	}
 }
