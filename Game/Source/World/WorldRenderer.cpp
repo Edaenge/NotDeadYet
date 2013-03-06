@@ -2,7 +2,6 @@
 #include "EntityList.h"
 #include "Entity.h"
 #include "WaterQuad.h"
-#include <limits>
 
 
 WorldRenderer::WorldRenderer( World* world, GraphicsEngine* graphics ) : 
@@ -35,7 +34,7 @@ WorldRenderer::WorldRenderer( World* world, GraphicsEngine* graphics ) :
 		(*i)->AddObserver(this);
 
 		zWaterQuads[*i] = zGraphics->CreateWaterPlane(Vector3(0.0f, 0.0f, 0.0f), "Media/WaterTexture.png");
-		
+
 		auto i2 = zWaterQuads.find(*i);
 		if ( i2 != zWaterQuads.end() )
 		{
@@ -118,7 +117,7 @@ void WorldRenderer::OnEvent( Event* e )
 		{
 			zWaterQuads[WQLE->zQuad]->SetVertexPosition(WQLE->zQuad->GetPosition(x), x);
 		}
-		
+
 		UpdateWaterBoxes(WQLE->zQuad);
 	}
 	else if ( WaterQuadEditedEvent* WQEE = dynamic_cast<WaterQuadEditedEvent*>(e) )
@@ -250,7 +249,7 @@ float WorldRenderer::GetYPosFromHeightMap( float x, float y )
 		return std::numeric_limits<float>::infinity();
 
 	unsigned int tIndex = (unsigned int)(y/(float)SECTOR_WORLD_SIZE) * zWorld->GetNumSectorsWidth() + (unsigned int)(x/(float)SECTOR_WORLD_SIZE);
-	
+
 	if ( tIndex >= zWorld->GetNumSectorsWidth() * zWorld->GetNumSectorsHeight() )
 		return std::numeric_limits<float>::infinity();
 
@@ -258,7 +257,7 @@ float WorldRenderer::GetYPosFromHeightMap( float x, float y )
 	{
 		return zTerrain[tIndex]->GetYPositionAt(fmod(x, (float)SECTOR_WORLD_SIZE), fmod(y, (float)SECTOR_WORLD_SIZE));
 	}
-	
+
 	return std::numeric_limits<float>::infinity();
 }
 
@@ -269,7 +268,7 @@ WaterCollisionData WorldRenderer::GetCollisionWithWaterBoxes()
 	// Default Settings
 	result.quad = 0; 
 
-	float curDistance = std::numeric_limits<float>::infinity(); //Change from max to infinity
+	float curDistance = std::numeric_limits<float>::max();
 
 	iCamera* cam = zGraphics->GetCamera();
 	Vector3 camPos = cam->GetPosition();
@@ -336,7 +335,7 @@ CollisionData WorldRenderer::Get3DRayCollisionDataWithGround()
 	zWorld->GetSectorsInCicle( zGraphics->GetCamera()->GetPosition().GetXZ(), zGraphics->GetEngineParameters().FarClip, sectors );
 
 	CollisionData returnData;
-	returnData.distance = std::numeric_limits<float>::infinity(); //Change from max to infinity
+	returnData.distance = std::numeric_limits<float>::max();
 
 	// Check For Collision
 	for( auto i = sectors.begin(); i != sectors.end(); ++i )
@@ -350,7 +349,7 @@ CollisionData WorldRenderer::Get3DRayCollisionDataWithGround()
 				zGraphics->GetCamera()->Get3DPickingRay(), 
 				zTerrain[sectorIndex],
 				(float)SECTOR_WORLD_SIZE / (float)(SECTOR_HEIGHT_SIZE-1));
-			
+
 			if ( cd.collision && cd.distance < returnData.distance ) returnData = cd;
 		}
 	}
@@ -365,11 +364,11 @@ Entity* WorldRenderer::Get3DRayCollisionWithMesh()
 
 	iCamera* cam = zGraphics->GetCamera();
 	Vector3 camPos = cam->GetPosition();
-	
+
 	std::set<Entity*> closeEntities;
 	zWorld->GetEntitiesInCircle(Vector2(cam->GetPosition().x, cam->GetPosition().z), 200.0f, closeEntities);
 
-	float curDistance = std::numeric_limits<float>::infinity(); //Change from max to infinity
+	float curDistance = std::numeric_limits<float>::max();
 	returnPointer = 0;
 
 	for( auto i = closeEntities.begin(); i != closeEntities.end(); ++i )
@@ -464,8 +463,7 @@ void WorldRenderer::Update()
 	std::set<Entity*> entsToUpdate;
 
 	// Update Current Entities LOD
-	auto zEntities_end = zEntities.cend();
-	for( auto i = zEntities.cbegin(); i != zEntities_end; ++i )
+	for( auto i = zEntities.cbegin(); i != zEntities.cend(); ++i )
 	{
 		entsToUpdate.insert(i->first);
 	}
@@ -474,8 +472,7 @@ void WorldRenderer::Update()
 	if ( zWorld ) zWorld->GetEntitiesInCircle( zGraphics->GetCamera()->GetPosition().GetXZ(), zGraphics->GetEngineParameters().FarClip, entsToUpdate);
 
 	// Update Entities
-	auto entsToUpdate_end = entsToUpdate.cend();
-	for ( auto i = entsToUpdate.cbegin(); i != entsToUpdate_end; ++i )
+	for ( auto i = entsToUpdate.cbegin(); i != entsToUpdate.cend(); ++i )
 	{
 		SetEntityGraphics(*i);
 	}
@@ -709,7 +706,7 @@ void WorldRenderer::UpdateWaterBoxes( WaterQuad* quad )
 				{
 				}
 			}
-			
+
 			zWaterBoxes[quad].zCubes[0] = zGraphics->CreateMesh("Media/Models/Cube_1.obj", positions[0]);
 			zWaterBoxes[quad].zCubes[1] = zGraphics->CreateMesh("Media/Models/Cube_2.obj", positions[1]);
 			zWaterBoxes[quad].zCubes[2] = zGraphics->CreateMesh("Media/Models/Cube_3.obj", positions[2]);

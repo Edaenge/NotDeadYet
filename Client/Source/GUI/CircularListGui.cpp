@@ -64,7 +64,7 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 		float imageWidth;
 		float imageHeight;
 		int value;
-		string texName = "";
+		std::string texName = "";
 		for(int i = 0; i < 4; i++)
 		{
 			value = this->zOptions[i];
