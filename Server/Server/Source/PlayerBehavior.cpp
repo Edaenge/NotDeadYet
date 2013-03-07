@@ -5,6 +5,7 @@
 #include "BioActor.h"
 #include "WorldActor.h"
 
+
 PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) : 
 	Behavior(actor, world)
 {	
@@ -16,6 +17,8 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 	this->zNearByRadius = 100.0f;
 	this->zPlayerConfigReader = GetPlayerConfig();
 
+	// Bigger Anchor For Players
+	zAnchor->radius = 50.0f;
 }
 
 PlayerBehavior::~PlayerBehavior()

@@ -22,6 +22,8 @@ class WorldActor;
 class ItemActor;
 class AnimalActor;
 class CraftingManager;
+class MaterialSpawnManager;
+
 
 class Game : public Observer, public Observed
 {
@@ -32,9 +34,9 @@ private:
 	World* zWorld;
 	CraftingManager* zCraftingManager;
 	SoundHandler* zSoundHandler;
-
 	PhysicsEngine* zPhysicsEngine;
 	ActorSynchronizer* zSyncher;
+	MaterialSpawnManager* zMaterialSpawnManager;
 
 	std::map<std::string, Vector3> zCameraOffset;
 	std::map<ClientData*, Player*> zPlayers;

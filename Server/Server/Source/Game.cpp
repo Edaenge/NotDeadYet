@@ -32,6 +32,7 @@
 #include "AnimationFileReader.h"
 #include "PlayerConfigReader.h"
 #include "CraftingManager.h"
+#include "MaterialSpawnManager.h"
 #include "sounds.h"
 
 static const float PI = 3.14159265358979323846f;
@@ -48,7 +49,8 @@ static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
 
 Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* syncher, const std::string& mode, const std::string& worldFile ) :
 	zSyncher(syncher),
-	zPhysicsEngine(physics)
+	zPhysicsEngine(physics),
+	zMaterialSpawnManager(0)
 {	
 	this->zCameraOffset["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
@@ -73,6 +75,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 // Actor Manager
 	this->zActorManager = new ActorManager(syncher, this->zSoundHandler);
 	
+	// Material Spawner
+	zMaterialSpawnManager = new MaterialSpawnManager(zWorld, zActorManager);
+
 	InitItemLookup();
 	InitCraftingRecipes();
 //Initialize Player Configuration file
@@ -118,7 +123,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zTotalSunRadiansShift = 0.0f;
 	this->zSunRadiansShiftPerUpdate = TOTAL_SUN_DEGREE_SHIFT / (SUN_UPDATE_DELAY * TOTAL_SUN_UPDATE_TIME);
 
-//Fog Enclosement
+	//Fog Enclosement
 	this->zPlayersAlive = 0;
 
 	Vector2 worldSize = this->zWorld->GetWorldSize();
@@ -138,11 +143,11 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zFogTimer = 0.0f;
 
 	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
-
 }
 
 Game::~Game()
-{	
+{
+	// Delete Behaviors
 	for( auto i = this->zBehaviors.begin(); i != this->zBehaviors.end(); ++i )
 	{
 		Behavior* data = (*i);
@@ -150,6 +155,7 @@ Game::~Game()
 	}
 	this->zBehaviors.clear();
 
+	// Delete Players
 	for( auto i = this->zPlayers.begin(); i != this->zPlayers.end(); ++i )
 	{
 		Player* data = i->second;
@@ -161,11 +167,13 @@ Game::~Game()
 	}
 	this->zPlayers.clear();
 
-	SAFE_DELETE(this->zWorld);
-	SAFE_DELETE(this->zActorManager);
-	SAFE_DELETE(this->zGameMode);
-	SAFE_DELETE(this->zSoundHandler);
-	SAFE_DELETE(this->zCraftingManager);
+	// Delete Subsystems
+	SAFE_DELETE(zWorld);
+	SAFE_DELETE(zActorManager);
+	SAFE_DELETE(zGameMode);
+	SAFE_DELETE(zSoundHandler);
+	SAFE_DELETE(zCraftingManager);
+	SAFE_DELETE(zMaterialSpawnManager);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -255,6 +263,7 @@ void Game::SpawnItemsDebug()
 	const Bandage*		temp_bandage_G	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT);
 	const Container*	temp_waterBottle= GetItemLookup()->GetContainer(ITEM_SUB_TYPE_CANTEEN);
 	const Misc*			temp_Trap		= GetItemLookup()->GetMisc(ITEM_SUB_TYPE_REGULAR_TRAP);
+
 	unsigned int increment = 0;
 	int maxPoints = 10;
 	float radius = 3.5f;
@@ -1739,7 +1748,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//Set Nearby actors
 				projBehavior->SetNearBioActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearBioActors() );
 				projBehavior->SetNearWorldActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearWorldActors() );
-
+				
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
 				this->zBehaviors.insert(projBehavior);
@@ -1815,7 +1824,9 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 			std::string msg;
 			if (item)
 			{
-				CraftedTypes craftedType = CraftedTypes(craftType, craftSubType);
+				CraftedTypes craftedType = CraftedTypes();
+				craftedType.type = craftType;
+				craftedType.subType = craftSubType;
 				//Items used for crafting and the required stacks.
 				std::map<Item*, unsigned int> item_stack_out;
 
@@ -2332,7 +2343,9 @@ void Game::RestartGame()
 	this->zActorManager->ClearAll();
 	//Remove old messages
 	this->zSyncher->ClearAll();
-
+	//Remove loaded entities
+	this->zWorldActors.clear();
+	
 	//Recreate Actors
 	std::string message = "";
 	auto it_zPlayers_end = zPlayers.end();

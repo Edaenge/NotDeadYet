@@ -88,6 +88,7 @@ Client::Client()
 	this->zPam = new PickAnimalMenu();
 
 	this->zGameTimer = new GameTimer();
+	this->zPerf = new MaloWPerformance();
 }
 
 void Client::Connect(const std::string &IPAddress, const unsigned int &port, std::string& errMsg, int& errorCode)
@@ -101,6 +102,7 @@ void Client::Connect(const std::string &IPAddress, const unsigned int &port, std
 
 Client::~Client()
 {
+	this->zPerf->GenerateReport(this->zEng->GetEngineParameters());
 	this->zEng->GetCamera()->RemoveMesh();
 
 	this->Close();
@@ -116,6 +118,7 @@ Client::~Client()
 
 	SAFE_DELETE(this->zWorld);
 	SAFE_DELETE(this->zGameTimer);
+	SAFE_DELETE(this->zPerf);
 
 	this->zMeshCameraOffsets.clear();
 	this->zStateCameraOffset.clear();
@@ -157,10 +160,14 @@ void Client::Update()
 {
 	this->UpdateText();
 
+	this->zPerf->PreMeasure("Actor Updates", 0);
 	this->zActorManager->UpdateObjects(this->zGameTimer->GetDeltaTime(), this->zID);
+	this->zPerf->PostMeasure("Actor Updates", 0);
 
+	this->zPerf->PreMeasure("Gui Updates", 3);
 	if (this->zGuiManager)
 		this->zGuiManager->Update(this->zDeltaTime);
+	this->zPerf->PostMeasure("Gui Updates", 3);
 
 	// Anchors with the world to decide what to render.
 	if(zWorld)
@@ -174,9 +181,14 @@ void Client::Update()
 
 			this->zAnchor->radius = this->zEng->GetEngineParameters().FarClip;
 		}
+		this->zPerf->PreMeasure("World Updates", 2);
 		this->zWorld->Update();
+		this->zPerf->PostMeasure("World Updates", 2);
+
+		this->zPerf->PreMeasure("WorldRenderer Updates", 0);
 		if ( zWorldRenderer ) 
 			zWorldRenderer->Update();
+		this->zPerf->PostMeasure("WorldRenderer Updates", 0);
 
 	//	this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
@@ -348,8 +360,11 @@ void Client::UpdateGame()
 	AudioManager* am = AudioManager::GetInstance();
 	am->Update();
 
+	this->zPerf->PreMeasure("Message Reading", 0);
+
 	this->ReadMessages();
 
+	this->zPerf->PostMeasure("Message Reading", 0);
 	this->CheckMenus();
 }
 
@@ -357,7 +372,7 @@ void Client::CheckMenus()
 {
 	if(this->zPam->GetShow())
 	{
-		int returnValue = this->zPam->Run(this->zEnergy);
+		int returnValue = this->zPam->Run((int)this->zEnergy);
 		if(returnValue == DEER)
 		{
 			this->zPam->ToggleMenu();
@@ -1234,15 +1249,21 @@ void Client::HandleNetworkPacket( Packet* P )
 {
 	if ( ServerFramePacket* SFP = dynamic_cast<ServerFramePacket*>(P) )
 	{
-		this->UpdateActors(SFP);	
+		this->zPerf->PreMeasure("Network Actor Updating", 2);
+		this->UpdateActors(SFP);
+		this->zPerf->PostMeasure("Network Actor Updating", 2);
 	}
 	else if (NewActorPacket* NPA = dynamic_cast<NewActorPacket*>(P))
 	{
+		this->zPerf->PreMeasure("Network Actor Adding", 2);
 		this->AddActor(NPA);
+		this->zPerf->PostMeasure("Network Actor Adding", 2);
 	}
 	else if (PhysicalConditionPacket* PCP = dynamic_cast<PhysicalConditionPacket*>(P))
 	{
+		this->zPerf->PreMeasure("Network Physical Conditions Updating", 2);
 		this->UpdatePhysicalCondition(PCP);
+		this->zPerf->PostMeasure("Network Physical Conditions Updating", 2);
 	}
 
 	delete P;
@@ -1286,10 +1307,12 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		// Deserialize
 		packet->Deserialize(ss);
+		this->zPerf->PreMeasure("Network Packet Handling", 1);
 
 		// Handle
 		HandleNetworkPacket(packet);
 
+		this->zPerf->PostMeasure("Network Packet Handling", 1);
 		return;
 	}
 
@@ -1298,6 +1321,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 	if (Messages::MsgFileWrite())
 		Messages::Debug(msg);
+	this->zPerf->PreMeasure("Network Message Handling", 1);
 
 	//Checks what type of message was sent
 	if(msgArray[0].find(M_PING.c_str()) == 0)
@@ -1343,6 +1367,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			this->zGuiManager->ResetGui();
 		else
 			this->zGuiManager = new GuiManager(GetGraphics());
+
+		this->zEng->GetCamera()->RemoveMesh();
 	}
 	else if (msgArray[0].find(M_FOG_ENCLOSEMENT.c_str()) == 0)
 	{
@@ -1468,7 +1494,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		float eventId = this->zMsgHandler.ConvertStringToInt(M_PLAY_SOUND, msgArray[0]);
+		int eventId = this->zMsgHandler.ConvertStringToInt(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
 
 		AudioManager* am = AudioManager::GetInstance();
@@ -1563,6 +1589,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		MaloW::Debug("C: Unknown Message Header Was sent from server " + msgArray[0] + " in HandleNetworkMessage");
 		MaloW::Debug("C: " + msg);
 	}
+	this->zPerf->PostMeasure("Network Message Handling", 1);
 }
 
 bool Client::CheckHumanSpecificMessages(std::vector<std::string> msgArray)
@@ -1820,11 +1847,11 @@ void Client::UpdateHealthAndBleedingImage()
 	{
 		if(!this->zDroppingPulse)
 		{
-			this->zBleedingOpacity += this->zDeltaTime * 0.14 * (this->zBleedingLevel - 1.0f);
+			this->zBleedingOpacity += this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
 		}
 		else
 		{
-			this->zBleedingOpacity -= this->zDeltaTime * 0.14 * (this->zBleedingLevel - 1.0f);
+			this->zBleedingOpacity -= this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
 		}
 	}
 	else

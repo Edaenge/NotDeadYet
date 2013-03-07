@@ -29,10 +29,13 @@ public:
 	InventoryGui(float x, float y, float width, float height, std::string textureName);
 	virtual ~InventoryGui();
 
+	std::vector<InventorySlotGui*> GetInventory(){ return this->zSlotGui; }
+
 	virtual bool AddToRenderer(GraphicsEngine* ge);
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
 	Selected_Item_ReturnData CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
+
 	bool AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	bool RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	void EquipItem(const Gui_Item_Data gid, bool guiOpen);
@@ -41,10 +44,11 @@ public:
 	void FadeOut(float value);
 	void ShowGui();
 	void HideGui();
+
 	std::string GetImageName(unsigned int position);
 	void UpdateInventoryWeight(float weight);
-	void Reset(bool open);
 
+	void Reset(bool open);
 	void Resize(float windowWidth, float windowHeight, float dx);
 private:
 	Vector3 lerp(Vector3 x, Vector3 y, float a);

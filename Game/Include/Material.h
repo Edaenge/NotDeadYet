@@ -7,6 +7,7 @@
 
 #include "Item.h"
 
+//NOTE: Do not rearrange!!!.
 static const enum M_MATERIAL_ITEM_SUB_TYPE
 {
 	ITEM_SUB_TYPE_SMALL_STICK,
