@@ -17,7 +17,7 @@ BioActor::BioActor() : Actor()
 	this->zStamina = zStaminaMax;
 	this->zStaminaCof = 2.2f;
 
-	this->zCollisionRadius = 0.5f;
+	this->zCollisionRadius = 0.3f;
 
 	this->zBleedingLevel = 0.0f;
 	this->zValid = false;
@@ -43,7 +43,7 @@ BioActor::BioActor(Player* player) : Actor()
 
 	this->zBleedingLevel = 0.0f;
 	this->zValid = false;
-	this->zCollisionRadius = 0.5f;
+	this->zCollisionRadius = 0.3f;
 
 	CalculateCollisionPoints();
 }
