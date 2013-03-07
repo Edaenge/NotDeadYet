@@ -2,11 +2,14 @@
 #include "Behavior.h"
 #include "Actor.h"
 
+using namespace std::chrono;
+
 
 Behavior::Behavior( Actor* actor, World* world ) :
 	zActor(actor),
 	zWorld(world),
-	zAnchor(0)
+	zAnchor(0),
+	zAwakeTime(time_point_cast<fSeconds>(system_clock::now()))
 {
 	zActor->AddObserver(this);
 
@@ -25,6 +28,16 @@ Behavior::~Behavior()
 
 	if (zActor)
 		zActor->RemoveObserver(this);
+}
+
+void Behavior::Sleep(float time)
+{
+	zAwakeTime = time_point_cast<fSeconds>(system_clock::now()) + fSeconds(time);
+}
+
+bool Behavior::IsAwake() const
+{
+	return time_point_cast<fSeconds>(system_clock::now()) > zAwakeTime;
 }
 
 void Behavior::OnEvent(Event* e)
