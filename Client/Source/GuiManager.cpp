@@ -4,6 +4,7 @@
 #define LOOTING_GUI_PATH "Media/Icons/Use_v02.png"
 #define INVENTORY_GUI_PATH "Media/InGameUI/Inventory_BG.png"
 #define LOOT_GUI_PATH "Media/InGameUI/Loot_BG.png"
+#define CRAFT_GUI_PATH "Media/Menu/CraftingMenu/Crafting_BG.png"
 #define IN_GAME_MENU_GUI_PATH "Media/Icons/Use_v02.png"
 #define INVENTORY_ITEM_SELECTION_GUI_PATH "Media/Icons/Menu_Circle.png"
 
@@ -19,6 +20,7 @@ GuiManager::GuiManager()
 {
 	this->zLooting = false;
 	this->zInventoryOpen = false;
+	this->zCraftOpen = false;
 	this->zCircularInventorySelectionOpen = false;
 
 	this->zLootingGuiShowTimer = 0.0f;
@@ -61,6 +63,8 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 
 	this->zLootGui = new LootInventoryGui(0, windowHeight - heightLoot, width, heightLoot, LOOT_GUI_PATH);
 
+	this->zCraftingGui = new CraftingMenu((150.0f / 1024.0f) * dx, (150.0f / 768.0f) * windowHeight, (312.0f / 1024.0f) * dx, (250.0f / 768.0f) * windowHeight, CRAFT_GUI_PATH);
+
 	Vector2 mousePosition = this->zEng->GetKeyListener()->GetMousePosition();
 
 	x = mousePosition.x;
@@ -93,6 +97,12 @@ GuiManager::~GuiManager()
 	{
 		delete this->zLootGui;
 		this->zLootGui = NULL;
+	}
+
+	if(this->zCraftingGui)
+	{
+		delete this->zCraftingGui;
+		this->zCraftingGui = NULL;
 	}
 	//if (this->zLootingGui)
 	//{
@@ -145,6 +155,24 @@ void GuiManager::ToggleLootGui(unsigned int lootActorId)
 		}
 	}
 }
+
+void GuiManager::ToggleCraftingGui()
+{
+	if (!this->zCraftOpen)
+	{
+		//Show Inventory
+		this->zCraftingGui->UpdateCrafting(this->zInvGui->GetInventory());
+		this->zCraftingGui->AddToRenderer(this->zEng);
+		this->zCraftOpen = true;
+	}
+	else
+	{
+		//Hide Inventory
+		this->zCraftOpen = false;
+		this->zCraftingGui->RemoveFromRenderer(this->zEng);
+	}
+}
+
 
 void GuiManager::AddInventoryItemToGui(const Gui_Item_Data gid)
 {
@@ -327,6 +355,22 @@ Menu_select_data GuiManager::CheckCollisionInv()
 	msd.gid.zType = -1;
 	return msd;
 }
+
+Menu_select_data GuiManager::CheckCrafting()
+{
+	if( this->zCraftOpen )
+	{
+		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
+		this->zCraftingGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(1), zEng);
+	}
+
+	Menu_select_data msd;
+	msd.zAction = (CIRCMENU)-1;
+	msd.gid.zID = -1;
+	msd.gid.zType = -1;
+	return msd;
+}
+
 
 void GuiManager::EquipItem( const Gui_Item_Data gid )
 {

@@ -48,6 +48,7 @@
     <ClCompile Include="Source\GUI\InventorySlotGui.cpp" />
     <ClCompile Include="Source\GUI\LootInventoryGui.cpp" />
     <ClCompile Include="Source\GUI\NoEvent.cpp" />
+    <ClCompile Include="Source\GUI\RecipeNoteGui.cpp" />
     <ClCompile Include="Source\GUI\SimpleButton.cpp" />
     <ClCompile Include="Source\GUI\TextBox.cpp" />
     <ClCompile Include="Source\InGameMenu.cpp" />
@@ -86,6 +87,7 @@
     <ClInclude Include="Source\GUI\InventorySlotGui.h" />
     <ClInclude Include="Source\GUI\LootInventoryGui.h" />
     <ClInclude Include="Source\GUI\NoEvent.h" />
+    <ClInclude Include="Source\GUI\RecipeNoteGui.h" />
     <ClInclude Include="Source\GUI\SimpleButton.h" />
     <ClInclude Include="Source\GUI\TextBox.h" />
     <ClInclude Include="Source\InGameMenu.h" />
