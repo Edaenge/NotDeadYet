@@ -102,9 +102,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	//this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();		//this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnItemsDebug();
+	//this->SpawnAnimalsDebug();
+	this->SpawnHumanDebug();
+
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
 
@@ -268,7 +269,7 @@ void Game::SpawnItemsDebug()
 	unsigned int increment = 0;
 	int maxPoints = 10;
 	float radius = 3.5f;
-	int numberOfObjects = 10;
+	int numberOfObjects = 12;
 	int total = 0;
 	Vector3 center;
 	Vector3 position;
