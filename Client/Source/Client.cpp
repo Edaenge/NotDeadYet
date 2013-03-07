@@ -191,7 +191,6 @@ void Client::Update()
 	}		
 
 	this->UpdateHealthAndBleedingImage();
-	this->zPerf->PreMeasure("WorldRenderer Updates", 2);
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
 

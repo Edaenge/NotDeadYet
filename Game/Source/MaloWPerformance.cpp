@@ -59,7 +59,7 @@ void MaloWPerformance::PostMeasure( string perfName, int tier )
 void MaloWPerformance::GenerateReport(iGraphicsEngineParams& gep)
 {
 	fstream writeFile;
-	writeFile.open ("MPR.txt", ios::out | ios::trunc);
+	writeFile.open ("MPR_Client.txt", ios::out | ios::trunc);
 	writeFile << "Performance report, times in milliseconds, IE 100 in the file = 0.1 seconds." << endl << endl;
 	writeFile << "Settings: " << endl;
 	writeFile << "Resolution: " << gep.WindowWidth << " x " << gep.WindowHeight << endl;

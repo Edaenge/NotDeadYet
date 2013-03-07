@@ -1814,7 +1814,9 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 			std::string msg;
 			if (item)
 			{
-				CraftedTypes craftedType = CraftedTypes(craftType, craftSubType);
+				CraftedTypes craftedType = CraftedTypes();
+				craftedType.type = craftType;
+				craftedType.subType = craftSubType;
 				//Items used for crafting and the required stacks.
 				std::map<Item*, unsigned int> item_stack_out;
 
