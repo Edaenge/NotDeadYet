@@ -33,6 +33,7 @@ static const std::string FILENAME		= "CraftingRecipes.cfg";
 
 static const std::string RECIPE			= "#RECIPE";
 static const std::string CRAFTING_TYPE	= "CRAFTING_TYPE";
+static const std::string CRAFTING_PATH	= "CRAFTING_PATH";
 static const std::string MATERIAL_REQ	= "MATERIAL_REQ";
 static const std::string END			= "#END";
 
@@ -40,7 +41,7 @@ CraftingReader::CraftingReader()
 {
 	if(!this->ReadFromFile())
 	{
-		CraftedTypes* craft_Bow = new CraftedTypes(ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW);
+		CraftedTypes* craft_Bow = new CraftedTypes(ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW, "Media/Models/Bow_Icon_Temp.png");
 
 		std::map<unsigned int, unsigned int> Bow_Materials;
 		Bow_Materials[ITEM_SUB_TYPE_MEDIUM_STICK] = 4;
@@ -48,20 +49,20 @@ CraftingReader::CraftingReader()
 		this->zMappedTypesToMaterialsReq[craft_Bow] = Bow_Materials;
 		this->zCraftingList.push_back(craft_Bow);
 
-		CraftedTypes* craft_Arrow = new CraftedTypes(ITEM_TYPE_PROJECTILE, ITEM_SUB_TYPE_ARROW);
+		CraftedTypes* craft_Arrow = new CraftedTypes(ITEM_TYPE_PROJECTILE, ITEM_SUB_TYPE_ARROW, "Media/Models/Arrow_Icon_Temp.png");
 		std::map<unsigned int, unsigned int> Arrow_Materials;
 		Arrow_Materials[ITEM_SUB_TYPE_SMALL_STICK] = 2;
 		this->zMappedTypesToMaterialsReq[craft_Arrow] = Arrow_Materials;
 		this->zCraftingList.push_back(craft_Arrow);
 
-		CraftedTypes* craft_Bandage = new CraftedTypes(ITEM_TYPE_BANDAGE, ITEM_SUB_TYPE_BANDAGE_POOR);
+		CraftedTypes* craft_Bandage = new CraftedTypes(ITEM_TYPE_BANDAGE, ITEM_SUB_TYPE_BANDAGE_POOR, "Media/Models/Poor_Bandage_Icon_Temp.png");
 		std::map<unsigned int, unsigned int> Bandage_Materials;
 		Bandage_Materials[ITEM_SUB_TYPE_DISENFECTANT_LEAF] = 1;
 		Bandage_Materials[ITEM_SUB_TYPE_THREAD] = 1;
 		this->zMappedTypesToMaterialsReq[craft_Bandage] = Bandage_Materials;
 		this->zCraftingList.push_back(craft_Bandage);
 
-		CraftedTypes* craft_Trap = new CraftedTypes(ITEM_TYPE_MISC, ITEM_SUB_TYPE_REGULAR_TRAP);
+		CraftedTypes* craft_Trap = new CraftedTypes(ITEM_TYPE_MISC, ITEM_SUB_TYPE_REGULAR_TRAP, "Media/Models/Trap_Icon_Temp.png");
 		std::map<unsigned int, unsigned int> Trap_Materials;
 		Trap_Materials[ITEM_SUB_TYPE_LARGE_STICK] = 8;
 		Trap_Materials[ITEM_SUB_TYPE_MEDIUM_STICK] = 10;
@@ -69,7 +70,7 @@ CraftingReader::CraftingReader()
 		this->zMappedTypesToMaterialsReq[craft_Trap] = Trap_Materials;
 		this->zCraftingList.push_back(craft_Trap);
 
-		CraftedTypes* craft_Campfire = new CraftedTypes(ITEM_TYPE_MISC, ITEM_SUB_TYPE_CAMPFIRE);
+		CraftedTypes* craft_Campfire = new CraftedTypes(ITEM_TYPE_MISC, ITEM_SUB_TYPE_CAMPFIRE, "Media/Models/Campfire_Icon_Temp.png");
 		std::map<unsigned int, unsigned int> Campfire_Materials;
 		Campfire_Materials[ITEM_SUB_TYPE_LARGE_STICK] = 2;
 		Campfire_Materials[ITEM_SUB_TYPE_MEDIUM_STICK] = 3;
@@ -115,7 +116,7 @@ bool CraftingReader::ReadFromFile()
 
 		if (line == RECIPE)
 		{
-			CraftedTypes* ct = NULL;
+			CraftedTypes* ct = new CraftedTypes();
 			while (!read.eof() && line != END)
 			{
 				std::getline(read, line);
@@ -145,6 +146,8 @@ void CraftingReader::WriteToFile()
 
 		write << CRAFTING_TYPE << "=" << it->first->type << "," << it->first->subType << "\n";
 
+		write << CRAFTING_PATH << "=" << it->first->filePath << "\n";
+
 		for (auto it_m = it->second.begin(); it_m != it->second.end(); it_m++)
 		{
 			write << MATERIAL_REQ << "=" << it_m->first << "," << it_m->second << "\n";
@@ -166,12 +169,17 @@ void CraftingReader::InterpCommand(std::string value, std::string key, CraftedTy
 
 		int type = atoi(a);
 		int subType = atoi(b);
-		ct = new CraftedTypes(type, subType);
+		ct->type = type;
+		ct->subType = subType;
 
 		std::map<unsigned int, unsigned int> map;
 		this->zMappedTypesToMaterialsReq[ct] = map;
 
 		this->zCraftingList.push_back(ct);
+	}
+	else if (key == CRAFTING_PATH)
+	{
+		ct->filePath = value;
 	}
 	else if (key == MATERIAL_REQ)
 	{

@@ -1747,7 +1747,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//Set Nearby actors
 				projBehavior->SetNearBioActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearBioActors() );
 				projBehavior->SetNearWorldActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearWorldActors() );
-
+				
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
 				this->zBehaviors.insert(projBehavior);
@@ -1823,7 +1823,9 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemID, const unsi
 			std::string msg;
 			if (item)
 			{
-				CraftedTypes craftedType = CraftedTypes(craftType, craftSubType);
+				CraftedTypes craftedType = CraftedTypes();
+				craftedType.type = craftType;
+				craftedType.subType = craftSubType;
 				//Items used for crafting and the required stacks.
 				std::map<Item*, unsigned int> item_stack_out;
 
@@ -2337,7 +2339,9 @@ void Game::RestartGame()
 	this->zActorManager->ClearAll();
 	//Remove old messages
 	this->zSyncher->ClearAll();
-
+	//Remove loaded entities
+	this->zWorldActors.clear();
+	
 	//Recreate Actors
 	std::string message = "";
 	auto it_zPlayers_end = zPlayers.end();

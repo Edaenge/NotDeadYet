@@ -15,7 +15,7 @@ Entity::~Entity()
 {
 	EntityDeletedEvent EDE;
 	EDE.entity = this;
-	NotifyObservers( &EDE );
+	//NotifyObservers( &EDE );
 }
 
 void Entity::SetPosition( const Vector3& pos )
