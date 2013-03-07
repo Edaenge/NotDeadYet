@@ -1503,8 +1503,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_LOAD_MAP.c_str()) == 0)
 	{
+		// Server tells client to load a specific map
 		std::string mapName = this->zMsgHandler.ConvertStringToSubstring(M_LOAD_MAP, msgArray[0]);
-
 		this->InitGraphics(mapName);
 	}
 	else if(msgArray[0].find(M_ERROR_MESSAGE.c_str()) == 0)
