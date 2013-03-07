@@ -77,13 +77,13 @@ void MaterialSpawnManager::ProcessEntity(const Entity* entity)
 				ItemActor* actor = new ItemActor(new_item);
 
 				// Randomize Direction
-				float dir = (float)rand() / (float)RAND_MAX * 3.13;
+				float dir = (float)rand() / (float)RAND_MAX * 3.14f;
 
 				// Position
 				Vector3 pos = entity->GetPosition() + Vector3(cos(dir), 0.0f, sin(dir)) * i->distance;
 				try
 				{
-					pos = Vector3(pos.x, zWorld->GetHeightAt(pos.GetXZ()), pos.z);
+					pos = Vector3(pos.x, zWorld->CalcHeightAtWorldPos(pos.GetXZ())+0.1f, pos.z);
 				}
 				catch(...)
 				{

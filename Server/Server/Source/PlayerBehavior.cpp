@@ -18,7 +18,7 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 	this->zPlayerConfigReader = GetPlayerConfig();
 
 	// Bigger Anchor For Players
-	zAnchor->radius = 200.0f;
+	zAnchor->radius = 50.0f;
 }
 
 PlayerBehavior::~PlayerBehavior()
