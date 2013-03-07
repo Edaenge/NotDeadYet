@@ -37,7 +37,7 @@ void Behavior::Sleep(float time)
 
 bool Behavior::IsAwake() const
 {
-	return time_point_cast<fSeconds>(system_clock::now()) > zAwakeTime;
+	return time_point_cast<fSeconds>(system_clock::now()) >= zAwakeTime;
 }
 
 void Behavior::OnEvent(Event* e)

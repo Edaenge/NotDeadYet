@@ -1738,7 +1738,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//Set Nearby actors
 				projBehavior->SetNearBioActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearBioActors() );
 				projBehavior->SetNearWorldActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearWorldActors() );
-
+				
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
 				this->zBehaviors.insert(projBehavior);
