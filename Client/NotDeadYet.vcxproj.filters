@@ -141,6 +141,9 @@
     <ClCompile Include="Source\GUI\LootInventoryGui.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GUI\CraftingMenu.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Client.h">
@@ -261,6 +264,9 @@
       <Filter>Source\Sound</Filter>
     </ClInclude>
     <ClInclude Include="Source\GUI\LootInventoryGui.h">
+      <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUI\CraftingMenu.h">
       <Filter>Source\GUI</Filter>
     </ClInclude>
   </ItemGroup>
