@@ -46,10 +46,10 @@ static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 //Expected playtime
 static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
 
-Game::Game(const int maxClients, ActorSynchronizer* syncher, std::string mode, const std::string& worldFile ) :
-	zSyncher(syncher)
-{
-	this->zPhysicsEngine = GetPhysics();	
+Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* syncher, const std::string& mode, const std::string& worldFile ) :
+	zSyncher(syncher),
+	zPhysicsEngine(physics)
+{	
 	this->zCameraOffset["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
@@ -493,7 +493,6 @@ bool Game::Update( float dt )
 	int counter = 0;
 	while( i != zBehaviors.end() )
 	{
-
 		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
 		{
 			playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
@@ -503,7 +502,7 @@ bool Game::Update( float dt )
 			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 		}
 		
-		if ( (*i)->Update(dt) )
+		if ( (*i)->IsAwake() && (*i)->Update(dt) )
 		{
 			Behavior* temp = (*i);
 			Actor* oldActor = NULL;
@@ -1231,7 +1230,7 @@ void Game::HandleConnection( ClientData* cd )
 	//Tells the client it has been connected.
 	NetworkMessageConverter NMC;
 	std::string message;
-
+	
 	message = NMC.Convert(MESSAGE_TYPE_CONNECTED);
 	cd->Send(message);
 
@@ -2345,8 +2344,8 @@ void Game::RestartGame()
 		pActor->SetModel( (*it).second->GetModelPath() );
 		PlayerHumanBehavior* pBehavior = new PlayerHumanBehavior(pActor, zWorld, (*it).second);
 
-		pActor->SetPosition(CalcPlayerSpawnPoint(32));
-		pActor->SetScale(pActor->GetScale());
+		pActor->SetPosition(CalcPlayerSpawnPoint(32), false);
+		pActor->SetScale(pActor->GetScale(), false);
 		pActor->AddObserver(this->zGameMode);
 		SetPlayerBehavior((*it).second, pBehavior);
 		this->zActorManager->AddActor(pActor);

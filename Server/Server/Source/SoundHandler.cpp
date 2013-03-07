@@ -65,7 +65,7 @@ void SoundHandler::OnEvent( Event* e )
 	}
 	else if(PlayerRemoveEvent *PAE = dynamic_cast<PlayerRemoveEvent *>(e))
 	{
-		zPlayers.insert(PAE->player);
+		zPlayers.erase(PAE->player);
 	}
 }
 
