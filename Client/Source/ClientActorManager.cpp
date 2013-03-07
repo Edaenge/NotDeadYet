@@ -42,9 +42,14 @@ ClientActorManager::~ClientActorManager()
 	this->zUpdates.clear();
 
 	for(int i = 0; i < MAXFOOTSTEPS; i++)
+	{
 		this->zFootStep[i]->Release();
+		delete this->zFootStep[i];
+		this->zFootStep[i] = NULL;
+	}
 
 	delete this->zFootStep;
+	this->zFootStep = NULL;
 
 }
 

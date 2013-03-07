@@ -20,7 +20,12 @@ MainMenu::~MainMenu()
 	SAFE_DELETE(this->zGame);
 
 	ambientMusic->Release();
+	delete ambientMusic;
+	ambientMusic = NULL;
+
 	menuClick->Release();
+	delete menuClick;
+	menuClick = NULL;
 
 	AudioManager::ReleaseInstance();
 }
