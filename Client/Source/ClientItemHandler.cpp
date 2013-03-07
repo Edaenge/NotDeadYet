@@ -22,9 +22,9 @@ void Client::HandleWeaponUse(const unsigned int ID)
 			{
 				this->zPlayerInventory->RemoveItemStack(proj->GetID(), 1);
 
-				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 				Gui_Item_Data gid = this->MakeGID(proj);
 				this->zGuiManager->RemoveInventoryItemFromGui(gid);
+				this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
 			}
 		}
 		else 
@@ -43,9 +43,9 @@ void Client::HandleWeaponUse(const unsigned int ID)
 		{
 			this->zPlayerInventory->RemoveItemStack(proj->GetID(), 1);
 
-			unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 			Gui_Item_Data gid = this->MakeGID(proj);
 			this->zGuiManager->RemoveInventoryItemFromGui(gid);
+			this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
 		}
 	}
 

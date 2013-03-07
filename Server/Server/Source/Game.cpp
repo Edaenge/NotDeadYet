@@ -50,6 +50,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	zSyncher(syncher),
 	zPhysicsEngine(physics)
 {	
+	this->zPerf = NULL;
+
 	this->zCameraOffset["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
@@ -138,7 +140,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zFogTimer = 0.0f;
 
 	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
-
 }
 
 Game::~Game()
@@ -488,6 +489,7 @@ bool Game::Update( float dt )
 	NetworkMessageConverter NMC;
 	std::string msg;
 
+	this->zPerf->PreMeasure("Updating Behaviors", 1);
 	// Update Behaviors
 	auto i = zBehaviors.begin();
 	int counter = 0;
@@ -523,13 +525,18 @@ bool Game::Update( float dt )
 			counter++;
 		}
 	}
+	this->zPerf->PostMeasure("Updating Behaviors", 1);
 
+	this->zPerf->PreMeasure("Updating GameMode", 4);
 	// Update Game Mode, Might Notify That GameMode is Finished
 	if ( this->zGameMode->Update(dt) )
 		return false;
+	this->zPerf->PostMeasure("Updating GameMode", 4);
 
+	this->zPerf->PreMeasure("Updating World", 4);
 	// Update World
 	this->zWorld->Update();
+	this->zPerf->PreMeasure("Updating World", 4);
 
 	//Updating animals and Check fog.
 	static float testUpdater = 0.0f;
@@ -538,10 +545,11 @@ bool Game::Update( float dt )
 
 	if(testUpdater > 4.0f)
 	{
+		this->zPerf->PreMeasure("Updating animal targets", 2);
 		//Creating targets to insert into the animals' behaviors
 		std::set<Actor*> aSet;
-
-		for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+		auto it_zBehaviors_end = zBehaviors.end();
+		for(i = zBehaviors.begin(); i != it_zBehaviors_end; i++)
 		{
 			if(dynamic_cast<BioActor*>((*i)->GetActor()))
 			{
@@ -550,7 +558,7 @@ bool Game::Update( float dt )
 		}
 
 		//Updating animals' targets and Check if Players Are in Fog.
-		for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+		for(i = zBehaviors.begin(); i != it_zBehaviors_end; i++)
 		{
 			if(AIBehavior* animalBehavior = dynamic_cast<AIBehavior*>( (*i) ))
 			{
@@ -574,6 +582,7 @@ bool Game::Update( float dt )
 			}
 		}
 		testUpdater = 0.0f;
+		this->zPerf->PostMeasure("Updating animal targets", 2);
 	}
 
 /*	// Collisions Tests
@@ -669,7 +678,8 @@ bool Game::Update( float dt )
 void Game::OnEvent( Event* e )
 {
 	// TODO: Incoming Message
-
+	if (this->zPerf)
+		this->zPerf->PreMeasure("Game Event Handling", 2);
 	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
 	{
 		HandleConnection(PCE->clientData);
@@ -731,7 +741,9 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerLootItemEvent* PLIE = dynamic_cast<PlayerLootItemEvent*>(e) )
 	{
-		HandleLootItem(PLIE->clientData, PLIE->itemID, PLIE->itemType, PLIE->objID, PLIE->subType);		
+		this->zPerf->PreMeasure("Loot Event Handling", 3);
+		HandleLootItem(PLIE->clientData, PLIE->itemID, PLIE->itemType, PLIE->objID, PLIE->subType);
+		this->zPerf->PostMeasure("Loot Event Handling", 3);
 	}
 	else if ( PlayerDropItemEvent* PDIE = dynamic_cast<PlayerDropItemEvent*>(e) )
 	{
@@ -739,11 +751,15 @@ void Game::OnEvent( Event* e )
 	}
 	else if (PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e))
 	{
+		this->zPerf->PreMeasure("Use Event Handling", 3);
 		HandleUseItem(PUIE->clientData, PUIE->itemID);
+		this->zPerf->PostMeasure("Use Event Handling", 3);
 	}
 	else if (PlayerCraftItemEvent* PCIE = dynamic_cast<PlayerCraftItemEvent*>(e))
 	{
+		this->zPerf->PreMeasure("Craft Event Handling", 3);
 		HandleCraftItem(PCIE->clientData, PCIE->itemID, PCIE->craftedItemType, PCIE->craftedItemSubType);
+		this->zPerf->PostMeasure("Craft Event Handling", 3);
 	}
 	else if (PlayerFillItemEvent* PFIE = dynamic_cast<PlayerFillItemEvent*>(e))
 	{
@@ -751,7 +767,9 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
+		this->zPerf->PreMeasure("Weapon Use Event Handling", 3);
 		HandleUseWeapon(PUEWE->clientData, PUEWE->itemID);
+		this->zPerf->PostMeasure("Weapon Use Event Handling", 3);
 	}
 	else if(PlayerAnimalAttackEvent* PAAE = dynamic_cast<PlayerAnimalAttackEvent*>(e))
 	{
@@ -792,11 +810,15 @@ void Game::OnEvent( Event* e )
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{
+		this->zPerf->PreMeasure("Equip Event Handling", 3);
 		HandleEquipItem(PEIE->clientData, PEIE->itemID);
+		this->zPerf->PostMeasure("Equip Event Handling", 3);
 	}
 	else if (PlayerUnEquipItemEvent* PUEIE = dynamic_cast<PlayerUnEquipItemEvent*>(e) )
 	{
+		this->zPerf->PreMeasure("UnEquip Event Handling", 3);
 		HandleUnEquipItem(PUEIE->clientData, PUEIE->itemID, PUEIE->eq_Slot);
+		this->zPerf->PostMeasure("UnEquip Event Handling", 3);
 	}
 	else if(PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
 	{
@@ -1078,6 +1100,8 @@ void Game::OnEvent( Event* e )
 	}
 
 	NotifyObservers(e);
+	if (this->zPerf)
+		this->zPerf->PostMeasure("Game Event Handling", 2);
 }
 
 void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
