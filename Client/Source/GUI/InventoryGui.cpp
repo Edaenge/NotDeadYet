@@ -104,7 +104,6 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 {
 	if(gid.zCanStack) // If item can stack
 	{
-		bool found = false;
 		Gui_Item_Data returnGid;
 		for(int i = 0; i < SLOTS; i++) // See if the Item exists
 		{

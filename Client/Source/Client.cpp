@@ -347,7 +347,7 @@ void Client::CheckMenus()
 {
 	if(this->zPam->GetShow())
 	{
-		int returnValue = this->zPam->Run(this->zEnergy);
+		int returnValue = this->zPam->Run((int)this->zEnergy);
 		if(returnValue == DEER)
 		{
 			this->zPam->ToggleMenu();
@@ -1469,7 +1469,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_PLAY_SOUND.c_str()) == 0)
 	{
-		float eventId = this->zMsgHandler.ConvertStringToInt(M_PLAY_SOUND, msgArray[0]);
+		int eventId = this->zMsgHandler.ConvertStringToInt(M_PLAY_SOUND, msgArray[0]);
 		Vector3 pos = this->zMsgHandler.ConvertStringToVector(M_POSITION, msgArray[1]);
 
 		AudioManager* am = AudioManager::GetInstance();
@@ -1827,11 +1827,11 @@ void Client::UpdateHealthAndBleedingImage()
 	{
 		if(!this->zDroppingPulse)
 		{
-			this->zBleedingOpacity += this->zDeltaTime * 0.14 * (this->zBleedingLevel - 1.0f);
+			this->zBleedingOpacity += this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
 		}
 		else
 		{
-			this->zBleedingOpacity -= this->zDeltaTime * 0.14 * (this->zBleedingLevel - 1.0f);
+			this->zBleedingOpacity -= this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
 		}
 	}
 	else
