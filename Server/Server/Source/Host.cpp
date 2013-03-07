@@ -34,10 +34,14 @@ Host::Host() :
 	this->zSendUpdateDelayTimer = 0.0f;
 	this->zGameStarted = false;
 	this->zRestartRequested = false;
+
+	this->zPerf = new MaloWPerformance();
+	this->zPerf->SetFilePath("MPR_Server.txt");
 }
 
 Host::~Host()
 {
+	this->zPerf->GenerateReport();
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 
@@ -76,6 +80,7 @@ Host::~Host()
 	}
 
 	FreePhysics();
+	SAFE_DELETE(this->zPerf);
 }
 
 void Host::SendMessageToClient( const std::string& message )
@@ -113,9 +118,14 @@ void Host::Life()
 	{
 		this->zDeltaTime = this->zGameTimer->Frame();
 
+		this->zPerf->PreMeasure("Message Reading", 0);
 		ReadMessages();
+		this->zPerf->PostMeasure("Message Reading", 0);
+
+		this->zPerf->PreMeasure("Updating Game", 0);
 		UpdateGame();
-		
+		this->zPerf->PreMeasure("Updating Game", 0);
+
 		if (FRAME_TIME > 0)
 		{
 			if (this->zDeltaTime < TARGET_DT)
@@ -157,13 +167,17 @@ void Host::UpdateGame()
 		}
 		else if(this->zGame->Update(this->zDeltaTime))
 		{
+			
 			this->PingClients();
 
 			this->zSendUpdateDelayTimer += this->zDeltaTime;
 
 			if (zSendUpdateDelayTimer >= UPDATE_DELAY)
 			{
+				this->zPerf->PreMeasure("Synchronizing", 1);
 				SynchronizeAll();
+				this->zPerf->PostMeasure("Synchronizing", 1);
+
 				zSendUpdateDelayTimer = 0.0f;
 				SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()), false);
 			}
@@ -698,6 +712,7 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
  	// Start New
  	PhysicsInit();
  	this->zGame = new Game(zMaxClients, GetPhysics(), this->zSynchronizer, gameMode, map);
+	this->zGame->SetPerfPtr(this->zPerf);
  	this->AddObserver(this->zGame);
  
  	// Fake Connects

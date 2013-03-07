@@ -22,6 +22,7 @@ class ActorSynchronizer;
 
 class Host : public MaloW::Process, public Observed
 {
+	MaloWPerformance* zPerf;
 	ServerListener* zServerListener;
 
 	NetworkMessageConverter zMessageConverter;

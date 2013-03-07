@@ -58,7 +58,7 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 	//std::vector<Actor*> actors;
 	float latency = 1.0f / (float)this->zLatency;
 	float server_DeltaTime = 1.0f / (float)this->zUpdatesPerSec;
-	float t = deltaTime - server_DeltaTime + latency;//GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
+	float t = deltaTime + latency;//GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
 	static GraphicsEngine* gEng = GetGraphics();
 	int stepsPlayedThisUpdate = 1;
 

@@ -89,6 +89,7 @@ Client::Client()
 
 	this->zGameTimer = new GameTimer();
 	this->zPerf = new MaloWPerformance();
+	this->zPerf->SetFilePath("MPR_Client.txt");
 }
 
 void Client::Connect(const std::string &IPAddress, const unsigned int &port, std::string& errMsg, int& errorCode)
@@ -303,7 +304,7 @@ void Client::Life()
 		{
 			if (this->zDeltaTime < TARGET_DT)
 			{
-				float sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
+				DWORD sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
 				Sleep(sleepTime);
 			}
 		}

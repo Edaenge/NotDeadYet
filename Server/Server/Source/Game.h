@@ -8,6 +8,7 @@
 #include "Physics.h"
 #include "Item.h"
 #include "SoundHandler.h"
+#include "MaloWPerformance.h"
 
 class ClientData;
 class World;
@@ -29,6 +30,7 @@ class Game : public Observer, public Observed
 {
 
 private:
+	MaloWPerformance* zPerf;
 	ActorManager* zActorManager;
 	GameMode* zGameMode;
 	World* zWorld;
@@ -76,6 +78,8 @@ public:
 	Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* syncher, const std::string& mode, const std::string& worldFile);
 	virtual ~Game();
 
+	void SetPerfPtr(MaloWPerformance* perf) {this->zPerf = perf;}
+
 	// Returns false if game has finished
 	bool Update( float dt );
 
@@ -105,8 +109,7 @@ public:
 	void HandleConnection(ClientData* cd);
 	void HandleDisconnect(ClientData* cd);
 	void HandleLootObject(ClientData* cd, std::vector<unsigned int>& actorID);
-	void HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, 
-		unsigned int objID, unsigned int subType );
+	void HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType );
 	void HandleDropItem(ClientData* cd, unsigned int objectID);
 	void HandleUseItem(ClientData* cd, unsigned int itemID);
 	void HandleUseWeapon(ClientData* cd, unsigned int itemID);
