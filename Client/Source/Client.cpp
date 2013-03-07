@@ -1318,6 +1318,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			this->zGuiManager->ResetGui();
 		else
 			this->zGuiManager = new GuiManager(GetGraphics());
+
+		this->zEng->GetCamera()->RemoveMesh();
 	}
 	else if (msgArray[0].find(M_FOG_ENCLOSEMENT.c_str()) == 0)
 	{

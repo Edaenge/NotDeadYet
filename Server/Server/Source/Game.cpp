@@ -2328,7 +2328,9 @@ void Game::RestartGame()
 	this->zActorManager->ClearAll();
 	//Remove old messages
 	this->zSyncher->ClearAll();
-
+	//Remove loaded entities
+	this->zWorldActors.clear();
+	
 	//Recreate Actors
 	std::string message = "";
 	auto it_zPlayers_end = zPlayers.end();
