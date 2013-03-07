@@ -90,8 +90,6 @@ bool ProjectileArrowBehavior::Update( float dt )
  		middle += yValue;
  		newPos.y = middle;
 
-		ProjectileActor* test = dynamic_cast<ProjectileActor*>(zActor);
-
 		this->Stop();
 		this->zActor->SetPosition(newPos);
 		
@@ -248,7 +246,7 @@ Actor* ProjectileArrowBehavior::CheckCollision( const Vector3& pos, const float&
 		return NULL;
 
 	float range = this->zLength;
-	float rangeWithin = 2.0f + range;
+	float rangeWithin = 1.0f + range;
 
 	PhysicsCollisionData data;
 	ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(this->zActor); 
@@ -271,7 +269,7 @@ Actor* ProjectileArrowBehavior::CheckCollision( const Vector3& pos, const float&
 		if( !(*it)->CanCollide() )
 			continue;
 		
-		float distance = ( pos - (*it)->GetPosition() ).GetLength();
+		float distance = ( pos.GetXZ() - (*it)->GetPosition().GetXZ() ).GetLength();
 
 		if( distance > rangeWithin )
 			continue;

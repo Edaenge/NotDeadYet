@@ -29,8 +29,7 @@ namespace GUI
             InitializeComponent();
 
             m_ServerEngine = new CppCLI();
-
-
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
 
         public void ServerLoop()
@@ -73,7 +72,7 @@ namespace GUI
             String mapName = "Media/Maps/" + this.map_combobox.GetItemText(this.map_combobox.SelectedItem);
 
             String str_port = textBox_Port.Text.Trim();
-            String str_players =textBox_Players.Text.Trim();
+            String str_players = textBox_Players.Text.Trim();
             if (FFARadioButton.Checked)
             {
                 gameMode = "FFA";
@@ -122,7 +121,6 @@ namespace GUI
                     textBox_public_ip.Text = IPADD + ":" +textBox_Port.Text; 
                 }
             }
-
         }
 
         private void button_Start_EnabledChanged(object sender, EventArgs e)
@@ -139,8 +137,6 @@ namespace GUI
                 textBox_Players.Enabled = false;
                 textBox_Port.Enabled = false;
             }
-
-            
         }
 
         private void button_Shutdown_EnabledChanged(object sender, EventArgs e)
@@ -203,6 +199,8 @@ namespace GUI
             }
 
             this.map_combobox.Enabled = true;
+
+            // Select top one by default
             if(files.Length > 0)
                 this.map_combobox.SelectedIndex = 0;
         }

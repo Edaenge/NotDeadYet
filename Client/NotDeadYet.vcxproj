@@ -36,6 +36,7 @@
     <ClCompile Include="Source\GUI\ChangeSetEvent.cpp" />
     <ClCompile Include="Source\GUI\CheckBox.cpp" />
     <ClCompile Include="Source\GUI\CircularListGui.cpp" />
+    <ClCompile Include="Source\GUI\CraftingMenu.cpp" />
     <ClCompile Include="Source\GUI\DropDownList.cpp" />
     <ClCompile Include="Source\GUI\Element.cpp" />
     <ClCompile Include="Source\GUI\ChangeTextAndMenuEvent.cpp" />
@@ -73,6 +74,7 @@
     <ClInclude Include="Source\GUI\ChangeSetEvent.h" />
     <ClInclude Include="Source\GUI\CheckBox.h" />
     <ClInclude Include="Source\GUI\CircularListGui.h" />
+    <ClInclude Include="Source\GUI\CraftingMenu.h" />
     <ClInclude Include="Source\GUI\DropDownList.h" />
     <ClInclude Include="Source\GUI\Element.h" />
     <ClInclude Include="Source\GUI\ChangeTextAndMenuEvent.h" />

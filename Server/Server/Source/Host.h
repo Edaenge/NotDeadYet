@@ -31,8 +31,6 @@ class Host : public MaloW::Process, public Observed
 	int zPort;
 	bool zGameStarted;
 	bool zRestartRequested;
-	//INT64 zStartime;
-	//float zSecsPerCnt;
 	float zDeltaTime;
 	GameTimer* zGameTimer;
 	float zTimeOut;
@@ -70,6 +68,7 @@ public:
 
 	/*! Runs the Game Loop.*/
 	void UpdateGame();
+
 	/*! */
 	void SendToAllClients(const std::string& message, bool important = true);
 
