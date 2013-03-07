@@ -273,8 +273,7 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 						if(mousePressed)
 						{
 							Selected_Item_ReturnData sir;
-							sir.ID = (*x)->GetGid().zID;
-							sir.type = (*x)->GetGid().zType;
+							sir.gid= (*x)->GetGid();
 							sir.inventory = 0;
 							return sir;
 						}
@@ -292,15 +291,7 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 					if(mousePressed)
 					{
 						Selected_Item_ReturnData sir;
-						sir.ID = x->second->GetGid().zID;
-						if(this->zWeaponSlots[MELEE] == x->second->GetPosition())
-							sir.type = MELEE;
-						if(this->zWeaponSlots[RANGED] == x->second->GetPosition())
-							sir.type = RANGED;
-						if(this->zWeaponSlots[PROJECTILE] == x->second->GetPosition())
-							sir.type = PROJECTILE;
-
-						//sir.type = (*x)->GetType();
+						sir.gid = x->second->GetGid();
 						sir.inventory = 1;
 						return sir;
 					}
@@ -309,8 +300,8 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 		}
 	}
 	Selected_Item_ReturnData sir;
-	sir.ID = -1;
-	sir.type = -1;
+	sir.gid.zID = -1;
+	sir.gid.zType = -1;
 	sir.inventory = -1;
 	return sir;
 }

@@ -138,7 +138,8 @@ Client::~Client()
 	if (this->zLatencyText)
 		this->zEng->DeleteText(this->zLatencyText);
 
-	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
+	auto it_text_end = this->zDisplayedText.end();
+	for (auto it = this->zDisplayedText.begin(); it != it_text_end; it++)
 	{
 		TextDisplay* temp = (*it);
 
@@ -199,47 +200,6 @@ void Client::Update()
 	
 
 
-}
-
-void Client::IgnoreRender( const float& radius, const Vector2& center )
-{
-	/*std::set<Entity*> zPreviousEntities;
-	std::set<Entity*> entities; 
-	std::set<Entity*> validEntities;
-
-	zWorld->GetEntitiesInCircle(center, radius, entities);
-	
-	for (auto it = entities.begin(); it != entities.end(); it++)
-	{
-		if ( GetEntBlockRadius( (*it)->GetType() ) <= 0.0f )
-		{
-			iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*it);
-			
-			if(mesh)
-			{
-				mesh->DontRender(false);
-				validEntities.insert(*it);
-			}
-		}
-	}
-
-	Check previous, if prev is not in valid, they should not be rendered.
-	for(auto it = zPreviousEntities.begin(); it != zPreviousEntities.end(); it++)
-	{
-		auto found = validEntities.find(*it);
-
-		if(found == validEntities.end())
-		{ 
-			iMesh* temp;
-			temp = this->zWorldRenderer->GetEntityMesh(*it);
-
-			if(temp)
-				temp->DontRender(true);
-		}
-	}
-
-	zPreviousEntities.clear();
-	zPreviousEntities = validEntities;*/
 }
 
 void Client::InitGraphics(const std::string& mapName)
@@ -308,29 +268,13 @@ void Client::InitGraphics(const std::string& mapName)
 		this->zEng->DeleteText(this->zClientUpsText);
 
 	this->zClientUpsText = this->zEng->CreateText("", Vector2(1, 49), 1.0f, "Media/Fonts/new");
-
-	//Go through entities (bush etc) and set render flag.
-	std::set<Entity*> entities;
-	Vector2 size = zWorld->GetWorldSize();
-	float radius = powf(size.x, 2.0f) + powf(size.y, 2.0f);
-	zWorld->GetEntitiesInCircle(center, (radius * 0.5f), entities);
-
-	for (auto i = entities.begin(); i != entities.end(); i++)
-	{
-		if ( GetEntBlockRadius( (*i)->GetType() ) <= 0.0f )
-		{
-			//iMesh* mesh = this->zWorldRenderer->GetEntityMesh(*i);
-			//mesh->DontRender(true);
-		}
-	}
-
 }
 
 void Client::Life()
 {
 	MaloW::Debug("Client Process Started");
 	
-	static const float FRAME_TIME = 120.0f;
+	static const float FRAME_TIME = 60.0f;
 	static const float TARGET_DT = 1.0f / FRAME_TIME;
 
 	this->zGameTimer->Init();
@@ -569,13 +513,13 @@ void Client::CheckPlayerSpecificKeys()
 		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
 
-		if (msd.zAction != -1 && msd.zID != -1)
+		if (msd.zAction != -1 && msd.gid.zID != -1)
 		{
-			Item* item = this->zPlayerInventory->SearchAndGetItem(msd.zID);
+			Item* item = this->zPlayerInventory->SearchAndGetItem(msd.gid.zID);
 			if (msd.zAction == USE)
 			{
 				if (item)
-					SendUseItemMessage(msd.zID);
+					SendUseItemMessage(msd.gid.zID);
 			}
 			if (msd.zAction == CRAFT)
 			{
@@ -605,33 +549,33 @@ void Client::CheckPlayerSpecificKeys()
 						subType = ITEM_SUB_TYPE_BANDAGE_POOR;
 					}
 					
-					SendCraftItemMessage(msd.zID, type, subType);
+					SendCraftItemMessage(msd.gid.zID, type, subType);
 				}
 			}
 			else if(msd.zAction == EQUIP)
 			{
 				if(item)
-					SendEquipItem(msd.zID);
+					SendEquipItem(msd.gid.zID);
 			}
 			else if (msd.zAction == LOOT)
 			{
 				unsigned int id = this->zGuiManager->GetLootingActor();
 				if (id != 0)
-					SendLootItemMessage(id, msd.zID, msd.zType, msd.zSubType);
+					SendLootItemMessage(id, msd.gid.zID, msd.gid.zType, msd.gid.zSubType);
 			}
 			else if (msd.zAction == FILL)
 			{
-				this->SendItemFill(msd.zID);
+				this->SendItemFill(msd.gid.zID);
 			}
 			else if (msd.zAction == DROP)
 			{
 				if(item)
-					this->SendDropItemMessage(msd.zID);
+					this->SendDropItemMessage(msd.gid.zID);
 			}
 			else if (msd.zAction == UNEQUIP)
 			{
 				if(item)
-					this->SendUnEquipItem(msd.zID, (msd.zType));
+					this->SendUnEquipItem(msd.gid.zID, (msd.gid.zType));
 			}
 		}
 	}
@@ -644,7 +588,8 @@ void Client::CheckPlayerSpecificKeys()
 			std::vector<unsigned int> collisionObjects = this->RayVsWorld();
 			if (collisionObjects.size() > 0)
 			{
-				for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
+				auto it_collision_end = collisionObjects.end();
+				for (auto it = collisionObjects.begin(); it != it_collision_end; it++)
 				{
 					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (float)(*it));
 				}
@@ -922,6 +867,7 @@ void Client::CheckAnimalInput()
 			if (collisionObjects.size() > 0)
 			{
 				std::string msg = "";
+				auto it_collision_end = collisionObjects.end();
 				for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
 				{
 					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DEER_EAT_OBJECT, (float)(*it));
@@ -1561,8 +1507,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_LOAD_MAP.c_str()) == 0)
 	{
+		// Server tells client to load a specific map
 		std::string mapName = this->zMsgHandler.ConvertStringToSubstring(M_LOAD_MAP, msgArray[0]);
-
 		this->InitGraphics(mapName);
 	}
 	else if(msgArray[0].find(M_ERROR_MESSAGE.c_str()) == 0)
@@ -1928,7 +1874,8 @@ std::vector<unsigned int> Client::RayVsWorld()
 	//Static objects
 	std::map<unsigned int, Actor*> actors = this->zActorManager->GetActors();
 	iMesh* mesh = NULL;
-	for(auto it = actors.begin(); it != actors.end(); it++)
+	auto it_actors_end = actors.end();
+	for(auto it = actors.begin(); it != it_actors_end; it++)
 	{
 		Actor* actor = it->second;
 		unsigned int ID = it->first;
@@ -2004,7 +1951,8 @@ void Client::OnEvent(Event* e)
 void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsigned int ActorID)
 {
 	Gui_Item_Data gid;
-	for (auto it_Item_Data = msgArray.begin() + 1; it_Item_Data != msgArray.end(); it_Item_Data++)
+	auto it_string_end = msgArray.end();
+	for (auto it_Item_Data = msgArray.begin() + 1; it_Item_Data != it_string_end; it_Item_Data++)
 	{
 		if((*it_Item_Data).find(M_OBJECT_ID.c_str()) == 0)
 		{
@@ -2092,7 +2040,8 @@ void Client::UpdateText()
 
 			it = this->zDisplayedText.erase(it);
 
-			for (auto new_It = it; new_It != this->zDisplayedText.end(); new_It++)
+			auto it_text_end = this->zDisplayedText.end();
+			for (auto new_It = it; new_It != it_text_end; new_It++)
 			{
 				Vector2 oldPos = (*new_It)->zText->GetPosition();
 
@@ -2140,8 +2089,8 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 		this->zEng->DeleteText(temp->zText);
 		SAFE_DELETE(temp);
 	}
-
-	for (auto it = this->zDisplayedText.begin(); it != this->zDisplayedText.end(); it++)
+	auto it_text_end = this->zDisplayedText.end();
+	for (auto it = this->zDisplayedText.begin(); it != it_text_end; it++)
 	{
 		float x = (*it)->zText->GetPosition().x;
 		position = Vector2(x, yStartPosition + c++ * textheight);

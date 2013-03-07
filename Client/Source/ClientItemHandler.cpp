@@ -707,7 +707,9 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	int maxUse = 0;
 	int currUse = 0;
 	char key[256];
-	for (auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
+	
+	auto it_string_end = msgArray.end();
+	for (auto it = msgArray.begin() + 1; it < it_string_end; it++)
 	{
 		sscanf_s((*it).c_str(), "%s ", key, sizeof(key));
 

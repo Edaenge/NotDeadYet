@@ -1,147 +1,158 @@
-
-
 WARNING: Visual Leak Detector detected memory leaks!
----------- Block 2106 at 0x03107240: 120 bytes ----------
+---------- Block 3059 at 0x06773308: 8 bytes ----------
   Call Stack:
-    x:\users\documents\github\notdeadyet\client\source\sounds.cpp (17): Client.exe!SoundsInit + 0x7 bytes
-    x:\users\documents\github\notdeadyet\client\source\main.cpp (25): Client.exe!wWinMain + 0x5 bytes
+    e:\documents\github\notdeadyet\client\source\soundengine\audiomanager.cpp (334): Client.exe!AudioManager::GetEventHandle + 0x7 bytes
+    e:\documents\github\notdeadyet\client\source\mainmenu.cpp (39): Client.exe!MainMenu::Init + 0x1B bytes
+    e:\documents\github\notdeadyet\client\source\main.cpp (35): Client.exe!wWinMain
     f:\dd\vctools\crt_bld\self_x86\crt\src\crtexe.c (528): Client.exe!__tmainCRTStartup + 0x15 bytes
     f:\dd\vctools\crt_bld\self_x86\crt\src\crtexe.c (377): Client.exe!wWinMainCRTStartup
-    0x759D8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
-    0x77CAAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
-    0x77CAAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
+    0x748F8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
+    0x771AAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
+    0x771AAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
   Data:
-    C0 62 3F 01    A0 39 B5 00    20 99 10 03    78 98 10 03     .b?..9.. ....x...
-    00 00 00 00    F0 9B 10 03    88 9B 10 03    00 00 00 00     ........ ........
-    00 00 00 00    00 00 00 00    E0 14 46 05    D0 2B 46 05     ........ ..F..+F.
-    88 D2 B5 00    00 00 00 00    00 00 00 00    00 00 00 00     ........ ........
-    00 00 00 00    00 00 00 00    00 00 00 00    00 00 00 00     ........ ........
-    00 00 00 00    00 00 00 00    00 00 00 00    00 00 00 00     ........ ........
-    CD CD CD CD    CD CD CD CD    CD CD CD CD    00 00 00 00     ........ ........
-    05 40 04 00    00 00 CD CD                                   .@...... ........
+    24 C2 1D 01    01 00 48 00                                   $.....H. ........
 
 
----------- Block 2107 at 0x03109878: 40 bytes ----------
+---------- Block 3073 at 0x06774DD8: 8 bytes ----------
   Call Stack:
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (788): Client.exe!std::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > >::_Buynode0 + 0x18 bytes
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (774): Client.exe!std::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > >::_Buyheadnode
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (727): Client.exe!std::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > >::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > > + 0x8 bytes
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (830): Client.exe!std::_List_buy<SoundStruct,std::allocator<SoundStruct> >::_List_buy<SoundStruct,std::allocator<SoundStruct> >
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (900): Client.exe!std::list<SoundStruct,std::allocator<SoundStruct> >::list<SoundStruct,std::allocator<SoundStruct> >
-    x:\users\documents\github\notdeadyet\client\source\soundengine\soundhandler.cpp (3): Client.exe!SoundHandler::SoundHandler + 0x59 bytes
-    x:\users\documents\github\notdeadyet\client\source\sounds.cpp (17): Client.exe!SoundsInit + 0x2B bytes
-    x:\users\documents\github\notdeadyet\client\source\main.cpp (25): Client.exe!wWinMain + 0x5 bytes
+    e:\documents\github\notdeadyet\client\source\soundengine\audiomanager.cpp (334): Client.exe!AudioManager::GetEventHandle + 0x7 bytes
+    e:\documents\github\notdeadyet\client\source\mainmenu.cpp (42): Client.exe!MainMenu::Init + 0x1B bytes
+    e:\documents\github\notdeadyet\client\source\main.cpp (35): Client.exe!wWinMain
     f:\dd\vctools\crt_bld\self_x86\crt\src\crtexe.c (528): Client.exe!__tmainCRTStartup + 0x15 bytes
     f:\dd\vctools\crt_bld\self_x86\crt\src\crtexe.c (377): Client.exe!wWinMainCRTStartup
-    0x759D8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
-    0x77CAAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
-    0x77CAAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
+    0x748F8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
+    0x771AAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
+    0x771AAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
   Data:
-    78 98 10 03    78 98 10 03    CD CD CD CD    CD CD CD CD     x...x... ........
-    CD CD CD CD    CD CD CD CD    CD CD CD CD    CD CD CD CD     ........ ........
-    CD CD CD CD    CD CD CD CD                                   ........ ........
+    24 C2 1D 01    01 00 4C 00                                   $.....L. ........
 
 
----------- Block 2108 at 0x03109920: 8 bytes ----------
+---------- Block 785600 at 0x148829B0: 8 bytes ----------
   Call Stack:
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (755): Client.exe!std::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > >::_Alloc_proxy + 0xA bytes
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (729): Client.exe!std::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > >::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > > + 0x8 bytes
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (830): Client.exe!std::_List_buy<SoundStruct,std::allocator<SoundStruct> >::_List_buy<SoundStruct,std::allocator<SoundStruct> >
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (900): Client.exe!std::list<SoundStruct,std::allocator<SoundStruct> >::list<SoundStruct,std::allocator<SoundStruct> >
-    x:\users\documents\github\notdeadyet\client\source\soundengine\soundhandler.cpp (3): Client.exe!SoundHandler::SoundHandler + 0x59 bytes
-    x:\users\documents\github\notdeadyet\client\source\sounds.cpp (17): Client.exe!SoundsInit + 0x2B bytes
-    x:\users\documents\github\notdeadyet\client\source\main.cpp (25): Client.exe!wWinMain + 0x5 bytes
-    f:\dd\vctools\crt_bld\self_x86\crt\src\crtexe.c (528): Client.exe!__tmainCRTStartup + 0x15 bytes
-    f:\dd\vctools\crt_bld\self_x86\crt\src\crtexe.c (377): Client.exe!wWinMainCRTStartup
-    0x759D8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
-    0x77CAAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
-    0x77CAAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
+    e:\documents\github\notdeadyet\client\source\soundengine\audiomanager.cpp (334): Client.exe!AudioManager::GetEventHandle + 0x7 bytes
+    e:\documents\github\notdeadyet\client\source\clientactormanager.cpp (13): Client.exe!ClientActorManager::ClientActorManager + 0x21 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (245): Client.exe!Client::InitGraphics + 0x2B bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (1569): Client.exe!Client::HandleNetworkMessage
+    e:\documents\github\notdeadyet\client\source\client.cpp (446): Client.exe!Client::ReadMessages + 0x11 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (385): Client.exe!Client::UpdateGame
+    e:\documents\github\notdeadyet\client\source\client.cpp (340): Client.exe!Client::Life
+    e:\documents\github\notdeadyet\malow\include\process.h (84): Client.exe!MaloW::Process::threadProc + 0xF bytes
+    0x748F8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
+    0x771AAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
+    0x771AAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
   Data:
-    48 72 10 03    00 00 00 00                                   Hr...... ........
+    24 C2 1D 01    01 08 0C 00                                   $....... ........
 
 
----------- Block 2109 at 0x03109B88: 40 bytes ----------
+---------- Block 785601 at 0x148829F8: 8 bytes ----------
   Call Stack:
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (788): Client.exe!std::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > >::_Buynode0 + 0x18 bytes
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (774): Client.exe!std::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > >::_Buyheadnode
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (727): Client.exe!std::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > >::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > > + 0x8 bytes
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (830): Client.exe!std::_List_buy<SoundStruct,std::allocator<SoundStruct> >::_List_buy<SoundStruct,std::allocator<SoundStruct> >
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (900): Client.exe!std::list<SoundStruct,std::allocator<SoundStruct> >::list<SoundStruct,std::allocator<SoundStruct> >
-    x:\users\documents\github\notdeadyet\client\source\soundengine\soundhandler.cpp (3): Client.exe!SoundHandler::SoundHandler + 0x6B bytes
-    x:\users\documents\github\notdeadyet\client\source\sounds.cpp (17): Client.exe!SoundsInit + 0x2B bytes
-    x:\users\documents\github\notdeadyet\client\source\main.cpp (25): Client.exe!wWinMain + 0x5 bytes
-    f:\dd\vctools\crt_bld\self_x86\crt\src\crtexe.c (528): Client.exe!__tmainCRTStartup + 0x15 bytes
-    f:\dd\vctools\crt_bld\self_x86\crt\src\crtexe.c (377): Client.exe!wWinMainCRTStartup
-    0x759D8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
-    0x77CAAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
-    0x77CAAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
+    e:\documents\github\notdeadyet\client\source\soundengine\audiomanager.cpp (334): Client.exe!AudioManager::GetEventHandle + 0x7 bytes
+    e:\documents\github\notdeadyet\client\source\clientactormanager.cpp (13): Client.exe!ClientActorManager::ClientActorManager + 0x21 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (245): Client.exe!Client::InitGraphics + 0x2B bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (1569): Client.exe!Client::HandleNetworkMessage
+    e:\documents\github\notdeadyet\client\source\client.cpp (446): Client.exe!Client::ReadMessages + 0x11 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (385): Client.exe!Client::UpdateGame
+    e:\documents\github\notdeadyet\client\source\client.cpp (340): Client.exe!Client::Life
+    e:\documents\github\notdeadyet\malow\include\process.h (84): Client.exe!MaloW::Process::threadProc + 0xF bytes
+    0x748F8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
+    0x771AAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
+    0x771AAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
   Data:
-    88 9B 10 03    88 9B 10 03    CD CD CD CD    CD CD CD CD     ........ ........
-    CD CD CD CD    CD CD CD CD    CD CD CD CD    CD CD CD CD     ........ ........
-    CD CD CD CD    CD CD CD CD                                   ........ ........
+    24 C2 1D 01    01 10 0C 00                                   $....... ........
 
 
----------- Block 2110 at 0x03109BF0: 8 bytes ----------
+---------- Block 785602 at 0x14882A40: 8 bytes ----------
   Call Stack:
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (755): Client.exe!std::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > >::_Alloc_proxy + 0xA bytes
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (729): Client.exe!std::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > >::_List_alloc<0,std::_List_base_types<SoundStruct,std::allocator<SoundStruct> > > + 0x8 bytes
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (830): Client.exe!std::_List_buy<SoundStruct,std::allocator<SoundStruct> >::_List_buy<SoundStruct,std::allocator<SoundStruct> >
-    x:\program files (x86)\microsoft visual studio 11.0\vc\include\list (900): Client.exe!std::list<SoundStruct,std::allocator<SoundStruct> >::list<SoundStruct,std::allocator<SoundStruct> >
-    x:\users\documents\github\notdeadyet\client\source\soundengine\soundhandler.cpp (3): Client.exe!SoundHandler::SoundHandler + 0x6B bytes
-    x:\users\documents\github\notdeadyet\client\source\sounds.cpp (17): Client.exe!SoundsInit + 0x2B bytes
-    x:\users\documents\github\notdeadyet\client\source\main.cpp (25): Client.exe!wWinMain + 0x5 bytes
-    f:\dd\vctools\crt_bld\self_x86\crt\src\crtexe.c (528): Client.exe!__tmainCRTStartup + 0x15 bytes
-    f:\dd\vctools\crt_bld\self_x86\crt\src\crtexe.c (377): Client.exe!wWinMainCRTStartup
-    0x759D8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
-    0x77CAAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
-    0x77CAAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
+    e:\documents\github\notdeadyet\client\source\soundengine\audiomanager.cpp (334): Client.exe!AudioManager::GetEventHandle + 0x7 bytes
+    e:\documents\github\notdeadyet\client\source\clientactormanager.cpp (13): Client.exe!ClientActorManager::ClientActorManager + 0x21 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (245): Client.exe!Client::InitGraphics + 0x2B bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (1569): Client.exe!Client::HandleNetworkMessage
+    e:\documents\github\notdeadyet\client\source\client.cpp (446): Client.exe!Client::ReadMessages + 0x11 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (385): Client.exe!Client::UpdateGame
+    e:\documents\github\notdeadyet\client\source\client.cpp (340): Client.exe!Client::Life
+    e:\documents\github\notdeadyet\malow\include\process.h (84): Client.exe!MaloW::Process::threadProc + 0xF bytes
+    0x748F8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
+    0x771AAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
+    0x771AAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
   Data:
-    54 72 10 03    00 00 00 00                                   Tr...... ........
+    24 C2 1D 01    01 18 0C 00                                   $....... ........
 
 
----------- Block 261192 at 0x0DC99940: 12 bytes ----------
+---------- Block 785603 at 0x14882A88: 8 bytes ----------
   Call Stack:
-    x:\users\documents\github\notdeadyet\game\source\world\world.cpp (715): Client.exe!World::CreateAnchor + 0x7 bytes
-    x:\users\documents\github\notdeadyet\client\source\client.cpp (1456): Client.exe!Client::OnEvent + 0xB bytes
-    x:\users\documents\github\notdeadyet\game\include\world\observer.h (35): Client.exe!Observed::NotifyObservers + 0x99 bytes
-    x:\users\documents\github\notdeadyet\game\source\world\world.cpp (474): Client.exe!World::OnEvent + 0x3A bytes
-    x:\users\documents\github\notdeadyet\game\include\world\observer.h (35): Client.exe!Observed::NotifyObservers + 0x99 bytes
-    x:\users\documents\github\notdeadyet\game\source\world\worldfile.cpp (124): Client.exe!WorldFile::Open + 0x41 bytes
-    x:\users\documents\github\notdeadyet\game\source\world\worldfile.cpp (169): Client.exe!WorldFile::ReadHeader
-    x:\users\documents\github\notdeadyet\game\source\world\world.cpp (27): Client.exe!World::World
-    x:\users\documents\github\notdeadyet\client\source\client.cpp (178): Client.exe!Client::InitGraphics + 0x59 bytes
-    x:\users\documents\github\notdeadyet\client\source\client.cpp (1236): Client.exe!Client::HandleNetworkMessage
-    x:\users\documents\github\notdeadyet\client\source\client.cpp (320): Client.exe!Client::ReadMessages + 0x11 bytes
-    x:\users\documents\github\notdeadyet\client\source\client.cpp (260): Client.exe!Client::Life
-    x:\users\documents\github\notdeadyet\malow\include\process.h (84): Client.exe!MaloW::Process::threadProc + 0xF bytes
-    0x759D8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
-    0x77CAAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
-    0x77CAAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
+    e:\documents\github\notdeadyet\client\source\soundengine\audiomanager.cpp (334): Client.exe!AudioManager::GetEventHandle + 0x7 bytes
+    e:\documents\github\notdeadyet\client\source\clientactormanager.cpp (13): Client.exe!ClientActorManager::ClientActorManager + 0x21 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (245): Client.exe!Client::InitGraphics + 0x2B bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (1569): Client.exe!Client::HandleNetworkMessage
+    e:\documents\github\notdeadyet\client\source\client.cpp (446): Client.exe!Client::ReadMessages + 0x11 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (385): Client.exe!Client::UpdateGame
+    e:\documents\github\notdeadyet\client\source\client.cpp (340): Client.exe!Client::Life
+    e:\documents\github\notdeadyet\malow\include\process.h (84): Client.exe!MaloW::Process::threadProc + 0xF bytes
+    0x748F8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
+    0x771AAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
+    0x771AAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
   Data:
-    00 00 00 00    00 00 00 00    00 00 C8 42                    ........ ...B....
+    24 C2 1D 01    01 20 0C 00                                   $....... ........
 
 
-Visual Leak Detector detected 6 memory leaks (444 bytes).
-Largest number used: 39791674 bytes.
-Total allocations: 255785039 bytes.
+---------- Block 785604 at 0x14882AD0: 8 bytes ----------
+  Call Stack:
+    e:\documents\github\notdeadyet\client\source\soundengine\audiomanager.cpp (334): Client.exe!AudioManager::GetEventHandle + 0x7 bytes
+    e:\documents\github\notdeadyet\client\source\clientactormanager.cpp (13): Client.exe!ClientActorManager::ClientActorManager + 0x21 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (245): Client.exe!Client::InitGraphics + 0x2B bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (1569): Client.exe!Client::HandleNetworkMessage
+    e:\documents\github\notdeadyet\client\source\client.cpp (446): Client.exe!Client::ReadMessages + 0x11 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (385): Client.exe!Client::UpdateGame
+    e:\documents\github\notdeadyet\client\source\client.cpp (340): Client.exe!Client::Life
+    e:\documents\github\notdeadyet\malow\include\process.h (84): Client.exe!MaloW::Process::threadProc + 0xF bytes
+    0x748F8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
+    0x771AAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
+    0x771AAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
+  Data:
+    24 C2 1D 01    01 28 0C 00                                   $....(.. ........
+
+
+---------- Block 785605 at 0x14882B18: 8 bytes ----------
+  Call Stack:
+    e:\documents\github\notdeadyet\client\source\soundengine\audiomanager.cpp (334): Client.exe!AudioManager::GetEventHandle + 0x7 bytes
+    e:\documents\github\notdeadyet\client\source\clientactormanager.cpp (13): Client.exe!ClientActorManager::ClientActorManager + 0x21 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (245): Client.exe!Client::InitGraphics + 0x2B bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (1569): Client.exe!Client::HandleNetworkMessage
+    e:\documents\github\notdeadyet\client\source\client.cpp (446): Client.exe!Client::ReadMessages + 0x11 bytes
+    e:\documents\github\notdeadyet\client\source\client.cpp (385): Client.exe!Client::UpdateGame
+    e:\documents\github\notdeadyet\client\source\client.cpp (340): Client.exe!Client::Life
+    e:\documents\github\notdeadyet\malow\include\process.h (84): Client.exe!MaloW::Process::threadProc + 0xF bytes
+    0x748F8543 (File and line number not available): KERNEL32.DLL!BaseThreadInitThunk + 0xE bytes
+    0x771AAC69 (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x85 bytes
+    0x771AAC3C (File and line number not available): ntdll.dll!RtlInitializeExceptionChain + 0x58 bytes
+  Data:
+    24 C2 1D 01    01 30 0C 00                                   $....0.. ........
+
+
+Visual Leak Detector detected 8 memory leaks (352 bytes).
+Largest number used: 36345161 bytes.
+Total allocations: 198871184 bytes.
 Visual Leak Detector is now exiting.
 DXGI WARNING: Process is terminating. Using simple reporting. Please call ReportLiveObjects() at runtime for standard reporting. [ STATE_CREATION WARNING #0: ]
-DXGI WARNING: Live Producer at 0x0045A9F8, Refcount: 4. [ STATE_CREATION WARNING #0: ]
-DXGI WARNING: 	Live Object at 0x0045D260, Refcount: 2. [ STATE_CREATION WARNING #0: ]
+DXGI WARNING: Live Producer at 0x009A57F8, Refcount: 4. [ STATE_CREATION WARNING #0: ]
+DXGI WARNING: 	Live Object at 0x009A8050, Refcount: 2. [ STATE_CREATION WARNING #0: ]
 DXGI WARNING: Live                         Object :      1 [ STATE_CREATION WARNING #0: ]
 Detected memory leaks!
 Dumping objects ->
-{266905} normal block at 0x0DC99940, 12 bytes long.
- Data: <           B> 00 00 00 00 00 00 00 00 00 00 C8 42 
-{2429} normal block at 0x03109BF0, 8 bytes long.
- Data: <Tr      > 54 72 10 03 00 00 00 00 
-{2428} normal block at 0x03109B88, 40 bytes long.
- Data: <                > 88 9B 10 03 88 9B 10 03 CD CD CD CD CD CD CD CD 
-{2427} normal block at 0x03109920, 8 bytes long.
- Data: <Hr      > 48 72 10 03 00 00 00 00 
-{2426} normal block at 0x03109878, 40 bytes long.
- Data: <x   x           > 78 98 10 03 78 98 10 03 CD CD CD CD CD CD CD CD 
-{2424} normal block at 0x03107240, 120 bytes long.
- Data: < b?  9      x   > C0 62 3F 01 A0 39 B5 00 20 99 10 03 78 98 10 03 
+{799628} normal block at 0x14882B18, 8 bytes long.
+ Data: <$    0  > 24 C2 1D 01 01 30 0C 00 
+{799627} normal block at 0x14882AD0, 8 bytes long.
+ Data: <$    (  > 24 C2 1D 01 01 28 0C 00 
+{799626} normal block at 0x14882A88, 8 bytes long.
+ Data: <$       > 24 C2 1D 01 01 20 0C 00 
+{799625} normal block at 0x14882A40, 8 bytes long.
+ Data: <$       > 24 C2 1D 01 01 18 0C 00 
+{799624} normal block at 0x148829F8, 8 bytes long.
+ Data: <$       > 24 C2 1D 01 01 10 0C 00 
+{799623} normal block at 0x148829B0, 8 bytes long.
+ Data: <$       > 24 C2 1D 01 01 08 0C 00 
+{3404} normal block at 0x06774DD8, 8 bytes long.
+ Data: <$     L > 24 C2 1D 01 01 00 4C 00 
+{3390} normal block at 0x06773308, 8 bytes long.
+ Data: <$     H > 24 C2 1D 01 01 00 48 00 
 Object dump complete.
-The program '[5676] Client.exe' has exited with code 0 (0x0).

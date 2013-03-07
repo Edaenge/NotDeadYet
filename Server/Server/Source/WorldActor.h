@@ -5,6 +5,7 @@
 class WorldActor : public Actor
 {
 public:
-	WorldActor(PhysicsObject* pObj);
+	WorldActor( PhysicsObject* pObj, const float& blockRadius );
 	virtual ~WorldActor();
+
 };

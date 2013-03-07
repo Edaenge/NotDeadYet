@@ -18,7 +18,8 @@ ActorManager::~ActorManager()
 	this->RemoveObserver(this->zSynch);
 	this->RemoveObserver(this->zSoundHandler);
 
-	for(auto it = this->zActors.begin(); it != this->zActors.end(); it++)
+	auto it_actors_end = this->zActors.end();
+	for(auto it = this->zActors.begin(); it != it_actors_end; it++)
 	{
 		Actor* temp = (*it);
 		SAFE_DELETE(temp);
@@ -178,7 +179,8 @@ Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
 
 Actor* ActorManager::GetActor( const unsigned int ID ) const
 {
-	for(auto it_Actor = this->zActors.begin(); it_Actor != this->zActors.end(); it_Actor++)
+	auto it_actors_end = this->zActors.end();
+	for(auto it_Actor = this->zActors.begin(); it_Actor != it_actors_end; it_Actor++)
 	{
 		if((*it_Actor)->GetID() == ID)
 		{
@@ -192,7 +194,8 @@ unsigned int ActorManager::GetActorsInCircle( const Vector2& center, float radiu
 {
 	unsigned int counter=0;
 
-	for(auto i = zActors.cbegin(); i != zActors.cend(); i++)
+	auto it_zActors_end = zActors.cend();
+	for(auto i = zActors.cbegin(); i != it_zActors_end; i++)
 	{
 		Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );
 		if( Vector2(center-pos).GetLength() < radius)
@@ -209,7 +212,8 @@ unsigned int ActorManager::GetActorsInCircle( const Vector2& center, float radiu
 {
 	unsigned int counter=0;
 
-	for(auto i = zActors.cbegin(); i != zActors.cend(); i++)
+	auto it_zActors_end = zActors.cend();
+	for(auto i = zActors.cbegin(); i != it_zActors_end; i++)
 	{
 		if( (*i)->GetType() == filter )
 		{
@@ -229,7 +233,8 @@ unsigned int ActorManager::GetCollideableActorsInCircle( const Vector2& center, 
 {
 	unsigned int counter=0;
 
-	for(auto i = zCollideableActors.cbegin(); i != zCollideableActors.cend(); i++)
+	auto i_zCollideableActors_end = zCollideableActors.cend();
+	for(auto i = zCollideableActors.cbegin(); i != i_zCollideableActors_end; i++)
 	{
 
 		Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );

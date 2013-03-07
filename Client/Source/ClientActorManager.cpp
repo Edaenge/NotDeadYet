@@ -20,7 +20,8 @@ ClientActorManager::ClientActorManager()
 
 ClientActorManager::~ClientActorManager()
 {
-	for(auto it = this->zActors.begin(); it != this->zActors.end(); it++)
+	auto it_zActors_end = this->zActors.end();
+	for(auto it = this->zActors.begin(); it != it_zActors_end; it++)
 	{
 		if(it->second)
 		{
@@ -29,8 +30,8 @@ ClientActorManager::~ClientActorManager()
 		}
 	}
 	this->zActors.clear();
-
-	for(auto it = this->zUpdates.begin(); it != this->zUpdates.end(); it++)
+	auto it_zUpdates_end = this->zUpdates.end();
+	for(auto it = this->zUpdates.begin(); it != it_zUpdates_end; it++)
 	{
 		if(it->second)
 		{
@@ -284,7 +285,8 @@ Vector4 ClientActorManager::InterpolateRotation( const Vector4& currentRotation,
 
 void ClientActorManager::ClearAll()
 {
-	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
+	auto it_zActors_end = this->zActors.end();
+	for (auto it = this->zActors.begin(); it != it_zActors_end; it++)
 	{
 		auto ret = zUpdates.find(it->first);
 
