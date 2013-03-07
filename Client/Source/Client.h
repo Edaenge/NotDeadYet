@@ -20,6 +20,7 @@
 #include "PickAnimalMenu.h"
 #include <AnimationFileReader.h>
 #include "GameTimer.h"
+#include "MaloWPerformance.h"
 
 using namespace MaloW;
 
@@ -230,6 +231,7 @@ private:
 	float	zBleedingLevel;
 	float	zBleedingOpacity;
 	bool	zDroppingPulse;
+	float	zCurrentOffset;
 	
 
 	bool zGameStarted;
@@ -264,4 +266,5 @@ private:
 		Bear_Model
 	*/
 	AnimationFileReader zAnimationFileReader[4];
+	MaloWPerformance* zPerf;
 };

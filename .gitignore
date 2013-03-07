@@ -57,3 +57,8 @@
 /WorkingDir/Media/Maps/*.map
 
 /WorkingDir/MPR.txt
+/*.psess
+
+/*.vspx
+/WorkingDir/MPR_Client.txt
+/WorkingDir/MPR_Server.txt

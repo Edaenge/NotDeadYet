@@ -21,10 +21,9 @@ void Client::HandleWeaponUse(const unsigned int ID)
 			if( proj->Use() )
 			{
 				this->zPlayerInventory->RemoveItemStack(proj->GetID(), 1);
-
-				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 				Gui_Item_Data gid = this->MakeGID(proj);
 				this->zGuiManager->RemoveInventoryItemFromGui(gid);
+				this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
 			}
 		}
 		else 
@@ -42,10 +41,9 @@ void Client::HandleWeaponUse(const unsigned int ID)
 		if( proj->Use() )
 		{
 			this->zPlayerInventory->RemoveItemStack(proj->GetID(), 1);
-
-			unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 			Gui_Item_Data gid = this->MakeGID(proj);
 			this->zGuiManager->RemoveInventoryItemFromGui(gid);
+			this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
 		}
 	}
 
@@ -105,7 +103,7 @@ void Client::HandleUseItem(const unsigned int ID)
 		gid.zStacks = 1; // Stacks to be removed
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 
-		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
+		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
 	}
 	/*else if (item->GetItemType() == ITEM_TYPE_MATERIAL)
 	{
@@ -158,7 +156,7 @@ void Client::HandleUseItem(const unsigned int ID)
 		gid.zStacks = 1; // Stacks to be removed
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 
-		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
+		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
 	}
 }
 
@@ -175,7 +173,7 @@ void Client::HandleCraftItem(const unsigned int ID, const unsigned int Stacks)
 		gid.zStacks = Stacks;
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
-		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
+		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
 	}
 	else
 	{
@@ -243,7 +241,6 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 		if(!success)
 			return;
 
-		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 		if(prev)
 		{
 			
@@ -258,6 +255,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 		this->zGuiManager->EquipItem(gid);
+		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
 		
 		return;
 	}
@@ -291,7 +289,6 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			}
 			else
 			{
-				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 				Gui_Item_Data gid = MakeGID(prev);
 
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -299,12 +296,12 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			}
 		}
 
-		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 		Gui_Item_Data gid = MakeGID(projectile);
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 		this->zGuiManager->EquipItem(gid);
-		
+
+		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
@@ -327,7 +324,6 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		if(!success)
 			return;
-		unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 		if(prev)
 		{
 			Gui_Item_Data gid = this->MakeGID(prev);
@@ -340,7 +336,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 		this->zGuiManager->EquipItem(gid);
-		
+		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
 		return;
 	}
 }
@@ -355,7 +351,6 @@ bool Client::HandleUnEquipItem(const unsigned int ItemID, const int Slot)
 		{
 			if (projectile->GetID() == ItemID)
 			{
-				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 
 				Gui_Item_Data gid = this->MakeGID(projectile);
 				this->zGuiManager->AddInventoryItemToGui(gid);
@@ -545,12 +540,11 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 
 				Item* temp = this->zPlayerInventory->RemoveItem(ItemID);
 
-				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
-
 				Gui_Item_Data gid = this->MakeGID(weapon);
 				this->zGuiManager->UnEquipItem(gid);
 
 				this->zPlayerInventory->UnEquipRangedWeapon();
+				this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
 				SAFE_DELETE(temp);
 			}
 		}
@@ -570,7 +564,6 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 
 				Item* temp = this->zPlayerInventory->RemoveItem(ItemID);
 
-				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 
 				Gui_Item_Data gid = this->MakeGID(weapon);
 				this->zGuiManager->UnEquipItem(gid);
@@ -578,6 +571,7 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 				SAFE_DELETE(temp);
 
 				this->zPlayerInventory->UnEquipMeleeWeapon();
+				this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
 			}
 		}
 		return;
@@ -596,7 +590,6 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 
 				Item* temp = this->zPlayerInventory->RemoveItem(projectile);
 
-				unsigned int totalWeight = this->zPlayerInventory->GetTotalWeight();
 
 				Gui_Item_Data gid = this->MakeGID(projectile);
 				this->zGuiManager->UnEquipItem(gid);
@@ -604,6 +597,7 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 				SAFE_DELETE(temp);
 
 				this->zPlayerInventory->UnEquipProjectile();
+				this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
 			}
 		}
 		return;
@@ -646,7 +640,7 @@ void Client::SendCraftItemMessage(const unsigned int ID, const int Type, const i
 
 void Client::SendItemFill(const unsigned int ID)
 {
-	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_FILL, ID);
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_FILL, (float)ID);
 	this->zServerChannel->Send(msg);
 }
 
@@ -683,7 +677,7 @@ void Client::HandleRemoveInventoryItem(const unsigned int ID)
 			delete item, item = NULL;
 		}
 	}
-	this->zGuiManager->UpdateInventoryWeight(zPlayerInventory->GetTotalWeight());
+	this->zGuiManager->UpdateInventoryWeight((float)zPlayerInventory->GetTotalWeight());
 }
 
 void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
@@ -929,7 +923,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	{
 		SAFE_DELETE(item);
 	}
-	this->zGuiManager->UpdateInventoryWeight(zPlayerInventory->GetTotalWeight());
+	this->zGuiManager->UpdateInventoryWeight((float)zPlayerInventory->GetTotalWeight());
 }
 
 Gui_Item_Data Client::MakeGID( Item* item )

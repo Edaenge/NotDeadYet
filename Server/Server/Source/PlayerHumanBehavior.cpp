@@ -202,8 +202,6 @@ bool PlayerHumanBehavior::Update( float dt )
 		zActor->SetPosition(center);
 	}
 
-	//PhysicalConditionCalculator(dt);
-
 	Vector3 pActor_rewind_dir;
 	Actor* collide = NULL;
 	
@@ -246,10 +244,13 @@ bool PlayerHumanBehavior::Update( float dt )
 		zActor->SetPosition(newPosition);
 	}
 
+	PhysicalConditionCalculator(dt);
+
+
 	return false;
 }
 
-void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
+bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 {
 	//BioActor* bActor = dynamic_cast<BioActor*>(this->zActor);
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActor);
@@ -408,4 +409,5 @@ void PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		}
 		this->zIntervalCounter = 0.0f;
 	}
+	return false;
 }

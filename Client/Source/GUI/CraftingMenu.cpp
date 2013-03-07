@@ -1,5 +1,5 @@
 #include "CraftingMenu.h"
-#include "Safe.h"'
+#include "Safe.h"
 #include "CraftingReader.h"
 
 #define SLOTIMAGEWIDTH 50.0f
