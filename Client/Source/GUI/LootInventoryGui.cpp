@@ -188,7 +188,7 @@ Selected_Item_ReturnData LootInventoryGui::CheckCollision(float mouseX, float mo
 						{
 							Selected_Item_ReturnData sir;
 							sir.gid = (*x)->GetGid();
-							sir.inventory = 1;
+							sir.inventory = 2;
 							return sir;
 						}
 					}
