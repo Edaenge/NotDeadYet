@@ -44,6 +44,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 	// Save and Free Settings
 	SavePlayerSettings();
 	FreePlayerSettings();
-	_CrtDumpMemoryLeaks();
+	//_CrtDumpMemoryLeaks();
 	return 0;
 }
