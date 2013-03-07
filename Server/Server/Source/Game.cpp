@@ -2344,8 +2344,8 @@ void Game::RestartGame()
 		pActor->SetModel( (*it).second->GetModelPath() );
 		PlayerHumanBehavior* pBehavior = new PlayerHumanBehavior(pActor, zWorld, (*it).second);
 
-		pActor->SetPosition(CalcPlayerSpawnPoint(32));
-		pActor->SetScale(pActor->GetScale());
+		pActor->SetPosition(CalcPlayerSpawnPoint(32), false);
+		pActor->SetScale(pActor->GetScale(), false);
 		pActor->AddObserver(this->zGameMode);
 		SetPlayerBehavior((*it).second, pBehavior);
 		this->zActorManager->AddActor(pActor);

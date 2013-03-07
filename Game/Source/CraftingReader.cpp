@@ -200,7 +200,7 @@ const std::map<unsigned int, unsigned int>* CraftingReader::GetMaterialReq(Craft
 	auto it_end = this->zMappedTypesToMaterialsReq.end();
 	for (auto it = this->zMappedTypesToMaterialsReq.begin(); it != it_end; it++)
 	{
-		if (it->first->subType == types->subType && it->first->subType == types->subType)
+		if (it->first->type == types->type && it->first->subType == types->subType)
 		{
 			return &it->second;
 		}
