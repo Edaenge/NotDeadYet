@@ -299,10 +299,12 @@ Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY
 			}
 		}
 	}
+
 	Selected_Item_ReturnData sir;
 	sir.gid.zID = -1;
 	sir.gid.zType = -1;
 	sir.inventory = -1;
+
 	return sir;
 }
 
@@ -508,12 +510,15 @@ void InventoryGui::RemoveBlockers(int m, bool open, GraphicsEngine* ge, int inve
 		if(!this->zSlotGui.at(i)->GetBlocker())
 		{
 			int slots = this->zSlotGui.at(m)->GetGid().zSlots;
+
 			if(inventory == 1)
 				slots = this->zWeaponSlotGui.at(m)->GetGid().zSlots;
+
 			for(unsigned int k = 1; k < slots; k++)
 			{
 				this->zSlotGui.at(i+k)->RemoveItemFromSlot(open, ge);
 			}
+
 			i = 0;
 		}
 	}

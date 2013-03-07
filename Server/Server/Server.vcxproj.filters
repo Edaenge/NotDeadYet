@@ -156,6 +156,12 @@
     <ClCompile Include="Source\SoundHandler.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\MaterialSpawnSet.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MaterialSpawnManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -310,6 +316,12 @@
     </ClInclude>
     <ClInclude Include="Source\ActorEvent.h">
       <Filter>Source\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MaterialSpawnSet.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MaterialSpawnManager.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
