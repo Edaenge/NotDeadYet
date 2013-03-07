@@ -114,8 +114,6 @@ void Client::AddActor( NewActorPacket* NAP )
 
 		if (!this->zActorManager->GetActor(ID))
 		{
-			actor = new Actor(ID);
-			
 			iMesh* mesh = NULL;
 			//Creates a Mesh from the given Filename
 			if (model.length() > 4)
@@ -131,6 +129,8 @@ void Client::AddActor( NewActorPacket* NAP )
 			
 			if(mesh)
 			{
+				actor = new Actor(ID);
+
 				actor->SetStaticMesh(mesh);
 				actor->SetModel(model);
 

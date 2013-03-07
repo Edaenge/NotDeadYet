@@ -8,11 +8,19 @@ struct CraftedTypes
 {
 	unsigned int subType;
 	unsigned int type;
+	std::string filePath;
 
-	CraftedTypes(unsigned int type, unsigned int subType)
+	CraftedTypes()
+	{
+		type = 100;
+		subType = 100;
+		filePath = "Media/Models/Unknown.png";
+	}
+	CraftedTypes(unsigned int type, unsigned int subType, const std::string& filePath)
 	{
 		this->type = type;
 		this->subType = subType;
+		this->filePath = filePath;
 	}
 };
 
