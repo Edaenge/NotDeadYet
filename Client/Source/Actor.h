@@ -26,9 +26,6 @@ public:
 
 		if (this->zMesh)
 		{
-			zMesh->DontRender(true);
-			zMesh->UseInvisibilityEffect(true);
-
 			if ( iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(this->zMesh) )
 					graphics->DeleteFBXMesh( fbxMesh );
 			
