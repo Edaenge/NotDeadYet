@@ -230,6 +230,7 @@ private:
 	float	zBleedingLevel;
 	float	zBleedingOpacity;
 	bool	zDroppingPulse;
+	float	zCurrentOffset;
 	
 
 	bool zGameStarted;

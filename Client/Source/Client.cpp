@@ -77,7 +77,10 @@ Client::Client()
 	this->zHealthOpacity = 0.0f;
 	this->zBleedingOpacity = 0.0f;
 	this->zBleedingLevel = 0.0f;
-	this->zDroppingPulse = false;	this->zEnergy = 100.0f;
+	this->zDroppingPulse = false;
+	this->zCurrentOffset = 0.0f;
+
+	this->zEnergy = 100.0f;
 	this->zStamina = 100.0f;
 	this->zHealth = 100.0f;
 	this->zHydration = 100.0f;
@@ -178,7 +181,10 @@ void Client::Update()
 	//	this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
 
-	this->UpdateHealthAndBleedingImage();
+	if(this->zHealth > 0.0f)
+	{
+		this->UpdateHealthAndBleedingImage();
+	}
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
 
@@ -196,9 +202,6 @@ void Client::Update()
 			this->zDamageIndicator = NULL;
 		}
 	}
-
-	
-
 
 }
 
@@ -322,6 +325,24 @@ void Client::UpdateGame()
 		}
 
 		this->Update();
+	}
+	else
+	{
+			this->zHealth = 0.0f;
+			this->zBleedingLevel = 0.0f;
+			this->zCurrentOffset = 0.0f;
+
+			if(this->zDamageIndicator)
+			{
+				this->zEng->DeleteImage(this->zDamageIndicator);
+				this->zDamageIndicator = NULL;
+			}
+			if(this->zBleedingAndHealthIndicator)
+			{
+				this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
+				this->zBleedingAndHealthIndicator = NULL;
+			}
+
 	}
 
 	AudioManager* am = AudioManager::GetInstance();
@@ -1647,10 +1668,6 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 	Actor* player = this->zActorManager->GetActor(this->zID);
 
 	this->zHealth -= damageTaken;
-	if(this->zHealth < 0.0f)
-	{
-		this->zHealth = 100.0f;
-	}
 
 	if(!player)
 	{
@@ -1668,7 +1685,7 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 	Vector3 resultingVector = actorPos - playerPos;
 	resultingVector.Normalize();
 
-	if(this->zDamageIndicator == NULL)
+	if(this->zDamageIndicator == NULL && this->zHealth < 0.0f)
 	{
 		float windowHeight = (float)this->zEng->GetEngineParameters().WindowHeight;
 		float windowWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
@@ -1766,18 +1783,17 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 
 void Client::UpdateHealthAndBleedingImage()
 {
-
 	this->zHealthOpacity = this->zHealth / 100;
 	float goalOffset = 500.0f * this->zHealthOpacity;
-	static float currentOffset = 0.0f;
+	
 
-	if(currentOffset < goalOffset)
+	if(this->zCurrentOffset < goalOffset)
 	{
-		currentOffset += 20.0f * zDeltaTime;
+		this->zCurrentOffset += 20.0f * zDeltaTime;
 	}
-	else if(currentOffset > goalOffset)
+	else if(this->zCurrentOffset > goalOffset)
 	{
-		currentOffset -= 20.0f * zDeltaTime;
+		this->zCurrentOffset -= 20.0f * zDeltaTime;
 	}
 
 
@@ -1795,7 +1811,7 @@ void Client::UpdateHealthAndBleedingImage()
 
 	if(this->zBleedingAndHealthIndicator == NULL)
 	{
-		this->zBleedingAndHealthIndicator = this->zEng->CreateImage(Vector2(0 - currentOffset,0 - currentOffset), Vector2(windowWidth + currentOffset*2, windowHeight + currentOffset*2), "Media/Icons/HealthAndBleeding_Small_Temp.png" );
+		this->zBleedingAndHealthIndicator = this->zEng->CreateImage(Vector2(0 - this->zCurrentOffset,0 - this->zCurrentOffset), Vector2(windowWidth + this->zCurrentOffset*2, windowHeight + this->zCurrentOffset*2), "Media/Icons/HealthAndBleeding_Small_Temp.png" );
 	}
 
 
@@ -1846,8 +1862,8 @@ void Client::UpdateHealthAndBleedingImage()
 
 
 	this->zBleedingAndHealthIndicator->SetOpacity(this->zHealthOpacity + this->zBleedingOpacity);
-	this->zBleedingAndHealthIndicator->SetPosition(Vector2(0 - currentOffset,0 - currentOffset) );
-	this->zBleedingAndHealthIndicator->SetDimensions(Vector2(windowWidth + currentOffset*2, windowHeight + currentOffset*2));
+	this->zBleedingAndHealthIndicator->SetPosition(Vector2(0 - this->zCurrentOffset,0 - this->zCurrentOffset) );
+	this->zBleedingAndHealthIndicator->SetDimensions(Vector2(windowWidth + this->zCurrentOffset*2, windowHeight + this->zCurrentOffset*2));
 
 
 }
