@@ -13,6 +13,8 @@ Inventory::Inventory()
 
 	this->zItems = std::vector<Item*>();
 
+	this->zInventoryCap = 49;
+	this->zWeightTotal = 0;
 	this->zSlotsAvailable = this->zInventoryCap;
 
 	this->zRangedWeapon = NULL;
@@ -565,5 +567,15 @@ void Inventory::ClearAll()
 	{
 		SAFE_DELETE((*x));
 	}
+
+	this->zInventoryCap = 49;
+	this->zWeightTotal = 0;
+	this->zSlotsAvailable = this->zInventoryCap;
+
+	this->zRangedWeapon = NULL;
+	this->zMeleeWeapon = NULL;
+	this->zProjectile = NULL;
+	this->zPrimaryEquip = NULL;
+	this->zSecondaryEquip = NULL;
 }
 
