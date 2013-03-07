@@ -97,8 +97,8 @@ Game::Game(const int maxClients, ActorSynchronizer* syncher, std::string mode, c
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();		//this->SpawnAnimalsDebug();
+	//this->SpawnItemsDebug();
+	this->SpawnAnimalsDebug();		//this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -1598,15 +1598,7 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 				}
 				else if (Container* container = dynamic_cast<Container*>(item))
 				{
-
-					//Just testing this stuff for now, probably needs a proper function for itself.
-					Vector2 position = Vector2(pActor->GetPosition().x, pActor->GetPosition().z);
-					float test = this->zWorld->GetWaterDepthAt(position);
-					if(test > 0.3f)
-					{
-						container->SetRemainingUses(container->GetMaxUses());
-					}
-
+			
 					if (container->Use())
 					{
 						//To do fix values and stuff
@@ -2112,9 +2104,12 @@ void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
 	}
 
 	//Logic for filling container here.
-
-
-
+	Vector2 position = Vector2(pActor->GetPosition().x, pActor->GetPosition().z);
+	float depth = this->zWorld->GetWaterDepthAt(position);
+	if(depth > 0.3f)
+	{
+		dynamic_cast<Container*>(item)->SetRemainingUses(dynamic_cast<Container*>(item)->GetMaxUses());
+	}
 	//Sending Message to client
 	NetworkMessageConverter NMC;
 	std::string msg = NMC.Convert(MESSAGE_TYPE_ITEM_FILL, (float)itemID);

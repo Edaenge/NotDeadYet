@@ -195,6 +195,10 @@ void Client::Update()
 			this->zDamageIndicator = NULL;
 		}
 	}
+
+	
+
+
 }
 
 void Client::IgnoreRender( const float& radius, const Vector2& center )
