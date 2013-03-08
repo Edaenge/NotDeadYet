@@ -317,8 +317,16 @@ Actor* ProjectileArrowBehavior::CheckWorldActorCollision()
 	for( int i = 0; i < 4 && !isBlocking; i++)
 	{
 		blockedPos = thisActorPositionXZ + collidePoints[i];
-		if( this->zWorld->IsBlockingAt(blockedPos) )
-			isBlocking = true;
+		try
+		{
+			if( this->zWorld->IsBlockingAt(blockedPos) )
+				isBlocking = true;
+		}
+		catch (...)
+		{
+			isBlocking = false;
+		}
+		
 	}
 
 	if( !isBlocking )
