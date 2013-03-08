@@ -4,7 +4,6 @@
 #include "Array.h"
 #include <string>
 #include <fstream>
-#include <iGraphicsEngineParams.h>
 
 #define NR_OF_TIERS 6
 
@@ -37,7 +36,6 @@ public:
 	void SetFilePath(const std::string filePath) {this->filePath = filePath;}
 	void PreMeasure(string perfName, int tier);
 	void PostMeasure(string perfName, int tier);
-	void GenerateReport(iGraphicsEngineParams& gep);
 	void GenerateReport();
 	void ResetAll();
 };

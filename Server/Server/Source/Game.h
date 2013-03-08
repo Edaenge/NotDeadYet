@@ -8,6 +8,7 @@
 #include "Physics.h"
 #include "Item.h"
 #include "SoundHandler.h"
+#include "MaloWPerformance.h"
 
 class ClientData;
 class World;
@@ -29,6 +30,8 @@ class Game : public Observer, public Observed
 {
 
 private:
+	MaloWPerformance* zPerf;
+
 	ActorManager* zActorManager;
 	GameMode* zGameMode;
 	World* zWorld;
@@ -96,7 +99,12 @@ public:
 	
 	void SendToAll(std::string msg);
 
-	void RestartGame();	void ModifyLivingPlayers(const int value);private:
+	void RestartGame();	
+	void ModifyLivingPlayers(const int value);
+
+	void SetPerformancePtr(MaloWPerformance* perf) {this->zPerf = perf;}
+
+private:
 	//Test function, spawns items/Animals
 	void SpawnItemsDebug();
 	void SpawnAnimalsDebug();
