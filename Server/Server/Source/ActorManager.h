@@ -14,17 +14,23 @@ class ActorManager : public Observed, public Observer
 	SoundHandler* zSoundHandler;
 	std::set<Actor*> zActors;
 	std::set<Actor*> zCollideableActors;
+	std::set<Behavior*> zBehaviors;
 
 public:
 	ActorManager( ActorSynchronizer* syncher, SoundHandler* sh);
 	virtual ~ActorManager();
 	void AddActor( Actor* actor );
+	void AddBehavior( Behavior* behavior );
 	/*! Removes The actor, physics object will NOT be freed.*/
 	void RemoveActor( Actor* actor );
+	void RemoveBehavior( Behavior* behavior );
 	/*! Removes all actors, physics objects WILL be freed.*/
 	void ClearAll();
+
+	std::set<Behavior*>& GetBehaviors() {return zBehaviors;}
 	std::set<Actor*>& GetActors() {return this->zActors;}
 	std::set<Actor*>& GetCollideableActors() {return this->zCollideableActors;}
+
 	Actor* GetActor(const unsigned int ID) const;
 	/*! Adds all Actors within the circle to out. Returns total amount of actors found*/
 	unsigned int GetActorsInCircle(const Vector2& center, float radius, std::set<Actor*>& out) const;

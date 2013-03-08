@@ -525,6 +525,7 @@ bool Game::Update( float dt )
 			temp = NULL;
 			PhysicsObject* pObject = oldActor->GetPhysicsObject();
 			this->zPhysicsEngine->DeletePhysicsObject(pObject);
+			oldActor->SetPhysicsObject(NULL);
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
 		}
@@ -985,6 +986,7 @@ void Game::OnEvent( Event* e )
 		{
 			PhysicsObject* Pobj = i->second->GetPhysicsObject();
 			zPhysicsEngine->DeletePhysicsObject(Pobj);
+			i->second->SetPhysicsObject(NULL);
 			this->zActorManager->RemoveActor(i->second);
 			this->zWorldActors.erase(i);
 		}
@@ -1524,8 +1526,8 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 						SAFE_DELETE(item);
 					}
 
-					if (bActor->GetInventory()->GetItems().size() <= 0)
-						this->zActorManager->RemoveActor(bActor);
+					/*if (bActor->GetInventory()->GetItems().size() <= 0)
+						this->zActorManager->RemoveActor(bActor);*/
 				}
 				else
 				{

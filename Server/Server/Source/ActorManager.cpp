@@ -63,6 +63,16 @@ void ActorManager::RemoveActor( Actor* actor )
 	delete actor;
 }
 
+void ActorManager::RemoveBehavior( Behavior* behavior )
+{
+
+}
+
+void ActorManager::AddBehavior( Behavior* behavior )
+{
+
+}
+
 Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 {
 	if(!actor)

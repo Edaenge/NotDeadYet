@@ -1542,6 +1542,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
+		this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
+
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 
 		if (Actor* actor = this->zActorManager->GetActor(this->zID))
