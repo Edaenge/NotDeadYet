@@ -23,7 +23,7 @@ void Client::HandleWeaponUse(const unsigned int ID)
 				this->zPlayerInventory->RemoveItemStack(proj->GetID(), 1);
 				Gui_Item_Data gid = this->MakeGID(proj);
 				this->zGuiManager->RemoveInventoryItemFromGui(gid);
-				this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
+				this->zGuiManager->UpdateInventoryWeight( (float)this->zPlayerInventory->GetTotalWeight());
 			}
 		}
 		else 

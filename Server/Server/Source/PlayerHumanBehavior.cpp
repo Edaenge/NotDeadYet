@@ -257,9 +257,9 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 	
 	if(this->zIntervalCounter >= 1.0f)
 	{
-		std::stringstream tester; 
-		tester<<"Fullness: "<<pActor->GetFullness()<<"   "<<"Hydration: "<<pActor->GetHydration()<<"    "<<"Stamina: "<<pActor->GetStamina()<<"    "<<"Health: "<<pActor->GetHealth()<<std::endl;
-		OutputDebugString(tester.str().c_str());
+		//std::stringstream tester; 
+		//tester<<"Fullness: "<<pActor->GetFullness()<<"   "<<"Hydration: "<<pActor->GetHydration()<<"    "<<"Stamina: "<<pActor->GetStamina()<<"    "<<"Health: "<<pActor->GetHealth()<<std::endl;
+		//OutputDebugString(tester.str().c_str());
 	
 		float regeneratedHealth = 100;
 		

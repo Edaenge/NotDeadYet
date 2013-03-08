@@ -607,8 +607,8 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 			Node theNextNode(nextX,nextY);
 			
 			//calculate the f cost.			
-			theNextNode.fCost = abs(goalX - nextX);//zNodes[nextNode].fCost = abs( goalX - zNodes[nextNode].x);
-			theNextNode.fCost += abs(goalY - nextY);//zNodes[nextNode].fCost += abs( goalY - zNodes[nextNode].y);
+			theNextNode.fCost = (int)abs(goalX - nextX);//zNodes[nextNode].fCost = abs( goalX - zNodes[nextNode].x);
+			theNextNode.fCost += (int)abs(goalY - nextY);//zNodes[nextNode].fCost += abs( goalY - zNodes[nextNode].y);
 
 			theNextNode.fCost *= 10;//zNodes[nextNode].fCost *= 10;
 
