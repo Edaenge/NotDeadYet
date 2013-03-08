@@ -57,6 +57,7 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 	// Check Packet Number
 	if ( packetNumber != zPacketNumberIn++ )
 	{
+		MaloW::Debug("Throw Exception: Packet Not Received In Correct Order!");
 		throw( NetworkException("Packet Not Received In Correct Order!", 0) );
 	}
 
