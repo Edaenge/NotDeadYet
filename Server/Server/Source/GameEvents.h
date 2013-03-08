@@ -144,7 +144,6 @@ public:
 
 	ClientData* clientData;
 
-	unsigned int itemID;
 	unsigned int craftedItemType;
 	unsigned int craftedItemSubType;
 };

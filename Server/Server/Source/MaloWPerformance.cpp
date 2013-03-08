@@ -94,4 +94,3 @@ void MaloWPerformance::ResetAll()
 		}
 	}
 }
-
