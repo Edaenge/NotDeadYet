@@ -20,6 +20,7 @@ GuiManager::GuiManager()
 {
 	this->zLooting = false;
 	this->zInventoryOpen = false;
+	this->zLootOpen = false;
 	this->zCraftOpen = false;
 	this->zCircularInventorySelectionOpen = false;
 
@@ -40,6 +41,7 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 	this->zLooting = false;
 	this->zInventoryOpen = false;
 	this->zLootOpen = false;
+	this->zCraftOpen = false;
 	this->zCircularInventorySelectionOpen = false;
 
 	this->zEng = ge;
@@ -63,7 +65,7 @@ GuiManager::GuiManager(GraphicsEngine* ge)
 
 	this->zLootGui = new LootInventoryGui(0, windowHeight - heightLoot, width, heightLoot, LOOT_GUI_PATH);
 
-	this->zCraftingGui = new CraftingMenu((150.0f / 1024.0f) * dx, (150.0f / 768.0f) * windowHeight, (312.0f / 1024.0f) * dx, (250.0f / 768.0f) * windowHeight, CRAFT_GUI_PATH);
+	this->zCraftingGui = new CraftingMenu((150.0f / 1024.0f) * dx, (150.0f / 768.0f) * windowHeight, (312.0f / 1024.0f) * dx, (300.0f / 768.0f) * windowHeight, CRAFT_GUI_PATH);
 
 	Vector2 mousePosition = this->zEng->GetKeyListener()->GetMousePosition();
 
@@ -361,13 +363,20 @@ Menu_select_data GuiManager::CheckCrafting()
 	if( this->zCraftOpen )
 	{
 		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
-		this->zCraftingGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(1), zEng);
+		Gui_Item_Data gid = this->zCraftingGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(1), zEng);
+		if(zEng->GetKeyListener()->IsClicked(1))
+		{
+			Menu_select_data msd;
+			msd.zAction = CIRCMENU::CRAFT;
+			msd.gid = gid;
+			return msd;
+		}
 	}
 
 	Menu_select_data msd;
 	msd.zAction = (CIRCMENU)-1;
-	msd.gid.zID = -1;
-	msd.gid.zType = -1;
+	msd.gid.zID = 0;
+	msd.gid.zType = 0;
 	return msd;
 }
 
