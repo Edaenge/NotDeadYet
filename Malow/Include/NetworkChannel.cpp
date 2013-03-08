@@ -26,6 +26,7 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 	{
 		if ( errCode < 0 )
 		{
+			MaloW::Debug("Throw Exception: Failed to Receive Packet Time, Connection closed");
 			throw( NetworkException("Failed Receiving Packet Number!", WSAGetLastError()) );
 		}
 		else
@@ -42,6 +43,7 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 	{
 		if ( errCode < 0 )
 		{
+			MaloW::Debug("Throw Exception: Failed to Receive Packet Number, Connection closed");
 			throw( NetworkException("Failed Receiving Packet Number!", WSAGetLastError()) );
 		}
 		else
@@ -64,6 +66,7 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 	{
 		if ( errCode < 0 )
 		{
+			MaloW::Debug("Throw Exception: Failed to Receive Packet Size, Connection closed");
 			throw( NetworkException("Failed Receiving Packet Size!", WSAGetLastError()) );
 		}
 		else
@@ -80,11 +83,12 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 	{
 		if ( errCode < 0 )
 		{
+			MaloW::Debug("Throw Exception: Failed to Receive Packet Data, Connection closed");
 			throw( NetworkException("Failed Receiving Packet Data!", WSAGetLastError()) );
 		}
 		else
 		{
-			MaloW::Debug("Failed to Receive Packet, Connection closed");
+			MaloW::Debug("Failed to Receive Packet Data!, Connection closed");
 			// Connection Canceled
 			return false;
 		}
