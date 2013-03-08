@@ -633,12 +633,15 @@ void Client::CheckPlayerSpecificKeys()
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
 		}
 	}
-	if(this->zEng->GetKeyListener()->IsPressed('P'))
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_CRAFTING)))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_CRAFTING))
 		{
 			if(!this->zGuiManager->IsCraftOpen())
 			{
+				if(this->zGuiManager->IsLootingOpen())
+					this->zGuiManager->ToggleLootGui(0);
+
 				this->zGuiManager->ToggleCraftingGui();
 				this->zShowCursor = true;
 			}
@@ -647,13 +650,13 @@ void Client::CheckPlayerSpecificKeys()
 				this->zGuiManager->ToggleCraftingGui();
 				this->zShowCursor = false;
 			}
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_CRAFTING, true);
 		}
 	}
 	else
 	{
-		if (this->zKeyInfo.GetKeyState(KEY_TEST))
-			this->zKeyInfo.SetKeyState(KEY_TEST, false);
+		if (this->zKeyInfo.GetKeyState(KEY_CRAFTING))
+			this->zKeyInfo.SetKeyState(KEY_CRAFTING, false);
 
 	}
 
@@ -683,9 +686,15 @@ void Client::CheckPlayerSpecificKeys()
 		{
 			this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
 			if (!this->zGuiManager->IsLootingOpen())
-				this->zShowCursor = !this->zShowCursor;
-
-			this->zGuiManager->ToggleInventoryGui();
+			{
+				this->zShowCursor = true;
+				this->zGuiManager->ToggleInventoryGui();
+			}
+			else if(this->zGuiManager->IsLootingOpen())
+			{
+				this->zShowCursor = false;
+				this->zGuiManager->ToggleInventoryGui();
+			}
 		}
 	}
 	else
@@ -2036,6 +2045,8 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsi
 			this->zGuiManager->AddLootItemToLootGui(gid);
 		}
 	}
+	if(this->zGuiManager->IsCraftOpen())
+		this->zGuiManager->ToggleCraftingGui();
 	this->zGuiManager->ToggleInventoryGui();
 	this->zGuiManager->ToggleLootGui(ActorID);
 	this->zShowCursor = true;
