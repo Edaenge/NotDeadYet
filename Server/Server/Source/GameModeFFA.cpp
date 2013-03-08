@@ -350,6 +350,8 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	gActor->SetDir(direction);
 	gActor->SetEnergy(energy + 25.0f);
 	gActor->AddObserver(this);
+	gActor->SetModel("Media/Models/Ball.obj");
+	gActor->SetScale(Vector3());
 
 	//Create Ghost behavior
 	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);

@@ -6,6 +6,7 @@ MaloWPerformance::MaloWPerformance()
 	LARGE_INTEGER li;
 	QueryPerformanceFrequency(&li);
 	PCFreq = float(li.QuadPart)/1000.0f;
+	this->filePath = "MPR.txt";
 }
 
 MaloWPerformance::~MaloWPerformance()
@@ -59,7 +60,7 @@ void MaloWPerformance::PostMeasure( string perfName, int tier )
 void MaloWPerformance::GenerateReport(iGraphicsEngineParams& gep)
 {
 	fstream writeFile;
-	writeFile.open ("MPR_Client.txt", ios::out | ios::trunc);
+	writeFile.open (this->filePath, ios::out | ios::trunc);
 	writeFile << "Performance report, times in milliseconds, IE 100 in the file = 0.1 seconds." << endl << endl;
 	writeFile << "Settings: " << endl;
 	writeFile << "Resolution: " << gep.WindowWidth << " x " << gep.WindowHeight << endl;
@@ -76,6 +77,27 @@ void MaloWPerformance::GenerateReport(iGraphicsEngineParams& gep)
 		writeFile << "WARNING, MAXFPS IS SET!" << endl << endl;
 	else
 		writeFile << endl;
+
+	for(int u = 0; u < NR_OF_TIERS; u++)
+	{
+		writeFile << "           Tier " << u + 1 << ": " << endl;
+		for(int i = 0; i < this->perfs[u].size(); i++)
+		{
+			writeFile << this->perfs[u][i].name << ": " << endl << 
+				"Avg: " << this->perfs[u][i].totalTime / this->perfs[u][i].measures << "     Tot:" <<
+				this->perfs[u][i].totalTime << ", Measures: " << this->perfs[u][i].measures << endl << endl;
+		}
+		writeFile << endl;
+	}
+
+	writeFile.close();
+}
+
+void MaloWPerformance::GenerateReport()
+{
+	fstream writeFile;
+	writeFile.open (this->filePath, ios::out | ios::trunc);
+	writeFile << "Performance report, times in milliseconds, IE 100 in the file = 0.1 seconds." << endl << endl;
 
 	for(int u = 0; u < NR_OF_TIERS; u++)
 	{

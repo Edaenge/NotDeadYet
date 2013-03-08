@@ -89,6 +89,7 @@ Client::Client()
 
 	this->zGameTimer = new GameTimer();
 	this->zPerf = new MaloWPerformance();
+	this->zPerf->SetFilePath("MPR_Client.txt");
 }
 
 void Client::Connect(const std::string &IPAddress, const unsigned int &port, std::string& errMsg, int& errorCode)
@@ -303,7 +304,7 @@ void Client::Life()
 		{
 			if (this->zDeltaTime < TARGET_DT)
 			{
-				float sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
+				DWORD sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
 				Sleep(sleepTime);
 			}
 		}
@@ -557,37 +558,6 @@ void Client::CheckPlayerSpecificKeys()
 				if (item)
 					SendUseItemMessage(msd.gid.zID);
 			}
-			if (msd.zAction == CRAFT)
-			{
-				if (item)
-				{
-					unsigned int type = 1000;
-					unsigned int subType = 1000;
-
-					if (item->GetItemSubType() == ITEM_SUB_TYPE_THREAD || item->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK)
-					{
-						type = ITEM_TYPE_WEAPON_RANGED;
-						subType = ITEM_SUB_TYPE_BOW;
-					}
-					else if (item->GetItemSubType() == ITEM_SUB_TYPE_SMALL_STICK)
-					{
-						type = ITEM_TYPE_PROJECTILE;
-						subType = ITEM_SUB_TYPE_ARROW;
-					}
-					else if (item->GetItemSubType() == ITEM_SUB_TYPE_LARGE_STICK)
-					{
-						type = ITEM_TYPE_MISC;
-						subType = ITEM_SUB_TYPE_REGULAR_TRAP;
-					}
-					else if (item->GetItemSubType() == ITEM_SUB_TYPE_DISENFECTANT_LEAF)
-					{
-						type = ITEM_TYPE_BANDAGE;
-						subType = ITEM_SUB_TYPE_BANDAGE_POOR;
-					}
-					
-					SendCraftItemMessage(msd.gid.zID, type, subType);
-				}
-			}
 			else if(msd.zAction == EQUIP)
 			{
 				if(item)
@@ -614,6 +584,43 @@ void Client::CheckPlayerSpecificKeys()
 					this->SendUnEquipItem(msd.gid.zID, (msd.gid.zType));
 			}
 		}
+	}
+	if(this->zGuiManager->IsCraftOpen())
+	{
+
+		Menu_select_data msd = this->zGuiManager->CheckCrafting();
+		/*
+		if (msd.zAction == CRAFT)
+		{
+			if (item)
+			{
+				unsigned int type = 1000;
+				unsigned int subType = 1000;
+
+				if (item->GetItemSubType() == ITEM_SUB_TYPE_THREAD || item->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK)
+				{
+					type = ITEM_TYPE_WEAPON_RANGED;
+					subType = ITEM_SUB_TYPE_BOW;
+				}
+				else if (item->GetItemSubType() == ITEM_SUB_TYPE_SMALL_STICK)
+				{
+					type = ITEM_TYPE_PROJECTILE;
+					subType = ITEM_SUB_TYPE_ARROW;
+				}
+				else if (item->GetItemSubType() == ITEM_SUB_TYPE_LARGE_STICK)
+				{
+					type = ITEM_TYPE_MISC;
+					subType = ITEM_SUB_TYPE_REGULAR_TRAP;
+				}
+				else if (item->GetItemSubType() == ITEM_SUB_TYPE_DISENFECTANT_LEAF)
+				{
+					type = ITEM_TYPE_BANDAGE;
+					subType = ITEM_SUB_TYPE_BANDAGE_POOR;
+				}
+
+				SendCraftItemMessage(msd.gid.zID, type, subType);
+			}
+		}*/
 	}
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
@@ -653,6 +660,29 @@ void Client::CheckPlayerSpecificKeys()
 			this->zShowCursor = false;
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
 		}
+	}
+	if(this->zEng->GetKeyListener()->IsPressed('P'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			if(!this->zGuiManager->IsCraftOpen())
+			{
+				this->zGuiManager->ToggleCraftingGui();
+				this->zShowCursor = true;
+			}
+			else
+			{
+				this->zGuiManager->ToggleCraftingGui();
+				this->zShowCursor = false;
+			}
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_TEST))
+			this->zKeyInfo.SetKeyState(KEY_TEST, false);
+
 	}
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_SWAP_EQ)))

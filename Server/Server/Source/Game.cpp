@@ -102,9 +102,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	//this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();		//this->SpawnAnimalsDebug();
+	this->SpawnItemsDebug();
+	this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
+
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
 
@@ -143,6 +144,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zFogTimer = 0.0f;
 
 	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
+
 }
 
 Game::~Game()
@@ -185,35 +187,35 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/temp_guy_movement_anims.fbx");
+	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	DeerActor* dActor = new DeerActor(deerPhysics);
 	dActor->AddObserver(this->zGameMode);
 
-	/*Vector3 position2 = this->CalcPlayerSpawnPoint(increment++);
+	Vector3 position2 = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	BearActor* bActor = new BearActor(bearPhysics);
-	bActor->AddObserver(this->zGameMode);*/
+	bActor->AddObserver(this->zGameMode);
 
 	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
-	//AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
+	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
 
 	zBehaviors.insert(aiDeerBehavior);
-	//zBehaviors.insert(aiBearBehavior);
+	zBehaviors.insert(aiBearBehavior);
 
 	dActor->SetPosition(position);
 	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 
-	//bActor->SetPosition(position2);
-	//bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
+	bActor->SetPosition(position2);
+	bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
 
-	//const Food* temp_Bear_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
+	const Food* temp_Bear_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
 	
 	int lootSize = (rand() % 5) + 1;
 	Food* new_Food = NULL;
 
-	Inventory* inv;// = bActor->GetInventory();
+	Inventory* inv = bActor->GetInventory();
 	bool stacked = false;
-	/*if (temp_Bear_food)
+	if (temp_Bear_food)
 	{
 		for (int i = 0; i < lootSize; i++)
 		{
@@ -223,7 +225,7 @@ void Game::SpawnAnimalsDebug()
 			if( stacked && new_Food->GetStackSize() == 0 )
 				SAFE_DELETE(new_Food);
 		}
-	}*/
+	}
 
 	const Food* temp_Deer_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
 
@@ -244,7 +246,7 @@ void Game::SpawnAnimalsDebug()
 	}
 	
 	this->zActorManager->AddActor(dActor);
-	//this->zActorManager->AddActor(bActor);
+	this->zActorManager->AddActor(bActor);
 }
 
 void Game::SpawnItemsDebug()
@@ -267,7 +269,7 @@ void Game::SpawnItemsDebug()
 	unsigned int increment = 0;
 	int maxPoints = 10;
 	float radius = 3.5f;
-	int numberOfObjects = 10;
+	int numberOfObjects = 12;
 	int total = 0;
 	Vector3 center;
 	Vector3 position;
