@@ -38,28 +38,28 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 	}
 
 	// Receive Packet Number
-	unsigned int packetNumber = 0;
-	if ( (errCode = recv(zSocket, reinterpret_cast<char*>(&packetNumber), sizeof(unsigned int), 0)) <= 0 )
-	{
-		if ( errCode < 0 )
-		{
-			MaloW::Debug("Throw Exception: Failed to Receive Packet Number, Connection closed");
-			throw( NetworkException("Failed Receiving Packet Number!", WSAGetLastError()) );
-		}
-		else
-		{
-			MaloW::Debug("Failed to Receive Packet Number, Connection closed");
-			// Connection Canceled
-			return false;
-		}
-	}
+	//unsigned int packetNumber = 0;
+	//if ( (errCode = recv(zSocket, reinterpret_cast<char*>(&packetNumber), sizeof(unsigned int), 0)) <= 0 )
+	//{
+	//	if ( errCode < 0 )
+	//	{
+	//		MaloW::Debug("Throw Exception: Failed to Receive Packet Number, Connection closed");
+	//		throw( NetworkException("Failed Receiving Packet Number!", WSAGetLastError()) );
+	//	}
+	//	else
+	//	{
+	//		MaloW::Debug("Failed to Receive Packet Number, Connection closed");
+	//		// Connection Canceled
+	//		return false;
+	//	}
+	//}
 
-	// Check Packet Number
-	if ( packetNumber != zPacketNumberIn++ )
-	{
-		MaloW::Debug("Throw Exception: Packet Not Received In Correct Order!");
-		throw( NetworkException("Packet Not Received In Correct Order!", 0) );
-	}
+	//// Check Packet Number
+	//if ( packetNumber != zPacketNumberIn++ )
+	//{
+	//	MaloW::Debug("Throw Exception: Packet Not Received In Correct Order!");
+	//	throw( NetworkException("Packet Not Received In Correct Order!", 0) );
+	//}
 
 	// Receive Packet Size
 	unsigned int packetSize = 0;
@@ -136,19 +136,19 @@ bool NetworkChannel::Send(const std::string& msg)
 	}
 
 	// Send Packet Number
-	unsigned int packetNumber = zPacketNumberOut++;
-	if ( (errCode = send(zSocket, reinterpret_cast<char*>(&packetNumber), sizeof(unsigned int), 0)) <= 0 )
-	{
-		if ( errCode < 0 )
-		{
-			throw( NetworkException("Failed Sending Packet Number!", WSAGetLastError()) );
-		}
-		else
-		{
-			// Connection Canceled
-			return false;
-		}
-	}
+	//unsigned int packetNumber = zPacketNumberOut++;
+	//if ( (errCode = send(zSocket, reinterpret_cast<char*>(&packetNumber), sizeof(unsigned int), 0)) <= 0 )
+	//{
+	//	if ( errCode < 0 )
+	//	{
+	//		throw( NetworkException("Failed Sending Packet Number!", WSAGetLastError()) );
+	//	}
+	//	else
+	//	{
+	//		// Connection Canceled
+	//		return false;
+	//	}
+	//}
 
 	// Send Packet Size
 	unsigned int size = msg.length();
