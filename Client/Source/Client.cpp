@@ -1853,6 +1853,19 @@ void Client::UpdateHealthAndBleedingImage()
 		{
 			this->zBleedingOpacity -= this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
 		}
+
+
+		if(this->zBleedingOpacity >= 0.22f || this->zBleedingOpacity <= 0.0f)
+		{
+			if(!this->zDroppingPulse)
+			{
+				this->zDroppingPulse = true;
+			}
+			else 
+			{
+				this->zDroppingPulse = false;
+			}
+		}
 	}
 	else
 	{
@@ -1860,17 +1873,7 @@ void Client::UpdateHealthAndBleedingImage()
 	}
 	//this->zHealthOpacity += testBleed;
 
-	if(this->zBleedingOpacity >= 0.22f || this->zBleedingOpacity <= 0.0f)
-	{
-		if(!this->zDroppingPulse)
-		{
-			this->zDroppingPulse = true;
-		}
-		else 
-		{
-			this->zDroppingPulse = false;
-		}
-	}
+	
 
 
 	/*if(this->zPulseCounter > pulseLimit)

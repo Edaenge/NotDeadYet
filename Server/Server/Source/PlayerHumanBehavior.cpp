@@ -244,7 +244,7 @@ bool PlayerHumanBehavior::Update( float dt )
 		zActor->SetPosition(newPosition);
 	}
 
-	PhysicalConditionCalculator(dt);
+	//PhysicalConditionCalculator(dt);
 
 
 	return false;
@@ -255,6 +255,8 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 	//BioActor* bActor = dynamic_cast<BioActor*>(this->zActor);
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActor);
 	
+	Damage bleedingAndConditionDamage;
+
 	if(this->zIntervalCounter >= 1.0f)
 	{
 		std::stringstream tester; 
@@ -375,39 +377,50 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 			pActor->SetHydration(hydration);
 		}
 
-		Damage hurting;
+		
+
+		//Damage hurting;
 		if(pActor->GetFullness() < 0)
 		{
 			pActor->SetFullness(0.0f);
-			hurting.blunt = this->zPlayerConfigReader->GetVariable(DAMAGE_AT_STARVATON_COEFF);
-			pActor->TakeDamage(hurting, pActor);
+			bleedingAndConditionDamage.blunt += this->zPlayerConfigReader->GetVariable(DAMAGE_AT_STARVATON_COEFF);
+			//pActor->TakeDamage(hurting, pActor);
 		}
 		if(pActor->GetHydration() < 0)
 		{
 			pActor->SetHydration(0.0f);
-			hurting.blunt = this->zPlayerConfigReader->GetVariable(DAMAGE_AT_THIRST_COEFF);
-			pActor->TakeDamage(hurting, pActor);
+			bleedingAndConditionDamage.blunt += this->zPlayerConfigReader->GetVariable(DAMAGE_AT_THIRST_COEFF);
+			//pActor->TakeDamage(hurting, pActor);
 		}
 
-		float health = pActor->GetHealth();
+		float health = 0.0f;
 
 		if(regeneratedHealth < 0.0f)
 		{
-			Damage bleedingDamage;
-			bleedingDamage.blunt = -(regeneratedHealth / this->zPlayerConfigReader->GetVariable(REGEN_SCALE));
-			pActor->TakeDamage(bleedingDamage,pActor);
+			//Damage bleedingDamage;
+			bleedingAndConditionDamage.blunt += -(regeneratedHealth / this->zPlayerConfigReader->GetVariable(REGEN_SCALE));
+			//pActor->TakeDamage(bleedingDamage,pActor);
 		}
 		else
 		{
-			health += regeneratedHealth / this->zPlayerConfigReader->GetVariable(REGEN_SCALE);
-			pActor->SetHealth(health);  
+			health = regeneratedHealth / this->zPlayerConfigReader->GetVariable(REGEN_SCALE);
+			pActor->SetHealth(pActor->GetHealth() + health);  
 		}
 		
 		if(pActor->GetHealth() > pActor->GetHealthMax())
 		{
 			pActor->SetHealth(pActor->GetHealthMax()); 
 		}
+
+		if(bleedingAndConditionDamage.GetTotal() > 0.0f)
+		{
+			pActor->TakeDamage(bleedingAndConditionDamage,pActor);
+		}
+
+
+
+
 		this->zIntervalCounter = 0.0f;
 	}
-	return false;
+	return pActor->IsAlive();
 }
