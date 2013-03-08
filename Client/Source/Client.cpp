@@ -37,7 +37,7 @@ Client::Client()
 	this->zMeshCameraOffsets["Media/Models/Ball.obj"] = Vector3();
 	this->zMeshCameraOffsets["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zMeshCameraOffsets["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
-	this->zMeshCameraOffsets["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
+	this->zMeshCameraOffsets["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 2.3f, 0.0f);
 
 	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
@@ -633,27 +633,31 @@ void Client::CheckPlayerSpecificKeys()
 			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
 		}
 	}
-	if(this->zEng->GetKeyListener()->IsPressed('P'))
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_CRAFTING)))
 	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		if (!this->zKeyInfo.GetKeyState(KEY_CRAFTING))
 		{
 			if(!this->zGuiManager->IsCraftOpen())
 			{
+				if(this->zGuiManager->IsLootingOpen())
+					this->zGuiManager->ToggleLootGui(0);
+
 				this->zGuiManager->ToggleCraftingGui();
 				this->zShowCursor = true;
 			}
 			else
 			{
 				this->zGuiManager->ToggleCraftingGui();
-				this->zShowCursor = false;
+				if(!this->zGuiManager->IsLootingOpen() && !this->zGuiManager->IsInventoryOpen())
+					this->zShowCursor = false;
 			}
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+			this->zKeyInfo.SetKeyState(KEY_CRAFTING, true);
 		}
 	}
 	else
 	{
-		if (this->zKeyInfo.GetKeyState(KEY_TEST))
-			this->zKeyInfo.SetKeyState(KEY_TEST, false);
+		if (this->zKeyInfo.GetKeyState(KEY_CRAFTING))
+			this->zKeyInfo.SetKeyState(KEY_CRAFTING, false);
 
 	}
 
@@ -682,10 +686,17 @@ void Client::CheckPlayerSpecificKeys()
 		if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY) && !this->zPam->GetShow())
 		{
 			this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
-			if (!this->zGuiManager->IsLootingOpen())
-				this->zShowCursor = !this->zShowCursor;
-
-			this->zGuiManager->ToggleInventoryGui();
+			if (!this->zGuiManager->IsInventoryOpen())
+			{
+				this->zShowCursor = true;
+				this->zGuiManager->ToggleInventoryGui();
+			}
+			else if(this->zGuiManager->IsInventoryOpen())
+			{
+				this->zGuiManager->ToggleInventoryGui();
+				if(!this->zGuiManager->IsLootingOpen() && !this->zGuiManager->IsCraftOpen())
+					this->zShowCursor = false;
+			}
 		}
 	}
 	else
@@ -2038,6 +2049,8 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsi
 			this->zGuiManager->AddLootItemToLootGui(gid);
 		}
 	}
+	if(this->zGuiManager->IsCraftOpen())
+		this->zGuiManager->ToggleCraftingGui();
 	this->zGuiManager->ToggleInventoryGui();
 	this->zGuiManager->ToggleLootGui(ActorID);
 	this->zShowCursor = true;

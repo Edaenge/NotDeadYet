@@ -42,7 +42,6 @@ Host::Host() :
 Host::~Host()
 {
 	this->zPerf->GenerateReport();
-	SAFE_DELETE(this->zPerf);
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 
@@ -79,7 +78,7 @@ Host::~Host()
 
 		counter++;
 	}
-
+	SAFE_DELETE(this->zPerf);
 	FreePhysics();
 }
 
