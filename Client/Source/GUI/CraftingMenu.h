@@ -34,7 +34,7 @@ public:
 	virtual ~CraftingMenu();
 
 	// Checks what to craft
-	Selected_Item_ReturnData CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
+	Gui_Item_Data CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
 
 	//Call this before adding to renderer.
 	void UpdateCrafting(std::vector<InventorySlotGui*> inventory);

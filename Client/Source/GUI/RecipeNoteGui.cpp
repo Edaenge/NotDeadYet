@@ -40,15 +40,15 @@ RecipeNoteGui::RecipeNoteGui(Vector2 pos, const std::map<unsigned int, unsigned 
 		}
 	}
 	// Calc positions.
-	this->SetDimension(Vector2((300.0f / 1024.0f) * dx, 
-		(TEXTSTARTY + (this->zNrOfTexts * TEXTHEIGHT) + TEXTSTARTY / 768.0f) * windowHeight));
+	this->SetDimension(Vector2((350.0f / 1024.0f) * dx, 
+		((TEXTSTARTY + (this->zNrOfTexts * TEXTHEIGHT) + TEXTSTARTY) / 768.0f) * windowHeight));
 
 	GuiElement::AddToRenderer(GetGraphics());
 	int lCurrentText = 0;
 	for(int i = 0; i < this->zNrOfTexts; i++)
 	{
-		Vector2 pos = Vector2(this->zX + TEXTSTARTX, this->zY + TEXTSTARTY + (this->zNrOfTexts * TEXTHEIGHT));
-		this->zRenderTextes[lCurrentText] = GetGraphics()->CreateText(this->zMatsText[lCurrentText].c_str(), pos, 2, "Media/fonts/new");
+		Vector2 pos = Vector2(this->zX + TEXTSTARTX, this->zY + TEXTSTARTY + (i * TEXTHEIGHT));
+		this->zRenderTextes[lCurrentText] = GetGraphics()->CreateText(this->zMatsText[lCurrentText].c_str(), pos, TEXTSIZE, "Media/Fonts/new");
 		lCurrentText++;
 	}
 	
@@ -60,7 +60,8 @@ RecipeNoteGui::~RecipeNoteGui()
 	for(int i = 0; i < MAXNROFMATS; i++)
 	{
 		if(this->zRenderTextes[i])
-			SAFE_DELETE(this->zRenderTextes[i]);
+			GetGraphics()->DeleteText(this->zRenderTextes[i]);
+		this->zRenderTextes[i] = NULL;
 	}
 }
 

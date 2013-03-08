@@ -5,7 +5,8 @@
 #include <map>
 
 #define MAXNROFMATS 5
-#define RECIPENOTETEXTURE ""
+#define RECIPENOTETEXTURE "Media/Menu/CraftingMenu/Material_BG.png"
+#define TEXTSIZE 1.5f
 #define TEXTHEIGHT 35.0f
 #define TEXTSTARTX 10.0f
 #define TEXTSTARTY 10.0f
