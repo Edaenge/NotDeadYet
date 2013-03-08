@@ -37,7 +37,7 @@ Client::Client()
 	this->zMeshCameraOffsets["Media/Models/Ball.obj"] = Vector3();
 	this->zMeshCameraOffsets["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zMeshCameraOffsets["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
-	this->zMeshCameraOffsets["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 2.5f, 0.0f);
+	this->zMeshCameraOffsets["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
 
 	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
@@ -589,38 +589,10 @@ void Client::CheckPlayerSpecificKeys()
 	{
 
 		Menu_select_data msd = this->zGuiManager->CheckCrafting();
-		/*
 		if (msd.zAction == CRAFT)
 		{
-			if (item)
-			{
-				unsigned int type = 1000;
-				unsigned int subType = 1000;
-
-				if (item->GetItemSubType() == ITEM_SUB_TYPE_THREAD || item->GetItemSubType() == ITEM_SUB_TYPE_MEDIUM_STICK)
-				{
-					type = ITEM_TYPE_WEAPON_RANGED;
-					subType = ITEM_SUB_TYPE_BOW;
-				}
-				else if (item->GetItemSubType() == ITEM_SUB_TYPE_SMALL_STICK)
-				{
-					type = ITEM_TYPE_PROJECTILE;
-					subType = ITEM_SUB_TYPE_ARROW;
-				}
-				else if (item->GetItemSubType() == ITEM_SUB_TYPE_LARGE_STICK)
-				{
-					type = ITEM_TYPE_MISC;
-					subType = ITEM_SUB_TYPE_REGULAR_TRAP;
-				}
-				else if (item->GetItemSubType() == ITEM_SUB_TYPE_DISENFECTANT_LEAF)
-				{
-					type = ITEM_TYPE_BANDAGE;
-					subType = ITEM_SUB_TYPE_BANDAGE_POOR;
-				}
-
-				SendCraftItemMessage(msd.gid.zID, type, subType);
-			}
-		}*/
+			this->SendCraftItemMessage(msd.gid.zType, msd.gid.zSubType);
+		}
 	}
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))

@@ -12,6 +12,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include "GameModeFFA.h"
 #include "GameEvents.h"
 #include "GameTimer.h"
+#include "MaloWPerformance.h"
 
 class ActorSynchronizer;
 
@@ -22,6 +23,7 @@ class ActorSynchronizer;
 
 class Host : public MaloW::Process, public Observed
 {
+	MaloWPerformance* zPerf;
 	ServerListener* zServerListener;
 
 	NetworkMessageConverter zMessageConverter;

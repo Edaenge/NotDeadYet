@@ -58,6 +58,7 @@
     <ClCompile Include="Source\KeyUtil\KeyHandler.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\MainMenu.cpp" />
+    <ClCompile Include="Source\MaloWPerformance.cpp" />
     <ClCompile Include="Source\PickAnimalMenu.cpp" />
     <ClCompile Include="Source\PlayerConfig\PlayerSettings.cpp" />
     <ClCompile Include="Source\PlayerConfig\UserDataConfig.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="Source\KeyUtil\KeyConverter.h" />
     <ClInclude Include="Source\KeyUtil\KeyHandler.h" />
     <ClInclude Include="Source\MainMenu.h" />
+    <ClInclude Include="Source\MaloWPerformance.h" />
     <ClInclude Include="Source\PickAnimalMenu.h" />
     <ClInclude Include="Source\PlayerConfig\PlayerSettings.h" />
     <ClInclude Include="Source\PlayerConfig\UserDataConfig.h" />
