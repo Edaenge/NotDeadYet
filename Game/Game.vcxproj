@@ -94,7 +94,6 @@
     <ClInclude Include="Include\ItemLookup.h" />
     <ClInclude Include="Include\KeyStates.h" />
     <ClInclude Include="Include\KeyValues.h" />
-    <ClInclude Include="Include\MaloWPerformance.h" />
     <ClInclude Include="Include\Material.h" />
     <ClInclude Include="Include\MeleeWeapon.h" />
     <ClInclude Include="Include\NetworkMessageConverter.h" />
@@ -135,7 +134,6 @@
     <ClCompile Include="Source\Item.cpp" />
     <ClCompile Include="Source\ItemLookup.cpp" />
     <ClCompile Include="Source\KeyStates.cpp" />
-    <ClCompile Include="Source\MaloWPerformance.cpp" />
     <ClCompile Include="Source\Material.cpp" />
     <ClCompile Include="Source\MeleeWeapon.cpp" />
     <ClCompile Include="Source\NetworkMessageConverter.cpp" />

@@ -140,9 +140,6 @@
     <ClInclude Include="Include\CraftingReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\MaloWPerformance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\World\Sector.cpp">
@@ -230,9 +227,6 @@
       <Filter>Source Files\World</Filter>
     </ClCompile>
     <ClCompile Include="Source\CraftingReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MaloWPerformance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

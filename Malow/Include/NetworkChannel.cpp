@@ -30,6 +30,7 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 		}
 		else
 		{
+			MaloW::Debug("Failed to Receive Packet Time, Connection closed");
 			// Connection Canceled
 			return false;
 		}
@@ -45,6 +46,7 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 		}
 		else
 		{
+			MaloW::Debug("Failed to Receive Packet Number, Connection closed");
 			// Connection Canceled
 			return false;
 		}
@@ -66,6 +68,7 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 		}
 		else
 		{
+			MaloW::Debug("Failed to Receive Packet Size, Connection closed");
 			// Connection Canceled
 			return false;
 		}
@@ -81,6 +84,7 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 		}
 		else
 		{
+			MaloW::Debug("Failed to Receive Packet, Connection closed");
 			// Connection Canceled
 			return false;
 		}

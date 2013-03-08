@@ -49,15 +49,10 @@
 /ModelingProject1/bin
 /WorkingDir/Media/Models/Cache/*.MalEng
 /WorkingDir/Media/Models/Cache
-/WorkingDir/UserData.cfg
-/WorkingDir/Media/Maps/*.map/WorkingDir/MaloWPerformanceReport.txt
-/WorkingDir/MaloWPerformanceReport.txt
 
-/WorkingDir/Media/Maps/*.map
 /WorkingDir/Media/Maps/*.map
 
 /WorkingDir/MPR.txt
-/*.psess
-
-/*.vspx
 /WorkingDir/MPR_Client.txt
+/WorkingDir/MPR_Server.txt
+/WorkingDir/UserData.cfg

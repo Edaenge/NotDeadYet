@@ -147,6 +147,9 @@
     <ClCompile Include="Source\GUI\RecipeNoteGui.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\MaloWPerformance.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Client.h">
@@ -274,6 +277,9 @@
     </ClInclude>
     <ClInclude Include="Source\GUI\RecipeNoteGui.h">
       <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MaloWPerformance.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

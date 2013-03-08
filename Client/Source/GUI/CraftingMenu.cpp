@@ -6,7 +6,7 @@
 #define SLOTIMAGEHEIGHT 50.0f
 #define PADDING 12.0f
 #define XOFFSETINV 32.0f
-#define YOFFSETINV 32.0f
+#define YOFFSETINV 82.0f
 
 CraftingMenu::CraftingMenu() : GuiElement()
 {
@@ -83,7 +83,7 @@ CraftingMenu::~CraftingMenu()
 	}
 }
 
-Selected_Item_ReturnData CraftingMenu::CheckCollision( float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge )
+Gui_Item_Data CraftingMenu::CheckCollision( float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge )
 {
 
 	for(auto it = this->zSlotGui.begin(); it != this->zSlotGui.end(); it++)
@@ -92,37 +92,42 @@ Selected_Item_ReturnData CraftingMenu::CheckCollision( float mouseX, float mouse
 		{
 			if(mousePressed)
 			{
-				
+				 Gui_Item_Data gid = (*it)->GetGid();
+				 Selected_Item_ReturnData();
 			}
 			else
 			{
-				if(zSelectedGid.zSubType == (*it)->GetGid().zSubType)
+				if(this->zSelectedGid.zSubType != (*it)->GetGid().zSubType || this->zSelectedGid.zType != (*it)->GetGid().zType)
 				{
 					this->zSelectedGid = (*it)->GetGid();
 					for(auto i = this->zCanCraftList.cbegin(); i != this->zCanCraftList.cend(); i++)
 					{
-						if((*i)->subType == this->zSelectedGid.zSubType)
+						if((*i)->subType == this->zSelectedGid.zSubType && (*i)->type == this->zSelectedGid.zType)
 						{
 							CraftingReader* CraftRead = GetCraftingRecipes();
+							if(this->zRecipeNote)
+							{
+								delete this->zRecipeNote;
+								this->zRecipeNote = NULL;
+							}
 							this->zRecipeNote = new RecipeNoteGui(GetGraphics()->GetKeyListener()->GetMousePosition(),
 								CraftRead->GetMaterialReq(*i));
-							break;
+
+							return Gui_Item_Data();
 						}
 					}
 				}
 			}
-		}
-		else
-		{
-			if(this->zRecipeNote)
-			{
-				this->zSelectedGid = Gui_Item_Data();
-				delete this->zRecipeNote;
-				this->zRecipeNote = NULL;
-			}
+			return Gui_Item_Data();
 		}
 	}
-	return Selected_Item_ReturnData();
+	if(this->zRecipeNote)
+	{
+		this->zSelectedGid = Gui_Item_Data();
+		delete this->zRecipeNote;
+		this->zRecipeNote = NULL;
+	}
+	return Gui_Item_Data();
 }
 
 void CraftingMenu::UpdateCrafting(std::vector<InventorySlotGui*> inventory)
@@ -170,8 +175,8 @@ void CraftingMenu::UpdateCrafting(std::vector<InventorySlotGui*> inventory)
 		{
 			if(!(*it)->GetBlocked()) // Look for the next slot that isnt blocked
 			{
-				Gui_Item_Data gid = Gui_Item_Data(0, (*craftItem)->type, (*craftItem)->type, 
-					0, 0, 0, false, "Craft", "Media/Icons/Axe_Icon_Temp.png", "CraftableItem");
+				Gui_Item_Data gid = Gui_Item_Data(0, (*craftItem)->type, (*craftItem)->subType, 
+					0, 0, 0, false, "Craft", (*craftItem)->filePath, "CraftableItem");
 				(*it)->AddItemToSlot(gid, false, ge);
 				break;
 			}
@@ -196,6 +201,11 @@ bool CraftingMenu::RemoveFromRenderer( GraphicsEngine* ge )
 	for (auto x = this->zSlotGui.begin(); x < this->zSlotGui.end(); x++)
 	{
 		(*x)->RemoveFromRenderer(ge);
+	}
+	if(this->zRecipeNote)
+	{
+		SAFE_DELETE(this->zRecipeNote);
+		this->zRecipeNote = NULL;
 	}
 	return true;
 }
