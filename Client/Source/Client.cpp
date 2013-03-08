@@ -591,7 +591,7 @@ void Client::CheckPlayerSpecificKeys()
 		Menu_select_data msd = this->zGuiManager->CheckCrafting();
 		if (msd.zAction == CRAFT)
 		{
-			SendCraftItemMessage(msd.gid.zID, msd.gid.zType, msd.gid.zSubType);
+			this->SendCraftItemMessage(msd.gid.zType, msd.gid.zSubType);
 		}
 	}
 
