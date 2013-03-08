@@ -585,8 +585,11 @@ void Client::CheckPlayerSpecificKeys()
 			}
 		}
 	}
-	/*if(this->zGuiManager->IsCraftOpen())
+	if(this->zGuiManager->IsCraftOpen())
 	{
+
+		Menu_select_data msd = this->zGuiManager->CheckCrafting();
+		/*
 		if (msd.zAction == CRAFT)
 		{
 			if (item)
@@ -617,8 +620,8 @@ void Client::CheckPlayerSpecificKeys()
 
 				SendCraftItemMessage(msd.gid.zID, type, subType);
 			}
-		}
-	}*/
+		}*/
+	}
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
 	{

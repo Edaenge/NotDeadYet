@@ -6,6 +6,10 @@
 RecipeNoteGui::RecipeNoteGui(Vector2 pos, const std::map<unsigned int, unsigned int>* mats) : 
 	GuiElement(pos.x, pos.y, TEXTHEIGHT * mats->size(), TEXTHEIGHT * mats->size(), RECIPENOTETEXTURE)
 {
+	for(int i = 0; i < MAXNROFMATS; i++)
+	{
+		this->zRenderTextes[i] = NULL;
+	}
 	float windowHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 
