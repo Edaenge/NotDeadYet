@@ -259,7 +259,7 @@ void AIDeerBehavior::SetFearLevel(float fear)
 
 bool AIDeerBehavior::InitPathfinder()
 {
-	this->zPathfinder.InitAI(0.5,95);
+	this->zPathfinder.InitAI(0.5,3840);
 	this->zPathfinder.SetWorldPointer(this->zWorld);
 	return true;
 }
