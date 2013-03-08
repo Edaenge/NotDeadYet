@@ -34,10 +34,15 @@ Host::Host() :
 	this->zSendUpdateDelayTimer = 0.0f;
 	this->zGameStarted = false;
 	this->zRestartRequested = false;
+
+	this->zPerf = new MaloWPerformance();
+	this->zPerf->SetFilePath("MPR_Server.txt");
 }
 
 Host::~Host()
 {
+	this->zPerf->GenerateReport();
+	SAFE_DELETE(this->zPerf);
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 
@@ -113,8 +118,13 @@ void Host::Life()
 	{
 		this->zDeltaTime = this->zGameTimer->Frame();
 
+		this->zPerf->PreMeasure("Message Reading", 0);
 		ReadMessages();
+		this->zPerf->PostMeasure("Message Reading", 0);
+
+		this->zPerf->PreMeasure("Updating Game", 0);
 		UpdateGame();
+		this->zPerf->PostMeasure("Updating Game", 0);
 		
 		if (FRAME_TIME > 0)
 		{
@@ -163,7 +173,10 @@ void Host::UpdateGame()
 
 			if (zSendUpdateDelayTimer >= UPDATE_DELAY)
 			{
+				this->zPerf->PreMeasure("Synchronizing", 1);
 				SynchronizeAll();
+				this->zPerf->PostMeasure("Synchronizing", 1);
+
 				zSendUpdateDelayTimer = 0.0f;
 				SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()), false);
 			}
@@ -333,11 +346,9 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		if (msgArray.size() > 2)
 		{
 			PlayerCraftItemEvent e;
-			int _itemID = this->zMessageConverter.ConvertStringToInt(M_ITEM_CRAFT, msgArray[0]);
 			unsigned int _itemType = this->zMessageConverter.ConvertStringToInt(M_ITEM_TYPE, msgArray[1]);
 			unsigned int _itemSubType = this->zMessageConverter.ConvertStringToInt(M_ITEM_SUB_TYPE, msgArray[2]);
 			e.clientData = cd;
-			e.itemID = _itemID;
 			e.craftedItemType = _itemType;
 			e.craftedItemSubType = _itemSubType;
 			NotifyObservers(&e);
@@ -698,6 +709,7 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
  	// Start New
  	PhysicsInit();
  	this->zGame = new Game(zMaxClients, GetPhysics(), this->zSynchronizer, gameMode, map);
+	this->zGame->SetPerformancePtr(this->zPerf);
  	this->AddObserver(this->zGame);
  
  	// Fake Connects

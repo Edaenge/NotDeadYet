@@ -202,6 +202,11 @@ bool CraftingMenu::RemoveFromRenderer( GraphicsEngine* ge )
 	{
 		(*x)->RemoveFromRenderer(ge);
 	}
+	if(this->zRecipeNote)
+	{
+		SAFE_DELETE(this->zRecipeNote);
+		this->zRecipeNote = NULL;
+	}
 	return true;
 }
 

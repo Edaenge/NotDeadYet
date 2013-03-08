@@ -630,10 +630,9 @@ void Client::SendLootItemMessage(const unsigned int ID, const unsigned int ItemI
 	this->zServerChannel->Send(msg);
 }
 
-void Client::SendCraftItemMessage(const unsigned int ID, const int Type, const int SubType)
+void Client::SendCraftItemMessage(const int Type, const int SubType)
 {
-	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_CRAFT, (float)ID);
-	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)Type);
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)Type);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_SUB_TYPE, (float)SubType);
 	this->zServerChannel->Send(msg);
 }

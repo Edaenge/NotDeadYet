@@ -591,7 +591,7 @@ void Client::CheckPlayerSpecificKeys()
 		Menu_select_data msd = this->zGuiManager->CheckCrafting();
 		if (msd.zAction == CRAFT)
 		{
-			SendCraftItemMessage(msd.gid.zID, msd.gid.zType, msd.gid.zSubType);
+			this->SendCraftItemMessage(msd.gid.zType, msd.gid.zSubType);
 		}
 	}
 
@@ -648,7 +648,8 @@ void Client::CheckPlayerSpecificKeys()
 			else
 			{
 				this->zGuiManager->ToggleCraftingGui();
-				this->zShowCursor = false;
+				if(!this->zGuiManager->IsLootingOpen() && !this->zGuiManager->IsInventoryOpen())
+					this->zShowCursor = false;
 			}
 			this->zKeyInfo.SetKeyState(KEY_CRAFTING, true);
 		}
@@ -685,15 +686,16 @@ void Client::CheckPlayerSpecificKeys()
 		if (!this->zKeyInfo.GetKeyState(KEY_INVENTORY) && !this->zPam->GetShow())
 		{
 			this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
-			if (!this->zGuiManager->IsLootingOpen())
+			if (!this->zGuiManager->IsInventoryOpen())
 			{
 				this->zShowCursor = true;
 				this->zGuiManager->ToggleInventoryGui();
 			}
-			else if(this->zGuiManager->IsLootingOpen())
+			else if(this->zGuiManager->IsInventoryOpen())
 			{
-				this->zShowCursor = false;
 				this->zGuiManager->ToggleInventoryGui();
+				if(!this->zGuiManager->IsLootingOpen() && !this->zGuiManager->IsCraftOpen())
+					this->zShowCursor = false;
 			}
 		}
 	}
