@@ -48,7 +48,7 @@ Host::~Host()
 	this->Close();
 	this->WaitUntillDone();
 
-	this->zPerf->PreMeasure("Deleting Host", 4);
+	this->zPerf->PreMeasure("Deleting Host", 2);
 
 	SAFE_DELETE(this->zGame);
 	SAFE_DELETE(this->zGameTimer);
@@ -81,7 +81,7 @@ Host::~Host()
 		counter++;
 	}
 	FreePhysics();
-	this->zPerf->PostMeasure("Deleting Host", 4);
+	this->zPerf->PostMeasure("Deleting Host", 2);
 	this->zPerf->GenerateReport();
 
 	SAFE_DELETE(this->zPerf);

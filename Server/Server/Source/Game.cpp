@@ -152,7 +152,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 Game::~Game()
 {
-	this->zPerf->PreMeasure("Deleting Game", 2);
+	this->zPerf->PreMeasure("Deleting Game", 3);
 	// Delete Players
 	for( auto i = this->zPlayers.begin(); i != this->zPlayers.end(); ++i )
 	{
@@ -177,7 +177,7 @@ Game::~Game()
 	FreePlayerConfig();
 	FreeCraftingRecipes();
 
-	this->zPerf->PostMeasure("Deleting Game", 2);
+	this->zPerf->PostMeasure("Deleting Game", 3);
 }
 
 void Game::SpawnAnimalsDebug()
