@@ -15,7 +15,6 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 
 	this->zNearActorsIndex = 0;
 	this->zNearByRadius = 100.0f;
-	this->zPlayerConfigReader = GetPlayerConfig();
 
 	// Bigger Anchor For Players
 	zAnchor->radius = 50.0f;
@@ -36,11 +35,12 @@ bool PlayerBehavior::ProcessClientData( Vector3 direction, Vector4 rotation )
 
 bool PlayerBehavior::Update(float dt)
 {
+	static PlayerConfigReader* playerConfigReader = GetPlayerConfig();
 	float energy = zActor->GetEnergy();
 
 	if (energy < 200.0f)
 
-		energy += this->zPlayerConfigReader->GetVariable(ENERGY_COEFF) * dt;
+		energy += playerConfigReader->GetVariable(ENERGY_COEFF) * dt;
 
 	if (energy >= 200.0f)
 		energy = 200.0f;

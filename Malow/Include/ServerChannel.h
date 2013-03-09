@@ -29,12 +29,12 @@ namespace MaloW
 		void CloseSpecific();
 
 	public:
-		ServerChannel( MaloW::Process* observerProcess, const std::string &IP, const unsigned int &port,
-						std::string& out, int& errCode);
+		ServerChannel( MaloW::Process* observerProcess);
 		virtual ~ServerChannel();
 
 		// Begin Process
 		void Life();
+		bool Connect(const std::string &IP, const unsigned int &port);
 	};
 }
 

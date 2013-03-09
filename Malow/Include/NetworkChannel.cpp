@@ -26,12 +26,11 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 	{
 		if ( errCode < 0 )
 		{
-			MaloW::Debug("Throw Exception: Failed to Receive Packet Time, Connection closed");
 			throw( NetworkException("Failed Receiving Packet Number!", WSAGetLastError()) );
 		}
 		else
 		{
-			MaloW::Debug("Failed to Receive Packet Time, Connection closed");
+			throw("Connection Closed by the Server");
 			// Connection Canceled
 			return false;
 		}
@@ -67,33 +66,37 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 	{
 		if ( errCode < 0 )
 		{
-			MaloW::Debug("Throw Exception: Failed to Receive Packet Size, Connection closed");
 			throw( NetworkException("Failed Receiving Packet Size!", WSAGetLastError()) );
 		}
 		else
 		{
-			MaloW::Debug("Failed to Receive Packet Size, Connection closed");
+			throw("Connection Closed by the Server");
 			// Connection Canceled
 			return false;
 		}
 	}
-
+	msg.clear();
 	// Receive Packet
 	msg.resize(packetSize);
-	if ( (errCode = recv(zSocket, &msg[0], packetSize, 0)) <= 0 )
+	if ( (errCode = recv(zSocket, &msg[0], packetSize, MSG_WAITALL)) <= 0 )
 	{
 		if ( errCode < 0 )
 		{
-			MaloW::Debug("Throw Exception: Failed to Receive Packet Data, Connection closed");
 			throw( NetworkException("Failed Receiving Packet Data!", WSAGetLastError()) );
 		}
 		else
 		{
-			MaloW::Debug("Failed to Receive Packet Data!, Connection closed");
+			throw("Connection Closed by the Server");
 			// Connection Canceled
 			return false;
 		}
 	}
+	if (packetSize != errCode)
+	{
+		MaloW::Debug(packetSize);
+		MaloW::Debug(errCode);
+	}
+	
 
 	// Count Bytes Received
 	zNumBytesIn += packetSize + sizeof(unsigned int) * 2;
@@ -130,6 +133,7 @@ bool NetworkChannel::Send(const std::string& msg)
 		}
 		else
 		{
+			throw("Connection Closed by the Server");
 			// Connection Canceled
 			return false;
 		}
@@ -160,6 +164,7 @@ bool NetworkChannel::Send(const std::string& msg)
 		}
 		else
 		{
+			throw("Connection Closed by the Server");
 			return false;
 		}
 	}
@@ -173,6 +178,7 @@ bool NetworkChannel::Send(const std::string& msg)
 		}
 		else
 		{
+			throw("Connection Closed by the Server");
 			return false;
 		}
 	}

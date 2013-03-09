@@ -7,66 +7,9 @@
 using namespace MaloW;
 
 
-ServerChannel::ServerChannel( MaloW::Process* observerProcess, const std::string &IP, const unsigned int &port,
-							 std::string& out, int& errorCode)
+ServerChannel::ServerChannel( MaloW::Process* observerProcess)
 	: zNotifier(observerProcess), NetworkChannel(0)
 {
-	try
-	{
-		WSADATA wsaData;
-		if(int errCode = WSAStartup(MAKEWORD(2,2), &wsaData)) 
-		{
-			out = "Failed To Initializing network connection!";
-			errorCode = WSAGetLastError();
-			throw( NetworkException("Failed Initializing Winsock!", WSAGetLastError()) );
-		}
-	}
-	catch (NetworkException* e)
-	{
-		out = e->errString;
-		errorCode = e->errCode;
-	}
-
-	try
-	{
-		// Open a socket
-		zSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
-		if(!zSocket) 
-		{
-			out = "Failed Opening Socket!";
-			errorCode = WSAGetLastError();
-			return;
-			//throw( NetworkException("Failed Opening Socket!", WSAGetLastError()) );
-		}
-	}
-	catch (NetworkException* e)
-	{
-		out = e->errString;
-		errorCode = e->errCode;
-	}
-	
-	// Connect
-	sockaddr_in saServer;
-	saServer.sin_port = htons((u_short)port);
-	saServer.sin_addr.s_addr = inet_addr(IP.c_str());
-	saServer.sin_family = AF_INET;
-	try
-	{
-		if( connect(zSocket, (sockaddr*)&saServer, sizeof(saServer)) == SOCKET_ERROR )
-		{
-			closesocket(zSocket);
-			out = "Failed Connecting To Server! Verify that the server is online";
-			errorCode = WSAGetLastError();
-			return;
-			//throw( NetworkException("Failed Connecting Socket!", WSAGetLastError()) );
-		}
-	}
-	catch (NetworkException* e)
-	{
-		out = e->errString;
-		errorCode = e->errCode;
-	}
-	
 }
 
 ServerChannel::~ServerChannel()
@@ -75,6 +18,41 @@ ServerChannel::~ServerChannel()
 	this->WaitUntillDone();
 	if(zSocket) 
 		closesocket(zSocket);
+}
+
+bool MaloW::ServerChannel::Connect( const std::string &IP, const unsigned int &port )
+{
+	WSADATA wsaData;
+	if(int errCode = WSAStartup(MAKEWORD(2,2), &wsaData)) 
+	{
+		throw( NetworkException("Failed To Initializing Socket!", WSAGetLastError()) );
+		return false;
+	}
+
+
+	// Open a socket
+	zSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+	if(!zSocket) 
+	{
+		throw( NetworkException("Failed Opening Socket!", WSAGetLastError()) );
+		return false;
+	}
+
+	// Connect
+	sockaddr_in saServer;
+	saServer.sin_port = htons((u_short)port);
+	saServer.sin_addr.s_addr = inet_addr(IP.c_str());
+	saServer.sin_family = AF_INET;
+
+	if( connect(zSocket, (sockaddr*)&saServer, sizeof(saServer)) == SOCKET_ERROR )
+	{
+		int errorCode = WSAGetLastError();
+		closesocket(zSocket);
+
+		throw( NetworkException("Failed Connecting to Server!", errorCode) );
+		return false;
+	}
+	return true;
 }
 
 void ServerChannel::Life()
@@ -90,9 +68,18 @@ void ServerChannel::Life()
 			zNotifier->PutEvent(new NetworkPacket(msg, this, packetTime));
 		}
 	}
+	catch(char* e)
+	{
+		zNotifier->PutEvent(new DisconnectedEvent(this, e));
+	}
+	catch(NetworkException e)
+	{
+		std::string errMsg = "Error Code: " + MaloW::convertNrToString(e.errCode) +  e.errString;
+		zNotifier->PutEvent(new DisconnectedEvent(this, errMsg));
+	}
 	catch(...)
 	{
-		zNotifier->PutEvent(new DisconnectedEvent(this));
+		zNotifier->PutEvent(new DisconnectedEvent(this, "Unknown Reason"));
 	}
 }
 

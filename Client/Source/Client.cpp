@@ -84,7 +84,9 @@ Client::Client()
 	this->zStamina = 100.0f;
 	this->zHealth = 100.0f;
 	this->zHydration = 100.0f;
-	this->zHunger = 100.0f;	this->zIgm = new InGameMenu();
+	this->zHunger = 100.0f;	
+	
+	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
 
 	this->zGameTimer = new GameTimer();
@@ -92,13 +94,18 @@ Client::Client()
 	this->zPerf->SetFilePath("MPR_Client.txt");
 }
 
-void Client::Connect(const std::string &IPAddress, const unsigned int &port, std::string& errMsg, int& errorCode)
+bool Client::Connect(const std::string &IPAddress, const unsigned int &port)
 {
+	bool result;
 	this->zIP = IPAddress;
 	this->zPort = port;
-	this->zServerChannel = new ServerChannel(this, IPAddress, port, errMsg, errorCode);
-	if (errMsg == "")
+	this->zServerChannel = new ServerChannel(this);
+	
+	result = this->zServerChannel->Connect(IPAddress, port);
+	if (result)
 		this->zServerChannel->Start();
+
+	return result;
 }
 
 Client::~Client()
@@ -241,9 +248,30 @@ void Client::InitGraphics(const std::string& mapName)
 
 	if ( zWorld ) 
 		delete zWorld, zWorld=0;
-
-	this->zWorld = new World(this, mapName, true);
-
+	try
+	{
+		this->zWorld = new World(this, mapName, true);
+	}
+	catch (char* s)
+	{
+		std::string errorMessage;
+		if (s == "Empty File!")
+		{
+			errorMessage = "Missing map: " + mapName + " From Your map Directory";
+		}
+		else if(s == "File Doesn't Have Header!")
+		{
+			errorMessage = "Map: " + mapName + " Could be corrupt please re download the map again";
+		}
+		this->CloseConnection(s);
+		return;
+	}
+	catch (...)
+	{
+		this->CloseConnection("Map Not Found");
+		return;
+	}
+	
 	Vector2 center = this->zWorld->GetWorldCenter();
 
 	this->zEng->GetCamera()->SetPosition( Vector3(center.x, 20, center.y) );
@@ -420,7 +448,7 @@ void Client::ReadMessages()
 		return;
 
 	int messages_To_Read = min(MAX_NR_OF_MESSAGES, nrOfMessages);
-	for (int i = 0; i < messages_To_Read; i++)
+	for (int i = 0; i < messages_To_Read && this->stayAlive; i++)
 	{
 		if (MaloW::ProcessEvent* ev = this->PeekEvent())
 		{
@@ -431,9 +459,9 @@ void Client::ReadMessages()
 			}
 			else if ( DisconnectedEvent* np = dynamic_cast<DisconnectedEvent*>(ev) )
 			{
-				this->AddDisplayText("Connection Closed", true);
+				this->AddDisplayText(np->GetReason(), true);
 				Sleep(5000);
-				this->CloseConnection("Disconnected");
+				this->CloseConnection(np->GetReason());
 			}
 
 			SAFE_DELETE(ev);

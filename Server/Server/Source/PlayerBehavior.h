@@ -41,7 +41,6 @@ protected:
 	Player* zPlayer;
 	Vector3 zVelocity;
 	float	zVelDown;
-	PlayerConfigReader* zPlayerConfigReader;	
 	float zNearByRadius;
 	unsigned int zNearActorsIndex;
 
