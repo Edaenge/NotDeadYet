@@ -25,6 +25,14 @@ ActorManager::~ActorManager()
 		SAFE_DELETE(temp);
 	}
 	this->zActors.clear();
+
+	// Delete Behaviors
+	for( auto i = this->zBehaviors.begin(); i != this->zBehaviors.end(); ++i )
+	{
+		Behavior* data = (*i);
+		SAFE_DELETE(data);
+	}
+	this->zBehaviors.clear();
 }
 
 void ActorManager::AddActor( Actor* actor )
@@ -40,6 +48,15 @@ void ActorManager::AddActor( Actor* actor )
 	ActorAdded e;
 	e.zActor = actor;
 	NotifyObservers(&e);
+}
+
+void ActorManager::AddBehavior( Behavior* behavior )
+{
+	if(!behavior)
+		return;
+
+	this->zBehaviors.insert(behavior);
+	this->AddObserver(behavior);
 }
 
 void ActorManager::RemoveActor( Actor* actor )
@@ -61,16 +78,36 @@ void ActorManager::RemoveActor( Actor* actor )
 	NotifyObservers(&e);
 
 	delete actor;
+} 
+
+void ActorManager::RemoveBehavior( Actor* actor)
+{
+	auto it_zBehavior_end = this->zBehaviors.end();
+
+	for (auto it = this->zBehaviors.begin(); it != it_zBehavior_end;)
+	{
+		if ( (*it)->GetActor() == actor )
+		{
+			Behavior* temp = *it;
+			it = this->zBehaviors.erase(it);
+			SAFE_DELETE(temp);
+			//Notify
+		}
+		else
+		{
+			it++;
+		}
+	}
 }
 
 void ActorManager::RemoveBehavior( Behavior* behavior )
 {
+	if(!behavior)
+		return;
 
-}
-
-void ActorManager::AddBehavior( Behavior* behavior )
-{
-
+	RemoveObserver(behavior);
+	this->zBehaviors.erase(behavior);
+	SAFE_DELETE(behavior);
 }
 
 Actor* ActorManager::CheckCollisions( Actor* actor, float& range )

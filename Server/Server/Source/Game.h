@@ -45,8 +45,6 @@ private:
 	std::map<ClientData*, Player*> zPlayers;
 	std::map<Entity*, WorldActor*> zWorldActors;
 
-	std::set<Behavior*> zBehaviors;
-
 	int zMaxNrOfPlayers;
 
 	Vector3 zCurrentSunPosition;
@@ -87,7 +85,6 @@ public:
 
 	// Sets The Behavior Of Player
 	void SetPlayerBehavior( Player* player, PlayerBehavior* behavior );
-	void RemoveAIBehavior(AnimalActor* aActor);
 	/*! Converts an item to ItemActor*/
 	ItemActor* ConvertToItemActor(Behavior* behavior,  Actor*& oldActorOut);
 	
@@ -96,7 +93,7 @@ public:
 	Vector3 CalcPlayerSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center);
 	ActorManager* GetActorManager() {return this->zActorManager;}
 	World* GetWorld() {return this->zWorld;}
-	
+
 	void SendToAll(std::string msg);
 
 	void RestartGame();	
