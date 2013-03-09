@@ -2,11 +2,11 @@
 
 #include <Observer.h>
 #include "SoundHandler.h"
+#include "Behavior.h"
 
 class ActorSynchronizer;
 class Actor;
 class Vector2;
-class ActorAdded;
 
 class ActorManager : public Observed, public Observer
 {
@@ -24,11 +24,12 @@ public:
 	/*! Removes The actor, physics object will NOT be freed.*/
 	void RemoveActor( Actor* actor );
 	void RemoveBehavior( Behavior* behavior );
-	/*! Removes all actors, physics objects WILL be freed.*/
+	void RemoveBehavior( Actor* actor);
+	/*! Removes all actors, behaviors, physics objects WILL be freed.*/
 	void ClearAll();
 
-	std::set<Behavior*>& GetBehaviors() {return zBehaviors;}
 	std::set<Actor*>& GetActors() {return this->zActors;}
+	std::set<Behavior*>& GetBehaviors() {return this->zBehaviors;}
 	std::set<Actor*>& GetCollideableActors() {return this->zCollideableActors;}
 
 	Actor* GetActor(const unsigned int ID) const;

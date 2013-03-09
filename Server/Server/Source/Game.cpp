@@ -152,15 +152,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 Game::~Game()
 {
-	this->zPerf->PreMeasure("Deleting Game", 4);
-	// Delete Behaviors
-	for( auto i = this->zBehaviors.begin(); i != this->zBehaviors.end(); ++i )
-	{
-		Behavior* data = (*i);
-		SAFE_DELETE(data);
-	}
-	this->zBehaviors.clear();
-
+	this->zPerf->PreMeasure("Deleting Game", 2);
 	// Delete Players
 	for( auto i = this->zPlayers.begin(); i != this->zPlayers.end(); ++i )
 	{
@@ -184,7 +176,8 @@ Game::~Game()
 	FreeItemLookup();
 	FreePlayerConfig();
 	FreeCraftingRecipes();
-	this->zPerf->PostMeasure("Deleting Game", 4);
+
+	this->zPerf->PostMeasure("Deleting Game", 2);
 }
 
 void Game::SpawnAnimalsDebug()
@@ -204,8 +197,8 @@ void Game::SpawnAnimalsDebug()
 	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
 	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
 
-	zBehaviors.insert(aiDeerBehavior);
-	zBehaviors.insert(aiBearBehavior);
+	zActorManager->AddBehavior(aiDeerBehavior);
+	zActorManager->AddBehavior(aiBearBehavior);
 
 	dActor->SetPosition(position);
 	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
@@ -505,10 +498,12 @@ bool Game::Update( float dt )
 	std::string msg;
 
 	this->zPerf->PreMeasure("Updating Behaviors", 1);
+	std::set<Behavior*> behaviors = this->zActorManager->GetBehaviors();
+
 	// Update Behaviors
-	auto i = zBehaviors.begin();
+	auto i = behaviors.begin();
 	int counter = 0;
-	while( i != zBehaviors.end() )
+	while( i != behaviors.end() )
 	{
 		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
 		{
@@ -525,7 +520,7 @@ bool Game::Update( float dt )
 			Actor* oldActor = NULL;
 			ItemActor* newActor = ConvertToItemActor(temp, oldActor);
 			
-			i = zBehaviors.erase(i);
+			i = behaviors.erase(i);
 			
 			delete temp;
 			temp = NULL;
@@ -565,7 +560,7 @@ bool Game::Update( float dt )
 		//Creating targets to insert into the animals' behaviors
 		std::set<Actor*> aSet;
 
-		for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+		for(i = behaviors.begin(); i != behaviors.end(); i++)
 		{
 			if(dynamic_cast<BioActor*>((*i)->GetActor()))
 			{
@@ -574,7 +569,7 @@ bool Game::Update( float dt )
 		}
 
 		//Updating animals' targets and Check if Players Are in Fog.
-		for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
+		for(i = behaviors.begin(); i != behaviors.end(); i++)
 		{
 			if(AIBehavior* animalBehavior = dynamic_cast<AIBehavior*>( (*i) ))
 			{
@@ -601,92 +596,6 @@ bool Game::Update( float dt )
 		this->zPerf->PostMeasure("Updating animal targets", 2);
 	}
 
-/*	// Collisions Tests
-	for(i = zBehaviors.begin(); i != zBehaviors.end(); i++)
-	{
-		//*** Projectiles ***
-		if(ProjectileArrowBehavior* projBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i))
-		{
-			ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(projBehavior->GetActor());
-			if(!projActor)
-			{
-				MaloW::Debug("ProjectileActor is null. Arrow collision detection in Game.cpp, Update.");;
-				continue;
-			}
-
-			//Get Data
-			float length = projBehavior->GetLength();
-			float distance = length;
-			//Check collision, returns the result
-			Actor* collide = this->zActorManager->CheckCollisions(projActor, distance); 
-
-			if( BioActor* victim = dynamic_cast<BioActor*>(collide) )
-			{
-				//Stop arrow
-				projBehavior->Stop();
-				
-				//Take damage
-				victim->TakeDamage(projActor->GetDamage(), projActor->GetOwner());
-			}
-			else if( WorldActor* object = dynamic_cast<WorldActor*>(collide) )
-			{
-				//Stop Arrow
-				projBehavior->Stop();
-			}
-
-		}
-		//*** Ghosts, ignore ***
-		else if( dynamic_cast<PlayerGhostBehavior*>(*i) )
-		{
-			continue;
-		}
-		//*** AI, ignore ***
-		else if( dynamic_cast<AIBehavior*>(*i) )
-		{
-			continue;
-		}
-		//*** Others ***
-		else
-		{
-			BioActor* pActor = dynamic_cast<BioActor*>((*i)->GetActor());
-
-			//If actor hasn't moved, ignore
-			if( pActor && !pActor->HasMoved() )
-				continue;
-
-			Actor* collide = NULL;
-			float range = 1.0f; //hard coded
-
-			collide = this->zActorManager->CheckCollisionsByDistance(pActor, range);
-
-			//No collision, ignore the rest
-			if(!collide)
-				continue;
-
-			Vector3 pActor_rewind_dir = (collide->GetPosition() - pActor->GetPosition());
-			pActor_rewind_dir.Normalize();
-
-			if( BioActor* target = dynamic_cast<BioActor*>(collide) )
-			{
-				//Calculate Target rewind dir.
-				Vector3 target_rewind_dir = pActor_rewind_dir * -1;
-	
-				//If target did not move, do not rewind position.
-				if(target->HasMoved())
-					target->SetPosition( target->GetPosition() - (target_rewind_dir * 0.25f) );
-
-				pActor->SetPosition( pActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
-			}
-			else if( WorldActor* object = dynamic_cast<WorldActor*>(collide) )
-			{
-				//Rewind the pActor only.
-				pActor_rewind_dir = pActor_rewind_dir;
-				pActor->SetPosition( pActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
-			}
-		}
-	}
-	*/
-
 	// Game Still Active
 	return true;
 }
@@ -699,7 +608,7 @@ void Game::OnEvent( Event* e )
 
 	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
 	{
-		this->zPerf->PreMeasure("Player Connected", 1);
+		this->zPerf->PreMeasure("Player Connecting", 2);
 		this->HandleConnection(PCE->clientData);
 	}
 	else if( UserReadyEvent* URE = dynamic_cast<UserReadyEvent*>(e) )
@@ -871,7 +780,7 @@ void Game::OnEvent( Event* e )
 					dActor->SetPlayer(NULL);
 					AIDeerBehavior* behavior = new AIDeerBehavior(dActor, this->zWorld);
 
-					this->zBehaviors.insert(behavior);
+					this->zActorManager->AddBehavior(behavior);
 
 					//Create Ghost behavior And Ghost Actor
 					GhostActor* gActor = new GhostActor(player);
@@ -1102,7 +1011,7 @@ void Game::OnEvent( Event* e )
 		message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 		this->SendToAll(message);
 
-		this->zPerf->PostMeasure("Player Connected", 1);
+		this->zPerf->PostMeasure("Player Connecting", 2);
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
@@ -1133,37 +1042,17 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	// Find In Behaviors
 	if ( curPlayerBehavior )
 	{
-		zBehaviors.erase(curPlayerBehavior);
-		delete curPlayerBehavior;
+		this->zActorManager->RemoveBehavior(curPlayerBehavior);
 		curPlayerBehavior = NULL;
 	}
 
 	// Set New Behavior
 	if ( behavior )	
 	{
-		zBehaviors.insert(behavior);
-		//std::set<Actor*> actors;
-		//this->zActorManager->GetCollideableActorsInCircle(behavior->GetActor()->GetPosition().GetXZ(), behavior->GetCollisionRadius(), actors);
-		//behavior->SetNearActors(actors);
+		this->zActorManager->AddBehavior(behavior);
 	}
 
 	player->zBehavior = behavior;
-}
-
-void Game::RemoveAIBehavior( AnimalActor* aActor )
-{
-	auto it_zBehavior_end = this->zBehaviors.end();
-	for (auto it_behavior = this->zBehaviors.begin(); it_behavior != it_zBehavior_end;)
-	{
-		if ((*it_behavior)->GetActor() == aActor)
-		{
-			it_behavior = this->zBehaviors.erase(it_behavior);
-		}
-		else
-		{
-			it_behavior++;
-		}
-	}
 }
 
 Vector3 Game::CalcPlayerSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center)
@@ -1299,12 +1188,12 @@ void Game::HandleDisconnect( ClientData* cd )
 	if ( PlayerDeerBehavior* playerDeer = dynamic_cast<PlayerDeerBehavior*>(playerBehavior) )
 	{
 		AIDeerBehavior* aiDeer = new AIDeerBehavior(playerDeer->GetActor(), zWorld);
-		zBehaviors.insert(aiDeer);
+		this->zActorManager->AddBehavior(aiDeer);
 	}
 	else if ( PlayerBearBehavior* playerBear = dynamic_cast<PlayerBearBehavior*>(playerBehavior) )
 	{
 		AIBearBehavior* aiDeer = new AIBearBehavior(playerBear->GetActor(), zWorld);
-		zBehaviors.insert(aiDeer);
+		this->zActorManager->AddBehavior(aiDeer);
 	}
 	//Kills actor if human
 	else if ( PlayerHumanBehavior* pHuman = dynamic_cast<PlayerHumanBehavior*>(playerBehavior))
@@ -1558,8 +1447,8 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 						SAFE_DELETE(item);
 					}
 
-					/*if (bActor->GetInventory()->GetItems().size() <= 0)
-						this->zActorManager->RemoveActor(bActor);*/
+					if (bActor->GetInventory()->GetItems().size() <= 0)
+						this->zActorManager->RemoveActor(bActor);
 				}
 				else
 				{
@@ -1787,7 +1676,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
-				this->zBehaviors.insert(projBehavior);
+				this->zActorManager->AddBehavior(projBehavior);
 				//Decrease stack
 				arrow->Use();
 				inventory->RemoveItemStack(arrow->GetID(), 1);

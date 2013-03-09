@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "BioActor.h"
 #include "WorldActor.h"
-
+#include "ActorSynchronizer.h"
 
 PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) : 
 	Behavior(actor, world)
@@ -168,4 +168,26 @@ Actor* PlayerBehavior::CheckCollision(const Vector3& pos, const float& radius, c
 	}
 
 	return NULL;
+}
+
+void PlayerBehavior::OnEvent( Event* e )
+{
+	Behavior::OnEvent(e);
+
+	if( ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e) )
+	{
+		auto found = this->zNearActors.find(AR->zActor);
+		if(found != this->zNearActors.end())
+			this->zNearActors.erase(found);
+
+		found = this->zNearBioActors.find(AR->zActor);
+		if( found != this->zNearBioActors.end() )
+			this->zNearBioActors.erase(found);
+		else
+		{
+			found = this->zNearWorldActors.find(AR->zActor);
+			if( found != this->zNearWorldActors.end() )
+				this->zNearWorldActors.erase(found);
+		}
+	}
 }

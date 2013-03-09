@@ -105,7 +105,7 @@ void GameModeTest::OnEvent( Event* e )
 		{
 			if(aActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 			{
-				this->zGame->RemoveAIBehavior(aActor);
+				this->zGame->GetActorManager()->RemoveBehavior(aActor);
 			}
 		}
 	}
