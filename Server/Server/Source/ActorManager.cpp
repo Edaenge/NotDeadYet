@@ -246,7 +246,6 @@ unsigned int ActorManager::GetCollideableActorsInCircle( const Vector2& center, 
 	auto i_zCollideableActors_end = zCollideableActors.cend();
 	for(auto i = zCollideableActors.cbegin(); i != i_zCollideableActors_end; i++)
 	{
-
 		Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );
 		if( Vector2(center-pos).GetLength() < radius)
 		{
@@ -263,7 +262,7 @@ void ActorManager::OnEvent( Event* e )
 {
 	if( ActorAdded* AA = dynamic_cast<ActorAdded*>(e) )
 	{
-		AddActor(AA->zActor);
+		this->AddActor(AA->zActor);
 	}
 
 }

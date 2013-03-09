@@ -152,6 +152,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 Game::~Game()
 {
+	this->zPerf->PreMeasure("Deleting Game", 4);
 	// Delete Behaviors
 	for( auto i = this->zBehaviors.begin(); i != this->zBehaviors.end(); ++i )
 	{
@@ -183,6 +184,7 @@ Game::~Game()
 	FreeItemLookup();
 	FreePlayerConfig();
 	FreeCraftingRecipes();
+	this->zPerf->PostMeasure("Deleting Game", 4);
 }
 
 void Game::SpawnAnimalsDebug()
@@ -697,6 +699,7 @@ void Game::OnEvent( Event* e )
 
 	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
 	{
+		this->zPerf->PreMeasure("Player Connected", 1);
 		this->HandleConnection(PCE->clientData);
 	}
 	else if( UserReadyEvent* URE = dynamic_cast<UserReadyEvent*>(e) )
@@ -1098,6 +1101,8 @@ void Game::OnEvent( Event* e )
 
 		message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 		this->SendToAll(message);
+
+		this->zPerf->PostMeasure("Player Connected", 1);
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{

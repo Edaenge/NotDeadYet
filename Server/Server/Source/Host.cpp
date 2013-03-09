@@ -41,12 +41,14 @@ Host::Host() :
 
 Host::~Host()
 {
-	this->zPerf->GenerateReport();
+	
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 
 	this->Close();
 	this->WaitUntillDone();
+
+	this->zPerf->PreMeasure("Deleting Host", 4);
 
 	SAFE_DELETE(this->zGame);
 	SAFE_DELETE(this->zGameTimer);
@@ -78,8 +80,12 @@ Host::~Host()
 
 		counter++;
 	}
-	SAFE_DELETE(this->zPerf);
 	FreePhysics();
+	this->zPerf->PostMeasure("Deleting Host", 4);
+	this->zPerf->GenerateReport();
+
+	SAFE_DELETE(this->zPerf);
+	
 }
 
 void Host::SendMessageToClient( const std::string& message )

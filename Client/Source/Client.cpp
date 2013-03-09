@@ -110,7 +110,7 @@ bool Client::Connect(const std::string &IPAddress, const unsigned int &port)
 
 Client::~Client()
 {
-	this->zPerf->GenerateReport(this->zEng->GetEngineParameters());
+	this->zPerf->PreMeasure("Deleting Client", 4);
 	this->zEng->GetCamera()->RemoveMesh();
 
 	this->Close();
@@ -126,7 +126,6 @@ Client::~Client()
 
 	SAFE_DELETE(this->zWorld);
 	SAFE_DELETE(this->zGameTimer);
-	SAFE_DELETE(this->zPerf);
 
 	this->zMeshCameraOffsets.clear();
 	this->zStateCameraOffset.clear();
@@ -162,6 +161,10 @@ Client::~Client()
 	}
 
 	this->zDisplayedText.clear();
+	this->zPerf->PostMeasure("Deleting Client", 4);
+
+	this->zPerf->GenerateReport(this->zEng->GetEngineParameters());
+	SAFE_DELETE(this->zPerf);
 }
 
 void Client::Update()
@@ -254,16 +257,16 @@ void Client::InitGraphics(const std::string& mapName)
 	}
 	catch (char* s)
 	{
-		std::string errorMessage;
-		if (s == "Empty File!")
+		std::string errorMessage = s;
+		if (errorMessage == "Empty File!")
 		{
-			errorMessage = "Missing map: " + mapName + " From Your map Directory";
+			errorMessage = "Missing map: " + mapName + " In Your map Directory";
 		}
-		else if(s == "File Doesn't Have Header!")
+		else if(errorMessage == "File Doesn't Have Header!")
 		{
 			errorMessage = "Map: " + mapName + " Could be corrupt please re download the map again";
 		}
-		this->CloseConnection(s);
+		this->CloseConnection(errorMessage);
 		return;
 	}
 	catch (...)
@@ -615,7 +618,6 @@ void Client::CheckPlayerSpecificKeys()
 	}
 	if(this->zGuiManager->IsCraftOpen())
 	{
-
 		Menu_select_data msd = this->zGuiManager->CheckCrafting();
 		if (msd.zAction == CRAFT)
 		{
@@ -1944,6 +1946,7 @@ void Client::CloseConnection(const std::string& reason)
 	this->AddDisplayText("Client Shutdown: " + reason, false);
 	//Todo Skriv ut vilket reason som gavs
 	this->zServerChannel->TrySend(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID));
+	Sleep(2000);
 	this->zServerChannel->Close();
 	this->Close();
 }
