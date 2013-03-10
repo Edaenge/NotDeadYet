@@ -165,6 +165,9 @@
     <ClCompile Include="Source\MaloWPerformance.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SupplyDropBehavior.cpp">
+      <Filter>Source\Actors\Behavior</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -328,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="Source\MaloWPerformance.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SupplyDropBehavior.h">
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -23,6 +23,8 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 PlayerBehavior::~PlayerBehavior()
 {
 	this->zNearActors.clear();
+	this->zNearBioActors.clear();
+	this->zNearWorldActors.clear();
 }
 
 bool PlayerBehavior::ProcessClientData( Vector3 direction, Vector4 rotation )
