@@ -16,6 +16,7 @@ protected:
 	World* zWorld;
 	WorldAnchor* zAnchor;
 	std::chrono::time_point<std::chrono::system_clock, fSeconds> zAwakeTime;
+	bool zRemoveBehavior;
 
 public:
 	Behavior(Actor* actor, World* world);
@@ -35,4 +36,7 @@ public:
 
 	// Handles The Anchor Update From ActorMovedEvent
 	virtual void OnEvent(Event* e);
+
+	bool Removed() {return this->zRemoveBehavior;}
+	void Remove() {this->zRemoveBehavior = true;}
 };

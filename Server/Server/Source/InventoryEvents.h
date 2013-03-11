@@ -40,3 +40,23 @@ public:
 	unsigned int id;
 	unsigned int slot;
 };
+
+class InventoryBindPrimaryWeapon : public Event
+{
+public:
+	virtual ~InventoryBindPrimaryWeapon() {}
+
+	std::string model;
+	unsigned int ID;
+	unsigned int type;
+	unsigned int subType;
+};
+
+class InventoryUnBindPrimaryWeapon : public Event
+{
+public:
+	virtual ~InventoryUnBindPrimaryWeapon() {}
+
+	std::string model;
+	unsigned int ID;
+};

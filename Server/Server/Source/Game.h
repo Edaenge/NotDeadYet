@@ -118,8 +118,8 @@ private:
 	void HandleCraftItem(ClientData* cd, const unsigned int itemType, const unsigned int itemSubType);
 	void HandleFillItem(ClientData* cd, const unsigned int itemID);
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
-	void HandleUnEquipItem(ClientData* cd, unsigned int itemID, int eq_slot);
-	void HandleBindings(Item* item, const unsigned int ID);
+	void HandleUnEquipItem(ClientData* cd, unsigned int itemID);
+	void HandleBindings(const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType);
 
 	void UpdateSunDirection(float dt);
 	void UpdateFogEnclosement(float dt);

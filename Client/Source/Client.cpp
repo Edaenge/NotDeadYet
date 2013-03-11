@@ -616,26 +616,7 @@ void Client::CheckPlayerSpecificKeys()
 			else if (msd.zAction == UNEQUIP)
 			{
 				if(item)
-				{
-					int slot = -1;
-					if (msd.gid.zType == ITEM_TYPE_WEAPON_RANGED)
-					{
-						slot = EQUIPMENT_SLOT_RANGED_WEAPON;
-					}
-					if (msd.gid.zType == ITEM_TYPE_WEAPON_MELEE)
-					{
-						slot = EQUIPMENT_SLOT_MELEE_WEAPON;
-					}
-					if (msd.gid.zType == ITEM_TYPE_PROJECTILE)
-					{
-						slot = EQUIPMENT_SLOT_PROJECTILE;
-					}
-					if (slot != -1)
-					{
-						this->SendUnEquipItem(msd.gid.zID, slot);
-					}
-					
-				}
+					this->SendUnEquipItem(msd.gid.zID);
 			}
 		}
 	}

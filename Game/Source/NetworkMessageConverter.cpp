@@ -218,6 +218,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_ITEM_USE:
 		ss << M_ITEM_USE;
 		break;
+	case MESSAGE_TYPE_ITEM_CRAFT:
+		ss << M_ITEM_CRAFT;
+		break;
 	case MESSAGE_TYPE_ITEM_FILL:
 		ss << M_ITEM_FILL;
 		break;
@@ -314,9 +317,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 		break;
 	case MESSAGE_TYPE_ITEM_FINISHED:
 		ss << M_ITEM_FINISHED;
-		break;
-	case MESSAGE_TYPE_ITEM_CRAFT:
-		ss << M_ITEM_CRAFT;
 		break;
 	case MESSAGE_TYPE_ACTOR_KILL:
 		ss << M_ACTOR_KILL;

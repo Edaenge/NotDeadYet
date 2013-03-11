@@ -277,7 +277,6 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 
 		if(pActor->GetState() == STATE_RUNNING)
 		{
-			
 			if(pActor->GetExhausted() == false)
 			{
 				if(pActor->GetStamina() <= 0.0)
@@ -408,6 +407,7 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		{
 			pActor->SetHealth(pActor->GetHealthMax()); 
 		}
+		
 		this->zIntervalCounter = 0.0f;
 	}
 	return false;
