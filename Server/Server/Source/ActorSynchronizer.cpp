@@ -348,7 +348,10 @@ void ActorSynchronizer::ClearAll()
 	for ( auto it = zIndividualPhysicalConditions.begin(); it != zIndividualPhysicalConditions.end(); it++ )
 	{
 		if( it->second )
-			delete it->second;
+		{
+			PhysicalConditionPacket* temp = it->second;
+			delete temp;
+		}
 	}
 
 	// Clear Sets

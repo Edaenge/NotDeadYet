@@ -506,36 +506,50 @@ bool Game::Update( float dt )
 	int counter = 0;
 	while( i != behaviors.end() )
 	{
-		if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
+		if (!(*i)->Removed())
 		{
-			playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
-		}
-		else if( ProjectileArrowBehavior* projectileArrowBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i) )
-		{
-			projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
-		}
-		
-		if ( (*i)->IsAwake() && (*i)->Update(dt) )
-		{
-			Behavior* temp = (*i);
-			Actor* oldActor = NULL;
-			ItemActor* newActor = ConvertToItemActor(temp, oldActor);
-			
-			PhysicsObject* pObject = oldActor->GetPhysicsObject();
-			this->zPhysicsEngine->DeletePhysicsObject(pObject);
-			oldActor->SetPhysicsObject(NULL);
-			this->zActorManager->RemoveActor(oldActor);
-			this->zActorManager->AddActor(newActor);
+			if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
+			{
+				playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
+			}
+			else if( ProjectileArrowBehavior* projectileArrowBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i) )
+			{
+				projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
+			}
 
-			i = behaviors.erase(i);
-			this->zActorManager->RemoveBehavior(temp);
+			if ( (*i)->IsAwake() && (*i)->Update(dt) )
+			{
+				Behavior* temp = (*i);
+				Actor* oldActor = NULL;
+				ItemActor* newActor = ConvertToItemActor(temp, oldActor);
 
+				PhysicsObject* pObject = oldActor->GetPhysicsObject();
+				if (pObject)
+				{
+					this->zPhysicsEngine->DeletePhysicsObject(pObject);
+					oldActor->SetPhysicsObject(NULL);
+				}
+
+				this->zActorManager->RemoveActor(oldActor);
+				this->zActorManager->AddActor(newActor);
+
+				i = behaviors.erase(i);
+				this->zActorManager->RemoveBehavior(temp);
+
+			}
+			else
+			{
+				i++;
+				counter++;
+			}
 		}
 		else
 		{
-			i++;
-			counter++;
+			Behavior* temp = (*i);
+			i = behaviors.erase(i);
+			this->zActorManager->RemoveBehavior(temp);
 		}
+		
 	}
 	this->zPerf->PostMeasure("Updating Behaviors", 1);
 
@@ -1076,8 +1090,9 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 	// Find In Behaviors
 	if ( curPlayerBehavior )
 	{
-		this->zActorManager->RemoveBehavior(curPlayerBehavior);
-		curPlayerBehavior = NULL;
+		curPlayerBehavior->Remove();
+		//this->zActorManager->RemoveBehavior(curPlayerBehavior);
+		//curPlayerBehavior = NULL;
 	}
 
 	// Set New Behavior
