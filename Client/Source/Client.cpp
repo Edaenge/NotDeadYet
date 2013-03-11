@@ -92,6 +92,8 @@ Client::Client()
 	this->zGameTimer = new GameTimer();
 	this->zPerf = new MaloWPerformance();
 	this->zPerf->SetFilePath("MPR_Client.txt");
+
+	InitCraftingRecipes();
 }
 
 bool Client::Connect(const std::string &IPAddress, const unsigned int &port)
@@ -165,6 +167,8 @@ Client::~Client()
 
 	this->zPerf->GenerateReport(this->zEng->GetEngineParameters());
 	SAFE_DELETE(this->zPerf);
+
+	FreeCraftingRecipes();
 }
 
 void Client::Update()

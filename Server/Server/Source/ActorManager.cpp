@@ -61,18 +61,12 @@ void ActorManager::AddBehavior( Behavior* behavior )
 
 void ActorManager::RemoveActor( Actor* actor )
 {
-	std::set<Actor*>::iterator ret = zActors.end();
-
 	if(!actor)
 		return;
 
 	this->zActors.erase(actor);
+	this->zCollideableActors.erase(actor);
 	
-	if( actor->CanCollide() )
-	{
-		this->zCollideableActors.erase(actor);
-	}
-
 	ActorRemoved e;
 	e.zActor = actor;
 	NotifyObservers(&e);
@@ -90,14 +84,15 @@ void ActorManager::RemoveBehavior( Actor* actor)
 		{
 			Behavior* temp = *it;
 			it = this->zBehaviors.erase(it);
+			RemoveObserver(*it);
 			SAFE_DELETE(temp);
-			//Notify
 		}
 		else
 		{
 			it++;
 		}
 	}
+
 }
 
 void ActorManager::RemoveBehavior( Behavior* behavior )
@@ -106,6 +101,7 @@ void ActorManager::RemoveBehavior( Behavior* behavior )
 		return;
 
 	RemoveObserver(behavior);
+
 	this->zBehaviors.erase(behavior);
 	SAFE_DELETE(behavior);
 }

@@ -30,7 +30,6 @@ CraftingMenu::CraftingMenu() : GuiElement()
 CraftingMenu::CraftingMenu( float x, float y, float width, float height, std::string textureName )
 	: GuiElement(x, y, width, height, textureName)
 {
-	InitCraftingRecipes();
 	float windowHeight = (float)(GetGraphics()->GetEngineParameters().WindowHeight);
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 

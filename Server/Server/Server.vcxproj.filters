@@ -165,6 +165,9 @@
     <ClCompile Include="Source\MaloWPerformance.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SupplyDropBehavior.cpp">
+      <Filter>Source\Actors\Behavior</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Inventory.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -332,9 +335,10 @@
     <ClInclude Include="Source\MaloWPerformance.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\InventoryEvents.h">
-      <Filter>Source</Filter>
+    <ClInclude Include="Source\SupplyDropBehavior.h">
+      <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
+    <ClInclude Include="Source\InventoryEvents.h" />
     <ClInclude Include="Source\Inventory.h">
       <Filter>Source</Filter>
     </ClInclude>

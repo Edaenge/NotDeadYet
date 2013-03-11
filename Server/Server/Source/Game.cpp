@@ -34,6 +34,7 @@
 #include "CraftingManager.h"
 #include "MaterialSpawnManager.h"
 #include "sounds.h"
+#include "SupplyActor.h"
 
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
@@ -520,15 +521,15 @@ bool Game::Update( float dt )
 			Actor* oldActor = NULL;
 			ItemActor* newActor = ConvertToItemActor(temp, oldActor);
 			
-			i = behaviors.erase(i);
-			
-			delete temp;
-			temp = NULL;
 			PhysicsObject* pObject = oldActor->GetPhysicsObject();
 			this->zPhysicsEngine->DeletePhysicsObject(pObject);
 			oldActor->SetPhysicsObject(NULL);
 			this->zActorManager->RemoveActor(oldActor);
 			this->zActorManager->AddActor(newActor);
+
+			i = behaviors.erase(i);
+			this->zActorManager->RemoveBehavior(temp);
+
 		}
 		else
 		{
@@ -1287,6 +1288,25 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 					msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED);
 					bLooted = true;
 				}
+				//Check if the Actor is an SupplyActor
+				else if(SupplyActor* sActor = dynamic_cast<SupplyActor*>(*it_actor))
+				{
+					Inventory* inv = sActor->GetInventory();
+					ID = sActor->GetID();
+
+					std::vector<Item*> items = inv->GetItems();
+					if (items.size() > 0)
+					{
+						msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE, (float)sActor->GetID());
+						auto it_items_end = items.end();
+						for (auto it_Item = items.begin(); it_Item != it_items_end; it_Item++)
+						{
+							msg += (*it_Item)->ToMessageString(&NMC);
+							msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED);
+						}
+						bLooted = true;
+					}
+				}
 				//Check if the Actor is a PlayerActor
 				else if(PlayerActor* pActor = dynamic_cast<PlayerActor*>(*it_actor))
 				{
@@ -1490,6 +1510,45 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 				}
 
 				//cd->Send(msg);
+			}
+		}
+	}
+
+	//Check if the Actor being looted is a SupplyActor.
+	else if (SupplyActor* supplyActor = dynamic_cast<SupplyActor*>(actor))
+	{
+		Inventory* inv = supplyActor->GetInventory();
+		if (inv)
+		{
+			item = inv->SearchAndGetItem(itemID);
+
+			if( !item )
+				return;
+
+			std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+			if (item->GetItemType() == itemType)// && item->GetItemSubType() == subType)
+			{
+				msg += item->ToMessageString(&NMC);
+				//Add item
+				if(pActor->GetInventory()->AddItem(item, stacked))
+				{
+					supplyActor->GetInventory()->RemoveItem(item);
+
+					if( stacked && item->GetStackSize() == 0 )
+					{
+						SAFE_DELETE(item);
+					}
+
+					if (supplyActor->GetInventory()->GetItems().size() <= 0)
+						this->zActorManager->RemoveActor(supplyActor);
+				}
+				else
+				{
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
+					return;
+				}
+
+				cd->Send(msg);
 			}
 		}
 	}
