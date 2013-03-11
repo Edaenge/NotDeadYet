@@ -23,6 +23,7 @@ private:
 
 public:
 	ProjectileArrowBehavior(Actor* actor, World* world);
+	virtual ~ProjectileArrowBehavior();
 
 	bool Update(float dt);
 	bool IsMoving() {return this->zMoving;}
@@ -41,6 +42,8 @@ public:
 
 	/*! Check collisions using ray vs mesh.*/
 	virtual Actor* CheckCollision( const Vector3& pos, const float& radius, const std::set<Actor*>& actors);
+
+	virtual void OnEvent( Event* e );
 
 protected:
 	virtual Actor* CheckBioActorCollision();

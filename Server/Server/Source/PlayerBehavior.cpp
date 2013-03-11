@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "BioActor.h"
 #include "WorldActor.h"
-
+#include "ActorSynchronizer.h"
 
 PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) : 
 	Behavior(actor, world)
@@ -15,7 +15,6 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 
 	this->zNearActorsIndex = 0;
 	this->zNearByRadius = 100.0f;
-	this->zPlayerConfigReader = GetPlayerConfig();
 
 	// Bigger Anchor For Players
 	zAnchor->radius = 50.0f;
@@ -24,6 +23,8 @@ PlayerBehavior::PlayerBehavior(Actor* actor, World* world, Player* player) :
 PlayerBehavior::~PlayerBehavior()
 {
 	this->zNearActors.clear();
+	this->zNearBioActors.clear();
+	this->zNearWorldActors.clear();
 }
 
 bool PlayerBehavior::ProcessClientData( Vector3 direction, Vector4 rotation )
@@ -36,11 +37,12 @@ bool PlayerBehavior::ProcessClientData( Vector3 direction, Vector4 rotation )
 
 bool PlayerBehavior::Update(float dt)
 {
+	static PlayerConfigReader* playerConfigReader = GetPlayerConfig();
 	float energy = zActor->GetEnergy();
 
 	if (energy < 200.0f)
 
-		energy += this->zPlayerConfigReader->GetVariable(ENERGY_COEFF) * dt;
+		energy += playerConfigReader->GetVariable(ENERGY_COEFF) * dt;
 
 	if (energy >= 200.0f)
 		energy = 200.0f;
@@ -168,4 +170,26 @@ Actor* PlayerBehavior::CheckCollision(const Vector3& pos, const float& radius, c
 	}
 
 	return NULL;
+}
+
+void PlayerBehavior::OnEvent( Event* e )
+{
+	Behavior::OnEvent(e);
+
+	if( ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e) )
+	{
+		auto found = this->zNearActors.find(AR->zActor);
+		if(found != this->zNearActors.end())
+			this->zNearActors.erase(found);
+
+		found = this->zNearBioActors.find(AR->zActor);
+		if( found != this->zNearBioActors.end() )
+			this->zNearBioActors.erase(found);
+		else
+		{
+			found = this->zNearWorldActors.find(AR->zActor);
+			if( found != this->zNearWorldActors.end() )
+				this->zNearWorldActors.erase(found);
+		}
+	}
 }

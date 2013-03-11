@@ -20,19 +20,19 @@ RecipeNoteGui::RecipeNoteGui(Vector2 pos, const std::map<unsigned int, unsigned 
 		switch (it->first)
 		{
 		case ITEM_SUB_TYPE_SMALL_STICK:
-			this->zMatsText[zNrOfTexts++] = "SMALL STICKS: " + MaloW::convertNrToString(it->second);
+			this->zMatsText[zNrOfTexts++] = "SMALL STICKS: " + MaloW::convertNrToString((float)it->second);
 			break;
 		case ITEM_SUB_TYPE_MEDIUM_STICK:
-			this->zMatsText[zNrOfTexts++] = "MEDIUM STICKS: " + MaloW::convertNrToString(it->second);
+			this->zMatsText[zNrOfTexts++] = "MEDIUM STICKS: " + MaloW::convertNrToString((float)it->second);
 			break;
 		case ITEM_SUB_TYPE_LARGE_STICK:
-			this->zMatsText[zNrOfTexts++] = "LARGE STICKS: " + MaloW::convertNrToString(it->second);
+			this->zMatsText[zNrOfTexts++] = "LARGE STICKS: " + MaloW::convertNrToString((float)it->second);
 			break;
 		case ITEM_SUB_TYPE_THREAD:
-			this->zMatsText[zNrOfTexts++] = "THREAD: " + MaloW::convertNrToString(it->second);
+			this->zMatsText[zNrOfTexts++] = "THREAD: " + MaloW::convertNrToString((float)it->second);
 			break;
 		case ITEM_SUB_TYPE_DISENFECTANT_LEAF:
-			this->zMatsText[zNrOfTexts++] = "DISENFECTANT LEAF: " + MaloW::convertNrToString(it->second);
+			this->zMatsText[zNrOfTexts++] = "DISENFECTANT LEAF: " + MaloW::convertNrToString((float)it->second);
 			break;
 		default:
 			this->zMatsText[zNrOfTexts++] = "ERROR";

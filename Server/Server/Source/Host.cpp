@@ -41,12 +41,14 @@ Host::Host() :
 
 Host::~Host()
 {
-	this->zPerf->GenerateReport();
+	
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 
 	this->Close();
 	this->WaitUntillDone();
+
+	this->zPerf->PreMeasure("Deleting Host", 2);
 
 	SAFE_DELETE(this->zGame);
 	SAFE_DELETE(this->zGameTimer);
@@ -78,8 +80,12 @@ Host::~Host()
 
 		counter++;
 	}
-	SAFE_DELETE(this->zPerf);
 	FreePhysics();
+	this->zPerf->PostMeasure("Deleting Host", 2);
+	this->zPerf->GenerateReport();
+
+	SAFE_DELETE(this->zPerf);
+	
 }
 
 void Host::SendMessageToClient( const std::string& message )
@@ -98,7 +104,7 @@ void Host::SendMessageToClient( const std::string& message )
 	{
 		std::string msg = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, message);
 
-		this->SendToAllClients(msg, true);
+		this->SendToAllClients(msg);
 	}
 }
 
@@ -177,7 +183,7 @@ void Host::UpdateGame()
 				this->zPerf->PostMeasure("Synchronizing", 1);
 
 				zSendUpdateDelayTimer = 0.0f;
-				SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()), false);
+				SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()));
 			}
 		}
 	}
@@ -206,7 +212,7 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	return 0;
 }
 
-void Host::SendToAllClients(const std::string& message, bool bImportant)
+void Host::SendToAllClients(const std::string& message)
 {
 	for (auto it = zClients.begin(); it != zClients.end(); it++)
 	{
@@ -501,7 +507,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 void Host::BroadCastServerShutdown()
 {
 	std::string mess = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_SHUTDOWN);
-	SendToAllClients(mess, true);
+	SendToAllClients(mess);
 }
 
 void Host::PingClients()

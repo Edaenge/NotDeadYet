@@ -84,26 +84,35 @@ Client::Client()
 	this->zStamina = 100.0f;
 	this->zHealth = 100.0f;
 	this->zHydration = 100.0f;
-	this->zHunger = 100.0f;	this->zIgm = new InGameMenu();
+	this->zHunger = 100.0f;	
+	
+	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
 
 	this->zGameTimer = new GameTimer();
 	this->zPerf = new MaloWPerformance();
 	this->zPerf->SetFilePath("MPR_Client.txt");
+
+	InitCraftingRecipes();
 }
 
-void Client::Connect(const std::string &IPAddress, const unsigned int &port, std::string& errMsg, int& errorCode)
+bool Client::Connect(const std::string &IPAddress, const unsigned int &port)
 {
+	bool result;
 	this->zIP = IPAddress;
 	this->zPort = port;
-	this->zServerChannel = new ServerChannel(this, IPAddress, port, errMsg, errorCode);
-	if (errMsg == "")
+	this->zServerChannel = new ServerChannel(this);
+	
+	result = this->zServerChannel->Connect(IPAddress, port);
+	if (result)
 		this->zServerChannel->Start();
+
+	return result;
 }
 
 Client::~Client()
 {
-	this->zPerf->GenerateReport(this->zEng->GetEngineParameters());
+	this->zPerf->PreMeasure("Deleting Client", 4);
 	this->zEng->GetCamera()->RemoveMesh();
 
 	this->Close();
@@ -119,7 +128,6 @@ Client::~Client()
 
 	SAFE_DELETE(this->zWorld);
 	SAFE_DELETE(this->zGameTimer);
-	SAFE_DELETE(this->zPerf);
 
 	this->zMeshCameraOffsets.clear();
 	this->zStateCameraOffset.clear();
@@ -155,6 +163,12 @@ Client::~Client()
 	}
 
 	this->zDisplayedText.clear();
+	this->zPerf->PostMeasure("Deleting Client", 4);
+
+	this->zPerf->GenerateReport(this->zEng->GetEngineParameters());
+	SAFE_DELETE(this->zPerf);
+
+	FreeCraftingRecipes();
 }
 
 void Client::Update()
@@ -241,9 +255,30 @@ void Client::InitGraphics(const std::string& mapName)
 
 	if ( zWorld ) 
 		delete zWorld, zWorld=0;
-
-	this->zWorld = new World(this, mapName, true);
-
+	try
+	{
+		this->zWorld = new World(this, mapName, true);
+	}
+	catch (char* s)
+	{
+		std::string errorMessage = s;
+		if (errorMessage == "Empty File!")
+		{
+			errorMessage = "Missing map: " + mapName + " In Your map Directory";
+		}
+		else if(errorMessage == "File Doesn't Have Header!")
+		{
+			errorMessage = "Map: " + mapName + " Could be corrupt please re download the map again";
+		}
+		this->CloseConnection(errorMessage);
+		return;
+	}
+	catch (...)
+	{
+		this->CloseConnection("Map Not Found");
+		return;
+	}
+	
 	Vector2 center = this->zWorld->GetWorldCenter();
 
 	this->zEng->GetCamera()->SetPosition( Vector3(center.x, 20, center.y) );
@@ -420,7 +455,7 @@ void Client::ReadMessages()
 		return;
 
 	int messages_To_Read = min(MAX_NR_OF_MESSAGES, nrOfMessages);
-	for (int i = 0; i < messages_To_Read; i++)
+	for (int i = 0; i < messages_To_Read && this->stayAlive; i++)
 	{
 		if (MaloW::ProcessEvent* ev = this->PeekEvent())
 		{
@@ -431,9 +466,9 @@ void Client::ReadMessages()
 			}
 			else if ( DisconnectedEvent* np = dynamic_cast<DisconnectedEvent*>(ev) )
 			{
-				this->AddDisplayText("Connection Closed", true);
+				this->AddDisplayText(np->GetReason(), true);
 				Sleep(5000);
-				this->CloseConnection("Disconnected");
+				this->CloseConnection(np->GetReason());
 			}
 
 			SAFE_DELETE(ev);
@@ -550,7 +585,7 @@ void Client::CheckPlayerSpecificKeys()
 		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
 
-		if (msd.zAction != -1 && msd.gid.zID != -1)
+		if (msd.zAction != -1 && msd.gid.zID != 0)
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItem(msd.gid.zID);
 			if (msd.zAction == USE)
@@ -581,17 +616,43 @@ void Client::CheckPlayerSpecificKeys()
 			else if (msd.zAction == UNEQUIP)
 			{
 				if(item)
-					this->SendUnEquipItem(msd.gid.zID, (msd.gid.zType));
+				{
+					int slot = -1;
+					if (msd.gid.zType == ITEM_TYPE_WEAPON_RANGED)
+					{
+						slot = EQUIPMENT_SLOT_RANGED_WEAPON;
+					}
+					if (msd.gid.zType == ITEM_TYPE_WEAPON_MELEE)
+					{
+						slot = EQUIPMENT_SLOT_MELEE_WEAPON;
+					}
+					if (msd.gid.zType == ITEM_TYPE_PROJECTILE)
+					{
+						slot = EQUIPMENT_SLOT_PROJECTILE;
+					}
+					if (slot != -1)
+					{
+						this->SendUnEquipItem(msd.gid.zID, slot);
+					}
+					
+				}
 			}
 		}
 	}
 	if(this->zGuiManager->IsCraftOpen())
 	{
-
 		Menu_select_data msd = this->zGuiManager->CheckCrafting();
 		if (msd.zAction == CRAFT)
 		{
-			this->SendCraftItemMessage(msd.gid.zType, msd.gid.zSubType);
+			if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			{
+				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+				this->SendCraftItemMessage(msd.gid.zType, msd.gid.zSubType);
+			}
+		}
+		else
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 		}
 	}
 
@@ -1926,6 +1987,7 @@ void Client::CloseConnection(const std::string& reason)
 	this->AddDisplayText("Client Shutdown: " + reason, false);
 	//Todo Skriv ut vilket reason som gavs
 	this->zServerChannel->TrySend(this->zMsgHandler.Convert(MESSAGE_TYPE_CONNECTION_CLOSED, (float)this->zID));
+	Sleep(2000);
 	this->zServerChannel->Close();
 	this->Close();
 }

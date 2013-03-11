@@ -75,139 +75,139 @@ bool AIBearBehavior::SetValuesFromFile()
 		//fear interval
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFearInterval = numberFromFile;
 
 		//minimum distance
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
-		this->zMinimumDistance = numberFromFile;
+		numberFromFile = (float)atof(characters);
+		this->zMinimumDistance = (int)numberFromFile;
 
 		//field of view
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFieldOfView = numberFromFile;
 
 		//Threat movement speed threshold
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zThreatMovementSpeedThreshold = numberFromFile;
 
 		//Confidence koef
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zConfidenceKoef = numberFromFile;
 
 		//Distance too close for comfort
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zTooCloseInDistance = numberFromFile;
 
 		//extra fear with more players
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearWithNumberOfPlayers = numberFromFile;
 
 		//extra fear with something too close
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearWithCloseProximity = numberFromFile;
 
 		//extra fear when seeing threat
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearAtSight = numberFromFile;
 
 		//extra fear when threat moves too quickly
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zExtraFearAtThreatMovementSpeed = numberFromFile;
 
 		//amount of fear decrease
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFearDecrease = numberFromFile;
 
 		//fear when hurt
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFearAtDamageDone = numberFromFile;
 
 		//fear level between calm and aggressive.
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zCalmToAggressiveThreshold = numberFromFile;
 
 		//distance to walk when calm
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
-		this->zDistanceToWalkWhenCalm = numberFromFile;
+		numberFromFile = (float)atof(characters);
+		this->zDistanceToWalkWhenCalm = (int)numberFromFile;
 
 		//distance to walk when suspicious
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
-		this->zDistanceToWalkWhenSuspicious = numberFromFile;
+		numberFromFile = (float)atof(characters);
+		this->zDistanceToWalkWhenSuspicious = (int)numberFromFile;
 
 		//factor to use when chosing a new target
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
-		this->zNewTargetCloseByAFactorOf = numberFromFile;
+		numberFromFile = (float)atof(characters);
+		this->zNewTargetCloseByAFactorOf = (int)numberFromFile;
 
 		//flee distance
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
-		this->zFleeDistance = numberFromFile;
+		numberFromFile = (float)atof(characters);
+		this->zFleeDistance = (int)numberFromFile;
 
 		//How afraid to be when a large sound even happens
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
-		this->zLargeSoundEventFearIncrease = numberFromFile;
+		numberFromFile = (float)atof(characters);
+		this->zLargeSoundEventFearIncrease = (int)numberFromFile;
 
 		//The range of the pausing time when calm.
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
-		this->zCalmRandomInterval = numberFromFile;
+		numberFromFile = (float)atof(characters);
+		this->zCalmRandomInterval = (int)numberFromFile;
 
 		//The minimum value 
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
-		this->zCalmRandomAddition = numberFromFile;
+		numberFromFile = (float)atof(characters);
+		this->zCalmRandomAddition = (int)numberFromFile;
 
 		//the walking velocity
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zWalkingVelocity = numberFromFile;
 
 		//the velocity when attacking
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zAttackingVelocity = numberFromFile;
 		
 		//the fleeing velocity
 		infile.getline(characters, 256,' ');
 		infile.ignore(256, '\n');
-		numberFromFile = atof(characters);
+		numberFromFile = (float)atof(characters);
 		this->zFleeingVelocity = numberFromFile;
 
 		valuesRetrieved = true;
@@ -534,8 +534,8 @@ bool AIBearBehavior::Update( float dt )
 		if(this->zIntervalCounter > this->zCalmActionInterval && this->GetIfNeedPath())
 		{
 			this->zIntervalCounter = 0;
-			srand(time(NULL));
-			this->zCalmActionInterval = rand() % this->zCalmRandomInterval + this->zCalmRandomAddition; 
+			srand(time(0));
+			this->zCalmActionInterval = (float)(rand() % this->zCalmRandomInterval + this->zCalmRandomAddition); 
 			this->zCurrentPath.clear(); //Since a new path is gotten, and the old one might not have been completed, we clear it just in case.
 			//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->GetPosition().x + rand() % 14 - 7, this->GetPosition().z + rand() % 14 - 7, this->zCurrentPath, 20); //Get a small path to walk, short and does not have to lead anywhere.
 			this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, bActor->GetPosition().x + rand() % this->zDistanceToWalkWhenCalm - this->zDistanceToWalkWhenCalm/2, bActor->GetPosition().z + rand() % this->zDistanceToWalkWhenCalm - this->zDistanceToWalkWhenCalm/2, this->zCurrentPath, maximumNodesTest);

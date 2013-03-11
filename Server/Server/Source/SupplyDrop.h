@@ -17,8 +17,11 @@ public:
 	bool SpawnSupplyDrop( Vector2& pos, std::set<Item*>& items);
 	bool SpawnSupplyDrop( Vector2& pos, std::set<Item*>& items, const unsigned int itemCapacity);
 
-	bool SpawnAirbornSupplyDrop( Vector3& pos, std::set<Item*>& items);
-	bool SpawnAirbornSupplyDrop( Vector3& pos, std::set<Item*>& items, const unsigned int itemCapacity);
+	bool SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::set<Item*>& items);
+	bool SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::set<Item*>& items, const unsigned int itemCapacity);
+
+private:
+	unsigned int CalculateTotalWeight(std::set<Item*>& items) const;
 
 private:
 	World* zWorld;

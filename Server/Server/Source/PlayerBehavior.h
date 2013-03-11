@@ -36,12 +36,12 @@ public:
 protected:
 	virtual Actor* CheckBioActorCollision();
 	virtual Actor* CheckWorldActorCollision();
+	virtual void OnEvent(Event* e);
 
 protected:
 	Player* zPlayer;
 	Vector3 zVelocity;
 	float	zVelDown;
-	PlayerConfigReader* zPlayerConfigReader;	
 	float zNearByRadius;
 	unsigned int zNearActorsIndex;
 

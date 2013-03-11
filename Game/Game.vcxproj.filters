@@ -50,9 +50,6 @@
     <ClInclude Include="Include\Gear.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Inventory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Item.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -159,9 +156,6 @@
     </ClCompile>
     <ClCompile Include="Source\World\EntityList.cpp">
       <Filter>Source Files\World</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Inventory.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Item.cpp">
       <Filter>Source Files</Filter>

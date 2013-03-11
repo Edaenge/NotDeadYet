@@ -7,15 +7,17 @@
 class DisconnectedEvent : public MaloW::ProcessEvent
 {
 	MaloW::ServerChannel *zChannel;
-	DisconnectedEvent( MaloW::ServerChannel* channel ) :
-		zChannel(channel)
+	std::string zReason;
+	DisconnectedEvent( MaloW::ServerChannel* channel, std::string reason) :
+		zChannel(channel), zReason(reason)
 	{
 	}
 
 public:
 	virtual ~DisconnectedEvent() {};
 
-	inline MaloW::ServerChannel* GetChannel() const { return zChannel; }
+	std::string GetReason() {return this->zReason;}
+	inline MaloW::ServerChannel* GetChannel() const { return this->zChannel; }
 
 	friend class MaloW::ServerChannel;
 };

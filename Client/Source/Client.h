@@ -47,7 +47,7 @@ class Client : public MaloW::Process, public Observer
 public:
 	Client();
 	/*! Connects to a Host with the specified parameters*/
-	void Connect(const std::string& IPAddress, const unsigned int &port, std::string& errMsg, int& errorCode);
+	bool Connect(const std::string& IPAddress, const unsigned int &port);
 	virtual ~Client();
 	void Life();
 	/*! Checks if Thread is alive*/
@@ -188,7 +188,6 @@ private:
 	int	zPort;
 	GameTimer* zGameTimer;
 
-	//INT64 zStartime;
 	float zDeltaTime;
 	/*! Total Runtime*/
 	float zFrameTime;
@@ -198,10 +197,13 @@ private:
 	float zSendUpdateDelayTimer;
 
 	unsigned int zActorType;
+
+	bool zReady;
 	bool zCreated;
 	bool zRunning;
 	bool zShowCursor;
-	
+	bool zGameStarted;
+
 	std::string zIP;
 	std::string zMeshID;
 	std::string zName;
@@ -233,9 +235,6 @@ private:
 	bool	zDroppingPulse;
 	float	zCurrentOffset;
 	
-
-	bool zGameStarted;
-	bool zReady;
 	iImage* zBlackImage;
 	InGameMenu* zIgm;
 	PickAnimalMenu* zPam;

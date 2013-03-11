@@ -178,9 +178,7 @@ void ClientActorManager::RemoveActor( const unsigned int ID )
 
 	auto actorStateIterator = this->zState.find(actor);
 	if (actorStateIterator != this->zState.end())
-	{
 		this->zState.erase(actorStateIterator);
-	}
 
 	SAFE_DELETE(actor);
 

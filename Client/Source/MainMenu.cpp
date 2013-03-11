@@ -1,5 +1,6 @@
 #include "MainMenu.h"
 #include "Safe.h"
+#include "NetworkException.h"
 
 MainMenu::MainMenu()
 {
@@ -128,7 +129,7 @@ void MainMenu::Init()
 	//IPAddress
 	//194.47.150.16 - Server
 	temp = new TextBox(AdressX + (20.0f / 1024.0f) * dx, AdressY + (60.0f / 768.0f) * windowHeight, 1.0f, "", 
-		(530.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "194.47.150.16", "IPAdress", 2.0f, 16, ALL);
+		(530.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "127.0.0.1", "IPAdress", 2.0f, 16, ALL);
 	zSets[GETIPADRESS].AddElement(temp);
 
 	temp = new SimpleButton(AdressX + (472.0f / 1024.0f) * dx, AdressY + (104.0f / 768.0f) * windowHeight, 1.0f, 
@@ -274,29 +275,43 @@ void MainMenu::Init()
 
 void MainMenu::StartTestRun()
 {
-	std::string errorMessage;
-	int errorCode = 0;
-	//zGame->InitGameClient("80.78.216.201", 11521); //Simon hem
-	zGame->InitGameClient("194.47.150.16", 11521, errorMessage, errorCode); //server
-	//zGame->InitGameClient("194.47.150.20", 11521, errorMessage, errorCode); //Simon
-	//zGame->InitGameClient("194.47.150.12", 11521, errorMessage, errorCode); //Christopher
-	//zGame->InitGameClient("127.0.0.1", 11521, errorMessage, errorCode);
-	if (errorMessage != "")
+	bool result;
+	try
+	{
+		//result = zGame->InitGameClient("80.78.216.201", 11521); //Simon hem
+		result = zGame->InitGameClient("194.47.150.16", 11521); //server
+		//result = zGame->InitGameClient("194.47.150.20", 11521); //Simon
+		//result = zGame->InitGameClient("194.47.150.12", 11521); //Christopher
+		//result = zGame->InitGameClient("127.0.0.1", 11521); // Local
+	}
+	catch (NetworkException e)
 	{
 		GraphicsEngine* gEng = GetGraphics();
 		Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
 
-		std::string errorMsg = "Error Code: " + MaloW::convertNrToString((float)errorCode) + ": " + errorMessage;
+		std::string errorMsg = "Error Code: " + MaloW::convertNrToString((float)e.errCode) + ": " + e.errString;
 		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
 
 		Sleep(5000);
 
 		gEng->DeleteText(errorText);
 	}
-	else
+	catch(...)
 	{
-		zGame->Run();
+		GraphicsEngine* gEng = GetGraphics();
+		Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
+
+		std::string errorMsg = "Unknown Exception occurred";
+		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
+
+		Sleep(5000);
+
+		gEng->DeleteText(errorText);
 	}
+	
+	if (result)
+		zGame->Run();
+	
 }
 
 void MainMenu::Run()
@@ -664,27 +679,37 @@ void MainMenu::StartGameWithIPField()
 
 	this->EnableMouse(false);
 
-	std::string errorMessage;
-	int errorCode = 0;
-
-	zGame->InitGameClient(temp, 11521, errorMessage, errorCode);	 // Save to connect IP
-	if (errorMessage != "")
+	bool result = false;
+	try
+	{
+		result = zGame->InitGameClient(temp, 11521);	 // Save to connect IP
+	}
+	catch (NetworkException e)
 	{
 		GraphicsEngine* gEng = GetGraphics();
 		Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
 
-		std::string errorMsg = "Error Code: " + MaloW::convertNrToString((float)errorCode) + ": " + errorMessage;
+		std::string errorMsg = "Error Code: " + MaloW::convertNrToString((float)e.errCode) + ": " + e.errString;
 		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
 
 		Sleep(5000);
 
 		gEng->DeleteText(errorText);
 	}
-	else
+	catch(...)
 	{
-		zGame->Run();
-	}
+		GraphicsEngine* gEng = GetGraphics();
+		Vector2 position = Vector2(50.0f, gEng->GetEngineParameters().WindowHeight * 0.5f);
 
+		std::string errorMsg = "Unknown Exception occurred";
+		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
+
+		Sleep(5000);
+
+		gEng->DeleteText(errorText);
+	}
+	if (result)
+		this->zGame->Run();
 
 	delete this->zGame;
 

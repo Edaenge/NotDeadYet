@@ -36,7 +36,7 @@ void Game::Run()
 	}
 }
 
-void Game::InitGameClient(const std::string &IP, const unsigned int &port, std::string& errMsg, int& errorCode)
+bool Game::InitGameClient(const std::string &IP, const unsigned int &port)
 {
 	//If a Client Hasn't been created yet Create one
 	if(this->zClient)
@@ -49,7 +49,10 @@ void Game::InitGameClient(const std::string &IP, const unsigned int &port, std::
 		(float)GetGraphics()->GetEngineParameters().WindowHeight), "Media/LoadingScreen/FadeTexture.png" );
 	this->zClient->SetBlackImage(blackImage);
 	blackImage = NULL;
-	this->zClient->Connect(IP, port, errMsg, errorCode);
-	if (errMsg == "")
+	bool result = this->zClient->Connect(IP, port);
+
+	if (result)
 		this->zClient->Start();
+
+	return result;
 }

@@ -132,7 +132,7 @@ void GameModeFFA::OnEvent( Event* e )
 			{
 				if(aActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 				{
-					this->zGame->RemoveAIBehavior(aActor);
+					this->zGame->GetActorManager()->RemoveBehavior(aActor);
 				}
 			}
 			
@@ -290,7 +290,7 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 
 			closestAnimal->SetPlayer(player);
 
-			this->zGame->RemoveAIBehavior(closestAnimal);
+			this->zGame->GetActorManager()->RemoveBehavior(closestAnimal);
 			this->zGame->SetPlayerBehavior(player, animalBehavior);
 
 			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)closestAnimal->GetID());
@@ -311,7 +311,8 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 
 			closestAnimal->SetPlayer(player);
 
-			this->zGame->RemoveAIBehavior(closestAnimal);
+			this->zGame->GetActorManager()->RemoveBehavior(closestAnimal);
+
 			this->zGame->SetPlayerBehavior(player, animalBehavior);
 
 			msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)closestAnimal->GetID());
@@ -333,6 +334,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	std::string msg = "";
 
 	Player* player = pActor->GetPlayer();
+	pActor->SetState(STATE_IDLE);
 	player->GetKeys().ClearStates();
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);

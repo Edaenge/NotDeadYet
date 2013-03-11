@@ -22,8 +22,9 @@ void Client::HandleWeaponUse(const unsigned int ID)
 			{
 				this->zPlayerInventory->RemoveItemStack(proj->GetID(), 1);
 				Gui_Item_Data gid = this->MakeGID(proj);
+				gid.zStacks = 1;
 				this->zGuiManager->RemoveInventoryItemFromGui(gid);
-				this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
+				this->zGuiManager->UpdateInventoryWeight( (float)this->zPlayerInventory->GetTotalWeight());
 			}
 		}
 		else 
@@ -42,6 +43,7 @@ void Client::HandleWeaponUse(const unsigned int ID)
 		{
 			this->zPlayerInventory->RemoveItemStack(proj->GetID(), 1);
 			Gui_Item_Data gid = this->MakeGID(proj);
+			gid.zStacks = 1;
 			this->zGuiManager->RemoveInventoryItemFromGui(gid);
 			this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
 		}
@@ -632,7 +634,8 @@ void Client::SendLootItemMessage(const unsigned int ID, const unsigned int ItemI
 
 void Client::SendCraftItemMessage(const int Type, const int SubType)
 {
-	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)Type);
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_CRAFT);
+	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)Type);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_SUB_TYPE, (float)SubType);
 	this->zServerChannel->Send(msg);
 }

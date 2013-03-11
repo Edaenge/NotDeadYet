@@ -9,7 +9,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include <World/WorldEvents.h>
 #include "PlayerEvent.h"
 
-
 /*This class is used to save player information such as position and states.
   This information is sent to clients.
 */

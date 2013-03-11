@@ -249,7 +249,7 @@ void Client::AddActor( NewActorPacket* NAP )
 		this->zEng->DeleteImage(this->zBlackImage);
 		this->zBlackImage = NULL;
 
-		this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);
+		//this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);
 		this->zReady = true;
 
 		//this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PLAYER_READY));

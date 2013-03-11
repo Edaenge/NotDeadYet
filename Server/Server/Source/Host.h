@@ -72,7 +72,7 @@ public:
 	void UpdateGame();
 
 	/*! */
-	void SendToAllClients(const std::string& message, bool important = true);
+	void SendToAllClients(const std::string& message);
 
 	/*! Checks if the server is alive.*/
 	bool IsAlive() const;

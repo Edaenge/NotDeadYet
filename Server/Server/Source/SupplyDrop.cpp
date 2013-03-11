@@ -26,20 +26,7 @@ SupplyDrop::~SupplyDrop()
 
 bool SupplyDrop::SpawnSupplyDrop( Vector2& pos, std::set<Item*>& items )
 {
-	unsigned int weight = 0;
-	
-	//Calculate total weight
-	for( auto it = items.begin(); it != items.end(); it++ )
-	{
-		if( (*it) == NULL )
-		{
-			it = items.erase(it);
-			continue;
-		}
-
-		weight += (*it)->GetWeight() * (*it)->GetStackSize();
-	}
-	
+	unsigned int weight = CalculateTotalWeight(items);
 	return SpawnSupplyDrop(pos, items, weight);
 }
 
@@ -88,14 +75,32 @@ bool SupplyDrop::SpawnSupplyDrop( Vector2& pos, std::set<Item*>& items, const un
 	return true;
 }
 
-bool SupplyDrop::SpawnAirbornSupplyDrop( Vector3& pos, std::set<Item*>& items )
+bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::set<Item*>& items )
+{
+	unsigned int weight = CalculateTotalWeight(items);
+	return SpawnAirbornSupplyDrop(landPoint, height, items, weight);
+}
+
+bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::set<Item*>& items, const unsigned int itemCapacity )
 {
 
 	return false;
 }
 
-bool SupplyDrop::SpawnAirbornSupplyDrop( Vector3& pos, std::set<Item*>& items, const unsigned int itemCapacity )
+unsigned int SupplyDrop::CalculateTotalWeight( std::set<Item*>& items ) const
 {
+	unsigned int weight = 0;
+	//Calculate total weight
+	for( auto it = items.begin(); it != items.end(); it++ )
+	{
+		if( (*it) == NULL )
+		{
+			it = items.erase(it);
+			continue;
+		}
 
-	return false;
+		weight += (*it)->GetWeight() * (*it)->GetStackSize();
+	}
+
+	return weight;
 }

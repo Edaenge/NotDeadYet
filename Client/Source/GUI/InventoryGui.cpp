@@ -513,7 +513,7 @@ void InventoryGui::RemoveBlockers(int m, bool open, GraphicsEngine* ge, int inve
 			if(inventory == 1)
 				slots = this->zWeaponSlotGui.at(m)->GetGid().zSlots;
 
-			for(unsigned int k = 1; k < slots; k++)
+			for(int k = 1; k < slots; k++)
 			{
 				this->zSlotGui.at(i+k)->RemoveItemFromSlot(open, ge);
 			}

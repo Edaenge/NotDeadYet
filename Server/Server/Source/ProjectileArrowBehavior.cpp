@@ -5,6 +5,7 @@
 #include "ProjectileActor.h"
 #include "Physics.h"
 #include "WorldActor.h"
+#include "ActorSynchronizer.h"
 
 static const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 
@@ -26,6 +27,13 @@ ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world ) :
 
 	this->zNearActorsIndex = 0;
 	this->zNearByRadius = 370.0f;
+}
+
+ProjectileArrowBehavior::~ProjectileArrowBehavior()
+{
+	this->zNearActors.clear();
+	this->zNearBioActors.clear();
+	this->zNearWorldActors.clear();
 }
 
 bool ProjectileArrowBehavior::Update( float dt )
@@ -82,7 +90,6 @@ bool ProjectileArrowBehavior::Update( float dt )
 	}
 
 	// If true, stop the projectile and return.
-	Vector3 scale = this->zActor->GetScale();
 	float middle = zLength * 0.5f;
 	float yTip = newPos.y - middle;
 	if(yTip <= yValue )
@@ -333,4 +340,26 @@ Actor* ProjectileArrowBehavior::CheckWorldActorCollision()
 		return NULL;
 
 	return CheckCollision(thisActorPosition, this->zActor->GetCollisionRadius(), zNearWorldActors);
+}
+
+void ProjectileArrowBehavior::OnEvent( Event* e )
+{
+	Behavior::OnEvent(e);
+
+	if( ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e) )
+	{
+		auto found = this->zNearActors.find(AR->zActor);
+		if(found != this->zNearActors.end())
+			this->zNearActors.erase(found);
+
+		found = this->zNearBioActors.find(AR->zActor);
+		if( found != this->zNearBioActors.end() )
+			this->zNearBioActors.erase(found);
+		else
+		{
+			found = this->zNearWorldActors.find(AR->zActor);
+			if( found != this->zNearWorldActors.end() )
+				this->zNearWorldActors.erase(found);
+		}
+	}
 }

@@ -25,6 +25,14 @@ ActorManager::~ActorManager()
 		SAFE_DELETE(temp);
 	}
 	this->zActors.clear();
+
+	// Delete Behaviors
+	for( auto i = this->zBehaviors.begin(); i != this->zBehaviors.end(); ++i )
+	{
+		Behavior* data = (*i);
+		SAFE_DELETE(data);
+	}
+	this->zBehaviors.clear();
 }
 
 void ActorManager::AddActor( Actor* actor )
@@ -42,35 +50,60 @@ void ActorManager::AddActor( Actor* actor )
 	NotifyObservers(&e);
 }
 
+void ActorManager::AddBehavior( Behavior* behavior )
+{
+	if(!behavior)
+		return;
+
+	this->zBehaviors.insert(behavior);
+	this->AddObserver(behavior);
+}
+
 void ActorManager::RemoveActor( Actor* actor )
 {
-	std::set<Actor*>::iterator ret = zActors.end();
-
 	if(!actor)
 		return;
 
 	this->zActors.erase(actor);
+	this->zCollideableActors.erase(actor);
 	
-	if( actor->CanCollide() )
-	{
-		this->zCollideableActors.erase(actor);
-	}
-
 	ActorRemoved e;
 	e.zActor = actor;
 	NotifyObservers(&e);
 
 	delete actor;
+} 
+
+void ActorManager::RemoveBehavior( Actor* actor)
+{
+	auto it_zBehavior_end = this->zBehaviors.end();
+
+	for (auto it = this->zBehaviors.begin(); it != it_zBehavior_end;)
+	{
+		if ( (*it)->GetActor() == actor )
+		{
+			Behavior* temp = *it;
+			it = this->zBehaviors.erase(it);
+			RemoveObserver(*it);
+			SAFE_DELETE(temp);
+		}
+		else
+		{
+			it++;
+		}
+	}
+
 }
 
 void ActorManager::RemoveBehavior( Behavior* behavior )
 {
+	if(!behavior)
+		return;
 
-}
+	RemoveObserver(behavior);
 
-void ActorManager::AddBehavior( Behavior* behavior )
-{
-
+	this->zBehaviors.erase(behavior);
+	SAFE_DELETE(behavior);
 }
 
 Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
@@ -246,7 +279,6 @@ unsigned int ActorManager::GetCollideableActorsInCircle( const Vector2& center, 
 	auto i_zCollideableActors_end = zCollideableActors.cend();
 	for(auto i = zCollideableActors.cbegin(); i != i_zCollideableActors_end; i++)
 	{
-
 		Vector2 pos( (*i)->GetPosition().x, (*i)->GetPosition().z );
 		if( Vector2(center-pos).GetLength() < radius)
 		{
@@ -263,7 +295,7 @@ void ActorManager::OnEvent( Event* e )
 {
 	if( ActorAdded* AA = dynamic_cast<ActorAdded*>(e) )
 	{
-		AddActor(AA->zActor);
+		this->AddActor(AA->zActor);
 	}
 
 }

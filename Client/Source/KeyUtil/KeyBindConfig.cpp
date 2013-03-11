@@ -286,6 +286,9 @@ const std::string& KeyBindConfig::GetCommand(const int keyValue)
 	case KEY_PICKMENU:
 		return COMMAND_PICKMENU;
 		break;
+	case KEY_CRAFTING:
+		return COMMAND_CRAFT;
+		break;
 	default:
 		return COMMAND_NONE;
 		break;

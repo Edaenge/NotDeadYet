@@ -37,6 +37,7 @@
     <ClCompile Include="Source\GameModeFFA.cpp" />
     <ClCompile Include="Source\GameModeTest.cpp" />
     <ClCompile Include="Source\GhostActor.cpp" />
+    <ClCompile Include="Source\Inventory.cpp" />
     <ClCompile Include="Source\MaloWPerformance.cpp" />
     <ClCompile Include="Source\MaterialSpawnManager.cpp" />
     <ClCompile Include="Source\MaterialSpawnSet.cpp" />
@@ -64,6 +65,7 @@
     <ClCompile Include="Source\SoundHandler.cpp" />
     <ClCompile Include="Source\SupplyActor.cpp" />
     <ClCompile Include="Source\SupplyDrop.cpp" />
+    <ClCompile Include="Source\SupplyDropBehavior.cpp" />
     <ClCompile Include="Source\WolfActor.cpp" />
     <ClCompile Include="Source\WorldActor.cpp" />
   </ItemGroup>
@@ -91,6 +93,8 @@
     <ClInclude Include="Source\GameModeFFA.h" />
     <ClInclude Include="Source\GameModeTest.h" />
     <ClInclude Include="Source\GhostActor.h" />
+    <ClInclude Include="Source\Inventory.h" />
+    <ClInclude Include="Source\InventoryEvents.h" />
     <ClInclude Include="Source\MaloWPerformance.h" />
     <ClInclude Include="Source\MaterialSpawnManager.h" />
     <ClInclude Include="Source\MaterialSpawnSet.h" />
@@ -120,6 +124,7 @@
     <ClInclude Include="Source\SoundHandler.h" />
     <ClInclude Include="Source\SupplyActor.h" />
     <ClInclude Include="Source\SupplyDrop.h" />
+    <ClInclude Include="Source\SupplyDropBehavior.h" />
     <ClInclude Include="Source\WolfActor.h" />
     <ClInclude Include="Source\WorldActor.h" />
   </ItemGroup>

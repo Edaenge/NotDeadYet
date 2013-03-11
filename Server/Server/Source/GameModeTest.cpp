@@ -105,7 +105,7 @@ void GameModeTest::OnEvent( Event* e )
 		{
 			if(aActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 			{
-				this->zGame->RemoveAIBehavior(aActor);
+				this->zGame->GetActorManager()->RemoveBehavior(aActor);
 			}
 		}
 	}
@@ -134,6 +134,7 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	std::string msg;
 
 	Player* player = pActor->GetPlayer();
+	pActor->SetState(STATE_IDLE);
 	player->GetKeys().ClearStates();
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
@@ -161,6 +162,9 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	newPActor->SetPosition(position);
 	newPActor->SetDir(direction);
 	newPActor->AddObserver(this);
+	Inventory* inv = pActor->GetInventory();
+	inv->AddObserver(this);
+	inv->SetPlayer(player);
 
 	//Create New Human Behavior
 	PlayerHumanBehavior* pHumanBehavior = new PlayerHumanBehavior(newPActor, this->zGame->GetWorld(), player);
