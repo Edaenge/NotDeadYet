@@ -14,6 +14,7 @@ class ActorManager : public Observed, public Observer
 	SoundHandler* zSoundHandler;
 	std::set<Actor*> zActors;
 	std::set<Actor*> zCollideableActors;
+	std::set<Actor*> zLootableActors;
 	std::set<Behavior*> zBehaviors;
 
 public:
@@ -38,6 +39,8 @@ public:
 	unsigned int GetActorsInCircle(const Vector2& center, float radius, std::set<Actor*>& out, const unsigned int filter) const;
 	/*! */
 	unsigned int GetCollideableActorsInCircle(const Vector2& center, float radius, std::set<Actor*>& out);
+
+	std::set<Actor*>& GetLootableActors();
 
 	/*! Checks if this actor collides with BioActors/WorldActors in the game using physics calculations.*/
 	Actor* CheckCollisions(Actor* actor, float& range);

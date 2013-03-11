@@ -1278,7 +1278,7 @@ void Game::HandleDisconnect( ClientData* cd )
 
 void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID )
 {
-	std::set<Actor*> actors = this->zActorManager->GetActors();
+	std::set<Actor*> actors = this->zActorManager->GetLootableActors();
 	std::vector<Item*> lootedItems;
 
 	auto playerIterator = this->zPlayers.find(cd);
@@ -1295,7 +1295,7 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 
 	for (auto it_actor = actors.begin(); it_actor != it_actors_end && !bLooted; it_actor++)
 	{
-		if (dynamic_cast<WorldActor*>(*it_actor))
+		if ((*it_actor)->GetID == actor->GetID())
 			continue;
 
 		//Loop through all ID's of all actors the client tried to loot.

@@ -3,6 +3,8 @@
 #include "ActorSynchronizer.h"
 #include "Physics.h"
 #include "BioActor.h"
+#include "ItemActor.h"
+#include "SupplyActor.h"
 #include "WorldActor.h"
 #include "ProjectileActor.h"
 
@@ -45,6 +47,9 @@ void ActorManager::AddActor( Actor* actor )
 	if( actor->CanCollide() )
 		this->zCollideableActors.insert(actor);
 
+	if (dynamic_cast<ItemActor*>(actor) || dynamic_cast<BioActor*>(actor) || dynamic_cast<SupplyActor*>(actor))
+		zLootableActors.insert(actor);
+
 	ActorAdded e;
 	e.zActor = actor;
 	NotifyObservers(&e);
@@ -66,7 +71,8 @@ void ActorManager::RemoveActor( Actor* actor )
 
 	this->zActors.erase(actor);
 	this->zCollideableActors.erase(actor);
-	
+	this->zLootableActors.erase(actor);
+
 	ActorRemoved e;
 	e.zActor = actor;
 	NotifyObservers(&e);
@@ -289,6 +295,11 @@ unsigned int ActorManager::GetCollideableActorsInCircle( const Vector2& center, 
 	}
 
 	return counter;
+}
+
+std::set<Actor*>& ActorManager::GetLootableActors()
+{
+	return this->zLootableActors;
 }
 
 void ActorManager::OnEvent( Event* e )
