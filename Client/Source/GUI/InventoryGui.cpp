@@ -194,8 +194,20 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 
 	if(gid.zType == ITEM_TYPE_WEAPON_MELEE || gid.zType == ITEM_TYPE_WEAPON_RANGED || gid.zType == ITEM_TYPE_PROJECTILE)
 	{
-		this->RemoveBlockers(gid.zType, open, ge, 1);
-		this->zWeaponSlotGui[gid.zType]->RemoveItemFromSlot(open, ge); // If item isn't in inventory
+		if(this->zWeaponSlotGui[gid.zType]->GetGid().zCanStack == true)
+		{
+			this->zWeaponSlotGui[gid.zType]->SetStacks(this->zWeaponSlotGui[gid.zType]->GetGid().zStacks - gid.zStacks);
+			if(this->zWeaponSlotGui[gid.zType]->GetGid().zStacks <= 0)
+			{
+				this->RemoveBlockers(gid.zType, open, ge, 1);
+				this->zWeaponSlotGui[gid.zType]->RemoveItemFromSlot(open, ge); // If item isn't in inventory
+			}
+		}
+		else
+		{
+			this->RemoveBlockers(gid.zType, open, ge, 1);
+			this->zWeaponSlotGui[gid.zType]->RemoveItemFromSlot(open, ge); // If item isn't in inventory
+		}
 	}
 
 	return true;
