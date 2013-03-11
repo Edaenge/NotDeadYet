@@ -90,8 +90,10 @@ void ActorManager::RemoveBehavior( Actor* actor)
 		{
 			Behavior* temp = *it;
 			it = this->zBehaviors.erase(it);
-			RemoveObserver(*it);
+			RemoveObserver(temp);
 			SAFE_DELETE(temp);
+
+			it = it_zBehavior_end;
 		}
 		else
 		{
@@ -106,7 +108,7 @@ void ActorManager::RemoveBehavior( Behavior* behavior )
 	if(!behavior)
 		return;
 
-	RemoveObserver(behavior);
+	this->RemoveObserver(behavior);
 
 	this->zBehaviors.erase(behavior);
 	SAFE_DELETE(behavior);
@@ -301,6 +303,7 @@ std::set<Actor*>& ActorManager::GetLootableActors()
 {
 	return this->zLootableActors;
 }
+
 void ActorManager::ClearAll()
 {
 	PhysicsEngine* physics = GetPhysics();
