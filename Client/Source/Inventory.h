@@ -15,7 +15,6 @@
 #include "Bandage.h"
 #include "Misc.h"
 #include <vector>
-#include "Observer.h"
 
 enum EQUIPMENT_SLOT
 {

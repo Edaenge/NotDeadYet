@@ -37,6 +37,7 @@
     <ClCompile Include="Source\GameModeFFA.cpp" />
     <ClCompile Include="Source\GameModeTest.cpp" />
     <ClCompile Include="Source\GhostActor.cpp" />
+    <ClCompile Include="Source\Inventory.cpp" />
     <ClCompile Include="Source\MaloWPerformance.cpp" />
     <ClCompile Include="Source\MaterialSpawnManager.cpp" />
     <ClCompile Include="Source\MaterialSpawnSet.cpp" />
@@ -91,6 +92,8 @@
     <ClInclude Include="Source\GameModeFFA.h" />
     <ClInclude Include="Source\GameModeTest.h" />
     <ClInclude Include="Source\GhostActor.h" />
+    <ClInclude Include="Source\Inventory.h" />
+    <ClInclude Include="Source\InventoryEvents.h" />
     <ClInclude Include="Source\MaloWPerformance.h" />
     <ClInclude Include="Source\MaterialSpawnManager.h" />
     <ClInclude Include="Source\MaterialSpawnSet.h" />

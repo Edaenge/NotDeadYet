@@ -162,6 +162,9 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	newPActor->SetPosition(position);
 	newPActor->SetDir(direction);
 	newPActor->AddObserver(this);
+	Inventory* inv = pActor->GetInventory();
+	inv->AddObserver(this);
+	inv->SetPlayer(player);
 
 	//Create New Human Behavior
 	PlayerHumanBehavior* pHumanBehavior = new PlayerHumanBehavior(newPActor, this->zGame->GetWorld(), player);

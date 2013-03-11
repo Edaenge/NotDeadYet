@@ -946,6 +946,9 @@ void Game::OnEvent( Event* e )
 		center = this->CalcPlayerSpawnPoint(32, zWorld->GetWorldCenter());
 		pActor->SetPosition(center, false);
 		pActor->SetScale(pActor->GetScale(), false);
+		Inventory* inv = pActor->GetInventory();
+		inv->AddObserver(this);
+		inv->SetPlayer(zPlayers[UDE->clientData]);
 
 		auto offsets = this->zCameraOffset.find(UDE->playerModel);
 		
@@ -1028,7 +1031,37 @@ void Game::OnEvent( Event* e )
 		if (bActor)
 			bActor->Kill();
 	}
+	else if (InventoryAddItemEvent* IAIE = dynamic_cast<InventoryAddItemEvent*>(e))
+	{
+		NetworkMessageConverter NMC;
+		std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+		msg += IAIE->item->ToMessageString(&NMC);
 
+		IAIE->cd->Send(msg);
+	}
+	else if (InventoryRemoveItemEvent* IRIE = dynamic_cast<InventoryRemoveItemEvent*>(e))
+	{
+		NetworkMessageConverter NMC;
+		std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)IRIE->ID);
+
+		IRIE->cd->Send(msg);
+	}
+	else if (InventoryEquipItemEvent* IEIE = dynamic_cast<InventoryEquipItemEvent*>(e))
+	{
+		NetworkMessageConverter NMC;
+
+		std::string msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)IEIE->id);
+		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)IEIE->slot);
+		IEIE->cd->Send(msg);
+	}
+	else if (InventoryUnEquipItemEvent* IUIE = dynamic_cast<InventoryUnEquipItemEvent*>(e))
+	{
+		NetworkMessageConverter NMC;
+
+		std::string msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)IUIE->id);
+		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)IUIE->slot);
+		IUIE->cd->Send(msg);
+	}
 	NotifyObservers(e);
 	if (this->zPerf)
 		this->zPerf->PostMeasure("Game Event Handling", 2);
@@ -1351,7 +1384,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 		if (!item)
 			return;
 
-		std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+		//std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 
 		if (item->GetID() == itemID && item->GetItemType() == itemType)// && item->GetItemSubType() == subType)
 		{
@@ -1392,7 +1425,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 				}
 			}
 
-			msg += item->ToMessageString(&NMC);
+			//msg += item->ToMessageString(&NMC);
 
 			//add item
 			if(pActor->GetInventory()->AddItem(item, stacked))
@@ -1417,7 +1450,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 				return;
 			}
 
-			cd->Send(msg);
+			//cd->Send(msg);
 		}
 		
 	}
@@ -1433,10 +1466,10 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 			if( !item )
 				return;
 		
-			std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+			//std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 			if (item->GetItemType() == itemType)// && item->GetItemSubType() == subType)
 			{
-				msg += item->ToMessageString(&NMC);
+				//msg += item->ToMessageString(&NMC);
 				//Add item
 				if(pActor->GetInventory()->AddItem(item, stacked))
 				{
@@ -1456,7 +1489,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 					return;
 				}
 
-				cd->Send(msg);
+				//cd->Send(msg);
 			}
 		}
 	}
@@ -1486,8 +1519,8 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 	actor->SetPosition(pActor->GetPosition(), false);
 	this->zActorManager->AddActor(actor);
 
-	NetworkMessageConverter NMC;
-	cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
+	//NetworkMessageConverter NMC;
+	//cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
 }
 
 void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
@@ -1538,8 +1571,8 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 
 						if(item)
 						{
-							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
-							cd->Send(msg);
+							//msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
+							//cd->Send(msg);
 							
 							delete item, item = NULL;
 						}
@@ -1598,8 +1631,8 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 
 						if(item)
 						{
-							msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
-							cd->Send(msg);
+							//msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
+							//cd->Send(msg);
 							delete item, item = NULL;
 						}
 					}
@@ -1680,7 +1713,6 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//Decrease stack
 				arrow->Use();
 				inventory->RemoveItemStack(arrow->GetID(), 1);
-
 
 				//if arrow stack is empty
 				if (arrow->GetStackSize() <= 0)
@@ -1805,12 +1837,12 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 							else
 							{
 								inv->RemoveItem(it->first);
-								cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)it->first->GetID()));
+								//cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)it->first->GetID()));
 							}
 						}
 						//Send Add Inventory Msg to the Player.
-						std::string add_msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-						add_msg += craftedItem->ToMessageString(&NMC);
+						//std::string add_msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+						//add_msg += craftedItem->ToMessageString(&NMC);
 
 						//Try to add the crafted item to the inventory.
 						bool stacked = false;
@@ -1835,7 +1867,7 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 								}
 							}
 
-							cd->Send(add_msg);
+							//cd->Send(add_msg);
 						}
 						else
 						{
@@ -1843,13 +1875,13 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 							for (auto it = item_stack_out.begin(); it != item_it_end; it++)
 							{
 								inv->RemoveItem(it->first);
-								cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)it->first->GetID()));
+								//cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)it->first->GetID()));
 								it->first->IncreaseStackSize(it->second);
 								if(inv->AddItem(it->first, stacked))
 								{
-									std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-									msg += craftedItem->ToMessageString(&NMC);
-									cd->Send(msg);
+									//std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
+									//msg += craftedItem->ToMessageString(&NMC);
+									//cd->Send(msg);
 									if (stacked)
 									{
 										MaloW::Debug("Weird Error When Crafting, item stacked but shouldn't have");
@@ -1968,9 +2000,9 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 	if (primaryWpn == item)
 		this->HandleBindings(item, pActor->GetID());
 	
-	msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)item->GetID());
-	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)slot);
-	cd->Send(msg);
+	//msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)item->GetID());
+	//msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)slot);
+	//cd->Send(msg);
 }
 
 void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
@@ -2028,9 +2060,9 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 			this->HandleBindings(newPrimary, pActor->GetID());
 	}
 	
-	msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)itemID);
-	msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)eq_slot);
-	cd->Send(msg);
+	//msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)itemID);
+	//msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)eq_slot);
+	//cd->Send(msg);
 }
 
 void Game::HandleBindings(Item* item, const unsigned int ID)

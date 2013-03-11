@@ -581,7 +581,7 @@ void Client::CheckPlayerSpecificKeys()
 		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
 
-		if (msd.zAction != -1 && msd.gid.zID != -1)
+		if (msd.zAction != -1 && msd.gid.zID != 0)
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItem(msd.gid.zID);
 			if (msd.zAction == USE)
@@ -612,7 +612,26 @@ void Client::CheckPlayerSpecificKeys()
 			else if (msd.zAction == UNEQUIP)
 			{
 				if(item)
-					this->SendUnEquipItem(msd.gid.zID, (msd.gid.zType));
+				{
+					int slot = -1;
+					if (msd.gid.zType == ITEM_TYPE_WEAPON_RANGED)
+					{
+						slot = EQUIPMENT_SLOT_RANGED_WEAPON;
+					}
+					if (msd.gid.zType == ITEM_TYPE_WEAPON_MELEE)
+					{
+						slot = EQUIPMENT_SLOT_MELEE_WEAPON;
+					}
+					if (msd.gid.zType == ITEM_TYPE_PROJECTILE)
+					{
+						slot = EQUIPMENT_SLOT_PROJECTILE;
+					}
+					if (slot != -1)
+					{
+						this->SendUnEquipItem(msd.gid.zID, slot);
+					}
+					
+				}
 			}
 		}
 	}
@@ -621,7 +640,15 @@ void Client::CheckPlayerSpecificKeys()
 		Menu_select_data msd = this->zGuiManager->CheckCrafting();
 		if (msd.zAction == CRAFT)
 		{
-			this->SendCraftItemMessage(msd.gid.zType, msd.gid.zSubType);
+			if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			{
+				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+				this->SendCraftItemMessage(msd.gid.zType, msd.gid.zSubType);
+			}
+		}
+		else
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 		}
 	}
 

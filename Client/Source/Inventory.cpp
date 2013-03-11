@@ -107,7 +107,6 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 
 			stacked = true;
 			this->zWeightTotal += weight * stack;
-			this->zSlotsAvailable -= item->GetSlotSize();
 			return true;
 		}
 	}
@@ -123,7 +122,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 			Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
 
 		this->zWeightTotal += weight * item->GetStackSize();
-		this->zSlotsAvailable -= item->GetSlotSize();
+		this->zSlotsAvailable -= item->GetSlotSize() - 1;
 		return true;
 	}
 
