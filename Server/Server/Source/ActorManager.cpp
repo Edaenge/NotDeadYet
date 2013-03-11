@@ -301,16 +301,6 @@ std::set<Actor*>& ActorManager::GetLootableActors()
 {
 	return this->zLootableActors;
 }
-
-void ActorManager::OnEvent( Event* e )
-{
-	if( ActorAdded* AA = dynamic_cast<ActorAdded*>(e) )
-	{
-		this->AddActor(AA->zActor);
-	}
-
-}
-
 void ActorManager::ClearAll()
 {
 	PhysicsEngine* physics = GetPhysics();

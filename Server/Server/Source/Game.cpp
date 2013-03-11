@@ -523,14 +523,18 @@ bool Game::Update( float dt )
 				Actor* oldActor = NULL;
 				ItemActor* newActor = ConvertToItemActor(temp, oldActor);
 
-				PhysicsObject* pObject = oldActor->GetPhysicsObject();
-				if (pObject)
+				if( oldActor )
 				{
-					this->zPhysicsEngine->DeletePhysicsObject(pObject);
-					oldActor->SetPhysicsObject(NULL);
+					PhysicsObject* pObject = oldActor->GetPhysicsObject();
+					if (pObject)
+					{
+						this->zPhysicsEngine->DeletePhysicsObject(pObject);
+						oldActor->SetPhysicsObject(NULL);
+					}
+
+					this->zActorManager->RemoveActor(oldActor);
 				}
 
-				this->zActorManager->RemoveActor(oldActor);
 				this->zActorManager->AddActor(newActor);
 
 				i = behaviors.erase(i);

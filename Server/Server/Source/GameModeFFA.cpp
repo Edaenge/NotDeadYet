@@ -417,9 +417,22 @@ bool GameModeFFA::StartGameMode()
 		return false;
 
 	this->zGameStarted = true;
-	
-	//Test
-	//ITEMS
+
+	std::set<Item*> items = GenerateItems();
+	//this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items);
+	this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 200.0f, items);
+
+	return true;
+}
+
+bool GameModeFFA::SpawnRandomDrop()
+{
+	return false;
+}
+
+std::set<Item*> GameModeFFA::GenerateItems()
+{
+	/*Just a test*/
 	std::set<Item*> items;
 
 	const Food*			temp_food		= GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
@@ -437,8 +450,5 @@ bool GameModeFFA::StartGameMode()
 	items.insert(arrow);
 	items.insert(melee);
 
-	this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items);
-
-	return true;
-	
+	return items;
 }

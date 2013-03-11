@@ -19,7 +19,7 @@ public:
 	bool HasParachute() const;
 	bool AttachParachute(Actor* parachute);
 	Actor* DetatchParachute();
-	
+	inline Actor* GetParachute() const {return zParachute;}
 	inline Inventory* GetInventory() const {return this->zInventory;}
 	
 private:
