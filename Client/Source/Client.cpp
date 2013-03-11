@@ -339,8 +339,8 @@ void Client::Life()
 		{
 			if (this->zDeltaTime < TARGET_DT)
 			{
-				DWORD sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
-				Sleep(sleepTime);
+				float sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
+				Sleep((DWORD)sleepTime);
 			}
 		}
 	}
@@ -1096,7 +1096,7 @@ void Client::HandleWeaponEquips()
 
 void Client::HandleDebugInfo()
 {
-	//Graphical error Object debug
+	//Graphical error Terrain debug
 	if (this->zEng->GetKeyListener()->IsPressed(VK_F1))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -1168,7 +1168,7 @@ void Client::HandleDebugInfo()
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
-	//Object debug
+	//AI debug
 	else if (this->zEng->GetKeyListener()->IsPressed(VK_F5))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -1186,7 +1186,7 @@ void Client::HandleDebugInfo()
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
-	//Object debug
+	//AI debug
 	else if (this->zEng->GetKeyListener()->IsPressed(VK_F6))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
