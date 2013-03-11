@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Observer.h>
+#include <World/Observer.h>
 #include "PlayerActor.h"
 
 class GameMode : public Observer

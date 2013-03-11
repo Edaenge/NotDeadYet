@@ -223,5 +223,8 @@
     <ClCompile Include="Source\CraftingReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\World\EntQuadTree.cpp">
+      <Filter>Source Files\World</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

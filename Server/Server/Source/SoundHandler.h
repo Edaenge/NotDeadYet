@@ -1,5 +1,6 @@
 #pragma once
-#include "Observer.h"
+
+#include <World/Observer.h>
 #include "Player.h"
 
 class SoundHandler : public Observer

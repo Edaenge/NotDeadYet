@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Observer.h>
+#include <World/Observer.h>
 #include <vector.h>
 #include "ClientData.h"
 #include "Actor.h"
@@ -12,7 +12,6 @@ public:
 
 	Vector3 zPos;
 };
-
 
 class PlayerActorPhysicalConditionHungerEvent : public Event
 {

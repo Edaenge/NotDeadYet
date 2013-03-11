@@ -15,7 +15,7 @@
 #include "Bandage.h"
 #include "Misc.h"
 #include <vector>
-#include "Observer.h"
+#include <World/Observer.h>
 #include "InventoryEvents.h"
 #include "Player.h"
 

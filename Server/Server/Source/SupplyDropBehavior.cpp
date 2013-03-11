@@ -79,14 +79,12 @@ bool SupplyDropBehavior::Update( float dt )
 
 	newPos = sActor->GetPosition();
 	zVelocity.Normalize();
-
+	//Calculate new Position
+	zVelocity += GRAVITY * dt;
+	newPos += zVelocity;
 	
 	if( sActor->HasParachute() )
 	{
-		//Calculate new Position
-		zVelocity += GRAVITY * dt;
-		newPos += zVelocity;
-
 		newParachutePos = sActor->GetParachute()->GetPosition();
 		newParachutePos += zVelocity;
 		sActor->GetParachute()->SetPosition(newParachutePos);

@@ -15,46 +15,61 @@ Entity::~Entity()
 {
 	EntityDeletedEvent EDE;
 	EDE.entity = this;
-	//NotifyObservers( &EDE );
+	NotifyObservers( &EDE );
 }
 
 void Entity::SetPosition( const Vector3& pos )
 {
-	SetEdited(true);
-	zPosition = pos;
+	if ( zPosition != pos )
+	{
+		EntityMovingEvent EME(this, pos);
+		NotifyObservers(&EME);
 
-	EntityUpdatedEvent EUE;
-	EUE.entity = this;
-	NotifyObservers( &EUE );
+		SetEdited(true);
+		zPosition = pos;
+
+		EntityUpdatedEvent EUE;
+		EUE.entity = this;
+		NotifyObservers(&EUE);
+	}
 }
 
 void Entity::SetRotation( const Vector3& rot )
 {
-	SetEdited(true);
-	zRotation = rot;
-	
-	EntityUpdatedEvent EUE;
-	EUE.entity = this;
-	NotifyObservers( &EUE );
+	if ( zRotation != rot )
+	{
+		SetEdited(true);
+		zRotation = rot;
+		
+		EntityUpdatedEvent EUE;
+		EUE.entity = this;
+		NotifyObservers(&EUE);
+	}
 }
 
 void Entity::SetScale( const Vector3& scale )
 {
-	SetEdited(true);
-	zScale = scale;
+	if ( zScale != scale )
+	{
+		SetEdited(true);
+		zScale = scale;
 
-	EntityUpdatedEvent EUE;
-	EUE.entity = this;
-	NotifyObservers( &EUE );
+		EntityUpdatedEvent EUE;
+		EUE.entity = this;
+		NotifyObservers(&EUE);
+	}
 }
 
 void Entity::SetSelected( bool selected )
 {
-	zSelected = selected;
+	if ( zSelected != selected )
+	{
+		zSelected = selected;
 
-	EntitySelectedEvent ESE;
-	ESE.entity = this;
-	NotifyObservers( &ESE );
+		EntitySelectedEvent ESE;
+		ESE.entity = this;
+		NotifyObservers( &ESE );
+	}
 }
 
 void Entity::SetType( unsigned int& newType )

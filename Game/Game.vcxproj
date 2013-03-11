@@ -140,6 +140,7 @@
     <ClCompile Include="Source\Misc.cpp" />
     <ClCompile Include="Source\World\Entity.cpp" />
     <ClCompile Include="Source\World\EntityList.cpp" />
+    <ClCompile Include="Source\World\EntQuadTree.cpp" />
     <ClCompile Include="Source\World\Sector.cpp" />
     <ClCompile Include="Source\World\WaterQuad.cpp" />
     <ClCompile Include="Source\World\World.cpp" />
