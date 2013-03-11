@@ -157,14 +157,11 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 
 	PhysicsObject* pObj = GetPhysics()->CreatePhysicsObject(model, position);
 	
-	PlayerActor* newPActor = new PlayerActor(player, pObj);
+	PlayerActor* newPActor = new PlayerActor(player, pObj, this->zGame);
 	newPActor->SetModel(pActor->GetModel());
 	newPActor->SetPosition(position);
 	newPActor->SetDir(direction);
 	newPActor->AddObserver(this);
-	Inventory* inv = pActor->GetInventory();
-	inv->AddObserver(this->zGame);
-	inv->SetPlayer(player);
 
 	//Create New Human Behavior
 	PlayerHumanBehavior* pHumanBehavior = new PlayerHumanBehavior(newPActor, this->zGame->GetWorld(), player);

@@ -9,6 +9,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include <World/WorldEvents.h>
 #include "PlayerEvent.h"
 
+class Game;
 /*This class is used to save player information such as position and states.
   This information is sent to clients.
 */
@@ -17,7 +18,7 @@ class PlayerActor : public BioActor
 	Vector3 zInitialDirection;
 
 public:
-	PlayerActor(Player* player, PhysicsObject* pObj);
+	PlayerActor(Player* player, PhysicsObject* pObj, Observer* game);
 
 	virtual ~PlayerActor();
 

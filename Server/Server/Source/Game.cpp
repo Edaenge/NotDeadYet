@@ -432,7 +432,7 @@ void Game::SpawnHumanDebug()
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/temp_guy.obj");
-	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics);
+	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics, this);
 	pActor->SetModel("Media/Models/temp_guy_movement_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
@@ -952,7 +952,7 @@ void Game::OnEvent( Event* e )
 		// Create Player Actor
 		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
 		
-		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj);
+		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
 		pActor->SetModel(UDE->playerModel);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 		zPlayers[UDE->clientData]->zUserModel = UDE->playerModel;
@@ -2285,13 +2285,14 @@ void Game::RestartGame()
 
 		PhysicsObject* physObj = zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
 		
-		PlayerActor* pActor = new PlayerActor((*it).second, physObj);
+		PlayerActor* pActor = new PlayerActor((*it).second, physObj, this);
 		pActor->SetModel( (*it).second->GetModelPath() );
 		PlayerHumanBehavior* pBehavior = new PlayerHumanBehavior(pActor, zWorld, (*it).second);
 
 		pActor->SetPosition(CalcPlayerSpawnPoint(32), false);
 		pActor->SetScale(pActor->GetScale(), false);
 		pActor->AddObserver(this->zGameMode);
+
 		SetPlayerBehavior((*it).second, pBehavior);
 		this->zActorManager->AddActor(pActor);
 
