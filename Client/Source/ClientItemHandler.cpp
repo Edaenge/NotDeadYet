@@ -606,11 +606,9 @@ void Client::HandleRemoveEquipment(const unsigned int ItemID, const int Slot)
 	}
 }
 
-void Client::SendUnEquipItem(const unsigned int ID, const int Slot)
+void Client::SendUnEquipItem( const unsigned int ID )
 {
 	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)ID);
-
-	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)Slot);
 
 	this->zServerChannel->Send(msg);
 }
@@ -634,7 +632,7 @@ void Client::SendLootItemMessage(const unsigned int ID, const unsigned int ItemI
 
 void Client::SendCraftItemMessage(const int Type, const int SubType)
 {
-	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_CRAFT);
+	std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_CRAFT, 0);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_TYPE, (float)Type);
 	msg += this->zMsgHandler.Convert(MESSAGE_TYPE_ITEM_SUB_TYPE, (float)SubType);
 	this->zServerChannel->Send(msg);

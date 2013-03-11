@@ -24,42 +24,6 @@ PlayerActor::~PlayerActor()
 {
 }
 
-Item* PlayerActor::DropItem(const long ID)
-{
-	Item* item = this->zInventory->SearchAndGetItem(ID);
-
-	if(!item)
-	{
-		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString((float)ID));
-		return NULL;
-	}
-	
-	RangedWeapon* rwp = this->zInventory->GetRangedWeapon();
-	MeleeWeapon* mwp = this->zInventory->GetMeleeWeapon();
-	Projectile* proj = this->zInventory->GetProjectile();
-
-	if(rwp && dynamic_cast<RangedWeapon*>(item) == rwp)
-	{
-		this->zInventory->UnEquipRangedWeapon();
-	}
-	else if(mwp && dynamic_cast<MeleeWeapon*>(item) == mwp)
-	{
-		this->zInventory->UnEquipMeleeWeapon();
-	}
-	else if(proj && dynamic_cast<Projectile*>(item) == proj)
-	{
-		this->zInventory->UnEquipProjectile();
-	}
-
-	item = this->zInventory->RemoveItem(item);
-
-	if (item && Messages::FileWrite())	
-		Messages::Debug("Removed successes: " + MaloW::convertNrToString((float)ID));
-
-
-	return item;
-}
-
 float PlayerActor::GetFullness()
 {
 	return this->zFullness;

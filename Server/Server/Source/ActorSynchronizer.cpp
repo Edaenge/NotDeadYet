@@ -20,6 +20,16 @@ ActorSynchronizer::~ActorSynchronizer()
 {
 	SAFE_DELETE(this->zFrameData);
 	SAFE_DELETE(this->zActorData);
+
+	auto it_phys_end = this->zIndividualPhysicalConditions.end();
+	for ( auto it = this->zIndividualPhysicalConditions.begin(); it != it_phys_end; it++ )
+	{
+		if( it->second )
+		{
+			PhysicalConditionPacket* temp = it->second;
+			SAFE_DELETE(temp);
+		}
+	}
 }
 
 void ActorSynchronizer::AddAnimation(BioActor* bActor)
@@ -344,8 +354,8 @@ void ActorSynchronizer::ClearAll()
 		delete this->zActorData;
 
 	zActorData = new NewActorPacket();
-
-	for ( auto it = zIndividualPhysicalConditions.begin(); it != zIndividualPhysicalConditions.end(); it++ )
+	auto it_phys_end = this->zIndividualPhysicalConditions.end();
+	for ( auto it = this->zIndividualPhysicalConditions.begin(); it != it_phys_end; it++ )
 	{
 		if( it->second )
 		{

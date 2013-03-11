@@ -650,19 +650,19 @@ void Game::OnEvent( Event* e )
 			Inventory* inv = pActor->GetInventory();
 			if(inv->SwapWeapon())
 			{
-				NetworkMessageConverter NMC;
-				std::string msg;
+				//NetworkMessageConverter NMC;
+				//std::string msg;
 
-				Item* item = inv->GetSecondaryEquip();
+				//Item* item = inv->GetSecondaryEquip();
 
-				msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)pActor->GetID());
-				msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
-				SEQWE->clientdData->Send(msg);
+				//msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)pActor->GetID());
+				//msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+				//SEQWE->clientdData->Send(msg);
 
-				Item* newPrimary = inv->GetPrimaryEquip();
+				//Item* newPrimary = inv->GetPrimaryEquip();
 
-				if (newPrimary)
-					this->HandleBindings(newPrimary, pActor->GetID());
+				//if (newPrimary)
+				//	this->HandleBindings(newPrimary, pActor->GetID());
 			}
 		}
 	}
@@ -759,7 +759,7 @@ void Game::OnEvent( Event* e )
 	else if (PlayerUnEquipItemEvent* PUEIE = dynamic_cast<PlayerUnEquipItemEvent*>(e) )
 	{
 		this->zPerf->PreMeasure("UnEquip Event Handling", 3);
-		this->HandleUnEquipItem(PUEIE->clientData, PUEIE->itemID, PUEIE->eq_Slot);
+		this->HandleUnEquipItem(PUEIE->clientData, PUEIE->itemID);
 		this->zPerf->PostMeasure("UnEquip Event Handling", 3);
 	}
 	else if(PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
@@ -1076,6 +1076,19 @@ void Game::OnEvent( Event* e )
 		std::string msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)IUIE->id);
 		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)IUIE->slot);
 		IUIE->cd->Send(msg);
+	}
+	else if (InventoryBindPrimaryWeapon* IBPW = dynamic_cast<InventoryBindPrimaryWeapon*>(e))
+	{
+		this->HandleBindings(IBPW->ID, IBPW->model, IBPW->type, IBPW->subType);
+	}
+	else if (InventoryUnBindPrimaryWeapon* IUBPW = dynamic_cast<InventoryUnBindPrimaryWeapon*>(e))
+	{
+		NetworkMessageConverter NMC;
+		std::string msg;
+
+		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)IUBPW->ID);
+		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, IUBPW->model);
+		this->SendToAll(msg);
 	}
 	NotifyObservers(e);
 	if (this->zPerf)
@@ -1571,6 +1584,9 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 
 void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 {
+	NetworkMessageConverter NMC;
+	std::string msg;
+
 	Actor* actor  = NULL;
 	PlayerActor* pActor = NULL;
 	Item* item = NULL;
@@ -1583,7 +1599,45 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 	if(!pActor)
 		return;
 
-	item = pActor->DropItem(objectID);
+	Inventory* inventory = pActor->GetInventory();
+	
+	item = inventory->SearchAndGetItem(objectID);
+
+	if(!item)
+	{
+		MaloW::Debug("Failed Item=NULL ID: " + MaloW::convertNrToString((float)objectID));
+		return;
+	}
+
+	RangedWeapon* rwp = inventory->GetRangedWeapon();
+	MeleeWeapon* mwp = inventory->GetMeleeWeapon();
+	Projectile* proj = inventory->GetProjectile();
+
+	if(rwp && dynamic_cast<RangedWeapon*>(item) == rwp)
+		inventory->UnEquipRangedWeapon();
+	
+	else if(mwp && dynamic_cast<MeleeWeapon*>(item) == mwp)
+		inventory->UnEquipMeleeWeapon();
+	
+	else if(proj && dynamic_cast<Projectile*>(item) == proj)
+		inventory->UnEquipProjectile();
+
+	item = inventory->RemoveItem(item);
+
+	if (item && Messages::FileWrite())	
+		Messages::Debug("Removed successes: " + MaloW::convertNrToString((float)objectID));
+	
+	//if (wasPrimary)
+	//{
+	//	msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)pActor->GetID());
+	//	msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+	//	cd->Send(msg);
+
+	//	Item* newPrimary = inventory->GetPrimaryEquip();
+
+	//	if (newPrimary)
+	//		this->HandleBindings(newPrimary, pActor->GetID());
+	//}
 
 	if(!item)
 		return;
@@ -1791,12 +1845,13 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//if arrow stack is empty
 				if (arrow->GetStackSize() <= 0)
 				{
-					std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
-					msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_PROJECTILE);
-					cd->Send(msg);
-					item = inventory->RemoveItem(arrow);
-					SAFE_DELETE(item);
+					//std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
+					//msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_PROJECTILE);
+					//cd->Send(msg);
 					inventory->UnEquipProjectile();
+					item = inventory->RemoveItem(arrow);
+					
+					SAFE_DELETE(item);
 				}
 				//Send feedback message
 				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
@@ -2069,17 +2124,17 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 		cd->Send(msg);
 		return;
 	}
-	//Check if the Equipped Item is the Primary one Then Add it to the Mesh
-	Item* primaryWpn = inventory->GetPrimaryEquip();
-	if (primaryWpn == item)
-		this->HandleBindings(item, pActor->GetID());
+	////Check if the Equipped Item is the Primary one Then Add it to the Mesh
+	//Item* primaryWpn = inventory->GetPrimaryEquip();
+	//if (primaryWpn == item)
+	//	this->HandleBindings(item, pActor->GetID());
 	
 	//msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)item->GetID());
 	//msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)slot);
 	//cd->Send(msg);
 }
 
-void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
+void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID )
 {
 	std::string msg;
 	NetworkMessageConverter NMC;
@@ -2103,15 +2158,15 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 		return;
 	}
 
-	if(eq_slot == EQUIPMENT_SLOT_PROJECTILE)
+	if(dynamic_cast<Projectile*>(item))
 	{
 		inventory->UnEquipProjectile();
 	}
-	else if(eq_slot == EQUIPMENT_SLOT_MELEE_WEAPON)
+	else if(dynamic_cast<MeleeWeapon*>(item))
 	{
 		inventory->UnEquipMeleeWeapon();
 	}
-	else if(eq_slot == EQUIPMENT_SLOT_RANGED_WEAPON)
+	else if(dynamic_cast<RangedWeapon*>(item))
 	{
 		inventory->UnEquipRangedWeapon();
 	}
@@ -2122,60 +2177,59 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID, int eq_slot )
 		return;
 	}
 
-	if (wasPrimary)
-	{
-		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)pActor->GetID());
-		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
-		cd->Send(msg);
+	//if (wasPrimary)
+	//{
+	//	msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)pActor->GetID());
+	//	msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+	//	cd->Send(msg);
 
-		Item* newPrimary = inventory->GetPrimaryEquip();
+	//	Item* newPrimary = inventory->GetPrimaryEquip();
 
-		if (newPrimary)
-			this->HandleBindings(newPrimary, pActor->GetID());
-	}
+	//	if (newPrimary)
+	//		this->HandleBindings(newPrimary, pActor->GetID());
+	//}
 	
 	//msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)itemID);
 	//msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)eq_slot);
 	//cd->Send(msg);
 }
 
-void Game::HandleBindings(Item* item, const unsigned int ID)
+void Game::HandleBindings( const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType )
 {
 	std::string msg;
 	NetworkMessageConverter NMC;
 
-	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
+	if (type == ITEM_TYPE_WEAPON_RANGED)
 	{
-		if (item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
+		if (subType == ITEM_SUB_TYPE_BOW)
 		{
 			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
-			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
-			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
-			this->SendToAll(msg);
-		}
-
-	}
-	else if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
-	{
-		if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
-		{
-			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
-			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
-			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
-			this->SendToAll(msg);
-		}
-		else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
-		{
-			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
-			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
 		}
 	}
-	else if (item->GetItemType() == ITEM_TYPE_PROJECTILE && item->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
+	else if (type == ITEM_TYPE_WEAPON_MELEE)
+	{
+		if (subType == ITEM_SUB_TYPE_MACHETE)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
+		else if (subType == ITEM_SUB_TYPE_POCKET_KNIFE)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
+	}
+	else if (type == ITEM_TYPE_PROJECTILE && subType == ITEM_SUB_TYPE_ROCK)
 	{
 		msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
-		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
+		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 		msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 		this->SendToAll(msg);
 	}

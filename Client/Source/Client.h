@@ -172,7 +172,7 @@ private:
 	void DisplayMessageToClient(const std::string& msg, bool bError);
 	void HandleEquipItem(const unsigned int ItemID, const int Slot);
 	bool HandleUnEquipItem(const unsigned int ItemID, const int Slot);
-	void SendUnEquipItem(const unsigned int ID, const int Slot);
+	void SendUnEquipItem(const unsigned int ID);
 	void SendEquipItem(const unsigned int ID);
 	void SendItemFill(const unsigned int ID);
 	void HandleFillItem(const unsigned int ID, const int currentUses);
