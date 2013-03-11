@@ -1564,6 +1564,8 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			tempHandle->Play();
 			delete temp;
 		}
+		delete tempHandle;
+		tempHandle = NULL;
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
