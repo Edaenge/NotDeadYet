@@ -43,6 +43,4 @@ public:
 	Actor* CheckCollisions(Actor* actor, float& range);
 	/*! Checks if this actor collides with BioActors/WorldActors in the game using distance calculations.*/
 	Actor* CheckCollisionsByDistance(Actor* actor, float& range);
-	/**/
-	virtual void OnEvent( Event* e);
 };

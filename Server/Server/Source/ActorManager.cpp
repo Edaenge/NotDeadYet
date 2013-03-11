@@ -291,15 +291,6 @@ unsigned int ActorManager::GetCollideableActorsInCircle( const Vector2& center, 
 	return counter;
 }
 
-void ActorManager::OnEvent( Event* e )
-{
-	if( ActorAdded* AA = dynamic_cast<ActorAdded*>(e) )
-	{
-		this->AddActor(AA->zActor);
-	}
-
-}
-
 void ActorManager::ClearAll()
 {
 	PhysicsEngine* physics = GetPhysics();
