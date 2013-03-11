@@ -1572,7 +1572,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
 
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
-
+		this->ResetPhysicalConditions();
 		if (Actor* actor = this->zActorManager->GetActor(this->zID))
 		{
 			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(actor->GetModel());
@@ -2243,4 +2243,14 @@ void Client::UpdatePhysicalCondition( PhysicalConditionPacket* PCP )
 
 	if(PCP->zStamina != -1.0f)
 		this->zStamina = PCP->zStamina;
+}
+
+void Client::ResetPhysicalConditions()
+{
+	this->zHealth = 100;
+	this->zEnergy = zEnergy;
+	this->zBleedingLevel = 0;
+	this->zHunger = 100;
+	this->zHydration = 100;
+	this->zStamina = 100;
 }

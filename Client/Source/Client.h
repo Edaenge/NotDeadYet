@@ -129,6 +129,7 @@ private:
 	//Updates the health and bleeding indicator.
 	void UpdateHealthAndBleedingImage();	/*! Updates conditions*/
 	void UpdatePhysicalCondition(PhysicalConditionPacket* PCP);	/*! Checks Ray Vs Static/Dynamic Objects*/
+	void ResetPhysicalConditions();
 	std::vector<unsigned int> RayVsWorld();
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
 	bool CheckCollision();
