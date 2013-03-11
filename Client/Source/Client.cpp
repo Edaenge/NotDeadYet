@@ -756,6 +756,13 @@ void Client::CheckGhostSpecificKeys()
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
 			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
+
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)) )
+		{
+			int testingKey = 0;
+		}
+
+
 	}
 }
 
@@ -1525,7 +1532,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
-		this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
+		//this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
 
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 
