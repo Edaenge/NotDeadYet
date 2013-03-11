@@ -4,7 +4,7 @@ Material Drop Manager, Handles the material drops from world
 
 #pragma once
 
-#include <Observer.h>
+#include <World/Observer.h>
 #include <Vector.h>
 
 class World;

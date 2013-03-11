@@ -1,8 +1,7 @@
 #pragma once
 
-#include <Observer.h>
+#include <World/Observer.h>
 #include <KeyStates.h>
-#include "Observer.h"
 
 class ClientData;
 class Behavior;

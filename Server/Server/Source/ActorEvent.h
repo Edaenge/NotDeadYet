@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Observer.h>
+#include <World/Observer.h>
+
 class Actor;
 
 class ActorPositionEvent : public Event
