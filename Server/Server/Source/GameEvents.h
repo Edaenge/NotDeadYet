@@ -112,7 +112,6 @@ public:
 	ClientData* clientData;
 
 	unsigned int itemID;
-	int eq_Slot;
 };
 
 /*Event when a player wants to use an item.*/

@@ -383,14 +383,7 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 	{
 		PlayerUnEquipItemEvent e;
 		int _itemID = this->zMessageConverter.ConvertStringToInt(M_UNEQUIP_ITEM, msgArray[0]);
-		int _eq_Slot = -1;
 
-		if (msgArray.size() > 1)
-		{
-			_eq_Slot = this->zMessageConverter.ConvertStringToInt(M_EQUIPMENT_SLOT, msgArray[1]);
-		}
-
-		e.eq_Slot = _eq_Slot;
 		e.itemID = _itemID;
 		e.clientData = cd;
 		NotifyObservers(&e);

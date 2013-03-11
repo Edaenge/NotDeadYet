@@ -19,6 +19,7 @@ Behavior::Behavior( Actor* actor, World* world ) :
 		zAnchor->position = zActor->GetPosition().GetXZ();
 		zAnchor->radius = 32.0f;
 	}
+	this->zRemoveBehavior = false;
 }
 
 Behavior::~Behavior()

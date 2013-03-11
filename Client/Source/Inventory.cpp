@@ -450,6 +450,9 @@ void Inventory::UnEquipRangedWeapon()
 		Messages::Debug("UnEquipped Ranged Weapon");
 
 	Item* item = dynamic_cast<RangedWeapon*>(this->zRangedWeapon);
+	
+	if (!item)
+		return;
 
 	if(zPrimaryEquip == item)
 	{
@@ -472,6 +475,9 @@ void Inventory::UnEquipMeleeWeapon()
 
 	Item* item = dynamic_cast<MeleeWeapon*>(this->zMeleeWeapon);
 
+	if (!item)
+		return;
+
 	if(this->zPrimaryEquip == item)
 	{
 		this->zPrimaryEquip = NULL;
@@ -492,6 +498,9 @@ void Inventory::UnEquipProjectile()
 		Messages::Debug("UnEquipped Projectile");
 
 	Item* item = dynamic_cast<Projectile*>(this->zProjectile);
+
+	if (!item)
+		return;
 
 	if(this->zPrimaryEquip == item)
 	{
@@ -577,4 +586,3 @@ void Inventory::ClearAll()
 	this->zPrimaryEquip = NULL;
 	this->zSecondaryEquip = NULL;
 }
-

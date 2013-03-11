@@ -8,20 +8,25 @@ class ActorManager;
 class World;
 class PhysicsEngine;
 
-class SupplyDrop : public Observed
+//MODEL NAME
+static const std::string SUPPLY_ACTOR_FILENAME	= "Media/Models/Cube_4.obj";
+static const std::string PARACHUTE_FILE_NAME	= "Media/Models/Cube_4.obj";
+
+class SupplyDrop
 {
 public:
 	SupplyDrop( ActorManager* actorManager, World* world );
 	virtual ~SupplyDrop();
 	
-	bool SpawnSupplyDrop( Vector2& pos, std::set<Item*>& items);
-	bool SpawnSupplyDrop( Vector2& pos, std::set<Item*>& items, const unsigned int itemCapacity);
+	bool SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, float height);
+	bool SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, const unsigned int itemCapacity, float height);
 
 	bool SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::set<Item*>& items);
 	bool SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::set<Item*>& items, const unsigned int itemCapacity);
 
 private:
 	unsigned int CalculateTotalWeight(std::set<Item*>& items) const;
+	Vector2 RandomizePos(const Vector2& landpos);
 
 private:
 	World* zWorld;

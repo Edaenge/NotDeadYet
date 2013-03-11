@@ -339,8 +339,8 @@ void Client::Life()
 		{
 			if (this->zDeltaTime < TARGET_DT)
 			{
-				DWORD sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
-				Sleep(sleepTime);
+				float sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
+				Sleep((DWORD)sleepTime);
 			}
 		}
 	}
@@ -616,26 +616,7 @@ void Client::CheckPlayerSpecificKeys()
 			else if (msd.zAction == UNEQUIP)
 			{
 				if(item)
-				{
-					int slot = -1;
-					if (msd.gid.zType == ITEM_TYPE_WEAPON_RANGED)
-					{
-						slot = EQUIPMENT_SLOT_RANGED_WEAPON;
-					}
-					if (msd.gid.zType == ITEM_TYPE_WEAPON_MELEE)
-					{
-						slot = EQUIPMENT_SLOT_MELEE_WEAPON;
-					}
-					if (msd.gid.zType == ITEM_TYPE_PROJECTILE)
-					{
-						slot = EQUIPMENT_SLOT_PROJECTILE;
-					}
-					if (slot != -1)
-					{
-						this->SendUnEquipItem(msd.gid.zID, slot);
-					}
-					
-				}
+					this->SendUnEquipItem(msd.gid.zID);
 			}
 		}
 	}
@@ -1129,7 +1110,7 @@ void Client::HandleWeaponEquips()
 
 void Client::HandleDebugInfo()
 {
-	//Graphical error Object debug
+	//Graphical error Terrain debug
 	if (this->zEng->GetKeyListener()->IsPressed(VK_F1))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -1201,7 +1182,7 @@ void Client::HandleDebugInfo()
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
-	//Object debug
+	//AI debug
 	else if (this->zEng->GetKeyListener()->IsPressed(VK_F5))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -1219,7 +1200,7 @@ void Client::HandleDebugInfo()
 			this->zKeyInfo.SetKeyState(KEY_DEBUG_INFO, true);
 		}
 	}
-	//Object debug
+	//AI debug
 	else if (this->zEng->GetKeyListener()->IsPressed(VK_F6))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
@@ -1597,13 +1578,15 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			tempHandle->Play();
 			delete temp;
 		}
+		delete tempHandle;
+		tempHandle = NULL;
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
 		//this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
 
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
-
+		this->ResetPhysicalConditions();
 		if (Actor* actor = this->zActorManager->GetActor(this->zID))
 		{
 			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(actor->GetModel());
@@ -2277,4 +2260,14 @@ void Client::UpdatePhysicalCondition( PhysicalConditionPacket* PCP )
 
 	if(PCP->zStamina != -1.0f)
 		this->zStamina = PCP->zStamina;
+}
+
+void Client::ResetPhysicalConditions()
+{
+	this->zHealth = 100;
+	this->zEnergy = zEnergy;
+	this->zBleedingLevel = 0;
+	this->zHunger = 100;
+	this->zHydration = 100;
+	this->zStamina = 100;
 }

@@ -18,10 +18,12 @@ public:
 	virtual ~GameModeFFA();
 
 	bool Update(float dt);
+	bool SpawnRandomDrop();
 	bool HasGameStarted() const {return this->zGameStarted;}
 	bool StartGameMode();
 
 private:
+	std::set<Item*> GenerateItems();
 	virtual void OnEvent( Event* e );
 	void OnPlayerHumanDeath(PlayerActor* pActor);
 	void OnPlayerAnimalDeath(AnimalActor* aActor);

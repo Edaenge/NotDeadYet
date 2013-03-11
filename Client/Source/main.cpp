@@ -45,5 +45,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 	SavePlayerSettings();
 	FreePlayerSettings();
 	//_CrtDumpMemoryLeaks();
+	MaloW::Debug("Quit Game.");
 	return 0;
 }

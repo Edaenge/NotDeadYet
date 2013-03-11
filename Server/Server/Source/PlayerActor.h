@@ -34,10 +34,6 @@ public:
 	void SetExhausted(bool exhausted);
 	void SetHasSprinted(bool hasSprinted){ this->zHasSprinted = hasSprinted; }
 
-	/*! Returns The dropped item.
-	Doesn't deallocate Item.*/
-	Item* DropItem(const long ID);
-
 private:
 
 	float zFullness;

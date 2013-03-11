@@ -129,7 +129,7 @@ void MainMenu::Init()
 	//IPAddress
 	//194.47.150.16 - Server
 	temp = new TextBox(AdressX + (20.0f / 1024.0f) * dx, AdressY + (60.0f / 768.0f) * windowHeight, 1.0f, "", 
-		(530.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "127.0.0.1", "IPAdress", 2.0f, 16, ALL);
+		(530.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "194.47.150.16", "IPAdress", 2.0f, 16, ALL);
 	zSets[GETIPADRESS].AddElement(temp);
 
 	temp = new SimpleButton(AdressX + (472.0f / 1024.0f) * dx, AdressY + (104.0f / 768.0f) * windowHeight, 1.0f, 
@@ -137,7 +137,7 @@ void MainMenu::Init()
 		new ChangeSetEvent(MAINMENU), "Media/Menu/ConnectMenu/BackPress.png", "Media/Menu/ConnectMenu/BackOver.png", AdressX + (472.0f / 1024.0f) * dx
 		, AdressY + (104.0f / 768.0f) * windowHeight, (67.0f / 1024.0f) * dx, (28.0f / 768.0f) * windowHeight);
 	zSets[GETIPADRESS].AddElement(temp);
-
+		
 	temp = new SimpleButton(AdressX + (348.0f / 1024.0f) * dx, AdressY + (104.0f / 768.0f) * windowHeight, 1.0f, 
 		"Media/Menu/ConnectMenu/Connect.png", (111.0f / 1024.0f) * dx, (28.0f / 768.0f) * windowHeight, 
 		new ChangeTextAndMenuEvent(MAINMENU, "IPAdress"), "Media/Menu/ConnectMenu/ConnectPress.png", "Media/Menu/ConnectMenu/ConnectOver.png", AdressX + (348.0f / 1024.0f) * dx
@@ -692,7 +692,7 @@ void MainMenu::StartGameWithIPField()
 		std::string errorMsg = "Error Code: " + MaloW::convertNrToString((float)e.errCode) + ": " + e.errString;
 		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
 
-		Sleep(5000);
+		Sleep(3000);
 
 		gEng->DeleteText(errorText);
 	}
@@ -704,7 +704,7 @@ void MainMenu::StartGameWithIPField()
 		std::string errorMsg = "Unknown Exception occurred";
 		iText* errorText = GetGraphics()->CreateText(errorMsg.c_str(), position, 0.7f, "Media/Fonts/new");
 
-		Sleep(5000);
+		Sleep(3000);
 
 		gEng->DeleteText(errorText);
 	}
