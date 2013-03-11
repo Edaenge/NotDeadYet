@@ -238,7 +238,8 @@ void AIBearBehavior::SetFearLevel(float fear)
 
 bool AIBearBehavior::InitPathfinder()
 {
-	this->zPathfinder.InitAI(0.5,3840);
+	//this->zPathfinder.InitAI(0.5,3840); //For big map.
+	this->zPathfinder.InitAI(0.5,90); //For small testing map.
 	this->zPathfinder.SetWorldPointer(this->zWorld);
 	return true;
 }

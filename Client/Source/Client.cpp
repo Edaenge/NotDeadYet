@@ -820,7 +820,14 @@ void Client::CheckGhostSpecificKeys()
 
 		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)) )
 		{
-			int testingKey = 0;
+			// Check for targets to possess!
+
+			std::vector<unsigned int> ids;
+
+			ids = this->RayVsWorld();
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_TRY_TO_POSSESS_ANIMAL, 0);
+			this->zServerChannel->Send(msg);
 		}
 
 

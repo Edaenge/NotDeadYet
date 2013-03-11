@@ -106,8 +106,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	//this->SpawnItemsDebug();
+	this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -190,31 +190,31 @@ void Game::SpawnAnimalsDebug()
 	DeerActor* dActor = new DeerActor(deerPhysics);
 	dActor->AddObserver(this->zGameMode);
 
-	Vector3 position2 = this->CalcPlayerSpawnPoint(increment++);
+	/*Vector3 position2 = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	BearActor* bActor = new BearActor(bearPhysics);
-	bActor->AddObserver(this->zGameMode);
+	bActor->AddObserver(this->zGameMode);*/
 
 	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
-	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
+	//AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
 
 	zActorManager->AddBehavior(aiDeerBehavior);
-	zActorManager->AddBehavior(aiBearBehavior);
+	//zActorManager->AddBehavior(aiBearBehavior);
 
 	dActor->SetPosition(position);
 	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 
-	bActor->SetPosition(position2);
-	bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
+	//bActor->SetPosition(position2);
+	//bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
 
-	const Food* temp_Bear_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
+	//const Food* temp_Bear_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
 	
 	int lootSize = (rand() % 5) + 1;
 	Food* new_Food = NULL;
 
-	Inventory* inv = bActor->GetInventory();
+	Inventory* inv;// = bActor->GetInventory();
 	bool stacked = false;
-	if (temp_Bear_food)
+	/*if (temp_Bear_food)
 	{
 		for (int i = 0; i < lootSize; i++)
 		{
@@ -224,7 +224,7 @@ void Game::SpawnAnimalsDebug()
 			if( stacked && new_Food->GetStackSize() == 0 )
 				SAFE_DELETE(new_Food);
 		}
-	}
+	}*/
 
 	const Food* temp_Deer_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
 
@@ -245,7 +245,7 @@ void Game::SpawnAnimalsDebug()
 	}
 	
 	this->zActorManager->AddActor(dActor);
-	this->zActorManager->AddActor(bActor);
+	//this->zActorManager->AddActor(bActor);
 }
 
 void Game::SpawnItemsDebug()
@@ -759,6 +759,20 @@ void Game::OnEvent( Event* e )
 			if (playerBehavior)
 			{
 				PASE->zActor = playerBehavior->GetActor();
+			}
+		}
+	}
+	else if(PlayerAnimalPossessEvent* POSSESSE = dynamic_cast<PlayerAnimalPossessEvent*>(e))
+	{
+		auto playerIterator = this->zPlayers.find(POSSESSE->clientData);
+		Player* player = playerIterator->second;
+
+		if (player)
+		{
+			Behavior* playerBehavior = player->GetBehavior();
+			if (playerBehavior)
+			{
+				POSSESSE->zActor = playerBehavior->GetActor();
 			}
 		}
 	}

@@ -26,5 +26,6 @@ private:
 	void OnPlayerHumanDeath(PlayerActor* pActor);
 	void OnPlayerAnimalDeath(AnimalActor* aActor);
 	void SwapToAnimal(GhostActor* actor, unsigned int animalType);
+	void PossessAnAnimal(GhostActor* actor);
 	
 };
