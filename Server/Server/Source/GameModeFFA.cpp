@@ -17,6 +17,17 @@
 #include "ItemLookup.h"
 #include "World/world.h"
 
+static const unsigned int WEAPON_MIN	= 1;
+static const unsigned int WEAPON_MAX	= 2;
+
+static const unsigned int MISC_MAX		= 3;
+static const unsigned int MISC_MIN		= 2;
+
+static const unsigned int MATERIAL_MAX	= 4;
+static const unsigned int MATERIAL_MIN	= 3;
+
+static const float VAR					= 0.2f;
+
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
 	srand((unsigned int)time(0));
@@ -602,8 +613,55 @@ bool GameModeFFA::SpawnRandomDrop()
 
 std::set<Item*> GameModeFFA::GenerateItems()
 {
-	/*Just a test*/
+
+	//1-2 * nrOfPlayers/var
+
+	//Randomize Weapon MAX/MIN
+	unsigned int weapons	= rand() % WEAPON_MIN + WEAPON_MAX;
+	unsigned int misc		= rand() % MISC_MIN + MISC_MAX;
+	unsigned int materials	= rand() % MATERIAL_MIN + MATERIAL_MAX;
+
+	unsigned int size = zPlayers.size();
+	weapons		*= size * VAR;
+	misc		*= size * VAR;
+	materials	*= size * VAR;
+
 	std::set<Item*> items;
+	
+	//Randomize between Weapons : 2
+	for(int i = 0; i < weapons; i++)
+	{
+		Item* item = NULL;
+		unsigned int nr = rand() % 1 + 2;
+		
+		if( nr == 1 )
+			item = new RangedWeapon( *GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW) );
+
+		else if( nr == 2)
+			item = new MeleeWeapon( *GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE) );
+
+		if( item )
+			items.insert(item);
+	}
+	//Randomize between Misc : 2
+	/*for(int i = 0; i < misc; i++)
+	{
+		Item* item = NULL;
+		unsigned int nr = rand() % 1 + 2;
+
+		if( nr == 1 )
+			item = new RangedWeapon( *GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW) );
+
+		else if( nr == 2)
+			item = new MeleeWeapon( *GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE) );
+
+		if( item )
+			items.insert(item);
+	}
+	*/
+
+	/*Just a test*/
+/*	std::set<Item*> items;
 
 	const Food*			temp_food		= GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
 	const RangedWeapon* temp_R_weapon	= GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
@@ -619,6 +677,7 @@ std::set<Item*> GameModeFFA::GenerateItems()
 	items.insert(ranged);
 	items.insert(arrow);
 	items.insert(melee);
+	*/
 
 	return items;
 }

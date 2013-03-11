@@ -4,7 +4,7 @@
 /* After that you can send update info to clients.						*/
 /************************************************************************/
 
-#include "Observer.h"
+#include <World/Observer.h>
 #include "ClientData.h"
 #include "NetworkMessageConverter.h"
 

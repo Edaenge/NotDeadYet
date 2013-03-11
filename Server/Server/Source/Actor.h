@@ -7,7 +7,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include <string>
 #include <Vector.h>
 #include <Safe.h>
-#include <Observer.h>
+#include <World/Observer.h>
 #include "PhysicsObject.h"
 #include "ActorEvent.h"
 static const enum ACTOR_TYPE
