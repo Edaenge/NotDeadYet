@@ -108,7 +108,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 //DEBUG;
 	this->SpawnItemsDebug();
 	//this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -1878,11 +1878,18 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 	{
 		float range = 0.0f; 
 		BioActor* victim = NULL;
+		PlayerBehavior* pBehavior = dynamic_cast<PlayerBehavior*>(playerIterator->second->GetBehavior());
+
+		if( !pBehavior )
+		{
+			MaloW::Debug("In Game, OnEvent, HandleWeaponUse: pBehavior is null.");
+			return;
+		}
 
 		//Check Collisions
 		range = meele->GetRange();
-		victim = dynamic_cast<BioActor* >(this->zActorManager->CheckCollisions(pActor, range));
-
+		victim = dynamic_cast<BioActor*>( zActorManager->CheckCollisions( actor, range, pBehavior->GetNearBioActors() ) );
+		
 		if(victim)
 		{
 			Damage dmg;

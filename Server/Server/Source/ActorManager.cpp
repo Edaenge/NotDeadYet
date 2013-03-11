@@ -114,60 +114,35 @@ void ActorManager::RemoveBehavior( Behavior* behavior )
 	SAFE_DELETE(behavior);
 }
 
-Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
+Actor* ActorManager::CheckCollisions( Actor* actor, float& range, const std::set<Actor*>& actors )
 {
 	if(!actor)
 		return NULL;
 
-	float radiusWithin = 2.0f + range;
+	float rangeWithin = 1.0f + range;
 	Actor* collide = NULL;
 	PhysicsCollisionData data;
-	std::set<Actor*> inRadius;
-	GetActorsInCircle(actor->GetPosition().GetXZ(), radiusWithin, inRadius);
+	Vector3 pos = actor->GetPosition();
+	Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
+
+	//Need offset if bioActor
+	if ( BioActor* bActor = dynamic_cast<BioActor*>(actor) )
+		offset = bActor->GetCameraOffset();
 	
-	for (auto it = inRadius.begin(); it != inRadius.end(); it++)
+	auto it_end = actors.end();
+	for (auto it = actors.begin(); it != it_end; it++)
 	{
-		//If same, ignore
-		if((*it) == actor)
+		if( (*it) == actor )
 			continue;
-		
-		BioActor* tBioActor = dynamic_cast<BioActor*>(*it);
-		Actor* target = NULL;
-
-		//if BioActor
-		if(tBioActor)
-		{
-			if(tBioActor->IsAlive())
-				target = tBioActor;
-		}
-		//If Actor has Physics
-		else if( (*it) && (*it)->GetPhysicsObject() )
-		{
-			target = (*it);
-		}
-
-		//If the target is null, ignore
-		if(!target)
+		if( !(*it)->CanCollide() )
 			continue;
 
-		Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
+		float distance = ( pos.GetXZ() - (*it)->GetPosition().GetXZ() ).GetLength();
 
-		if (BioActor* bActor = dynamic_cast<BioActor*>(actor))
-		{
-			offset = bActor->GetCameraOffset();
-		}
-		else if ( ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(actor) )
-		{
-			if( target ==  projActor->GetOwner() )
-				continue;
+		if(distance > rangeWithin)
+			continue;
 
-// 			PhysicsObject* actorPhys = actor->GetPhysicsObject();
-// 			Vector3 center = actorPhys->GetBoundingSphere().center;
-// 			center = actorPhys->GetWorldMatrix() * center;
-// 			offset = ( center - actor->GetPosition() ) * 2;
-
-		}
-		PhysicsObject* targetObject = target->GetPhysicsObject();
+		PhysicsObject* targetObject = (*it)->GetPhysicsObject();
 		data = GetPhysics()->GetCollisionRayMesh(actor->GetPosition() + offset, actor->GetDir(), targetObject);
 
 		if(data.collision && data.distance < range)
@@ -182,50 +157,9 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 	return collide;
 }
 
-Actor* ActorManager::CheckCollisionsByDistance( Actor* actor, float& range )
+Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
 {
-	if(!actor)
-		return NULL;
-
-	Actor* collide = NULL;
-	float distance = 0.0f;
-
-	for (auto it = this->zActors.begin(); it != this->zActors.end(); it++)
-	{
-		//If same, ignore
-		if((*it) == actor)
-			continue;
-
-		BioActor* tBioActor = dynamic_cast<BioActor*>(*it);
-		Actor* target = NULL;
-
-		//if BioActor
-		if(tBioActor)
-		{
-			if(tBioActor->IsAlive())
-				target = tBioActor;
-		}
-		//If Actor has Physics
-		else if( (*it) && (*it)->GetPhysicsObject() )
-		{
-			target = (*it);
-		}
-
-		//If the target is null, ignore
-		if(!target)
-			continue;
-
-		//Check distance
-		distance = ( actor->GetPosition() - (*it)->GetPosition() ).GetLength();
-		if(distance <= range)
-		{
-			range = distance;
-			collide = (*it);
-		}
-	}
-
-	//Returns the closest actor
-	return collide;
+	return CheckCollisions(actor, range, this->zCollideableActors);
 }
 
 Actor* ActorManager::GetActor( const unsigned int ID ) const
