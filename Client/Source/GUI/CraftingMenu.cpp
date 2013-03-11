@@ -91,8 +91,7 @@ Gui_Item_Data CraftingMenu::CheckCollision( float mouseX, float mouseY, bool mou
 		{
 			if(mousePressed)
 			{
-				 Gui_Item_Data gid = (*it)->GetGid();
-				 Selected_Item_ReturnData();
+				 return (*it)->GetGid();
 			}
 			else
 			{
