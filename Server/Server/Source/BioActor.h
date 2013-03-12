@@ -60,7 +60,7 @@ class BioActor : public Actor
 {
 public:
 	BioActor();
-	BioActor(Player* player);
+	BioActor(Player* player, Observer* game);
 	BioActor(const Vector3& startPos, const Vector4& rot);
 	virtual ~BioActor();
 

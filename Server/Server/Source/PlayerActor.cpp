@@ -2,8 +2,8 @@
 #include "ClientServerMessages.h"
 #include "MaloWFileDebug.h"
 
-PlayerActor::PlayerActor(Player* player, PhysicsObject* physObj) 
-	: BioActor(player)
+PlayerActor::PlayerActor(Player* player, PhysicsObject* physObj, Observer* game) 
+	: BioActor(player, game)
 {
 	SetPhysicsObject(physObj);
 	/*InitValues();*/

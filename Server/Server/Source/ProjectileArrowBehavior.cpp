@@ -11,9 +11,9 @@ static const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 
 ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world ) : Behavior(actor, world)
 {
-	this->zSpeed = 30.0f;
+	this->zSpeed = 35.0f;
 	this->zVelocity = actor->GetDir();
-	this->zDamping = 0.01f;
+	this->zDamping = 0.99f;
 	this->zMoving = true;
 	//this->zLength = 16.396855f;
 
@@ -187,8 +187,8 @@ bool ProjectileArrowBehavior::RefreshNearCollideableActors( const std::set<Actor
 		return false;
 
 	unsigned int size = actors.size();
-	// Increment 5%
-	unsigned int increment = (unsigned int)(size * 0.05);
+	// Increment 10%
+	unsigned int increment = (unsigned int)(size * 0.10);
 
 	Vector3 pos = this->zActor->GetPosition();
 
