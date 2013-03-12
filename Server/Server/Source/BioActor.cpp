@@ -1,6 +1,7 @@
 #include "BioActor.h"
 #include "Physics.h"
 
+
 BioActor::BioActor() : Actor()
 {
 	this->zPlayer = NULL;
@@ -61,7 +62,8 @@ BioActor::~BioActor()
 void BioActor::SetAction(const std::string& actionName, float seconds)
 {
 	zActionTimeStarted = std::chrono::time_point_cast<fSeconds>(std::chrono::system_clock::now());
-	zActionTimeLength = std::chrono::duration<float, std::chrono::seconds>(seconds);
+	zActionTimeLength = fSeconds(seconds);
+	zCurrentAction = actionName;
 }
 
 const std::string& BioActor::GetCurrentAction()
