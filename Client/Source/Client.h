@@ -98,6 +98,7 @@ private:
 	//			  		//
 	//////////////////////
 
+	void CheckAdminCommands();
 	void CheckAnimalInput();
 	void CheckGhostSpecificKeys();
 	void CheckNonGhostInput();
@@ -117,6 +118,7 @@ private:
 	//////////////////////
 
 	void UpdateGame();
+	void CalculateDeltaTime();
 
 	/*! Updates The Positions*/
 	void Update();
@@ -182,7 +184,7 @@ private:
 	void HandleDisplayLootData(std::vector<std::string> msgArray, const unsigned int ActorID);
 protected:
 	virtual void OnEvent(Event* e);
-
+	
 private:
 	/*! Current Client ID*/
 	unsigned int zID;

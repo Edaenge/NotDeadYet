@@ -9,7 +9,7 @@ Behavior::Behavior( Actor* actor, World* world ) :
 	zActor(actor),
 	zWorld(world),
 	zAnchor(0),
-	zAwakeTime(time_point_cast<fSeconds>(system_clock::now()))
+	zAwakeTime(time_point_cast<microseconds>(system_clock::now()))
 {
 	zActor->AddObserver(this);
 
@@ -33,12 +33,12 @@ Behavior::~Behavior()
 
 void Behavior::Sleep(float time)
 {
-	zAwakeTime = time_point_cast<fSeconds>(system_clock::now()) + fSeconds(time);
+	zAwakeTime = time_point_cast<std::chrono::microseconds>(system_clock::now()) + std::chrono::microseconds((long long)(time * 1000000.0f));
 }
 
 bool Behavior::IsAwake() const
 {
-	return time_point_cast<fSeconds>(system_clock::now()) >= zAwakeTime;
+	return time_point_cast<microseconds>(system_clock::now()) >= zAwakeTime;
 }
 
 void Behavior::OnEvent(Event* e)

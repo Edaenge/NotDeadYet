@@ -56,9 +56,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	this->zPerf = NULL;
 	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	
-	this->zCameraOffset["media/models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
+	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["media/models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
-	this->zCameraOffset["media/models/ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
+	this->zCameraOffset["media/models/ghost.obj"] = Vector3(0.0f, 0.0f, 0.0f);
 	
 // Create World
 	if(worldFile != "")
@@ -107,9 +107,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 //DEBUG;
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
-	//this->SpawnItemsDebug();
 	//this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 
@@ -978,10 +975,10 @@ void Game::OnEvent( Event* e )
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
 	{
 		// Filter Player Models
-		static const std::string defaultModel = "media/models/temp_guy_movement_anims.fbx";
+		static const std::string defaultModel = "media/models/token_anims.fbx";
 		const std::string* selectedModel = &defaultModel;
 
-		if ( UDE->playerModel == "media/models/temp_guy_movement_anims.fbx" )
+		if ( UDE->playerModel == "media/models/token_anims.fbx" )
 		{
 			selectedModel = &UDE->playerModel;
 		}
