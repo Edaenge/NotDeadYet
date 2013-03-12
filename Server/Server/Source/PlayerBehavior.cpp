@@ -27,7 +27,7 @@ PlayerBehavior::~PlayerBehavior()
 	this->zNearWorldActors.clear();
 }
 
-bool PlayerBehavior::ProcessClientData( Vector3 direction, Vector4 rotation )
+bool PlayerBehavior::ProcessClientData( const Vector3& direction, const Vector4& rotation )
 {
 	this->zActor->SetDir(direction);
 	this->zActor->SetRotation(rotation);
