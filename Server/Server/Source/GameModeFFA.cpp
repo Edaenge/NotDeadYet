@@ -614,6 +614,7 @@ bool GameModeFFA::SpawnRandomDrop()
 std::set<Item*> GameModeFFA::GenerateItems()
 {
 
+	/** This is not the complete code, this is a test code. **/
 	//1-2 * nrOfPlayers/var
 
 	//Randomize Weapon MAX/MIN
@@ -628,37 +629,73 @@ std::set<Item*> GameModeFFA::GenerateItems()
 
 	std::set<Item*> items;
 	
-	//Randomize between Weapons : 2
+	//Randomize between Weapons : (2)
 	for(int i = 0; i < weapons; i++)
 	{
 		Item* item = NULL;
-		unsigned int nr = rand() % 1 + 2;
+		unsigned int nr = rand() % 2;
 		
-		if( nr == 1 )
+		if( nr == ITEM_SUB_TYPE_BOW )
 			item = new RangedWeapon( *GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW) );
 
-		else if( nr == 2)
+		else if( nr == ITEM_SUB_TYPE_MACHETE)
 			item = new MeleeWeapon( *GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE) );
 
 		if( item )
 			items.insert(item);
 	}
-	//Randomize between Misc : 2
-	/*for(int i = 0; i < misc; i++)
+	//Randomize between Material : (5)
+	for(int i = 0; i < materials; i++)
 	{
 		Item* item = NULL;
-		unsigned int nr = rand() % 1 + 2;
+		unsigned int nr = rand() % 5;
+		
+		if( nr == ITEM_SUB_TYPE_SMALL_STICK )
+			item = new Material( *GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_SMALL_STICK) );
 
-		if( nr == 1 )
-			item = new RangedWeapon( *GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW) );
+		else if( nr == ITEM_SUB_TYPE_MEDIUM_STICK )
+			item = new Material( *GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_MEDIUM_STICK) );
 
-		else if( nr == 2)
-			item = new MeleeWeapon( *GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE) );
+		else if( nr == ITEM_SUB_TYPE_LARGE_STICK )
+			item = new Material( *GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_LARGE_STICK) );
+
+		else if( nr == ITEM_SUB_TYPE_THREAD )
+			item = new Material( *GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_THREAD) );
+
+		else if( nr == ITEM_SUB_TYPE_DISENFECTANT_LEAF )
+			item = new Material( *GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_DISENFECTANT_LEAF) );
 
 		if( item )
 			items.insert(item);
 	}
-	*/
+
+	//Randomize Misc, for now, canteen, food and bandage
+	for (int i = 0; i < misc; i++)
+	{
+		Item* item = NULL;
+		unsigned int nr = rand() % 4;
+
+		if( nr == 0)
+			item = new Food( *GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD) );
+		
+		else if( nr == 1 ) 
+			item = new Container( * GetItemLookup()->GetContainer(ITEM_SUB_TYPE_CANTEEN) );
+		
+		else if( nr == 2)
+		{
+			nr = rand()% 1 + 100;
+			
+			if( nr < 80)
+				item = new Bandage( *GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_POOR) );
+			else
+				item = new Bandage( *GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT) );
+		}
+
+		if(item)
+			items.insert(item);
+	}
+
+	return items;
 
 	/*Just a test*/
 /*	std::set<Item*> items;
@@ -678,6 +715,4 @@ std::set<Item*> GameModeFFA::GenerateItems()
 	items.insert(arrow);
 	items.insert(melee);
 	*/
-
-	return items;
 }
