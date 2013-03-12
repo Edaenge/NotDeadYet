@@ -1192,13 +1192,6 @@ void Client::HandleDebugInfo()
 
 	struct tm * now = localtime(&t);
 
-	;
-	now->tm_min;
-	now->tm_sec;
-	;
-	;
-	;
-
 	//Graphical error Terrain debug
 	if (this->zEng->GetKeyListener()->IsPressed(VK_F1))
 	{
