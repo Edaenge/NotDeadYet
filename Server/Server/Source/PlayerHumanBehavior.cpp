@@ -38,12 +38,12 @@ bool PlayerHumanBehavior::Update( float dt )
 	if ( PlayerBehavior::Update(dt) )
 		return true;
 
-	if(BioActor *bActor = dynamic_cast<BioActor *>(this->zActor))
+	if(BioActor *bActor = dynamic_cast<BioActor*>(this->zActor))
 	{
 		if(bActor->InAction())
 		{
 			this->zVelocity = Vector3(0.0f, 0.0f, 0.0f);
-			return true;
+			return false;
 		}
 	}
 

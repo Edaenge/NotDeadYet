@@ -1,6 +1,7 @@
 #include "BioActor.h"
 #include "Physics.h"
 
+
 BioActor::BioActor() : Actor()
 {
 	this->zPlayer = NULL;
@@ -60,8 +61,8 @@ BioActor::~BioActor()
 
 void BioActor::SetAction(const std::string& actionName, float seconds)
 {
-	zActionTimeStarted = std::chrono::time_point_cast<fSeconds>(std::chrono::system_clock::now());
-	zActionTimeLength = fSeconds(seconds);
+	zActionTimeStarted = std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now());
+	zActionTimeLength = std::chrono::microseconds((long long)(seconds * 1000000.0f));
 	zCurrentAction = actionName;
 }
 
@@ -81,7 +82,7 @@ const std::string& BioActor::GetCurrentAction()
 
 bool BioActor::InAction()
 {
-	return std::chrono::system_clock::now() < (zActionTimeStarted + zActionTimeLength);
+	return std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) < (zActionTimeStarted + zActionTimeLength);
 }
 
 bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)

@@ -196,7 +196,7 @@ void GameModeFFA::OnEvent( Event* e )
 
 			if( counter >= this->zPlayers.size() )
 			{
-				this->zGame->RestartGame();
+				//this->zGame->RestartGame();
 				StartGameMode();
 			}
 		}
@@ -358,7 +358,6 @@ void GameModeFFA::PossessAnAnimal(GhostActor* gActor)
 	NetworkMessageConverter NMC;
 	std::string msg = "";
 	AnimalActor* chosenAnimal = NULL;
-	float distance = 999999.9f;
 
 	Vector3 position = gActor->GetPosition();
 
@@ -601,7 +600,7 @@ bool GameModeFFA::StartGameMode()
 
 	std::set<Item*> items = GenerateItems();
 	//this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items);
-	this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 200.0f, items);
+	this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 150.0f, items);
 
 	return true;
 }
@@ -630,7 +629,7 @@ std::set<Item*> GameModeFFA::GenerateItems()
 	std::set<Item*> items;
 	
 	//Randomize between Weapons : (2)
-	for(int i = 0; i < weapons; i++)
+	for(unsigned int i = 0; i < weapons; i++)
 	{
 		Item* item = NULL;
 		unsigned int nr = rand() % 2;
@@ -645,10 +644,10 @@ std::set<Item*> GameModeFFA::GenerateItems()
 			items.insert(item);
 	}
 	//Randomize between Material : (5)
-	for(int i = 0; i < materials; i++)
+	for(unsigned int i = 0; i < materials; i++)
 	{
 		Item* item = NULL;
-		unsigned int nr = rand() % 5;
+		unsigned int nr = rand() % MATERIALS_COUNT;
 		
 		if( nr == ITEM_SUB_TYPE_SMALL_STICK )
 			item = new Material( *GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_SMALL_STICK) );
@@ -670,29 +669,37 @@ std::set<Item*> GameModeFFA::GenerateItems()
 	}
 
 	//Randomize Misc, for now, canteen, food and bandage
-	for (int i = 0; i < misc; i++)
+	for (unsigned int i = 0; i < misc; i++)
 	{
 		Item* item = NULL;
-		unsigned int nr = rand() % 4;
+		unsigned int nr = rand() % 3;
 
-		if( nr == 0)
-			item = new Food( *GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD) );
-		
-		else if( nr == 1 ) 
-			item = new Container( * GetItemLookup()->GetContainer(ITEM_SUB_TYPE_CANTEEN) );
-		
-		else if( nr == 2)
+		if( nr == 0 )
 		{
-			nr = rand()% 1 + 100;
+			item = new Food( *GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD) );
+		}
+		else if ( nr == 1 )
+		{
+			item = new Container( * GetItemLookup()->GetContainer(ITEM_SUB_TYPE_CANTEEN) );
+		}
+		else if ( nr == 2 )
+		{
+			nr = rand()%100 + 1;
 			
 			if( nr < 80)
+			{
 				item = new Bandage( *GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_POOR) );
+			}
 			else
+			{
 				item = new Bandage( *GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT) );
+			}
 		}
 
 		if(item)
+		{
 			items.insert(item);
+		}
 	}
 
 	return items;
