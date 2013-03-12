@@ -24,19 +24,20 @@ class EntQuadTree : public Observer
 		Rect zRect;
 
 		std::set<Entity*> zElements;
+		size_t zNumElementsWithChildren;
 
 	public:
 		Node(const Rect& rect);
 		virtual ~Node();
 
 		// Insert element into node or children
-		void Insert(Entity* elem, const Vector2& pos);
+		bool Insert(Entity* elem, const Vector2& pos);
 
 		// Erase element from node and child nodes
 		bool Erase(Entity* elem, const Vector2& pos);
 
-		// Manually set a child node, deletes existing one
-		void SetNode(unsigned int index, Node* ptrNode);
+		// Manually set a child node, deletes existing one by default
+		void SetNode(unsigned int index, Node* ptrNode, bool deleteFlag=true);
 
 		// Scan circle recursively and return amounts of additions
 		size_t CircleScan(std::set<Entity*>& ents, const Circle& circle, unsigned int entType) const;
@@ -82,15 +83,16 @@ public:
 	size_t RectangleScan(std::set<Entity*>& ents, const Rect& rect, unsigned int entType = 0) const;
 
 	// Management
-	void Insert(Entity* E);
+	bool Insert(Entity* E);
 	bool Erase(Entity* E);
 
 	// Print Tree
+	void PrintDebug(const std::string& msgLine);
 	void BranchPrint(Node*, std::ofstream& file, unsigned int level);
 	void PrintTree();
 
 protected:
-	void Insert(Entity* E, const Vector2& pos);
+	bool Insert(Entity* E, const Vector2& pos);
 	bool Erase(Entity* E, const Vector2& pos);
 	virtual void OnEvent(Event* e);
 };
