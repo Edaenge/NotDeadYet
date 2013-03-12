@@ -105,4 +105,5 @@ private:
 	void ReadMessages(); 
 	/*! */
 	void PingClients();
+	void CalculateDeltaTime();
 };

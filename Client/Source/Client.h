@@ -34,13 +34,15 @@ enum CLIENT_ACTOR_TYPE
 };
 struct TextDisplay
 {
-	TextDisplay(iText* text, float time)
+	TextDisplay(iText* text, float time, bool error)
 	{
 		zText = text;
 		zTimer = time;
+		zError = error;
 	}
 	iText* zText;
 	float zTimer;
+	bool zError;
 };
 class Client : public MaloW::Process, public Observer
 {
@@ -98,6 +100,7 @@ private:
 	//			  		//
 	//////////////////////
 
+	void CheckAdminCommands();
 	void CheckAnimalInput();
 	void CheckGhostSpecificKeys();
 	void CheckNonGhostInput();
@@ -117,6 +120,7 @@ private:
 	//////////////////////
 
 	void UpdateGame();
+	void CalculateDeltaTime();
 
 	/*! Updates The Positions*/
 	void Update();
@@ -182,7 +186,7 @@ private:
 	void HandleDisplayLootData(std::vector<std::string> msgArray, const unsigned int ActorID);
 protected:
 	virtual void OnEvent(Event* e);
-
+	
 private:
 	/*! Current Client ID*/
 	unsigned int zID;

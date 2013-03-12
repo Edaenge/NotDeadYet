@@ -98,8 +98,14 @@ void GameModeTest::OnEvent( Event* e )
 				NetworkMessageConverter NMC;
 				std::string msg = NMC.Convert(MESSAGE_TYPE_ACTOR_TAKE_DAMAGE, (float)ID);
 				msg += NMC.Convert(MESSAGE_TYPE_HEALTH, damage);
-				ClientData* cd = pActor->GetPlayer()->GetClientData();
-				cd->Send(msg);
+				Player* player = pActor->GetPlayer();
+				if (player)
+				{
+					ClientData* cd = player->GetClientData();
+
+					if (cd)
+						cd->Send(msg);
+				}
 			}
 		}
 		else if( AnimalActor* aActor = dynamic_cast<AnimalActor*>(ATD->zActor) )

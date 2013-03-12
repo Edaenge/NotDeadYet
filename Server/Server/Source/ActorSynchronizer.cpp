@@ -52,7 +52,7 @@ void ActorSynchronizer::AddAnimation(BioActor* bActor)
 		else if (idle_Animation > 160 && idle_Animation <= 270)//Medium Chance 11%
 			animation = IDLE_O2;
 		else if (idle_Animation > 270 && idle_Animation <= 340)//Low Chance 7%
-			animation = IDLE_O3;
+			animation = IDLE_O4;
 		else if (idle_Animation > 340 && idle_Animation <= 590)//Very High Chance 25%
 			animation = IDLE_O4;
 		else if (idle_Animation > 590 && idle_Animation <= 840)//Very High Chance 25%
@@ -84,7 +84,13 @@ void ActorSynchronizer::AddAnimation(BioActor* bActor)
 			animation = WALK_RIGHT;
 	}
 	else if (state == STATE_RUNNING)
+	{
 		animation = SPRINT;
+	}
+	else if (state == STATE_BUSY)
+	{
+		animation = IDLE_O3;
+	}
 
 	if (animation != "")
 		this->zFrameData->newAnimations[bActor->GetID()] = animation;
