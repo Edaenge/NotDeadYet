@@ -617,9 +617,9 @@ std::set<Item*> GameModeFFA::GenerateItems()
 	//1-2 * nrOfPlayers/var
 
 	//Randomize Weapon MAX/MIN
-	unsigned int weapons	= rand() % WEAPON_MIN + WEAPON_MAX;
-	unsigned int misc		= rand() % MISC_MIN + MISC_MAX;
-	unsigned int materials	= rand() % MATERIAL_MIN + MATERIAL_MAX;
+	unsigned int weapons	= rand() % WEAPON_MAX + WEAPON_MIN;
+	unsigned int misc		= rand() % MISC_MAX + MISC_MIN;
+	unsigned int materials	= rand() % MATERIAL_MAX + MATERIAL_MIN;
 
 	unsigned int size = zPlayers.size();
 	weapons		*= size * VAR;

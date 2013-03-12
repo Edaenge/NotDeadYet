@@ -3,7 +3,8 @@ Ugly Spawn
 Picking up arrows is far too slow
 Stabbing needs cooldown
 FBX bindmesh rotation
-
+connecting message
+Server waits on client when sending sockets and the client has not received the current ones
 
 2013-03-11
 Client Crash:
