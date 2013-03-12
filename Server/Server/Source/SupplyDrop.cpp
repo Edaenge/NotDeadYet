@@ -175,8 +175,8 @@ Vector2 SupplyDrop::RandomizePos( const Vector2& landpos )
 	case 3:
 		temp += three;
 		break;
-		temp += four;
 	case 4:
+		temp += four;
 		break;
 	}
 

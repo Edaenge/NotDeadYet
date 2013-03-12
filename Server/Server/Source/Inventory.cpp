@@ -86,7 +86,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 			Item* existingItem = this->SearchAndGetItemFromType(item->GetItemType(), item->GetItemSubType());
 
 			int max_stack = MAX_QUIVER_SLOTS - existingItem->GetStackSize();
-			unsigned int stack;
+			unsigned int stack = 0;
 
 			if(available_slots < max_stack)
 				max_stack = available_slots;

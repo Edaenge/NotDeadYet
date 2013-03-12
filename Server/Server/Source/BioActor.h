@@ -81,10 +81,9 @@ protected:
 
 	Player* zPlayer;
 
-	typedef std::chrono::duration<float, std::chrono::seconds> fSeconds;
 	std::string zCurrentAction;
-	std::chrono::time_point<std::chrono::system_clock, fSeconds> zActionTimeStarted;
-	fSeconds zActionTimeLength;
+	std::chrono::time_point<std::chrono::system_clock, std::chrono::microseconds> zActionTimeStarted;
+	std::chrono::microseconds zActionTimeLength;
 
 public:
 	bool zValid;

@@ -676,9 +676,13 @@ void Game::OnEvent( Event* e )
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
 	{
 		Player* player = zPlayers[CDE->clientData];
-		if (player)
-			if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(player->GetBehavior()))
+		if ( player && player->GetBehavior() )
+		{
+			if ( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(player->GetBehavior()) )
+			{
 				dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
+			}
+		}
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
@@ -711,8 +715,8 @@ void Game::OnEvent( Event* e )
 		{
 			if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PCIE->clientData]->zBehavior->GetActor()))
 			{
-				bActor->SetAction("Crafting", 3.0f);
-				this->zPlayers[PCIE->clientData]->zBehavior->Sleep(3.0f);
+				bActor->SetAction("Crafting", 5.0f);
+				this->zPlayers[PCIE->clientData]->zBehavior->Sleep(5.0f);
 			}
 		}
 		this->zPerf->PostMeasure("Craft Event Handling", 3);

@@ -9,7 +9,7 @@ class WorldAnchor;
 
 class Behavior : public Observer
 {
-	typedef std::chrono::duration<float, std::ratio<1, 1>> fSeconds;
+	typedef std::chrono::duration<float, std::ratio<1i64, 1i64>> fSeconds;
 
 protected:
 	Actor* zActor;
