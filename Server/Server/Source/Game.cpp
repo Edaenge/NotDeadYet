@@ -55,10 +55,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 {	
 
 	this->zPerf = NULL;
-	this->zCameraOffset["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	
-	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
-	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
-	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
+	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	
+	this->zCameraOffset["media/models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
+	this->zCameraOffset["media/models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zCameraOffset["media/models/ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
 	
 // Create World
 	if(worldFile != "")
@@ -106,9 +106,12 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	this->SpawnItemsDebug();
+	//this->SpawnItemsDebug();
+	this->SpawnAnimalsDebug();
+	//this->SpawnHumanDebug();
+	//this->SpawnItemsDebug();
 	//this->SpawnAnimalsDebug();
-	this->SpawnHumanDebug();
+	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -190,31 +193,31 @@ void Game::SpawnAnimalsDebug()
 	DeerActor* dActor = new DeerActor(deerPhysics);
 	dActor->AddObserver(this->zGameMode);
 
-	Vector3 position2 = this->CalcPlayerSpawnPoint(increment++);
+	/*Vector3 position2 = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
 	BearActor* bActor = new BearActor(bearPhysics);
-	bActor->AddObserver(this->zGameMode);
+	bActor->AddObserver(this->zGameMode);*/
 
 	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
-	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
+	//AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
 
 	zActorManager->AddBehavior(aiDeerBehavior);
-	zActorManager->AddBehavior(aiBearBehavior);
+	//zActorManager->AddBehavior(aiBearBehavior);
 
 	dActor->SetPosition(position);
 	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 
-	bActor->SetPosition(position2);
-	bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
+	//bActor->SetPosition(position2);
+	//bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
 
-	const Food* temp_Bear_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
+	//const Food* temp_Bear_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
 	
 	int lootSize = (rand() % 5) + 1;
 	Food* new_Food = NULL;
 
-	Inventory* inv = bActor->GetInventory();
+	Inventory* inv;// = bActor->GetInventory();
 	bool stacked = false;
-	if (temp_Bear_food)
+	/*if (temp_Bear_food)
 	{
 		for (int i = 0; i < lootSize; i++)
 		{
@@ -224,7 +227,7 @@ void Game::SpawnAnimalsDebug()
 			if( stacked && new_Food->GetStackSize() == 0 )
 				SAFE_DELETE(new_Food);
 		}
-	}
+	}*/
 
 	const Food* temp_Deer_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
 
@@ -245,7 +248,7 @@ void Game::SpawnAnimalsDebug()
 	}
 	
 	this->zActorManager->AddActor(dActor);
-	this->zActorManager->AddActor(bActor);
+	//this->zActorManager->AddActor(bActor);
 }
 
 void Game::SpawnItemsDebug()
@@ -780,6 +783,20 @@ void Game::OnEvent( Event* e )
 			}
 		}
 	}
+	else if(PlayerAnimalPossessEvent* POSSESSE = dynamic_cast<PlayerAnimalPossessEvent*>(e))
+	{
+		auto playerIterator = this->zPlayers.find(POSSESSE->clientData);
+		Player* player = playerIterator->second;
+
+		if (player)
+		{
+			Behavior* playerBehavior = player->GetBehavior();
+			if (playerBehavior)
+			{
+				POSSESSE->zActor = playerBehavior->GetActor();
+			}
+		}
+	}
 	else if (PlayerLeaveAnimalEvent* PLAE = dynamic_cast<PlayerLeaveAnimalEvent*>(e))
 	{
 		auto playerIterator = this->zPlayers.find(PLAE->clientData);
@@ -949,13 +966,22 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
 	{
+		// Filter Player Models
+		static const std::string defaultModel = "media/models/temp_guy_movement_anims.fbx";
+		const std::string* selectedModel = &defaultModel;
+
+		if ( UDE->playerModel == "media/models/temp_guy_movement_anims.fbx" )
+		{
+			selectedModel = &UDE->playerModel;
+		}
+
 		// Create Player Actor
 		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
 		
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
-		pActor->SetModel(UDE->playerModel);
+		pActor->SetModel(*selectedModel);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
-		zPlayers[UDE->clientData]->zUserModel = UDE->playerModel;
+		zPlayers[UDE->clientData]->zUserModel = *selectedModel;
 
 		
 		pActor->AddObserver(this->zGameMode);
@@ -969,7 +995,7 @@ void Game::OnEvent( Event* e )
 		inv->AddObserver(this);
 		inv->SetPlayer(zPlayers[UDE->clientData]);
 
-		auto offsets = this->zCameraOffset.find(UDE->playerModel);
+		auto offsets = this->zCameraOffset.find(*selectedModel);
 		
 		if(offsets != this->zCameraOffset.end())
 			pActor->SetCameraOffset(offsets->second);

@@ -34,8 +34,8 @@ PlayerConfigReader::PlayerConfigReader()
 		this->zVariables[HYDRATION_COEFF] = 0.14f;
 		this->zVariables[HYDRATION_SPRINT_COEFF] = 0.6f;
 		this->zVariables[STAMINA_SPRINT_COEFF] = 2.0f;
-		this->zVariables[DAMAGE_AT_STARVATON_COEFF] = 0.4f;
-		this->zVariables[DAMAGE_AT_THIRST_COEFF] = 0.4f;
+		this->zVariables[DAMAGE_AT_STARVATON_COEFF] = 20.4f;
+		this->zVariables[DAMAGE_AT_THIRST_COEFF] = 20.4f;
 		this->zVariables[STAMINA_DECREASE_COEFF_HUNGER] = 0.6f;
 		this->zVariables[STAMINA_DECREASE_COEFF_HYDRATION] = 0.8f;
 		this->zVariables[STAMINA_DECREASE_BLEEDING_COEF] = 1.2f;

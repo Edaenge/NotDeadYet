@@ -1,12 +1,21 @@
 2013-03-11
 Client Crash:
 FBXMesh::BindMesh: Someone has something equipped but FBX Mesh is not loaded
+Update: Skeleton generation check should prevent client crash
 
 Server Glitch:
 Server update Delta time makes you teleport, limit to a static value
 
+Editor Move Tool:
+WorldRenderer not observing entities
+
 Server Crash:
 Connecting as another model
+Update: Server holds a list of acceptable models
+Bug: client model offset is not correct
+Update: updated the offset map to use lowercase names
+Update: Fixed the animation loader list to use lowercase aswell
+Update: Client Offset Fixed
 
 Server Crash:
 Server Stop button on the UI does not work.

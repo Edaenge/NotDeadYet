@@ -34,19 +34,19 @@ Client::Client()
 	this->zName		= GetPlayerSettings()->GetPlayerName();
 
 	//Temporary Ghost Model
-	this->zMeshCameraOffsets["Media/Models/Ball.obj"] = Vector3();
-	this->zMeshCameraOffsets["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
-	this->zMeshCameraOffsets["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
-	this->zMeshCameraOffsets["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 2.3f, 0.0f);
+	this->zMeshCameraOffsets["media/models/ball.obj"] = Vector3();
+	this->zMeshCameraOffsets["media/models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
+	this->zMeshCameraOffsets["media/models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zMeshCameraOffsets["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 2.3f, 0.0f);
 
 	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_WALKING] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_CROUCHING] = Vector3(0.0f, 1.0f, 0.0f);
 
-	this->zAnimationFileReader[0] = AnimationFileReader("Media/Models/temp_guy_movement_anims.cfg");
+	this->zAnimationFileReader[0] = AnimationFileReader("media/models/temp_guy_movement_anims.cfg");
 
-	this->zModelToReaderMap["Media/Models/temp_guy_movement_anims.fbx"] = zAnimationFileReader[0];
+	this->zModelToReaderMap["media/models/temp_guy_movement_anims.fbx"] = zAnimationFileReader[0];
 
 	this->zSendUpdateDelayTimer = 0.0f;
 
@@ -798,6 +798,20 @@ void Client::CheckGhostSpecificKeys()
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
 			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
+
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)) )
+		{
+			// Check for targets to possess!
+
+			std::vector<unsigned int> ids;
+
+			ids = this->RayVsWorld();
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_TRY_TO_POSSESS_ANIMAL, 0);
+			this->zServerChannel->Send(msg);
+		}
+
+
 	}
 }
 
@@ -1569,7 +1583,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
-		this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
+		//this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
 
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 		this->ResetPhysicalConditions();
@@ -1912,6 +1926,19 @@ void Client::UpdateHealthAndBleedingImage()
 		{
 			this->zBleedingOpacity -= this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
 		}
+
+
+		if(this->zBleedingOpacity >= 0.22f || this->zBleedingOpacity <= 0.0f)
+		{
+			if(!this->zDroppingPulse)
+			{
+				this->zDroppingPulse = true;
+			}
+			else 
+			{
+				this->zDroppingPulse = false;
+			}
+		}
 	}
 	else
 	{
@@ -1919,17 +1946,7 @@ void Client::UpdateHealthAndBleedingImage()
 	}
 	//this->zHealthOpacity += testBleed;
 
-	if(this->zBleedingOpacity >= 0.22f || this->zBleedingOpacity <= 0.0f)
-	{
-		if(!this->zDroppingPulse)
-		{
-			this->zDroppingPulse = true;
-		}
-		else 
-		{
-			this->zDroppingPulse = false;
-		}
-	}
+	
 
 
 	/*if(this->zPulseCounter > pulseLimit)

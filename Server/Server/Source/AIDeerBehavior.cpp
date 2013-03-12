@@ -259,7 +259,8 @@ void AIDeerBehavior::SetFearLevel(float fear)
 
 bool AIDeerBehavior::InitPathfinder()
 {
-	this->zPathfinder.InitAI(0.5,95);
+	//this->zPathfinder.InitAI(0.5,3840); //For big map.
+	this->zPathfinder.InitAI(0.5,90); //For small testing map.
 	this->zPathfinder.SetWorldPointer(this->zWorld);
 	return true;
 }
@@ -718,8 +719,7 @@ bool AIDeerBehavior::Update( float dt )
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
 
 			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_WALKING);
-
-
+			
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
@@ -779,7 +779,7 @@ bool AIDeerBehavior::Update( float dt )
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
 
 			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
-
+			
 			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			Vector3 direction = goal - dActor->GetPosition();
 			direction.Normalize();
@@ -804,15 +804,15 @@ bool AIDeerBehavior::Update( float dt )
 			this->SetIfNeedPath(true);
 		}
 
-		if(dActor->GetVelocity() == 0.0f)
-		{
-			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_IDLE);
-		}
-
 	}
 	else
 	{
 		this->SetIfNeedPath(true);
+	}
+
+	if(dActor->GetVelocity() == 0.0f)
+	{
+		dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_IDLE);		
 	}
 
 	//Rotate Animal
