@@ -169,6 +169,10 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	newPActor->SetDir(direction);
 	newPActor->AddObserver(this);
 
+	Vector3 offset = this->zGame->GetOffset(pActor->GetModel());
+
+	newPActor->SetCameraOffset(offset);
+
 	//Create New Human Behavior
 	PlayerHumanBehavior* pHumanBehavior = new PlayerHumanBehavior(newPActor, this->zGame->GetWorld(), player);
 

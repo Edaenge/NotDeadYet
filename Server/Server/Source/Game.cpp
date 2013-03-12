@@ -981,7 +981,6 @@ void Game::OnEvent( Event* e )
 		if ( UDE->playerModel == "media/models/token_anims.fbx" )
 			selectedModel = &UDE->playerModel;
 		
-
 		// Create Player Actor
 		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("media/models/temp_guy.obj");
 		
@@ -990,7 +989,6 @@ void Game::OnEvent( Event* e )
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 		zPlayers[UDE->clientData]->zUserModel = *selectedModel;
 
-		
 		pActor->AddObserver(this->zGameMode);
 		Vector3 center;
 
@@ -2296,6 +2294,16 @@ void Game::ModifyLivingPlayers( const int value )
 	NetworkMessageConverter NMC;
 	std::string message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 	this->SendToAll(message);
+}
+
+Vector3 Game::GetOffset(const std::string& model)
+{
+	auto offsets = this->zCameraOffset.find(model);
+
+	if(offsets != this->zCameraOffset.end())
+		return offsets->second;
+
+	return Vector3();
 }
 
 void Game::RestartGame()
