@@ -17,10 +17,10 @@ public:
 	virtual	~PlayerBehavior();
 
 	inline std::set<Actor*> GetNearActors() const {return this->zNearActors;}
-	std::set<Actor*> GetNearBioActors() const {return this->zNearBioActors;}
-	std::set<Actor*> GetNearWorldActors() const {return this->zNearWorldActors;}
+	inline std::set<Actor*> GetNearBioActors() const {return this->zNearBioActors;}
+	inline std::set<Actor*> GetNearWorldActors() const {return this->zNearWorldActors;}
 
-	float GetNearByRadius() const {return this->zNearByRadius;}
+	inline float GetNearByRadius() const {return this->zNearByRadius;}
 
 
 	bool ProcessClientData(const Vector3& direction, const Vector4& rotation);

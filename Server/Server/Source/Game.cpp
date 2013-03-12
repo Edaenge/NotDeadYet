@@ -106,8 +106,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	//this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
+	this->SpawnItemsDebug();
+	//this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 	//this->SpawnItemsDebug();
 	//this->SpawnAnimalsDebug();
@@ -676,9 +676,13 @@ void Game::OnEvent( Event* e )
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
 	{
 		Player* player = zPlayers[CDE->clientData];
-		if (player)
-			if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(player->GetBehavior()))
+		if ( player && player->GetBehavior() )
+		{
+			if ( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(player->GetBehavior()) )
+			{
 				dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
+			}
+		}
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
@@ -707,7 +711,14 @@ void Game::OnEvent( Event* e )
 	else if (PlayerCraftItemEvent* PCIE = dynamic_cast<PlayerCraftItemEvent*>(e))
 	{
 		this->zPerf->PreMeasure("Craft Event Handling", 3);
-		this->HandleCraftItem(PCIE->clientData, PCIE->craftedItemType, PCIE->craftedItemSubType);
+		if(this->HandleCraftItem(PCIE->clientData, PCIE->craftedItemType, PCIE->craftedItemSubType))
+		{
+			if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PCIE->clientData]->zBehavior->GetActor()))
+			{
+				bActor->SetAction("Crafting", 5.0f);
+				this->zPlayers[PCIE->clientData]->zBehavior->Sleep(5.0f);
+			}
+		}
 		this->zPerf->PostMeasure("Craft Event Handling", 3);
 	}
 	else if (PlayerFillItemEvent* PFIE = dynamic_cast<PlayerFillItemEvent*>(e))
@@ -1930,7 +1941,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 	}
 }
 
-void Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const unsigned int itemSubType)
+bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const unsigned int itemSubType)
 {
 	auto playerIterator = this->zPlayers.find(cd);
 	auto playerBehavior = playerIterator->second->GetBehavior();
@@ -2034,6 +2045,7 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 							}
 
 							//cd->Send(add_msg);
+							return true;
 						}
 						else
 						{
@@ -2075,6 +2087,7 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 			}
 		}
 	}
+	return false;
 }
 
 void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )

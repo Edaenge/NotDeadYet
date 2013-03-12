@@ -116,7 +116,6 @@ bool PlayerBearBehavior::Update( float dt )
 	// Check On Ground
 	bool isOnGround = false;
 	float heightAboveGround = 0.0f;
-	bool isJumping = false;
 
 	try
 	{
