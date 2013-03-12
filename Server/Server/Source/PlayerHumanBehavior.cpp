@@ -179,8 +179,12 @@ bool PlayerHumanBehavior::Update( float dt )
 			}
 		}
 	}
-	
-
+	if(this->zVelocity.GetDotProduct(this->zActor->GetDir()) < 0)
+	{
+		float lSpeed = this->zVelocity.GetLength();
+		this->zVelocity.Normalize();
+		this->zVelocity *= (lSpeed * 0.5);
+	}
 	// Apply Velocity
 	Vector3 newPosition = curPosition + (zVelocity * dt) + Vector3(0.0f, this->zVelDown, 0.0f) + (groundNormal * dt);
 
