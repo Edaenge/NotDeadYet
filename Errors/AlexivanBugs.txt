@@ -1,0 +1,25 @@
+2013-03-11
+Client Crash:
+FBXMesh::BindMesh: Someone has something equipped but FBX Mesh is not loaded
+
+Server Glitch:
+Server update Delta time makes you teleport, limit to a static value
+
+Server Crash:
+Connecting as another model
+
+Server Crash:
+Server Stop button on the UI does not work.
+
+World:
+Seems like it never unloads entities.
+
+Server Glitch:
+Sometimes you suddently run backwards
+
+Server Feature:
+Admin rights, IP based
+
+EntQuadTree:
+Takes forever to unload
+sometimes a single entity remains after world deletes all entities.
