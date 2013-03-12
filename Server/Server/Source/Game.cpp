@@ -979,12 +979,11 @@ void Game::OnEvent( Event* e )
 		const std::string* selectedModel = &defaultModel;
 
 		if ( UDE->playerModel == "media/models/token_anims.fbx" )
-		{
 			selectedModel = &UDE->playerModel;
-		}
+		
 
 		// Create Player Actor
-		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
+		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("media/models/temp_guy.obj");
 		
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
 		pActor->SetModel(*selectedModel);
@@ -999,9 +998,6 @@ void Game::OnEvent( Event* e )
 		center = this->CalcPlayerSpawnPoint(32, zWorld->GetWorldCenter());
 		pActor->SetPosition(center, false);
 		pActor->SetScale(pActor->GetScale(), false);
-		Inventory* inv = pActor->GetInventory();
-		inv->AddObserver(this);
-		inv->SetPlayer(zPlayers[UDE->clientData]);
 
 		auto offsets = this->zCameraOffset.find(*selectedModel);
 		
@@ -1009,10 +1005,10 @@ void Game::OnEvent( Event* e )
 			pActor->SetCameraOffset(offsets->second);
 
 		// Apply Default Player Behavior
-		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(pActor, zWorld, zPlayers[UDE->clientData]));
+		this->SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(pActor, zWorld, zPlayers[UDE->clientData]));
 
 		//Add actor
-		zActorManager->AddActor(pActor);
+		this->zActorManager->AddActor(pActor);
 
 		//Tells the client which Actor he owns.
 		std::string message;
