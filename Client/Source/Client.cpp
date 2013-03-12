@@ -407,6 +407,14 @@ void Client::UpdateGame()
 			std::stringstream ss;
 			ss << this->zGameTimer->GetFPS() <<" CLIENT FPS";
 			this->zClientUpsText->SetText(ss.str().c_str());
+
+			if (this->zGameTimer->GetFPS() < 30)
+				this->zClientUpsText->SetColor(Vector3(255.0f, 0.0f, 0.0f));
+			else if (this->zGameTimer->GetFPS() > 30 && this->zGameTimer->GetFPS() < 60)
+				this->zClientUpsText->SetColor(Vector3(255.0f, 255.0f, 0.0f));
+			else
+				this->zClientUpsText->SetColor(Vector3(0.0f, 255.0f, 0.0f));
+
 			fps_Delay_Timer = 0.0f;
 		}
 
@@ -417,10 +425,6 @@ void Client::UpdateGame()
 			this->zSendUpdateDelayTimer = 0.0f;
 
 			this->SendClientUpdate();
-
-			std::stringstream ss;
-			ss << this->zGameTimer->GetFPS() <<" CLIENT FPS";
-			this->zClientUpsText->SetText(ss.str().c_str());
 		}
 
 		this->Update();
@@ -2220,6 +2224,11 @@ void Client::UpdateText()
 
 				(*new_It)->zText->SetPosition(position);
 
+				if ((*new_It)->zError)
+					(*new_It)->zText->SetColor(Vector3(0.0f, 0.0f, 255.0f));
+				else
+					(*new_It)->zText->SetColor(Vector3(255.0f, 0.0f, 0.0f));
+
 				position = oldPos;
 			}
 			
@@ -2268,6 +2277,11 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 		float x = (*it)->zText->GetPosition().x;
 		position = Vector2(x, yStartPosition + c++ * textheight);
 		(*it)->zText->SetPosition(position);
+
+		if ((*it)->zError)
+			(*it)->zText->SetColor(Vector3(0.0f, 0.0f, 255.0f));
+		else
+			(*it)->zText->SetColor(Vector3(255.0f, 0.0f, 0.0f));
 	}
 
 	if (arrSize == 0)
@@ -2282,12 +2296,8 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 	iText* text = NULL;
 
 	text = this->zEng->CreateText(newString.c_str(), position, 0.7f, "Media/Fonts/new");
-	if (bError)
-		text->SetColor(Vector3(0.0f, 0.0f, 255.0f));
-	else
-		text->SetColor(Vector3(255.0f, 0.0f, 0.0f));
-
-	TextDisplay* displayedText = new TextDisplay(text, START_TEXT_TIMER);
+	
+	TextDisplay* displayedText = new TextDisplay(text, START_TEXT_TIMER, bError);
 
 	this->zDisplayedText.push_back(displayedText);
 }
