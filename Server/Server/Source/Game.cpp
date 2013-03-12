@@ -106,15 +106,12 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-<<<<<<< HEAD
 	//this->SpawnItemsDebug();
 	this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
-=======
-	this->SpawnItemsDebug();
+	//this->SpawnItemsDebug();
 	//this->SpawnAnimalsDebug();
-	this->SpawnHumanDebug();
->>>>>>> b838767e922df38f4a216252dd8f0bc6c5fab7ce
+	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
