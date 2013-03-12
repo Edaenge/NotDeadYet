@@ -34,19 +34,18 @@ Client::Client()
 	this->zName		= GetPlayerSettings()->GetPlayerName();
 
 	//Temporary Ghost Model
-	this->zMeshCameraOffsets["Media/Models/Ball.obj"] = Vector3();
-	this->zMeshCameraOffsets["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
-	this->zMeshCameraOffsets["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
-	this->zMeshCameraOffsets["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 2.3f, 0.0f);
+	this->zMeshCameraOffsets["media/models/ghost.obj"] = Vector3();
+	this->zMeshCameraOffsets["media/models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zMeshCameraOffsets["media/models/token_anims.fbx"] = Vector3(0.0f, 2.3f, 0.0f);
 
 	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_WALKING] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_CROUCHING] = Vector3(0.0f, 1.0f, 0.0f);
 
-	this->zAnimationFileReader[0] = AnimationFileReader("Media/Models/temp_guy_movement_anims.cfg");
+	this->zAnimationFileReader[0] = AnimationFileReader("media/models/token_anims.cfg");
 
-	this->zModelToReaderMap["Media/Models/temp_guy_movement_anims.fbx"] = zAnimationFileReader[0];
+	this->zModelToReaderMap["media/models/token_anims.fbx"] = zAnimationFileReader[0];
 
 	this->zSendUpdateDelayTimer = 0.0f;
 
@@ -321,6 +320,46 @@ void Client::InitGraphics(const std::string& mapName)
 	this->zClientUpsText = this->zEng->CreateText("", Vector2(1, 49), 1.0f, "Media/Fonts/new");
 }
 
+void Client::CalculateDeltaTime()
+{
+	this->zDeltaTime = this->zGameTimer->Frame();
+
+	//20 fps Minimum cap
+	static const float MAXIMUM_DELTA = 1.0f / 20.0f;
+	static float accumulator = 0.0f;
+	static float difference = 0.0f;
+
+	//Check if Fps is Higher than minimum cap
+	if (this->zDeltaTime > MAXIMUM_DELTA)
+	{
+		//Add difference to buffer.
+		float currentDifference = this->zDeltaTime - MAXIMUM_DELTA;
+		accumulator += currentDifference;
+		//Decrease deltaTime so it doesn't go below limit.
+		this->zDeltaTime -= currentDifference;
+	}
+	else
+	{
+		//Calculate difference Between current delta time and minimum limit.
+		difference = MAXIMUM_DELTA - this->zDeltaTime;
+
+		//Check if Difference is higher than what is stored in Buffer.
+		if (difference > accumulator)
+		{
+			//Add buffer to current deltaTime.
+			this->zDeltaTime += accumulator;
+			accumulator = 0.0f;
+		}
+		else
+		{
+			//Add difference to current deltaTime and decrease difference from buffer.
+			this->zDeltaTime = difference;
+			accumulator -= difference;
+		}
+	}
+	this->zGameTimer->CalculateFps(this->zDeltaTime);
+}
+
 void Client::Life()
 {
 	MaloW::Debug("Client Process Started");
@@ -331,8 +370,8 @@ void Client::Life()
 	this->zGameTimer->Init();
 	while(this->zEng->IsRunning() && this->stayAlive)
 	{
-		this->zDeltaTime = this->zGameTimer->Frame();
-		
+		this->CalculateDeltaTime();
+
 		this->UpdateGame();
 
 		if (FRAME_TIME > 0)
@@ -352,12 +391,23 @@ void Client::UpdateGame()
 {
 	// 50 updates per second
 	static const float UPDATE_DELAY = 0.020f;
+	static const float FPS_DELAY = 1.0f;
+	static float fps_Delay_Timer = 0.0f;
 
 	this->CheckKeyboardInput();
 	if(this->zCreated)
 	{
 		this->zSendUpdateDelayTimer += this->zDeltaTime;
 		this->zTimeSinceLastPing += this->zDeltaTime;
+		fps_Delay_Timer += this->zDeltaTime;
+
+		if (fps_Delay_Timer >= FPS_DELAY)
+		{
+			std::stringstream ss;
+			ss << this->zGameTimer->GetFPS() <<" CLIENT FPS";
+			this->zClientUpsText->SetText(ss.str().c_str());
+			fps_Delay_Timer = 0.0f;
+		}
 
 		this->zActorManager->SetUpdatesPerSec(this->zGameTimer->GetFPS());
 
@@ -367,9 +417,7 @@ void Client::UpdateGame()
 
 			this->SendClientUpdate();
 
-			std::stringstream ss;
-			ss << this->zGameTimer->GetFPS() <<" CLIENT FPS";
-			this->zClientUpsText->SetText(ss.str().c_str());
+			
 		}
 
 		this->Update();
@@ -567,6 +615,48 @@ bool Client::CheckKey(const unsigned int ID)
 		result = false;
 	}
 	return result;
+}
+
+void Client::CheckAdminCommands()
+{
+	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL)  && this->zEng->GetKeyListener()->IsPressed(VK_MENU) && this->zEng->GetKeyListener()->IsPressed('R'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_RESTART))
+		{
+			this->zKeyInfo.SetKeyState(KEY_RESTART, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_RESTART_GAME_REQUEST);
+
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_RESTART))
+			this->zKeyInfo.SetKeyState(KEY_RESTART, false);
+	}
+
+	if (this->zActorType != GHOST)
+	{
+		//Kill yourself button
+		if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('K'))
+		{
+			if (!this->zKeyInfo.GetKeyState(KEY_KILL))
+			{
+				this->zKeyInfo.SetKeyState(KEY_KILL, true);
+
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACTOR_KILL);
+
+				this->zServerChannel->Send(msg);
+			}
+		}
+		else
+		{
+			if(this->zKeyInfo.GetKeyState(KEY_KILL))
+				this->zKeyInfo.SetKeyState(KEY_KILL, false);
+		}
+	}
+	
 }
 
 void Client::CheckMovementKeys()
@@ -806,24 +896,6 @@ void Client::CheckNonGhostInput()
 	this->CheckKey(KEY_SPRINT);
 
 	this->CheckKey(KEY_DUCK);
-
-	//Kill yourself button
-	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('K'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_KILL))
-		{
-			this->zKeyInfo.SetKeyState(KEY_KILL, true);
-
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACTOR_KILL);
-
-			this->zServerChannel->Send(msg);
-		}
-	}
-	else
-	{
-		if(this->zKeyInfo.GetKeyState(KEY_KILL))
-			this->zKeyInfo.SetKeyState(KEY_KILL, false);
-	}
 }
 
 void Client::CheckKeyboardInput()
@@ -832,23 +904,6 @@ void Client::CheckKeyboardInput()
 	{
 		MaloW::Debug("Something Went Wrong. This player cannot be found. In function Client::HandleKeyBoardInput");
 		return;
-	}
-
-	else if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL)  && this->zEng->GetKeyListener()->IsPressed(VK_MENU) && this->zEng->GetKeyListener()->IsPressed('R'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_RESTART))
-		{
-			this->zKeyInfo.SetKeyState(KEY_RESTART, true);
-
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_RESTART_GAME_REQUEST);
-
-			this->zServerChannel->Send(msg);
-		}
-	}
-	else
-	{
-		if(this->zKeyInfo.GetKeyState(KEY_RESTART))
-			this->zKeyInfo.SetKeyState(KEY_RESTART, false);
 	}
 
 	if (this->zActorType != NONE)
@@ -873,6 +928,8 @@ void Client::CheckKeyboardInput()
 	{
 		this->CheckNonGhostInput();
 	}
+
+	this->CheckAdminCommands();
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 	{

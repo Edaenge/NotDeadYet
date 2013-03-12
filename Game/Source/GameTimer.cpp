@@ -37,18 +37,27 @@ float GameTimer::Frame()
 	this->zRunTime += this->zDeltaTime;
 
 	this->zStartTime = currentTime;
-	
-	//Calculate Frames Per Second
-	this->zCounter += this->zDeltaTime;
-
-	this->zFrameCounter++;
-	if(this->zCounter >= 1.0f)
-	{
-		this->zFramesPerSec = this->zFrameCounter;
-
-		this->zCounter = 0.0f;
-		this->zFrameCounter = 0;
-	}
 
 	return this->zDeltaTime;
+}
+
+void GameTimer::CalculateFps(float deltaTime)
+{
+	static const unsigned int MAX_SAMPLES = 100;
+
+	if (this->zDt.size() >= MAX_SAMPLES)
+		this->zDt.erase(this->zDt.begin());
+
+	this->zDt.push_back(deltaTime);
+
+	float totalDeltaTime = 0.0f;
+	auto it_end = this->zDt.end();
+	for (auto it = this->zDt.begin(); it != it_end; it++)
+	{
+		totalDeltaTime += (*it);
+	}
+
+	float averageDelta = totalDeltaTime / this->zDt.size();
+
+	this->zFramesPerSec = 1.0f / averageDelta;
 }

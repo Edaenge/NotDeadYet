@@ -1,9 +1,20 @@
 #pragma once
 
 #include <windows.h>
+#include <vector>
 
 class GameTimer
 {
+public:
+	GameTimer();
+	virtual ~GameTimer() {}
+	void Init();
+	float Frame();
+	void CalculateFps(float deltaTime);
+	inline float GetRunTime() {return this->zRunTime;}
+	inline float GetDeltaTime() {return this->zDeltaTime;}
+	inline int GetFPS() {return this->zFramesPerSec;}
+
 private:
 	float zSecsPerCnt;
 	INT64 zStartTime;
@@ -12,11 +23,5 @@ private:
 	int zFramesPerSec;
 	int zFrameCounter;
 	float zCounter;
-public:
-	GameTimer();
-	void Init();
-	float Frame();
-	inline float GetRunTime() {return this->zRunTime;}
-	inline float GetDeltaTime() {return this->zDeltaTime;}
-	inline int GetFPS() {return this->zFramesPerSec;}
+	std::vector<float> zDt;
 };

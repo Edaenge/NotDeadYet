@@ -110,13 +110,13 @@ void GameModeFFA::OnEvent( Event* e )
 				std::string msg = NMC.Convert(MESSAGE_TYPE_ACTOR_TAKE_DAMAGE, (float)ID);
 				msg += NMC.Convert(MESSAGE_TYPE_HEALTH, damage);
 				Player* player = pActor->GetPlayer();
-
-				if(player)
+				if (player)
 				{
 					ClientData* cd = player->GetClientData();
-					cd->Send(msg);
+
+					if (cd)
+						cd->Send(msg);
 				}
-				
 			}
 		}
 		else if( AnimalActor* aActor = dynamic_cast<AnimalActor*>(ATD->zActor) )
