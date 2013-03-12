@@ -44,13 +44,13 @@ struct Gui_Item_Data
 		this->zFilePath = filePath;
 		this->zDescription = description;
 	}
-	unsigned int zID;
-	unsigned int zSlots;
-	unsigned int zType;
-	unsigned int zSubType;
+	int zID;
+	int zSlots;
+	int zType;
+	int zSubType;
 
-	unsigned int zWeight;
-	unsigned int zStacks;
+	int zWeight;
+	int zStacks;
 	bool zCanStack;
 
 	std::string zName;
