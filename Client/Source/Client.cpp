@@ -297,7 +297,11 @@ void Client::InitGraphics(const std::string& mapName)
 	float yPos = (windowHeight / 2.0f) - length * 0.5f;
 
 	this->zWorld->Update();
-	this->zWorldRenderer->Update();
+	for(int i = 0; i < 50; i++)
+	{
+		this->zWorldRenderer->Update();
+	}
+	
 	
 	if (this->zCrossHair)
 		this->zEng->DeleteImage(this->zCrossHair);
@@ -895,6 +899,24 @@ void Client::CheckKeyboardInput()
 			this->zKeyInfo.SetKeyState(KEY_MENU, true);
 			if(!this->zIgm->GetShow())
 			{
+				
+				if(this->zPam->GetShow())
+				{
+					this->zPam->ToggleMenu();
+				}
+				if(this->zGuiManager->IsCraftOpen())
+				{
+					this->zGuiManager->ToggleCraftingGui();
+				}
+				if(this->zGuiManager->IsLootingOpen())
+				{
+					this->zGuiManager->ToggleLootGui(0);
+				}
+				if(this->zGuiManager->IsInventoryOpen())
+				{
+					this->zGuiManager->ToggleInventoryGui();
+				}
+
 				this->zIgm->ToggleMenu(); // Shows the menu and sets Show to true.
 				zShowCursor = true;
 			}

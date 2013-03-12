@@ -30,9 +30,14 @@ InventorySlotGui::InventorySlotGui(float x, float y, float width, float height, 
 
 InventorySlotGui::~InventorySlotGui()
 {
-	if ( zSlotImage && GetGraphics()->IsRunning()) 
+	if ( this->zSlotImage && GetGraphics()->IsRunning()) 
 		GetGraphics()->DeleteImage(this->zSlotImage);
-	else if( zSlotImage && !GetGraphics()->IsRunning())
+	else if( this->zSlotImage && !GetGraphics()->IsRunning())
+		throw("Image Memory Leak!");
+
+	if(this->zStackText && GetGraphics()->IsRunning())
+		GetGraphics()->DeleteText(this->zStackText);
+	else if( this->zStackText && !GetGraphics()->IsRunning())
 		throw("Image Memory Leak!");
 }
 
