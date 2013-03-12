@@ -35,8 +35,9 @@ Client::Client()
 
 	//Temporary Ghost Model
 	this->zMeshCameraOffsets["media/models/ghost.obj"] = Vector3();
-	this->zMeshCameraOffsets["media/models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zMeshCameraOffsets["media/models/token_anims.fbx"] = Vector3(0.0f, 2.3f, 0.0f);
+	this->zMeshCameraOffsets["media/models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zMeshCameraOffsets["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 2.3f, 0.0f);
 
 	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
@@ -400,7 +401,7 @@ void Client::UpdateGame()
 		this->zSendUpdateDelayTimer += this->zDeltaTime;
 		this->zTimeSinceLastPing += this->zDeltaTime;
 		fps_Delay_Timer += this->zDeltaTime;
-
+		
 		if (fps_Delay_Timer >= FPS_DELAY)
 		{
 			std::stringstream ss;
@@ -417,7 +418,9 @@ void Client::UpdateGame()
 
 			this->SendClientUpdate();
 
-			
+			std::stringstream ss;
+			ss << this->zGameTimer->GetFPS() <<" CLIENT FPS";
+			this->zClientUpsText->SetText(ss.str().c_str());
 		}
 
 		this->Update();
@@ -615,48 +618,6 @@ bool Client::CheckKey(const unsigned int ID)
 		result = false;
 	}
 	return result;
-}
-
-void Client::CheckAdminCommands()
-{
-	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL)  && this->zEng->GetKeyListener()->IsPressed(VK_MENU) && this->zEng->GetKeyListener()->IsPressed('R'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_RESTART))
-		{
-			this->zKeyInfo.SetKeyState(KEY_RESTART, true);
-
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_RESTART_GAME_REQUEST);
-
-			this->zServerChannel->Send(msg);
-		}
-	}
-	else
-	{
-		if(this->zKeyInfo.GetKeyState(KEY_RESTART))
-			this->zKeyInfo.SetKeyState(KEY_RESTART, false);
-	}
-
-	if (this->zActorType != GHOST)
-	{
-		//Kill yourself button
-		if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('K'))
-		{
-			if (!this->zKeyInfo.GetKeyState(KEY_KILL))
-			{
-				this->zKeyInfo.SetKeyState(KEY_KILL, true);
-
-				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACTOR_KILL);
-
-				this->zServerChannel->Send(msg);
-			}
-		}
-		else
-		{
-			if(this->zKeyInfo.GetKeyState(KEY_KILL))
-				this->zKeyInfo.SetKeyState(KEY_KILL, false);
-		}
-	}
-	
 }
 
 void Client::CheckMovementKeys()
@@ -888,6 +849,20 @@ void Client::CheckGhostSpecificKeys()
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
 			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
+
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)) )
+		{
+			// Check for targets to possess!
+
+			std::vector<unsigned int> ids;
+
+			ids = this->RayVsWorld();
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_TRY_TO_POSSESS_ANIMAL, 0);
+			this->zServerChannel->Send(msg);
+		}
+
+
 	}
 }
 
@@ -896,6 +871,24 @@ void Client::CheckNonGhostInput()
 	this->CheckKey(KEY_SPRINT);
 
 	this->CheckKey(KEY_DUCK);
+
+	//Kill yourself button
+	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('K'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_KILL))
+		{
+			this->zKeyInfo.SetKeyState(KEY_KILL, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ACTOR_KILL);
+
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_KILL))
+			this->zKeyInfo.SetKeyState(KEY_KILL, false);
+	}
 }
 
 void Client::CheckKeyboardInput()
@@ -904,6 +897,23 @@ void Client::CheckKeyboardInput()
 	{
 		MaloW::Debug("Something Went Wrong. This player cannot be found. In function Client::HandleKeyBoardInput");
 		return;
+	}
+
+	else if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL)  && this->zEng->GetKeyListener()->IsPressed(VK_MENU) && this->zEng->GetKeyListener()->IsPressed('R'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_RESTART))
+		{
+			this->zKeyInfo.SetKeyState(KEY_RESTART, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_RESTART_GAME_REQUEST);
+
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_RESTART))
+			this->zKeyInfo.SetKeyState(KEY_RESTART, false);
 	}
 
 	if (this->zActorType != NONE)
@@ -928,8 +938,6 @@ void Client::CheckKeyboardInput()
 	{
 		this->CheckNonGhostInput();
 	}
-
-	this->CheckAdminCommands();
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_MENU)))
 	{
@@ -1626,7 +1634,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
-		this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
+		//this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
 
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 		this->ResetPhysicalConditions();
@@ -1969,6 +1977,19 @@ void Client::UpdateHealthAndBleedingImage()
 		{
 			this->zBleedingOpacity -= this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
 		}
+
+
+		if(this->zBleedingOpacity >= 0.22f || this->zBleedingOpacity <= 0.0f)
+		{
+			if(!this->zDroppingPulse)
+			{
+				this->zDroppingPulse = true;
+			}
+			else 
+			{
+				this->zDroppingPulse = false;
+			}
+		}
 	}
 	else
 	{
@@ -1976,17 +1997,7 @@ void Client::UpdateHealthAndBleedingImage()
 	}
 	//this->zHealthOpacity += testBleed;
 
-	if(this->zBleedingOpacity >= 0.22f || this->zBleedingOpacity <= 0.0f)
-	{
-		if(!this->zDroppingPulse)
-		{
-			this->zDroppingPulse = true;
-		}
-		else 
-		{
-			this->zDroppingPulse = false;
-		}
-	}
+	
 
 
 	/*if(this->zPulseCounter > pulseLimit)

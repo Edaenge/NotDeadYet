@@ -23,7 +23,7 @@ public:
 	float GetNearByRadius() const {return this->zNearByRadius;}
 
 
-	bool ProcessClientData(Vector3 direction, Vector4 rotation);
+	bool ProcessClientData(const Vector3& direction, const Vector4& rotation);
 	inline Player* GetPlayer() const {return this->zPlayer;}
 
 	/*! Check collisions using distance.*/

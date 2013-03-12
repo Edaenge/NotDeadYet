@@ -156,6 +156,15 @@ void GameModeFFA::OnEvent( Event* e )
 		if (gActor)
 			this->SwapToAnimal(gActor, PASE->zAnimalType);
 	}
+	else if(PlayerAnimalPossessEvent* POSSESSE = dynamic_cast<PlayerAnimalPossessEvent*>(e))
+	{
+
+		GhostActor* gActor = dynamic_cast<GhostActor*>(POSSESSE->zActor);
+
+		if(gActor)
+			this->PossessAnAnimal(gActor);
+				
+	}
 	else if( PlayerAddEvent* PAE = dynamic_cast<PlayerAddEvent*>(e) )
 	{
 		zPlayers.insert(PAE->player);
@@ -207,6 +216,7 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 	if(animalType == 0 && gActor->GetEnergy() < 50)
 	{
 		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_enough_energy_for_this_animal"));
+		gActor->SetEnergy(50);
 		return;
 	}
 	else if(animalType == 2 && gActor->GetEnergy() < 200)
@@ -292,6 +302,7 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 		//Deer
 		if (animalType == 0)
 		{
+			gActor->SetEnergy( gActor->GetEnergy() - 50);
 			closestAnimal->SetEnergy(gActor->GetEnergy());
 
 			animalBehavior = new PlayerDeerBehavior(closestAnimal, this->zGame->GetWorld(), player);
@@ -313,6 +324,7 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 		//Bear
 		else if (animalType == 2)
 		{
+			gActor->SetEnergy( gActor->GetEnergy() - 200);
 			closestAnimal->SetEnergy(gActor->GetEnergy());
 
 			animalBehavior = new PlayerBearBehavior(closestAnimal, this->zGame->GetWorld(), player);
@@ -335,6 +347,164 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 	}
 	else
 		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No animal of the type is close by"));
+
+}
+
+void GameModeFFA::PossessAnAnimal(GhostActor* gActor)
+{
+	Player* player = gActor->GetPlayer();
+	ClientData* cd = player->GetClientData();
+
+	NetworkMessageConverter NMC;
+	std::string msg = "";
+	AnimalActor* chosenAnimal = NULL;
+	float distance = 999999.9f;
+
+	Vector3 position = gActor->GetPosition();
+
+	bool foundAnimal = false;
+	int animalType = -1;
+
+	std::set<Actor*> actors;
+
+	auto target = actors.begin();
+
+	this->zGame->GetActorManager()->GetActorsInCircle(position.GetXZ(), 4.0f, actors, ACTOR_TYPE_ANIMAL);
+	for (auto it_Actors = actors.begin(); it_Actors != actors.end(); it_Actors++)
+	{
+		if(GetPhysics()->GetCollisionRayMeshBoundingOnly(gActor->GetPosition(),gActor->GetDir(), (*it_Actors)->GetPhysicsObject()).collision)
+		{
+			foundAnimal = true;
+			target = it_Actors;
+		}
+	}
+	
+	if(foundAnimal)
+	{
+		if (AnimalActor* aActor = dynamic_cast<AnimalActor*>((*target)))
+		{
+			//If type = Deer
+			if (DeerActor* dActor = dynamic_cast<DeerActor*>(aActor))
+			{
+				if (dActor->IsAlive())
+				{
+					animalType = 0;
+					chosenAnimal = dActor;
+				}
+				else
+				{
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You are not looking at something alive"));	
+				}
+			}
+			
+			/*//If Type = Wolf
+			else if (animalType == 1)
+			{
+				if (WolfActor* wActor = dynamic_cast<WolfActor*>(aActor))
+				{
+					//Kill player on Client
+					Player* player = gActor->GetPlayer();
+					gActor->SetPlayer(NULL);
+
+					PlayerWolfBehavior* playerWolfBehavior = new PlayerWolfBehavior(wActor, this->zGame->GetWorld(), player);
+
+					this->zGame->SetPlayerBehavior(player, playerWolfBehavior);
+
+					wActor->SetPlayer(player);
+
+					msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, wActor->GetID());
+					msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
+
+					cd->Send(msg);
+
+					this->zGame->GetActorManager()->RemoveActor(gActor);
+					found = true;
+				}
+			}*/
+			//If Type = Bear
+			if (BearActor* bActor = dynamic_cast<BearActor*>(aActor))
+			{
+				if (bActor->IsAlive())
+				{
+					animalType = 2;
+					chosenAnimal = bActor;
+				}
+				else
+				{
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You are not looking at something alive"));
+				}
+			}
+		}
+
+		PlayerBehavior* animalBehavior = NULL;
+		if (chosenAnimal)
+		{
+			//Deer
+			if (animalType == 0)
+			{
+
+				if(gActor->GetEnergy() < 50 / 2)
+				{
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_enough_energy_for_this_animal"));
+					return;
+				}
+				gActor->SetEnergy( gActor->GetEnergy() - 50 / 2);
+
+				chosenAnimal->SetEnergy(gActor->GetEnergy());
+
+				animalBehavior = new PlayerDeerBehavior(chosenAnimal, this->zGame->GetWorld(), player);
+
+				gActor->SetPlayer(NULL);
+
+				chosenAnimal->SetPlayer(player);
+
+				this->zGame->GetActorManager()->RemoveBehavior(chosenAnimal);
+				this->zGame->SetPlayerBehavior(player, animalBehavior);
+
+				msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)chosenAnimal->GetID());
+				msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
+
+				cd->Send(msg);
+
+				this->zGame->GetActorManager()->RemoveActor(gActor);
+			}
+			//Bear
+			else if (animalType == 2)
+			{
+
+				if(gActor->GetEnergy() < 200 / 2)
+				{
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_enough_energy_for_this_animal"));
+					return;
+				}
+				gActor->SetEnergy( gActor->GetEnergy() - 200 / 2);
+				chosenAnimal->SetEnergy(gActor->GetEnergy());
+
+				animalBehavior = new PlayerBearBehavior(chosenAnimal, this->zGame->GetWorld(), player);
+
+				gActor->SetPlayer(NULL);
+
+				chosenAnimal->SetPlayer(player);
+
+				this->zGame->GetActorManager()->RemoveBehavior(chosenAnimal);
+
+				this->zGame->SetPlayerBehavior(player, animalBehavior);
+
+				msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)chosenAnimal->GetID());
+				msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 3);
+
+				cd->Send(msg);
+
+				this->zGame->GetActorManager()->RemoveActor(gActor);
+			}
+		}
+
+
+	}
+	else
+	{
+		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Nothing to possess"));
+	}
 
 }
 
@@ -444,6 +614,7 @@ bool GameModeFFA::SpawnRandomDrop()
 std::set<Item*> GameModeFFA::GenerateItems()
 {
 
+	/** This is not the complete code, this is a test code. **/
 	//1-2 * nrOfPlayers/var
 
 	//Randomize Weapon MAX/MIN
@@ -458,37 +629,73 @@ std::set<Item*> GameModeFFA::GenerateItems()
 
 	std::set<Item*> items;
 	
-	//Randomize between Weapons : 2
+	//Randomize between Weapons : (2)
 	for(int i = 0; i < weapons; i++)
 	{
 		Item* item = NULL;
-		unsigned int nr = rand() % 1 + 2;
+		unsigned int nr = rand() % 2;
 		
-		if( nr == 1 )
+		if( nr == ITEM_SUB_TYPE_BOW )
 			item = new RangedWeapon( *GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW) );
 
-		else if( nr == 2)
+		else if( nr == ITEM_SUB_TYPE_MACHETE)
 			item = new MeleeWeapon( *GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE) );
 
 		if( item )
 			items.insert(item);
 	}
-	//Randomize between Misc : 2
-	/*for(int i = 0; i < misc; i++)
+	//Randomize between Material : (5)
+	for(int i = 0; i < materials; i++)
 	{
 		Item* item = NULL;
-		unsigned int nr = rand() % 1 + 2;
+		unsigned int nr = rand() % 5;
+		
+		if( nr == ITEM_SUB_TYPE_SMALL_STICK )
+			item = new Material( *GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_SMALL_STICK) );
 
-		if( nr == 1 )
-			item = new RangedWeapon( *GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW) );
+		else if( nr == ITEM_SUB_TYPE_MEDIUM_STICK )
+			item = new Material( *GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_MEDIUM_STICK) );
 
-		else if( nr == 2)
-			item = new MeleeWeapon( *GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE) );
+		else if( nr == ITEM_SUB_TYPE_LARGE_STICK )
+			item = new Material( *GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_LARGE_STICK) );
+
+		else if( nr == ITEM_SUB_TYPE_THREAD )
+			item = new Material( *GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_THREAD) );
+
+		else if( nr == ITEM_SUB_TYPE_DISENFECTANT_LEAF )
+			item = new Material( *GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_DISENFECTANT_LEAF) );
 
 		if( item )
 			items.insert(item);
 	}
-	*/
+
+	//Randomize Misc, for now, canteen, food and bandage
+	for (int i = 0; i < misc; i++)
+	{
+		Item* item = NULL;
+		unsigned int nr = rand() % 4;
+
+		if( nr == 0)
+			item = new Food( *GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD) );
+		
+		else if( nr == 1 ) 
+			item = new Container( * GetItemLookup()->GetContainer(ITEM_SUB_TYPE_CANTEEN) );
+		
+		else if( nr == 2)
+		{
+			nr = rand()% 1 + 100;
+			
+			if( nr < 80)
+				item = new Bandage( *GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_POOR) );
+			else
+				item = new Bandage( *GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT) );
+		}
+
+		if(item)
+			items.insert(item);
+	}
+
+	return items;
 
 	/*Just a test*/
 /*	std::set<Item*> items;
@@ -508,6 +715,4 @@ std::set<Item*> GameModeFFA::GenerateItems()
 	items.insert(arrow);
 	items.insert(melee);
 	*/
-
-	return items;
 }

@@ -482,6 +482,19 @@ void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &m
 		e.zAnimalType = animalType;
 		NotifyObservers(&e);
 	}
+	else if(msgArray[0].find(M_ATTEMPT_POSSESS_ANIMAL.c_str()) == 0)
+	{
+		PlayerAnimalPossessEvent e;
+
+		//Probably not necessary, a relic from the code I copied, will have to fix.
+		int animalType = this->zMessageConverter.ConvertStringToInt(M_ATTEMPT_POSSESS_ANIMAL, msgArray[0]);
+
+		e.zActor = NULL;
+		e.clientData = cd;
+		e.zAnimalType = animalType;
+		NotifyObservers(&e);
+
+	}
 	else if (msgArray[0].find(M_ANIMAL_ATTACK.c_str()) == 0)
 	{
 		unsigned int mouseButton = this->zMessageConverter.ConvertStringToInt(M_ANIMAL_ATTACK, msgArray[0]);
@@ -659,7 +672,6 @@ void Host::HandleLootRequest( const std::vector<std::string> &msgArray, ClientDa
 	int _subType = 20;
 	if (msgArray.size() > 3)
 	{
-		
 		_objID = this->zMessageConverter.ConvertStringToInt(M_LOOT_ITEM, msgArray[0]);
 		_itemID = this->zMessageConverter.ConvertStringToInt(M_OBJECT_ID, msgArray[1]);
 		_type = this->zMessageConverter.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
@@ -687,6 +699,12 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 		if(it_m->find(M_MESH_MODEL) == 0)
 		{
 			e.playerModel = this->zMessageConverter.ConvertStringToSubstring(M_MESH_MODEL, (*it_m));
+
+			// Force Lowercase on Model
+			for( unsigned int x=0; x<e.playerModel.length(); ++x )
+			{
+				e.playerModel[x] = tolower(e.playerModel[x]);
+			}
 		}
 		else if(it_m->find(M_DIRECTION) == 0)
 		{
