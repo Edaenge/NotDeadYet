@@ -9,8 +9,8 @@ class World;
 class PhysicsEngine;
 
 //MODEL NAME
-static const std::string SUPPLY_ACTOR_FILENAME	= "Media/Models/Cube_4.obj";
-static const std::string PARACHUTE_FILE_NAME	= "Media/Models/Cube_4.obj";
+static const std::string SUPPLY_ACTOR_FILENAME	= "Media/Models/Supplycrate_01_v03.obj";
+static const std::string PARACHUTE_FILE_NAME	= "Media/Models/Supplycrate_01_v03.obj";
 
 class SupplyDrop
 {

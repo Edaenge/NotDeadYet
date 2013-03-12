@@ -22,7 +22,6 @@ public:
 	bool IsMoving() {return this->zMoving;}
 
 private:
-	float zSpeed;
 	bool zMoving;
 	Vector3 zDestination;
 	Vector3 zVelocity;
