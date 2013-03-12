@@ -202,46 +202,49 @@ bool PlayerHumanBehavior::Update( float dt )
 		zActor->SetPosition(center);
 	}
 
-	Vector3 pActor_rewind_dir;
-	Actor* collide = NULL;
-	
-	/* Check Collisions against BioActors */
-	collide = CheckBioActorCollision();
-
-	if( collide )
+	if(this->zVelocity.GetLength() > 0.1)
 	{
-		BioActor* bioActor = dynamic_cast<BioActor*>(collide);
-		pActor_rewind_dir = (bioActor->GetPosition() - zActor->GetPosition());
-		pActor_rewind_dir.Normalize();
-		Vector3 target_rewind_dir = pActor_rewind_dir * -1;
+		Vector3 pActor_rewind_dir;
+		Actor* collide = NULL;
+	
+		/* Check Collisions against BioActors */
+		collide = CheckBioActorCollision();
 
-		if( bioActor->IsAlive() )
+		if( collide )
 		{
-			if( bioActor->HasMoved() )
-				bioActor->SetPosition( bioActor->GetPosition() - (target_rewind_dir * 0.25f) );
+			BioActor* bioActor = dynamic_cast<BioActor*>(collide);
+			pActor_rewind_dir = (bioActor->GetPosition() - zActor->GetPosition());
+			pActor_rewind_dir.Normalize();
+			Vector3 target_rewind_dir = pActor_rewind_dir * -1;
+
+			if( bioActor->IsAlive() )
+			{
+				if( bioActor->HasMoved() )
+					bioActor->SetPosition( bioActor->GetPosition() - (target_rewind_dir * 0.25f) );
+
+				zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+				zVelocity = Vector3(.0f, .0f, .0f);
+			}
+
+			return false;
+		}
+
+		/* Check Collisions against WorldActors */
+		collide = CheckWorldActorCollision();
+
+		if( collide )
+		{
+			pActor_rewind_dir = (collide->GetPosition() - zActor->GetPosition());
+			pActor_rewind_dir.Normalize();
 
 			zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
 			zVelocity = Vector3(.0f, .0f, .0f);
 		}
-
-		return false;
-	}
-
-	/* Check Collisions against WorldActors */
-	collide = CheckWorldActorCollision();
-
-	if( collide )
-	{
-		pActor_rewind_dir = (collide->GetPosition() - zActor->GetPosition());
-		pActor_rewind_dir.Normalize();
-
-		zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
-		zVelocity = Vector3(.0f, .0f, .0f);
-	}
-	else
-	{
-		//Sets position and notifies
-		zActor->SetPosition(newPosition);
+		else
+		{
+			//Sets position and notifies
+			zActor->SetPosition(newPosition);
+		}
 	}
 
 	//PhysicalConditionCalculator(dt);
