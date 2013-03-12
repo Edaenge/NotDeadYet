@@ -409,11 +409,11 @@ void Client::UpdateGame()
 			this->zClientUpsText->SetText(ss.str().c_str());
 
 			if (this->zGameTimer->GetFPS() < 30)
-				this->zClientUpsText->SetColor(Vector3(255.0f, 0.0f, 0.0f));
+				this->zClientUpsText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
 			else if (this->zGameTimer->GetFPS() > 30 && this->zGameTimer->GetFPS() < 60)
-				this->zClientUpsText->SetColor(Vector3(255.0f, 255.0f, 0.0f));
+				this->zClientUpsText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
 			else
-				this->zClientUpsText->SetColor(Vector3(0.0f, 255.0f, 0.0f));
+				this->zClientUpsText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
 
 			fps_Delay_Timer = 0.0f;
 		}
@@ -1465,6 +1465,13 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		ss << (int)latency <<" MS";
 		zLatencyText->SetText(ss.str().c_str());
 
+		if (latency > 300)
+			this->zLatencyText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
+		else if (latency > 200 && latency < 300)
+			this->zLatencyText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
+		else
+			this->zLatencyText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
+
 		this->zActorManager->SetLatency((int)latency);
 	}
 	else if (msgArray[0].find(M_SERVER_UPDATES_PER_SEC.c_str()) == 0)
@@ -1475,6 +1482,14 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		ss << updatesPerSec <<" SERVER FPS";
 		this->zServerUpsText->SetText(ss.str().c_str());
+
+		if (updatesPerSec < 30)
+			this->zServerUpsText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
+		else if (updatesPerSec > 30 && updatesPerSec < 60)
+			this->zServerUpsText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
+		else
+			this->zServerUpsText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
+
 		this->zActorManager->SetUpdatesPerSec(updatesPerSec);
 	}
 	else if (msgArray[0].find(M_SERVER_RESTART.c_str()) == 0)
@@ -2224,11 +2239,6 @@ void Client::UpdateText()
 
 				(*new_It)->zText->SetPosition(position);
 
-				if ((*new_It)->zError)
-					(*new_It)->zText->SetColor(Vector3(0.0f, 0.0f, 255.0f));
-				else
-					(*new_It)->zText->SetColor(Vector3(255.0f, 0.0f, 0.0f));
-
 				position = oldPos;
 			}
 			
@@ -2278,10 +2288,7 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 		position = Vector2(x, yStartPosition + c++ * textheight);
 		(*it)->zText->SetPosition(position);
 
-		if ((*it)->zError)
-			(*it)->zText->SetColor(Vector3(0.0f, 0.0f, 255.0f));
-		else
-			(*it)->zText->SetColor(Vector3(255.0f, 0.0f, 0.0f));
+		
 	}
 
 	if (arrSize == 0)
@@ -2290,13 +2297,17 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 	}
 	else
 	{
-
 		position = Vector2(xPosition, yStartPosition + c++ * textheight);
 	}
 	iText* text = NULL;
 
 	text = this->zEng->CreateText(newString.c_str(), position, 0.7f, "Media/Fonts/new");
 	
+	if (bError)
+		text->SetColor(Vector3(0.0f, -255.0f, -255.0f));
+	else
+		text->SetColor(Vector3(0.0f, 0.0f, -255.0f));
+
 	TextDisplay* displayedText = new TextDisplay(text, START_TEXT_TIMER, bError);
 
 	this->zDisplayedText.push_back(displayedText);
