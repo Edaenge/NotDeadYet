@@ -16,6 +16,14 @@ class Game;
 class PlayerActor : public BioActor
 {
 	Vector3 zInitialDirection;
+	float zFullness;
+	float zHydration;
+
+	float zFullnessMax;
+	float zHydrationMax;
+
+	bool zExhausted;
+	bool zHasSprinted;
 
 public:
 	PlayerActor(Player* player, PhysicsObject* pObj, Observer* game);
@@ -25,26 +33,15 @@ public:
 	float GetFullness();
 	float GetHydration();
 
-	float GetFullnessMax() {return this->zFullnessMax;}
-	float GetHydrationMax() {return this->zHydrationMax;}
-	bool GetExhausted(){ return this->zExhausted; }
-	bool GetHasSprinted(){ return this->zHasSprinted; }
+	inline float GetFullnessMax() {return this->zFullnessMax;}
+	inline float GetHydrationMax() {return this->zHydrationMax;}
+	inline bool GetExhausted(){ return this->zExhausted; }
+	inline bool GetHasSprinted(){ return this->zHasSprinted; }
 
 	void SetFullness(float fullness, const bool notify = true);
 	void SetHydration(float hydration, const bool notify = true);
 	void SetExhausted(bool exhausted);
-	void SetHasSprinted(bool hasSprinted){ this->zHasSprinted = hasSprinted; }
-
-private:
-
-	float zFullness;
-	float zHydration;
-	
-	float zFullnessMax;
-	float zHydrationMax;
-
-	bool zExhausted;
-	bool zHasSprinted;
+	inline void SetHasSprinted(bool hasSprinted) { this->zHasSprinted = hasSprinted; }
 };
 
 //class PlayerUpdatedEvent : public Event
