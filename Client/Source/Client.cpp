@@ -9,6 +9,7 @@
 #include <DisconnectedEvent.h>
 #include "PlayerConfig/PlayerSettings.h"
 #include <algorithm>
+#include <ctime>
 
 using namespace MaloW;
 
@@ -1187,6 +1188,17 @@ void Client::HandleWeaponEquips()
 
 void Client::HandleDebugInfo()
 {
+	time_t t = time(0);
+
+	struct tm * now = localtime(&t);
+
+	;
+	now->tm_min;
+	now->tm_sec;
+	;
+	;
+	;
+
 	//Graphical error Terrain debug
 	if (this->zEng->GetKeyListener()->IsPressed(VK_F1))
 	{
@@ -1195,6 +1207,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Graphical Terrain error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1213,6 +1226,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Graphical Object error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1231,6 +1245,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Player Movement blocked when shouldn't at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1249,6 +1264,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Player movement Should be blocked at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1267,6 +1283,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "AI Is Blocked but shouldn't be at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1285,6 +1302,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "AI should be blocked at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1303,6 +1321,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Misc Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1321,6 +1340,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Sound Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1339,6 +1359,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Terrain Normal Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1357,6 +1378,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Water Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
