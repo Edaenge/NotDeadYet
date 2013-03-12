@@ -34,13 +34,15 @@ enum CLIENT_ACTOR_TYPE
 };
 struct TextDisplay
 {
-	TextDisplay(iText* text, float time)
+	TextDisplay(iText* text, float time, bool error)
 	{
 		zText = text;
 		zTimer = time;
+		zError = error;
 	}
 	iText* zText;
 	float zTimer;
+	bool zError;
 };
 class Client : public MaloW::Process, public Observer
 {

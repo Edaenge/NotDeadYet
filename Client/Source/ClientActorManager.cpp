@@ -90,7 +90,8 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 					AudioManager::GetInstance()->SetPlayerPosition(&ConvertToFmodVector(position), &ConvertToFmodVector(gEng->GetCamera()->GetForward()), &ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
 
 					this->zFootStep[MAXFOOTSTEPS-1]->Setposition(&ConvertToFmodVector(position));
-					this->zFootStep[MAXFOOTSTEPS-1]->Play();
+					if(actor->GetModel() != "Media/Models/ghost.obj")
+						this->zFootStep[MAXFOOTSTEPS-1]->Play();
 
 					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
 				}

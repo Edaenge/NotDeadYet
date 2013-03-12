@@ -36,15 +36,29 @@ void SoundHandler::OnEvent( Event* e )
 		{
 			if(PlayerActor *PA = dynamic_cast<PlayerActor *>(BATDE->zActor))
 			{
-				
-				NetworkMessageConverter NMC;
-				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_MAN_KNIFESTAB);
-				if(PA->GetModel().find("female"))
-					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_WOMAN_KNIFESTAB);
-				msg += NMC.Convert(MESSAGE_TYPE_POSITION, PA->GetPosition());
-				for(auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+				if((PA->GetHealth() - BATDE->zDamage->GetTotal()) <= 0)
 				{
-					(*it)->GetClientData()->Send(msg);
+					NetworkMessageConverter NMC;
+					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_MAN_DEATH);
+					if(PA->GetModel().find("female"))
+						msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_WOMAN_DEATH);
+					msg += NMC.Convert(MESSAGE_TYPE_POSITION, PA->GetPosition());
+					for(auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+					{
+						(*it)->GetClientData()->Send(msg);
+					}
+				}
+				else
+				{
+					NetworkMessageConverter NMC;
+					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_MAN_KNIFESTAB);
+					if(PA->GetModel().find("female"))
+						msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_WOMAN_KNIFESTAB);
+					msg += NMC.Convert(MESSAGE_TYPE_POSITION, PA->GetPosition());
+					for(auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+					{
+						(*it)->GetClientData()->Send(msg);
+					}
 				}
 			}
 		}

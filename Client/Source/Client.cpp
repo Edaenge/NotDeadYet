@@ -297,7 +297,11 @@ void Client::InitGraphics(const std::string& mapName)
 	float yPos = (windowHeight / 2.0f) - length * 0.5f;
 
 	this->zWorld->Update();
-	this->zWorldRenderer->Update();
+	for(int i = 0; i < 50; i++)
+	{
+		this->zWorldRenderer->Update();
+	}
+	
 	
 	if (this->zCrossHair)
 		this->zEng->DeleteImage(this->zCrossHair);
@@ -407,6 +411,14 @@ void Client::UpdateGame()
 			std::stringstream ss;
 			ss << this->zGameTimer->GetFPS() <<" CLIENT FPS";
 			this->zClientUpsText->SetText(ss.str().c_str());
+
+			if (this->zGameTimer->GetFPS() < 30)
+				this->zClientUpsText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
+			else if (this->zGameTimer->GetFPS() > 30 && this->zGameTimer->GetFPS() < 60)
+				this->zClientUpsText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
+			else
+				this->zClientUpsText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
+
 			fps_Delay_Timer = 0.0f;
 		}
 
@@ -417,10 +429,6 @@ void Client::UpdateGame()
 			this->zSendUpdateDelayTimer = 0.0f;
 
 			this->SendClientUpdate();
-
-			std::stringstream ss;
-			ss << this->zGameTimer->GetFPS() <<" CLIENT FPS";
-			this->zClientUpsText->SetText(ss.str().c_str());
 		}
 
 		this->Update();
@@ -965,6 +973,24 @@ void Client::CheckKeyboardInput()
 			this->zKeyInfo.SetKeyState(KEY_MENU, true);
 			if(!this->zIgm->GetShow())
 			{
+				
+				if(this->zPam->GetShow())
+				{
+					this->zPam->ToggleMenu();
+				}
+				if(this->zGuiManager->IsCraftOpen())
+				{
+					this->zGuiManager->ToggleCraftingGui();
+				}
+				if(this->zGuiManager->IsLootingOpen())
+				{
+					this->zGuiManager->ToggleLootGui(0);
+				}
+				if(this->zGuiManager->IsInventoryOpen())
+				{
+					this->zGuiManager->ToggleInventoryGui();
+				}
+
 				this->zIgm->ToggleMenu(); // Shows the menu and sets Show to true.
 				zShowCursor = true;
 			}
@@ -1480,6 +1506,13 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		ss << (int)latency <<" MS";
 		zLatencyText->SetText(ss.str().c_str());
 
+		if (latency > 300)
+			this->zLatencyText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
+		else if (latency > 200 && latency < 300)
+			this->zLatencyText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
+		else
+			this->zLatencyText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
+
 		this->zActorManager->SetLatency((int)latency);
 	}
 	else if (msgArray[0].find(M_SERVER_UPDATES_PER_SEC.c_str()) == 0)
@@ -1490,6 +1523,14 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		ss << updatesPerSec <<" SERVER FPS";
 		this->zServerUpsText->SetText(ss.str().c_str());
+
+		if (updatesPerSec < 30)
+			this->zServerUpsText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
+		else if (updatesPerSec > 30 && updatesPerSec < 60)
+			this->zServerUpsText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
+		else
+			this->zServerUpsText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
+
 		this->zActorManager->SetUpdatesPerSec(updatesPerSec);
 	}
 	else if (msgArray[0].find(M_SERVER_RESTART.c_str()) == 0)
@@ -2287,6 +2328,8 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 		float x = (*it)->zText->GetPosition().x;
 		position = Vector2(x, yStartPosition + c++ * textheight);
 		(*it)->zText->SetPosition(position);
+
+		
 	}
 
 	if (arrSize == 0)
@@ -2295,18 +2338,18 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 	}
 	else
 	{
-
 		position = Vector2(xPosition, yStartPosition + c++ * textheight);
 	}
 	iText* text = NULL;
 
 	text = this->zEng->CreateText(newString.c_str(), position, 0.7f, "Media/Fonts/new");
+	
 	if (bError)
-		text->SetColor(Vector3(0.0f, 0.0f, 255.0f));
+		text->SetColor(Vector3(0.0f, -255.0f, -255.0f));
 	else
-		text->SetColor(Vector3(255.0f, 0.0f, 0.0f));
+		text->SetColor(Vector3(0.0f, 0.0f, -255.0f));
 
-	TextDisplay* displayedText = new TextDisplay(text, START_TEXT_TIMER);
+	TextDisplay* displayedText = new TextDisplay(text, START_TEXT_TIMER, bError);
 
 	this->zDisplayedText.push_back(displayedText);
 }
