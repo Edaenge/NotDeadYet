@@ -502,7 +502,7 @@ bool Game::Update( float dt )
 	std::string msg;
 
 	this->zPerf->PreMeasure("Updating Behaviors", 1);
-	std::set<Behavior*> behaviors = this->zActorManager->GetBehaviors();
+	std::set<Behavior*> &behaviors = this->zActorManager->GetBehaviors();
 
 	// Update Behaviors
 	auto i = behaviors.begin();

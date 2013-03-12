@@ -9,6 +9,7 @@
 #include "GameEvents.h"
 #include "PlayerHumanBehavior.h"
 #include "Physics.h"
+#include <Packets/PhysicalConditionPacket.h>
 
 GameModeTest::GameModeTest(Game* game, int killLimit) : GameMode(game)
 {
@@ -163,6 +164,16 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	newPActor->SetDir(direction);
 	newPActor->AddObserver(this);
 
+	PhysicalConditionPacket* PCP = new PhysicalConditionPacket();
+
+	//Gather Actor Physical Conditions
+	PCP->zBleedingLevel = pActor->GetBleeding();
+	PCP->zEnergy = pActor->GetEnergy();
+	PCP->zHealth = pActor->GetHealth();
+	PCP->zHunger = pActor->GetFullness();
+	PCP->zHydration = pActor->GetHydration();
+	PCP->zStamina = pActor->GetStamina();
+
 	//Create New Human Behavior
 	PlayerHumanBehavior* pHumanBehavior = new PlayerHumanBehavior(newPActor, this->zGame->GetWorld(), player);
 
@@ -174,6 +185,9 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 1);
 
 	cd->Send(msg);
+	cd->Send(*PCP);
+
+	delete PCP;
 
 	aManager->AddActor(newPActor);
 }
