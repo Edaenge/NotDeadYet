@@ -49,11 +49,38 @@ BioActor::BioActor(Player* player, Observer* game) : Actor()
 	this->zCollisionRadius = 0.3f;
 
 	CalculateCollisionPoints();
+
+	SetAction("", 0.0f);
 }
 
 BioActor::~BioActor()
 {
 	SAFE_DELETE(this->zInventory);
+}
+
+void BioActor::SetAction(const std::string& actionName, float seconds)
+{
+	zActionTimeStarted = std::chrono::time_point_cast<fSeconds>(std::chrono::system_clock::now());
+	zActionTimeLength = std::chrono::duration<float, std::chrono::seconds>(seconds);
+}
+
+const std::string& BioActor::GetCurrentAction()
+{
+	static const std::string noAction;
+
+	if ( InAction() ) 
+	{
+		return zCurrentAction;
+	}
+	else
+	{
+		return noAction;
+	}
+}
+
+bool BioActor::InAction()
+{
+	return std::chrono::system_clock::now() < zActionTimeStarted + zActionTimeLength;
 }
 
 bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
