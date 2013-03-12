@@ -793,26 +793,45 @@ void Client::CheckGhostSpecificKeys()
 			else
 				zShowCursor = false;
 		}
+
 	}
 	else
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
 			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
+	}
 
-		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)) )
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
+	{
+		if(!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
 		{
-			// Check for targets to possess!
+			this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
 
-			std::vector<unsigned int> ids;
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_MAKE_NOISE, 0);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_INVENTORY))
+			this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
+	}
 
-			ids = this->RayVsWorld();
-
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
+	{
+		if(!this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
 			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_TRY_TO_POSSESS_ANIMAL, 0);
 			this->zServerChannel->Send(msg);
 		}
-
-
 	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_INTERACT))
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
+	}
+	
 }
 
 void Client::CheckNonGhostInput()

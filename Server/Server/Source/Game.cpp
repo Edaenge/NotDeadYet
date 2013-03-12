@@ -227,8 +227,8 @@ void Game::SpawnAnimalsDebug()
 			if( stacked && new_Food->GetStackSize() == 0 )
 				SAFE_DELETE(new_Food);
 		}
-	}*/
-
+	}
+*/
 	const Food* temp_Deer_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
 
 	lootSize = (rand() % 7) + 1;
@@ -794,6 +794,20 @@ void Game::OnEvent( Event* e )
 			if (playerBehavior)
 			{
 				POSSESSE->zActor = playerBehavior->GetActor();
+			}
+		}
+	}
+	else if(PlayerGhostMakesNoiseEvent* PGMNE = dynamic_cast<PlayerGhostMakesNoiseEvent*>(e))
+	{
+		auto playerIterator = this->zPlayers.find(PGMNE->clientData);
+		Player* player = playerIterator->second;
+
+		if (player)
+		{
+			Behavior* playerBehavior = player->GetBehavior();
+			if (playerBehavior)
+			{
+				PGMNE->zActor = playerBehavior->GetActor();
 			}
 		}
 	}

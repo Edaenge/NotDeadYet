@@ -165,6 +165,10 @@ void GameModeFFA::OnEvent( Event* e )
 			this->PossessAnAnimal(gActor);
 				
 	}
+	else if(PlayerAnimalPossessEvent* PGMNE = dynamic_cast<PlayerAnimalPossessEvent*>(e))
+	{
+		GhostActor* gActor = dynamic_cast<GhostActor*>(PGMNE->zActor);
+	}
 	else if( PlayerAddEvent* PAE = dynamic_cast<PlayerAddEvent*>(e) )
 	{
 		zPlayers.insert(PAE->player);
@@ -216,7 +220,6 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 	if(animalType == 0 && gActor->GetEnergy() < 50)
 	{
 		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_enough_energy_for_this_animal"));
-		gActor->SetEnergy(50);
 		return;
 	}
 	else if(animalType == 2 && gActor->GetEnergy() < 200)

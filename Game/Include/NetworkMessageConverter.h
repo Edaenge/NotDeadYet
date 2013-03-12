@@ -99,6 +99,7 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_PLAY_AS_ANIMAL,
 	MESSAGE_TYPE_TRY_TO_POSSESS_ANIMAL,
 	MESSAGE_TYPE_LEAVE_ANIMAL,
+	MESSAGE_TYPE_MAKE_NOISE,
 	MESSAGE_TYPE_DEER_EAT_OBJECT,
 	MESSAGE_TYPE_PLAY_SOUND,
 	MESSAGE_TYPE_PLAY_ANIMATION,
@@ -135,6 +136,7 @@ static const std::string M_RESTART_GAME_REQUEST		= "RGR";
 static const std::string M_PLAY_AS_ANIMAL			= "PAD";
 static const std::string M_ATTEMPT_POSSESS_ANIMAL	= "PAA";
 static const std::string M_LEAVE_ANIMAL				= "LA";
+static const std::string M_MAKE_NOISE				= "MSN";
 static const std::string M_DEER_EAT_OBJECT			= "AE";
 static const std::string M_SUN_DIRECTION			= "SD";
 //Data Messages
