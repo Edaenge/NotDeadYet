@@ -6,11 +6,13 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #pragma once
 
 #include "Actor.h"
-#include <AnimationStates.h>
-#include <string>
 #include "Damage.h"
 #include "Player.h"
 #include "Inventory.h"
+#include <AnimationStates.h>
+#include <string>
+#include <chrono>
+
 
 class BioActorTakeDamageEvent : public Event
 {
@@ -58,11 +60,42 @@ public:
 /*This class is Abstract, this class is used to create living creatures such as humans, animals etc. */
 class BioActor : public Actor
 {
+protected:
+	int		zState;
+	float	zVelocity;
+
+	float	zHealth;
+	float	zHealthMax;
+
+	float	zStamina;
+	float	zStaminaMax;
+	float	zStaminaCof;
+
+	float	zBleedingLevel;
+
+	bool	zAlive;
+
+	Vector3 zDirection;
+	Vector3 zCameraOffset;
+	Inventory* zInventory;
+
+	Player* zPlayer;
+
+	std::string zCurrentAction;
+	std::chrono::time_point<std::chrono::system_clock, std::chrono::microseconds> zActionTimeStarted;
+	std::chrono::microseconds zActionTimeLength;
+
 public:
+	bool zValid;
+
 	BioActor();
 	BioActor(Player* player, Observer* game);
 	BioActor(const Vector3& startPos, const Vector4& rot);
 	virtual ~BioActor();
+
+	void SetAction(const std::string& actionName, float seconds);
+	const std::string& GetCurrentAction();
+	bool InAction();
 
 	// virtual void Update(float deltaTime) = 0;
 
@@ -109,27 +142,4 @@ public:
 
 	Player* GetPlayer(){ return this->zPlayer; }
 	void SetPlayer(Player* player) {this->zPlayer = player; this->zInventory->SetPlayer(player);}
-
-protected:
-	int		zState;
-	float	zVelocity;
-
-	float	zHealth;
-	float	zHealthMax;
-
-	float	zStamina;
-	float	zStaminaMax;
-	float	zStaminaCof;
-
-	float	zBleedingLevel;
-
-	bool	zAlive;
-
-	Vector3 zDirection;
-	Vector3 zCameraOffset;
-	Inventory* zInventory;
-
-	Player* zPlayer;
-public:
-	bool zValid;
 };

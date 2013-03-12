@@ -7,9 +7,6 @@
 #include "Physics.h"
 #include <algorithm>
 
-// 50 updates per sec
-static const float UPDATE_DELAY = 0.020f;
-
 Host::Host() :
 	zSynchronizer(0),
 	zGame(0)
@@ -85,7 +82,6 @@ Host::~Host()
 	this->zPerf->GenerateReport();
 
 	SAFE_DELETE(this->zPerf);
-	
 }
 
 void Host::SendMessageToClient( const std::string& message )
@@ -108,6 +104,46 @@ void Host::SendMessageToClient( const std::string& message )
 	}
 }
 
+void Host::CalculateDeltaTime()
+{
+	this->zDeltaTime = this->zGameTimer->Frame();
+
+	//100 fps Minimum cap
+	static const float MAXIMUM_DELTA = 1.0f / 100.0f;
+	static float accumulator = 0.0f;
+	static float difference = 0.0f;
+	
+	//Check if Fps is Higher than minimum cap
+	if (this->zDeltaTime > MAXIMUM_DELTA)
+	{
+		//Add difference to buffer.
+		float currentDifference = this->zDeltaTime - MAXIMUM_DELTA;
+		accumulator += currentDifference;
+		//Decrease deltaTime so it doesn't go below limit.
+		this->zDeltaTime -= currentDifference;
+	}
+	else
+	{
+		//Calculate difference Between current delta time and minimum limit.
+		difference = MAXIMUM_DELTA - this->zDeltaTime;
+
+		//Check if Difference is higher than what is stored in Buffer.
+		if (difference > accumulator)
+		{
+			//Add buffer to current deltaTime.
+			this->zDeltaTime += accumulator;
+			accumulator = 0.0f;
+		}
+		else
+		{
+			//Add difference to current deltaTime and decrease difference from buffer.
+			this->zDeltaTime = difference;
+			accumulator -= difference;
+		}
+	}
+	this->zGameTimer->CalculateFps(this->zDeltaTime);
+}
+
 void Host::Life()
 {
 	if (Messages::FileWrite())
@@ -115,35 +151,34 @@ void Host::Life()
 
 	this->zServerListener->Start();
 
-	static const float FRAME_TIME = 240.0f;
+	static const float FRAME_TIME = 300.0f;
 	static const float TARGET_DT = 1.0f / FRAME_TIME;
 
 	this->zGameTimer->Init();
 	while(this->stayAlive)
 	{
-		this->zDeltaTime = this->zGameTimer->Frame();
+		this->CalculateDeltaTime();
 
-		this->zPerf->PreMeasure("Message Reading", 0);
-		ReadMessages();
-		this->zPerf->PostMeasure("Message Reading", 0);
+		this->ReadMessages();
 
-		this->zPerf->PreMeasure("Updating Game", 0);
-		UpdateGame();
-		this->zPerf->PostMeasure("Updating Game", 0);
-		
-		if (FRAME_TIME > 0)
+		this->UpdateGame();
+
+		if (this->zDeltaTime < TARGET_DT)
 		{
-			if (this->zDeltaTime < TARGET_DT)
-			{
-				float sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
-				Sleep((DWORD)sleepTime);
-			}
+			float sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
+			Sleep((DWORD)sleepTime);
 		}
 	}
 }
 
 void Host::UpdateGame()
 {
+	// 50 updates per sec
+	static const float UPDATE_DELAY = 0.020f;
+	static const float FPS_DELAY = 1.0f;
+	static float fpsDelayTimer = 0.0f;
+
+	this->zPerf->PreMeasure("Updating Game", 0);
 	//if (!this->zGameStarted)
 	//{
 	//	//Check if All players Are Ready
@@ -163,30 +198,38 @@ void Host::UpdateGame()
 	//else
 	//{
 
-	if ( zGame )
+	if (this->zGame)
 	{
-		if ( zRestartRequested )
+		if (this->zRestartRequested)
 		{
-			zGame->RestartGame();
-			zRestartRequested = false;
+			this->zGame->RestartGame();
+			this->zRestartRequested = false;
 		}
 		else if(this->zGame->Update(this->zDeltaTime))
 		{
 			this->PingClients();
 
 			this->zSendUpdateDelayTimer += this->zDeltaTime;
+			fpsDelayTimer += this->zDeltaTime;
 
-			if (zSendUpdateDelayTimer >= UPDATE_DELAY)
+			if (fpsDelayTimer > FPS_DELAY)
+			{
+				fpsDelayTimer = 0.0f;
+				SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()));
+			}
+
+			if (this->zSendUpdateDelayTimer >= UPDATE_DELAY)
 			{
 				this->zPerf->PreMeasure("Synchronizing", 1);
 				SynchronizeAll();
 				this->zPerf->PostMeasure("Synchronizing", 1);
 
-				zSendUpdateDelayTimer = 0.0f;
-				SendToAllClients(this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_UPDATES_PER_SEC, (float)this->zGameTimer->GetFPS()));
+				this->zSendUpdateDelayTimer = 0.0f;
+				
 			}
 		}
 	}
+	this->zPerf->PostMeasure("Updating Game", 0);
 }
 
 const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClients,  const std::string& gameModeName, const std::string& mapName)
@@ -232,6 +275,8 @@ unsigned int Host::GetNumClients() const
 
 void Host::ReadMessages()
 {
+	this->zPerf->PreMeasure("Message Reading", 0);
+
 	static unsigned int MAX_MESSAGES_TO_READ = 10000;
 	unsigned int nrOfMessages = this->GetEventQueueSize();
 
@@ -263,6 +308,7 @@ void Host::ReadMessages()
 		// Unhandled Message
 		SAFE_DELETE(pe);
 	}
+	this->zPerf->PostMeasure("Message Reading", 0);
 }
 
 void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &message )
@@ -635,7 +681,6 @@ void Host::HandleLootRequest( const std::vector<std::string> &msgArray, ClientDa
 	int _subType = 20;
 	if (msgArray.size() > 3)
 	{
-		
 		_objID = this->zMessageConverter.ConvertStringToInt(M_LOOT_ITEM, msgArray[0]);
 		_itemID = this->zMessageConverter.ConvertStringToInt(M_OBJECT_ID, msgArray[1]);
 		_type = this->zMessageConverter.ConvertStringToInt(M_ITEM_TYPE, msgArray[2]);
@@ -663,6 +708,12 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 		if(it_m->find(M_MESH_MODEL) == 0)
 		{
 			e.playerModel = this->zMessageConverter.ConvertStringToSubstring(M_MESH_MODEL, (*it_m));
+
+			// Force Lowercase on Model
+			for( unsigned int x=0; x<e.playerModel.length(); ++x )
+			{
+				e.playerModel[x] = tolower(e.playerModel[x]);
+			}
 		}
 		else if(it_m->find(M_DIRECTION) == 0)
 		{

@@ -38,6 +38,15 @@ bool PlayerHumanBehavior::Update( float dt )
 	if ( PlayerBehavior::Update(dt) )
 		return true;
 
+	if(BioActor *bActor = dynamic_cast<BioActor*>(this->zActor))
+	{
+		if(bActor->InAction())
+		{
+			this->zVelocity = Vector3(0.0f, 0.0f, 0.0f);
+			return false;
+		}
+	}
+
 	KeyStates keyStates = this->zPlayer->GetKeys();
 
 	Vector3 curPosition = this->zActor->GetPosition();
@@ -179,8 +188,12 @@ bool PlayerHumanBehavior::Update( float dt )
 			}
 		}
 	}
-	
-
+	if(this->zVelocity.GetDotProduct(this->zActor->GetDir()) < 0)
+	{
+		float lSpeed = this->zVelocity.GetLength();
+		this->zVelocity.Normalize();
+		this->zVelocity *= (lSpeed * 0.5);
+	}
 	// Apply Velocity
 	Vector3 newPosition = curPosition + (zVelocity * dt) + Vector3(0.0f, this->zVelDown, 0.0f) + (groundNormal * dt);
 

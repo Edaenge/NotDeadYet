@@ -5,8 +5,8 @@ static const std::string PATH			= "UserData.cfg";
 static const std::string player_Settings = "[PlayerSettings]";
 static const std::string playerName		= "NAME";
 static const std::string playerModel	= "MODEL";
-static const std::string DefaultName	= "John_Doe";
-static const std::string DefaultModel	= "Media/Models/temp_guy.obj";
+static const std::string DefaultName	= "Xavier";
+static const std::string DefaultModel	= "Media/Models/token_anims.fbx";
 
 static const std::string END			= "#END";
 

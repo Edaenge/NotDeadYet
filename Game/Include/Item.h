@@ -28,45 +28,58 @@ public:
 	Item(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType);
 	Item(const unsigned int itemType, const unsigned int itemSubType);
 	virtual ~Item(){}
+
 	/*! Returns Item ID*/
 	inline unsigned int GetID() const {return this->zID;}
+
 	/*! Returns the Item Weight*/
 	inline unsigned int GetWeight() const {return this->zWeight;}
+
 	/*! Returns the Item Description*/
-	std::string GetItemName() const {return this->zItemName;}
+	inline const std::string& GetItemName() const {return this->zItemName;}
+
 	/*! Returns the Item Type*/
-	unsigned int GetItemType() const {return this->zItemType;}
-	unsigned int GetItemSubType() const {return this->zItemSubType;}
+	inline unsigned int GetItemType() const {return this->zItemType;}
+	inline unsigned int GetItemSubType() const {return this->zItemSubType;}
+
 	/*! Returns the Item Description*/
-	std::string GetItemDescription() const {return this->zItemDescription;}
+	inline const std::string& GetItemDescription() const {return this->zItemDescription;}
+
 	/*! Returns number of stacks the item has.*/
-	unsigned int GetStackSize() const {return this->zStacks;}
-	unsigned int GetSlotSize() const {return this->zSlotSize;}
-	std::string GetIconPath() const {return this->zIconPath;}
+	inline unsigned int GetStackSize() const {return this->zStacks;}
+	inline unsigned int GetSlotSize() const {return this->zSlotSize;}
+	inline const std::string& GetIconPath() const {return this->zIconPath;}
 
-	void SetIconPath(const std::string& path) {this->zIconPath = path;}
+	inline void SetIconPath(const std::string& path) {this->zIconPath = path;}
+
 	/*! Sets the Item ID*/
-	void SetItemID(const unsigned int id) {this->zID = id;}
-	/*! Sets the Item Weight*/
-	void SetItemWeight(const unsigned int weight) {this->zWeight = weight;}
-	/*! Sets the Item Name*/
-	void SetItemName(const std::string& name) {this->zItemName = name;}
-	/*! Sets The Item Type*/
-	void SetItemType(const unsigned int type) {this->zItemType = type;}
-	void SetItemSubType(const unsigned int SubType) {this->zItemSubType = SubType;}
-	/*! Sets the Item Description*/
-	void SetItemDescription(const std::string& description) {this->zItemDescription = description;}
-	/*! Sets the mesh model*/
-	void SetModel(const std::string& model) {this->zMeshModel = model;}
-	/*! Sets the Item Stack Size.*/
-	void SetStackSize(const unsigned int size) {this->zStacks = size;}
-	void SetSlotSize(const unsigned int size) {this->zSlotSize = size;}
-	void SetStacking(bool value) {this->zStacking = value;}
-	void IncreaseStackSize(const unsigned int size) {this->zStacks += size;}
-	void DecreaseStackSize(const unsigned int size) {this->zStacks -= size;}
+	inline void SetItemID(const unsigned int id) {this->zID = id;}
 
-	bool GetStacking() const {return this->zStacking;}
-	const std::string& GetModel() const {return this->zMeshModel;}
+	/*! Sets the Item Weight*/
+	inline void SetItemWeight(const unsigned int weight) {this->zWeight = weight;}
+
+	/*! Sets the Item Name*/
+	inline void SetItemName(const std::string& name) {this->zItemName = name;}
+
+	/*! Sets The Item Type*/
+	inline void SetItemType(const unsigned int type) {this->zItemType = type;}
+	inline void SetItemSubType(const unsigned int SubType) {this->zItemSubType = SubType;}
+
+	/*! Sets the Item Description*/
+	inline void SetItemDescription(const std::string& description) {this->zItemDescription = description;}
+
+	/*! Sets the mesh model*/
+	inline void SetModel(const std::string& model) {this->zMeshModel = model;}
+
+	/*! Sets the Item Stack Size.*/
+	inline void SetStackSize(const unsigned int size) {this->zStacks = size;}
+	inline void SetSlotSize(const unsigned int size) {this->zSlotSize = size;}
+	inline void SetStacking(bool value) {this->zStacking = value;}
+	inline void IncreaseStackSize(const unsigned int size) {this->zStacks += size;}
+	inline void DecreaseStackSize(const unsigned int size) {this->zStacks -= size;}
+
+	inline bool GetStacking() const {return this->zStacking;}
+	inline const std::string& GetModel() const {return this->zMeshModel;}
 
 	virtual bool Use() = 0;
 	virtual std::string ToMessageString(NetworkMessageConverter* NMC);

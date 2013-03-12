@@ -9,13 +9,11 @@ class WorldAnchor;
 
 class Behavior : public Observer
 {
-	typedef std::chrono::duration<float, std::ratio<1, 1>> fSeconds;
-
 protected:
 	Actor* zActor;
 	World* zWorld;
 	WorldAnchor* zAnchor;
-	std::chrono::time_point<std::chrono::system_clock, fSeconds> zAwakeTime;
+	std::chrono::time_point<std::chrono::system_clock, std::chrono::microseconds> zAwakeTime;
 	bool zRemoveBehavior;
 
 public:
@@ -37,6 +35,6 @@ public:
 	// Handles The Anchor Update From ActorMovedEvent
 	virtual void OnEvent(Event* e);
 
-	bool Removed() {return this->zRemoveBehavior;}
-	void Remove() {this->zRemoveBehavior = true;}
+	inline bool Removed() {return this->zRemoveBehavior;}
+	inline void Remove() {this->zRemoveBehavior = true;}
 };

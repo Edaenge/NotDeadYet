@@ -55,10 +55,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 {	
 
 	this->zPerf = NULL;
-	this->zCameraOffset["Media/Models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	
-	this->zCameraOffset["Media/Models/temp_guy.obj"] = Vector3(0.0f, 1.9f, 0.0f);
-	this->zCameraOffset["Media/Models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
-	this->zCameraOffset["Media/Models/Ball.obj"] = Vector3(0.0f, 0.0f, 0.0f);
+	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	
+	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
+	this->zCameraOffset["media/models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zCameraOffset["media/models/ghost.obj"] = Vector3(0.0f, 0.0f, 0.0f);
 	
 // Create World
 	if(worldFile != "")
@@ -106,10 +106,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	//this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
-	//this->SpawnItemsDebug();
+	this->SpawnItemsDebug();
 	//this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 
@@ -676,9 +673,13 @@ void Game::OnEvent( Event* e )
 	else if( ClientDataEvent* CDE = dynamic_cast<ClientDataEvent*>(e) )
 	{
 		Player* player = zPlayers[CDE->clientData];
-		if (player)
-			if( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(player->GetBehavior()))
+		if ( player && player->GetBehavior() )
+		{
+			if ( PlayerBehavior* dCastBehavior = dynamic_cast<PlayerBehavior*>(player->GetBehavior()) )
+			{
 				dCastBehavior->ProcessClientData(CDE->direction, CDE->rotation);
+			}
+		}
 	}
 	else if ( PlayerDisconnectedEvent* PDCE = dynamic_cast<PlayerDisconnectedEvent*>(e) )
 	{
@@ -707,7 +708,14 @@ void Game::OnEvent( Event* e )
 	else if (PlayerCraftItemEvent* PCIE = dynamic_cast<PlayerCraftItemEvent*>(e))
 	{
 		this->zPerf->PreMeasure("Craft Event Handling", 3);
-		this->HandleCraftItem(PCIE->clientData, PCIE->craftedItemType, PCIE->craftedItemSubType);
+		if(this->HandleCraftItem(PCIE->clientData, PCIE->craftedItemType, PCIE->craftedItemSubType))
+		{
+			if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PCIE->clientData]->zBehavior->GetActor()))
+			{
+				bActor->SetAction("Crafting", 5.0f);
+				this->zPlayers[PCIE->clientData]->zBehavior->Sleep(5.0f);
+			}
+		}
 		this->zPerf->PostMeasure("Craft Event Handling", 3);
 	}
 	else if (PlayerFillItemEvent* PFIE = dynamic_cast<PlayerFillItemEvent*>(e))
@@ -980,13 +988,22 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
 	{
+		// Filter Player Models
+		static const std::string defaultModel = "media/models/token_anims.fbx";
+		const std::string* selectedModel = &defaultModel;
+
+		if ( UDE->playerModel == "media/models/token_anims.fbx" )
+		{
+			selectedModel = &UDE->playerModel;
+		}
+
 		// Create Player Actor
 		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
 		
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
-		pActor->SetModel(UDE->playerModel);
+		pActor->SetModel(*selectedModel);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
-		zPlayers[UDE->clientData]->zUserModel = UDE->playerModel;
+		zPlayers[UDE->clientData]->zUserModel = *selectedModel;
 
 		
 		pActor->AddObserver(this->zGameMode);
@@ -1000,7 +1017,7 @@ void Game::OnEvent( Event* e )
 		inv->AddObserver(this);
 		inv->SetPlayer(zPlayers[UDE->clientData]);
 
-		auto offsets = this->zCameraOffset.find(UDE->playerModel);
+		auto offsets = this->zCameraOffset.find(*selectedModel);
 		
 		if(offsets != this->zCameraOffset.end())
 			pActor->SetCameraOffset(offsets->second);
@@ -1935,7 +1952,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 	}
 }
 
-void Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const unsigned int itemSubType)
+bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const unsigned int itemSubType)
 {
 	auto playerIterator = this->zPlayers.find(cd);
 	auto playerBehavior = playerIterator->second->GetBehavior();
@@ -2039,6 +2056,7 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 							}
 
 							//cd->Send(add_msg);
+							return true;
 						}
 						else
 						{
@@ -2080,6 +2098,7 @@ void Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 			}
 		}
 	}
+	return false;
 }
 
 void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
