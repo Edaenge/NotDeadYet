@@ -109,9 +109,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->SpawnItemsDebug();
 	//this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
-	//this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -978,10 +975,10 @@ void Game::OnEvent( Event* e )
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
 	{
 		// Filter Player Models
-		static const std::string defaultModel = "media/models/temp_guy_movement_anims.fbx";
+		static const std::string defaultModel = "media/models/token_anims.fbx";
 		const std::string* selectedModel = &defaultModel;
 
-		if ( UDE->playerModel == "media/models/temp_guy_movement_anims.fbx" )
+		if ( UDE->playerModel == "media/models/token_anims.fbx" )
 		{
 			selectedModel = &UDE->playerModel;
 		}
