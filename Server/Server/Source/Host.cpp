@@ -135,8 +135,8 @@ void Host::Life()
 		{
 			if (this->zDeltaTime < TARGET_DT)
 			{
-				DWORD sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
-				Sleep(sleepTime);
+				float sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
+				Sleep((DWORD)sleepTime);
 			}
 		}
 	}

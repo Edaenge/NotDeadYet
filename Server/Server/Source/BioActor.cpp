@@ -25,11 +25,14 @@ BioActor::BioActor() : Actor()
 	CalculateCollisionPoints();
 }
 
-BioActor::BioActor(Player* player) : Actor()
+BioActor::BioActor(Player* player, Observer* game) : Actor()
 {
 	this->zPlayer = player;
 
-	zInventory = new Inventory();
+	this->zInventory = new Inventory();
+	this->zInventory->AddObserver(game);
+	this->zInventory->SetPlayer(player);
+
 	this->zState = STATE_IDLE;
 	this->zVelocity = V_WALK_SPEED;
 

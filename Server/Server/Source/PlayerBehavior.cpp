@@ -60,8 +60,8 @@ bool PlayerBehavior::RefreshNearCollideableActors( const std::set<Actor*>& actor
 		return false;
 
 	unsigned int size = actors.size();
-	// Increment 5%
-	unsigned int increment = (unsigned int)(size * 0.05);
+	// Increment 10%
+	unsigned int increment = (unsigned int)(size * 0.10);
 
 	Vector3 pos = this->zActor->GetPosition();
 
