@@ -1864,8 +1864,8 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				projBehavior->AddObserver(this->zSoundHandler);
 
 				//Set Nearby actors
-				projBehavior->SetNearBioActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearBioActors() );
-				projBehavior->SetNearWorldActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearWorldActors() );
+				projBehavior->SetNearDynamicActors( zPlayers[cd]->GetBehavior()->GetNearDynamicActors() );
+				projBehavior->SetNearStaticActors( zPlayers[cd]->GetBehavior()->GetNearStaticActors() );
 				
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
@@ -1916,7 +1916,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 		//Check Collisions
 		range = meele->GetRange();
-		victim = dynamic_cast<BioActor*>( zActorManager->CheckCollisions( actor, range, pBehavior->GetNearBioActors() ) );
+		victim = dynamic_cast<BioActor*>( zActorManager->CheckCollisions( actor, range, pBehavior->GetNearDynamicActors() ) );
 		
 		if(victim)
 		{

@@ -7,7 +7,7 @@ Actor::Actor() :
 	zPhysicsObject(NULL)
 {
 	this->zEnergy = 0.0f;
-	this->zCollisionRadius = 0.0f;
+	this->zCollisionRadius = 0.3f;
 	SetScale(Vector3(0.05f, 0.05f, 0.05f), false);
 }
 
