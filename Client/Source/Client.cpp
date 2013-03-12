@@ -798,6 +798,20 @@ void Client::CheckGhostSpecificKeys()
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
 			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
+
+		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)) )
+		{
+			// Check for targets to possess!
+
+			std::vector<unsigned int> ids;
+
+			ids = this->RayVsWorld();
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_TRY_TO_POSSESS_ANIMAL, 0);
+			this->zServerChannel->Send(msg);
+		}
+
+
 	}
 }
 
@@ -1569,7 +1583,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	}
 	else if(msgArray[0].find(M_SELF_ID.c_str()) == 0)
 	{
-		this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
+		//this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
 
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 		this->ResetPhysicalConditions();
@@ -1912,6 +1926,19 @@ void Client::UpdateHealthAndBleedingImage()
 		{
 			this->zBleedingOpacity -= this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
 		}
+
+
+		if(this->zBleedingOpacity >= 0.22f || this->zBleedingOpacity <= 0.0f)
+		{
+			if(!this->zDroppingPulse)
+			{
+				this->zDroppingPulse = true;
+			}
+			else 
+			{
+				this->zDroppingPulse = false;
+			}
+		}
 	}
 	else
 	{
@@ -1919,17 +1946,7 @@ void Client::UpdateHealthAndBleedingImage()
 	}
 	//this->zHealthOpacity += testBleed;
 
-	if(this->zBleedingOpacity >= 0.22f || this->zBleedingOpacity <= 0.0f)
-	{
-		if(!this->zDroppingPulse)
-		{
-			this->zDroppingPulse = true;
-		}
-		else 
-		{
-			this->zDroppingPulse = false;
-		}
-	}
+	
 
 
 	/*if(this->zPulseCounter > pulseLimit)

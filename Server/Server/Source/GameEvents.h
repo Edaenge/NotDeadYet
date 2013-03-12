@@ -252,6 +252,16 @@ public:
 	int zAnimalType;
 };
 
+class PlayerAnimalPossessEvent : public Event
+{
+public:
+	virtual ~PlayerAnimalPossessEvent() {}
+
+	ClientData* clientData;
+	Actor* zActor;
+	int zAnimalType;
+};
+
 class PlayerLeaveAnimalEvent : public Event
 {
 public:

@@ -22,5 +22,5 @@
 8     //zSupsiciousRandomInterval
 6     //zSupsiciousAddition
 1.2   //zWalkingVelocity
-4.4   //zAttackingVelocity
-7.8   //zFleeingVelocity
+2.4   //zAttackingVelocity
+2.8   //zFleeingVelocity
