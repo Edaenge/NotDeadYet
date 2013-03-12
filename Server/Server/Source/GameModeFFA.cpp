@@ -196,7 +196,7 @@ void GameModeFFA::OnEvent( Event* e )
 
 			if( counter >= this->zPlayers.size() )
 			{
-				this->zGame->RestartGame();
+				//this->zGame->RestartGame();
 				StartGameMode();
 			}
 		}
@@ -600,7 +600,7 @@ bool GameModeFFA::StartGameMode()
 
 	std::set<Item*> items = GenerateItems();
 	//this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items);
-	this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 200.0f, items);
+	this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 150.0f, items);
 
 	return true;
 }

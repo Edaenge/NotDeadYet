@@ -6,13 +6,15 @@ static const Vector3 GRAVITY = Vector3(.0f, -9.82f, .0f);
 //Heights
 static const float MAX_AIRBORN_HEIGHT = 200.0f;
 static const float MAX_FALL_HEIGHT = 15.0f;
+//MAX y velocity
+static const float MAX_FALL_VELOCITY_PARACHUTE			= 15.0f;
+static const float MAX_FALL_VELOCITY_NONE_PARACHUTE		= 45.0f;
 
 SupplyDropBehavior::SupplyDropBehavior( Actor* actor, World* world, Vector2& destination )
 	: Behavior(actor, world)
 {
 	this->zMoving = true;
-	this->zSpeed = -10.0f;
-	
+
 	if(!world->IsInside( destination) )
 		destination = this->zWorld->GetWorldCenter();
 
@@ -20,6 +22,7 @@ SupplyDropBehavior::SupplyDropBehavior( Actor* actor, World* world, Vector2& des
 	this->zDestination = Vector3(destination.x, yValue, destination.y);
 	
 	this->zVelocity = this->zDestination - this->zActor->GetPosition();
+	this->zVelocity.Normalize();
 
 	SupplyActor* sActor = dynamic_cast<SupplyActor*>(zActor);
 
@@ -76,31 +79,56 @@ bool SupplyDropBehavior::Update( float dt )
 
 	Vector3 newPos;
 	Vector3 newParachutePos;
-
 	newPos = sActor->GetPosition();
-	zVelocity.Normalize();
+
 	//Calculate new Position
-	zVelocity += GRAVITY * dt;
-	newPos += zVelocity;
-	
 	if( sActor->HasParachute() )
 	{
+		//If velocity fall is bigger than max, constant velocity has been reached
+		if( fabs(zVelocity.y) > MAX_FALL_VELOCITY_PARACHUTE )
+		{	
+			zVelocity.y = MAX_FALL_VELOCITY_PARACHUTE * -1;
+		}
+		
+		//If true, constant velocity hasn't been reached
+		if( fabs(zVelocity.y) != MAX_FALL_VELOCITY_PARACHUTE )
+		{
+			zVelocity = zVelocity + GRAVITY * dt;
+		}
+		
+		//Update parachute position
 		newParachutePos = sActor->GetParachute()->GetPosition();
-		newParachutePos += zVelocity;
+		newParachutePos += zVelocity * dt;
 		sActor->GetParachute()->SetPosition(newParachutePos);
 		
+		//Detach within this height
 		if( newPos.y <= MAX_FALL_HEIGHT )
 		{
 			//Notify?
 			Actor* parachute = sActor->DetatchParachute();
 		}
 	}
+	//No Parachute
 	else
 	{
-		//Do Something
+		//If velocity fall is bigger than max, constant velocity has been reached
+		if( fabs(zVelocity.y) > MAX_FALL_VELOCITY_NONE_PARACHUTE )
+		{	
+			zVelocity.y = MAX_FALL_VELOCITY_NONE_PARACHUTE * -1;
+		}
+
+		//If true, constant velocity hasn't been reached
+		if( fabs(zVelocity.y) != MAX_FALL_VELOCITY_NONE_PARACHUTE )
+		{
+			zVelocity = zVelocity + GRAVITY * dt;
+		}
+
 	}
 
-	//**Check if the actor has hit the destination**
+	//Update position
+	newPos += zVelocity * dt;
+
+	/***Check if the actor has hit the destination***/
 	if( newPos.y <= zDestination.y )
 	{
 		this->zMoving = false;
@@ -112,8 +140,6 @@ bool SupplyDropBehavior::Update( float dt )
 
 	//Update-Notify Position
 	this->zActor->SetPosition(newPos);
-	MaloW::Debug("SupplyDrop Y Position: " + MaloW::convertNrToString(newPos.y));
-
 
 	return false;
 }
