@@ -243,7 +243,7 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	{
 		try
 		{
-			zServerListener = new ServerListener(this, port);
+			zServerListener = new MaloW::ServerListener(this, port);
 			zServerListener->Start();
 		}
 		catch(const char *str)
@@ -290,7 +290,7 @@ void Host::ReadMessages()
 	{
 		MaloW::ProcessEvent* pe = PeekEvent();
 
-		if ( ClientConnectedEvent* CCE = dynamic_cast<ClientConnectedEvent*>(pe) )
+		if ( MaloW::ClientConnectedEvent* CCE = dynamic_cast<MaloW::ClientConnectedEvent*>(pe) )
 		{
 			// A Client Connected
 			HandleNewConnection(CCE->GetClientChannel());
@@ -299,7 +299,7 @@ void Host::ReadMessages()
 		{
 			HandleReceivedMessage(NP->GetChannel(), NP->GetMessage());
 		}
-		else if ( ClientDisconnectedEvent* CDE = dynamic_cast<ClientDisconnectedEvent*>(pe) )
+		else if ( MaloW::ClientDisconnectedEvent* CDE = dynamic_cast<MaloW::ClientDisconnectedEvent*>(pe) )
 		{
 			HandleClientDisconnect(CDE->GetClientChannel()->GetNetworkChannel());
 		}

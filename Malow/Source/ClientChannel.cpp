@@ -5,6 +5,7 @@
 #include "ReceiverProcess.h"
 #include "SenderProcess.h"
 #include "NetworkChannel.h"
+#include "SendPacketEvent.h"
 
 using namespace MaloW;
 
@@ -24,6 +25,9 @@ ClientChannel::ClientChannel(MaloW::Process* observerProcess, SOCKET sock, const
 
 	// Create Receiver Process
 	zReceiveProcess = new ReceiverProcess(zObserverProcess, this);
+
+	// Create Sender Process
+	zSenderProcess = new SenderProcess(zObserverProcess, this);
 }
 
 ClientChannel::~ClientChannel()
@@ -82,10 +86,10 @@ void ClientChannel::Disconnect()
 
 void ClientChannel::Send(const std::string& message)
 {
-	zNetworkChannel->Send(message);
+	zSenderProcess->PutEvent( new SendPacketEvent(message) );
 }
 
 void ClientChannel::TrySend(const std::string& message)
 {
-	zNetworkChannel->TrySend(message);
+	zSenderProcess->PutEvent( new SendPacketEvent(message) );
 }

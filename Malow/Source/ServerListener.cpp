@@ -2,8 +2,10 @@
 #include "ClientConnectedEvent.h"
 #include "NetworkException.h"
 
+using namespace MaloW;
 
-ServerListener::ServerListener( MaloW::Process *observer, const unsigned int &port ) : 
+
+ServerListener::ServerListener( Process *observer, const unsigned int &port ) : 
 	zObserver(observer), 
 	zPort(port)
 {
@@ -77,7 +79,7 @@ void ServerListener::Life()
 
 		if (this->stayAlive)
 		{
-			zObserver->PutEvent(new ClientConnectedEvent(new MaloW::ClientChannel(zObserver, newConnection, ip)));
+			zObserver->PutEvent(new ClientConnectedEvent(new ClientChannel(zObserver, newConnection, ip)));
 		}
 	}
 }

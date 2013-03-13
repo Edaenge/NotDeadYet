@@ -167,12 +167,12 @@ Game::~Game()
 	this->zPlayers.clear();
 
 	// Delete Subsystems
-	SAFE_DELETE(zWorld);
 	SAFE_DELETE(zActorManager);
 	SAFE_DELETE(zGameMode);
 	SAFE_DELETE(zSoundHandler);
 	SAFE_DELETE(zCraftingManager);
 	SAFE_DELETE(zMaterialSpawnManager);
+	SAFE_DELETE(zWorld);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -2365,5 +2365,4 @@ void Game::RestartGame()
 	SpawnItemsDebug();
 	//SpawnAnimalsDebug();
 	SpawnHumanDebug();
-
 }

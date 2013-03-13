@@ -10,14 +10,14 @@ namespace MaloW
 
 namespace MaloW
 {
-	class SenderProcess : public MaloW::Process
+	class SenderProcess : public Process
 	{
 	private:
-		MaloW::Process* zObserverProcess;
-		MaloW::ClientChannel* zClientChannel;
+		Process* zObserverProcess;
+		ClientChannel* zClientChannel;
 
 	protected:
-		SenderProcess(MaloW::Process* observerProcess, MaloW::ClientChannel* channel);
+		SenderProcess(Process* observerProcess, ClientChannel* channel);
 		virtual ~SenderProcess();
 
 		// Running Process
