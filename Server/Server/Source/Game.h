@@ -91,8 +91,10 @@ public:
 	Vector3 CalcPlayerSpawnPoint(int MaxPoints, Vector2 center);
 	Vector3 CalcPlayerSpawnPoint(int nr);
 	Vector3 CalcPlayerSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center);
+	
 	ActorManager* GetActorManager() {return this->zActorManager;}
 	World* GetWorld() {return this->zWorld;}
+	SoundHandler* GetSoundHandler() {return this->zSoundHandler;}
 
 	void SendToAll(std::string msg);
 

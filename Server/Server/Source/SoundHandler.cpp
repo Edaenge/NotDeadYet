@@ -77,6 +77,10 @@ void SoundHandler::OnEvent( Event* e )
 			(*it)->GetClientData()->Send(msg);
 		}
 	}
+	else if( SupplyDropLanded *SDL = dynamic_cast<SupplyDropLanded*>(e) )
+	{
+		//Implement here
+	}
 	else if(PlayerAddEvent *PAE = dynamic_cast<PlayerAddEvent *>(e))
 	{
 		zPlayers.insert(PAE->player);
@@ -85,7 +89,7 @@ void SoundHandler::OnEvent( Event* e )
 	{
 		zPlayers.erase(PAE->player);
 	}
-	else if(PlayerGhostMakesNoiseEvent* PGMNE = dynamic_cast<PlayerGhostMakesNoiseEvent*>(e))
+else if(PlayerGhostMakesNoiseEvent* PGMNE = dynamic_cast<PlayerGhostMakesNoiseEvent*>(e))
 	{
 		if(PGMNE->zActor->GetEnergy() >= 100.0f)
 		{
@@ -124,4 +128,3 @@ void SoundHandler::OnEvent( Event* e )
 		}
 	}
 }
-

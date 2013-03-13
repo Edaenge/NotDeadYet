@@ -26,12 +26,12 @@ static const unsigned int MISC_MIN		= 2;
 static const unsigned int MATERIAL_MAX	= 4;
 static const unsigned int MATERIAL_MIN	= 3;
 
-static const float VAR					= 0.2f;
+static const unsigned int VAR			= 5;
 
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
 	srand((unsigned int)time(0));
-	this->zSupplyDrop = new SupplyDrop( game->GetActorManager(), game->GetWorld() );
+	this->zSupplyDrop = new SupplyDrop( game->GetActorManager(), game->GetWorld(), game->GetSoundHandler() );
 	this->zGameStarted = false;
 	this->zGameEnd = false;
 	//zKillLimit = killLimit;
@@ -645,9 +645,16 @@ std::set<Item*> GameModeFFA::GenerateItems()
 	unsigned int materials	= rand() % MATERIAL_MAX + MATERIAL_MIN;
 
 	unsigned int size = zPlayers.size();
-	weapons		*= size * VAR;
-	misc		*= size * VAR;
-	materials	*= size * VAR;
+	weapons		*= size / VAR;
+	misc		*= size / VAR;
+	materials	*= size / VAR;
+
+	if(weapons == 0)
+		weapons = WEAPON_MIN;
+	if(misc == 0)
+		misc = MISC_MIN;
+	if(materials == 0)
+		materials = MATERIAL_MIN;
 
 	std::set<Item*> items;
 	
@@ -727,22 +734,4 @@ std::set<Item*> GameModeFFA::GenerateItems()
 
 	return items;
 
-	/*Just a test*/
-/*	std::set<Item*> items;
-
-	const Food*			temp_food		= GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
-	const RangedWeapon* temp_R_weapon	= GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
-	const Projectile*	temp_Arrow		= GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
-	const MeleeWeapon*	temp_M_weapon	= GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE);
-
-	Food* food = new Food(*temp_food);
-	RangedWeapon* ranged = new RangedWeapon(*temp_R_weapon);
-	Projectile* arrow = new Projectile(*temp_Arrow);
-	MeleeWeapon* melee = new MeleeWeapon(*temp_M_weapon);
-
-	items.insert(food);
-	items.insert(ranged);
-	items.insert(arrow);
-	items.insert(melee);
-	*/
 }

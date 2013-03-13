@@ -1,18 +1,23 @@
 #include "SupplyDropBehavior.h"
 #include "SupplyActor.h"
 #include "World/World.h"
+#include "ActorEvent.h"
+#include "SoundHandler.h"
+
 
 static const Vector3 GRAVITY = Vector3(.0f, -9.82f, .0f);
 //Heights
 static const float MAX_AIRBORN_HEIGHT = 200.0f;
-static const float MAX_FALL_HEIGHT = 15.0f;
+static const float MAX_FALL_HEIGHT = 20.0f;
 //MAX y velocity
-static const float MAX_FALL_VELOCITY_PARACHUTE			= 15.0f;
+static const float MAX_FALL_VELOCITY_PARACHUTE			= 10.0f;
 static const float MAX_FALL_VELOCITY_NONE_PARACHUTE		= 45.0f;
 
-SupplyDropBehavior::SupplyDropBehavior( Actor* actor, World* world, Vector2& destination )
-	: Behavior(actor, world)
+SupplyDropBehavior::SupplyDropBehavior( Actor* actor, World* world, Vector2& destination, SoundHandler* soundHandler )
+	: Behavior(actor, world), zSoundHandler(soundHandler)
 {
+	AddObserver(this->zSoundHandler);
+
 	this->zMoving = true;
 
 	if(!world->IsInside( destination) )
@@ -31,7 +36,7 @@ SupplyDropBehavior::SupplyDropBehavior( Actor* actor, World* world, Vector2& des
 		Vector3 pos = sActor->GetPosition();
 
 		//Check Heights
-		if( sActor->HasParachute() )
+		if( sActor->IsParachuteAttached() )
 		{
 			if( pos.y > MAX_AIRBORN_HEIGHT )
 			{
@@ -64,12 +69,12 @@ SupplyDropBehavior::SupplyDropBehavior( Actor* actor, World* world, Vector2& des
 
 SupplyDropBehavior::~SupplyDropBehavior()
 {
-
+	RemoveObserver(this->zSoundHandler);
 }
 
 bool SupplyDropBehavior::Update( float dt )
 {
-	if( !zMoving )
+	if( !this->zMoving )
 		return true;
 
 	SupplyActor* sActor = dynamic_cast<SupplyActor*>(zActor);
@@ -77,12 +82,18 @@ bool SupplyDropBehavior::Update( float dt )
 	if( !sActor )
 		return true;
 
+	Actor* parachute = sActor->GetParachute();
 	Vector3 newPos;
 	Vector3 newParachutePos;
+	static bool crateLanded = false;
+
+	//Get Positions
 	newPos = sActor->GetPosition();
+	if( parachute )
+		newParachutePos = parachute->GetPosition();
 
 	//Calculate new Position
-	if( sActor->HasParachute() )
+	if( sActor->IsParachuteAttached() )
 	{
 		//If velocity fall is bigger than max, constant velocity has been reached
 		if( fabs(zVelocity.y) > MAX_FALL_VELOCITY_PARACHUTE )
@@ -96,50 +107,83 @@ bool SupplyDropBehavior::Update( float dt )
 			zVelocity = zVelocity + GRAVITY * dt;
 		}
 		
+		//Update crate pos
+		newPos += zVelocity * dt;
+		sActor->SetPosition(newPos);
+
 		//Update parachute position
-		newParachutePos = sActor->GetParachute()->GetPosition();
 		newParachutePos += zVelocity * dt;
-		sActor->GetParachute()->SetPosition(newParachutePos);
-		
+		parachute->SetPosition(newParachutePos);
+
 		//Detach within this height
 		if( newPos.y <= MAX_FALL_HEIGHT )
 		{
-			//Notify?
-			Actor* parachute = sActor->DetatchParachute();
+			sActor->DetatchParachute();
 		}
+
 	}
-	//No Parachute
+	//No Parachute Attached
 	else
 	{
-		//If velocity fall is bigger than max, constant velocity has been reached
-		if( fabs(zVelocity.y) > MAX_FALL_VELOCITY_NONE_PARACHUTE )
-		{	
-			zVelocity.y = MAX_FALL_VELOCITY_NONE_PARACHUTE * -1;
+		if( !crateLanded )
+		{
+			//If velocity fall is bigger than max, constant velocity has been reached
+			if( fabs(zVelocity.y) > MAX_FALL_VELOCITY_NONE_PARACHUTE )
+			{	
+				zVelocity.y = MAX_FALL_VELOCITY_NONE_PARACHUTE * -1;
+			}
+
+			//If true, constant velocity hasn't been reached
+			if( fabs(zVelocity.y) != MAX_FALL_VELOCITY_NONE_PARACHUTE )
+			{
+				zVelocity = zVelocity + GRAVITY * dt;
+			}
+
+			//Update crate pos
+			newPos += zVelocity * dt;
+			this->zActor->SetPosition(newPos);
 		}
 
-		//If true, constant velocity hasn't been reached
-		if( fabs(zVelocity.y) != MAX_FALL_VELOCITY_NONE_PARACHUTE )
+		//Parachute
+		if( parachute )
 		{
-			zVelocity = zVelocity + GRAVITY * dt;
+			Vector3 vel = zVelocity;
+			vel.y = MAX_FALL_VELOCITY_PARACHUTE * 0.5f;
+			
+			newParachutePos += (vel * -1) * dt;
+			parachute->SetPosition(newParachutePos);
 		}
 
 	}
 
-	//Update position
-	newPos += zVelocity * dt;
-
-	/***Check if the actor has hit the destination***/
-	if( newPos.y <= zDestination.y )
+	/***Check if the crate has hit the destination***/
+	if( !crateLanded && newPos.y <= zDestination.y )
 	{
-		this->zMoving = false;
 		sActor->SetPosition(zDestination);
+
+		if( !parachute )
+		{
+			this->zMoving = false;
+			return true;
+		}
+
+		crateLanded = true;
+
+		//Notify Observers
+		SupplyDropLanded e;
+		e.zActor = sActor;
+		NotifyObservers(&e);
+		
+	}
+
+	/***Check if the parachute has hit the destination***/
+	if( newParachutePos.y <= zDestination.y )
+	{
+		parachute->SetScale( Vector3(0,0,0) );
+		zMoving = false;
 
 		return true;
 	}
-
-
-	//Update-Notify Position
-	this->zActor->SetPosition(newPos);
 
 	return false;
 }
