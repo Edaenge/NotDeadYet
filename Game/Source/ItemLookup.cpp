@@ -631,14 +631,6 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Material*& 
 		else
 			ma->SetStacking(false);
 	}
-	else if(command == CRAFTING_TYPE)
-	{
-		ma->SetCraftingType((int)MaloW::convertStringToFloat(key));
-	}
-	else if(command == STACKS_REQUIREMENT)
-	{
-		ma->SetRequiredStackToCraft((int)MaloW::convertStringToFloat(key));
-	}
 
 	return true;
 }
