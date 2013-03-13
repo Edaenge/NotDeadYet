@@ -102,6 +102,7 @@ public:
 	void SetPerformancePtr(MaloWPerformance* perf) {this->zPerf = perf;}
 
 	Vector3 GetOffset(const std::string& model);
+	void CheckPlayerUseBow(Player* player);
 
 private:
 	//Test function, spawns items/Animals

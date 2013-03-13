@@ -15,7 +15,7 @@ private:
 	bool zMoving;
 
 public:
-	ProjectileArrowBehavior(Actor* actor, World* world);
+	ProjectileArrowBehavior(Actor* actor, World* world, float speed = 35.0f);
 	virtual ~ProjectileArrowBehavior();
 
 	bool Update(float dt);
