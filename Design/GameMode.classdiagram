@@ -177,9 +177,6 @@
           </association>
         </targetEnds>
         <ownedAttributesInternal>
-          <property Id="484e7862-1a52-48f2-b717-28f2d15bc2f8" name="zBehaviors[]" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="6401bc02-c95b-4f69-b362-0fe0e3909ddd" />
-          </property>
           <property Id="ca7738f3-c7ec-4e87-904f-6b5e15206707" name="zPlayers[]" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="d8c671c8-f443-415f-905f-3e36ea17fb97" />
           </property>
@@ -191,9 +188,6 @@
           </property>
           <property Id="d163dcd8-932c-4899-a921-29c456b255a6" name="GameMode* zMode;" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="6e3c8b6d-a386-46aa-a8ad-f88617cfa89a" />
-          </property>
-          <property Id="ec49c440-b423-40f7-bd60-de25dd702da3" name="Set&lt;Behavior*&gt;" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
-            <elementDefinition Id="672d4b4b-4c66-4c00-88bd-5b3c70b1cfa1" />
           </property>
         </ownedAttributesInternal>
         <ownedOperationsInternal>
@@ -352,6 +346,9 @@
           </property>
           <property Id="659fe363-4e2f-41b2-8d42-cc21c54a4fc4" name="*zSyncher" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
             <elementDefinition Id="87b88622-78f4-4240-9d45-2604f4351e73" />
+          </property>
+          <property Id="100efdf5-6e99-4740-bea1-eeb502f565cc" name="Set&lt;Behavior*&gt;" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="b0ec016a-c183-4af5-ab41-cb0033a38f91" />
           </property>
         </ownedAttributesInternal>
         <ownedOperationsInternal>

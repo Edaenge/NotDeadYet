@@ -2020,17 +2020,6 @@
         </targetEnds>
         <ownedAttributesInternal>
           <property
-            Id="6401bc02-c95b-4f69-b362-0fe0e3909ddd"
-            name="zBehaviors[]"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
             Id="d8c671c8-f443-415f-905f-3e36ea17fb97"
             name="zPlayers[]"
             isLeaf="false"
@@ -2066,17 +2055,6 @@
           <property
             Id="6e3c8b6d-a386-46aa-a8ad-f88617cfa89a"
             name="GameMode* zMode;"
-            isLeaf="false"
-            isStatic="false"
-            isReadOnly="false"
-            isUnique="false"
-            isDerived="false"
-            isDerivedUnion="false"
-            aggregation="None"
-            isComposite="false" />
-          <property
-            Id="672d4b4b-4c66-4c00-88bd-5b3c70b1cfa1"
-            name="Set&lt;Behavior*&gt;"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"
@@ -2405,6 +2383,17 @@
           <property
             Id="87b88622-78f4-4240-9d45-2604f4351e73"
             name="*zSyncher"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="b0ec016a-c183-4af5-ab41-cb0033a38f91"
+            name="Set&lt;Behavior*&gt;"
             isLeaf="false"
             isStatic="false"
             isReadOnly="false"

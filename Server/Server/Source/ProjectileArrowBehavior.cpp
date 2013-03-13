@@ -29,7 +29,6 @@ ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world, fl
 
 ProjectileArrowBehavior::~ProjectileArrowBehavior()
 {
-
 }
 
 bool ProjectileArrowBehavior::Update( float dt )
