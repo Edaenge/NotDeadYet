@@ -1552,7 +1552,6 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 					iActor->RemoveItem();
 					this->zActorManager->RemoveActor(iActor);
 				}
-
 			}
 			else
 			{
