@@ -73,8 +73,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	LoadEntList("Entities.txt");
 
 	// Create soundhandler and let it observe game.
-	this->zSoundHandler = new SoundHandler();
-	this->AddObserver(this->zSoundHandler);
+	this->zSoundHandler = new SoundHandler(this);
 
 // Actor Manager
 	this->zActorManager = new ActorManager(syncher, this->zSoundHandler);
