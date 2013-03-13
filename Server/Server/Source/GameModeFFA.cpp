@@ -143,10 +143,9 @@ void GameModeFFA::OnEvent( Event* e )
 			{
 				if(aActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 				{
-					this->zGame->GetActorManager()->RemoveBehavior(aActor);
+					this->zGame->GetActorManager()->RemoveBehavior(aActor, false);
 				}
 			}
-			
 		}
 	}
 	else if (PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
@@ -517,6 +516,8 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	player->GetKeys().ClearStates();
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
+	pActor->GetInventory()->UnEquipAll();
+
 	this->zGame->ModifyLivingPlayers(-1);
 
 	ClientData* cd = player->GetClientData();
@@ -531,8 +532,6 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	gActor->SetDir(direction);
 	gActor->SetEnergy(energy + 25.0f);
 	gActor->AddObserver(this);
-	gActor->SetModel("Media/Models/ghost.obj");
-	gActor->SetScale(Vector3());
 
 	//Create Ghost behavior
 	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);

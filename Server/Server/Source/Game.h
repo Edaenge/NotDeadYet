@@ -104,6 +104,7 @@ public:
 	void SetPerformancePtr(MaloWPerformance* perf) {this->zPerf = perf;}
 
 	Vector3 GetOffset(const std::string& model);
+	void CheckPlayerUseBow(Player* player);
 
 private:
 	//Test function, spawns items/Animals
@@ -123,7 +124,7 @@ private:
 	void HandleFillItem(ClientData* cd, const unsigned int itemID);
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID);
-	void HandleBindings(const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType);
+	void HandleBindings(ClientData* cd, const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType);
 
 	void UpdateSunDirection(float dt);
 	void UpdateFogEnclosement(float dt);

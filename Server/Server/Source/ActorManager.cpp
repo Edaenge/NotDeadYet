@@ -89,7 +89,7 @@ void ActorManager::RemoveActor( Actor* actor )
 	delete actor;
 } 
 
-void ActorManager::RemoveBehavior( Actor* actor)
+void ActorManager::RemoveBehavior(Actor* actor, bool instant)
 {
 	auto it_zBehavior_end = this->zBehaviors.end();
 
@@ -98,11 +98,18 @@ void ActorManager::RemoveBehavior( Actor* actor)
 		if ( (*it)->GetActor() == actor )
 		{
 			Behavior* temp = *it;
-			it = this->zBehaviors.erase(it);
-			RemoveObserver(temp);
-			SAFE_DELETE(temp);
+			if (instant)
+			{
+				it = this->zBehaviors.erase(it);
+				RemoveObserver(temp);
+				SAFE_DELETE(temp);
 
-			it = it_zBehavior_end;
+				it = it_zBehavior_end;
+			}
+			else
+			{
+				temp->Remove();
+			}
 		}
 		else
 		{

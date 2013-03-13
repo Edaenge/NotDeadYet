@@ -243,7 +243,7 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 	{
 		try
 		{
-			zServerListener = new ServerListener(this, port);
+			zServerListener = new MaloW::ServerListener(this, port);
 			zServerListener->Start();
 		}
 		catch(const char *str)
@@ -285,24 +285,23 @@ void Host::ReadMessages()
 		return;
 
 	nrOfMessages = min(nrOfMessages, MAX_MESSAGES_TO_READ);
-	MaloW::ProcessEvent* pe;
 
 	for (unsigned int i = 0; i < nrOfMessages; i++)
 	{
-		pe = PeekEvent();
+		MaloW::ProcessEvent* pe = PeekEvent();
 
-		if ( ClientConnectedEvent* CCE = dynamic_cast<ClientConnectedEvent*>(pe) )
+		if ( MaloW::ClientConnectedEvent* CCE = dynamic_cast<MaloW::ClientConnectedEvent*>(pe) )
 		{
 			// A Client Connected
 			HandleNewConnection(CCE->GetClientChannel());
 		}
 		else if ( MaloW::NetworkPacket* NP = dynamic_cast<MaloW::NetworkPacket*>(pe) )
 		{
-			HandleReceivedMessage(dynamic_cast<MaloW::ClientChannel*>(NP->GetChannel()), NP->GetMessage());
+			HandleReceivedMessage(NP->GetChannel(), NP->GetMessage());
 		}
-		else if ( ClientDisconnectedEvent* CDE = dynamic_cast<ClientDisconnectedEvent*>(pe) )
+		else if ( MaloW::ClientDisconnectedEvent* CDE = dynamic_cast<MaloW::ClientDisconnectedEvent*>(pe) )
 		{
-			HandleClientDisconnect(CDE->GetClientChannel());
+			HandleClientDisconnect(CDE->GetClientChannel()->GetNetworkChannel());
 		}
 
 		// Unhandled Message
@@ -311,15 +310,21 @@ void Host::ReadMessages()
 	this->zPerf->PostMeasure("Message Reading", 0);
 }
 
-void Host::HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &message )
+void Host::HandleReceivedMessage( MaloW::NetworkChannel* cc, const std::string &message )
 {
 	std::vector<std::string> msgArray;
 	if(message.empty())
 		return;
 
 	msgArray = this->zMessageConverter.SplitMessage(message); 
-	ClientData* cd = zClients[cc];
 	
+	auto cdIt = zClients.find(cc);
+	if ( cdIt != zClients.end() )
+	{
+	}
+
+	ClientData* cd = cdIt->second;
+
 	// Empty Array
 	if ( msgArray.size() == 0 ) 
 		return;
@@ -587,7 +592,7 @@ bool Host::IsAlive() const
 	return this->stayAlive;
 }
 
-void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
+void Host::HandleClientDisconnect( MaloW::NetworkChannel* channel )
 {
 	//DON'T call ClientChannel->Kick in here! For fuck sakes
 	//The kick command will push a ClientDisonnected event, again.
@@ -596,26 +601,28 @@ void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 		return;
 
 	PlayerDisconnectedEvent e;
-	auto i = zClients.find(channel);
+	auto i = this->zClients.find(channel);
 
-	if( i == zClients.end() )
+	if( i == this->zClients.end() )
 		return;
 	
-
 	ClientData* cd = i->second;
 	e.clientData = cd;
 
 	NotifyObservers(&e);
-	delete cd, cd = NULL;
-	zClients.erase(i);
-}
+
+
+	this->zClients.erase(i);
+
+	delete cd;
+	cd = NULL;}
 
 void Host::HandleNewConnection( MaloW::ClientChannel* CC )
 {
 	zClientChannels.insert(CC);
 
 	ClientData* cd = new ClientData(CC);
-	zClients[CC] = cd;
+	zClients[CC->GetNetworkChannel()] = cd;
 	CC->Start();
 
 	PlayerConnectedEvent e;
@@ -775,7 +782,7 @@ void Host::Restart( const std::string& gameMode, const std::string& map )
  	this->AddObserver(this->zGame);
  
  	// Fake Connects
- 	for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
+ 	for( auto i = this->zClients.cbegin(); i != this->zClients.cend(); ++i )
  	{
  		PlayerConnectedEvent PCE;
  		PCE.clientData = i->second;

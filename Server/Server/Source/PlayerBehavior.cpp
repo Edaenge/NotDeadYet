@@ -33,12 +33,12 @@ bool PlayerBehavior::ProcessClientData( const Vector3& direction, const Vector4&
 
 bool PlayerBehavior::Update(float dt)
 {
-	static PlayerConfigReader* playerConfigReader = GetPlayerConfig();
+	static const float energy_Coeff = GetPlayerConfig()->GetVariable(ENERGY_COEFF);
 	float energy = zActor->GetEnergy();
 
 	if (energy < 200.0f)
 
-		energy += playerConfigReader->GetVariable(ENERGY_COEFF) * dt;
+		energy += energy_Coeff * dt;
 
 	if (energy >= 200.0f)
 		energy = 200.0f;

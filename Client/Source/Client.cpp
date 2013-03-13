@@ -177,7 +177,7 @@ void Client::Update()
 	this->UpdateText();
 
 	this->zPerf->PreMeasure("Actor Updates", 0);
-	this->zActorManager->UpdateObjects(this->zGameTimer->GetDeltaTime(), this->zID);
+	this->zActorManager->UpdateObjects(this->zGameTimer->GetDeltaTime(), this->zID, this->zWorld);
 	this->zPerf->PostMeasure("Actor Updates", 0);
 
 	this->zPerf->PreMeasure("Gui Updates", 3);
@@ -265,12 +265,13 @@ void Client::InitGraphics(const std::string& mapName)
 		std::string errorMessage = s;
 		if (errorMessage == "Empty File!")
 		{
-			errorMessage = "Missing map: " + mapName + " In Your map Directory";
+			errorMessage = "Missing map: " + mapName;
 		}
 		else if(errorMessage == "File Doesn't Have Header!")
 		{
-			errorMessage = "Map: " + mapName + " Could be corrupt please re download the map again";
+			errorMessage = "Map: " + mapName + " Could be corrupt";
 		}
+
 		this->CloseConnection(errorMessage);
 		return;
 	}
@@ -631,11 +632,14 @@ bool Client::CheckKey(const unsigned int ID)
 
 void Client::CheckMovementKeys()
 {
-	this->CheckKey(KEY_FORWARD);
-	this->CheckKey(KEY_BACKWARD);
+	if (!zShowCursor)
+	{
+		this->CheckKey(KEY_FORWARD);
+		this->CheckKey(KEY_BACKWARD);
 
-	this->CheckKey(KEY_LEFT);
-	this->CheckKey(KEY_RIGHT);
+		this->CheckKey(KEY_LEFT);
+		this->CheckKey(KEY_RIGHT);
+	}
 }
 
 void Client::CheckPlayerSpecificKeys()
@@ -825,6 +829,17 @@ void Client::CheckPlayerSpecificKeys()
 			if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
 			{
 				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+				std::string msg = "";
+				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, (float)MOUSE_LEFT_PRESS);
+
+				this->zServerChannel->Send(msg);
+			}
+		}
+		else
+		{
+			if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			{
+				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 
 				Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
 				if (!primaryWeapon)
@@ -837,11 +852,6 @@ void Client::CheckPlayerSpecificKeys()
 					this->zServerChannel->Send(msg);
 				}
 			}
-		}
-		else
-		{
-			if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
-				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 		}
 	}
 	this->HandleWeaponEquips();
@@ -2125,14 +2135,11 @@ std::vector<unsigned int> Client::RayVsWorld()
 				MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 				continue;
 			}
-			if (!dynamic_cast<iFBXMesh*>(mesh))
-			{
-				data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
+			data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
 
-				if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
-				{
-					Collisions.push_back(ID);
-				}
+			if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+			{
+				Collisions.push_back(ID);
 			}
 		}
 	}
