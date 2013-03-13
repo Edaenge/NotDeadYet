@@ -9,6 +9,8 @@
 #include "NetworkPacket.h"
 #include "NetworkChannel.h"
 
+class ClientData;
+
 using namespace std;
 
 /*
@@ -29,13 +31,13 @@ namespace MaloW
 		std::string zIP;
 		long zID;
 
+		virtual ~ClientChannel();
 	protected:
 		void CloseSpecific();
 
 	public:
 		ClientChannel(MaloW::Process* zNotifier, SOCKET hClient, const std::string& ip_adress);
-		virtual ~ClientChannel();
-
+		
 		// Begin Process
 		void Life();
 
@@ -43,7 +45,9 @@ namespace MaloW
 		void Disconnect();
 
 		// The IP Of Connection
-		inline const std::string& const GetIP() const {return this->zIP;}
+		inline const std::string& GetIP() {return this->zIP;}
+
+		friend class ClientData;
 	};
 }
 

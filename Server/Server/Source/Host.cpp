@@ -596,18 +596,20 @@ void Host::HandleClientDisconnect( MaloW::ClientChannel* channel )
 		return;
 
 	PlayerDisconnectedEvent e;
-	auto i = zClients.find(channel);
+	auto i = this->zClients.find(channel);
 
-	if( i == zClients.end() )
+	if( i == this->zClients.end() )
 		return;
 	
-
 	ClientData* cd = i->second;
 	e.clientData = cd;
 
 	NotifyObservers(&e);
-	delete cd, cd = NULL;
-	zClients.erase(i);
+
+	this->zClients.erase(i);
+
+	delete cd;
+	cd = NULL;
 }
 
 void Host::HandleNewConnection( MaloW::ClientChannel* CC )

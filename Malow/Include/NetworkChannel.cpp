@@ -93,8 +93,8 @@ bool NetworkChannel::Receive( std::string& msg, double& timeTaken )
 	}
 	if (packetSize != errCode)
 	{
-		MaloW::Debug(packetSize);
-		MaloW::Debug(errCode);
+		MaloW::Debug((float)packetSize);
+		MaloW::Debug((float)errCode);
 	}
 	
 
