@@ -8,6 +8,12 @@ server Skickar data direkt via networkchannel istället för ClientData får ser
 man kan inte döda rådjur
 ingen attack animation
 dead player model would be nice
+IP adress field is bugged sometimes
+Failed Connecting to does not show IP
+Musen flyttas till mitten när man klickar i spelet efter att man har gått ut
+Byta skugg nivå i options dialogen funkar inte
+Options dialogen resizar fel
+Client fönstret stängs men clienten är fortfarande en process
 
 2013-03-12
 Ugly Spawn
