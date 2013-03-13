@@ -834,7 +834,7 @@ void Game::OnEvent( Event* e )
 					//Create Ghost behavior And Ghost Actor
 					GhostActor* gActor = new GhostActor(player);
 					gActor->SetPosition(dActor->GetPosition());
-					gActor->SetModel("media/models/ghost.obj");
+					gActor->AddObserver(this->zGameMode);
 
 					PlayerGhostBehavior* playerGhostBehavior = new PlayerGhostBehavior(gActor, this->zWorld, player);
 
@@ -847,9 +847,6 @@ void Game::OnEvent( Event* e )
 
 					//Add the actor to the list
 					this->zActorManager->AddActor(gActor);
-
-					NetworkMessageConverter NMC;
-					std::string msg = NMC.Convert(MESSAGE_TYPE_SUN_DIRECTION, this->zCurrentSunDirection);
 				}
 			}
 		}
