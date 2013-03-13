@@ -22,19 +22,23 @@ class ClientData
 public:
 
 	/*! Returns the time of the last packet received from the client.*/
-	inline float GetLastPacketTime() {return this->zLastRecivedPacketTime;}
+	inline float GetLastPacketTime() const {return this->zLastRecivedPacketTime;}
+
 	/*! Calculates and returns the average latency.*/
 	float GetAverageLatency();
 
 	/*! Sets the time of the last packet received from the client.*/
-	inline void SetLastPacketTime(const float packet) {this->zLastRecivedPacketTime = packet;}
+	inline void SetLastPacketTime(const float& packet) { this->zLastRecivedPacketTime = packet; }
+
 	/*! Adds the latency to the list.*/
 	void AddLatency(const float time);
+
 	/*! Sends a message to the client.*/
 	inline void Send(const std::string& msg)
 	{
 		if ( zClient ) zClient->TrySend(msg);
 	}
+
 	/*! Sends a packet to the client.*/
 	inline void Send( const Packet& packet )
 	{
@@ -62,6 +66,7 @@ public:
 			Send(ss.str());
 		}
 	}
+
 	/*! kicks the client.*/
 	void Kick();
 

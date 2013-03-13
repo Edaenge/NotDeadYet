@@ -16,42 +16,43 @@ ServerChannel::~ServerChannel()
 {
 	this->Close();
 	this->WaitUntillDone();
-	if(zSocket) 
+	
+	if(zSocket)
+	{
 		closesocket(zSocket);
+	}
 }
 
 bool MaloW::ServerChannel::Connect( const std::string &IP, const unsigned int &port )
 {
+	// Start WSA
 	WSADATA wsaData;
 	if(int errCode = WSAStartup(MAKEWORD(2,2), &wsaData)) 
 	{
-		throw( NetworkException("Failed To Initializing Socket!", WSAGetLastError()) );
-		return false;
+		throw NetworkException("Failed To Initializing Socket!", WSAGetLastError());
 	}
-
 
 	// Open a socket
 	zSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
 	if(!zSocket) 
 	{
-		throw( NetworkException("Failed Opening Socket!", WSAGetLastError()) );
-		return false;
+		throw NetworkException("Failed Opening Socket!", WSAGetLastError());
 	}
 
-	// Connect
+	// Connect info
 	sockaddr_in saServer;
 	saServer.sin_port = htons((u_short)port);
 	saServer.sin_addr.s_addr = inet_addr(IP.c_str());
 	saServer.sin_family = AF_INET;
 
+	// Attempt connection
 	if( connect(zSocket, (sockaddr*)&saServer, sizeof(saServer)) == SOCKET_ERROR )
 	{
 		int errorCode = WSAGetLastError();
 		closesocket(zSocket);
-
-		throw( NetworkException("Failed Connecting to Server!", errorCode) );
-		return false;
+		throw NetworkException("Failed Connecting to Server!", errorCode);
 	}
+
 	return true;
 }
 
@@ -98,6 +99,5 @@ void ServerChannel::CloseSpecific()
 		{
 			
 		}
-		
 	}
 }

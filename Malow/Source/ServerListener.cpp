@@ -22,12 +22,13 @@ ServerListener::ServerListener( MaloW::Process *observer, const unsigned int &po
 	saListen.sin_port = htons((u_short)port);
 	saListen.sin_addr.s_addr = htonl(INADDR_ANY);
 	saListen.sin_family = AF_INET;
-	if ( bind(zListenSocket, (sockaddr*)&saListen, sizeof(sockaddr)) == SOCKET_ERROR  )
+
+	if ( ::bind(zListenSocket, (sockaddr*)&saListen, sizeof(sockaddr)) == SOCKET_ERROR  )
 	{
 		throw NetworkException("Failed Binding Listen Socket!", WSAGetLastError());
 	}
 
-	if ( listen(zListenSocket, SOMAXCONN) == SOCKET_ERROR )
+	if ( ::listen(zListenSocket, SOMAXCONN) == SOCKET_ERROR )
 	{
 		throw NetworkException("Failed Initializing Listen Socket!", WSAGetLastError());
 	}

@@ -464,7 +464,7 @@ bool AIDeerBehavior::Update( float dt )
 				{
 					if(dynamic_cast<BioActor*>((*i))->zValid == true)
 					{
-					//Do a mathematical check, see if anyone is right in front of the deer. But... how? http://www.youtube.com/watch?v=gENVB6tjq_M
+						//Do a mathematical check, see if anyone is right in front of the deer. But... how? http://www.youtube.com/watch?v=gENVB6tjq_M
 						Vector3 actorPosition = dActor->GetPosition();
 						float dotProduct = dActor->GetDir().GetDotProduct( (*i)->GetPosition() - actorPosition );
 						if(dotProduct > this->zFieldOfView)//This sight is relatively wide, since it is a deer. If this is true, then the deer sees a player.

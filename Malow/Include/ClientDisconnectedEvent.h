@@ -1,7 +1,12 @@
 #pragma once
 
 #include "Process.h"
-#include "ClientChannel.h"
+
+namespace MaloW
+{
+	class ClientChannel;
+	class ReceiverProcess;
+}
 
 /*
 This class is used when a client disconnects from the server.
@@ -21,4 +26,5 @@ public:
 	inline MaloW::ClientChannel* GetClientChannel() const { return zChannel; }
 
 	friend class MaloW::ClientChannel;
+	friend class MaloW::ReceiverProcess;
 };

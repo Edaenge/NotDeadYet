@@ -10,7 +10,14 @@ ClientData::ClientData(MaloW::ClientChannel* cc)
 
 ClientData::~ClientData()
 {
-	SAFE_DELETE(this->zClient);
+	try
+	{
+		SAFE_DELETE(this->zClient);
+	}
+	catch(...)
+	{
+
+	}
 }
 
 void ClientData::Kick()
