@@ -2,6 +2,8 @@
 
 #include <string>
 #include "Winsock.h"
+#include <mutex>
+
 
 namespace MaloW
 {
@@ -9,6 +11,8 @@ namespace MaloW
 	{
 	protected:
 		SOCKET zSocket;
+		std::mutex zWriteMutex;
+		std::mutex zReadMutex;
 		
 		// Counters
 		unsigned int zPacketNumberIn;
