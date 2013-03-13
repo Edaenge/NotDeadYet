@@ -168,9 +168,9 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	newPActor->SetModel(pActor->GetModel());
 	newPActor->SetPosition(position);
 	newPActor->SetDir(direction);
-	newPActor->AddObserver(this);
+	newPActor->AddObserver(this);	Vector3 offset = this->zGame->GetOffset(pActor->GetModel());
 
-	PhysicalConditionPacket* PCP = new PhysicalConditionPacket();
+	newPActor->SetCameraOffset(offset);PhysicalConditionPacket* PCP = new PhysicalConditionPacket();
 
 	//Gather Actor Physical Conditions
 	PCP->zBleedingLevel = pActor->GetBleeding();
@@ -179,7 +179,6 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	PCP->zHunger = pActor->GetFullness();
 	PCP->zHydration = pActor->GetHydration();
 	PCP->zStamina = pActor->GetStamina();
-
 	//Create New Human Behavior
 	PlayerHumanBehavior* pHumanBehavior = new PlayerHumanBehavior(newPActor, this->zGame->GetWorld(), player);
 

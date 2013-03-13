@@ -68,7 +68,7 @@ public:
 	inline const Vector3& GetPreviousPos() const { return zPreviousPos; }
 	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
-	inline Vector3& GetDir() { return zDir; }
+	inline const Vector3& GetDir() const { return zDir; }
 	virtual const std::string GetModel() const;
 	PhysicsObject* GetPhysicsObject() {return this->zPhysicsObject;}
 	inline unsigned int GetType() const {return this->zType;}
