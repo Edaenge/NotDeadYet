@@ -2141,12 +2141,16 @@ std::vector<unsigned int> Client::RayVsWorld()
 				MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 				continue;
 			}
-			data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
-
-			if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+			if (!dynamic_cast<iFBXMesh*>(mesh))
 			{
-				Collisions.push_back(ID);
+				data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
+
+				if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+				{
+					Collisions.push_back(ID);
+				}
 			}
+			
 		}
 	}
 

@@ -1,9 +1,9 @@
 #include <world/World.h>
 #include "Behavior.h"
 #include "Actor.h"
-#include "ActorSynchronizer.h"
 #include "WorldActor.h"
 #include "BioActor.h"
+#include "ActorSynchronizer.h"
 
 using namespace std::chrono;
 

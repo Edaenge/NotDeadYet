@@ -6,22 +6,24 @@
 #include <Vector.h>
 
 class World;
+class SoundHandler;
 
 /*
 	This behavior will make the object fall from actor position
 	and land on destination.
 */
-class SupplyDropBehavior : public Behavior
+class SupplyDropBehavior : public Behavior, public Observed
 {
 public:
-	SupplyDropBehavior(Actor* actor, World* world, Vector2& destination);
+	SupplyDropBehavior(Actor* actor, World* world, Vector2& destination, SoundHandler* soundHandler);
 	virtual ~SupplyDropBehavior();
 
 	virtual bool Update(float dt);
-	bool Stop() {this->zMoving = false;}
+	void Stop() {this->zMoving = false;}
 	bool IsMoving() {return this->zMoving;}
 
 private:
+	SoundHandler* zSoundHandler;
 	bool zMoving;
 	Vector3 zDestination;
 	Vector3 zVelocity;

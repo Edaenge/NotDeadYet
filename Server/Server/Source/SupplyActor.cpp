@@ -1,4 +1,5 @@
 #include "SupplyActor.h"
+#include "Physics.h"
 
 SupplyActor::SupplyActor( const unsigned int inventoryCapacity )
 {
@@ -10,6 +11,13 @@ SupplyActor::SupplyActor( const unsigned int inventoryCapacity )
 SupplyActor::~SupplyActor()
 {
 	SAFE_DELETE(this->zInventory);
+
+	if( CanCollide() )
+	{
+		PhysicsObject* pObj = GetPhysicsObject();
+		GetPhysics()->DeletePhysicsObject(pObj);
+		SetPhysicsObject(NULL);
+	}
 }
 
 bool SupplyActor::AddItem( Item* item )
@@ -43,6 +51,7 @@ bool SupplyActor::AttachParachute( Actor* parachute )
 		return false;
 
 	zParachute = parachute;
+	zParachuteAttached = true;
 
 	return true;
 }
@@ -50,7 +59,15 @@ bool SupplyActor::AttachParachute( Actor* parachute )
 Actor* SupplyActor::DetatchParachute()
 {
 	Actor* temp = zParachute;
-	zParachute = NULL;
+	zParachuteAttached = false;
 
 	return temp;
+}
+
+bool SupplyActor::IsParachuteAttached() const
+{
+	if( zParachute )
+		return zParachuteAttached;
+
+	return false;
 }
