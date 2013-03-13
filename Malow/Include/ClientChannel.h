@@ -15,6 +15,8 @@ namespace MaloW
 	class SenderProcess;
 }
 
+class ClientData;
+
 using namespace std;
 
 /*
@@ -42,9 +44,10 @@ namespace MaloW
 		// Packet Sender
 		MaloW::SenderProcess* zSenderProcess;
 
+		virtual ~ClientChannel();
 	public:
 		ClientChannel(MaloW::Process* zNotifier, SOCKET hClient, const std::string& ip_adress);
-		virtual ~ClientChannel();
+		
 
 		// Get Network Channel
 		inline MaloW::NetworkChannel* GetNetworkChannel() const { return zNetworkChannel; }
@@ -63,5 +66,7 @@ namespace MaloW
 
 		// The IP Of Connection
 		inline const std::string& GetIP() const { return this->zIP; }
+
+		friend class ClientData;
 	};
 }

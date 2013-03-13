@@ -30,6 +30,7 @@ bool MaloW::ServerChannel::Connect( const std::string &IP, const unsigned int &p
 	if(int errCode = WSAStartup(MAKEWORD(2,2), &wsaData)) 
 	{
 		throw NetworkException("Failed To Initializing Socket!", WSAGetLastError());
+		return false;
 	}
 
 	// Open a socket
@@ -37,6 +38,7 @@ bool MaloW::ServerChannel::Connect( const std::string &IP, const unsigned int &p
 	if(!zSocket) 
 	{
 		throw NetworkException("Failed Opening Socket!", WSAGetLastError());
+		return false;
 	}
 
 	// Connect info
@@ -51,6 +53,7 @@ bool MaloW::ServerChannel::Connect( const std::string &IP, const unsigned int &p
 		int errorCode = WSAGetLastError();
 		closesocket(zSocket);
 		throw NetworkException("Failed Connecting to Server!", errorCode);
+		return false;
 	}
 
 	return true;

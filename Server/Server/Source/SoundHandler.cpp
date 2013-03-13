@@ -18,6 +18,7 @@ SoundHandler::~SoundHandler()
 {
 	if ( zGame ) zGame->RemoveObserver(this);
 	if ( zActorManager ) zActorManager->AddObserver(this);
+
 	zPlayers.clear();
 }
 
@@ -98,14 +99,6 @@ void SoundHandler::OnEvent( Event* e )
 	else if(PlayerRemoveEvent *PAE = dynamic_cast<PlayerRemoveEvent *>(e))
 	{
 		zPlayers.erase(PAE->player);
-	}
-	else if(ActorAdded* AA = dynamic_cast<ActorAdded*>(e))
-	{
-		AA->zActor->AddObserver(this);
-	}
-	else if(ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e))
-	{
-		AR->zActor->RemoveObserver(this);
 	}
 }
 

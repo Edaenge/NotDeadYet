@@ -6,6 +6,18 @@
 class ActorSynchronizer;
 class Actor;
 
+class BehaviorAddedEvent : public Event
+{
+public:
+	Behavior* behavior;
+};
+
+class BehaviorRemovedEvent : public Event
+{
+public:
+	Behavior* behavior;
+};
+
 class ActorManager : public Observed, public Observer
 {
 	ActorSynchronizer *zSynch;
@@ -23,8 +35,8 @@ public:
 
 	/*! Removes The actor, physics object will NOT be freed.*/
 	void RemoveActor( Actor* actor );
-	void RemoveBehavior( Behavior* behavior );
-	void RemoveBehavior( Actor* actor);
+	void RemoveBehavior(Behavior* behavior );
+	void RemoveBehavior(Actor* actor, bool instant = true);
 
 	/*! Removes all actors, behaviors, physics objects WILL be freed.*/
 	void ClearAll();

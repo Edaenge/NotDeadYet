@@ -12,7 +12,11 @@ ClientData::~ClientData()
 {
 	try
 	{
-		SAFE_DELETE(this->zClient);
+		if (this->zClient)
+		{
+			delete this->zClient;
+			this->zClient = NULL;
+		}
 	}
 	catch(...)
 	{

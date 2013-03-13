@@ -59,6 +59,11 @@ void ActorManager::AddBehavior( Behavior* behavior )
 	if(!behavior)
 		return;
 
+	// Notify Observers
+	BehaviorAddedEvent BAE;
+	BAE.behavior = behavior;
+	NotifyObservers(&BAE);
+
 	this->zBehaviors.insert(behavior);
 	this->AddObserver(behavior);
 }
@@ -72,6 +77,7 @@ void ActorManager::RemoveActor( Actor* actor )
 	this->zCollideableActors.erase(actor);
 	this->zLootableActors.erase(actor);
 
+	// Notify Observers
 	ActorRemoved e;
 	e.zActor = actor;
 	NotifyObservers(&e);
@@ -79,7 +85,7 @@ void ActorManager::RemoveActor( Actor* actor )
 	delete actor;
 } 
 
-void ActorManager::RemoveBehavior( Actor* actor)
+void ActorManager::RemoveBehavior(Actor* actor, bool instant)
 {
 	auto it_zBehavior_end = this->zBehaviors.end();
 
@@ -88,11 +94,24 @@ void ActorManager::RemoveBehavior( Actor* actor)
 		if ( (*it)->GetActor() == actor )
 		{
 			Behavior* temp = *it;
-			it = this->zBehaviors.erase(it);
-			RemoveObserver(temp);
-			SAFE_DELETE(temp);
+			if (instant)
+			{
+				it = this->zBehaviors.erase(it);
 
-			it = it_zBehavior_end;
+				// Notify Observers
+				BehaviorRemovedEvent BRE;
+				BRE.behavior = temp;
+				NotifyObservers(&BRE);
+
+				RemoveObserver(temp);
+				SAFE_DELETE(temp);
+
+				it = it_zBehavior_end;
+			}
+			else
+			{
+				temp->Remove();
+			}
 		}
 		else
 		{
@@ -255,5 +274,4 @@ void ActorManager::ClearAll()
 	}
 	zActors.clear();
 	zCollideableActors.clear();
-
 }

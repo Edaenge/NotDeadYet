@@ -265,12 +265,13 @@ void Client::InitGraphics(const std::string& mapName)
 		std::string errorMessage = s;
 		if (errorMessage == "Empty File!")
 		{
-			errorMessage = "Missing map: " + mapName + " In Your map Directory";
+			errorMessage = "Missing map: " + mapName;
 		}
 		else if(errorMessage == "File Doesn't Have Header!")
 		{
-			errorMessage = "Map: " + mapName + " Could be corrupt please re download the map again";
+			errorMessage = "Map: " + mapName + " Could be corrupt";
 		}
+
 		this->CloseConnection(errorMessage);
 		return;
 	}
@@ -2140,14 +2141,11 @@ std::vector<unsigned int> Client::RayVsWorld()
 				MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 				continue;
 			}
-			if (!dynamic_cast<iFBXMesh*>(mesh))
-			{
-				data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
+			data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
 
-				if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
-				{
-					Collisions.push_back(ID);
-				}
+			if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+			{
+				Collisions.push_back(ID);
 			}
 		}
 	}

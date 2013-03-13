@@ -7,6 +7,7 @@ struct Damage
 	float fallingDamage;
 	float piercing;
 	float fogDamage;
+	float internalDamage;
 	Damage()
 	{
 		slashing = .0f;
@@ -14,11 +15,12 @@ struct Damage
 		piercing = .0f;
 		fallingDamage = .0f;
 		fogDamage = .0f;
+		internalDamage = .0f;
 	}
 
 	float GetTotal() const
 	{
-		return slashing + blunt + piercing + fallingDamage + fogDamage;
+		return slashing + blunt + piercing + fallingDamage + fogDamage + internalDamage;
 	}
 
 	float GetBleedFactor() const

@@ -9,7 +9,6 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include <vector>
 #include <Packets\Packet.h>
 
-
 class ClientData
 {
 	ClientData(MaloW::ClientChannel* cc);
@@ -36,7 +35,8 @@ public:
 	/*! Sends a message to the client.*/
 	inline void Send(const std::string& msg)
 	{
-		if ( zClient ) zClient->TrySend(msg);
+		if (zClient)
+			zClient->TrySend(msg);
 	}
 
 	/*! Sends a packet to the client.*/

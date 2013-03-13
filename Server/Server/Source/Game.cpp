@@ -108,7 +108,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 //DEBUG;
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -187,12 +187,12 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
+	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 	DeerActor* dActor = new DeerActor(deerPhysics);
 	dActor->AddObserver(this->zGameMode);
 
 	/*Vector3 position2 = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
+	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 	BearActor* bActor = new BearActor(bearPhysics);
 	bActor->AddObserver(this->zGameMode);*/
 
@@ -834,6 +834,7 @@ void Game::OnEvent( Event* e )
 					//Create Ghost behavior And Ghost Actor
 					GhostActor* gActor = new GhostActor(player);
 					gActor->SetPosition(dActor->GetPosition());
+					gActor->AddObserver(this->zGameMode);
 
 					PlayerGhostBehavior* playerGhostBehavior = new PlayerGhostBehavior(gActor, this->zWorld, player);
 
@@ -846,9 +847,6 @@ void Game::OnEvent( Event* e )
 
 					//Add the actor to the list
 					this->zActorManager->AddActor(gActor);
-
-					NetworkMessageConverter NMC;
-					std::string msg = NMC.Convert(MESSAGE_TYPE_SUN_DIRECTION, this->zCurrentSunDirection);
 				}
 			}
 		}
@@ -988,7 +986,7 @@ void Game::OnEvent( Event* e )
 		
 		// Create Player Actor
 		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("media/models/temp_guy.obj");
-		
+
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
 		pActor->SetModel(*selectedModel);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
@@ -1116,13 +1114,40 @@ void Game::OnEvent( Event* e )
 	}
 	else if (InventoryBindPrimaryWeapon* IBPW = dynamic_cast<InventoryBindPrimaryWeapon*>(e))
 	{
-		this->HandleBindings(IBPW->ID, IBPW->model, IBPW->type, IBPW->subType);
+		this->HandleBindings(IBPW->clientData, IBPW->ID, IBPW->model, IBPW->type, IBPW->subType);
 	}
 	else if (InventoryUnBindPrimaryWeapon* IUBPW = dynamic_cast<InventoryUnBindPrimaryWeapon*>(e))
 	{
 		NetworkMessageConverter NMC;
 		std::string msg;
 
+		Actor* actor = this->zPlayers[IUBPW->clientData]->GetBehavior()->GetActor();
+
+		if (PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
+		{
+			Inventory* inv = pActor->GetInventory();
+
+			Item* item = inv->GetPrimaryEquip();
+
+			if (item)
+			{
+				if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
+				{
+					pActor->SetState(STATE_UNEQUIP_WEAPON);
+				}
+				else if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
+				{
+					if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+					{
+						pActor->SetState(STATE_UNEQUIP_WEAPON);
+					}
+					else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+					{
+
+					}
+				}
+			}
+		}
 		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)IUBPW->ID);
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, IUBPW->model);
 		this->SendToAll(msg);
@@ -1257,7 +1282,7 @@ void Game::HandleConnection( ClientData* cd )
 {
 	// Create Player
 	Player* player = new Player(cd);
-	zPlayers[cd] = player;
+	this->zPlayers[cd] = player;
 
 	//Lets gamemode observe players.
 	player->AddObserver(this->zGameMode);
@@ -1910,7 +1935,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
 				this->SendToAll(msg);
 
-				pActor->SetState(STATE_ATTACK_BOW);
+				pActor->SetState(STATE_ATTACK);
 			}
 			else
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
@@ -1945,7 +1970,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 			victim->TakeDamage(dmg, pActor);
 
-			pActor->SetState(STATE_ATTACK_MACHETE);
+			pActor->SetState(STATE_ATTACK);
 		}
 	}
 }
@@ -2253,8 +2278,15 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID )
 	//cd->Send(msg);
 }
 
-void Game::HandleBindings( const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType )
+void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType)
 {
+	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
+
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+
+	if (!pActor)
+		return;
+
 	std::string msg;
 	NetworkMessageConverter NMC;
 
@@ -2266,23 +2298,28 @@ void Game::HandleBindings( const unsigned int ID, const std::string& model, cons
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
+			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 	}
 	else if (type == ITEM_TYPE_WEAPON_MELEE)
 	{
 		if (subType == ITEM_SUB_TYPE_MACHETE)
 		{
-			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
+
+			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 		else if (subType == ITEM_SUB_TYPE_POCKET_KNIFE)
 		{
-			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
+
+			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 	}
 	else if (type == ITEM_TYPE_PROJECTILE && subType == ITEM_SUB_TYPE_ROCK)
