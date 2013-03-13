@@ -190,6 +190,7 @@ void Game::SpawnAnimalsDebug()
 	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 	DeerActor* dActor = new DeerActor(deerPhysics);
 	dActor->AddObserver(this->zGameMode);
+	dActor->SetModel("media/models/deer_anims.fbx");
 
 	/*Vector3 position2 = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
