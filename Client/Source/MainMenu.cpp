@@ -130,7 +130,7 @@ void MainMenu::Init()
 	//IPAddress
 	//194.47.150.16 - Server
 	temp = new TextBox(AdressX + (20.0f / 1024.0f) * dx, AdressY + (60.0f / 768.0f) * windowHeight, 1.0f, "", 
-		(530.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "194.47.150.16", "IPAdress", 2.0f, 16, ALL);
+		(530.0f / 1024.0f) * dx, (40.0f / 768.0f) * windowHeight, "194.47.150.20", "IPAdress", 2.0f, 16, ALL);
 	zSets[GETIPADRESS].AddElement(temp);
 
 	temp = new SimpleButton(AdressX + (472.0f / 1024.0f) * dx, AdressY + (104.0f / 768.0f) * windowHeight, 1.0f, 

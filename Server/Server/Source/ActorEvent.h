@@ -45,3 +45,10 @@ class ProjectileArrowCollide : public Event
 public:
 	Actor *zActor;
 };
+
+class SupplyDropLanded : public Event
+{
+public:
+	Actor *zActor;
+
+};

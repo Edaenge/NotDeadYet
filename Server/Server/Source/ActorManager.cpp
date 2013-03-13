@@ -69,6 +69,15 @@ void ActorManager::RemoveActor( Actor* actor )
 	if(!actor)
 		return;
 
+	if( SupplyActor* sActor =  dynamic_cast<SupplyActor*>(actor) )
+	{
+		if( sActor->HasParachute() )
+		{
+			Actor* parachute = sActor->GetParachute();
+			RemoveActor(parachute);
+		}
+	}
+
 	this->zActors.erase(actor);
 	this->zCollideableActors.erase(actor);
 	this->zLootableActors.erase(actor);

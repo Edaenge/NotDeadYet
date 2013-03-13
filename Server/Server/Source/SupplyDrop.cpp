@@ -8,10 +8,10 @@
 #include "SupplyDropBehavior.h"
 #include <ctime>
 
-SupplyDrop::SupplyDrop( ActorManager* actorManager, World* world )
-	:zWorld(world), zActorManager(actorManager)
+SupplyDrop::SupplyDrop( ActorManager* actorManager, World* world, SoundHandler* soundHandler )
+	:zWorld(world), zActorManager(actorManager), zSoundHandler(soundHandler)
 {
-	srand((unsigned int)time(0));
+	srand( (unsigned int) time(0) );
 
 	this->zActorManager = actorManager;
 	this->zPhyEngine = GetPhysics();
@@ -64,7 +64,7 @@ bool SupplyDrop::SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, co
 	spActor->SetScale(spActor->GetScale(), false);
 
 	//Create Behavior
-	SupplyDropBehavior* behavior = new SupplyDropBehavior(spActor, zWorld, landPoint);
+	SupplyDropBehavior* behavior = new SupplyDropBehavior(spActor, zWorld, landPoint, zSoundHandler);
 
 	zActorManager->AddBehavior(behavior);
 	zActorManager->AddActor(spActor);
@@ -123,7 +123,7 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 	spActor->AttachParachute(paraActor);
 
 	//Create behavior
-	SupplyDropBehavior* behavior = new SupplyDropBehavior(spActor, zWorld, landPoint);
+	SupplyDropBehavior* behavior = new SupplyDropBehavior(spActor, zWorld, landPoint, zSoundHandler);
 
 	zActorManager->AddActor(spActor);
 	zActorManager->AddActor(paraActor);

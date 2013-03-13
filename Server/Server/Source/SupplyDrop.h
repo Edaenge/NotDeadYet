@@ -7,6 +7,7 @@
 class ActorManager;
 class World;
 class PhysicsEngine;
+class SoundHandler;
 
 //MODEL NAME
 static const std::string SUPPLY_ACTOR_FILENAME	= "Media/Models/Supplycrate_01_v03.obj";
@@ -15,7 +16,7 @@ static const std::string PARACHUTE_FILE_NAME	= "Media/Models/Supplycrate_01_v03.
 class SupplyDrop
 {
 public:
-	SupplyDrop( ActorManager* actorManager, World* world );
+	SupplyDrop( ActorManager* actorManager, World* world, SoundHandler* soundHandler );
 	virtual ~SupplyDrop();
 	
 	bool SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, float height);
@@ -32,4 +33,5 @@ private:
 	World* zWorld;
 	ActorManager* zActorManager;
 	PhysicsEngine* zPhyEngine;
+	SoundHandler* zSoundHandler;
 };

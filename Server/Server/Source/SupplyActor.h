@@ -16,6 +16,7 @@ public:
 	Item* DropItem( Item* item );
 	Item* DropItem( const unsigned int itemID );
 
+	bool IsParachuteAttached() const;
 	bool HasParachute() const;
 	bool AttachParachute(Actor* parachute);
 	Actor* DetatchParachute();
@@ -23,6 +24,7 @@ public:
 	inline Inventory* GetInventory() const {return this->zInventory;}
 	
 private:
+	bool zParachuteAttached;
 	Inventory* zInventory;
 	Actor* zParachute;
 };
