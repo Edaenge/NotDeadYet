@@ -109,7 +109,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 //DEBUG;
 	this->SpawnItemsDebug();
 	this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -432,9 +432,9 @@ void Game::SpawnHumanDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/temp_guy.obj");
+	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/temp_guy.obj");
 	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics, this);
-	pActor->SetModel("Media/Models/temp_guy_movement_anims.fbx");
+	pActor->SetModel("media/models/token_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
 	pActor->SetHealth(5000);
@@ -990,7 +990,7 @@ void Game::OnEvent( Event* e )
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
 		pActor->SetModel(*selectedModel);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
-		zPlayers[UDE->clientData]->zUserModel = *selectedModel;
+		zPlayers[UDE->clientData]->zUserModel = (*selectedModel);
 
 		pActor->AddObserver(this->zGameMode);
 		Vector3 center;

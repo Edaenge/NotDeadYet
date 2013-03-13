@@ -547,8 +547,6 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	
 	//Add the actor to the list
 	aManager->AddActor(gActor);
-
-	this->zGame->ModifyLivingPlayers(1);
 }
 
 void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
