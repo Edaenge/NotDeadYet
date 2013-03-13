@@ -31,17 +31,16 @@ Bandage::Bandage(const Bandage& other)
 	else
 		this->zID = other.zID;
 
-	this->zID = other.zID;
 	this->zStacks = other.zStacks;
 	this->zWeight = other.zWeight;
 	this->zItemName = other.zItemName;
 	this->zIconPath = other.zIconPath;
 	this->zItemType = other.zItemType;
 	this->zSlotSize = other.zSlotSize;
+	this->zStacking = other.zStacking;
 	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
-	this->zStacking = other.zStacking;
 }
 
 bool Bandage::Use()

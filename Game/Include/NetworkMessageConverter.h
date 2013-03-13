@@ -75,8 +75,6 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_UNEQUIP_ITEM,
 	MESSAGE_TYPE_PROJECTILE_DAMAGE,
 	MESSAGE_TYPE_PROJECTILE_VELOCITY,
-	MESSAGE_TYPE_MATERIAL_STACKS_REQUIRED,
-	MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE,
 	MESSAGE_TYPE_START_GAME,
 	MESSAGE_TYPE_PLAYER_READY,
 	MESSAGE_TYPE_ITEM_SUB_TYPE,
@@ -168,8 +166,6 @@ static const std::string M_ITEM_STACK_SIZE			= "ISTSI";
 static const std::string M_ITEM_SLOT_SIZE			= "ISLSI";
 static const std::string M_WEAPON_DAMAGE			= "WD";
 static const std::string M_WEAPON_RANGE				= "WR";
-static const std::string M_MATERIAL_CRAFTING_TYPE	= "MCT";
-static const std::string M_MATERIAL_STACKS_REQUIRED	= "MSR";
 static const std::string M_PROJECTILE_DAMAGE		= "PD";
 static const std::string M_PROJECTILE_VELOCITY		= "PV";
 static const std::string M_WEAPON_USE				= "WU";
