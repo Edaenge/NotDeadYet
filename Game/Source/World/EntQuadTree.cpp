@@ -3,35 +3,31 @@
 #include <fstream>
 #include <string>
 
-// The minimum node size, nodes will not divide if theire size is equal
+// The minimum node size, nodes will not divide if their size is equal
 const static float FMINIMUMNODESIZE = 16;
 
 // Amount of entities required before the node divides
 const static size_t DIVISIONCOUNT = 16;
 
 
-EntQuadTree::Node::Node(const Rect& rect) : 
+EntQuadTree::Node::Node(const Rect& rect) :
 	zRect(rect)
 {
-	for( unsigned int x=0; x<4; ++x )
-	{
-		zChildNodes[x] = 0;
-	}
+	zChildNodes[0] = 0;
+	zChildNodes[1] = 0;
+	zChildNodes[2] = 0;
+	zChildNodes[3] = 0;
 }
 
 EntQuadTree::Node::~Node()
 {
-	for( unsigned int x=0; x<4; ++x )
-	{
-		if ( zChildNodes[x] )
-		{
-			delete zChildNodes[x];
-			zChildNodes[x] = 0;
-		}
-	}
+	if ( zChildNodes[0] ) delete zChildNodes[0];
+	if ( zChildNodes[1] ) delete zChildNodes[1];
+	if ( zChildNodes[2] ) delete zChildNodes[2];
+	if ( zChildNodes[3] ) delete zChildNodes[3];
 }
 
-void EntQuadTree::Node::Insert(Entity* elem, const Vector2& pos)
+bool EntQuadTree::Node::Insert(Entity* elem, const Vector2& pos)
 {
 	// Quad Center Position
 	Vector2 nodeCenter(zRect.topLeft + zRect.size * 0.5f);
@@ -42,7 +38,7 @@ void EntQuadTree::Node::Insert(Entity* elem, const Vector2& pos)
 	// Insert To Child Node
 	if ( zChildNodes[childNodeIndex] )
 	{
-		zChildNodes[childNodeIndex]->Insert(elem, pos);
+		return zChildNodes[childNodeIndex]->Insert(elem, pos);
 	}
 	else
 	{
@@ -86,13 +82,19 @@ void EntQuadTree::Node::Insert(Entity* elem, const Vector2& pos)
 			}
 
 			// Insert To Children
-			zChildNodes[childNodeIndex]->Insert(elem, pos);
+			return zChildNodes[childNodeIndex]->Insert(elem, pos);
 		}
 		else
 		{
-			zElements.insert(elem);
+			if ( !zElements.count(elem) )
+			{
+				zElements.insert(elem);
+				return true;
+			}
 		}
 	}
+
+	return false;
 }
 
 bool EntQuadTree::Node::Erase(Entity* elem, const Vector2& pos)
@@ -134,9 +136,9 @@ bool EntQuadTree::Node::Erase(Entity* elem, const Vector2& pos)
 	return zElements.erase(elem) > 0;
 }
 
-void EntQuadTree::Node::SetNode(unsigned int index, Node* node)
+void EntQuadTree::Node::SetNode(unsigned int index, Node* node, bool deleteFlag)
 {
-	if ( zChildNodes[index] ) 
+	if ( zChildNodes[index] && deleteFlag ) 
 	{ 
 		delete zChildNodes[index];
 	}
@@ -196,7 +198,7 @@ size_t EntQuadTree::Node::RectangleScan(std::set<Entity*>& ents, const Rect& rec
 		}
 	}
 
-	// Children node entities
+	// Children's entities
 	for( unsigned int x=0; x<4; ++x )
 	{
 		if ( zChildNodes[x] ) 
@@ -218,35 +220,44 @@ size_t EntQuadTree::Node::FlatScan(std::set<Entity*>& ents, unsigned int entType
 	size_t entFoundCounter = 0;
 
 	// Add Mine
-	for( auto i = zElements.cbegin(); i != zElements.cend(); ++i )
+	if ( entType )
 	{
-		if ( !entType || (*i)->GetType() == entType )
+		for( auto i = zElements.cbegin(); i != zElements.cend(); ++i )
 		{
-			ents.insert(*i);
-			entFoundCounter++;
+			if ( !entType || (*i)->GetType() == entType )
+			{
+				ents.insert(*i);
+				entFoundCounter++;
+			}
 		}
 	}
-
-	// Add Childrens
-	for( unsigned int x=0; x<4; ++x )
+	else
 	{
-		if ( zChildNodes[x] ) entFoundCounter += zChildNodes[x]->FlatScan(ents, entType);
+		ents.insert(zElements.cbegin(), zElements.cend());
+		entFoundCounter = ents.size();
 	}
+
+	// Add Children's Elements
+	if ( zChildNodes[0] ) entFoundCounter += zChildNodes[0]->FlatScan(ents, entType);
+	if ( zChildNodes[1] ) entFoundCounter += zChildNodes[1]->FlatScan(ents, entType);
+	if ( zChildNodes[2] ) entFoundCounter += zChildNodes[2]->FlatScan(ents, entType);
+	if ( zChildNodes[3] ) entFoundCounter += zChildNodes[3]->FlatScan(ents, entType);
 
 	return entFoundCounter;
 }
 
 size_t EntQuadTree::Node::Transfer(Node* node)
 {
+	// My Entities
 	size_t amount = zElements.size();
 	node->zElements.insert(zElements.cbegin(), zElements.cend());
 	zElements.clear();
 
-	// Child Nodes
-	for( unsigned int x=0; x<4; ++x )
-	{
-		if ( zChildNodes[x] ) amount += zChildNodes[x]->Transfer(node);
-	}
+	// Child Entities
+	if ( zChildNodes[0] ) amount += zChildNodes[0]->Transfer(node);
+	if ( zChildNodes[1] ) amount += zChildNodes[1]->Transfer(node);
+	if ( zChildNodes[2] ) amount += zChildNodes[2]->Transfer(node);
+	if ( zChildNodes[3] ) amount += zChildNodes[3]->Transfer(node);
 
 	return amount;
 }
@@ -255,22 +266,28 @@ size_t EntQuadTree::Node::CalcNumEntities(unsigned int entType) const
 {
 	size_t entFoundCounter = 0;
 
-	for( auto i = zElements.cbegin(); i != zElements.cend(); ++i )
+	// Count My Elements
+	if ( entType )
 	{
-		if ( !entType || (*i)->GetType() == entType )
+		
+		for( auto i = zElements.cbegin(); i != zElements.cend(); ++i )
 		{
-			entFoundCounter++;
+			if ( (*i)->GetType() == entType )
+			{
+				entFoundCounter++;
+			}
 		}
+	}
+	else
+	{
+		entFoundCounter = zElements.size();
 	}
 
-	// Add Childrens
-	for( unsigned int x=0; x<4; ++x )
-	{
-		if ( zChildNodes[x] )
-		{
-			entFoundCounter += zChildNodes[x]->CalcNumEntities(entType);
-		}
-	}
+	// Add Children's Elements
+	if ( zChildNodes[0] ) entFoundCounter += zChildNodes[0]->CalcNumEntities(entType);
+	if ( zChildNodes[1] ) entFoundCounter += zChildNodes[1]->CalcNumEntities(entType);
+	if ( zChildNodes[2] ) entFoundCounter += zChildNodes[2]->CalcNumEntities(entType);
+	if ( zChildNodes[3] ) entFoundCounter += zChildNodes[3]->CalcNumEntities(entType);
 
 	return entFoundCounter;
 }
@@ -329,7 +346,7 @@ size_t EntQuadTree::RectangleScan(std::set<Entity*>& ents, const Rect& rect, uns
 	return 0;
 }
 
-void EntQuadTree::Insert(Entity* ent, const Vector2& pos)
+bool EntQuadTree::Insert(Entity* ent, const Vector2& pos)
 {
 	if ( ent )
 	{
@@ -345,7 +362,8 @@ void EntQuadTree::Insert(Entity* ent, const Vector2& pos)
 			// Create Root
 			zRoot = new Node(rootRect);
 		}
-		else if ( !zRoot->GetRect().IsInside(pos) )
+
+		while ( !zRoot->GetRect().IsInside(pos) )
 		{
 			// Calc Root Level
 			float level = zRoot->GetRect().size.x / FMINIMUMNODESIZE;
@@ -377,8 +395,10 @@ void EntQuadTree::Insert(Entity* ent, const Vector2& pos)
 			zRoot = newRoot;
 		}
 
-		zRoot->Insert(ent, pos);
+		return zRoot->Insert(ent, pos);
 	}
+
+	return false;
 }
 
 bool EntQuadTree::Erase(Entity* ent, const Vector2& pos)
@@ -391,23 +411,21 @@ bool EntQuadTree::Erase(Entity* ent, const Vector2& pos)
 			{
 				if ( zRoot->Erase(ent, pos) )
 				{
-					while( zRoot->GetNumNodes() == 1 && zRoot->GetNumElements() == 0 )
+					while( zRoot && zRoot->GetNumElements() == 0 && zRoot->GetNumNodes() <= 1 )
 					{
 						Node* newRoot = 0;
 
 						for( unsigned int x=0; x<4 && !newRoot; ++x )
 						{
-							if ( zRoot->GetNode(x) ) newRoot = zRoot->GetNode(x);
+							if ( zRoot->GetNode(x) ) 
+							{
+								newRoot = zRoot->GetNode(x);
+								zRoot->SetNode(x, 0, false);
+							}
 						}
 
 						delete zRoot;
 						zRoot = newRoot;
-					}
-
-					if ( zRoot->GetNumElements() == 0 && zRoot->GetNumNodes() == 0 )
-					{
-						delete zRoot;
-						zRoot = 0;
 					}
 
 					return true;
@@ -419,13 +437,18 @@ bool EntQuadTree::Erase(Entity* ent, const Vector2& pos)
 	return false;
 }
 
-void EntQuadTree::Insert(Entity* ent)
+bool EntQuadTree::Insert(Entity* ent)
 {
 	if ( ent ) 
 	{
-		Insert(ent, ent->GetPosition().GetXZ());
-		ent->AddObserver(this);
+		if ( Insert(ent, ent->GetPosition().GetXZ()) )
+		{
+			ent->AddObserver(this);
+			return true;
+		}
 	}
+
+	return false;
 }
 
 bool EntQuadTree::Erase(Entity* ent)
@@ -464,7 +487,7 @@ void EntQuadTree::BranchPrint(EntQuadTree::Node* node, std::ofstream& file, unsi
 	pad.resize(level);
 	for( unsigned int x=0; x<pad.size(); ++x )
 	{
-		pad[x] = 32;
+		pad[x] = 9;
 	}
 
 	if ( node )
@@ -474,6 +497,7 @@ void EntQuadTree::BranchPrint(EntQuadTree::Node* node, std::ofstream& file, unsi
 
 		// Print Num Elements
 		file << pad << "NumElements: " << node->GetNumElements() << std::endl;
+		file << pad << "TotalElements: " << node->CalcNumEntities() << std::endl;
 
 		for( unsigned int x=0; x<4; ++x )
 		{
@@ -484,6 +508,18 @@ void EntQuadTree::BranchPrint(EntQuadTree::Node* node, std::ofstream& file, unsi
 	{
 		file << pad << "Empty" << std::endl;
 	}
+}
+
+void EntQuadTree::PrintDebug(const std::string& msgLine)
+{
+	std::ofstream file("Tree.txt", std::ios::app);
+
+	if ( file.good() )
+	{
+		file << msgLine << std::endl;
+	}
+
+	file.close();
 }
 
 void EntQuadTree::PrintTree()

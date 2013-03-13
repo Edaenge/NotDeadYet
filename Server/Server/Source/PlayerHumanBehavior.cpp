@@ -188,11 +188,12 @@ bool PlayerHumanBehavior::Update( float dt )
 			}
 		}
 	}
-	if(this->zVelocity.GetDotProduct(this->zActor->GetDir()) < 0)
+	Vector3 dir = this->zActor->GetDir();
+	if(this->zVelocity.GetDotProduct(dir) < 0)
 	{
 		float lSpeed = this->zVelocity.GetLength();
 		this->zVelocity.Normalize();
-		this->zVelocity *= (lSpeed * 0.5);
+		this->zVelocity *= (lSpeed * 0.5f);
 	}
 	// Apply Velocity
 	Vector3 newPosition = curPosition + (zVelocity * dt) + Vector3(0.0f, this->zVelDown, 0.0f) + (groundNormal * dt);
@@ -220,21 +221,28 @@ bool PlayerHumanBehavior::Update( float dt )
 		Vector3 pActor_rewind_dir;
 		Actor* collide = NULL;
 	
-		/* Check Collisions against BioActors */
-		collide = CheckBioActorCollision();
+		/* Check Collisions against Dynamic Actors */
+		collide = DistanceDynamicActorCollision();
 
 		if( collide )
 		{
-			BioActor* bioActor = dynamic_cast<BioActor*>(collide);
-			pActor_rewind_dir = (bioActor->GetPosition() - zActor->GetPosition());
+			pActor_rewind_dir = ( collide->GetPosition() - zActor->GetPosition() );
 			pActor_rewind_dir.Normalize();
 			Vector3 target_rewind_dir = pActor_rewind_dir * -1;
 
-			if( bioActor->IsAlive() )
+			if (BioActor* bioActor = dynamic_cast<BioActor*>(collide) )
 			{
-				if( bioActor->HasMoved() )
-					bioActor->SetPosition( bioActor->GetPosition() - (target_rewind_dir * 0.25f) );
+				if( bioActor->IsAlive() )
+				{
+					if( bioActor->HasMoved() )
+						bioActor->SetPosition( bioActor->GetPosition() - (target_rewind_dir * 0.25f) );
 
+					zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+					zVelocity = Vector3(.0f, .0f, .0f);
+				}
+			}
+			else
+			{
 				zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
 				zVelocity = Vector3(.0f, .0f, .0f);
 			}
@@ -242,8 +250,8 @@ bool PlayerHumanBehavior::Update( float dt )
 			return false;
 		}
 
-		/* Check Collisions against WorldActors */
-		collide = CheckWorldActorCollision();
+		/* Check Collisions against Static Actors */
+		collide = DistanceStaticActorCollision();
 
 		if( collide )
 		{

@@ -106,7 +106,7 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 		return false;
 	}
 
-	Vector2 position2D = RandomizePos(landPoint);
+	Vector2 position2D = landPoint;
 	Vector3 position3D = Vector3(position2D.x, height, position2D.y);
 
 	//Set Values
@@ -125,9 +125,9 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 	//Create behavior
 	SupplyDropBehavior* behavior = new SupplyDropBehavior(spActor, zWorld, landPoint);
 
-	zActorManager->AddBehavior(behavior);
 	zActorManager->AddActor(spActor);
 	zActorManager->AddActor(paraActor);
+	zActorManager->AddBehavior(behavior);
 
 	return true;
 }
@@ -152,7 +152,7 @@ unsigned int SupplyDrop::CalculateTotalWeight( std::set<Item*>& items ) const
 
 Vector2 SupplyDrop::RandomizePos( const Vector2& landpos )
 {
-	float radius = (float) (rand() % 1+10);
+	float radius = (float) (rand() % 1+5);
 	float distanceInAxes = sqrtf(powf(radius, 2.0f) * 0.5f);
 
 	Vector2 one = Vector2(distanceInAxes, distanceInAxes);

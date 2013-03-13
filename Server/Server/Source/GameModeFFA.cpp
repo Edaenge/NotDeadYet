@@ -196,7 +196,7 @@ void GameModeFFA::OnEvent( Event* e )
 
 			if( counter >= this->zPlayers.size() )
 			{
-				this->zGame->RestartGame();
+				//this->zGame->RestartGame();
 				StartGameMode();
 			}
 		}
@@ -600,7 +600,7 @@ bool GameModeFFA::StartGameMode()
 
 	std::set<Item*> items = GenerateItems();
 	//this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items);
-	this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 200.0f, items);
+	this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 150.0f, items);
 
 	return true;
 }
@@ -617,9 +617,9 @@ std::set<Item*> GameModeFFA::GenerateItems()
 	//1-2 * nrOfPlayers/var
 
 	//Randomize Weapon MAX/MIN
-	unsigned int weapons	= rand() % WEAPON_MIN + WEAPON_MAX;
-	unsigned int misc		= rand() % MISC_MIN + MISC_MAX;
-	unsigned int materials	= rand() % MATERIAL_MIN + MATERIAL_MAX;
+	unsigned int weapons	= rand() % WEAPON_MAX + WEAPON_MIN;
+	unsigned int misc		= rand() % MISC_MAX + MISC_MIN;
+	unsigned int materials	= rand() % MATERIAL_MAX + MATERIAL_MIN;
 
 	unsigned int size = zPlayers.size();
 	weapons		*= size * VAR;

@@ -499,7 +499,7 @@ bool Game::Update( float dt )
 	std::string msg;
 
 	this->zPerf->PreMeasure("Updating Behaviors", 1);
-	std::set<Behavior*> behaviors = this->zActorManager->GetBehaviors();
+	std::set<Behavior*> &behaviors = this->zActorManager->GetBehaviors();
 
 	// Update Behaviors
 	auto i = behaviors.begin();
@@ -979,19 +979,16 @@ void Game::OnEvent( Event* e )
 		const std::string* selectedModel = &defaultModel;
 
 		if ( UDE->playerModel == "media/models/token_anims.fbx" )
-		{
 			selectedModel = &UDE->playerModel;
-		}
-
+		
 		// Create Player Actor
-		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
+		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("media/models/temp_guy.obj");
 		
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
 		pActor->SetModel(*selectedModel);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 		zPlayers[UDE->clientData]->zUserModel = *selectedModel;
 
-		
 		pActor->AddObserver(this->zGameMode);
 		Vector3 center;
 
@@ -999,9 +996,6 @@ void Game::OnEvent( Event* e )
 		center = this->CalcPlayerSpawnPoint(32, zWorld->GetWorldCenter());
 		pActor->SetPosition(center, false);
 		pActor->SetScale(pActor->GetScale(), false);
-		Inventory* inv = pActor->GetInventory();
-		inv->AddObserver(this);
-		inv->SetPlayer(zPlayers[UDE->clientData]);
 
 		auto offsets = this->zCameraOffset.find(*selectedModel);
 		
@@ -1009,10 +1003,10 @@ void Game::OnEvent( Event* e )
 			pActor->SetCameraOffset(offsets->second);
 
 		// Apply Default Player Behavior
-		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(pActor, zWorld, zPlayers[UDE->clientData]));
+		this->SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(pActor, zWorld, zPlayers[UDE->clientData]));
 
 		//Add actor
-		zActorManager->AddActor(pActor);
+		this->zActorManager->AddActor(pActor);
 
 		//Tells the client which Actor he owns.
 		std::string message;
@@ -1870,8 +1864,8 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				projBehavior->AddObserver(this->zSoundHandler);
 
 				//Set Nearby actors
-				projBehavior->SetNearBioActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearBioActors() );
-				projBehavior->SetNearWorldActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearWorldActors() );
+				projBehavior->SetNearDynamicActors( zPlayers[cd]->GetBehavior()->GetNearDynamicActors() );
+				projBehavior->SetNearStaticActors( zPlayers[cd]->GetBehavior()->GetNearStaticActors() );
 				
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
@@ -1922,7 +1916,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 		//Check Collisions
 		range = meele->GetRange();
-		victim = dynamic_cast<BioActor*>( zActorManager->CheckCollisions( actor, range, pBehavior->GetNearBioActors() ) );
+		victim = dynamic_cast<BioActor*>( zActorManager->CheckCollisions( actor, range, pBehavior->GetNearDynamicActors() ) );
 		
 		if(victim)
 		{
@@ -2300,6 +2294,16 @@ void Game::ModifyLivingPlayers( const int value )
 	NetworkMessageConverter NMC;
 	std::string message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 	this->SendToAll(message);
+}
+
+Vector3 Game::GetOffset(const std::string& model)
+{
+	auto offsets = this->zCameraOffset.find(model);
+
+	if(offsets != this->zCameraOffset.end())
+		return offsets->second;
+
+	return Vector3();
 }
 
 void Game::RestartGame()
