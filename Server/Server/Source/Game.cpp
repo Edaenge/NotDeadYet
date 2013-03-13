@@ -438,7 +438,7 @@ void Game::SpawnHumanDebug()
 	pActor->SetModel("media/models/token_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
-	pActor->SetHealth(5000);
+	pActor->SetHealth(100);
 	pActor->SetScale(pActor->GetScale());
 	this->zActorManager->AddActor(pActor);
 }

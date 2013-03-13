@@ -241,43 +241,46 @@ bool PlayerHumanBehavior::Update( float dt )
 			pActor_rewind_dir = ( collide->GetPosition() - zActor->GetPosition() );
 			pActor_rewind_dir.Normalize();
 			Vector3 target_rewind_dir = pActor_rewind_dir * -1;
-
+			
+			//If it's an BioActor
 			if (BioActor* bioActor = dynamic_cast<BioActor*>(collide) )
 			{
 				if( bioActor->IsAlive() )
 				{
 					if( bioActor->HasMoved() )
-						bioActor->SetPosition( bioActor->GetPosition() - (target_rewind_dir * 0.25f) );
+						bioActor->SetPosition( bioActor->GetPosition() - (target_rewind_dir * 0.1f) );
 
-					zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+					zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.1f) );
 					zVelocity = Vector3(.0f, .0f, .0f);
 				}
 			}
 			else
 			{
-				zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
+				zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.1f) );
 				zVelocity = Vector3(.0f, .0f, .0f);
 			}
 
-			return false;
-		}
-
-		/* Check Collisions against Static Actors */
-		collide = DistanceStaticActorCollision();
-
-		if( collide )
-		{
-			pActor_rewind_dir = (collide->GetPosition() - zActor->GetPosition());
-			pActor_rewind_dir.Normalize();
-
-			zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.25f) );
-			zVelocity = Vector3(.0f, .0f, .0f);
 		}
 		else
 		{
-			//Sets position and notifies
-			zActor->SetPosition(newPosition);
+			/* Check Collisions against Static Actors */
+			collide = DistanceStaticActorCollision();
+
+			if( collide )
+			{
+				pActor_rewind_dir = (collide->GetPosition() - zActor->GetPosition());
+				pActor_rewind_dir.Normalize();
+
+				zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.1f) );
+				zVelocity = Vector3(.0f, .0f, .0f);
+			}
+			else
+			{
+				//Sets position and notifies
+				zActor->SetPosition(newPosition);
+			}
 		}
+
 	}
 
 	if (newState != -1)
