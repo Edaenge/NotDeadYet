@@ -101,8 +101,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	{
 		this->zGameMode = new GameModeFFA(this);
 	}
-// Game Mode Observes
-	this->AddObserver(this->zGameMode);
 
 //DEBUG;
 	this->SpawnItemsDebug();
@@ -166,12 +164,12 @@ Game::~Game()
 	this->zPlayers.clear();
 
 	// Delete Subsystems
-	SAFE_DELETE(zActorManager);
 	SAFE_DELETE(zGameMode);
 	SAFE_DELETE(zSoundHandler);
 	SAFE_DELETE(zCraftingManager);
 	SAFE_DELETE(zMaterialSpawnManager);
 	SAFE_DELETE(zWorld);
+	SAFE_DELETE(zActorManager);
 
 	FreeItemLookup();
 	FreePlayerConfig();
