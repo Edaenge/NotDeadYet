@@ -76,12 +76,12 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 // Load Entities
 	LoadEntList("Entities.txt");
 
-	// Create soundhandler and let it observe game.
-	this->zSoundHandler = new SoundHandler(this);
-
-// Actor Manager
-	this->zActorManager = new ActorManager(syncher, this->zSoundHandler);
+	// Actor Manager
+	this->zActorManager = new ActorManager(syncher);
 	
+	// Create sound handler and let it observe game and actors.
+	this->zSoundHandler = new SoundHandler(this, zActorManager);
+
 	// Material Spawner
 	zMaterialSpawnManager = new MaterialSpawnManager(zWorld, zActorManager);
 
@@ -1008,10 +1008,10 @@ void Game::OnEvent( Event* e )
 		// Apply Default Player Behavior
 		this->SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(pActor, zWorld, zPlayers[UDE->clientData]));
 
-		//Add actor
+		// Add actor
 		this->zActorManager->AddActor(pActor);
 
-		//Tells the client which Actor he owns.
+		// Tells the client which Actor he owns.
 		std::string message;
 		NetworkMessageConverter NMC;
 		unsigned int selfID;
@@ -1025,7 +1025,7 @@ void Game::OnEvent( Event* e )
 		NewActorPacket* NAP = new NewActorPacket();
 		PhysicalConditionPacket* PCP = new PhysicalConditionPacket();
 
-		//Gather Actor Physical Conditions
+		// Gather Actor Physical Conditions
 		PCP->zBleedingLevel = pActor->GetBleeding();
 		PCP->zEnergy = pActor->GetEnergy();
 		PCP->zHealth = pActor->GetHealth();
@@ -1036,7 +1036,7 @@ void Game::OnEvent( Event* e )
 		UDE->clientData->Send(*PCP);
 		delete PCP;
 
-		//Gather Actors Information and send to client
+		// Gather Actors Information and send to client
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		auto it_actors_end = actors.end();
 		for (auto it = actors.begin(); it != it_actors_end; it++)
@@ -1152,7 +1152,9 @@ void Game::OnEvent( Event* e )
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, IUBPW->model);
 		this->SendToAll(msg);
 	}
-	NotifyObservers(e);
+
+	// NotifyObservers(e);
+
 	if (this->zPerf)
 		this->zPerf->PostMeasure("Game Event Handling", 2);
 }
@@ -1907,6 +1909,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
 				this->zActorManager->AddBehavior(projBehavior);
+
 				//Decrease stack
 				arrow->Use();
 				inventory->RemoveItemStack(arrow->GetID(), 1);
