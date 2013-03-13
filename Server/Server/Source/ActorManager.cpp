@@ -8,17 +8,16 @@
 #include "WorldActor.h"
 #include "ProjectileActor.h"
 
-ActorManager::ActorManager( ActorSynchronizer* syncher, SoundHandler* sh) : 
-	zSynch(syncher), zSoundHandler(sh)
+
+ActorManager::ActorManager(ActorSynchronizer* syncher) : 
+	zSynch(syncher)
 {
 	AddObserver(this->zSynch);
-	AddObserver(this->zSoundHandler);
 }
 
 ActorManager::~ActorManager()
 {
 	this->RemoveObserver(this->zSynch);
-	this->RemoveObserver(this->zSoundHandler);
 
 	auto it_actors_end = this->zActors.end();
 	for(auto it = this->zActors.begin(); it != it_actors_end; it++)
@@ -41,7 +40,7 @@ void ActorManager::AddActor( Actor* actor )
 {
 	if(!actor)
 		return;
-	actor->AddObserver(this->zSoundHandler);
+
 	zActors.insert(actor);
 
 	if( actor->CanCollide() )
