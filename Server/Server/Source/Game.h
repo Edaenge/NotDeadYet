@@ -101,6 +101,9 @@ public:
 
 	void SetPerformancePtr(MaloWPerformance* perf) {this->zPerf = perf;}
 
+	float GetFogEnclosement();
+
+
 private:
 	//Test function, spawns items/Animals
 	void SpawnItemsDebug();
