@@ -2,6 +2,8 @@
 
 #include <string>
 #include "Winsock.h"
+#include <mutex>
+
 
 namespace MaloW
 {
@@ -9,6 +11,8 @@ namespace MaloW
 	{
 	protected:
 		SOCKET zSocket;
+		std::mutex zWriteMutex;
+		std::mutex zReadMutex;
 		
 		// Counters
 		unsigned int zPacketNumberIn;
@@ -19,32 +23,32 @@ namespace MaloW
 		// Timing
 		__int64 zChannelCreated;
 
+	public:
 		// Constructor
 		NetworkChannel( SOCKET socket );
 
-		// Receive Message
+		// Amount of packets sent
+		inline unsigned int GetNumPacketsSent() const { return zPacketNumberOut; }
+
+		// Amount of packets received
+		inline unsigned int GetNumPacketsReceived() const { return zPacketNumberIn; }
+		
+		// Amount of bytes sent
+		inline unsigned int GetNumBytesSent() const { return zNumBytesIn; }
+
+		// Amount of bytes received
+		inline unsigned int GetNumBytesReceived() const { return zNumBytesOut; }
+
+		// Receive message
 		virtual bool Receive(std::string& msg, double& timeTaken) throw(...);
 
-	public:
-		// Amount of Packets Sent
-		unsigned int GetNumPacketsSent() const { return zPacketNumberOut; }
-
-		// Amount of Packets Received
-		unsigned int GetNumPacketsReceived() const { return zPacketNumberIn; }
-		
-		// Amount of Bytes Sent
-		unsigned int GetNumBytesSent() const { return zNumBytesIn; }
-
-		// Amount of Bytes Received
-		unsigned int GetNumBytesReceived() const { return zNumBytesOut; }
-
-		// Send Message
+		// Send message
 		virtual bool Send(const std::string& msg) throw(...);
 
-		// Try Sending A message, does not throw when failing
+		// Try sending a message, does not throw when failing
 		virtual bool TrySend(const std::string& msg);
 
-		// Disconnects the channel.
+		// Disconnects the channel
 		virtual void Disconnect();
 	};
 }

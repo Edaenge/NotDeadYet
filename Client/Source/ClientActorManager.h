@@ -9,6 +9,7 @@
 #include <map>
 #include "AudioManager.h"
 #include "AnimationFileReader.h"
+#include "World/World.h"
 
 class Updates
 {
@@ -102,7 +103,7 @@ public:
 	virtual ~ClientActorManager();
 
 	/*! Interpolates all the Objects towards their final Position*/
-	void UpdateObjects(float deltaTime, unsigned int ignoreID);
+	void UpdateObjects(float deltaTime, unsigned int ignoreID, World* world);
 
 	unsigned int GetState(Actor* actor);
 	void AddActorState(Actor* actor, unsigned int state);
@@ -144,7 +145,9 @@ private:
 	Vector3 zCameraOffset;
 
 	FMOD_VECTOR ConvertToFmodVector(const Vector3& v) const;
-	IEventHandle** zFootStep;
+	int GetMostUsedTexOnPos(Vector3 pos, World* world);
+	IEventHandle** zFootStepGrass;
+	IEventHandle** zFootStepDirt;
 
 	std::map<std::string, AnimationFileReader> zModelToReaderMap;
 };

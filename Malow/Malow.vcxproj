@@ -77,6 +77,8 @@
     <ClCompile Include="Source\ClientChannel.cpp" />
     <ClCompile Include="Source\FileReader.cpp" />
     <ClCompile Include="Source\Process.cpp" />
+    <ClCompile Include="Source\ReceiverProcess.cpp" />
+    <ClCompile Include="Source\SenderProcess.cpp" />
     <ClCompile Include="Source\ServerChannel.cpp" />
     <ClCompile Include="Source\ServerListener.cpp" />
   </ItemGroup>
@@ -97,7 +99,10 @@
     <ClInclude Include="Include\NetworkPacket.h" />
     <ClInclude Include="Include\Process.h" />
     <ClInclude Include="Include\Queue.h" />
+    <ClInclude Include="Include\ReceiverProcess.h" />
     <ClInclude Include="Include\Safe.h" />
+    <ClInclude Include="Include\SenderProcess.h" />
+    <ClInclude Include="Include\SendPacketEvent.h" />
     <ClInclude Include="Include\ServerChannel.h" />
     <ClInclude Include="Include\ServerListener.h" />
     <ClInclude Include="Include\Winsock.h" />

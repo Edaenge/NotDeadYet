@@ -18,6 +18,7 @@ PlayerActor::PlayerActor(Player* player, PhysicsObject* physObj, Observer* game)
 	
 	this->zExhausted = false;
 	this->zHasSprinted = false;
+	this->zUsingBow = false;
 }
 
 PlayerActor::~PlayerActor()
@@ -76,4 +77,23 @@ void PlayerActor::SetExhausted( bool exhausted )
 		e.zPos = this->GetPosition();
 		NotifyObservers(&e);
 	}
+}
+
+void PlayerActor::SetBowStart()
+{
+	if(!this->zUsingBow)
+	{
+		this->zUsingBow = true;
+		this->zBowTimeStarted = std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now());
+	}
+}
+
+float PlayerActor::GetBowTimer()
+{
+	if(this->zUsingBow)
+	{
+		this->zUsingBow = false;
+		return (std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) - zBowTimeStarted).count() * 0.000001;
+	}
+	return 0;
 }

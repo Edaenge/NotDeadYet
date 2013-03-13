@@ -177,7 +177,7 @@ void Client::Update()
 	this->UpdateText();
 
 	this->zPerf->PreMeasure("Actor Updates", 0);
-	this->zActorManager->UpdateObjects(this->zGameTimer->GetDeltaTime(), this->zID);
+	this->zActorManager->UpdateObjects(this->zGameTimer->GetDeltaTime(), this->zID, this->zWorld);
 	this->zPerf->PostMeasure("Actor Updates", 0);
 
 	this->zPerf->PreMeasure("Gui Updates", 3);
@@ -632,11 +632,14 @@ bool Client::CheckKey(const unsigned int ID)
 
 void Client::CheckMovementKeys()
 {
-	this->CheckKey(KEY_FORWARD);
-	this->CheckKey(KEY_BACKWARD);
+	if (!zShowCursor)
+	{
+		this->CheckKey(KEY_FORWARD);
+		this->CheckKey(KEY_BACKWARD);
 
-	this->CheckKey(KEY_LEFT);
-	this->CheckKey(KEY_RIGHT);
+		this->CheckKey(KEY_LEFT);
+		this->CheckKey(KEY_RIGHT);
+	}
 }
 
 void Client::CheckPlayerSpecificKeys()
@@ -826,6 +829,17 @@ void Client::CheckPlayerSpecificKeys()
 			if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
 			{
 				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+				std::string msg = "";
+				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, (float)MOUSE_LEFT_PRESS);
+
+				this->zServerChannel->Send(msg);
+			}
+		}
+		else
+		{
+			if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			{
+				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 
 				Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
 				if (!primaryWeapon)
@@ -838,11 +852,6 @@ void Client::CheckPlayerSpecificKeys()
 					this->zServerChannel->Send(msg);
 				}
 			}
-		}
-		else
-		{
-			if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
-				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 		}
 	}
 	this->HandleWeaponEquips();

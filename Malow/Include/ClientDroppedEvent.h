@@ -1,5 +1,8 @@
+#pragma once
+
 #include "Process.h"
 #include "ClientChannel.h"
+
 
 class ClientDroppedEvent : public MaloW::ProcessEvent
 {

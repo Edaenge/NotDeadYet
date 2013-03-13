@@ -24,7 +24,7 @@ class ActorSynchronizer;
 class Host : public MaloW::Process, public Observed
 {
 	MaloWPerformance* zPerf;
-	ServerListener* zServerListener;
+	MaloW::ServerListener* zServerListener;
 
 	NetworkMessageConverter zMessageConverter;
 
@@ -43,7 +43,7 @@ class Host : public MaloW::Process, public Observed
 	std::string zMapName;
 
 	std::set<MaloW::ClientChannel*> zClientChannels;
-	std::map<MaloW::ClientChannel*, ClientData*> zClients;
+	std::map<MaloW::NetworkChannel*, ClientData*> zClients;
 	Game* zGame;
 	ActorSynchronizer* zSynchronizer;
 public:
@@ -84,25 +84,33 @@ public:
 	void Restart( const std::string& gameMode, const std::string& map );
 
 	void SendMessageToClient(const std::string& message);
+
 	// Synchronize Clients
 	void SynchronizeAll();
 private:
 	/*! Handles new incoming connections.*/
 	void HandleNewConnection( MaloW::ClientChannel* CC );
+
 	/*! Handles messages from clients.*/
-	void HandleReceivedMessage( MaloW::ClientChannel* cc, const std::string &message );
+	void HandleReceivedMessage( MaloW::NetworkChannel* cc, const std::string& message );
+
 	/*! */
 	void HandleClientUpdate(const std::vector<std::string> &msgArray, ClientData* cd);
+
 	/*! Handles if a client disconnects.
 		Deletes the client information.
 	*/
-	void HandleClientDisconnect( MaloW::ClientChannel* channel );
+	void HandleClientDisconnect( MaloW::NetworkChannel* channel );
+
 	/*! */
 	void HandleLootRequest(const std::vector<std::string> &msgArray, ClientData* cd);
+
 	/*! */
 	void HandleUserData(const std::vector<std::string> &msgArray, ClientData* cd);
+
 	/*! Read messages from queue and saves them in*/
 	void ReadMessages(); 
+
 	/*! */
 	void PingClients();
 	void CalculateDeltaTime();

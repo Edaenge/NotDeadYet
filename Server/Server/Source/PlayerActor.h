@@ -24,7 +24,9 @@ class PlayerActor : public BioActor
 
 	bool zExhausted;
 	bool zHasSprinted;
+	bool zUsingBow;
 
+	std::chrono::time_point<std::chrono::system_clock, std::chrono::microseconds> zBowTimeStarted;
 public:
 	PlayerActor(Player* player, PhysicsObject* pObj, Observer* game);
 
@@ -42,6 +44,8 @@ public:
 	void SetHydration(float hydration, const bool notify = true);
 	void SetExhausted(bool exhausted);
 	inline void SetHasSprinted(bool hasSprinted) { this->zHasSprinted = hasSprinted; }
+	void SetBowStart();
+	float GetBowTimer();
 };
 
 //class PlayerUpdatedEvent : public Event

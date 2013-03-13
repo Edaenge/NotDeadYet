@@ -1,5 +1,4 @@
-#ifndef CLIENTCHANNEL_H
-#define CLIENTCHANNEL_H
+#pragma once
 
 #include <iostream>
 #include <stdio.h>
@@ -9,14 +8,21 @@
 #include "NetworkPacket.h"
 #include "NetworkChannel.h"
 
+namespace MaloW
+{
+	class NetworkChannel;
+	class ReceiverProcess;
+	class SenderProcess;
+}
+
 class ClientData;
 
 using namespace std;
 
 /*
-Implement your own client class with this class as an object for sending / recieving data.
+Implement your own client class with this class as an object for sending / receiving data.
 1. Create ClientChannel Object.
-2. Use setNotifier to set which process recivied data will be sent to.
+2. Use setNotifier to set which process received data will be sent to.
 3. Call on ->Start
 This class will be listening for data with its own process and it will send data with
 ->SendData(string).
@@ -24,32 +30,43 @@ This class will be listening for data with its own process and it will send data
 
 namespace MaloW
 {
-	class ClientChannel : public MaloW::NetworkChannel, public MaloW::Process
+	class ClientChannel
 	{
 	private:
-		MaloW::Process* zNotifier;
+		SOCKET zSocket;
+		MaloW::NetworkChannel* zNetworkChannel;
+		MaloW::Process* zObserverProcess;
 		std::string zIP;
-		long zID;
+
+		// Packet Receiver
+		MaloW::ReceiverProcess* zReceiveProcess;
+
+		// Packet Sender
+		MaloW::SenderProcess* zSenderProcess;
 
 		virtual ~ClientChannel();
-	protected:
-		void CloseSpecific();
-
 	public:
 		ClientChannel(MaloW::Process* zNotifier, SOCKET hClient, const std::string& ip_adress);
 		
+
+		// Get Network Channel
+		inline MaloW::NetworkChannel* GetNetworkChannel() const { return zNetworkChannel; }
+
 		// Begin Process
-		void Life();
+		void Start();
 
 		// Disconnect
 		void Disconnect();
 
+		// Send Message
+		void Send(const std::string& message);
+
+		// Try Sending
+		void TrySend(const std::string& message);
+
 		// The IP Of Connection
-		inline const std::string& GetIP() {return this->zIP;}
+		inline const std::string& GetIP() const { return this->zIP; }
 
 		friend class ClientData;
 	};
 }
-
-
-#endif

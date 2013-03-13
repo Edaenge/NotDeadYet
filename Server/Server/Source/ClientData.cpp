@@ -10,10 +10,17 @@ ClientData::ClientData(MaloW::ClientChannel* cc)
 
 ClientData::~ClientData()
 {
-	if (this->zClient)
+	try
 	{
-		delete this->zClient;
-		this->zClient = NULL;
+		if (this->zClient)
+		{
+			delete this->zClient;
+			this->zClient = NULL;
+		}
+	}
+	catch(...)
+	{
+
 	}
 }
 

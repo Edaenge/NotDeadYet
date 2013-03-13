@@ -2,66 +2,94 @@
 #include "Winsock.h"
 #include "ClientDisconnectedEvent.h"
 #include "NetworkException.h"
+#include "ReceiverProcess.h"
+#include "SenderProcess.h"
+#include "NetworkChannel.h"
+#include "SendPacketEvent.h"
 
 using namespace MaloW;
 
 
 ClientChannel::ClientChannel(MaloW::Process* observerProcess, SOCKET sock, const std::string& ip_adress) :
-	zNotifier(observerProcess),
-	NetworkChannel(sock)
+	zSocket(zSocket),
+	zObserverProcess(observerProcess),
+	zNetworkChannel(0),
+	zReceiveProcess(0),
+	zSenderProcess(0)
 {
-	static unsigned int id = 0;
-	this->zID = id++;
+	// IP Address
 	this->zIP = ip_adress;
+
+	// Create Network Channel
+	zNetworkChannel = new NetworkChannel(sock);
+
+	// Create Receiver Process
+	zReceiveProcess = new ReceiverProcess(zObserverProcess, this);
+
+	// Create Sender Process
+	zSenderProcess = new SenderProcess(zObserverProcess, this);
 }
 
 ClientChannel::~ClientChannel()
 {
-	this->Close();
-	this->WaitUntillDone();
-
-	if(zSocket) closesocket(zSocket);
-}
-
-void ClientChannel::Life()
-{
-	MaloW::Debug("ClientChannel Process Started");
-
-	try
+	// Makes the threads quit
+	if ( zSocket )
 	{
-		double packetTime;
-		std::string msg;
-		while(this->stayAlive && Receive(msg, packetTime))
+		if ( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
 		{
-			zNotifier->PutEvent(new NetworkPacket(msg, this, packetTime));
+			throw NetworkException("Failed Shutting Down Socket!", WSAGetLastError());
 		}
 	}
-	catch(...)
+
+	// Wait For Receiver Process
+	if ( zReceiveProcess )
 	{
-		zNotifier->PutEvent(new ClientDisconnectedEvent(this));
+		zReceiveProcess->Close();
+		zReceiveProcess->WaitUntillDone();
+		delete zReceiveProcess;
+		zReceiveProcess = 0;
 	}
-}
 
-void ClientChannel::CloseSpecific()
-{
-	if(zSocket)
+	// Wait For Sender Process
+	if ( zSenderProcess )
 	{
-		try
-		{
-			if( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
-			{
-				throw NetworkException("Failed Shutting Down Socket!", WSAGetLastError());
-			}
-		}
-		catch(...)
-		{
+		zSenderProcess->Close();
+		zSenderProcess->WaitUntillDone();
+		delete zSenderProcess;
+		zSenderProcess = 0;
+	}
 
-		}
-		
+	// Delete Network Channel
+	if ( zNetworkChannel )
+	{
+		delete zNetworkChannel;
+		zNetworkChannel = 0;
+	}
+
+	// Delete Socket
+	if ( zSocket )
+	{
+		closesocket(zSocket);
 	}
 }
 
-void MaloW::ClientChannel::Disconnect()
+void ClientChannel::Start()
 {
-	NetworkChannel::Disconnect();
+	if ( zReceiveProcess ) zReceiveProcess->Start();
+	if ( zSenderProcess ) zSenderProcess->Start();
+}
+
+void ClientChannel::Disconnect()
+{
+	zNetworkChannel->Disconnect();
+}
+
+void ClientChannel::Send(const std::string& message)
+{
+	zSenderProcess->PutEvent( new SendPacketEvent(message) );
+}
+
+void ClientChannel::TrySend(const std::string& message)
+{
+	zSenderProcess->PutEvent( new SendPacketEvent(message) );
 }

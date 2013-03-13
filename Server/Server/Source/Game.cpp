@@ -48,6 +48,10 @@ static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 //Expected playtime
 static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
 
+#define ARROWMAXSPEED 35.0f
+#define ARROWMAXLOADTIME 3.0f
+#define ARROWSPEEDPERSEC (ARROWMAXSPEED / ARROWMAXLOADTIME)
+
 Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* syncher, const std::string& mode, const std::string& worldFile ) :
 	zSyncher(syncher),
 	zPhysicsEngine(physics),
@@ -73,8 +77,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	LoadEntList("Entities.txt");
 
 	// Create soundhandler and let it observe game.
-	this->zSoundHandler = new SoundHandler();
-	this->AddObserver(this->zSoundHandler);
+	this->zSoundHandler = new SoundHandler(this);
 
 // Actor Manager
 	this->zActorManager = new ActorManager(syncher, this->zSoundHandler);
@@ -102,8 +105,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	{
 		this->zGameMode = new GameModeFFA(this);
 	}
-// Game Mode Observes
-	this->AddObserver(this->zGameMode);
 
 //DEBUG;
 	this->SpawnItemsDebug();
@@ -167,12 +168,12 @@ Game::~Game()
 	this->zPlayers.clear();
 
 	// Delete Subsystems
-	SAFE_DELETE(zWorld);
-	SAFE_DELETE(zActorManager);
 	SAFE_DELETE(zGameMode);
 	SAFE_DELETE(zSoundHandler);
 	SAFE_DELETE(zCraftingManager);
 	SAFE_DELETE(zMaterialSpawnManager);
+	SAFE_DELETE(zWorld);
+	SAFE_DELETE(zActorManager);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -640,6 +641,10 @@ void Game::OnEvent( Event* e )
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
+		if(KDE->key == MOUSE_LEFT_PRESS)
+		{
+			this->CheckPlayerUseBow(this->zPlayers[KDE->clientData]);
+		}
 	}
 	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )
 	{
@@ -1842,6 +1847,16 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 		MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
+	float bowTimer = pActor->GetBowTimer();
+	if(bowTimer == 0)
+	{
+		MaloW::Debug("Too low loading time on bow.");
+		return;
+	}
+	if(bowTimer > 3.0f)
+	{
+		bowTimer = 3.0f;
+	}
 
 	Inventory* inventory = pActor->GetInventory();
 	if( !(inventory) )
@@ -1874,7 +1889,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//create projectileActor
 				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
 				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
-		
+				
 				ProjectileArrowBehavior* projBehavior = NULL;
 				Damage damage;
 
@@ -1887,7 +1902,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				projActor->SetDir(pActor->GetDir(), false);
 
 				//Create behavior
-				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
+				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld, ARROWSPEEDPERSEC * bowTimer);
 				projBehavior->AddObserver(this->zSoundHandler);
 
 				//Set Nearby actors
@@ -2404,5 +2419,25 @@ void Game::RestartGame()
 	SpawnItemsDebug();
 	//SpawnAnimalsDebug();
 	SpawnHumanDebug();
+}
 
+void Game::CheckPlayerUseBow(Player* player)
+{
+	if(player->GetKeys().GetKeyState(MOUSE_LEFT_PRESS))
+	{
+		if(BioActor *bActor = dynamic_cast<BioActor *>(player->GetBehavior()->GetActor()))
+		{
+			if(bActor->GetInventory()->GetPrimaryEquip() && bActor->GetInventory()->GetPrimaryEquip()->GetItemSubType() == ITEM_SUB_TYPE_BOW)
+			{
+				if(bActor->GetInventory()->GetProjectile() && bActor->GetInventory()->GetProjectile()->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+				{
+					dynamic_cast<PlayerActor* >(player->GetBehavior()->GetActor())->SetBowStart();
+					NetworkMessageConverter NMC;
+					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_BOW_BOWSTRETCH);
+					msg += NMC.Convert(MESSAGE_TYPE_POSITION, bActor->GetPosition());
+					this->SendToAll(msg);
+				}
+			}
+		}
+	}
 }
