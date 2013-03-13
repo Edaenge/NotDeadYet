@@ -108,7 +108,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 //DEBUG;
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -834,6 +834,7 @@ void Game::OnEvent( Event* e )
 					//Create Ghost behavior And Ghost Actor
 					GhostActor* gActor = new GhostActor(player);
 					gActor->SetPosition(dActor->GetPosition());
+					gActor->SetModel("media/models/ghost.obj");
 
 					PlayerGhostBehavior* playerGhostBehavior = new PlayerGhostBehavior(gActor, this->zWorld, player);
 
