@@ -16,9 +16,6 @@ ClientChannel::ClientChannel(MaloW::Process* observerProcess, SOCKET sock, const
 	zReceiveProcess(0),
 	zSenderProcess(0)
 {
-	static unsigned int id = 0;
-	this->zID = id++;
-
 	// IP Address
 	this->zIP = ip_adress;
 
@@ -56,6 +53,13 @@ ClientChannel::~ClientChannel()
 		zSenderProcess->WaitUntillDone();
 		delete zSenderProcess;
 		zSenderProcess = 0;
+	}
+
+	// Delete Network Channel
+	if ( zNetworkChannel )
+	{
+		delete zNetworkChannel;
+		zNetworkChannel = 0;
 	}
 
 	// Delete Socket

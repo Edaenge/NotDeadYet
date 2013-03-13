@@ -35,7 +35,6 @@ namespace MaloW
 		MaloW::NetworkChannel* zNetworkChannel;
 		MaloW::Process* zObserverProcess;
 		std::string zIP;
-		long zID;
 
 		// Packet Receiver
 		MaloW::ReceiverProcess* zReceiveProcess;
