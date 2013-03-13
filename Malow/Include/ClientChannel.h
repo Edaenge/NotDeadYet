@@ -33,7 +33,7 @@ namespace MaloW
 		void CloseSpecific();
 
 	public:
-		ClientChannel(MaloW::Process* zNotifier, SOCKET hClient, const std::string ip_adress);
+		ClientChannel(MaloW::Process* zNotifier, SOCKET hClient, const std::string& ip_adress);
 		virtual ~ClientChannel();
 
 		// Begin Process

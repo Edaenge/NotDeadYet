@@ -645,7 +645,7 @@ void Client::CheckPlayerSpecificKeys()
 		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
 
-		if (msd.zAction != -1 && msd.gid.zID != 0)
+		if (msd.zAction != -1 && msd.gid.zID != -1)
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItem(msd.gid.zID);
 			if (msd.zAction == USE)
@@ -677,6 +677,17 @@ void Client::CheckPlayerSpecificKeys()
 			{
 				if(item)
 					this->SendUnEquipItem(msd.gid.zID);
+			}
+			else if (msd.zAction == CRAFT)
+			{
+				if(!this->zGuiManager->IsCraftOpen())
+				{
+					if(this->zGuiManager->IsLootingOpen())
+						this->zGuiManager->ToggleLootGui(0);
+
+					this->zGuiManager->ToggleCraftingGui();
+					this->zShowCursor = true;
+				}
 			}
 		}
 	}

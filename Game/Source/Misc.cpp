@@ -34,7 +34,6 @@ Misc::Misc(const Misc& other )
 	this->zMeshModel = other.zMeshModel;
 	this->zItemSubType = other.zItemSubType;
 	this->zItemDescription = other.zItemDescription;
-	
 }
 
 Misc::~Misc()

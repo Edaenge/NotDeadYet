@@ -274,7 +274,7 @@ int Inventory::SearchForItemType(const int Type, const int SubType)
 
 	for (auto it = this->zItems.begin(); it < this->zItems.end(); it++)
 	{
-		if ((*it)->GetItemType() == Type && (*it)->GetItemSubType() == SubType)
+		if ((int)(*it)->GetItemType() == Type && (int)(*it)->GetItemSubType() == SubType)
 		{
 			counter += (*it)->GetStackSize();
 		}
