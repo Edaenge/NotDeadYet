@@ -73,8 +73,10 @@ void ServerListener::Life()
 		this->stayAlive = Accept(newConnection, client);
 		char *connected_ip = inet_ntoa(client.sin_addr);
 		std::string ip(connected_ip);
+
 		if (this->stayAlive)
+		{
 			zObserver->PutEvent(new ClientConnectedEvent(new MaloW::ClientChannel(zObserver, newConnection, ip)));
-		
+		}
 	}
 }
