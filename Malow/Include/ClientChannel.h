@@ -28,10 +28,6 @@ namespace MaloW
 		MaloW::Process* zNotifier;
 		std::string zIP;
 		long zID;
-		
-
-		// Receive Message
-		//bool Receive(std::string& msg) {NetworkChannel::Receive(msg);} throw(...)
 
 	protected:
 		void CloseSpecific();
@@ -43,9 +39,11 @@ namespace MaloW
 		// Begin Process
 		void Life();
 
+		// Disconnect
 		void Disconnect();
 
-		std::string const GetIP() const {return this->zIP;}
+		// The IP Of Connection
+		inline const std::string& const GetIP() const {return this->zIP;}
 	};
 }
 

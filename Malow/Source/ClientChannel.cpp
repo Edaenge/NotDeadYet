@@ -6,7 +6,7 @@
 using namespace MaloW;
 
 
-ClientChannel::ClientChannel(MaloW::Process* observerProcess, SOCKET sock, const std::string ip_adress) :
+ClientChannel::ClientChannel(MaloW::Process* observerProcess, SOCKET sock, const std::string& ip_adress) :
 	zNotifier(observerProcess),
 	NetworkChannel(sock)
 {

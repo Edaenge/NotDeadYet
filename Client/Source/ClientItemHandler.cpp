@@ -76,6 +76,7 @@ void Client::HandleUseItem(const unsigned int ID)
 		if(FMOD_RESULT_TEMP == FMOD_OK)
 		{
 			temp->Play();
+			delete temp;
 		}
 		if (!container)
 		{
@@ -202,6 +203,17 @@ void Client::HandleFillItem(const unsigned int ID, const int currentUses)
 		container->SetRemainingUses(currentUses);
 
 		this->zGuiManager->AddInventoryItemToGui(gid);
+
+		IEventHandle* temp;
+		AudioManager* am = AudioManager::GetInstance();
+		int FMOD_RESULT_TEMP = am->GetEventHandle(EVENTID_NOTDEADYET_MAN_DRINKWATER, temp);
+
+		if(FMOD_RESULT_TEMP == FMOD_OK)
+		{
+			temp->Play();
+			delete temp;
+		}
+
 	}
 }
 
