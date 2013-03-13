@@ -4,6 +4,7 @@
 #include "WorldActor.h"
 #include "BioActor.h"
 #include "ActorSynchronizer.h"
+#include "ActorManager.h"
 
 using namespace std::chrono;
 
@@ -63,7 +64,7 @@ void Behavior::OnEvent(Event* e)
 		zWorld->DeleteAnchor(zAnchor);
 		zActor = NULL;
 	}
-	else if( ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e) )
+	else if( ActorRemovedEvent* AR = dynamic_cast<ActorRemovedEvent*>(e) )
 	{
 		auto found = this->zNearActors.find(AR->zActor);
 		if(found != this->zNearActors.end())

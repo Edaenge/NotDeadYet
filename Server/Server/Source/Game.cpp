@@ -1008,10 +1008,10 @@ void Game::OnEvent( Event* e )
 		// Apply Default Player Behavior
 		this->SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(pActor, zWorld, zPlayers[UDE->clientData]));
 
-		//Add actor
+		// Add actor
 		this->zActorManager->AddActor(pActor);
 
-		//Tells the client which Actor he owns.
+		// Tells the client which Actor he owns.
 		std::string message;
 		NetworkMessageConverter NMC;
 		unsigned int selfID;
@@ -1025,7 +1025,7 @@ void Game::OnEvent( Event* e )
 		NewActorPacket* NAP = new NewActorPacket();
 		PhysicalConditionPacket* PCP = new PhysicalConditionPacket();
 
-		//Gather Actor Physical Conditions
+		// Gather Actor Physical Conditions
 		PCP->zBleedingLevel = pActor->GetBleeding();
 		PCP->zEnergy = pActor->GetEnergy();
 		PCP->zHealth = pActor->GetHealth();
@@ -1036,7 +1036,7 @@ void Game::OnEvent( Event* e )
 		UDE->clientData->Send(*PCP);
 		delete PCP;
 
-		//Gather Actors Information and send to client
+		// Gather Actors Information and send to client
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		auto it_actors_end = actors.end();
 		for (auto it = actors.begin(); it != it_actors_end; it++)

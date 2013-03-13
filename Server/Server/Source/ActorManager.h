@@ -1,21 +1,35 @@
 #pragma once
 
 #include <World/Observer.h>
-#include "Behavior.h"
+#include <Vector.h>
 
 class ActorSynchronizer;
 class Actor;
+class Behavior;
+
+
+class ActorAddedEvent : public Event
+{
+public:
+	Actor* zActor;
+};
+
+class ActorRemovedEvent : public Event
+{
+public:
+	Actor* zActor;
+};
 
 class BehaviorAddedEvent : public Event
 {
 public:
-	Behavior* behavior;
+	Behavior* zBehavior;
 };
 
 class BehaviorRemovedEvent : public Event
 {
 public:
-	Behavior* behavior;
+	Behavior* zBehavior;
 };
 
 class ActorManager : public Observed, public Observer
@@ -49,10 +63,9 @@ public:
 	Actor* GetActor(const unsigned int ID) const;
 
 	/*! Adds all Actors within the circle to out. Returns total amount of actors found*/
-	unsigned int GetActorsInCircle(const Vector2& center, float radius, std::set<Actor*>& out) const;
-	unsigned int GetActorsInCircle(const Vector2& center, float radius, std::set<Actor*>& out, const unsigned int filter) const;
+	unsigned int GetActorsInCircle(const Vector2& center, float radius, std::set<Actor*>& out, const unsigned int filter=0) const;
 	
-	/*! */
+	// Finds collideable Actors In Circle
 	unsigned int GetCollideableActorsInCircle(const Vector2& center, float radius, std::set<Actor*>& out);
 
 	// Returns set of lootable actors

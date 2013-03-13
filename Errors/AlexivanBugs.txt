@@ -5,7 +5,9 @@ Camera is not first person
 Man kan gå undervatten
 Server slutar skicka data till spelaren
 server Skickar data direkt via networkchannel istället för ClientData får servern att lagga
-
+man kan inte döda rådjur
+ingen attack animation
+dead player model would be nice
 
 2013-03-12
 Ugly Spawn

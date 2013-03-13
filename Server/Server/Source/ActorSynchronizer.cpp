@@ -9,6 +9,8 @@
 #include "WorldActor.h"
 #include "AnimationFileReader.h"
 #include <time.h>
+#include "ActorManager.h"
+
 
 ActorSynchronizer::ActorSynchronizer()
 {
@@ -186,7 +188,7 @@ void ActorSynchronizer::OnEvent( Event* e )
 	
 		this->AddAnimation(bActor);
 	}
-	else if (ActorAdded* AD = dynamic_cast<ActorAdded*>(e))
+	else if (ActorAddedEvent* AD = dynamic_cast<ActorAddedEvent*>(e))
 	{
 		// Do Not Sync World Actors
 		if( WorldActor* WA = dynamic_cast<WorldActor*>(AD->zActor) )
@@ -203,7 +205,7 @@ void ActorSynchronizer::OnEvent( Event* e )
 		AD->zActor->AddObserver(this);
 		//zNewActorSet.insert(AD->zActor);
 	}
-	else if(ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e))
+	else if(ActorRemovedEvent* AR = dynamic_cast<ActorRemovedEvent*>(e))
 	{
 		// Do Not Sync World Actors
 		if( WorldActor* WA = dynamic_cast<WorldActor*>(AR->zActor) )
