@@ -3,15 +3,18 @@
 #include "PlayerActor.h"
 #include "sounds.h"
 #include <time.h>
+#include "Game.h"
 
 
-SoundHandler::SoundHandler()
+SoundHandler::SoundHandler(Game* game) : 
+	zGame(game)
 {
-
+	zGame->AddObserver(this);
 }
 
 SoundHandler::~SoundHandler()
 {
+	if ( zGame ) zGame->RemoveObserver(this);
 	zPlayers.clear();
 }
 

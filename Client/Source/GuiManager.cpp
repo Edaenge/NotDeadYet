@@ -375,8 +375,8 @@ Menu_select_data GuiManager::CheckCrafting()
 
 	Menu_select_data msd;
 	msd.zAction = (CIRCMENU)-1;
-	msd.gid.zID = 0;
-	msd.gid.zType = 0;
+	msd.gid.zID = -1;
+	msd.gid.zType = -1;
 	return msd;
 }
 

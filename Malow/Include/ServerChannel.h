@@ -29,7 +29,7 @@ namespace MaloW
 		void CloseSpecific();
 
 	public:
-		ServerChannel( MaloW::Process* observerProcess);
+		ServerChannel(MaloW::Process* observerProcess);
 		virtual ~ServerChannel();
 
 		// Begin Process

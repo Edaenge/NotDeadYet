@@ -22,24 +22,11 @@ class Material : public Item
 {
 public:
 	Material();
-	Material(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType, 
-		const unsigned int craftingType, const unsigned int stacksRequiredToCraft);	
-	Material(const unsigned int itemType, const unsigned int itemSubType, 
-			const unsigned int craftingType, const unsigned int stacksRequiredToCraft);	
+	Material(const unsigned int ID, const unsigned int itemType, const unsigned int itemSubType);	
+	Material(const unsigned int itemType, const unsigned int itemSubType);	
 	Material(const Material& other);
 	virtual ~Material();
 
-	unsigned int GetCraftingType() const {return this->zCraftingType;}
-	unsigned int GetRequiredStacksToCraft() const {return this->zRequiredStackToCraft;}
-
-	void SetCraftingType(const int TYPE) {this->zCraftingType = TYPE;}
-	void SetRequiredStackToCraft(const int size) {this->zRequiredStackToCraft = size;}
-
 	virtual bool Use();
-	virtual bool IsUsable();
 	virtual std::string ToMessageString(NetworkMessageConverter* NMC);
-
-private:
-	unsigned int zCraftingType;
-	unsigned int zRequiredStackToCraft;
 };

@@ -24,8 +24,8 @@ public:
 	void AddBehavior( Behavior* behavior );
 	/*! Removes The actor, physics object will NOT be freed.*/
 	void RemoveActor( Actor* actor );
-	void RemoveBehavior( Behavior* behavior );
-	void RemoveBehavior( Actor* actor);
+	void RemoveBehavior(Behavior* behavior );
+	void RemoveBehavior(Actor* actor, bool instant = true);
 	/*! Removes all actors, behaviors, physics objects WILL be freed.*/
 	void ClearAll();
 

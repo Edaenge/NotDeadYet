@@ -83,9 +83,10 @@ void MainMenu::Init()
 		"Media/Models/Campfire_01_v01.obj",
 		"Media/Models/Pocketknife_v02.obj",
 		"Media/Models/StoneItem_01_v01.obj",
-		"Media/Models/BranchesItem_01_v01.obj"};
+		"Media/Models/BranchesItem_01_v01.obj",
+		"Media/Models/Supplycrate_01_v03.obj"};
 
-	eng->PreLoadResources(22, object);
+	eng->PreLoadResources(23, object);
 
 	eng->StartRendering();
 

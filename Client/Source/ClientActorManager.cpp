@@ -4,14 +4,19 @@
 
 #define PI 3.14159265358979323846f
 #define MAXFOOTSTEPS 6
-
+#define NROFGRASSTEX 3
+#define NROFDIRTTEX 3
 ClientActorManager::ClientActorManager()
 {
 	AudioManager* am = AudioManager::GetInstance();
-	this->zFootStep = new IEventHandle*[MAXFOOTSTEPS];
-	for(int i = 0; i < MAXFOOTSTEPS; i++)
-		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_GRASS, this->zFootStep[i]);
 
+	this->zFootStepGrass = new IEventHandle*[MAXFOOTSTEPS];
+	for(int i = 0; i < MAXFOOTSTEPS; i++)
+		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_GRASS, this->zFootStepGrass[i]);
+
+	this->zFootStepDirt = new IEventHandle*[MAXFOOTSTEPS];
+	for(int i = 0; i < MAXFOOTSTEPS; i++)
+		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_DIRT, this->zFootStepDirt[i]);
 
 	this->zInterpolationVelocity = 1.0f;
 	this->zUpdatesPerSec = 1;
@@ -40,20 +45,31 @@ ClientActorManager::~ClientActorManager()
 		}
 	}
 	this->zUpdates.clear();
-
+	// Delete grass footsteps
 	for(int i = 0; i < MAXFOOTSTEPS; i++)
 	{
-		this->zFootStep[i]->Release();
-		delete this->zFootStep[i];
-		this->zFootStep[i] = NULL;
+		this->zFootStepGrass[i]->Release();
+		delete this->zFootStepGrass[i];
+		this->zFootStepGrass[i] = NULL;
 	}
 
-	delete this->zFootStep;
-	this->zFootStep = NULL;
+	delete this->zFootStepGrass;
+	this->zFootStepGrass = NULL;
+
+	//Delete dirt footsteps
+	for(int i = 0; i < MAXFOOTSTEPS; i++)
+	{
+		this->zFootStepDirt[i]->Release();
+		delete this->zFootStepDirt[i];
+		this->zFootStepDirt[i] = NULL;
+	}
+
+	delete this->zFootStepDirt;
+	this->zFootStepDirt = NULL;
 
 }
 
-void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
+void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID, World* world )
 {
 	//std::vector<Actor*> actors;
 	float latency = 1.0f / (float)this->zLatency;
@@ -82,16 +98,27 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 			}
 			if (update->HasPositionChanged())
 			{
+				float lAmountOfGrass = 0.0f;
+				float lAmountOfDirt = 0.0f;
 				Vector3 oldPosition;
 				if(update->GetID() == clientID)
 				{
 					position = this->InterpolatePosition(gEng->GetCamera()->GetPosition() - this->zCameraOffset, update->GetPosition(), t);
-					
 					AudioManager::GetInstance()->SetPlayerPosition(&ConvertToFmodVector(position), &ConvertToFmodVector(gEng->GetCamera()->GetForward()), &ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
-
-					this->zFootStep[MAXFOOTSTEPS-1]->Setposition(&ConvertToFmodVector(position));
 					if(actor->GetModel() != "Media/Models/ghost.obj")
-						this->zFootStep[MAXFOOTSTEPS-1]->Play();
+					{
+						int mostUsedTex = this->GetMostUsedTexOnPos(position, world);
+						if(mostUsedTex == 0)
+						{
+							this->zFootStepGrass[MAXFOOTSTEPS-1]->Setposition(&ConvertToFmodVector(position));
+							this->zFootStepGrass[MAXFOOTSTEPS-1]->Play();
+						}
+						else
+						{
+							this->zFootStepDirt[MAXFOOTSTEPS-1]->Setposition(&ConvertToFmodVector(position));
+							this->zFootStepDirt[MAXFOOTSTEPS-1]->Play();
+						}
+					}
 
 					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
 				}
@@ -99,11 +126,21 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID )
 				{
 					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
 					actor->SetPosition(position);
-
-					if(stepsPlayedThisUpdate < MAXFOOTSTEPS)
+					if(actor->GetModel() != "Media/Models/ghost.obj")
 					{
-						this->zFootStep[stepsPlayedThisUpdate]->Setposition(&ConvertToFmodVector(position));
-						this->zFootStep[stepsPlayedThisUpdate]->Play();
+						if(stepsPlayedThisUpdate < MAXFOOTSTEPS)
+						{
+							if(this->GetMostUsedTexOnPos(position, world) == 0)
+							{
+								this->zFootStepGrass[stepsPlayedThisUpdate]->Setposition(&ConvertToFmodVector(position));
+								this->zFootStepGrass[stepsPlayedThisUpdate]->Play();
+							}
+							else
+							{
+								this->zFootStepDirt[stepsPlayedThisUpdate]->Setposition(&ConvertToFmodVector(position));
+								this->zFootStepDirt[stepsPlayedThisUpdate]->Play();
+							}
+						}
 					}
 
 				}
@@ -313,4 +350,37 @@ FMOD_VECTOR ClientActorManager::ConvertToFmodVector( const Vector3& v ) const
 	temp.y = v.y;
 	temp.z = v.z;
 	return temp;
+}
+
+int ClientActorManager::GetMostUsedTexOnPos( Vector3 pos, World* world )
+{
+	float mostGrassTex = 0.0f;
+	float mostDirtTex = 0.0;
+	float texGrass[NROFGRASSTEX];
+	texGrass[0] = world->GetAmountOfTexture(pos.GetXZ(), "01_v02-Moss.png");
+	texGrass[1] = world->GetAmountOfTexture(pos.GetXZ(), "06_v01-MossDark.png");
+	texGrass[2] = world->GetAmountOfTexture(pos.GetXZ(), "07_v01-MossLight.png");
+
+	float texDirt[NROFDIRTTEX];
+	texDirt[0] = world->GetAmountOfTexture(pos.GetXZ(), "05_v01-Sandpng.png");
+	texDirt[1] = world->GetAmountOfTexture(pos.GetXZ(), "04_v02-Gravel.png");
+	texDirt[2] = world->GetAmountOfTexture(pos.GetXZ(), "03_v02-Mix.png");
+
+	for(int i = 0; i < NROFGRASSTEX; i++)
+	{
+		if(texGrass[i] > mostGrassTex)
+			mostGrassTex = texGrass[i];
+	}
+
+	for(int i = 0; i < NROFDIRTTEX; i++)
+	{
+		if(texDirt[i] > mostGrassTex)
+			mostDirtTex = texDirt[i];
+	}
+
+	if(mostDirtTex > mostGrassTex)
+		return 1;
+	
+	return 0;
+
 }

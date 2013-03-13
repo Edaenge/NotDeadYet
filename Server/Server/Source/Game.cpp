@@ -48,6 +48,10 @@ static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 //Expected playtime
 static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
 
+#define ARROWMAXSPEED 35.0f
+#define ARROWMAXLOADTIME 3.0f
+#define ARROWSPEEDPERSEC (ARROWMAXSPEED / ARROWMAXLOADTIME)
+
 Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* syncher, const std::string& mode, const std::string& worldFile ) :
 	zSyncher(syncher),
 	zPhysicsEngine(physics),
@@ -73,8 +77,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	LoadEntList("Entities.txt");
 
 	// Create soundhandler and let it observe game.
-	this->zSoundHandler = new SoundHandler();
-	this->AddObserver(this->zSoundHandler);
+	this->zSoundHandler = new SoundHandler(this);
 
 // Actor Manager
 	this->zActorManager = new ActorManager(syncher, this->zSoundHandler);
@@ -102,12 +105,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	{
 		this->zGameMode = new GameModeFFA(this);
 	}
-// Game Mode Observes
-	this->AddObserver(this->zGameMode);
 
 //DEBUG;
-	//this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
+	//this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -167,12 +167,12 @@ Game::~Game()
 	this->zPlayers.clear();
 
 	// Delete Subsystems
-	SAFE_DELETE(zWorld);
-	SAFE_DELETE(zActorManager);
 	SAFE_DELETE(zGameMode);
 	SAFE_DELETE(zSoundHandler);
 	SAFE_DELETE(zCraftingManager);
 	SAFE_DELETE(zMaterialSpawnManager);
+	SAFE_DELETE(zWorld);
+	SAFE_DELETE(zActorManager);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -186,7 +186,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	
-	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
+	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 	DeerActor* dActor  = new DeerActor(deerPhysics);
 	DeerActor* dActor2 = new DeerActor(deerPhysics);
 	DeerActor* dActor3 = new DeerActor(deerPhysics);
@@ -203,7 +203,7 @@ void Game::SpawnAnimalsDebug()
 	dActor6->AddObserver(this->zGameMode);
 	dActor7->AddObserver(this->zGameMode);
 
-	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/deer_temp.obj");
+	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 	BearActor* bActor = new BearActor(bearPhysics);
 	bActor->AddObserver(this->zGameMode);
 
@@ -563,7 +563,7 @@ bool Game::Update( float dt )
 	std::string msg;
 
 	this->zPerf->PreMeasure("Updating Behaviors", 1);
-	std::set<Behavior*> behaviors = this->zActorManager->GetBehaviors();
+	std::set<Behavior*> &behaviors = this->zActorManager->GetBehaviors();
 
 	// Update Behaviors
 	auto i = behaviors.begin();
@@ -704,6 +704,10 @@ void Game::OnEvent( Event* e )
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
+		if(KDE->key == MOUSE_LEFT_PRESS)
+		{
+			this->CheckPlayerUseBow(this->zPlayers[KDE->clientData]);
+		}
 	}
 	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )
 	{
@@ -907,6 +911,7 @@ void Game::OnEvent( Event* e )
 					//Create Ghost behavior And Ghost Actor
 					GhostActor* gActor = new GhostActor(player);
 					gActor->SetPosition(dActor->GetPosition());
+					gActor->AddObserver(this->zGameMode);
 
 					PlayerGhostBehavior* playerGhostBehavior = new PlayerGhostBehavior(gActor, this->zWorld, player);
 
@@ -919,9 +924,6 @@ void Game::OnEvent( Event* e )
 
 					//Add the actor to the list
 					this->zActorManager->AddActor(gActor);
-
-					NetworkMessageConverter NMC;
-					std::string msg = NMC.Convert(MESSAGE_TYPE_SUN_DIRECTION, this->zCurrentSunDirection);
 				}
 			}
 		}
@@ -1057,19 +1059,16 @@ void Game::OnEvent( Event* e )
 		const std::string* selectedModel = &defaultModel;
 
 		if ( UDE->playerModel == "media/models/token_anims.fbx" )
-		{
 			selectedModel = &UDE->playerModel;
-		}
-
-		// Create Player Actor
-		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
 		
+		// Create Player Actor
+		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("media/models/temp_guy.obj");
+
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
 		pActor->SetModel(*selectedModel);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
 		zPlayers[UDE->clientData]->zUserModel = *selectedModel;
 
-		
 		pActor->AddObserver(this->zGameMode);
 		Vector3 center;
 
@@ -1077,9 +1076,6 @@ void Game::OnEvent( Event* e )
 		center = this->CalcPlayerSpawnPoint(32, zWorld->GetWorldCenter());
 		pActor->SetPosition(center, false);
 		pActor->SetScale(pActor->GetScale(), false);
-		Inventory* inv = pActor->GetInventory();
-		inv->AddObserver(this);
-		inv->SetPlayer(zPlayers[UDE->clientData]);
 
 		auto offsets = this->zCameraOffset.find(*selectedModel);
 		
@@ -1087,10 +1083,10 @@ void Game::OnEvent( Event* e )
 			pActor->SetCameraOffset(offsets->second);
 
 		// Apply Default Player Behavior
-		SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(pActor, zWorld, zPlayers[UDE->clientData]));
+		this->SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(pActor, zWorld, zPlayers[UDE->clientData]));
 
 		//Add actor
-		zActorManager->AddActor(pActor);
+		this->zActorManager->AddActor(pActor);
 
 		//Tells the client which Actor he owns.
 		std::string message;
@@ -1195,13 +1191,40 @@ void Game::OnEvent( Event* e )
 	}
 	else if (InventoryBindPrimaryWeapon* IBPW = dynamic_cast<InventoryBindPrimaryWeapon*>(e))
 	{
-		this->HandleBindings(IBPW->ID, IBPW->model, IBPW->type, IBPW->subType);
+		this->HandleBindings(IBPW->clientData, IBPW->ID, IBPW->model, IBPW->type, IBPW->subType);
 	}
 	else if (InventoryUnBindPrimaryWeapon* IUBPW = dynamic_cast<InventoryUnBindPrimaryWeapon*>(e))
 	{
 		NetworkMessageConverter NMC;
 		std::string msg;
 
+		Actor* actor = this->zPlayers[IUBPW->clientData]->GetBehavior()->GetActor();
+
+		if (PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
+		{
+			Inventory* inv = pActor->GetInventory();
+
+			Item* item = inv->GetPrimaryEquip();
+
+			if (item)
+			{
+				if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
+				{
+					pActor->SetState(STATE_UNEQUIP_WEAPON);
+				}
+				else if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
+				{
+					if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+					{
+						pActor->SetState(STATE_UNEQUIP_WEAPON);
+					}
+					else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+					{
+
+					}
+				}
+			}
+		}
 		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)IUBPW->ID);
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, IUBPW->model);
 		this->SendToAll(msg);
@@ -1334,7 +1357,7 @@ void Game::HandleConnection( ClientData* cd )
 {
 	// Create Player
 	Player* player = new Player(cd);
-	zPlayers[cd] = player;
+	this->zPlayers[cd] = player;
 
 	//Lets gamemode observe players.
 	player->AddObserver(this->zGameMode);
@@ -1899,6 +1922,16 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 		MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
+	float bowTimer = pActor->GetBowTimer();
+	if(bowTimer == 0)
+	{
+		MaloW::Debug("Too low loading time on bow.");
+		return;
+	}
+	if(bowTimer > 3.0f)
+	{
+		bowTimer = 3.0f;
+	}
 
 	Inventory* inventory = pActor->GetInventory();
 	if( !(inventory) )
@@ -1931,7 +1964,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//create projectileActor
 				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
 				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
-		
+				
 				ProjectileArrowBehavior* projBehavior = NULL;
 				Damage damage;
 
@@ -1944,12 +1977,12 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				projActor->SetDir(pActor->GetDir(), false);
 
 				//Create behavior
-				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld);
+				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld, ARROWSPEEDPERSEC * bowTimer);
 				projBehavior->AddObserver(this->zSoundHandler);
 
 				//Set Nearby actors
-				projBehavior->SetNearBioActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearBioActors() );
-				projBehavior->SetNearWorldActors( dynamic_cast<PlayerBehavior*>(zPlayers[cd]->GetBehavior())->GetNearWorldActors() );
+				projBehavior->SetNearDynamicActors( zPlayers[cd]->GetBehavior()->GetNearDynamicActors() );
+				projBehavior->SetNearStaticActors( zPlayers[cd]->GetBehavior()->GetNearStaticActors() );
 				
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
@@ -1976,7 +2009,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
 				this->SendToAll(msg);
 
-				pActor->SetState(STATE_ATTACK_BOW);
+				pActor->SetState(STATE_ATTACK);
 			}
 			else
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
@@ -2000,7 +2033,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 		//Check Collisions
 		range = meele->GetRange();
-		victim = dynamic_cast<BioActor*>( zActorManager->CheckCollisions( actor, range, pBehavior->GetNearBioActors() ) );
+		victim = dynamic_cast<BioActor*>( zActorManager->CheckCollisions( actor, range, pBehavior->GetNearDynamicActors() ) );
 		
 		if(victim)
 		{
@@ -2011,7 +2044,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 			victim->TakeDamage(dmg, pActor);
 
-			pActor->SetState(STATE_ATTACK_MACHETE);
+			pActor->SetState(STATE_ATTACK);
 		}
 	}
 }
@@ -2319,8 +2352,15 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID )
 	//cd->Send(msg);
 }
 
-void Game::HandleBindings( const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType )
+void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType)
 {
+	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
+
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+
+	if (!pActor)
+		return;
+
 	std::string msg;
 	NetworkMessageConverter NMC;
 
@@ -2332,23 +2372,28 @@ void Game::HandleBindings( const unsigned int ID, const std::string& model, cons
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
+			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 	}
 	else if (type == ITEM_TYPE_WEAPON_MELEE)
 	{
 		if (subType == ITEM_SUB_TYPE_MACHETE)
 		{
-			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
+
+			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 		else if (subType == ITEM_SUB_TYPE_POCKET_KNIFE)
 		{
-			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
+
+			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 	}
 	else if (type == ITEM_TYPE_PROJECTILE && subType == ITEM_SUB_TYPE_ROCK)
@@ -2378,6 +2423,16 @@ void Game::ModifyLivingPlayers( const int value )
 	NetworkMessageConverter NMC;
 	std::string message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 	this->SendToAll(message);
+}
+
+Vector3 Game::GetOffset(const std::string& model)
+{
+	auto offsets = this->zCameraOffset.find(model);
+
+	if(offsets != this->zCameraOffset.end())
+		return offsets->second;
+
+	return Vector3();
 }
 
 void Game::RestartGame()
@@ -2439,10 +2494,30 @@ void Game::RestartGame()
 	SpawnItemsDebug();
 	SpawnAnimalsDebug();
 	//SpawnHumanDebug();
-
 }
 
 float Game::GetFogEnclosement()
 {
 	return this->zCurrentFogEnclosement;
+}
+
+void Game::CheckPlayerUseBow(Player* player)
+{
+	if(player->GetKeys().GetKeyState(MOUSE_LEFT_PRESS))
+	{
+		if(BioActor *bActor = dynamic_cast<BioActor *>(player->GetBehavior()->GetActor()))
+		{
+			if(bActor->GetInventory()->GetPrimaryEquip() && bActor->GetInventory()->GetPrimaryEquip()->GetItemSubType() == ITEM_SUB_TYPE_BOW)
+			{
+				if(bActor->GetInventory()->GetProjectile() && bActor->GetInventory()->GetProjectile()->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+				{
+					dynamic_cast<PlayerActor* >(player->GetBehavior()->GetActor())->SetBowStart();
+					NetworkMessageConverter NMC;
+					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_BOW_BOWSTRETCH);
+					msg += NMC.Convert(MESSAGE_TYPE_POSITION, bActor->GetPosition());
+					this->SendToAll(msg);
+				}
+			}
+		}
+	}
 }

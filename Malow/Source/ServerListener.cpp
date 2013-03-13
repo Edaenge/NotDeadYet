@@ -2,8 +2,10 @@
 #include "ClientConnectedEvent.h"
 #include "NetworkException.h"
 
+using namespace MaloW;
 
-ServerListener::ServerListener( MaloW::Process *observer, const unsigned int &port ) : 
+
+ServerListener::ServerListener( Process *observer, const unsigned int &port ) : 
 	zObserver(observer), 
 	zPort(port)
 {
@@ -22,12 +24,13 @@ ServerListener::ServerListener( MaloW::Process *observer, const unsigned int &po
 	saListen.sin_port = htons((u_short)port);
 	saListen.sin_addr.s_addr = htonl(INADDR_ANY);
 	saListen.sin_family = AF_INET;
-	if ( bind(zListenSocket, (sockaddr*)&saListen, sizeof(sockaddr)) == SOCKET_ERROR  )
+
+	if ( ::bind(zListenSocket, (sockaddr*)&saListen, sizeof(sockaddr)) == SOCKET_ERROR  )
 	{
 		throw NetworkException("Failed Binding Listen Socket!", WSAGetLastError());
 	}
 
-	if ( listen(zListenSocket, SOMAXCONN) == SOCKET_ERROR )
+	if ( ::listen(zListenSocket, SOMAXCONN) == SOCKET_ERROR )
 	{
 		throw NetworkException("Failed Initializing Listen Socket!", WSAGetLastError());
 	}
@@ -73,8 +76,10 @@ void ServerListener::Life()
 		this->stayAlive = Accept(newConnection, client);
 		char *connected_ip = inet_ntoa(client.sin_addr);
 		std::string ip(connected_ip);
+
 		if (this->stayAlive)
-			zObserver->PutEvent(new ClientConnectedEvent(new MaloW::ClientChannel(zObserver, newConnection, ip)));
-		
+		{
+			zObserver->PutEvent(new ClientConnectedEvent(new ClientChannel(zObserver, newConnection, ip)));
+		}
 	}
 }

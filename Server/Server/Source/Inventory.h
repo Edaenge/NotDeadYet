@@ -78,9 +78,10 @@ public:
 
 	RangedWeapon* GetRangedWeapon();
 	MeleeWeapon* GetMeleeWeapon();
-
+	Item* GetLastUnequipped() {return this->zLastUnequipped;}
 	void UnEquipRangedWeapon();
 	void UnEquipMeleeWeapon();
+	void UnEquipAll();
 
 	/*! Returns the primary equipped item.*/
 	Item* GetPrimaryEquip() const {return this->zPrimaryEquip;}
@@ -113,6 +114,7 @@ private:
 	//Equipment Variables
 	Item* zPrimaryEquip;
 	Item* zSecondaryEquip;
+	Item* zLastUnequipped;
 	Projectile* zProjectile;
 	RangedWeapon* zRangedWeapon;
 	MeleeWeapon* zMeleeWeapon;

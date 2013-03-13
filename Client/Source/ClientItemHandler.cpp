@@ -76,6 +76,7 @@ void Client::HandleUseItem(const unsigned int ID)
 		if(FMOD_RESULT_TEMP == FMOD_OK)
 		{
 			temp->Play();
+			delete temp;
 		}
 		if (!container)
 		{
@@ -202,6 +203,17 @@ void Client::HandleFillItem(const unsigned int ID, const int currentUses)
 		container->SetRemainingUses(currentUses);
 
 		this->zGuiManager->AddInventoryItemToGui(gid);
+
+		IEventHandle* temp;
+		AudioManager* am = AudioManager::GetInstance();
+		int FMOD_RESULT_TEMP = am->GetEventHandle(EVENTID_NOTDEADYET_MAN_DRINKWATER, temp);
+
+		if(FMOD_RESULT_TEMP == FMOD_OK)
+		{
+			temp->Play();
+			delete temp;
+		}
+
 	}
 }
 
@@ -695,8 +707,6 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	unsigned int itemSlotSize = 1000;
 	float projectileDamage = 0.0f;
 	float projectileVelocity = 0.0f;
-	int craftingType = -1;
-	int stacksRequired = 10000;
 	float hunger = 0.0f;
 	int maxUse = 0;
 	int currUse = 0;
@@ -771,14 +781,6 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		{
 			currUse = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_CURRENT, (*it));
 		}
-		else if(strcmp(key, M_MATERIAL_CRAFTING_TYPE.c_str()) == 0)
-		{
-			craftingType = this->zMsgHandler.ConvertStringToInt(M_MATERIAL_CRAFTING_TYPE, (*it));
-		}
-		else if(strcmp(key, M_MATERIAL_STACKS_REQUIRED.c_str()) == 0)
-		{
-			stacksRequired = this->zMsgHandler.ConvertStringToInt(M_MATERIAL_STACKS_REQUIRED, (*it));
-		}
 	}
 	if (itemType == -1)
 	{
@@ -839,7 +841,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		item->SetItemDescription(itemDescription);
 		break;
 	case ITEM_TYPE_MATERIAL:
-		item = new Material(ID, itemType, itemSubType, craftingType, stacksRequired);
+		item = new Material(ID, itemType, itemSubType);
 		item->SetStacking(true);
 		item->SetItemName(itemName);
 		item->SetSlotSize(itemSlotSize);

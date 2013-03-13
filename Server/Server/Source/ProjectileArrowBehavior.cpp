@@ -3,15 +3,14 @@
 #include "Actor.h"
 #include "BioActor.h"
 #include "ProjectileActor.h"
-#include "Physics.h"
 #include "WorldActor.h"
 #include "ActorSynchronizer.h"
 
 static const Vector3 GRAVITY = Vector3(0, -9.82f, 0);
 
-ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world ) : Behavior(actor, world)
+ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world, float speed ) : Behavior(actor, world)
 {
-	this->zSpeed = 35.0f;
+	this->zSpeed = speed;
 	this->zVelocity = actor->GetDir();
 	this->zDamping = 0.99f;
 	this->zMoving = true;
@@ -25,15 +24,12 @@ ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world ) :
 		this->zLength = ( ( center - actor->GetPosition() ) * 2).GetLength();
 	}
 
-	this->zNearActorsIndex = 0;
 	this->zNearByRadius = 370.0f;
 }
 
 ProjectileArrowBehavior::~ProjectileArrowBehavior()
 {
-	this->zNearActors.clear();
-	this->zNearBioActors.clear();
-	this->zNearWorldActors.clear();
+
 }
 
 bool ProjectileArrowBehavior::Update( float dt )
@@ -116,8 +112,8 @@ bool ProjectileArrowBehavior::Update( float dt )
 
 	/***Check collisions***/
 
-	//Check if the arrow has hit a BioActor
-	Actor* collide = CheckBioActorCollision();
+	//Check if the arrow has hit a dynamic actor
+	Actor* collide = RayVsMeshDynamicActorCollision(zLength, newPos);
 
 	if(collide)
 	{
@@ -126,19 +122,20 @@ bool ProjectileArrowBehavior::Update( float dt )
 		PAC.zActor = collide;
 		NotifyObservers(&PAC);
 
-		BioActor* bioActor = dynamic_cast<BioActor*>(collide);
-
-		if( bioActor->IsAlive() )
+		if( BioActor* bioActor = dynamic_cast<BioActor*>(collide) )
 		{
-			ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(this->zActor);
-			bioActor->TakeDamage( projActor->GetDamage(), projActor->GetOwner() );
+			if( bioActor->IsAlive() )
+			{
+				ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(this->zActor);
+				bioActor->TakeDamage( projActor->GetDamage(), projActor->GetOwner() );
+			}
 		}
 
 		return true;
 	}
 
-	//Check if the arrow has hit a WorldActor
-	collide = CheckWorldActorCollision();
+	//Check if the arrow has hit a static actor
+	collide = RayVsMeshStaticActorCollision(zLength, newPos);
 
 	if(collide)
 	{
@@ -153,115 +150,26 @@ bool ProjectileArrowBehavior::Update( float dt )
 	return false;
 }
 
-void ProjectileArrowBehavior::SetNearBioActors( std::set<Actor*> actors )
+Actor* ProjectileArrowBehavior::RayVsMeshCollision( const Actor* actor, const Vector3& rayOrigin, float& range, const std::set<Actor*>& actors )
 {
-	this->zNearBioActors = actors;
-	this->zNearBioActors.erase(this->zActor);
-	this->zNearActors.clear();
-
-	auto it_end = this->zNearBioActors.end();
-	for (auto it = this->zNearBioActors.begin(); it != it_end; it++)
-	{
-		this->zNearActors.insert(*it);
-	}
-}
-
-void ProjectileArrowBehavior::SetNearWorldActors( std::set<Actor*> actors )
-{
-	this->zNearWorldActors = actors;
-	this->zNearWorldActors.erase(this->zActor);
-	this->zNearActors.clear();
-
-	auto it_end = this->zNearWorldActors.end();
-	for (auto it = this->zNearWorldActors.begin(); it != it_end; it++)
-	{
-		this->zNearActors.insert(*it);
-	}
-}
-
-bool ProjectileArrowBehavior::RefreshNearCollideableActors( const std::set<Actor*>& actors )
-{
-	bool canCollide = this->zActor->CanCollide();
-
-	if(!canCollide)
-		return false;
-
-	unsigned int size = actors.size();
-	// Increment 10%
-	unsigned int increment = (unsigned int)(size * 0.10);
-
-	Vector3 pos = this->zActor->GetPosition();
-
-	if(zNearActorsIndex >= size)
-		zNearActorsIndex = 0;
-
-	auto it = actors.begin();
-	std::advance(it, zNearActorsIndex);
-
-	//Check if the new actors is within range.
-	for (unsigned int i = 0; i < increment; i++)
-	{
-
-		if( it == actors.end() )
-		{
-			zNearActorsIndex = 0;
-			it = actors.begin();
-		}
-
-		if( (*it) != this->zActor && (*it)->CanCollide() )
-		{
-			Vector3 vec = (*it)->GetPosition() - pos;
-			BioActor* bioActor = dynamic_cast<BioActor*>(*it);
-			WorldActor* worldActor = dynamic_cast<WorldActor*>(*it);
-
-			auto found = this->zNearActors.find(*it);
-
-			if( vec.GetLength() <= zNearByRadius )
-			{
-				if( found == zNearActors.end() )
-					zNearActors.insert(*it);
-
-				if(bioActor && zNearBioActors.find(*it) == zNearBioActors.end())
-					this->zNearBioActors.insert(*it);
-
-				else if(worldActor && zNearWorldActors.find(*it) == zNearWorldActors.end())
-					this->zNearWorldActors.insert(*it);
-			}
-			else
-			{
-				if( found != zNearActors.end() )
-					zNearActors.erase(*it);
-
-				if( bioActor && zNearBioActors.find(*it) != zNearBioActors.end() )
-					this->zNearBioActors.erase(*it);
-
-				else if( worldActor && zNearWorldActors.find(*it) != zNearWorldActors.end() )
-					this->zNearWorldActors.erase(*it);
-			}
-		}
-
-		zNearActorsIndex++;
-		it++;
-	}
-
-	return true;
-}
-
-Actor* ProjectileArrowBehavior::CheckCollision( const Vector3& pos, const float& radius, const std::set<Actor*>& actors )
-{
-	if( !this->zActor || !this->zActor->CanCollide() )
+	if( !actor || !actor->CanCollide() )
 		return NULL;
 
-	float range = this->zLength;
 	float rangeWithin = 1.0f + range;
 
 	PhysicsCollisionData data;
+
 	ProjectileActor* projActor = dynamic_cast<ProjectileActor*>(this->zActor); 
+	
+	if( !projActor )
+		return Behavior::RayVsMeshCollision(actor, rayOrigin, range, actors);
+
 	Actor* collide = NULL;
 	Actor* owner = NULL;
+	Vector3 pos = actor->GetPosition();
+	Vector3 dir = actor->GetDir();
 
-	if(projActor)
-		owner = projActor->GetOwner();
+	owner = projActor->GetOwner();
 
 	if(!owner)
 		return NULL;
@@ -282,7 +190,7 @@ Actor* ProjectileArrowBehavior::CheckCollision( const Vector3& pos, const float&
 			continue;
 
 		PhysicsObject* targetObject = (*it)->GetPhysicsObject();
-		data = GetPhysics()->GetCollisionRayMesh(pos, this->zActor->GetDir(), targetObject);
+		data = GetPhysics()->GetCollisionRayMesh(rayOrigin, dir, targetObject);
 
 		if(data.collision && data.distance < range)
 		{
@@ -293,73 +201,4 @@ Actor* ProjectileArrowBehavior::CheckCollision( const Vector3& pos, const float&
 	}
 
 	return collide;
-}
-
-Actor* ProjectileArrowBehavior::CheckBioActorCollision()
-{
-	const Vector3 thisActorPosition = this->zActor->GetPosition();
-
-	if( !this->zActor->CanCollide() )
-		return NULL;
-
-	return CheckCollision(thisActorPosition, this->zActor->GetCollisionRadius(), zNearBioActors);
-}
-
-Actor* ProjectileArrowBehavior::CheckWorldActorCollision()
-{
-	if( !this->zActor )
-		return NULL;
-
-	if( !this->zActor->CanCollide() )
-		return NULL;
-
-	const Vector3 thisActorPosition = this->zActor->GetPosition();
-	const Vector2 thisActorPositionXZ = thisActorPosition.GetXZ();
-
-	//Check all collision points
-	const Vector2* collidePoints = this->zActor->GetCollisionPoints();
-	Vector2 blockedPos;
-	bool isBlocking = false;
-
-	for( int i = 0; i < 4 && !isBlocking; i++)
-	{
-		blockedPos = thisActorPositionXZ + collidePoints[i];
-		try
-		{
-			if( this->zWorld->IsBlockingAt(blockedPos) )
-				isBlocking = true;
-		}
-		catch (...)
-		{
-			isBlocking = false;
-		}
-		
-	}
-
-	if( !isBlocking )
-		return NULL;
-
-	return CheckCollision(thisActorPosition, this->zActor->GetCollisionRadius(), zNearWorldActors);
-}
-
-void ProjectileArrowBehavior::OnEvent( Event* e )
-{
-	Behavior::OnEvent(e);
-
-	if( ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e) )
-	{
-		auto found = this->zNearActors.find(AR->zActor);
-		if(found != this->zNearActors.end())
-			this->zNearActors.erase(found);
-
-		found = this->zNearBioActors.find(AR->zActor);
-		if( found != this->zNearBioActors.end() )
-			this->zNearBioActors.erase(found);
-		else
-		{
-			found = this->zNearWorldActors.find(AR->zActor);
-			if( found != this->zNearWorldActors.end() )
-				this->zNearWorldActors.erase(found);
-		}
-	}
 }

@@ -209,12 +209,6 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_WEAPON_RANGE:
 		ss << M_WEAPON_RANGE;
 		break;
-	case MESSAGE_TYPE_MATERIAL_STACKS_REQUIRED:
-		ss << M_MATERIAL_STACKS_REQUIRED;
-		break;
-	case MESSAGE_TYPE_MATERIAL_CRAFTING_TYPE:
-		ss << M_MATERIAL_CRAFTING_TYPE;
-		break;
 	case MESSAGE_TYPE_ITEM_USE:
 		ss << M_ITEM_USE;
 		break;

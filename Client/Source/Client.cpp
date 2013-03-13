@@ -9,6 +9,7 @@
 #include <DisconnectedEvent.h>
 #include "PlayerConfig/PlayerSettings.h"
 #include <algorithm>
+#include <ctime>
 
 using namespace MaloW;
 
@@ -176,7 +177,7 @@ void Client::Update()
 	this->UpdateText();
 
 	this->zPerf->PreMeasure("Actor Updates", 0);
-	this->zActorManager->UpdateObjects(this->zGameTimer->GetDeltaTime(), this->zID);
+	this->zActorManager->UpdateObjects(this->zGameTimer->GetDeltaTime(), this->zID, this->zWorld);
 	this->zPerf->PostMeasure("Actor Updates", 0);
 
 	this->zPerf->PreMeasure("Gui Updates", 3);
@@ -264,12 +265,13 @@ void Client::InitGraphics(const std::string& mapName)
 		std::string errorMessage = s;
 		if (errorMessage == "Empty File!")
 		{
-			errorMessage = "Missing map: " + mapName + " In Your map Directory";
+			errorMessage = "Missing map: " + mapName;
 		}
 		else if(errorMessage == "File Doesn't Have Header!")
 		{
-			errorMessage = "Map: " + mapName + " Could be corrupt please re download the map again";
+			errorMessage = "Map: " + mapName + " Could be corrupt";
 		}
+
 		this->CloseConnection(errorMessage);
 		return;
 	}
@@ -630,11 +632,14 @@ bool Client::CheckKey(const unsigned int ID)
 
 void Client::CheckMovementKeys()
 {
-	this->CheckKey(KEY_FORWARD);
-	this->CheckKey(KEY_BACKWARD);
+	if (!zShowCursor)
+	{
+		this->CheckKey(KEY_FORWARD);
+		this->CheckKey(KEY_BACKWARD);
 
-	this->CheckKey(KEY_LEFT);
-	this->CheckKey(KEY_RIGHT);
+		this->CheckKey(KEY_LEFT);
+		this->CheckKey(KEY_RIGHT);
+	}
 }
 
 void Client::CheckPlayerSpecificKeys()
@@ -644,7 +649,7 @@ void Client::CheckPlayerSpecificKeys()
 		Menu_select_data msd;
 		msd = this->zGuiManager->CheckCollisionInv(); // Returns -1 on both values if no hits.
 
-		if (msd.zAction != -1 && msd.gid.zID != 0)
+		if (msd.zAction != -1 && msd.gid.zID != -1)
 		{
 			Item* item = this->zPlayerInventory->SearchAndGetItem(msd.gid.zID);
 			if (msd.zAction == USE)
@@ -676,6 +681,17 @@ void Client::CheckPlayerSpecificKeys()
 			{
 				if(item)
 					this->SendUnEquipItem(msd.gid.zID);
+			}
+			else if (msd.zAction == CRAFT)
+			{
+				if(!this->zGuiManager->IsCraftOpen())
+				{
+					if(this->zGuiManager->IsLootingOpen())
+						this->zGuiManager->ToggleLootGui(0);
+
+					this->zGuiManager->ToggleCraftingGui();
+					this->zShowCursor = true;
+				}
 			}
 		}
 	}
@@ -813,6 +829,17 @@ void Client::CheckPlayerSpecificKeys()
 			if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
 			{
 				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+				std::string msg = "";
+				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, (float)MOUSE_LEFT_PRESS);
+
+				this->zServerChannel->Send(msg);
+			}
+		}
+		else
+		{
+			if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			{
+				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 
 				Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
 				if (!primaryWeapon)
@@ -825,11 +852,6 @@ void Client::CheckPlayerSpecificKeys()
 					this->zServerChannel->Send(msg);
 				}
 			}
-		}
-		else
-		{
-			if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
-				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 		}
 	}
 	this->HandleWeaponEquips();
@@ -1206,6 +1228,10 @@ void Client::HandleWeaponEquips()
 
 void Client::HandleDebugInfo()
 {
+	time_t t = time(0);
+
+	struct tm * now = localtime(&t);
+
 	//Graphical error Terrain debug
 	if (this->zEng->GetKeyListener()->IsPressed(VK_F1))
 	{
@@ -1214,6 +1240,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Graphical Terrain error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1232,6 +1259,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Graphical Object error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1250,6 +1278,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Player Movement blocked when shouldn't at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1268,6 +1297,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Player movement Should be blocked at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1286,6 +1316,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "AI Is Blocked but shouldn't be at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1304,6 +1335,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "AI should be blocked at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1322,6 +1354,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Misc Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1340,6 +1373,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Sound Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1358,6 +1392,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Terrain Normal Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1376,6 +1411,7 @@ void Client::HandleDebugInfo()
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
+			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
 			ss << "Water Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -2118,14 +2154,11 @@ std::vector<unsigned int> Client::RayVsWorld()
 				MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 				continue;
 			}
-			if (!dynamic_cast<iFBXMesh*>(mesh))
-			{
-				data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
+			data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
 
-				if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
-				{
-					Collisions.push_back(ID);
-				}
+			if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+			{
+				Collisions.push_back(ID);
 			}
 		}
 	}

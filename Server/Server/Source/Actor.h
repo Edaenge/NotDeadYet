@@ -61,14 +61,16 @@ public:
 	void SetScale(const Vector3& scale, const bool notify = true);
 	void SetDir(const Vector3& dir, const bool notify = true);
 	void SetEnergy(float energy, const bool notify = true);
-	virtual void SetModel(const std::string& model);	void SetCollisionRadius(const float radius) {this->zCollisionRadius = radius;}	bool CanCollide() const;
+	virtual void SetModel(const std::string& model);	
+	void SetCollisionRadius(const float radius) {this->zCollisionRadius = radius;}	
+	bool CanCollide() const;
 
 	// Get Transformation Functions
 	inline const Vector3& GetPosition() const { return zPos; }
 	inline const Vector3& GetPreviousPos() const { return zPreviousPos; }
 	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
-	inline Vector3& GetDir() { return zDir; }
+	inline const Vector3& GetDir() const { return zDir; }
 	virtual const std::string GetModel() const;
 	PhysicsObject* GetPhysicsObject() {return this->zPhysicsObject;}
 	inline unsigned int GetType() const {return this->zType;}

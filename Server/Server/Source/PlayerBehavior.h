@@ -16,37 +16,13 @@ public:
 	PlayerBehavior(Actor* actor, World* world, Player* player);
 	virtual	~PlayerBehavior();
 
-	inline std::set<Actor*> GetNearActors() const {return this->zNearActors;}
-	inline std::set<Actor*> GetNearBioActors() const {return this->zNearBioActors;}
-	inline std::set<Actor*> GetNearWorldActors() const {return this->zNearWorldActors;}
-
-	inline float GetNearByRadius() const {return this->zNearByRadius;}
-
-
 	bool ProcessClientData(const Vector3& direction, const Vector4& rotation);
 	inline Player* GetPlayer() const {return this->zPlayer;}
 
-	/*! Check collisions using distance.*/
-	virtual Actor* CheckCollision( const Vector3& pos, const float& radius, const std::set<Actor*>& actors);
-
-	bool RefreshNearCollideableActors(const std::set<Actor*>& actors);
-
 	bool Update(float dt);
-
-protected:
-	virtual Actor* CheckBioActorCollision();
-	virtual Actor* CheckWorldActorCollision();
-	virtual void OnEvent(Event* e);
 
 protected:
 	Player* zPlayer;
 	Vector3 zVelocity;
 	float	zVelDown;
-	float zNearByRadius;
-	unsigned int zNearActorsIndex;
-
-	std::set<Actor*> zNearActors;
-	std::set<Actor*> zNearWorldActors;
-	std::set<Actor*> zNearBioActors;
-
 };

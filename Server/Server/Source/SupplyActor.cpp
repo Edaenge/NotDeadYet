@@ -4,6 +4,7 @@ SupplyActor::SupplyActor( const unsigned int inventoryCapacity )
 {
 	this->zInventory = new Inventory(inventoryCapacity);
 	this->zParachute = NULL;
+	this->zCollisionRadius = 0.5f;
 }
 
 SupplyActor::~SupplyActor()

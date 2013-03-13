@@ -1,24 +1,33 @@
 #pragma once
 
 #include "Process.h"
-#include "ClientChannel.h"
+
+namespace MaloW
+{
+	class ClientChannel;
+	class ReceiverProcess;
+}
 
 /*
 This class is used when a client disconnects from the server.
 This class is not responsible for deallocation of ClientChannel.
 */
-class ClientDisconnectedEvent : public MaloW::ProcessEvent
+namespace MaloW
 {
-private:
-	MaloW::ClientChannel* zChannel;
-
-	ClientDisconnectedEvent(MaloW::ClientChannel* channel) :
-		zChannel(channel)
+	class ClientDisconnectedEvent : public ProcessEvent
 	{
-	}
-
-public:
-	inline MaloW::ClientChannel* GetClientChannel() const { return zChannel; }
-
-	friend class MaloW::ClientChannel;
-};
+	private:
+		ClientChannel* zChannel;
+	
+		ClientDisconnectedEvent(ClientChannel* channel) :
+			zChannel(channel)
+		{
+		}
+	
+	public:
+		inline ClientChannel* GetClientChannel() const { return zChannel; }
+	
+		friend class ClientChannel;
+		friend class ReceiverProcess;
+	};
+}

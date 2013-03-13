@@ -143,10 +143,9 @@ void GameModeFFA::OnEvent( Event* e )
 			{
 				if(aActor->GetHealth() - ATD->zDamage->GetTotal() <= 0)
 				{
-					this->zGame->GetActorManager()->RemoveBehavior(aActor);
+					this->zGame->GetActorManager()->RemoveBehavior(aActor, false);
 				}
 			}
-			
 		}
 	}
 	else if (PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
@@ -200,7 +199,7 @@ void GameModeFFA::OnEvent( Event* e )
 
 			if( counter >= this->zPlayers.size() )
 			{
-				this->zGame->RestartGame();
+				//this->zGame->RestartGame();
 				StartGameMode();
 			}
 		}
@@ -541,6 +540,8 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	player->GetKeys().ClearStates();
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
+	pActor->GetInventory()->UnEquipAll();
+
 	this->zGame->ModifyLivingPlayers(-1);
 
 	ClientData* cd = player->GetClientData();
@@ -555,8 +556,6 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	gActor->SetDir(direction);
 	gActor->SetEnergy(energy + 25.0f);
 	gActor->AddObserver(this);
-	gActor->SetModel("Media/Models/ghost.obj");
-	gActor->SetScale(Vector3());
 
 	//Create Ghost behavior
 	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);
@@ -624,7 +623,7 @@ bool GameModeFFA::StartGameMode()
 
 	std::set<Item*> items = GenerateItems();
 	//this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items);
-	this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 200.0f, items);
+	this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 150.0f, items);
 
 	return true;
 }
@@ -641,9 +640,9 @@ std::set<Item*> GameModeFFA::GenerateItems()
 	//1-2 * nrOfPlayers/var
 
 	//Randomize Weapon MAX/MIN
-	unsigned int weapons	= rand() % WEAPON_MIN + WEAPON_MAX;
-	unsigned int misc		= rand() % MISC_MIN + MISC_MAX;
-	unsigned int materials	= rand() % MATERIAL_MIN + MATERIAL_MAX;
+	unsigned int weapons	= rand() % WEAPON_MAX + WEAPON_MIN;
+	unsigned int misc		= rand() % MISC_MAX + MISC_MIN;
+	unsigned int materials	= rand() % MATERIAL_MAX + MATERIAL_MIN;
 
 	unsigned int size = zPlayers.size();
 	weapons		*= size * VAR;

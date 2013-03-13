@@ -46,6 +46,7 @@ class InventoryBindPrimaryWeapon : public Event
 public:
 	virtual ~InventoryBindPrimaryWeapon() {}
 
+	ClientData* clientData;
 	std::string model;
 	unsigned int ID;
 	unsigned int type;
@@ -57,6 +58,7 @@ class InventoryUnBindPrimaryWeapon : public Event
 public:
 	virtual ~InventoryUnBindPrimaryWeapon() {}
 
+	ClientData* clientData;
 	std::string model;
 	unsigned int ID;
 };
