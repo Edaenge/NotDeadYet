@@ -8,17 +8,16 @@
 #include "WorldActor.h"
 #include "ProjectileActor.h"
 
-ActorManager::ActorManager( ActorSynchronizer* syncher, SoundHandler* sh) : 
-	zSynch(syncher), zSoundHandler(sh)
+
+ActorManager::ActorManager(ActorSynchronizer* syncher) : 
+	zSynch(syncher)
 {
 	AddObserver(this->zSynch);
-	AddObserver(this->zSoundHandler);
 }
 
 ActorManager::~ActorManager()
 {
 	this->RemoveObserver(this->zSynch);
-	this->RemoveObserver(this->zSoundHandler);
 
 	auto it_actors_end = this->zActors.end();
 	for(auto it = this->zActors.begin(); it != it_actors_end; it++)
@@ -41,7 +40,7 @@ void ActorManager::AddActor( Actor* actor )
 {
 	if(!actor)
 		return;
-	actor->AddObserver(this->zSoundHandler);
+
 	zActors.insert(actor);
 
 	if( actor->CanCollide() )
@@ -59,6 +58,11 @@ void ActorManager::AddBehavior( Behavior* behavior )
 {
 	if(!behavior)
 		return;
+
+	// Notify Observers
+	BehaviorAddedEvent BAE;
+	BAE.behavior = behavior;
+	NotifyObservers(&BAE);
 
 	this->zBehaviors.insert(behavior);
 	this->AddObserver(behavior);
@@ -82,6 +86,7 @@ void ActorManager::RemoveActor( Actor* actor )
 	this->zCollideableActors.erase(actor);
 	this->zLootableActors.erase(actor);
 
+	// Notify Observers
 	ActorRemoved e;
 	e.zActor = actor;
 	NotifyObservers(&e);
@@ -101,6 +106,12 @@ void ActorManager::RemoveBehavior(Actor* actor, bool instantRemove)
 			if (instantRemove)
 			{
 				it = this->zBehaviors.erase(it);
+
+				// Notify Observers
+				BehaviorRemovedEvent BRE;
+				BRE.behavior = temp;
+				NotifyObservers(&BRE);
+
 				RemoveObserver(temp);
 				SAFE_DELETE(temp);
 
@@ -272,5 +283,4 @@ void ActorManager::ClearAll()
 	}
 	zActors.clear();
 	zCollideableActors.clear();
-
 }

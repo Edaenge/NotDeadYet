@@ -76,12 +76,12 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 // Load Entities
 	LoadEntList("Entities.txt");
 
-	// Create soundhandler and let it observe game.
-	this->zSoundHandler = new SoundHandler(this);
-
-// Actor Manager
-	this->zActorManager = new ActorManager(syncher, this->zSoundHandler);
+	// Actor Manager
+	this->zActorManager = new ActorManager(syncher);
 	
+	// Create sound handler and let it observe game and actors.
+	this->zSoundHandler = new SoundHandler(this, zActorManager);
+
 	// Material Spawner
 	zMaterialSpawnManager = new MaterialSpawnManager(zWorld, zActorManager);
 
@@ -1229,7 +1229,9 @@ void Game::OnEvent( Event* e )
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, IUBPW->model);
 		this->SendToAll(msg);
 	}
-	NotifyObservers(e);
+
+	// NotifyObservers(e);
+
 	if (this->zPerf)
 		this->zPerf->PostMeasure("Game Event Handling", 2);
 }
@@ -1629,7 +1631,6 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 					iActor->RemoveItem();
 					this->zActorManager->RemoveActor(iActor);
 				}
-
 			}
 			else
 			{
@@ -1985,6 +1986,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//Adds the actor and Behavior
 				this->zActorManager->AddActor(projActor);
 				this->zActorManager->AddBehavior(projBehavior);
+
 				//Decrease stack
 				arrow->Use();
 				inventory->RemoveItemStack(arrow->GetID(), 1);

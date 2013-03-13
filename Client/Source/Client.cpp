@@ -1558,16 +1558,22 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		std::stringstream ss;
 
 		ss << updatesPerSec <<" SERVER FPS";
-		this->zServerUpsText->SetText(ss.str().c_str());
+		if ( this->zServerUpsText )
+		{
+			this->zServerUpsText->SetText(ss.str().c_str());
 
-		if (updatesPerSec < 30)
-			this->zServerUpsText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
-		else if (updatesPerSec > 30 && updatesPerSec < 60)
-			this->zServerUpsText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
-		else
-			this->zServerUpsText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
+			if (updatesPerSec < 30)
+				this->zServerUpsText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
+			else if (updatesPerSec > 30 && updatesPerSec < 60)
+				this->zServerUpsText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
+			else
+				this->zServerUpsText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
+		}
 
-		this->zActorManager->SetUpdatesPerSec(updatesPerSec);
+		if ( zActorManager )
+		{
+			this->zActorManager->SetUpdatesPerSec(updatesPerSec);
+		}
 	}
 	else if (msgArray[0].find(M_SERVER_RESTART.c_str()) == 0)
 	{
@@ -2154,12 +2160,16 @@ std::vector<unsigned int> Client::RayVsWorld()
 				MaloW::Debug("ERROR: Mesh is Null in RayVsWorld function");
 				continue;
 			}
-			data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
-
-			if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+			if (!dynamic_cast<iFBXMesh*>(mesh))
 			{
-				Collisions.push_back(ID);
+				data = this->zEng->GetPhysicsEngine()->GetCollisionRayMeshBoundingOnly(origin, camForward, mesh);
+
+				if (data.collision && data.distance < MAX_DISTANCE_TO_OBJECT)
+				{
+					Collisions.push_back(ID);
+				}
 			}
+			
 		}
 	}
 
