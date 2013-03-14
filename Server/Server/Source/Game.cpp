@@ -2436,8 +2436,6 @@ void Game::RestartGame()
 	auto it_zPlayers_end = zPlayers.end();
 	for (auto it = zPlayers.begin(); it != it_zPlayers_end; it++)
 	{
-		/*Delete old Behavior*/
-		SetPlayerBehavior( (*it).second, 0 );
 		(*it).second->GetKeys().ClearStates();
 
 		PhysicsObject* physObj = zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
@@ -2450,8 +2448,9 @@ void Game::RestartGame()
 		pActor->SetScale(pActor->GetScale(), false);
 		pActor->AddObserver(this->zGameMode);
 
-		SetPlayerBehavior((*it).second, pBehavior);
 		this->zActorManager->AddActor(pActor);
+		SetPlayerBehavior((*it).second, pBehavior);
+
 
 		//Should be changed Later
 		auto offsets = this->zCameraOffset.find((*it).second->GetModelPath());

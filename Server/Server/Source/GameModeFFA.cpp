@@ -16,6 +16,8 @@
 #include "SupplyDrop.h"
 #include "ItemLookup.h"
 #include "World/world.h"
+#include "Packets/PhysicalConditionPacket.h"
+#include "PlayerHumanBehavior.h"
 
 static const unsigned int WEAPON_MIN	= 1;
 static const unsigned int WEAPON_MAX	= 2;
@@ -208,7 +210,7 @@ void GameModeFFA::OnEvent( Event* e )
 
 			if( counter >= this->zPlayers.size() )
 			{
-				//this->zGame->RestartGame();
+				this->zGame->RestartGame();
 				StartGameMode();
 			}
 		}
@@ -558,32 +560,100 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	this->zGame->ModifyLivingPlayers(-1);
 
 	ClientData* cd = player->GetClientData();
+	
+	Actor* newActor = NULL;
+	if( zGameStarted )
+	{
+		//Create Spirit
+		Vector3 position = pActor->GetPosition();
+		Vector3 direction = pActor->GetDir();
 
-	//Create Spirit
-	Vector3 position = pActor->GetPosition();
+		float energy = pActor->GetEnergy();
 
-	Vector3 direction = pActor->GetDir();
-	float energy = pActor->GetEnergy();
-	GhostActor* gActor = new GhostActor(player);
-	gActor->SetPosition(position);
-	gActor->SetDir(direction);
-	gActor->SetEnergy(energy + 25.0f);
-	gActor->AddObserver(this);
+		newActor = new GhostActor(player);
+		newActor->SetPosition(position, false);
+		newActor->SetDir(direction, false);
+		newActor->SetEnergy(energy + 25.0f, false);
+		newActor->AddObserver(this);
+	}
+	else
+	{
+		//Create new Player
+		int maxPlayers = zPlayers.size();
+		int rand = 1 + (std::rand() % (maxPlayers+1));
+		Vector3 position = this->zGame->CalcPlayerSpawnPoint(rand);
+
+		Vector3 direction = pActor->GetDir();
+		std::string model = pActor->GetModel();
+
+		if (model.length() > 4)
+		{
+			if (model.substr(model.length() - 4) == ".fbx")
+				model = "Media/Models/temp_guy.obj";
+		}
+
+		PhysicsObject* pObj = GetPhysics()->CreatePhysicsObject(model, position);
+
+		newActor = new PlayerActor(player, pObj, this->zGame);
+		newActor->SetEnergy( pActor->GetEnergy() );
+		newActor->SetModel(pActor->GetModel());
+		newActor->SetPosition(position, false);
+		newActor->SetDir(direction, false);
+		newActor->AddObserver(this);	
+	}
+
+	PhysicalConditionPacket* PCP = new PhysicalConditionPacket();
+
+	BioActor* bioActor = dynamic_cast<BioActor*>(newActor);
+
+	//Gather Actor Physical Conditions
+	PCP->zEnergy = newActor->GetEnergy();
+
+	if( bioActor )
+	{
+		PCP->zBleedingLevel = bioActor->GetBleeding();
+		PCP->zHealth = bioActor->GetHealth();
+		PCP->zStamina = bioActor->GetStamina();
+	}
+
+	PlayerActor* pTemp = dynamic_cast<PlayerActor*>(bioActor);
+
+	if( pTemp )
+	{
+		PCP->zHunger = pTemp->GetFullness();
+		PCP->zHydration = pTemp->GetHydration();
+	}
 
 	//Create Ghost behavior
-	PlayerGhostBehavior* pGhostBehavior = new PlayerGhostBehavior(gActor, this->zGame->GetWorld(), player);
+	PlayerBehavior* pBehavior = NULL;
+	unsigned int type;
+	
+	if( zGameStarted )
+	{
+		pBehavior = new PlayerGhostBehavior(newActor, this->zGame->GetWorld(), player);
+		type = 2;
+	}
+	else
+	{
+		pBehavior = new PlayerHumanBehavior(newActor, this->zGame->GetWorld(), player);
+		type = 1;
+	}
 
-	this->zGame->SetPlayerBehavior(player, pGhostBehavior);
+	this->zGame->SetPlayerBehavior(player, pBehavior);
 
 	//Tell Client his new ID and actor type
 	ActorManager* aManager = this->zGame->GetActorManager();
-	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float)gActor->GetID());
-	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, 2);
+	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float) newActor->GetID());
+	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, type);
 
 	cd->Send(msg);
+	cd->Send(*PCP);
 	
 	//Add the actor to the list
-	aManager->AddActor(gActor);
+	aManager->AddActor(newActor);
+
+	delete PCP;
+
 }
 
 void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
@@ -637,8 +707,8 @@ bool GameModeFFA::StartGameMode()
 	this->zGameStarted = true;
 
 	std::set<Item*> items = GenerateItems();
-	//this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items);
-	this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 150.0f, items);
+	this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items, 50.0f);
+	//this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 150.0f, items);
 
 	return true;
 }
