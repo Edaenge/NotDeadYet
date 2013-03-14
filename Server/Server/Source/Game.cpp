@@ -113,8 +113,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	//DEBUG;
-	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	//this->SpawnItemsDebug();
+	this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -192,7 +192,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	
-	for(int i = 0; i < 1; i++)
+	for(int i = 0; i < 4; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
