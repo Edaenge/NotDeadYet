@@ -62,31 +62,36 @@ void MainMenu::Init()
 	this->zSizedForHeight = windowHeight;
 
 	const char* object[] = {
-		"Media/Models/Bush_01.ani",
-		"Media/Models/Fern_02.ani",
-		"Media/Models/Tree_02.ani",
-		"Media/Models/Bigleaf_01.ani",
-		"Media/Models/GrassPlant_01.ani",
-		"Media/Models/WaterGrass_02.ani",
-		"Media/Models/Bow_v01.obj",
-		"Media/Models/temp_guy.obj",
-		"Media/Models/deer_temp.obj",
-		"Media/Models/Arrow_v01.obj",
-		"Media/Models/Machete_v01.obj",
-		"Media/Models/Bush_02_v02.obj",
-		"Media/Models/Stone_02_v01.obj",
-		"Media/Models/Stone_01_v02.obj",
-		"Media/Models/Bush_misc_01.obj",
-		"Media/Models/stone_03_v01.obj",
-		"Media/Models/ArmyRation_v01.obj", 
-		"Media/Models/Veins_01_v03_r.obj",
-		"Media/Models/Campfire_01_v01.obj",
-		"Media/Models/Pocketknife_v02.obj",
-		"Media/Models/StoneItem_01_v01.obj",
-		"Media/Models/BranchesItem_01_v01.obj",
-		"Media/Models/Supplycrate_01_v03.obj"};
+		"media/mapmodels/bush_01.ani",
+		"media/mapmodels/bush_02.ani",
+		"media/mapmodels/bern_02.ani",
+		"media/mapmodels/Tree_01.ani",
+		"media/mapmodels/Tree_02.ani",
+		"media/mapmodels/grassplant_01.ani",
+		"media/mapmodels/watergrass_02.ani",
+		"media/models/ghost.obj",
+		"media/mapmodels/deer.obj",
+		"media/models/bow_v01.obj",
+		"media/models/temp_guy.obj",
+		"media/mapmodels/target.obj",
+		"media/models/arrow_v01.obj",
+		"media/models/deer_temp.obj",
+		"media/models/supplyaddon.obj",
+		"media/mapmodels/stone_01.obj",
+		"media/mapmodels/stone_02.obj",
+		"media/mapmodels/stone_03.obj",
+		"media/mapmodels/veins_01.obj",
+		"media/models/machete_v01.obj",
+		"media/models/stone_03_v01.obj",
+		"media/models/armyration_v01.obj",
+		"media/models/campfire_01_v01.obj",
+		"media/models/pocketknife_v02.obj",
+		"media/mapmodels/bush_misc_01.obj",
+		"media/models/stoneItem_01_v01.obj",
+		"media/models/branchesitem_01_v01.obj",
+		"media/models/supplycrate_01_v03.obj"};
 
-	eng->PreLoadResources(23, object);
+	eng->PreLoadResources(28, object);
 
 	eng->StartRendering();
 
