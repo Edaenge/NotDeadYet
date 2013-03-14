@@ -188,45 +188,45 @@ void Game::SpawnAnimalsDebug()
 	
 	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 	DeerActor* dActor  = new DeerActor(deerPhysics);
-	DeerActor* dActor2 = new DeerActor(deerPhysics);
+	/*DeerActor* dActor2 = new DeerActor(deerPhysics);
 	DeerActor* dActor3 = new DeerActor(deerPhysics);
 	DeerActor* dActor4 = new DeerActor(deerPhysics);
 	DeerActor* dActor5 = new DeerActor(deerPhysics);
 	DeerActor* dActor6 = new DeerActor(deerPhysics);
-	DeerActor* dActor7 = new DeerActor(deerPhysics);
+	DeerActor* dActor7 = new DeerActor(deerPhysics);*/
 
 	dActor->AddObserver(this->zGameMode);
 	dActor->SetModel("media/models/deer_anims.fbx");
 
 
-	dActor2->AddObserver(this->zGameMode);
-	dActor3->AddObserver(this->zGameMode);
-	dActor4->AddObserver(this->zGameMode);
-	dActor5->AddObserver(this->zGameMode);
-	dActor6->AddObserver(this->zGameMode);
-	dActor7->AddObserver(this->zGameMode);
+	//dActor2->AddObserver(this->zGameMode);
+	//dActor3->AddObserver(this->zGameMode);
+	//dActor4->AddObserver(this->zGameMode);
+	//dActor5->AddObserver(this->zGameMode);
+	//dActor6->AddObserver(this->zGameMode);
+	//dActor7->AddObserver(this->zGameMode);
 
-	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
+	/*PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 	BearActor* bActor = new BearActor(bearPhysics);
-	bActor->AddObserver(this->zGameMode);
+	bActor->AddObserver(this->zGameMode);*/
 
 	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
-	AIDeerBehavior* aiDeerBehavior2 = new AIDeerBehavior(dActor2, this->zWorld);
+	/*AIDeerBehavior* aiDeerBehavior2 = new AIDeerBehavior(dActor2, this->zWorld);
 	AIDeerBehavior* aiDeerBehavior3 = new AIDeerBehavior(dActor3, this->zWorld);
 	AIDeerBehavior* aiDeerBehavior4 = new AIDeerBehavior(dActor4, this->zWorld);
 	AIDeerBehavior* aiDeerBehavior5 = new AIDeerBehavior(dActor5, this->zWorld);
 	AIDeerBehavior* aiDeerBehavior6 = new AIDeerBehavior(dActor6, this->zWorld);
 	AIDeerBehavior* aiDeerBehavior7 = new AIDeerBehavior(dActor7, this->zWorld);
-	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
+	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);*/
 
 	zActorManager->AddBehavior(aiDeerBehavior);
-	zActorManager->AddBehavior(aiDeerBehavior2);
+	/*zActorManager->AddBehavior(aiDeerBehavior2);
 	zActorManager->AddBehavior(aiDeerBehavior3);
 	zActorManager->AddBehavior(aiDeerBehavior4);
 	zActorManager->AddBehavior(aiDeerBehavior5);
 	zActorManager->AddBehavior(aiDeerBehavior6);
 	zActorManager->AddBehavior(aiDeerBehavior7);
-	zActorManager->AddBehavior(aiBearBehavior);
+	zActorManager->AddBehavior(aiBearBehavior);*/
 
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 
@@ -235,7 +235,7 @@ void Game::SpawnAnimalsDebug()
 
 	position = this->CalcPlayerSpawnPoint(increment++);
 
-	dActor2->SetPosition(position);
+	/*dActor2->SetPosition(position);
 	dActor2->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 
 	position = this->CalcPlayerSpawnPoint(increment++);
@@ -266,16 +266,16 @@ void Game::SpawnAnimalsDebug()
 	position = this->CalcPlayerSpawnPoint(increment++);
 
 	bActor->SetPosition(position);
-	bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
+	bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));*/
 
-	const Food* temp_Bear_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
+	//const Food* temp_Bear_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
 	
 	int lootSize = (rand() % 5) + 1;
 	Food* new_Food = NULL;
 
-	Inventory* inv = bActor->GetInventory();
+	Inventory* inv;// = bActor->GetInventory();
 	bool stacked = false;
-	if (temp_Bear_food)
+	/*if (temp_Bear_food)
 	{
 		for (int i = 0; i < lootSize; i++)
 		{
@@ -285,7 +285,7 @@ void Game::SpawnAnimalsDebug()
 			if( stacked && new_Food->GetStackSize() == 0 )
 				SAFE_DELETE(new_Food);
 		}
-	}
+	}*/
 
 	const Food* temp_Deer_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
 
@@ -306,13 +306,13 @@ void Game::SpawnAnimalsDebug()
 	}
 	
 	this->zActorManager->AddActor(dActor);
-	this->zActorManager->AddActor(dActor2);
+	/*this->zActorManager->AddActor(dActor2);
 	this->zActorManager->AddActor(dActor3);
 	this->zActorManager->AddActor(dActor4);
 	this->zActorManager->AddActor(dActor5);
 	this->zActorManager->AddActor(dActor6);
 	this->zActorManager->AddActor(dActor7);
-	this->zActorManager->AddActor(bActor);
+	this->zActorManager->AddActor(bActor);*/
 }
 
 void Game::SpawnItemsDebug()

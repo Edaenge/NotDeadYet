@@ -168,9 +168,9 @@ void GameModeFFA::OnEvent( Event* e )
 			this->PossessAnAnimal(gActor);
 				
 	}
-	else if(PlayerAnimalPossessEvent* PGMNE = dynamic_cast<PlayerAnimalPossessEvent*>(e))
+	else if(PlayerGhostMakesNoiseEvent* PGMNE = dynamic_cast<PlayerGhostMakesNoiseEvent*>(e))
 	{
-		GhostActor* gActor = dynamic_cast<GhostActor*>(PGMNE->zActor);
+		//GhostActor* gActor = dynamic_cast<GhostActor*>(PGMNE->zActor);
 	}
 	else if( PlayerAddEvent* PAE = dynamic_cast<PlayerAddEvent*>(e) )
 	{
