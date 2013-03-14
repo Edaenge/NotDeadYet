@@ -87,9 +87,11 @@ public:
 
 	// Sets The Behavior Of Player
 	void SetPlayerBehavior( Player* player, PlayerBehavior* behavior );
+
 	/*! Converts an item to ItemActor*/
 	ItemActor* ConvertToItemActor(Behavior* behavior,  Actor*& oldActorOut);
 	
+	// Spawn Points
 	Vector3 CalcPlayerSpawnPoint(int MaxPoints, Vector2 center);
 	Vector3 CalcPlayerSpawnPoint(int nr);
 	Vector3 CalcPlayerSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center);
@@ -99,15 +101,21 @@ public:
 	inline ActorManager* GetActorManager() const { return this->zActorManager; }
 	inline World* GetWorld() const { return this->zWorld;}
 	inline SoundHandler* GetSoundHandler() const { return this->zSoundHandler; }
+	inline void SetPerformancePtr(MaloWPerformance* perf) { this->zPerf = perf; }
 
+	// Send Message To All Players
 	void SendToAll(const std::string& msg);
 
+	// Restart Game Logic
 	void RestartGame();	
+
+	// What this do
 	void ModifyLivingPlayers(const int value);
-
-	void SetPerformancePtr(MaloWPerformance* perf) {this->zPerf = perf;}
-
+	
+	// Fog enclosure, should be game mode
 	float GetFogEnclosement();
+
+	// Player model Offset
 	Vector3 GetOffset(const std::string& model);
 	void CheckPlayerUseBow(Player* player);
 
@@ -117,11 +125,11 @@ private:
 	void SpawnAnimalsDebug();
 	void SpawnHumanDebug();
 
+	// Handle Incoming Messages
 	void HandleConnection(ClientData* cd);
 	void HandleDisconnect(ClientData* cd);
 	void HandleLootObject(ClientData* cd, std::vector<unsigned int>& actorID);
-	void HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, 
-		unsigned int objID, unsigned int subType );
+	void HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType );
 	void HandleDropItem(ClientData* cd, unsigned int objectID);
 	void HandleUseItem(ClientData* cd, unsigned int itemID);
 	void HandleUseWeapon(ClientData* cd, unsigned int itemID);
@@ -131,7 +139,7 @@ private:
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleBindings(ClientData* cd, const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType);
 
+	// Game Stuff
 	void UpdateSunDirection(float dt);
 	void UpdateFogEnclosement(float dt);
-	
 };

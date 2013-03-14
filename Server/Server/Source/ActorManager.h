@@ -20,18 +20,6 @@ public:
 	Actor* zActor;
 };
 
-class BehaviorAddedEvent : public Event
-{
-public:
-	Behavior* zBehavior;
-};
-
-class BehaviorRemovedEvent : public Event
-{
-public:
-	Behavior* zBehavior;
-};
-
 class ActorManager : public Observed, public Observer
 {
 	ActorSynchronizer *zSynch;

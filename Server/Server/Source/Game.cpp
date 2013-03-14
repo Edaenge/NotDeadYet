@@ -2454,8 +2454,10 @@ void Game::RestartGame()
 
 	//Delete All Actors
 	this->zActorManager->ClearAll();
+
 	//Remove old messages
 	this->zSyncher->ClearAll();
+
 	//Remove loaded entities
 	this->zWorldActors.clear();
 	
