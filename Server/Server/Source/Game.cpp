@@ -1247,7 +1247,7 @@ void Game::OnEvent( Event* e )
 		this->SendToAll(msg);
 	}
 
-	// NotifyObservers(e);
+	NotifyObservers(e);
 
 	if (this->zPerf)
 		this->zPerf->PostMeasure("Game Event Handling", 2);
