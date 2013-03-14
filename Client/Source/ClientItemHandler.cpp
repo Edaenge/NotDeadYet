@@ -269,7 +269,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 		this->zGuiManager->EquipItem(gid);
-		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
+		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
 		
 		return;
 	}
@@ -288,7 +288,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			return;
 		}
 		
-		int weigth = this->zPlayerInventory->GetTotalWeight();
+		float weigth = this->zPlayerInventory->GetTotalWeight();
 		Item* prev = NULL;
 		prev = this->zPlayerInventory->EquipProjectile(projectile);
 		if(prev)
@@ -315,7 +315,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 		this->zGuiManager->EquipItem(gid);
 
-		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
+		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
@@ -350,7 +350,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 		this->zGuiManager->EquipItem(gid);
-		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
+		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
 		return;
 	}
 }
@@ -697,7 +697,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	std::string itemName = "Unknown";
 	std::string itemDescription = "<UNKNOWN DESCRIPTION>";
 	std::string itemIconFilePath = "none";
-	int itemWeight = 0;
+	float itemWeight = 0;
 	int itemStackSize = 0;
 	unsigned int ID = 0;
 	unsigned int itemType = 10;
@@ -731,7 +731,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 		}
 		else if(strcmp(key, M_ITEM_WEIGHT.c_str()) == 0)
 		{
-			itemWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it));
+			itemWeight = this->zMsgHandler.ConvertStringToFloat(M_ITEM_WEIGHT, (*it));
 		}
 		else if(strcmp(key, M_ITEM_STACK_SIZE.c_str()) == 0)
 		{

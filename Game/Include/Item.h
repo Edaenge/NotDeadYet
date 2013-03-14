@@ -56,7 +56,7 @@ public:
 	inline void SetItemID(const unsigned int id) {this->zID = id;}
 
 	/*! Sets the Item Weight*/
-	inline void SetItemWeight(const unsigned int weight) {this->zWeight = weight;}
+	inline void SetItemWeight(const float weight) {this->zWeight = weight;}
 
 	/*! Sets the Item Name*/
 	inline void SetItemName(const std::string& name) {this->zItemName = name;}

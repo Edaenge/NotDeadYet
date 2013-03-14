@@ -104,7 +104,12 @@ void GameModeTest::OnEvent( Event* e )
 					ClientData* cd = player->GetClientData();
 
 					if (cd)
+					{
+						std::stringstream ss;
+						ss << "You did " << damage << " to your target";
 						cd->Send(msg);
+						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, ss.str()));
+					}
 				}
 			}
 		}
@@ -167,8 +172,8 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	
 	PlayerActor* newPActor = new PlayerActor(player, pObj, this->zGame);
 	newPActor->SetModel(pActor->GetModel());
-	newPActor->SetPosition(position);
-	newPActor->SetDir(direction);
+	newPActor->SetPosition(position, false);
+	newPActor->SetDir(direction, false);
 	newPActor->AddObserver(this);	
 	
 	Vector3 offset = this->zGame->GetOffset(pActor->GetModel());
@@ -178,7 +183,7 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 
 	//Gather Actor Physical Conditions
 	PCP->zBleedingLevel = newPActor->GetBleeding();
-	PCP->zEnergy = newPActor->GetEnergy();
+	PCP->zEnergy = pActor->GetEnergy();
 	PCP->zHealth = newPActor->GetHealth();
 	PCP->zHunger = newPActor->GetFullness();
 	PCP->zHydration = newPActor->GetHydration();

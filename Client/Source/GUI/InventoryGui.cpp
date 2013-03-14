@@ -494,7 +494,7 @@ void InventoryGui::UpdateInventoryWeight( float weight )
 
 Vector3 InventoryGui::lerp(Vector3 x, Vector3 y, float a)
 {
-	return x * (1.0 - a) + y * a;
+	return x * (1.0f - a) + y * a;
 }
 
 void InventoryGui::Reset(bool open)

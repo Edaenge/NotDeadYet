@@ -100,7 +100,7 @@ Gui_Item_Data CraftingMenu::CheckCollision( float mouseX, float mouseY, bool mou
 					this->zSelectedGid = (*it)->GetGid();
 					for(auto i = this->zCanCraftList.cbegin(); i != this->zCanCraftList.cend(); i++)
 					{
-						if((*i)->subType == this->zSelectedGid.zSubType && (*i)->type == this->zSelectedGid.zType)
+						if((int)(*i)->subType == this->zSelectedGid.zSubType && (int)(*i)->type == this->zSelectedGid.zType)
 						{
 							CraftingReader* CraftRead = GetCraftingRecipes();
 							if(this->zRecipeNote)
@@ -150,7 +150,7 @@ void CraftingMenu::UpdateCrafting(std::vector<InventorySlotGui*> inventory)
 			//See if the item is in the inventory. If not set canCraft to false
 			for(auto item = inventory.begin(); item != inventory.end(); item++)
 			{
-				if((*item)->GetGid().zSubType == subType->first)
+				if((*item)->GetGid().zSubType == (int)subType->first)
 					if((*item)->GetGid().zStacks >= subType->second)
 					{
 						materialFound = true;

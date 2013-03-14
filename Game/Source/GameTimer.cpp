@@ -59,5 +59,5 @@ void GameTimer::CalculateFps(float deltaTime)
 
 	float averageDelta = totalDeltaTime / this->zDt.size();
 
-	this->zFramesPerSec = 1.0f / averageDelta;
+	this->zFramesPerSec = (int)(1.0f / averageDelta);
 }

@@ -7,7 +7,7 @@
 class SupplyActor : public Actor
 {
 public:
-	SupplyActor( const unsigned int inventoryCapacity );
+	SupplyActor(const float inventoryCapacity);
 	virtual ~SupplyActor();
 
 	bool AddItem( Item* item );
