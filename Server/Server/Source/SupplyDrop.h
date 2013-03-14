@@ -11,7 +11,7 @@ class SoundHandler;
 
 //MODEL NAME
 static const std::string SUPPLY_ACTOR_FILENAME	= "Media/Models/Supplycrate_01_v03.obj";
-static const std::string PARACHUTE_FILE_NAME	= "Media/Models/Supplycrate_01_v03.obj";
+static const std::string PARACHUTE_FILE_NAME	= "Media/Models/SupplyAddon.obj";
 
 class SupplyDrop
 {
