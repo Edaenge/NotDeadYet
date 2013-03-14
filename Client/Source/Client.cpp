@@ -2260,7 +2260,7 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsi
 		}
 		else if((*it_Item_Data).find(M_ITEM_WEIGHT.c_str()) == 0)
 		{
-			gid.zWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it_Item_Data));
+			gid.zWeight = this->zMsgHandler.ConvertStringToFloat(M_ITEM_WEIGHT, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_STACK_SIZE.c_str()) == 0)
 		{

@@ -2,6 +2,8 @@
 #include "ClientServerMessages.h"
 #include "MaloWFileDebug.h"
 
+#define TAKEARROWANIMLENGTH 1.0f
+
 PlayerActor::PlayerActor(Player* player, PhysicsObject* physObj, Observer* game) 
 	: BioActor(player, game)
 {
@@ -92,8 +94,11 @@ float PlayerActor::GetBowTimer()
 {
 	if(this->zUsingBow)
 	{
-		this->zUsingBow = false;
-		return (float)(std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) - zBowTimeStarted).count() * 0.000001;
-	}
-	return 0;
+		float timeSenseStartShot = (std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) - zBowTimeStarted).count() * 0.000001;
+		if(timeSenseStartShot > TAKEARROWANIMLENGTH && !this->zPlayer->GetKeys().GetKeyState(MOUSE_LEFT_PRESS))
+		{
+			this->zUsingBow = false;
+			return timeSenseStartShot;
+		}	}
+	return -1;
 }
