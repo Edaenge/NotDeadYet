@@ -117,7 +117,6 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 	//Create parachute
 	Actor* paraActor = new Actor();
 	Vector3 pos = position3D;
-	pos.y += 1.0f;
 	paraActor->SetPosition(pos, false);
 	paraActor->SetModel(PARACHUTE_FILE_NAME);
 	spActor->AttachParachute(paraActor);
