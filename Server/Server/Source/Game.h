@@ -103,6 +103,7 @@ public:
 	int GetLivingPlayers() {return this->zPlayersAlive;}
 	void SetPerformancePtr(MaloWPerformance* perf) {this->zPerf = perf;}
 
+	float GetFogEnclosement() {return this->zCurrentFogEnclosement;}
 	Vector3 GetOffset(const std::string& model);
 	void CheckPlayerUseBow(Player* player);
 

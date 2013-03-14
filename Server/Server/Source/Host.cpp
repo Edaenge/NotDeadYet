@@ -504,6 +504,15 @@ void Host::HandleReceivedMessage( MaloW::NetworkChannel* cc, const std::string &
 		NotifyObservers(&e);
 
 	}
+	else if(msgArray[0].find(M_MAKE_NOISE.c_str()) == 0)
+	{
+		PlayerGhostMakesNoiseEvent e;
+
+		e.zActor = NULL;
+		e.clientData = cd;
+
+		NotifyObservers(&e);
+	}
 	else if (msgArray[0].find(M_ANIMAL_ATTACK.c_str()) == 0)
 	{
 		unsigned int mouseButton = this->zMessageConverter.ConvertStringToInt(M_ANIMAL_ATTACK, msgArray[0]);

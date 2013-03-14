@@ -108,7 +108,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 //DEBUG;
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -149,7 +149,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zFogTimer = 0.0f;
 
 	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
-
 }
 
 Game::~Game()
@@ -186,28 +185,115 @@ void Game::SpawnAnimalsDebug()
 {
 	srand((unsigned int)time(0));
 	int increment = 10;
-	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
-	DeerActor* dActor = new DeerActor(deerPhysics);
-	dActor->AddObserver(this->zGameMode);
-	dActor->SetModel("media/models/deer_anims.fbx");
+	
+	for(int i = 0; i < 1; i++)
+	{
+		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
+		DeerActor* dActor  = new DeerActor(deerPhysics);
 
-	/*Vector3 position2 = this->CalcPlayerSpawnPoint(increment++);
+		dActor->AddObserver(this->zGameMode);
+		dActor->SetModel("media/models/deer_anims.fbx");
+
+		AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
+
+		zActorManager->AddBehavior(aiDeerBehavior);
+
+		Vector3 position = this->CalcPlayerSpawnPoint(i);
+
+		dActor->SetPosition(position);
+		dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+		const Food* temp_Deer_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
+
+		int lootSize = (rand() % 5) + 1;
+		Food* new_Food = NULL;
+
+		Inventory* inv = dActor->GetInventory();
+		bool stacked = false;
+		if (temp_Deer_Food)
+		{
+			for (int i = 0; i < lootSize; i++)
+			{
+				new_Food = new Food((*temp_Deer_Food));
+
+				inv->AddItem(new_Food, stacked);
+				if( stacked && new_Food->GetStackSize() == 0 )
+					SAFE_DELETE(new_Food);
+			}
+		}
+
+		this->zActorManager->AddActor(dActor);
+	}
+
+	
+	/*DeerActor* dActor2 = new DeerActor(deerPhysics);
+	DeerActor* dActor3 = new DeerActor(deerPhysics);
+	DeerActor* dActor4 = new DeerActor(deerPhysics);
+	DeerActor* dActor5 = new DeerActor(deerPhysics);
+	DeerActor* dActor6 = new DeerActor(deerPhysics);
+	DeerActor* dActor7 = new DeerActor(deerPhysics);
+
+	//dActor2->AddObserver(this->zGameMode);
+	//dActor3->AddObserver(this->zGameMode);
+	//dActor4->AddObserver(this->zGameMode);
+	//dActor5->AddObserver(this->zGameMode);
+	//dActor6->AddObserver(this->zGameMode);
+	//dActor7->AddObserver(this->zGameMode);
+
 	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 	BearActor* bActor = new BearActor(bearPhysics);
-	bActor->AddObserver(this->zGameMode);*/
+	bActor->AddObserver(this->zGameMode);
 
-	AIDeerBehavior* aiDeerBehavior = new AIDeerBehavior(dActor, this->zWorld);
-	//AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
+	
+	AIDeerBehavior* aiDeerBehavior2 = new AIDeerBehavior(dActor2, this->zWorld);
+	AIDeerBehavior* aiDeerBehavior3 = new AIDeerBehavior(dActor3, this->zWorld);
+	AIDeerBehavior* aiDeerBehavior4 = new AIDeerBehavior(dActor4, this->zWorld);
+	AIDeerBehavior* aiDeerBehavior5 = new AIDeerBehavior(dActor5, this->zWorld);
+	AIDeerBehavior* aiDeerBehavior6 = new AIDeerBehavior(dActor6, this->zWorld);
+	AIDeerBehavior* aiDeerBehavior7 = new AIDeerBehavior(dActor7, this->zWorld);
+	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
 
-	zActorManager->AddBehavior(aiDeerBehavior);
-	//zActorManager->AddBehavior(aiBearBehavior);
+	
+	zActorManager->AddBehavior(aiDeerBehavior2);
+	zActorManager->AddBehavior(aiDeerBehavior3);
+	zActorManager->AddBehavior(aiDeerBehavior4);
+	zActorManager->AddBehavior(aiDeerBehavior5);
+	zActorManager->AddBehavior(aiDeerBehavior6);
+	zActorManager->AddBehavior(aiDeerBehavior7);
+	zActorManager->AddBehavior(aiBearBehavior);
 
-	dActor->SetPosition(position);
-	dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+	dActor2->SetPosition(position);
+	dActor2->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 
-	//bActor->SetPosition(position2);
-	//bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
+	position = this->CalcPlayerSpawnPoint(increment++);
+
+	dActor3->SetPosition(position);
+	dActor3->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+	position = this->CalcPlayerSpawnPoint(increment++);
+
+	dActor4->SetPosition(position);
+	dActor4->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+	position = this->CalcPlayerSpawnPoint(increment++);
+
+	dActor5->SetPosition(position);
+	dActor5->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+	position = this->CalcPlayerSpawnPoint(increment++);
+
+	dActor6->SetPosition(position);
+	dActor6->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+	position = this->CalcPlayerSpawnPoint(increment++);
+
+	dActor7->SetPosition(position);
+	dActor7->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+	position = this->CalcPlayerSpawnPoint(increment++);
+
+	bActor->SetPosition(position);
+	bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
 
 	//const Food* temp_Bear_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
 	
@@ -216,7 +302,7 @@ void Game::SpawnAnimalsDebug()
 
 	Inventory* inv;// = bActor->GetInventory();
 	bool stacked = false;
-	/*if (temp_Bear_food)
+	if (temp_Bear_food)
 	{
 		for (int i = 0; i < lootSize; i++)
 		{
@@ -226,28 +312,15 @@ void Game::SpawnAnimalsDebug()
 			if( stacked && new_Food->GetStackSize() == 0 )
 				SAFE_DELETE(new_Food);
 		}
-	}*/
-
-	const Food* temp_Deer_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
-
-	lootSize = (rand() % 7) + 1;
-	new_Food = NULL;
-	inv = dActor->GetInventory();
-	stacked = false;
-	if (temp_Deer_Food)
-	{
-		for (int i = 0; i < lootSize; i++)
-		{
-			new_Food = new Food((*temp_Deer_Food));
-
-			inv->AddItem(new_Food, stacked);
-			if( stacked && new_Food->GetStackSize() == 0 )
-				SAFE_DELETE(new_Food);
-		}
 	}
-	
-	this->zActorManager->AddActor(dActor);
-	//this->zActorManager->AddActor(bActor);
+
+	this->zActorManager->AddActor(dActor2);
+	this->zActorManager->AddActor(dActor3);
+	this->zActorManager->AddActor(dActor4);
+	this->zActorManager->AddActor(dActor5);
+	this->zActorManager->AddActor(dActor6);
+	this->zActorManager->AddActor(dActor7);
+	this->zActorManager->AddActor(bActor);*/
 }
 
 void Game::SpawnItemsDebug()
@@ -808,6 +881,20 @@ void Game::OnEvent( Event* e )
 			if (playerBehavior)
 			{
 				POSSESSE->zActor = playerBehavior->GetActor();
+			}
+		}
+	}
+	else if(PlayerGhostMakesNoiseEvent* PGMNE = dynamic_cast<PlayerGhostMakesNoiseEvent*>(e))
+	{
+		auto playerIterator = this->zPlayers.find(PGMNE->clientData);
+		Player* player = playerIterator->second;
+
+		if (player)
+		{
+			Behavior* playerBehavior = player->GetBehavior();
+			if (playerBehavior)
+			{
+				PGMNE->zActor = playerBehavior->GetActor();
 			}
 		}
 	}
@@ -1572,7 +1659,6 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 			if( !item )
 				return;
 		
-			//std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
 			if (item->GetItemType() == itemType)// && item->GetItemSubType() == subType)
 			{
 				//msg += item->ToMessageString(&NMC);
@@ -1594,8 +1680,6 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
 					return;
 				}
-
-				//cd->Send(msg);
 			}
 		}
 	}
@@ -1631,8 +1715,6 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
 					return;
 				}
-
-				//cd->Send(msg);
 			}
 		}
 	}
@@ -2040,7 +2122,6 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 							else
 							{
 								inv->RemoveItem(it->first);
-								//cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)it->first->GetID()));
 							}
 						}
 						//Send Add Inventory Msg to the Player.
@@ -2079,7 +2160,7 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 							for (auto it = item_stack_out.begin(); it != item_it_end; it++)
 							{
 								inv->RemoveItem(it->first);
-								//cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)it->first->GetID()));
+
 								it->first->IncreaseStackSize(it->second);
 								if(inv->AddItem(it->first, stacked))
 								{
@@ -2200,14 +2281,6 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 		cd->Send(msg);
 		return;
 	}
-	////Check if the Equipped Item is the Primary one Then Add it to the Mesh
-	//Item* primaryWpn = inventory->GetPrimaryEquip();
-	//if (primaryWpn == item)
-	//	this->HandleBindings(item, pActor->GetID());
-	
-	//msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)item->GetID());
-	//msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)slot);
-	//cd->Send(msg);
 }
 
 void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID )
@@ -2252,22 +2325,6 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID )
 		cd->Send(msg);
 		return;
 	}
-
-	//if (wasPrimary)
-	//{
-	//	msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)pActor->GetID());
-	//	msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
-	//	cd->Send(msg);
-
-	//	Item* newPrimary = inventory->GetPrimaryEquip();
-
-	//	if (newPrimary)
-	//		this->HandleBindings(newPrimary, pActor->GetID());
-	//}
-	
-	//msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)itemID);
-	//msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)eq_slot);
-	//cd->Send(msg);
 }
 
 void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType)
@@ -2410,8 +2467,8 @@ void Game::RestartGame()
 	}
 
 	SpawnItemsDebug();
-	//SpawnAnimalsDebug();
-	SpawnHumanDebug();
+	SpawnAnimalsDebug();
+	//SpawnHumanDebug();
 }
 
 void Game::CheckPlayerUseBow(Player* player)

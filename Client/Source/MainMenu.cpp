@@ -82,7 +82,6 @@ void MainMenu::Init()
 		"media/mapmodels/stone_03.obj",
 		"media/mapmodels/veins_01.obj",
 		"media/models/machete_v01.obj",
-		"media/models/stone_03_v01.obj",
 		"media/models/armyration_v01.obj",
 		"media/models/campfire_01_v01.obj",
 		"media/models/pocketknife_v02.obj",
@@ -91,7 +90,7 @@ void MainMenu::Init()
 		"media/models/branchesitem_01_v01.obj",
 		"media/models/supplycrate_01_v03.obj"};
 
-	eng->PreLoadResources(28, object);
+	eng->PreLoadResources(27, object);
 
 	eng->StartRendering();
 

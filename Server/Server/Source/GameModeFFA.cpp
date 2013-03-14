@@ -121,7 +121,7 @@ void GameModeFFA::OnEvent( Event* e )
 					if (cd)
 					{
 						std::stringstream ss;
-						ss << "You did " << damage << " to your target";
+						ss << "You Did " << damage << " to your target";
 						cd->Send(msg);
 						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, ss.str()));
 					}
@@ -172,6 +172,10 @@ void GameModeFFA::OnEvent( Event* e )
 		if(gActor)
 			this->PossessAnAnimal(gActor);
 				
+	}
+	else if(PlayerGhostMakesNoiseEvent* PGMNE = dynamic_cast<PlayerGhostMakesNoiseEvent*>(e))
+	{
+		//GhostActor* gActor = dynamic_cast<GhostActor*>(PGMNE->zActor);
 	}
 	else if( PlayerAddEvent* PAE = dynamic_cast<PlayerAddEvent*>(e) )
 	{
@@ -224,7 +228,6 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 	if(animalType == 0 && gActor->GetEnergy() < 50)
 	{
 		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Not_enough_energy_for_this_animal"));
-		gActor->SetEnergy(50);
 		return;
 	}
 	else if(animalType == 2 && gActor->GetEnergy() < 200)
@@ -248,14 +251,19 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 			{
 				if (DeerActor* dActor = dynamic_cast<DeerActor*>(aActor))
 				{
-					if (dActor->IsAlive())
+					if (dActor->IsAlive() && dActor->GetPlayer() == NULL)
 					{
-						float dist = (position - dActor->GetPosition()).GetLength();
-
-						if (dist < distance)
+						Vector2 center = this->zGame->GetWorld()->GetWorldCenter();
+						float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - dActor->GetPosition()).GetLength();
+						if(radiusFromCenter < this->zGame->GetFogEnclosement())
 						{
-							distance = dist;
-							closestAnimal = dActor;
+							float dist = (position - dActor->GetPosition()).GetLength();
+
+							if (dist < distance)
+							{
+								distance = dist;
+								closestAnimal = dActor;
+							}
 						}
 					}
 				}
@@ -289,14 +297,20 @@ void GameModeFFA::SwapToAnimal(GhostActor* gActor, unsigned int animalType)
 			{
 				if (BearActor* bActor = dynamic_cast<BearActor*>(aActor))
 				{
-					if (bActor->IsAlive())
+					if (bActor->IsAlive() && bActor->GetPlayer() == NULL)
 					{
-						float dist = (position - bActor->GetPosition()).GetLength();
 
-						if (dist < distance)
+						Vector2 center = this->zGame->GetWorld()->GetWorldCenter();
+						float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
+						if(radiusFromCenter < this->zGame->GetFogEnclosement())
 						{
-							distance = dist;
-							closestAnimal = bActor;
+							float dist = (position - bActor->GetPosition()).GetLength();
+
+							if (dist < distance)
+							{
+								distance = dist;
+								closestAnimal = bActor;
+							}
 						}
 					}
 				}
@@ -379,10 +393,13 @@ void GameModeFFA::PossessAnAnimal(GhostActor* gActor)
 	this->zGame->GetActorManager()->GetActorsInCircle(position.GetXZ(), 4.0f, actors, ACTOR_TYPE_ANIMAL);
 	for (auto it_Actors = actors.begin(); it_Actors != actors.end(); it_Actors++)
 	{
-		if(GetPhysics()->GetCollisionRayMeshBoundingOnly(gActor->GetPosition(), gActor->GetDir(), (*it_Actors)->GetPhysicsObject()).collision)
+		if(dynamic_cast<BioActor*>((*it_Actors))->IsAlive())
 		{
-			foundAnimal = true;
-			target = it_Actors;
+			if(GetPhysics()->GetCollisionRayMeshBoundingOnly(gActor->GetPosition(), gActor->GetDir(), (*it_Actors)->GetPhysicsObject()).collision)
+			{
+				foundAnimal = true;
+				target = it_Actors;
+			}
 		}
 	}
 	
@@ -393,14 +410,17 @@ void GameModeFFA::PossessAnAnimal(GhostActor* gActor)
 			//If type = Deer
 			if (DeerActor* dActor = dynamic_cast<DeerActor*>(aActor))
 			{
-				if (dActor->IsAlive())
+				Vector2 center = this->zGame->GetWorld()->GetWorldCenter();
+				float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - dActor->GetPosition()).GetLength();
+				
+				if (dActor->IsAlive() && dActor->GetPlayer() == NULL && radiusFromCenter < this->zGame->GetFogEnclosement())
 				{
 					animalType = 0;
 					chosenAnimal = dActor;
 				}
 				else
 				{
-					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You are not looking at something alive"));	
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "This can not be possessed"));	
 				}
 			}
 			
@@ -431,14 +451,18 @@ void GameModeFFA::PossessAnAnimal(GhostActor* gActor)
 			//If Type = Bear
 			if (BearActor* bActor = dynamic_cast<BearActor*>(aActor))
 			{
-				if (bActor->IsAlive())
+				Vector2 center = this->zGame->GetWorld()->GetWorldCenter();
+				float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
+
+
+				if (bActor->IsAlive() && bActor->GetPlayer() == NULL && radiusFromCenter < this->zGame->GetFogEnclosement())
 				{
 					animalType = 2;
 					chosenAnimal = bActor;
 				}
 				else
 				{
-					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You are not looking at something alive"));
+					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "This can not be possessed"));
 				}
 			}
 		}
