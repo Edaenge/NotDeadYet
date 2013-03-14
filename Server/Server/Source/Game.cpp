@@ -587,7 +587,7 @@ bool Game::Update( float dt )
 	int counter = 0;
 	for(auto it = this->zPlayers.begin(); it != this->zPlayers.end(); it++)
 	{
-		PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>(it->second);
+		PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>(it->second->GetBehavior());
 		if(playerBehavior != NULL)
 		{
 			PlayerActor *pActor = dynamic_cast<PlayerActor *>(playerBehavior->GetActor());
@@ -595,10 +595,7 @@ bool Game::Update( float dt )
 			{
 				if(pActor->GetUsingBow())
 				{
-					if(pActor->GetBowTimer() != -1)
-					{
-						this->CheckToShotArrow(it->first);
-					}
+					this->CheckToShotArrow(it->first);
 				}
 			}
 		}
@@ -2511,7 +2508,7 @@ void Game::CheckToShotArrow(ClientData* cd)
 		return;
 	}
 	float bowTimer = pActor->GetBowTimer();
-	if(bowTimer != -1)
+	if(bowTimer == -1)
 	{
 		MaloW::Debug("Too low loading time on bow.");
 		return;
