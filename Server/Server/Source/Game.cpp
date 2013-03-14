@@ -113,8 +113,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	//DEBUG;
-	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	//this->SpawnItemsDebug();
+	this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -192,7 +192,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	
-	for(int i = 0; i < 1; i++)
+	for(int i = 0; i < 4; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -232,101 +232,7 @@ void Game::SpawnAnimalsDebug()
 	}
 
 	
-	/*DeerActor* dActor2 = new DeerActor(deerPhysics);
-	DeerActor* dActor3 = new DeerActor(deerPhysics);
-	DeerActor* dActor4 = new DeerActor(deerPhysics);
-	DeerActor* dActor5 = new DeerActor(deerPhysics);
-	DeerActor* dActor6 = new DeerActor(deerPhysics);
-	DeerActor* dActor7 = new DeerActor(deerPhysics);
-
-	//dActor2->AddObserver(this->zGameMode);
-	//dActor3->AddObserver(this->zGameMode);
-	//dActor4->AddObserver(this->zGameMode);
-	//dActor5->AddObserver(this->zGameMode);
-	//dActor6->AddObserver(this->zGameMode);
-	//dActor7->AddObserver(this->zGameMode);
-
-	PhysicsObject* bearPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
-	BearActor* bActor = new BearActor(bearPhysics);
-	bActor->AddObserver(this->zGameMode);
-
 	
-	AIDeerBehavior* aiDeerBehavior2 = new AIDeerBehavior(dActor2, this->zWorld);
-	AIDeerBehavior* aiDeerBehavior3 = new AIDeerBehavior(dActor3, this->zWorld);
-	AIDeerBehavior* aiDeerBehavior4 = new AIDeerBehavior(dActor4, this->zWorld);
-	AIDeerBehavior* aiDeerBehavior5 = new AIDeerBehavior(dActor5, this->zWorld);
-	AIDeerBehavior* aiDeerBehavior6 = new AIDeerBehavior(dActor6, this->zWorld);
-	AIDeerBehavior* aiDeerBehavior7 = new AIDeerBehavior(dActor7, this->zWorld);
-	AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
-
-	
-	zActorManager->AddBehavior(aiDeerBehavior2);
-	zActorManager->AddBehavior(aiDeerBehavior3);
-	zActorManager->AddBehavior(aiDeerBehavior4);
-	zActorManager->AddBehavior(aiDeerBehavior5);
-	zActorManager->AddBehavior(aiDeerBehavior6);
-	zActorManager->AddBehavior(aiDeerBehavior7);
-	zActorManager->AddBehavior(aiBearBehavior);
-
-	dActor2->SetPosition(position);
-	dActor2->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-
-	position = this->CalcPlayerSpawnPoint(increment++);
-
-	dActor3->SetPosition(position);
-	dActor3->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-
-	position = this->CalcPlayerSpawnPoint(increment++);
-
-	dActor4->SetPosition(position);
-	dActor4->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-
-	position = this->CalcPlayerSpawnPoint(increment++);
-
-	dActor5->SetPosition(position);
-	dActor5->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-
-	position = this->CalcPlayerSpawnPoint(increment++);
-
-	dActor6->SetPosition(position);
-	dActor6->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-
-	position = this->CalcPlayerSpawnPoint(increment++);
-
-	dActor7->SetPosition(position);
-	dActor7->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-
-	position = this->CalcPlayerSpawnPoint(increment++);
-
-	bActor->SetPosition(position);
-	bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
-
-	//const Food* temp_Bear_food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_WOLF_FOOD);
-	
-	int lootSize = (rand() % 5) + 1;
-	Food* new_Food = NULL;
-
-	Inventory* inv;// = bActor->GetInventory();
-	bool stacked = false;
-	if (temp_Bear_food)
-	{
-		for (int i = 0; i < lootSize; i++)
-		{
-			new_Food = new Food((*temp_Bear_food));
-
-			inv->AddItem(new_Food, stacked);
-			if( stacked && new_Food->GetStackSize() == 0 )
-				SAFE_DELETE(new_Food);
-		}
-	}
-
-	this->zActorManager->AddActor(dActor2);
-	this->zActorManager->AddActor(dActor3);
-	this->zActorManager->AddActor(dActor4);
-	this->zActorManager->AddActor(dActor5);
-	this->zActorManager->AddActor(dActor6);
-	this->zActorManager->AddActor(dActor7);
-	this->zActorManager->AddActor(bActor);*/
 }
 
 void Game::SpawnItemsDebug()
@@ -1263,7 +1169,7 @@ void Game::OnEvent( Event* e )
 		this->SendToAll(msg);
 	}
 
-	// NotifyObservers(e);
+	NotifyObservers(e);
 
 	if (this->zPerf)
 		this->zPerf->PostMeasure("Game Event Handling", 2);
@@ -2469,12 +2375,11 @@ void Game::RestartGame()
 	}
 
 	SpawnItemsDebug();
-	SpawnAnimalsDebug();
+	//SpawnAnimalsDebug();
 	//SpawnHumanDebug();
 }
 
-void Game::CheckPlayerUseBow(Player* player)
-{
+void Game::CheckPlayerUseBow(Player* player){
 	if(player->GetKeys().GetKeyState(MOUSE_LEFT_PRESS))
 	{
 		if(BioActor *bActor = dynamic_cast<BioActor *>(player->GetBehavior()->GetActor()))
