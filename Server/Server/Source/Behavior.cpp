@@ -96,6 +96,9 @@ bool Behavior::RefreshNearCollideableActors( const std::set<Actor*>& actors )
 	// Increment 10%
 	unsigned int increment = (unsigned int)(size * 0.10);
 
+	if(increment == 0)
+		increment = size;
+
 	Vector3 pos = this->zActor->GetPosition();
 
 	if(zNearActorsIndex >= size)

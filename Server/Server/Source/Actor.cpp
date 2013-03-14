@@ -90,7 +90,7 @@ void Actor::SetDir( const Vector3& dir, const bool notify /*= true*/ )
 	zDir = dir;
 	if(notify)
 	{
-		ActorScaleEvent ASE;
+		ActorDirEvent ASE;
 		ASE.zActor = this;
 		NotifyObservers(&ASE);
 	}
