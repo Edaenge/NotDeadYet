@@ -177,7 +177,7 @@ bool SupplyDropBehavior::Update( float dt )
 	}
 
 	/***Check if the parachute has hit the destination***/
-	if( newParachutePos.y <= zDestination.y )
+	if( parachute && newParachutePos.y <= zDestination.y )
 	{
 		parachute->SetScale( Vector3(0,0,0) );
 		zMoving = false;
