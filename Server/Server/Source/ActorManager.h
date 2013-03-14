@@ -2,6 +2,7 @@
 
 #include <World/Observer.h>
 #include <Vector.h>
+#include "BehaviorManager.h"
 
 class ActorSynchronizer;
 class Actor;
