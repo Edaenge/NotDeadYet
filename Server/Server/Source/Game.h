@@ -105,6 +105,7 @@ public:
 
 	Vector3 GetOffset(const std::string& model);
 	void CheckPlayerUseBow(Player* player);
+	void CheckToShotArrow(ClientData* cd);
 
 private:
 	//Test function, spawns items/Animals
