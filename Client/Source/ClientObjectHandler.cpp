@@ -81,7 +81,7 @@ bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned i
 			}
 
 			this->zActorManager->SetCameraOffset(this->zMeshOffset);
-			this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset);
+			this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset + this->zEng->GetCamera()->GetForward(), Vector3(0.0f, 0.0f, 1.0f));
 			this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
 
 			if (this->zActorType == GHOST)
@@ -153,7 +153,7 @@ void Client::AddActor( NewActorPacket* NAP )
 						this->zMeshOffset = Vector3(0.0f, 1.0f, 0.0f);
 
 					this->zActorManager->SetCameraOffset(this->zMeshOffset);
-					this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+					this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset , Vector3(0.0f, 0.0f, 1.0f));
 					this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
 
 					if (this->zActorType == GHOST)
