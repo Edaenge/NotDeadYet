@@ -35,6 +35,8 @@
 #include "MaterialSpawnManager.h"
 #include "sounds.h"
 #include "SupplyActor.h"
+#include "BehaviorManager.h"
+
 
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
@@ -55,7 +57,8 @@ static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
 Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* syncher, const std::string& mode, const std::string& worldFile ) :
 	zSyncher(syncher),
 	zPhysicsEngine(physics),
-	zMaterialSpawnManager(0)
+	zMaterialSpawnManager(0),
+	zBehaviorManager(0)
 {	
 
 	this->zPerf = NULL;
@@ -79,6 +82,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	// Actor Manager
 	this->zActorManager = new ActorManager(syncher);
 	
+	// Behavior Manager
+	zBehaviorManager = new BehaviorManager();
+
 	// Create sound handler and let it observe game and actors.
 	this->zSoundHandler = new SoundHandler(this, zActorManager);
 
@@ -2380,7 +2386,7 @@ void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::stri
 	}
 }
 
-void Game::SendToAll( std::string msg)
+void Game::SendToAll( const std::string& msg)
 {
 	auto it_zPlayers_end = this->zPlayers.end();
 	for(auto it = this->zPlayers.begin(); it != it_zPlayers_end; it++)
@@ -2420,8 +2426,10 @@ void Game::RestartGame()
 
 	//Delete All Actors
 	this->zActorManager->ClearAll();
+
 	//Remove old messages
 	this->zSyncher->ClearAll();
+
 	//Remove loaded entities
 	this->zWorldActors.clear();
 	

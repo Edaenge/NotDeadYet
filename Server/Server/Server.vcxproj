@@ -29,6 +29,7 @@
     <ClCompile Include="Source\AnimalActor.cpp" />
     <ClCompile Include="Source\BearActor.cpp" />
     <ClCompile Include="Source\Behavior.cpp" />
+    <ClCompile Include="Source\BehaviorManager.cpp" />
     <ClCompile Include="Source\BioActor.cpp" />
     <ClCompile Include="Source\ClientData.cpp" />
     <ClCompile Include="Source\CraftingManager.cpp" />
@@ -82,6 +83,7 @@
     <ClInclude Include="Source\AnimalActor.h" />
     <ClInclude Include="Source\BearActor.h" />
     <ClInclude Include="Source\Behavior.h" />
+    <ClInclude Include="Source\BehaviorManager.h" />
     <ClInclude Include="Source\BioActor.h" />
     <ClInclude Include="Source\ClientData.h" />
     <ClInclude Include="Source\CraftingManager.h" />
