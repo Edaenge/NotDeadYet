@@ -298,7 +298,8 @@ void Behavior::SetNearStaticActors( std::set<Actor*> actors )
 	auto it_end = this->zNearStaticActors.end();
 	for (auto it = this->zNearStaticActors.begin(); it != it_end; it++)
 	{
-		this->zNearActors.insert(*it);
+		if( this->zActor != (*it) )
+			this->zNearActors.insert(*it);
 	}
 }
 
@@ -313,6 +314,7 @@ void Behavior::SetNearDynamicActors( std::set<Actor*> actors )
 	auto it_end = this->zNearDynamicActors.end();
 	for (auto it = this->zNearDynamicActors.begin(); it != it_end; it++)
 	{
-		this->zNearActors.insert(*it);
+		if( this->zActor != (*it) )
+			this->zNearActors.insert(*it);
 	}
 }
