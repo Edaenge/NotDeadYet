@@ -375,8 +375,8 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 	//Note: by Y, we of course mean Z. I was merely thinking in a 2-d grid when designing this.
 bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goalYPos, std::vector<Vector2> &inVector, int maximumPathLenght)
 {	
-	float goalX = ceil(goalXPos - 0.5); //Dynamic
-	float goalY = ceil(goalYPos - 0.5); //Dynamic
+	float goalX = (float)ceil(goalXPos - 0.5); //Dynamic
+	float goalY = (float)ceil(goalYPos - 0.5); //Dynamic
 
 	if(goalX < 1) 
 	{
@@ -413,8 +413,8 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 
 	int currentNode = 0;
 
-	float startX = ceil(startXPos - 0.5); //Dynamic
-	float startY = ceil(startYPos - 0.5); //Dynamic
+	float startX = (float)ceil(startXPos - 0.5); //Dynamic
+	float startY = (float)ceil(startYPos - 0.5); //Dynamic
 
 	zNodeList.push_front(Node(startX, startY));
 

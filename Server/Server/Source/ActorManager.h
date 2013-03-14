@@ -2,6 +2,7 @@
 
 #include <World/Observer.h>
 #include <Vector.h>
+#include "BehaviorManager.h"
 
 class ActorSynchronizer;
 class Actor;
@@ -18,18 +19,6 @@ class ActorRemovedEvent : public Event
 {
 public:
 	Actor* zActor;
-};
-
-class BehaviorAddedEvent : public Event
-{
-public:
-	Behavior* zBehavior;
-};
-
-class BehaviorRemovedEvent : public Event
-{
-public:
-	Behavior* zBehavior;
 };
 
 class ActorManager : public Observed, public Observer

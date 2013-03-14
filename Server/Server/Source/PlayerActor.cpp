@@ -99,7 +99,6 @@ float PlayerActor::GetBowTimer()
 		{
 			this->zUsingBow = false;
 			return timeSenseStartShot;
-		}
-	}
+		}	}
 	return -1;
 }

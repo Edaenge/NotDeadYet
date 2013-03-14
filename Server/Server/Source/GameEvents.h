@@ -269,6 +269,16 @@ public:
 
 	ClientData* clientData;
 };
+
+class PlayerGhostMakesNoiseEvent : public Event
+{
+public:
+	virtual ~PlayerGhostMakesNoiseEvent() {}
+
+	ClientData* clientData;
+	Actor* zActor;
+};
+
 class PlayerDeerEatObjectEvent : public Event
 {
 public:

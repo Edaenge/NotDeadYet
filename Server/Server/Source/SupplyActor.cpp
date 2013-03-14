@@ -1,7 +1,7 @@
 #include "SupplyActor.h"
 #include "Physics.h"
 
-SupplyActor::SupplyActor( const unsigned int inventoryCapacity )
+SupplyActor::SupplyActor(const float inventoryCapacity)
 {
 	this->zInventory = new Inventory(inventoryCapacity);
 	this->zParachute = NULL;

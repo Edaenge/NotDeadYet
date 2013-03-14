@@ -401,8 +401,8 @@ void GuiManager::Resize( int width, int height )
 	this->zInvGui->SetPosition(width - guiWidth, height - guiHeight);
 	this->zInvGui->SetDimension(Vector2(guiWidth, guiHeight));
 
-	this->zInvGui->Resize(width, height, dx);
-	this->zInvCircGui->Resize(width, height, dx);
+	this->zInvGui->Resize((float)width, (float)height, dx);
+	this->zInvCircGui->Resize(width, height, (int)dx);
 }
 void GuiManager::UpdateInventoryWeight( float weight )
 {

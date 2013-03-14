@@ -877,26 +877,45 @@ void Client::CheckGhostSpecificKeys()
 			else
 				zShowCursor = false;
 		}
+
 	}
 	else
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
 			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
+	}
 
-		if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)) )
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INVENTORY)))
+	{
+		if(!this->zKeyInfo.GetKeyState(KEY_INVENTORY))
 		{
-			// Check for targets to possess!
+			this->zKeyInfo.SetKeyState(KEY_INVENTORY, true);
 
-			std::vector<unsigned int> ids;
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_MAKE_NOISE, 0);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_INVENTORY))
+			this->zKeyInfo.SetKeyState(KEY_INVENTORY, false);
+	}
 
-			ids = this->RayVsWorld();
-
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
+	{
+		if(!this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
 			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_TRY_TO_POSSESS_ANIMAL, 0);
 			this->zServerChannel->Send(msg);
 		}
-
-
 	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_INTERACT))
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
+	}
+	
 }
 
 void Client::CheckNonGhostInput()
@@ -1049,7 +1068,7 @@ void Client::CheckAnimalInput()
 	this->CheckKey(KEY_JUMP);
 
 	//Leave Animal An Become a Ghost again
-	if (this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && this->zEng->GetKeyListener()->IsPressed('G'))
+	if (/*this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && */this->zEng->GetKeyListener()->IsPressed('G'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
@@ -2234,7 +2253,7 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsi
 		}
 		else if((*it_Item_Data).find(M_ITEM_WEIGHT.c_str()) == 0)
 		{
-			gid.zWeight = this->zMsgHandler.ConvertStringToInt(M_ITEM_WEIGHT, (*it_Item_Data));
+			gid.zWeight = this->zMsgHandler.ConvertStringToFloat(M_ITEM_WEIGHT, (*it_Item_Data));
 		}
 		else if((*it_Item_Data).find(M_ITEM_STACK_SIZE.c_str()) == 0)
 		{
