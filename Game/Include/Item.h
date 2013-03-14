@@ -33,7 +33,7 @@ public:
 	inline unsigned int GetID() const {return this->zID;}
 
 	/*! Returns the Item Weight*/
-	inline float GetWeight() const {return this->zWeight;}
+	inline unsigned int GetWeight() const {return this->zWeight;}
 
 	/*! Returns the Item Description*/
 	inline const std::string& GetItemName() const {return this->zItemName;}
@@ -90,7 +90,7 @@ protected:
 protected:
 	unsigned int zStacks;
 	unsigned int zID;
-	float zWeight;
+	int zWeight;
 	unsigned int zSlotSize;
 	unsigned int zItemType;
 	unsigned int zItemSubType;

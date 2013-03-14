@@ -810,9 +810,6 @@ void Client::CheckPlayerSpecificKeys()
 			}
 			else if(this->zGuiManager->IsInventoryOpen())
 			{
-				if (this->zGuiManager->IsCraftOpen())
-					this->zGuiManager->ToggleCraftingGui();
-
 				this->zGuiManager->ToggleInventoryGui();
 				if(!this->zGuiManager->IsLootingOpen() && !this->zGuiManager->IsCraftOpen())
 					this->zShowCursor = false;
