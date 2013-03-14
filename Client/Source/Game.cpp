@@ -28,6 +28,8 @@ void Game::Run()
 		if (bLastCursorVisible != bCurrentCursorVisible)
 		{
 			bLastCursorVisible = bCurrentCursorVisible;
+			if(!bCurrentCursorVisible)
+				eng->GetKeyListener()->SetMousePosition(Vector2((float)eng->GetEngineParameters().WindowWidth/2, (float)eng->GetEngineParameters().WindowHeight/2));
 			eng->GetCamera()->SetUpdateCamera(!bCurrentCursorVisible);
 			eng->GetKeyListener()->SetCursorVisibility(bCurrentCursorVisible);
 		}

@@ -94,6 +94,9 @@ Client::Client()
 	this->zPerf = new MaloWPerformance();
 	this->zPerf->SetFilePath("MPR_Client.txt");
 
+	AudioManager* am = AudioManager::GetInstance();
+	am->GetEventHandle(EVENTID_NOTDEADYET_AMBIENCE_FOREST, ambientMusic);
+	
 	InitCraftingRecipes();
 }
 
@@ -168,6 +171,11 @@ Client::~Client()
 
 	this->zPerf->GenerateReport(this->zEng->GetEngineParameters());
 	SAFE_DELETE(this->zPerf);
+
+	ambientMusic->Stop();
+	ambientMusic->Release();
+	delete ambientMusic;
+	ambientMusic = NULL;
 
 	FreeCraftingRecipes();
 }

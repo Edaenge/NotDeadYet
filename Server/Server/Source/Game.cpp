@@ -2151,6 +2151,16 @@ void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
 
 void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 {
+	BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[cd]->GetBehavior()->GetActor());
+	if (NULL != bActor)
+	{
+		if(bActor->InAction())
+		{
+			NetworkMessageConverter NMC;
+			cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Player is in action"));
+			return;
+		}
+	}
 	std::string msg;
 	int slot = -1;
 
@@ -2203,6 +2213,17 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 
 void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID )
 {
+	BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[cd]->GetBehavior()->GetActor());
+	if (NULL != bActor)
+	{
+		if(bActor->InAction())
+		{
+			NetworkMessageConverter NMC;
+			cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Player is in action"));
+			return;
+		}
+	}
+
 	std::string msg;
 	NetworkMessageConverter NMC;
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();

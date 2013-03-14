@@ -20,10 +20,6 @@ MainMenu::~MainMenu()
 	zSets = 0;
 	SAFE_DELETE(this->zGame);
 
-	ambientMusic->Release();
-	delete ambientMusic;
-	ambientMusic = NULL;
-
 	menuClick->Release();
 	delete menuClick;
 	menuClick = NULL;
@@ -42,9 +38,6 @@ void MainMenu::Init()
 	}
 
 	AudioManager* am = AudioManager::GetInstance();
-	am->GetEventHandle(EVENTID_NOTDEADYET_AMBIENCE_FOREST, ambientMusic);
-	ambientMusic->Play();
-	ambientMusic->Setvolume(0.2f);
 	am->GetEventHandle(EVENTID_NOTDEADYET_MENU_N_BACKPACK_TOGGLE_N_CLICK, menuClick);
 	menuClick->Setvolume(0.2f);
 

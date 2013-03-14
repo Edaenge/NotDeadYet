@@ -364,7 +364,7 @@ Menu_select_data GuiManager::CheckCrafting()
 	{
 		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
 		Gui_Item_Data gid = this->zCraftingGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(1), zEng);
-		if(zEng->GetKeyListener()->IsClicked(1))
+		if(zEng->GetKeyListener()->IsClicked(1) && gid.zID != -1)
 		{
 			Menu_select_data msd;
 			msd.zAction = CIRCMENU::CRAFT;

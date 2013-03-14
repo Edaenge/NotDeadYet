@@ -189,6 +189,9 @@ protected:
 	virtual void OnEvent(Event* e);
 	
 private:
+	//Sound
+	IEventHandle* ambientMusic;
+
 	/*! Current Client ID*/
 	unsigned int zID;
 	int	zPort;
