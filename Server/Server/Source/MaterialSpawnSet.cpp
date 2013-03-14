@@ -27,7 +27,7 @@ void ImportMaterialDrops(const std::string& filePath)
 			unsigned int entID = 0;
 
 			// Scan
-			if ( sscanf(curLine.c_str(), "material:%u, %u, %f, %f", &entID, &mat.materialID, &mat.chance, &mat.distance) == 4 )
+			if ( sscanf_s(curLine.c_str(), "material:%u, %u, %f, %f", &entID, &mat.materialID, &mat.chance, &mat.distance) == 4 )
 			{
 				materialDrops[entID].zMaterials.push_back(mat);
 			}

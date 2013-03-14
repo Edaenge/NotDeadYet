@@ -22,7 +22,7 @@ PhysicsResourceManager::~PhysicsResourceManager()
 			MaloW::Debug("WARNING: Resource manager deleted the object resource: '" 
 				+ objDataIterator->second->GetName() 
 				+ "'; missing decrease(s) in reference counter somewhere. Occurrences: " 
-				+ MaloW::convertNrToString(refCount - 1)
+				+ MaloW::convertNrToString((float)(refCount - 1))
 				+ ". Keep in mind that the cause can be PreLoadResources()-function if the resource was loaded but not used.");
 			for(int i = 0; i < refCount; i++)
 			{

@@ -341,7 +341,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, MeleeWeapon
 	}
 	else if(command == WEIGHT)
 	{
-		wp->SetItemWeight(MaloW::convertStringToInt(key));
+		wp->SetItemWeight(MaloW::convertStringToFloat(key));
 	}
 	else if(command == PATH)
 	{
@@ -407,7 +407,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, RangedWeapo
 	}
 	else if(command == WEIGHT)
 	{
-		wp->SetItemWeight(MaloW::convertStringToInt(key));
+		wp->SetItemWeight(MaloW::convertStringToFloat(key));
 	}
 	else if(command == PATH)
 	{
@@ -472,7 +472,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Food*& fd)
 	}
 	else if(command == WEIGHT)
 	{
-		fd->SetItemWeight(MaloW::convertStringToInt(key));
+		fd->SetItemWeight(MaloW::convertStringToFloat(key));
 	}
 	else if(command == PATH)
 	{
@@ -532,7 +532,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Container*&
 	}
 	else if(command == WEIGHT)
 	{
-		ct->SetItemWeight(MaloW::convertStringToInt(key));
+		ct->SetItemWeight(MaloW::convertStringToFloat(key));
 	}
 	else if(command == PATH)
 	{
@@ -596,7 +596,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Material*& 
 	}
 	else if(command == WEIGHT)
 	{
-		ma->SetItemWeight(MaloW::convertStringToInt(key));
+		ma->SetItemWeight(MaloW::convertStringToFloat(key));
 	}
 	else if(command == PATH)
 	{
@@ -652,7 +652,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Projectile*
 	}
 	else if(command == WEIGHT)
 	{
-		pa->SetItemWeight(MaloW::convertStringToInt(key));
+		pa->SetItemWeight(MaloW::convertStringToFloat(key));
 	}
 	else if(command == PATH)
 	{
@@ -716,7 +716,7 @@ bool ItemLookup::InterpCommand(std::string command, std::string key, Bandage*& b
 	}
 	else if(command == WEIGHT)
 	{
-		ba->SetItemWeight(MaloW::convertStringToInt(key));
+		ba->SetItemWeight(MaloW::convertStringToFloat(key));
 	}
 	else if(command == PATH)
 	{
@@ -772,7 +772,7 @@ bool ItemLookup::InterpCommand( std::string command, std::string key, Misc*& tp 
 	}
 	else if(command == WEIGHT)
 	{
-		tp->SetItemWeight(MaloW::convertStringToInt(key));
+		tp->SetItemWeight(MaloW::convertStringToFloat(key));
 	}
 	else if(command == PATH)
 	{

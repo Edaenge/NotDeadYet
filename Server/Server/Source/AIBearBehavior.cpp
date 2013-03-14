@@ -387,7 +387,7 @@ bool AIBearBehavior::Update( float dt )
 
 			if(finalDistance < shortestDistance)
 			{
-				shortestDistance = finalDistance;
+				shortestDistance = (int)finalDistance;
 				this->zMainActorTarget = (*i);//Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.		 
 			}
 			nrOfPredators++;
@@ -535,7 +535,7 @@ bool AIBearBehavior::Update( float dt )
 		if(this->zIntervalCounter > this->zCalmActionInterval && this->GetIfNeedPath())
 		{
 			this->zIntervalCounter = 0;
-			srand(time(0));
+			srand((unsigned int)time(0));
 			this->zCalmActionInterval = (float)(rand() % this->zCalmRandomInterval + this->zCalmRandomAddition); 
 			this->zCurrentPath.clear(); //Since a new path is gotten, and the old one might not have been completed, we clear it just in case.
 			//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->GetPosition().x + rand() % 14 - 7, this->GetPosition().z + rand() % 14 - 7, this->zCurrentPath, 20); //Get a small path to walk, short and does not have to lead anywhere.

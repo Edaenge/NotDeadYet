@@ -150,12 +150,11 @@ void Host::CalculateDeltaTime()
 
 void Host::Life()
 {
-	if (Messages::FileWrite())
-		Messages::Debug("Host Process Started");
+	MaloW::Debug("Host Process Started");
 
 	this->zServerListener->Start();
 
-	static const float FRAME_TIME = 300.0f;
+	static const float FRAME_TIME = 400.0f;
 	static const float TARGET_DT = 1.0f / FRAME_TIME;
 
 	this->zGameTimer->Init();
@@ -504,6 +503,15 @@ void Host::HandleReceivedMessage( MaloW::NetworkChannel* cc, const std::string &
 		NotifyObservers(&e);
 
 	}
+	else if(msgArray[0].find(M_MAKE_NOISE.c_str()) == 0)
+	{
+		PlayerGhostMakesNoiseEvent e;
+
+		e.zActor = NULL;
+		e.clientData = cd;
+
+		NotifyObservers(&e);
+	}
 	else if (msgArray[0].find(M_ANIMAL_ATTACK.c_str()) == 0)
 	{
 		unsigned int mouseButton = this->zMessageConverter.ConvertStringToInt(M_ANIMAL_ATTACK, msgArray[0]);
@@ -715,7 +723,7 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 			// Force Lowercase on Model
 			for( unsigned int x=0; x<e.playerModel.length(); ++x )
 			{
-				e.playerModel[x] = tolower(e.playerModel[x]);
+				e.playerModel[x] = tolower((int)e.playerModel[x]);
 			}
 		}
 		else if(it_m->find(M_DIRECTION) == 0)

@@ -2,6 +2,7 @@
 #include "GameEvents.h"
 #include "PlayerActor.h"
 #include "sounds.h"
+#include <time.h>
 #include "Game.h"
 #include "ActorManager.h"
 
@@ -17,7 +18,7 @@ SoundHandler::SoundHandler(Game* game, ActorManager* actorManager) :
 SoundHandler::~SoundHandler()
 {
 	if ( zGame ) zGame->RemoveObserver(this);
-	if ( zActorManager ) zActorManager->AddObserver(this);
+	if ( zActorManager ) zActorManager->RemoveObserver(this);
 
 	zPlayers.clear();
 }
@@ -104,5 +105,42 @@ void SoundHandler::OnEvent( Event* e )
 	{
 		zPlayers.erase(PAE->player);
 	}
+else if(PlayerGhostMakesNoiseEvent* PGMNE = dynamic_cast<PlayerGhostMakesNoiseEvent*>(e))
+	{
+		if(PGMNE->zActor->GetEnergy() >= 100.0f)
+		{
+			PGMNE->zActor->SetEnergy(PGMNE->zActor->GetEnergy() - 100.0f);
+			if(PGMNE->zActor)
+			{
+				NetworkMessageConverter NMC;
+				std::string msg;
+			
+				srand(time(NULL));
+				int sound = rand() % 4;
 
+				if(sound == 0)
+				{
+					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTGUID_NOTDEADYET_WALK_BUSH);
+				}
+				else if(sound == 1)
+				{
+					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_BOW_BOWSTRETCH);
+				}
+				else if(sound == 2)
+				{
+					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_WALK_DIRT);
+				}
+				else if(sound == 3)
+				{
+					msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_WALK_GRASS);
+				}
+			
+				msg += NMC.Convert(MESSAGE_TYPE_POSITION, PGMNE->zActor->GetPosition());
+				for(auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+				{
+					(*it)->GetClientData()->Send(msg);
+				}
+			}
+		}
+	}
 }

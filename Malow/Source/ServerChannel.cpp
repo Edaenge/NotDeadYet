@@ -78,7 +78,7 @@ void ServerChannel::Life()
 	}
 	catch(NetworkException e)
 	{
-		std::string errMsg = "Error Code: " + MaloW::convertNrToString(e.errCode) +  e.errString;
+		std::string errMsg = "Error Code: " + MaloW::convertNrToString((float)e.errCode) +  e.errString;
 		zNotifier->PutEvent(new DisconnectedEvent(this, errMsg));
 	}
 	catch(...)

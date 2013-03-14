@@ -93,7 +93,7 @@ float PlayerActor::GetBowTimer()
 	if(this->zUsingBow)
 	{
 		this->zUsingBow = false;
-		return (std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) - zBowTimeStarted).count() * 0.000001;
+		return (float)(std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) - zBowTimeStarted).count() * 0.000001;
 	}
 	return 0;
 }
