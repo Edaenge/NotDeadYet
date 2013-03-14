@@ -77,13 +77,17 @@ void GameModeFFA::OnEvent( Event* e )
 				else if (PlayerActor* pDealer = dynamic_cast<PlayerActor*>(ATD->zDealer))
 				{
 					Player* dealer = pDealer->GetPlayer();
-					killsMsg = "You were killed by " + dealer->GetPlayerName();
-					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
-					player->GetClientData()->Send(msg);
-
-					killsMsg = "You killed " + player->GetPlayerName();
-					msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
-					dealer->GetClientData()->Send(msg);
+					
+					if( !player && !dealer )
+					{
+						killsMsg = "You were killed by " + dealer->GetPlayerName();
+						msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+						player->GetClientData()->Send(msg);
+					
+						killsMsg = "You killed " + player->GetPlayerName();
+						msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
+						dealer->GetClientData()->Send(msg);
+					}
 
 				}
 				else if (AnimalActor* pDealer =dynamic_cast<AnimalActor*>(ATD->zDealer))
@@ -536,6 +540,10 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	std::string msg = "";
 
 	Player* player = pActor->GetPlayer();
+
+	if( !player )
+		return;
+
 	pActor->SetState(STATE_IDLE);
 	player->GetKeys().ClearStates();
 	//Remove Player Pointer From the Actor
@@ -571,8 +579,6 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	
 	//Add the actor to the list
 	aManager->AddActor(gActor);
-
-	this->zGame->ModifyLivingPlayers(1);
 }
 
 void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
@@ -581,6 +587,10 @@ void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
 	std::string msg = "";
 
 	Player* player = aActor->GetPlayer();
+
+	if( !player )
+		return;
+
 	//Remove Player Pointer From the Actor
 	aActor->SetPlayer(NULL);
 	

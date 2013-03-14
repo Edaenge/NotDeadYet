@@ -17,23 +17,6 @@ class ServerFramePacket;
 class NewActorPacket;
 class PhysicalConditionPacket;
 
-/*Events when a new actor has been added in ActorManager*/
-class ActorAdded : public Event
-{
-public:
-	virtual ~ActorAdded() {}
-
-	Actor* zActor;
-};
-
-/*Events when a new actor has been removed from ActorManager*/
-class ActorRemoved : public Event
-{
-public:
-	virtual ~ActorRemoved() {}
-
-	Actor* zActor;
-};
 
 class ActorSynchronizer : public Observer
 {

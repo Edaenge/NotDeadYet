@@ -50,3 +50,35 @@ void ClientData::AddLatency( const float time )
 
 	this->zLatency.push_back(time);
 }
+
+void ClientData::Send( const Packet& packet )
+{
+	if ( zClient )
+	{
+		std::stringstream ss;
+
+		// Notify Data Type
+		ss << "PACKET";
+
+		// Packet
+		std::string typeName = typeid(packet).name();
+		typeName.erase( typeName.begin(), typeName.begin() + 6 );
+
+		// Write Packet Type Name
+		unsigned int typeNameSize = typeName.length();
+		ss.write( reinterpret_cast<const char*>(&typeNameSize), sizeof(unsigned int) );
+		ss.write( &typeName[0], typeNameSize );
+
+		// Write Packet Data
+		if ( !packet.Serialize(ss) ) 
+			throw("Failed Packet Serialization!");			
+
+		// Send
+		Send(ss.str());
+	}
+}
+
+void ClientData::Send(const std::string& msg)
+{
+	if (zClient) zClient->Send(msg);
+}

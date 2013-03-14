@@ -108,7 +108,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 //DEBUG;
 	this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -196,6 +196,9 @@ void Game::SpawnAnimalsDebug()
 	DeerActor* dActor7 = new DeerActor(deerPhysics);
 
 	dActor->AddObserver(this->zGameMode);
+	dActor->SetModel("media/models/deer_anims.fbx");
+
+
 	dActor2->AddObserver(this->zGameMode);
 	dActor3->AddObserver(this->zGameMode);
 	dActor4->AddObserver(this->zGameMode);
@@ -495,12 +498,12 @@ void Game::SpawnHumanDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("Media/Models/temp_guy.obj");
+	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/temp_guy.obj");
 	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics, this);
-	pActor->SetModel("Media/Models/temp_guy_movement_anims.fbx");
+	pActor->SetModel("media/models/token_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
-	pActor->SetHealth(5000);
+	pActor->SetHealth(100);
 	pActor->SetScale(pActor->GetScale());
 	this->zActorManager->AddActor(pActor);
 }
@@ -1067,7 +1070,7 @@ void Game::OnEvent( Event* e )
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
 		pActor->SetModel(*selectedModel);
 		zPlayers[UDE->clientData]->zUserName = UDE->playerName;
-		zPlayers[UDE->clientData]->zUserModel = *selectedModel;
+		zPlayers[UDE->clientData]->zUserModel = (*selectedModel);
 
 		pActor->AddObserver(this->zGameMode);
 		Vector3 center;
@@ -1085,10 +1088,10 @@ void Game::OnEvent( Event* e )
 		// Apply Default Player Behavior
 		this->SetPlayerBehavior(zPlayers[UDE->clientData], new PlayerHumanBehavior(pActor, zWorld, zPlayers[UDE->clientData]));
 
-		//Add actor
+		// Add actor
 		this->zActorManager->AddActor(pActor);
 
-		//Tells the client which Actor he owns.
+		// Tells the client which Actor he owns.
 		std::string message;
 		NetworkMessageConverter NMC;
 		unsigned int selfID;
@@ -1102,7 +1105,7 @@ void Game::OnEvent( Event* e )
 		NewActorPacket* NAP = new NewActorPacket();
 		PhysicalConditionPacket* PCP = new PhysicalConditionPacket();
 
-		//Gather Actor Physical Conditions
+		// Gather Actor Physical Conditions
 		PCP->zBleedingLevel = pActor->GetBleeding();
 		PCP->zEnergy = pActor->GetEnergy();
 		PCP->zHealth = pActor->GetHealth();
@@ -1113,7 +1116,7 @@ void Game::OnEvent( Event* e )
 		UDE->clientData->Send(*PCP);
 		delete PCP;
 
-		//Gather Actors Information and send to client
+		// Gather Actors Information and send to client
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
 		auto it_actors_end = actors.end();
 		for (auto it = actors.begin(); it != it_actors_end; it++)

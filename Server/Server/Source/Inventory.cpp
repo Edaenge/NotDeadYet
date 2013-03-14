@@ -10,9 +10,9 @@ static const unsigned int MAX_QUIVER_SLOTS = 50;
 
 Inventory::Inventory()
 {
-	this->zInventoryCap = 49;
-	this->zWeightTotal = 0;
-	this->zSlotsAvailable = this->zInventoryCap;
+	this->zInventoryCap = 49.0f;
+	this->zWeightTotal = 0.0f;
+	this->zSlotsAvailable = (int)this->zInventoryCap;
 
 	this->zRangedWeapon = NULL;
 	this->zMeleeWeapon = NULL;
@@ -28,12 +28,12 @@ Inventory::Inventory()
 	this->zPlayer = NULL;
 }
 
-Inventory::Inventory(const unsigned int inventorySize)
+Inventory::Inventory(const float inventorySize)
 {
 	this->zInventoryCap = inventorySize;
-	this->zWeightTotal = 0;
+	this->zWeightTotal = 0.0f;
 
-	this->zSlotsAvailable = this->zInventoryCap;
+	this->zSlotsAvailable = (int)this->zInventoryCap;
 
 	this->zRangedWeapon = NULL;
 	this->zMeleeWeapon = NULL;
@@ -294,7 +294,7 @@ Item* Inventory::Erase( const unsigned int Index )
 	return NULL;
 }
 
-int Inventory::GetInventoryCapacity() const
+float Inventory::GetInventoryCapacity() const
 {
 	return this->zInventoryCap;
 }

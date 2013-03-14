@@ -35,5 +35,7 @@ void SenderProcess::Life()
 		{
 
 		}
+
+		delete PE;
 	}
 }

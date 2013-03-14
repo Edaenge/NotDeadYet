@@ -32,7 +32,7 @@ class Inventory
 {
 public:
 	Inventory();
-	Inventory(const unsigned int inventorySize);
+	Inventory(const float inventorySize);
 	virtual ~Inventory();
 	/*! Search for the Item in and returns its position*/
 	int Search(const unsigned int ID) const;
@@ -54,9 +54,9 @@ public:
 	Item* RemoveItem(Item* item);
 
 	/*! Returns the Inventory Capacity == Max Weight allowed*/
-	int GetInventoryCapacity() const;
+	float GetInventoryCapacity() const;
 	/*! Returns the total Weight.*/
-	inline int GetTotalWeight() const {return zWeightTotal;}
+	inline float GetTotalWeight() const {return this->zWeightTotal;}
 	/*! Returns amount of Items the player has in the inventory with itemType = TYPE*/
 	int SearchForItemType(const int Type, const int SubType);
 	/*! Removes weight from Inventory depending on item stacks and Weight.*/
@@ -102,9 +102,9 @@ private:
 	/*! Nr of slots available in inventory.*/
 	unsigned int zSlotsAvailable;
 	/*! Max nr of slots in The Inventory array.*/
-	unsigned int zInventoryCap;
+	float zInventoryCap;
 	/*! Nr of slots Occupied == Current Weight.*/
-	unsigned int zWeightTotal;
+	float zWeightTotal;
 
 	//Equipment Variables
 	Item* zPrimaryEquip;

@@ -95,6 +95,10 @@ void Host::SendMessageToClient( const std::string& message )
 		{
 			this->zRestartRequested = true;
 		}
+		else if(msg.find("kick"))
+		{
+
+		}
 	}
 	else
 	{
@@ -257,9 +261,9 @@ const char* Host::InitHost(const unsigned int &port, const unsigned int &maxClie
 
 void Host::SendToAllClients(const std::string& message)
 {
-	for (auto it = zClients.begin(); it != zClients.end(); it++)
+	for (auto it = this->zClients.begin(); it != this->zClients.end(); it++)
 	{
-		it->first->TrySend(message);
+		it->second->Send(message);
 	}
 }
 
@@ -573,7 +577,7 @@ void Host::HandleReceivedMessage( MaloW::NetworkChannel* cc, const std::string &
 void Host::BroadCastServerShutdown()
 {
 	std::string mess = this->zMessageConverter.Convert(MESSAGE_TYPE_SERVER_SHUTDOWN);
-	SendToAllClients(mess);
+	this->SendToAllClients(mess);
 }
 
 void Host::PingClients()
@@ -590,9 +594,10 @@ void Host::PingClients()
 
 	this->zTimeSinceLastPing = 0.0f;
 	std::string message;
-	for(auto it = zClients.begin(); it != zClients.end(); it++)
+	auto it_zClients_end = this->zClients.end();
+	for(auto it = this->zClients.begin(); it != it_zClients_end; it++)
 	{
-		(*it).first->TrySend( zMessageConverter.Convert(MESSAGE_TYPE_PING, this->zGameTimer->GetRunTime()) );
+		it->second->Send( zMessageConverter.Convert(MESSAGE_TYPE_PING, this->zGameTimer->GetRunTime()) );
 	}
 }
 
@@ -741,9 +746,10 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 
 void Host::SynchronizeAll()
 {
-	for( auto i = this->zClients.begin(); i != this->zClients.end(); ++i )
+	auto it_zClients_end = this->zClients.end();
+	for(auto it = this->zClients.begin(); it != it_zClients_end; it++)
 	{
-		this->zSynchronizer->SendUpdatesTo(i->second);
+		this->zSynchronizer->SendUpdatesTo(it->second);
 	}
 
 	this->zSynchronizer->ClearAll();

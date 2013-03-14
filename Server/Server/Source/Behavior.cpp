@@ -4,6 +4,7 @@
 #include "WorldActor.h"
 #include "BioActor.h"
 #include "ActorSynchronizer.h"
+#include "ActorManager.h"
 
 using namespace std::chrono;
 
@@ -63,7 +64,7 @@ void Behavior::OnEvent(Event* e)
 		zWorld->DeleteAnchor(zAnchor);
 		zActor = NULL;
 	}
-	else if( ActorRemoved* AR = dynamic_cast<ActorRemoved*>(e) )
+	else if( ActorRemovedEvent* AR = dynamic_cast<ActorRemovedEvent*>(e) )
 	{
 		auto found = this->zNearActors.find(AR->zActor);
 		if(found != this->zNearActors.end())
@@ -128,7 +129,7 @@ bool Behavior::RefreshNearCollideableActors( const std::set<Actor*>& actors )
 				if(worldActor && zNearStaticActors.find(*it) == zNearStaticActors.end())
 					this->zNearStaticActors.insert(*it);
 
-				else if(zNearDynamicActors.find(*it) == zNearDynamicActors.end())
+				else if(!worldActor && zNearDynamicActors.find(*it) == zNearDynamicActors.end())
 					this->zNearDynamicActors.insert(*it);
 			}
 			else
@@ -139,7 +140,7 @@ bool Behavior::RefreshNearCollideableActors( const std::set<Actor*>& actors )
 				if( worldActor && zNearStaticActors.find(*it) != zNearStaticActors.end() )
 					this->zNearStaticActors.erase(*it);
 
-				else if(zNearDynamicActors.find(*it) != zNearDynamicActors.end() )
+				else if(!worldActor && zNearDynamicActors.find(*it) != zNearDynamicActors.end() )
 					this->zNearDynamicActors.erase(*it);
 			}
 		}
@@ -280,7 +281,7 @@ Actor* Behavior::RayVsMeshStaticActorCollision( float& range, const Vector3& ray
 	if( !isBlocking )
 		return NULL;
 
-	return RayVsMeshCollision(this->zActor, rayOrigin, range, zNearDynamicActors);
+	return RayVsMeshCollision(this->zActor, rayOrigin, range, zNearStaticActors);
 }
 
 void Behavior::SetNearStaticActors( std::set<Actor*> actors )
