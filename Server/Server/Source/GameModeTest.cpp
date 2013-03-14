@@ -104,7 +104,12 @@ void GameModeTest::OnEvent( Event* e )
 					ClientData* cd = player->GetClientData();
 
 					if (cd)
+					{
+						std::stringstream ss;
+						ss << "You did " << damage << " to your target";
 						cd->Send(msg);
+						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, ss.str()));
+					}
 				}
 			}
 		}

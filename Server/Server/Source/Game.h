@@ -100,7 +100,7 @@ public:
 
 	void RestartGame();	
 	void ModifyLivingPlayers(const int value);
-
+	int GetLivingPlayers() {return this->zPlayersAlive;}
 	void SetPerformancePtr(MaloWPerformance* perf) {this->zPerf = perf;}
 
 	Vector3 GetOffset(const std::string& model);

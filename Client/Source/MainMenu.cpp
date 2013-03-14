@@ -276,7 +276,7 @@ void MainMenu::Init()
 
 void MainMenu::StartTestRun()
 {
-	bool result;
+	bool result = false;
 	try
 	{
 		//result = zGame->InitGameClient("80.78.216.201", 11521); //Simon hem

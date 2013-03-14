@@ -269,7 +269,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 		this->zGuiManager->EquipItem(gid);
-		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
+		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
 		
 		return;
 	}
@@ -288,7 +288,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 			return;
 		}
 		
-		int weigth = this->zPlayerInventory->GetTotalWeight();
+		float weigth = this->zPlayerInventory->GetTotalWeight();
 		Item* prev = NULL;
 		prev = this->zPlayerInventory->EquipProjectile(projectile);
 		if(prev)
@@ -315,7 +315,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 		this->zGuiManager->EquipItem(gid);
 
-		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
+		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
 		return;
 	}
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
@@ -350,7 +350,7 @@ void Client::HandleEquipItem(const unsigned int ItemID, const int Slot)
 
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 		this->zGuiManager->EquipItem(gid);
-		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
+		this->zGuiManager->UpdateInventoryWeight(this->zPlayerInventory->GetTotalWeight());
 		return;
 	}
 }

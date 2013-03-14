@@ -134,7 +134,7 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 
 unsigned int SupplyDrop::CalculateTotalWeight( std::set<Item*>& items ) const
 {
-	unsigned int weight = 0;
+	float weight = 0.0f;
 	//Calculate total weight
 	for( auto it = items.begin(); it != items.end(); it++ )
 	{

@@ -108,7 +108,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 //DEBUG;
 	this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
+	//this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -1497,8 +1497,6 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 		if (!item)
 			return;
 
-		//std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-
 		if (item->GetID() == itemID && item->GetItemType() == itemType)// && item->GetItemSubType() == subType)
 		{
 			if( item->GetStacking() && !pActor->GetInventory()->IsStacking(item) )
@@ -1538,8 +1536,6 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 				}
 			}
 
-			//msg += item->ToMessageString(&NMC);
-
 			//add item
 			if(pActor->GetInventory()->AddItem(item, stacked))
 			{
@@ -1561,8 +1557,6 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory Is Full"));
 				return;
 			}
-
-			//cd->Send(msg);
 		}
 		
 	}
@@ -2024,7 +2018,7 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 				}
 				if (craftedItem)
 				{
-					int newWeightChange = craftedItem->GetStackSize() * craftedItem->GetWeight();
+					float newWeightChange = craftedItem->GetStackSize() * craftedItem->GetWeight();
 					auto item_it_end = item_stack_out.end();
 					for (auto it = item_stack_out.begin(); it != item_it_end; it++)
 					{
@@ -2177,7 +2171,7 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 
 	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
-		int weight = inventory->GetTotalWeight();
+		float weight = inventory->GetTotalWeight();
 
 		ret = inventory->EquipProjectile(proj);
 		

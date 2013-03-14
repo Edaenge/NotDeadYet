@@ -119,7 +119,12 @@ void GameModeFFA::OnEvent( Event* e )
 					ClientData* cd = player->GetClientData();
 
 					if (cd)
+					{
+						std::stringstream ss;
+						ss << "You did " << damage << " to your target";
 						cd->Send(msg);
+						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, ss.str()));
+					}
 				}
 			}
 		}
@@ -374,7 +379,7 @@ void GameModeFFA::PossessAnAnimal(GhostActor* gActor)
 	this->zGame->GetActorManager()->GetActorsInCircle(position.GetXZ(), 4.0f, actors, ACTOR_TYPE_ANIMAL);
 	for (auto it_Actors = actors.begin(); it_Actors != actors.end(); it_Actors++)
 	{
-		if(GetPhysics()->GetCollisionRayMeshBoundingOnly(gActor->GetPosition(),gActor->GetDir(), (*it_Actors)->GetPhysicsObject()).collision)
+		if(GetPhysics()->GetCollisionRayMeshBoundingOnly(gActor->GetPosition(), gActor->GetDir(), (*it_Actors)->GetPhysicsObject()).collision)
 		{
 			foundAnimal = true;
 			target = it_Actors;

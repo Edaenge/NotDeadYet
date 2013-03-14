@@ -70,7 +70,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 	if (!item)
 		return false;
 
-	unsigned int weight = item->GetWeight();
+	float weight = item->GetWeight();
 	int available_slots = CalcMaxAvailableSlots(item);
 	stacked = false;
 	
@@ -94,7 +94,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 			{
 				stack = max_stack;
 			}
-			else if((unsigned int)max_stack >= item->GetStackSize())
+			else
 			{
 				stack = item->GetStackSize();
 			}
@@ -134,10 +134,10 @@ int Inventory::CalcMaxAvailableSlots( Item* item )
 	if(!item)
 		return 0;
 
-	int slotsLeft = this->zInventoryCap - this->zWeightTotal;
-	unsigned int weight = item->GetWeight();
+	float slotsLeft = this->zInventoryCap - this->zWeightTotal;
+	float weight = item->GetWeight();
 
-	int available_slots = slotsLeft / weight;
+	int available_slots = (int)(slotsLeft / weight);
 
 	return available_slots;
 }
@@ -207,7 +207,7 @@ bool Inventory::RemoveItemStack(const unsigned int ID, const unsigned int number
 
 	if ((unsigned int)index < this->zItems.size())
 	{
-		int weight = GetItem(index)->GetWeight() * numberOfStacks;
+		float weight = GetItem(index)->GetWeight() * numberOfStacks;
 		this->zWeightTotal -= weight;
 
 		if (Messages::FileWrite())
@@ -241,7 +241,7 @@ Item* Inventory::Erase( const unsigned int Index )
 	if (Index < this->zItems.size())
 	{
 		Item* item = this->GetItem(Index);
-		int weight = item->GetWeight() * item->GetStackSize();
+		float weight = item->GetWeight() * item->GetStackSize();
 		this->zWeightTotal -= weight;
 
 		this->zItems.erase(this->zItems.begin() + Index);
@@ -287,7 +287,7 @@ Item* Inventory::SearchAndGetItemFromType(const int Type, const int SubType)
 {
 	for (auto it = this->zItems.begin(); it < this->zItems.end(); it++)
 	{
-		if ((*it)->GetItemType() == Type && (*it)->GetItemSubType() == SubType)
+		if ((int)(*it)->GetItemType() == Type && (int)(*it)->GetItemSubType() == SubType)
 		{
 			return (*it);
 		}
@@ -382,7 +382,7 @@ Item* Inventory::EquipProjectile(Projectile* projectile)
 		if (this->zProjectile->GetItemSubType() == projectile->GetItemSubType())
 		{
 			int totalStacks = this->zProjectile->GetStackSize() + projectile->GetStackSize();
-			int weigth = projectile->GetStackSize() * projectile->GetWeight(); 
+			float weigth = projectile->GetStackSize() * projectile->GetWeight(); 
 			this->zWeightTotal += weigth;
 
 			this->zProjectile->SetStackSize(totalStacks);
@@ -576,9 +576,9 @@ void Inventory::ClearAll()
 		SAFE_DELETE((*x));
 	}
 
-	this->zInventoryCap = 49;
-	this->zWeightTotal = 0;
-	this->zSlotsAvailable = this->zInventoryCap;
+	this->zInventoryCap = 49.0f;
+	this->zWeightTotal = 0.0f;
+	this->zSlotsAvailable = (int)this->zInventoryCap;
 
 	this->zRangedWeapon = NULL;
 	this->zMeleeWeapon = NULL;

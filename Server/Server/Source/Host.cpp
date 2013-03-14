@@ -715,7 +715,7 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 			// Force Lowercase on Model
 			for( unsigned int x=0; x<e.playerModel.length(); ++x )
 			{
-				e.playerModel[x] = tolower(e.playerModel[x]);
+				e.playerModel[x] = tolower((int)e.playerModel[x]);
 			}
 		}
 		else if(it_m->find(M_DIRECTION) == 0)
