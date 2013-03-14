@@ -51,14 +51,14 @@ bool Game::InitGameClient(const std::string &IP, const unsigned int &port)
 	float windowHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 
-	iText* connectingText =  GetGraphics()->CreateText("Connecting...", Vector2((50.0f / 1024.0f) * dx, (700.0f / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight), 2.0f, "Media/Fonts/new");
+	/*iText* connectingText =  GetGraphics()->CreateText("Connecting...", Vector2((50.0f / 1024.0f) * dx, (700.0f / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight), 2.0f, "Media/Fonts/new");*/
 	this->zClient->SetBlackImage(blackImage);
 	blackImage = NULL;
-	this->zClient->SetConnectingText(connectingText);
-	connectingText = NULL;
 
 	bool result = this->zClient->Connect(IP, port);
 
+	/*GetGraphics()->DeleteText(connectingText);
+	connectingText = NULL;*/
 	if (result)
 		this->zClient->Start();
 

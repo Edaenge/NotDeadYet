@@ -10,13 +10,21 @@ ClientActorManager::ClientActorManager()
 {
 	AudioManager* am = AudioManager::GetInstance();
 
-	this->zFootStepGrass = new IEventHandle*[MAXFOOTSTEPS];
+	/*this->zFootStepGrass = new IEventHandle*[MAXFOOTSTEPS];
 	for(int i = 0; i < MAXFOOTSTEPS; i++)
 		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_GRASS, this->zFootStepGrass[i]);
 
 	this->zFootStepDirt = new IEventHandle*[MAXFOOTSTEPS];
 	for(int i = 0; i < MAXFOOTSTEPS; i++)
-		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_DIRT, this->zFootStepDirt[i]);
+		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_DIRT, this->zFootStepDirt[i]);*/
+
+	this->zFootStepsOnGrass = new Sound*[MAXFOOTSTEPS];
+	for(int i = 0; i < MAXFOOTSTEPS; i++)
+		zFootStepsOnGrass[i] = new Sound(EVENTID_NOTDEADYET_WALK_GRASS);
+
+	this->zFootStepsOnDirt = new Sound*[MAXFOOTSTEPS];
+	for(int i = 0; i < MAXFOOTSTEPS; i++)
+		zFootStepsOnDirt[i] = new Sound(EVENTID_NOTDEADYET_WALK_DIRT);
 
 	this->zInterpolationVelocity = 1.0f;
 	this->zUpdatesPerSec = 1;
@@ -45,7 +53,7 @@ ClientActorManager::~ClientActorManager()
 		}
 	}
 	this->zUpdates.clear();
-	// Delete grass footsteps
+	/*// Delete grass footsteps
 	for(int i = 0; i < MAXFOOTSTEPS; i++)
 	{
 		this->zFootStepGrass[i]->Release();
@@ -65,12 +73,31 @@ ClientActorManager::~ClientActorManager()
 	}
 
 	delete this->zFootStepDirt;
-	this->zFootStepDirt = NULL;
+	this->zFootStepDirt = NULL;*/
 
+	for(int i = 0; i < MAXFOOTSTEPS; i++)
+	{
+		delete this->zFootStepsOnGrass[i];
+		this->zFootStepsOnGrass[i] = NULL;
+	}
+	delete this->zFootStepsOnGrass;
+
+	for(int i = 0; i < MAXFOOTSTEPS; i++)
+	{
+		delete this->zFootStepsOnDirt[i];
+		this->zFootStepsOnDirt[i] = NULL;
+	}
+	delete this->zFootStepsOnDirt;
 }
 
 void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID, World* world )
 {
+	for(int i = 0; i < MAXFOOTSTEPS; i++)
+	{
+		this->zFootStepsOnDirt[i]->Update(deltaTime);
+		this->zFootStepsOnGrass[i]->Update(deltaTime);
+	}
+
 	//std::vector<Actor*> actors;
 	float latency = 1.0f / (float)this->zLatency;
 	float server_DeltaTime = 1.0f / (float)this->zUpdatesPerSec;
@@ -98,8 +125,6 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID, 
 			}
 			if (update->HasPositionChanged())
 			{
-				float lAmountOfGrass = 0.0f;
-				float lAmountOfDirt = 0.0f;
 				Vector3 oldPosition;
 				if(update->GetID() == clientID)
 				{
@@ -110,13 +135,15 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID, 
 						int mostUsedTex = this->GetMostUsedTexOnPos(position, world);
 						if(mostUsedTex == 0)
 						{
-							this->zFootStepGrass[MAXFOOTSTEPS-1]->Setposition(&ConvertToFmodVector(position));
-							this->zFootStepGrass[MAXFOOTSTEPS-1]->Play();
+							/*this->zFootStepGrass[MAXFOOTSTEPS-1]->Setposition(&ConvertToFmodVector(position));
+							this->zFootStepGrass[MAXFOOTSTEPS-1]->Play();*/
+							this->zFootStepsOnGrass[MAXFOOTSTEPS-1]->SetPosition(position);
+							this->zFootStepsOnGrass[MAXFOOTSTEPS-1]->Play();
 						}
 						else
 						{
-							this->zFootStepDirt[MAXFOOTSTEPS-1]->Setposition(&ConvertToFmodVector(position));
-							this->zFootStepDirt[MAXFOOTSTEPS-1]->Play();
+							this->zFootStepsOnDirt[MAXFOOTSTEPS-1]->SetPosition(position);
+							this->zFootStepsOnDirt[MAXFOOTSTEPS-1]->Play();
 						}
 					}
 
@@ -132,13 +159,17 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID, 
 						{
 							if(this->GetMostUsedTexOnPos(position, world) == 0)
 							{
-								this->zFootStepGrass[stepsPlayedThisUpdate]->Setposition(&ConvertToFmodVector(position));
-								this->zFootStepGrass[stepsPlayedThisUpdate]->Play();
+								/*this->zFootStepGrass[stepsPlayedThisUpdate]->Setposition(&ConvertToFmodVector(position));
+								this->zFootStepGrass[stepsPlayedThisUpdate]->Play();*/
+								this->zFootStepsOnGrass[stepsPlayedThisUpdate]->SetPosition(position);
+								this->zFootStepsOnGrass[stepsPlayedThisUpdate]->Play();
 							}
 							else
 							{
-								this->zFootStepDirt[stepsPlayedThisUpdate]->Setposition(&ConvertToFmodVector(position));
-								this->zFootStepDirt[stepsPlayedThisUpdate]->Play();
+								/*this->zFootStepDirt[stepsPlayedThisUpdate]->Setposition(&ConvertToFmodVector(position));
+								this->zFootStepDirt[stepsPlayedThisUpdate]->Play();*/
+								this->zFootStepsOnDirt[stepsPlayedThisUpdate]->SetPosition(position);
+								this->zFootStepsOnDirt[stepsPlayedThisUpdate]->Play();
 							}
 						}
 					}
