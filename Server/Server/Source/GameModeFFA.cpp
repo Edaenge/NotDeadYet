@@ -397,8 +397,7 @@ void GameModeFFA::PossessAnAnimal(GhostActor* gActor)
 	{
 		if(dynamic_cast<BioActor*>((*it_Actors))->IsAlive())
 		{
-			PhysicsCollisionData data = GetPhysics()->GetCollisionRayMeshBoundingOnly(gActor->GetPosition(), gActor->GetDir(), (*it_Actors)->GetPhysicsObject());
-			if(data.collision || data.BoundingSphereCollision)
+			if(GetPhysics()->GetCollisionRayMeshBoundingOnly(gActor->GetPosition(), gActor->GetDir(), (*it_Actors)->GetPhysicsObject()).collision)
 			{
 				foundAnimal = true;
 				target = it_Actors;

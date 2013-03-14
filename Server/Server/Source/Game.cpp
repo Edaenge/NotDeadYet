@@ -232,7 +232,9 @@ void Game::SpawnAnimalsDebug()
 	}
 
 	
+
 	
+
 }
 
 void Game::SpawnItemsDebug()
@@ -1170,7 +1172,6 @@ void Game::OnEvent( Event* e )
 	}
 
 	NotifyObservers(e);
-
 	if (this->zPerf)
 		this->zPerf->PostMeasure("Game Event Handling", 2);
 }
@@ -1847,6 +1848,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 		MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
+
 
 	Inventory* inventory = pActor->GetInventory();
 	if( !(inventory) )

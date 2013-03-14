@@ -134,6 +134,7 @@ void ActorManager::RemoveBehavior(Actor* actor, bool instantRemove)
 			else
 			{
 				temp->Remove();
+				it++;
 			}
 		}
 		else
