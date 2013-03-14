@@ -105,6 +105,7 @@ public:
 
 	void SetPerformancePtr(MaloWPerformance* perf) {this->zPerf = perf;}
 
+	float GetFogEnclosement();
 	Vector3 GetOffset(const std::string& model);
 	void CheckPlayerUseBow(Player* player);
 
