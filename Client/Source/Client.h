@@ -58,6 +58,7 @@ public:
 	bool GetCursorVisibility();
 
 	void SetBlackImage(iImage* image){ this->zBlackImage = image; }
+	void SetConnectingText(iText* text){ this->zConnectingText = text; }
 
 private:
 
@@ -241,6 +242,7 @@ private:
 	float	zCurrentOffset;
 	
 	iImage* zBlackImage;
+	iText* zConnectingText;
 	InGameMenu* zIgm;
 	PickAnimalMenu* zPam;
 
