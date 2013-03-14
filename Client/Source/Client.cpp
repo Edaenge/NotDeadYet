@@ -2040,16 +2040,17 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 void Client::UpdateHealthAndBleedingImage()
 {
 	this->zHealthOpacity = this->zHealth / 100;
-	float goalOffset = 500.0f * this->zHealthOpacity;
+
+	float goalOffset = 200.0f + 300.0f * this->zHealthOpacity;
 	
 
 	if(this->zCurrentOffset < goalOffset)
 	{
-		this->zCurrentOffset += 20.0f * zDeltaTime;
+		this->zCurrentOffset += 40.0f * zDeltaTime;
 	}
 	else if(this->zCurrentOffset > goalOffset)
 	{
-		this->zCurrentOffset -= 20.0f * zDeltaTime;
+		this->zCurrentOffset -= 40.0f * zDeltaTime;
 	}
 
 
@@ -2070,17 +2071,23 @@ void Client::UpdateHealthAndBleedingImage()
 		this->zBleedingAndHealthIndicator = this->zEng->CreateImage(Vector2(0 - this->zCurrentOffset,0 - this->zCurrentOffset), Vector2(windowWidth + this->zCurrentOffset*2, windowHeight + this->zCurrentOffset*2), "Media/Icons/HealthAndBleeding_Small_Temp.png" );
 	}
 
-
-
 	if(this->zBleedingLevel > 1)
 	{
 		if(!this->zDroppingPulse)
 		{
 			this->zBleedingOpacity += this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
+			if(this->zBleedingOpacity >= 0.22f)
+			{
+				this->zBleedingOpacity = 0.22f;
+			}
 		}
 		else
 		{
 			this->zBleedingOpacity -= this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
+			if(this->zBleedingOpacity <= 0.0f)
+			{
+				this->zBleedingOpacity = 0.0f;
+			}
 		}
 
 
