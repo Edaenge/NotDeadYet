@@ -2414,7 +2414,7 @@ void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::stri
 	}
 }
 
-void Game::SendToAll( std::string msg)
+void Game::SendToAll( const std::string& msg)
 {
 	auto it_zPlayers_end = this->zPlayers.end();
 	for(auto it = this->zPlayers.begin(); it != it_zPlayers_end; it++)

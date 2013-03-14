@@ -94,11 +94,13 @@ public:
 	Vector3 CalcPlayerSpawnPoint(int nr);
 	Vector3 CalcPlayerSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center);
 	
-	ActorManager* GetActorManager() {return this->zActorManager;}
-	World* GetWorld() {return this->zWorld;}
-	SoundHandler* GetSoundHandler() {return this->zSoundHandler;}
+	// Managers
+	inline BehaviorManager* GetBehaviorManager() const { return zBehaviorManager; }
+	inline ActorManager* GetActorManager() const { return this->zActorManager; }
+	inline World* GetWorld() const { return this->zWorld;}
+	inline SoundHandler* GetSoundHandler() const { return this->zSoundHandler; }
 
-	void SendToAll(std::string msg);
+	void SendToAll(const std::string& msg);
 
 	void RestartGame();	
 	void ModifyLivingPlayers(const int value);
