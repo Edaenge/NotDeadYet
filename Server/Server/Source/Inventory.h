@@ -56,6 +56,7 @@ public:
 	Item* RemoveItem(const unsigned int ID);
 	Item* RemoveItem(Item* item);
 
+	unsigned int GetSlotsAvailable() {return this->zSlotsAvailable;}
 	/*! Returns the Inventory Capacity == Max Weight allowed*/
 	float GetInventoryCapacity() const;
 	/*! Returns the total Weight.*/

@@ -114,8 +114,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	//DEBUG;
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnAnimalsDebug();
+	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -155,6 +155,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zFogTimer = 0.0f;
 
 	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
+
+	
+	//Used for caching fbx files dont change the function.
+	//this->Caching("media/models/token_anims.fbx");
 }
 
 Game::~Game()
@@ -229,11 +233,6 @@ void Game::SpawnAnimalsDebug()
 
 		this->zActorManager->AddActor(dActor);
 	}
-
-	
-
-	
-
 }
 
 void Game::SpawnItemsDebug()
@@ -424,8 +423,21 @@ void Game::SpawnHumanDebug()
 	pActor->SetModel("media/models/token_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
-	pActor->SetHealth(100);
+	pActor->SetHealth(1000);
 	pActor->SetScale(pActor->GetScale());
+	this->zActorManager->AddActor(pActor);
+}
+
+void Game::Caching( const std::string& modelName )
+{
+	srand((unsigned int)time(0));
+	int increment = 10;
+	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
+	PlayerActor* pActor = new PlayerActor(NULL, NULL, this);
+	pActor->SetModel(modelName);
+	pActor->AddObserver(this->zGameMode);
+	pActor->SetPosition(position);
+	pActor->SetHealth(100000);
 	this->zActorManager->AddActor(pActor);
 }
 
@@ -2025,14 +2037,21 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 				if (craftedItem)
 				{
 					float newWeightChange = craftedItem->GetStackSize() * craftedItem->GetWeight();
+					int slotChange = 0;
 					auto item_it_end = item_stack_out.end();
 					for (auto it = item_stack_out.begin(); it != item_it_end; it++)
 					{
 						newWeightChange -= (it->first->GetWeight() * it->second);
+						
+						int slots = it->first->GetStackSize() - it->second;
+						if (slots <= 0)
+							slotChange += it->first->GetSlotSize();
 					}
+					int cap = inv->GetSlotsAvailable() + slotChange;
+					int reqCap = craftedItem->GetSlotSize();
 
 					//Check if the new Weight is less or equal to the max Weight.
-					if(inv->GetTotalWeight() + newWeightChange <= inv->GetInventoryCapacity())
+					if(inv->GetTotalWeight() + newWeightChange <= inv->GetInventoryCapacity() && cap >= reqCap)
 					{
 						for (auto it = item_stack_out.begin(); it != item_it_end; it++)
 						{
@@ -2072,7 +2091,6 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 								}
 							}
 
-							//cd->Send(add_msg);
 							return true;
 						}
 						else
@@ -2407,11 +2425,12 @@ void Game::RestartGame()
 	}
 
 	SpawnItemsDebug();
-	//SpawnAnimalsDebug();
-	//SpawnHumanDebug();
+	SpawnAnimalsDebug();
+	SpawnHumanDebug();
 }
 
-void Game::CheckPlayerUseBow(Player* player){
+void Game::CheckPlayerUseBow(Player* player)
+{
 	if(player->GetKeys().GetKeyState(MOUSE_LEFT_PRESS))
 	{
 		if(BioActor *bActor = dynamic_cast<BioActor *>(player->GetBehavior()->GetActor()))

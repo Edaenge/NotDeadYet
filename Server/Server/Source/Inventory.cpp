@@ -98,7 +98,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 			{
 				stack = max_stack;
 			}
-			else if((unsigned int)max_stack >= item->GetStackSize())
+			else
 			{
 				stack = item->GetStackSize();
 			}
@@ -125,7 +125,8 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 		}
 	}
 	
-	if (this->zSlotsAvailable - item->GetSlotSize() <= 0)
+	int newSlotsSize = this->zSlotsAvailable - item->GetSlotSize();
+	if (newSlotsSize <= 0)
 		return false;
 
 	if((unsigned int)available_slots >= item->GetStackSize() )
@@ -136,7 +137,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 			Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
 
 		this->zWeightTotal += weight * item->GetStackSize();
-		this->zSlotsAvailable -= item->GetSlotSize() - 1;
+		this->zSlotsAvailable -= item->GetSlotSize();
 
 		if (this->zPlayer)
 		{
@@ -267,6 +268,7 @@ Item* Inventory::Erase( const unsigned int Index )
 		Item* item = this->GetItem(Index);
 		float weight = item->GetWeight() * item->GetStackSize();
 		this->zWeightTotal -= weight;
+		this->zSlotsAvailable += item->GetSlotSize();
 
 		this->zItems.erase(this->zItems.begin() + Index);
 		if(zRangedWeapon && dynamic_cast<RangedWeapon*>(item) == this->zRangedWeapon)

@@ -143,4 +143,5 @@ private:
 	// Game Stuff
 	void UpdateSunDirection(float dt);
 	void UpdateFogEnclosement(float dt);
+	void Caching(const std::string& modelName);
 };

@@ -277,10 +277,10 @@ void MainMenu::StartTestRun()
 	try
 	{
 		//result = zGame->InitGameClient("80.78.216.201", 11521); //Simon hem
-		result = zGame->InitGameClient("194.47.150.16", 11521); //server
+		//result = zGame->InitGameClient("194.47.150.16", 11521); //server
 		//result = zGame->InitGameClient("194.47.150.20", 11521); //Simon
 		//result = zGame->InitGameClient("194.47.150.12", 11521); //Christopher
-		//result = zGame->InitGameClient("127.0.0.1", 11521); // Local
+		result = zGame->InitGameClient("127.0.0.1", 11521); // Local
 	}
 	catch (NetworkException e)
 	{

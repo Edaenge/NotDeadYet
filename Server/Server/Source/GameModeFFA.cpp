@@ -121,11 +121,24 @@ void GameModeFFA::OnEvent( Event* e )
 					ClientData* cd = player->GetClientData();
 
 					if (cd)
-					{
-						std::stringstream ss;
-						ss << "You Did " << damage << " to your target";
 						cd->Send(msg);
-						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, ss.str()));
+				}
+				if (ATD->zActor != ATD->zDealer)
+				{
+					BioActor* bActor = dynamic_cast<BioActor*>(ATD->zDealer);
+					if (bActor)
+					{
+						player = bActor->GetPlayer();
+						if(player)
+						{
+							ClientData* cd = player->GetClientData();
+							if (cd)
+							{
+								std::stringstream ss;
+								ss << "You did " << damage << " damage to your target";
+								cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, ss.str()));
+							}
+						}
 					}
 				}
 			}
@@ -678,7 +691,7 @@ void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
 	GhostActor* gActor = new GhostActor(player);
 	gActor->SetPosition(position);
 	gActor->SetDir(direction);
-
+	gActor->AddObserver(this);
 	gActor->SetEnergy(aActor->GetEnergy());
 
 	//Create Ghost behavior

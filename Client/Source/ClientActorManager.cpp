@@ -146,7 +146,6 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID, 
 							this->zFootStepsOnDirt[MAXFOOTSTEPS-1]->Play();
 						}
 					}
-
 					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
 				}
 				else 
