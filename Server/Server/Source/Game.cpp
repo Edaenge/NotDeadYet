@@ -1903,8 +1903,6 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 
 						if(item)
 						{
-							//msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
-							//cd->Send(msg);
 							delete item, item = NULL;
 						}
 					}
@@ -2000,9 +1998,6 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 				//if arrow stack is empty
 				if (arrow->GetStackSize() <= 0)
 				{
-					//std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
-					//msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_PROJECTILE);
-					//cd->Send(msg);
 					inventory->UnEquipProjectile();
 					item = inventory->RemoveItem(arrow);
 					
@@ -2130,9 +2125,6 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 								inv->RemoveItem(it->first);
 							}
 						}
-						//Send Add Inventory Msg to the Player.
-						//std::string add_msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-						//add_msg += craftedItem->ToMessageString(&NMC);
 
 						//Try to add the crafted item to the inventory.
 						bool stacked = false;
@@ -2170,9 +2162,6 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 								it->first->IncreaseStackSize(it->second);
 								if(inv->AddItem(it->first, stacked))
 								{
-									//std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-									//msg += craftedItem->ToMessageString(&NMC);
-									//cd->Send(msg);
 									if (stacked)
 									{
 										MaloW::Debug("Weird Error When Crafting, item stacked but shouldn't have");

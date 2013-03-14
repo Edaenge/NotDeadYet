@@ -8,9 +8,6 @@ static const unsigned int MAX_QUIVER_SLOTS = 50;
 
 Inventory::Inventory()
 {
-	this->zInventoryCap = 49.0f;
-	this->zWeightTotal = 0;
-
 	this->zItems = std::vector<Item*>();
 
 	this->zInventoryCap = 49;
