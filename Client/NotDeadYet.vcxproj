@@ -66,6 +66,7 @@
     <ClCompile Include="Source\SoundEngine\AudioManager.cpp" />
     <ClCompile Include="Source\SoundEngine\EventHandle.cpp" />
     <ClCompile Include="Source\ClientActorManager.cpp" />
+    <ClCompile Include="Source\SoundEngine\Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Client.h" />
@@ -112,6 +113,7 @@
     <ClInclude Include="Source\SoundEngine\IEventHandle.h" />
     <ClInclude Include="Source\Actor.h" />
     <ClInclude Include="Source\ClientActorManager.h" />
+    <ClInclude Include="Source\SoundEngine\Sound.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FB7EE0D5-90C1-4BBD-8828-F5A39BE7D296}</ProjectGuid>

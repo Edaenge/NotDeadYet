@@ -12,14 +12,14 @@ struct Gui_Item_Data
 {
 	Gui_Item_Data()
 	{
-		this->zID = 0;
-		this->zSlots = 0;
+		this->zID = -1;
+		this->zSlots = -1;
 
-		this->zType = 0;
-		this->zSubType = 0;
+		this->zType = -1;
+		this->zSubType = -1;
 
-		this->zWeight = 0;
-		this->zStacks = 0;
+		this->zWeight = -1;
+		this->zStacks = -1;
 		this->zCanStack = false;
 
 		this->zName = "Unknown";

@@ -10,6 +10,7 @@
 #include "AudioManager.h"
 #include "AnimationFileReader.h"
 #include "World/World.h"
+#include "Sound.h"
 
 class Updates
 {
@@ -146,8 +147,10 @@ private:
 
 	FMOD_VECTOR ConvertToFmodVector(const Vector3& v) const;
 	int GetMostUsedTexOnPos(Vector3 pos, World* world);
-	IEventHandle** zFootStepGrass;
-	IEventHandle** zFootStepDirt;
+	/*IEventHandle** zFootStepGrass;
+	IEventHandle** zFootStepDirt;*/
+	Sound** zFootStepsOnGrass;
+	Sound** zFootStepsOnDirt;
 
 	std::map<std::string, AnimationFileReader> zModelToReaderMap;
 };

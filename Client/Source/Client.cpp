@@ -600,46 +600,43 @@ bool Client::CheckKey(const unsigned int ID)
 {
 	bool result = false;
 	char key = this->zKeyInfo.GetKey(ID);
-	//Check if key is pressed
-	if (this->zEng->GetKeyListener()->IsPressed(key))
+	if (!zShowCursor)
 	{
-		//Check if the Key was pressed last frame
-		if (!this->zKeyInfo.GetKeyState(ID))
+		//Check if key is pressed
+		if (this->zEng->GetKeyListener()->IsPressed(key))
 		{
-			std::string msg = "";
-			msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, (float)ID);
+			//Check if the Key was pressed last frame
+			if (!this->zKeyInfo.GetKeyState(ID))
+			{
+				std::string msg = "";
+				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, (float)ID);
 
-			this->zServerChannel->Send(msg);
+				this->zServerChannel->Send(msg);
+			}
+			this->zKeyInfo.SetKeyState(ID, true);
+			return true;
 		}
-		this->zKeyInfo.SetKeyState(ID, true);
-		result = true;
 	}
-	else 
+	//Check if the Key was pressed last frame
+	if (this->zKeyInfo.GetKeyState(ID))
 	{
-		//Check if the Key was pressed last frame
-		if (this->zKeyInfo.GetKeyState(ID))
-		{
-			std::string msg = "";
-			msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)ID);
+		std::string msg = "";
+		msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)ID);
 
-			this->zServerChannel->Send(msg);
-		}
-		this->zKeyInfo.SetKeyState(ID, false);
-		result = false;
+		this->zServerChannel->Send(msg);
 	}
-	return result;
+	this->zKeyInfo.SetKeyState(ID, false);
+	return false;
 }
 
 void Client::CheckMovementKeys()
 {
-	if (!zShowCursor)
-	{
-		this->CheckKey(KEY_FORWARD);
-		this->CheckKey(KEY_BACKWARD);
+	
+	this->CheckKey(KEY_FORWARD);
+	this->CheckKey(KEY_BACKWARD);
 
-		this->CheckKey(KEY_LEFT);
-		this->CheckKey(KEY_RIGHT);
-	}
+	this->CheckKey(KEY_LEFT);
+	this->CheckKey(KEY_RIGHT);
 }
 
 void Client::CheckPlayerSpecificKeys()
@@ -759,12 +756,19 @@ void Client::CheckPlayerSpecificKeys()
 				if(this->zGuiManager->IsLootingOpen())
 					this->zGuiManager->ToggleLootGui(0);
 
+				if(!this->zGuiManager->IsInventoryOpen())
+					this->zGuiManager->ToggleInventoryGui();
+
 				this->zGuiManager->ToggleCraftingGui();
 				this->zShowCursor = true;
 			}
 			else
 			{
 				this->zGuiManager->ToggleCraftingGui();
+
+				if(this->zGuiManager->IsInventoryOpen())
+					this->zGuiManager->ToggleInventoryGui();
+
 				if(!this->zGuiManager->IsLootingOpen() && !this->zGuiManager->IsInventoryOpen())
 					this->zShowCursor = false;
 			}
@@ -843,6 +847,11 @@ void Client::CheckPlayerSpecificKeys()
 			if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
 			{
 				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
+
+				std::string msg = "";
+				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)MOUSE_LEFT_PRESS);
+
+				this->zServerChannel->Send(msg);
 
 				Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
 				if (!primaryWeapon)
@@ -2041,16 +2050,17 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 void Client::UpdateHealthAndBleedingImage()
 {
 	this->zHealthOpacity = this->zHealth / 100;
-	float goalOffset = 500.0f * this->zHealthOpacity;
+
+	float goalOffset = 200.0f + 300.0f * this->zHealthOpacity;
 	
 
 	if(this->zCurrentOffset < goalOffset)
 	{
-		this->zCurrentOffset += 20.0f * zDeltaTime;
+		this->zCurrentOffset += 40.0f * zDeltaTime;
 	}
 	else if(this->zCurrentOffset > goalOffset)
 	{
-		this->zCurrentOffset -= 20.0f * zDeltaTime;
+		this->zCurrentOffset -= 40.0f * zDeltaTime;
 	}
 
 
@@ -2071,17 +2081,23 @@ void Client::UpdateHealthAndBleedingImage()
 		this->zBleedingAndHealthIndicator = this->zEng->CreateImage(Vector2(0 - this->zCurrentOffset,0 - this->zCurrentOffset), Vector2(windowWidth + this->zCurrentOffset*2, windowHeight + this->zCurrentOffset*2), "Media/Icons/HealthAndBleeding_Small_Temp.png" );
 	}
 
-
-
 	if(this->zBleedingLevel > 1)
 	{
 		if(!this->zDroppingPulse)
 		{
 			this->zBleedingOpacity += this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
+			if(this->zBleedingOpacity >= 0.22f)
+			{
+				this->zBleedingOpacity = 0.22f;
+			}
 		}
 		else
 		{
 			this->zBleedingOpacity -= this->zDeltaTime * 0.14f * (this->zBleedingLevel - 1.0f);
+			if(this->zBleedingOpacity <= 0.0f)
+			{
+				this->zBleedingOpacity = 0.0f;
+			}
 		}
 
 
