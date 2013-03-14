@@ -259,8 +259,8 @@ void AIDeerBehavior::SetFearLevel(float fear)
 
 bool AIDeerBehavior::InitPathfinder()
 {
-	//this->zPathfinder.InitAI(0.5,3840); //For big map.
-	this->zPathfinder.InitAI(0.5,90); //For small testing map.
+	this->zPathfinder.InitAI(0.5,3840); //For big map.
+	//this->zPathfinder.InitAI(0.5,90); //For small testing map.
 	this->zPathfinder.SetWorldPointer(this->zWorld);
 	return true;
 }
@@ -284,26 +284,32 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 	int counter = 0; //Just for testing stuff
 	getEmergencyDirection = false;
 
+
+	if(dest.x < 0)
+	{
+		dest.x = 0;
+		foundPath = true;
+	}
+	else if(dest.x > this->zWorld->GetWorldSize().x)
+	{
+		dest.x = this->zWorld->GetWorldSize().x - 1; 
+		foundPath = true;
+	}
+	if(dest.z < 0)
+	{
+		dest.z = 0;
+		foundPath = true;
+	}
+	else if(dest.z > this->zWorld->GetWorldSize().y)
+	{
+		dest.z = this->zWorld->GetWorldSize().y - 1;
+		foundPath = true;
+	}
+
 	while(foundPath == false)
 	{
 		getEmergencyDirection = false;
-		if(dest.x < 0)
-		{
-			dest.x = 0;
-		}
-		else if(dest.x > this->zWorld->GetWorldSize().x)
-		{
-			dest.x = this->zWorld->GetWorldSize().x - 1; 
-		}
-
-		if(dest.z < 0)
-		{
-			dest.z = 0;
-		}
-		else if(dest.z > this->zWorld->GetWorldSize().y)
-		{
-			dest.z = this->zWorld->GetWorldSize().y - 1;
-		}
+		
 		while(this->zWorld->IsBlockingAt(Vector2(dest.x, dest.z)) && ( dest - dActor->GetPosition() ).GetLength() > 2)
 		{
 			dest = (dest - dActor->GetPosition());
@@ -740,9 +746,12 @@ bool AIDeerBehavior::Update( float dt )
 			//	testInterval = 0;
 			//	dActor->SetPosition(Vector3(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y) );
 			//}
+
+			
+			
 			
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
-		
+
 		}
 		else if(this->GetMentalState() == AGGRESSIVE  && this->zCurrentPath.size() > 0)
 		{
@@ -803,6 +812,13 @@ bool AIDeerBehavior::Update( float dt )
 		{
 			this->SetIfNeedPath(true);
 		}
+
+		float height = this->zWorld->CalcHeightAtWorldPos( Vector2(dActor->GetPosition().x, dActor->GetPosition().z));
+
+		Vector3 actorPosition = dActor->GetPosition();
+		actorPosition.y = height;
+
+		dActor->SetPosition(actorPosition);
 
 	}
 	else
