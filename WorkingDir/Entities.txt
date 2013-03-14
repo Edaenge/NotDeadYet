@@ -1,7 +1,7 @@
 Number:1
 Name:Scale
 BlockRadius:0.5
-Model:Media/Scale.obj
+Model:Media/MapModels/Scale.obj
 
 Number:2
 Name:Tree_2_LOD
@@ -35,15 +35,15 @@ Model:Media/MapModels/Stone_01.obj
 
 Number:7
 Name:Placeholder
-Model:Media/Scale.obj
+Model:Media/MapModels/Scale.obj
 
 Number:8
 Name:Placeholder
-Model:Media/Scale.obj
+Model:Media/MapModels/Scale.obj
 
 Number:9
 Name:Placeholder
-Model:Media/Scale.obj
+Model:Media/MapModels/Scale.obj
 
 Number:10
 Name:Veins
@@ -51,7 +51,7 @@ Model:Media/MapModels/Veins_01.obj
 
 Number:11
 Name:Placeholder
-Model:Media/Scale.obj
+Model:Media/MapModels/Scale.obj
 
 Number:12
 Name:Spawn
@@ -64,7 +64,7 @@ Model:Media/MapModels/GrassPlant_01_01.obj 35.0
 
 Number:14
 Name:Placeholder
-Model:Media/Scale.obj
+Model:Media/MapModels/Scale.obj
 
 Number:15
 Name:Stone_02
@@ -81,7 +81,7 @@ Model:Media/MapModels/WaterGrass_02_01.obj
 
 Number:18
 Name:Placeholder
-Model:Media/Scale.obj
+Model:Media/MapModels/Scale.obj
 
 Number:19
 Name:Bush_02
@@ -112,8 +112,8 @@ Model:Media/MapModels/Deer.obj
 
 Number:201
 Name:Wolf Spawnpoint
-Model:Media/Scale.obj
+Model:Media/MapModels/Scale.obj
 
 Number:202
 Name:Bear Spawnpoint
-Model:Media/Scale.obj
+Model:Media/MapModels/Scale.obj
