@@ -32,7 +32,7 @@ bool SupplyDrop::SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, co
 {
 	SupplyActor* spActor = new SupplyActor(itemCapacity);
 
-	for( auto it = items.begin(); it != items.end(); it++ )
+	for( auto it = items.begin(); it != items.end(); )
 	{
 		if( !spActor->AddItem(*it) )
 		{
@@ -41,6 +41,10 @@ bool SupplyDrop::SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, co
 			it = items.erase(it);
 			
 			SAFE_DELETE(temp);
+		}
+		else
+		{
+			it++;
 		}
 	}
 	
@@ -135,15 +139,17 @@ unsigned int SupplyDrop::CalculateTotalWeight( std::set<Item*>& items ) const
 {
 	float weight = 0.0f;
 	//Calculate total weight
-	for( auto it = items.begin(); it != items.end(); it++ )
+	for( auto it = items.begin(); it != items.end(); )
 	{
 		if( (*it) == NULL )
 		{
 			it = items.erase(it);
 			continue;
 		}
-
+		
 		weight += (*it)->GetWeight() * (*it)->GetStackSize();
+
+		it++;
 	}
 
 	return weight;
