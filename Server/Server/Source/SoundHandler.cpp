@@ -17,7 +17,7 @@ SoundHandler::SoundHandler(Game* game, ActorManager* actorManager) :
 SoundHandler::~SoundHandler()
 {
 	if ( zGame ) zGame->RemoveObserver(this);
-	if ( zActorManager ) zActorManager->AddObserver(this);
+	if ( zActorManager ) zActorManager->RemoveObserver(this);
 
 	zPlayers.clear();
 }
