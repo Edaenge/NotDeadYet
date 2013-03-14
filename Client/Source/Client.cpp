@@ -600,46 +600,43 @@ bool Client::CheckKey(const unsigned int ID)
 {
 	bool result = false;
 	char key = this->zKeyInfo.GetKey(ID);
-	//Check if key is pressed
-	if (this->zEng->GetKeyListener()->IsPressed(key))
+	if (!zShowCursor)
 	{
-		//Check if the Key was pressed last frame
-		if (!this->zKeyInfo.GetKeyState(ID))
+		//Check if key is pressed
+		if (this->zEng->GetKeyListener()->IsPressed(key))
 		{
-			std::string msg = "";
-			msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, (float)ID);
+			//Check if the Key was pressed last frame
+			if (!this->zKeyInfo.GetKeyState(ID))
+			{
+				std::string msg = "";
+				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, (float)ID);
 
-			this->zServerChannel->Send(msg);
+				this->zServerChannel->Send(msg);
+			}
+			this->zKeyInfo.SetKeyState(ID, true);
+			return true;
 		}
-		this->zKeyInfo.SetKeyState(ID, true);
-		result = true;
 	}
-	else 
+	//Check if the Key was pressed last frame
+	if (this->zKeyInfo.GetKeyState(ID))
 	{
-		//Check if the Key was pressed last frame
-		if (this->zKeyInfo.GetKeyState(ID))
-		{
-			std::string msg = "";
-			msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)ID);
+		std::string msg = "";
+		msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)ID);
 
-			this->zServerChannel->Send(msg);
-		}
-		this->zKeyInfo.SetKeyState(ID, false);
-		result = false;
+		this->zServerChannel->Send(msg);
 	}
-	return result;
+	this->zKeyInfo.SetKeyState(ID, false);
+	return false;
 }
 
 void Client::CheckMovementKeys()
 {
-	if (!zShowCursor)
-	{
-		this->CheckKey(KEY_FORWARD);
-		this->CheckKey(KEY_BACKWARD);
+	
+	this->CheckKey(KEY_FORWARD);
+	this->CheckKey(KEY_BACKWARD);
 
-		this->CheckKey(KEY_LEFT);
-		this->CheckKey(KEY_RIGHT);
-	}
+	this->CheckKey(KEY_LEFT);
+	this->CheckKey(KEY_RIGHT);
 }
 
 void Client::CheckPlayerSpecificKeys()

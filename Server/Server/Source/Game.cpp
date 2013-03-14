@@ -1964,6 +1964,16 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const unsigned int itemSubType)
 {
+	BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[cd]->GetBehavior()->GetActor());
+	if (NULL != bActor)
+	{
+		if(bActor->InAction())
+		{
+			NetworkMessageConverter NMC;
+			cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Player is in action"));
+			return false;
+		}
+	}
 	auto playerIterator = this->zPlayers.find(cd);
 	auto playerBehavior = playerIterator->second->GetBehavior();
 
