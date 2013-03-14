@@ -110,7 +110,7 @@ private:
 	/*! Handle Keyboard Input */
 	void CheckKeyboardInput();
 	/*! Used to Equip weapons with Keyboard*/
-	void HandleWeaponEquips();
+	void CheckLogicDebug();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
 	void HandleDebugInfo();

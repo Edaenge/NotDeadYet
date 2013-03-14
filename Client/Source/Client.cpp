@@ -598,7 +598,6 @@ bool Client::IsAlive()
 
 bool Client::CheckKey(const unsigned int ID)
 {
-	bool result = false;
 	char key = this->zKeyInfo.GetKey(ID);
 	if (!zShowCursor)
 	{
@@ -612,8 +611,9 @@ bool Client::CheckKey(const unsigned int ID)
 				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_DOWN, (float)ID);
 
 				this->zServerChannel->Send(msg);
+				this->zKeyInfo.SetKeyState(ID, true);
 			}
-			this->zKeyInfo.SetKeyState(ID, true);
+			
 			return true;
 		}
 	}
@@ -624,8 +624,10 @@ bool Client::CheckKey(const unsigned int ID)
 		msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)ID);
 
 		this->zServerChannel->Send(msg);
+
+		this->zKeyInfo.SetKeyState(ID, false);
 	}
-	this->zKeyInfo.SetKeyState(ID, false);
+	
 	return false;
 }
 
@@ -866,7 +868,6 @@ void Client::CheckPlayerSpecificKeys()
 			}
 		}
 	}
-	this->HandleWeaponEquips();
 }
 
 void Client::CheckGhostSpecificKeys()
@@ -952,6 +953,87 @@ void Client::CheckNonGhostInput()
 	}
 }
 
+void Client::CheckAnimalInput()
+{
+	this->CheckKey(KEY_JUMP);
+
+	//Leave Animal An Become a Ghost again
+	if (/*this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && */this->zEng->GetKeyListener()->IsPressed('G'))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
+		{
+			this->zKeyInfo.SetKeyState(KEY_TEST, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_LEAVE_ANIMAL);
+
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_TEST))
+			this->zKeyInfo.SetKeyState(KEY_TEST, false);
+	}
+
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
+	{
+		if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			std::vector<unsigned int> collisionObjects = this->RayVsWorld();
+			if (collisionObjects.size() > 0)
+			{
+				std::string msg = "";
+				auto it_collision_end = collisionObjects.end();
+				for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
+				{
+					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DEER_EAT_OBJECT, (float)(*it));
+				}
+				this->zServerChannel->Send(msg);
+			}
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
+		{
+			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
+		}
+	}
+
+	if (this->zEng->GetKeyListener()->IsClicked(1))
+	{
+		if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_LEFT_PRESS);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
+			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
+	}
+
+	if (this->zEng->GetKeyListener()->IsClicked(2))
+	{
+		if (!this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+		{
+			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, true);
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_RIGHT_PRESS);
+			this->zServerChannel->Send(msg);
+		}
+	}
+	else
+	{
+		if (this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
+			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, false);
+	}
+}
+
 void Client::CheckKeyboardInput()
 {
 	if (this->zCreated && this->zGameStarted)
@@ -985,6 +1067,7 @@ void Client::CheckKeyboardInput()
 	if (this->zActorType == HUMAN)
 	{
 		this->CheckPlayerSpecificKeys();
+		this->CheckLogicDebug();
 	}
 	else if (this->zActorType == GHOST)
 	{
@@ -1072,159 +1155,76 @@ void Client::CheckKeyboardInput()
 	this->HandleDebugInfo();
 }
 
-void Client::CheckAnimalInput()
-{
-	this->CheckKey(KEY_JUMP);
-
-	//Leave Animal An Become a Ghost again
-	if (/*this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && */this->zEng->GetKeyListener()->IsPressed('G'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_LEAVE_ANIMAL);
-
-			this->zServerChannel->Send(msg);
-		}
-	}
-	else
-	{
-		if(this->zKeyInfo.GetKeyState(KEY_TEST))
-			this->zKeyInfo.SetKeyState(KEY_TEST, false);
-	}
-
-	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
-		{
-			std::vector<unsigned int> collisionObjects = this->RayVsWorld();
-			if (collisionObjects.size() > 0)
-			{
-				std::string msg = "";
-				auto it_collision_end = collisionObjects.end();
-				for (auto it = collisionObjects.begin(); it != collisionObjects.end(); it++)
-				{
-					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DEER_EAT_OBJECT, (float)(*it));
-				}
-				this->zServerChannel->Send(msg);
-			}
-			this->zKeyInfo.SetKeyState(KEY_INTERACT, true);
-		}
-	}
-	else
-	{
-		if (this->zKeyInfo.GetKeyState(KEY_INTERACT))
-		{
-			this->zKeyInfo.SetKeyState(KEY_INTERACT, false);
-		}
-	}
-
-	if (this->zEng->GetKeyListener()->IsClicked(1))
-	{
-		if (!this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
-		{
-			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, true);
-
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_LEFT_PRESS);
-			this->zServerChannel->Send(msg);
-		}
-	}
-	else
-	{
-		if (this->zKeyInfo.GetKeyState(MOUSE_LEFT_PRESS))
-			this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
-	}
-
-	if (this->zEng->GetKeyListener()->IsClicked(2))
-	{
-		if (!this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
-		{
-			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, true);
-
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_ANIMAL_ATTACK, (float)MOUSE_RIGHT_PRESS);
-			this->zServerChannel->Send(msg);
-		}
-	}
-	else
-	{
-		if (this->zKeyInfo.GetKeyState(MOUSE_RIGHT_PRESS))
-			this->zKeyInfo.SetKeyState(MOUSE_RIGHT_PRESS, false);
-	}
-}
-
 //Use to equip weapon with keyboard
-void Client::HandleWeaponEquips()
+void Client::CheckLogicDebug()
 {
 	if (!this->zPlayerInventory)
 		return;
 
-	//Equip Bow
-	if (this->zEng->GetKeyListener()->IsPressed('1'))
+	time_t t = time(0);
+	struct tm now;
+	localtime_s(&now, &t);
+	
+	//Print Inventory to file
+	if (this->zEng->GetKeyListener()->IsPressed('I') && this->zEng->GetKeyListener()->IsPressed(VK_CONTROL))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW);
-			if (item)
+			Item* ranged = this->zPlayerInventory->GetRangedWeapon();
+			Item* melee = this->zPlayerInventory->GetMeleeWeapon();
+			Item* projectile = this->zPlayerInventory->GetProjectile();
+			auto items = this->zPlayerInventory->GetItems();
+			float slots_calculated = 0.0f;
+			float weight_calculated = 0.0f;
+			std::stringstream ss;
+
+			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << now.tm_sec << endl;
+			ss << "Client Inventory Debug Data" <<endl;
+			ss << "Current Slots Left: " << 49 - this->zPlayerInventory->GetSlotsAvailable() << "/" << 49 << endl;
+			ss << "Current Weight: " << this->zPlayerInventory->GetTotalWeight() << "/" << this->zPlayerInventory->GetInventoryCapacity() << endl;
+			ss << items.size() << " number of items" << endl;
+			ss << endl;
+
+			for (auto it = items.cbegin(); it != items.cend(); it++)
 			{
-				SendUseItemMessage(item->GetID());
+				ss << "Item Name: " << (*it)->GetItemName() << endl;
+				ss << "Item ID: " << (*it)->GetID() << endl;
+				ss << "Item Slots: " << (*it)->GetSlotSize() << endl;
+				ss << "Item Stacks: " << (*it)->GetStackSize() << endl;
+				ss << "Item Weight: " << (*it)->GetWeight() << endl;
+				ss << endl;
+
+				slots_calculated += (*it)->GetSlotSize();
+				weight_calculated += ( (*it)->GetWeight() * (*it)->GetStackSize() );
 			}
 
-			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
-		}
-	}
-	//Equip Arrow
-	else if (this->zEng->GetKeyListener()->IsPressed('2'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
-		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_PROJECTILE, ITEM_SUB_TYPE_ARROW);
-			if (item)
-			{
-				SendUseItemMessage(item->GetID());
-			}
+			ss << "Calculated Slots from items = " << slots_calculated << endl;
+			ss << "Calculated Weight from items = " << weight_calculated << endl;
+			ss << endl;
 
-			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
-		}
-	}
-	//Equip Rock
-	else if (this->zEng->GetKeyListener()->IsPressed('3'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
-		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_PROJECTILE, ITEM_SUB_TYPE_ROCK);
-			if (item)
-			{
-				SendUseItemMessage(item->GetID());
-			}
+			ss << "Equipment " <<endl;
+			if (ranged)
+				ss << "Ranged Weapon Equipped: " << ranged->GetItemName() << endl;
+			else
+				ss << "No Ranged Weapon Equipped" << endl;
 
-			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
-		}
-	}
-	//Equip Axe
-	else if (this->zEng->GetKeyListener()->IsPressed('4'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
-		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE, ITEM_SUB_TYPE_MACHETE);
-			if (item)
-			{
-				SendUseItemMessage(item->GetID());
-			}
+			if (melee)
+				ss << "Melee Weapon Equipped: " << ranged->GetItemName() << endl;
+			else
+				ss << "No Melee Weapon Equipped" << endl;
 
-			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
-		}
-	}
-	//Equip Pocket Knife
-	else if (this->zEng->GetKeyListener()->IsPressed('5'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
-		{
-			Item* item = this->zPlayerInventory->SearchAndGetItemFromType(ITEM_TYPE_WEAPON_MELEE, ITEM_SUB_TYPE_POCKET_KNIFE);
-			if (item)
-			{
-				SendUseItemMessage(item->GetID());
-			}
+			if (projectile)
+				ss << "Projectile Equipped: " << ranged->GetItemName() << endl;
+			else
+				ss << "No Projectile Equipped" << endl;
+
+			ss << "--------------------------" << endl;
+			ss << endl;
+
+			Messages::DebugInventory(ss.str());
+
+			this->zServerChannel->Send(this->zMsgHandler.Convert(MESSAGE_TYPE_PRINT_INVENTORY, 0));
 
 			this->zKeyInfo.SetKeyState(KEY_EQUIP, true);
 		}
@@ -1243,7 +1243,6 @@ void Client::HandleDebugInfo()
 	time_t t = time(0);
 
 	struct tm * now = localtime(&t);
-
 	//Graphical error Terrain debug
 	if (this->zEng->GetKeyListener()->IsPressed(VK_F1))
 	{

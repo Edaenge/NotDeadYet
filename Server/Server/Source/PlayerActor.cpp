@@ -94,7 +94,7 @@ float PlayerActor::GetBowTimer()
 {
 	if(this->zUsingBow)
 	{
-		float timeSenseStartShot = (std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) - zBowTimeStarted).count() * 0.000001;
+		float timeSenseStartShot = (std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) - zBowTimeStarted).count() * 0.000001f;
 		if(timeSenseStartShot > TAKEARROWANIMLENGTH && !this->zPlayer->GetKeys().GetKeyState(MOUSE_LEFT_PRESS))
 		{
 			this->zUsingBow = false;

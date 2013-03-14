@@ -262,11 +262,6 @@ Item* Inventory::Erase( const unsigned int Index )
 	return NULL;
 }
 
-float Inventory::GetInventoryCapacity() const
-{
-	return this->zInventoryCap;
-}
-
 int Inventory::SearchForItemType(const int Type, const int SubType)
 {
 	int counter = 0;
