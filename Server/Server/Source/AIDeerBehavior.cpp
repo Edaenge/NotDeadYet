@@ -284,26 +284,32 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 	int counter = 0; //Just for testing stuff
 	getEmergencyDirection = false;
 
+
+	if(dest.x < 0)
+	{
+		dest.x = 0;
+		foundPath = true;
+	}
+	else if(dest.x > this->zWorld->GetWorldSize().x)
+	{
+		dest.x = this->zWorld->GetWorldSize().x - 1; 
+		foundPath = true;
+	}
+	if(dest.z < 0)
+	{
+		dest.z = 0;
+		foundPath = true;
+	}
+	else if(dest.z > this->zWorld->GetWorldSize().y)
+	{
+		dest.z = this->zWorld->GetWorldSize().y - 1;
+		foundPath = true;
+	}
+
 	while(foundPath == false)
 	{
 		getEmergencyDirection = false;
-		if(dest.x < 0)
-		{
-			dest.x = 0;
-		}
-		else if(dest.x > this->zWorld->GetWorldSize().x)
-		{
-			dest.x = this->zWorld->GetWorldSize().x - 1; 
-		}
-
-		if(dest.z < 0)
-		{
-			dest.z = 0;
-		}
-		else if(dest.z > this->zWorld->GetWorldSize().y)
-		{
-			dest.z = this->zWorld->GetWorldSize().y - 1;
-		}
+		
 		while(this->zWorld->IsBlockingAt(Vector2(dest.x, dest.z)) && ( dest - dActor->GetPosition() ).GetLength() > 2)
 		{
 			dest = (dest - dActor->GetPosition());
