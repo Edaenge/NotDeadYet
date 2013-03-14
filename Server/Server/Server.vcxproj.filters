@@ -171,6 +171,9 @@
     <ClCompile Include="Source\Inventory.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\BehaviorManager.cpp">
+      <Filter>Source\Handlers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -341,6 +344,9 @@
     <ClInclude Include="Source\InventoryEvents.h" />
     <ClInclude Include="Source\Inventory.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BehaviorManager.h">
+      <Filter>Source\Handlers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

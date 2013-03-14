@@ -24,6 +24,7 @@ class ItemActor;
 class AnimalActor;
 class CraftingManager;
 class MaterialSpawnManager;
+class BehaviorManager;
 
 
 class Game : public Observer, public Observed
@@ -32,6 +33,7 @@ class Game : public Observer, public Observed
 private:
 	MaloWPerformance* zPerf;
 
+	BehaviorManager* zBehaviorManager;
 	ActorManager* zActorManager;
 	GameMode* zGameMode;
 	World* zWorld;
