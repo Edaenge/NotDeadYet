@@ -51,7 +51,7 @@ static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
 
 #define ARROWMAXSPEED 35.0f
-#define ARROWMAXLOADTIME 3.0f
+#define ARROWMAXLOADTIME 2.0f
 #define ARROWSPEEDPERSEC (ARROWMAXSPEED / ARROWMAXLOADTIME)
 
 Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* syncher, const std::string& mode, const std::string& worldFile ) :
@@ -112,10 +112,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 		this->zGameMode = new GameModeFFA(this);
 	}
 
-//DEBUG;
+	//DEBUG;
 	this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
-	this->SpawnHumanDebug();
+	//this->SpawnAnimalsDebug();
+	//this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -585,11 +585,30 @@ bool Game::Update( float dt )
 	// Update Behaviors
 	auto i = behaviors.begin();
 	int counter = 0;
+	for(auto it = this->zPlayers.begin(); it != this->zPlayers.end(); it++)
+	{
+		PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>(it->second);
+		if(playerBehavior != NULL)
+		{
+			PlayerActor *pActor = dynamic_cast<PlayerActor *>(playerBehavior->GetActor());
+			if (NULL != pActor)
+			{
+				if(pActor->GetUsingBow())
+				{
+					if(pActor->GetBowTimer() != -1)
+					{
+						this->CheckToShotArrow(it->first);
+					}
+				}
+			}
+		}
+	}
 	while( i != behaviors.end() )
 	{
 		if (!(*i)->Removed())
 		{
-			if( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i)) )
+			PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i));
+			if( NULL != playerBehavior)
 			{
 				playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 			}
@@ -597,7 +616,7 @@ bool Game::Update( float dt )
 			{
 				projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 			}
-
+			
 			if ( (*i)->IsAwake() && (*i)->Update(dt) )
 			{
 				Behavior* temp = (*i);
@@ -1925,16 +1944,6 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 		MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
-	float bowTimer = pActor->GetBowTimer();
-	if(bowTimer == 0)
-	{
-		MaloW::Debug("Too low loading time on bow.");
-		return;
-	}
-	if(bowTimer > 3.0f)
-	{
-		bowTimer = 3.0f;
-	}
 
 	Inventory* inventory = pActor->GetInventory();
 	if( !(inventory) )
@@ -1956,7 +1965,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 	}
 	NetworkMessageConverter NMC;
 
-	if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
+	/*if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
 	{
 		if (ranged->GetItemSubType() == ITEM_SUB_TYPE_BOW)
 		{
@@ -2015,8 +2024,8 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 			else
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
 		}
-	}
-	else if(Projectile* proj = dynamic_cast<Projectile*>(item))
+	}*/
+	if(Projectile* proj = dynamic_cast<Projectile*>(item))
 	{
 		//TODO: Implement rocks
 	}
@@ -2484,6 +2493,110 @@ void Game::CheckPlayerUseBow(Player* player)
 					this->SendToAll(msg);
 				}
 			}
+		}
+	}
+}
+
+void Game::CheckToShotArrow(ClientData* cd)
+{
+	Actor* actor = NULL;
+
+	auto playerIterator = zPlayers.find(cd);
+	actor = playerIterator->second->GetBehavior()->GetActor();
+
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+	if ( !(pActor) )
+	{
+		MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
+		return;
+	}
+	float bowTimer = pActor->GetBowTimer();
+	if(bowTimer != -1)
+	{
+		MaloW::Debug("Too low loading time on bow.");
+		return;
+	}
+	if(bowTimer > ARROWMAXLOADTIME)
+	{
+		bowTimer = ARROWMAXLOADTIME;
+	}
+
+	Inventory* inventory = pActor->GetInventory();
+	if( !(inventory) )
+	{
+		MaloW::Debug("Inventory is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
+		return;
+	}
+
+	Item* item = inventory->GetPrimaryEquip();
+	if ( !(item ) )
+	{
+		MaloW::Debug("Item is null in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
+		return;
+	}
+	NetworkMessageConverter NMC;
+
+	if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
+	{
+		if (ranged->GetItemSubType() == ITEM_SUB_TYPE_BOW)
+		{
+			//Check if arrows are equipped
+			Projectile* arrow = inventory->GetProjectile();
+			if(arrow && arrow->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+			{
+				//create projectileActor
+				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
+				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
+
+				ProjectileArrowBehavior* projBehavior = NULL;
+				Damage damage;
+
+				//Sets damage
+				damage.piercing = ranged->GetDamage() + arrow->GetDamage();
+				projActor->SetDamage(damage);
+				//Set other values
+				projActor->SetScale(projActor->GetScale(), false);
+				projActor->SetPosition( pActor->GetPosition() + pActor->GetCameraOffset(), false);
+				projActor->SetDir(pActor->GetDir(), false);
+
+				//Create behavior
+				projBehavior = new ProjectileArrowBehavior(projActor, this->zWorld, ARROWSPEEDPERSEC * bowTimer);
+				projBehavior->AddObserver(this->zSoundHandler);
+
+				//Set Nearby actors
+				projBehavior->SetNearDynamicActors( zPlayers[cd]->GetBehavior()->GetNearDynamicActors() );
+				projBehavior->SetNearStaticActors( zPlayers[cd]->GetBehavior()->GetNearStaticActors() );
+
+				//Adds the actor and Behavior
+				this->zActorManager->AddActor(projActor);
+				this->zActorManager->AddBehavior(projBehavior);
+
+				//Decrease stack
+				arrow->Use();
+				inventory->RemoveItemStack(arrow->GetID(), 1);
+
+				//if arrow stack is empty
+				if (arrow->GetStackSize() <= 0)
+				{
+					//std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_EQUIPMENT, (float)arrow->GetID());
+					//msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)EQUIPMENT_SLOT_PROJECTILE);
+					//cd->Send(msg);
+					inventory->UnEquipProjectile();
+					item = inventory->RemoveItem(arrow);
+
+					SAFE_DELETE(item);
+				}
+				//Send feedback message
+				cd->Send(NMC.Convert(MESSAGE_TYPE_WEAPON_USE, (float)ranged->GetID()));
+
+				std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_BOW_BOWSHOT);
+				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
+				this->SendToAll(msg);
+
+				pActor->SetState(STATE_ATTACK);
+			}
+			else
+				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
 		}
 	}
 }

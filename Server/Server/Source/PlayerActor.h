@@ -46,6 +46,7 @@ public:
 	inline void SetHasSprinted(bool hasSprinted) { this->zHasSprinted = hasSprinted; }
 	void SetBowStart();
 	float GetBowTimer();
+	bool GetUsingBow(){ return this->zUsingBow; }
 };
 
 //class PlayerUpdatedEvent : public Event
