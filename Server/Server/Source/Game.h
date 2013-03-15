@@ -110,8 +110,9 @@ public:
 	// Restart Game Logic
 	void RestartGame();	
 
-	// What this do
+	// Fog Update when Living Players Change
 	void ModifyLivingPlayers(const int value);
+	
 	int GetLivingPlayers() {return this->zPlayersAlive;}	
 
 	float GetFogEnclosement() {return this->zCurrentFogEnclosement;}
@@ -144,4 +145,5 @@ private:
 	void UpdateSunDirection(float dt);
 	void UpdateFogEnclosement(float dt);
 	void Caching(const std::string& modelName);
+	void PrintDebugData(ClientData* cd, int type);
 };

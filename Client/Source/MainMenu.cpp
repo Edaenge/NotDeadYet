@@ -69,6 +69,7 @@ void MainMenu::Init()
 		"media/mapmodels/target.obj",
 		"media/models/arrow_v01.obj",
 		"media/models/deer_temp.obj",
+		"media/models/canteen_01.obj",
 		"media/models/supplyaddon.obj",
 		"media/mapmodels/stone_01.obj",
 		"media/mapmodels/stone_02.obj",

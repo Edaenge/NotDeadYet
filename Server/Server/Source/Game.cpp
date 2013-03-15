@@ -114,7 +114,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	//DEBUG;
 	this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
+	//this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -1181,10 +1181,85 @@ void Game::OnEvent( Event* e )
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, IUBPW->model);
 		this->SendToAll(msg);
 	}
+	else if (PrintDebugDataEvent* PDDE = dynamic_cast<PrintDebugDataEvent*>(e))
+	{
+		PrintDebugData(PDDE->clientData, PDDE->type);
+	}
 
 	NotifyObservers(e);
 	if (this->zPerf)
 		this->zPerf->PostMeasure("Game Event Handling", 2);
+}
+
+void Game::PrintDebugData(ClientData* cd, int type)
+{
+	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
+
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+
+	if (!pActor)
+		return;
+
+	time_t t = time(0);
+	struct tm now;
+	localtime_s(&now, &t);
+
+	Inventory* inventory = pActor->GetInventory();
+
+	Item* ranged = inventory->GetRangedWeapon();
+	Item* melee = inventory->GetMeleeWeapon();
+	Item* projectile = inventory->GetProjectile();
+	auto items = inventory->GetItems();
+	float slots_calculated = 0.0f;
+	float weight_calculated = 0.0f;
+	std::stringstream ss;
+
+	ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<std::endl;
+	ss << now.tm_hour << "-" << now.tm_min << now.tm_sec <<endl;
+	ss << "Server Inventory Debug Data" <<endl;
+	ss << "Current Slots Left: " << 49 - inventory->GetSlotsAvailable() << "/" << 49 << endl;
+	ss << "Current Weight: " << inventory->GetTotalWeight() << "/" << inventory->GetInventoryCapacity() << endl;
+	ss << items.size() << " number of items" << endl;
+	ss << endl;
+
+	for (auto it = items.cbegin(); it != items.cend(); it++)
+	{
+		ss << "Item Name: " << (*it)->GetItemName() << endl;
+		ss << "Item ID: " << (*it)->GetID() << endl;
+		ss << "Item Slots: " << (*it)->GetSlotSize() << endl;
+		ss << "Item Stacks: " << (*it)->GetStackSize() << endl;
+		ss << "Item Weight: " << (*it)->GetWeight() << endl;
+		ss << endl;
+
+		slots_calculated += (*it)->GetSlotSize();
+		weight_calculated += ( (*it)->GetWeight() * (*it)->GetStackSize() );
+	}
+
+	ss << "Calculated Slots from items = " << slots_calculated << endl;
+	ss << "Calculated Weight from items = " << weight_calculated << endl;
+	ss << endl;
+
+	ss << "Equipment " <<endl;
+	if (ranged)
+		ss << "Ranged Weapon Equipped: " << ranged->GetItemName() << endl;
+	else
+		ss << "No Ranged Weapon Equipped" << endl;
+
+	if (melee)
+		ss << "Melee Weapon Equipped: " << ranged->GetItemName() << endl;
+	else
+		ss << "No Melee Weapon Equipped" << endl;
+
+	if (projectile)
+		ss << "Projectile Equipped: " << ranged->GetItemName() << endl;
+	else
+		ss << "No Projectile Equipped" << endl;
+
+	ss << "===============================================================" << endl;
+
+	ss << endl;
+
+	Messages::DebugInventory(ss.str());
 }
 
 void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
