@@ -16,6 +16,8 @@ ActorSynchronizer::ActorSynchronizer()
 {
 	this->zFrameData = new ServerFramePacket();
 	this->zActorData = new NewActorPacket();
+
+	srand((unsigned int)time(0));
 }
 
 ActorSynchronizer::~ActorSynchronizer()
@@ -46,8 +48,6 @@ void ActorSynchronizer::AddAnimation(BioActor* bActor)
 	std::string animation = "";
 	if (state == STATE_IDLE)
 	{
-		srand((unsigned int)time(0));
-
 		float fRand = (float)rand() / (float)RAND_MAX;
 
 		if (fRand > 0.0f && fRand <= 0.16f)//High Chance 16%
