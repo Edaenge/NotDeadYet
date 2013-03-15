@@ -747,9 +747,6 @@ bool AIDeerBehavior::Update( float dt )
 			//	dActor->SetPosition(Vector3(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y) );
 			//}
 
-			
-			
-			
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 
 		}

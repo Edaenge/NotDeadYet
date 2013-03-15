@@ -30,6 +30,7 @@ public:
 	virtual ~InventoryGui();
 
 	std::vector<InventorySlotGui*> GetInventory(){ return this->zSlotGui; }
+	std::map<int, InventorySlotGui*> GetEquipment() {return this->zWeaponSlotGui;}
 
 	virtual bool AddToRenderer(GraphicsEngine* ge);
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
