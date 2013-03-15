@@ -20,9 +20,12 @@ private:
 
 	float zValue;
 	float zMaxValue;
+
+	float zFitForX;
+	float zFitForY;
 public:
 	AbilityIndicatorUi(Vector3 pos, Vector2 dim, int type);
 	virtual ~AbilityIndicatorUi();
 
-	void Update(float value);
+	void Update(float value, float x, float y);
 };

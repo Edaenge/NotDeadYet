@@ -13,6 +13,9 @@
 
 AbilityIndicatorUi::AbilityIndicatorUi(Vector3 pos, Vector2 dim, int type)
 {
+	this->zFitForX = (float)GetGraphics()->GetEngineParameters().WindowWidth;
+	this->zFitForY = (float)GetGraphics()->GetEngineParameters().WindowHeight;
+
 	this->zBG = NULL;
 	this->zFillerBar = NULL;
 
@@ -73,8 +76,22 @@ AbilityIndicatorUi::~AbilityIndicatorUi()
 		
 }
 
-void AbilityIndicatorUi::Update( float value )
+void AbilityIndicatorUi::Update( float value, float x, float y )
 {
+	float windowWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
+	float windowHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
+	if(this->zFitForX != windowWidth && this->zFitForY != windowHeight)
+	{
+		this->zFitForX = windowWidth;
+		this->zFitForY = windowHeight;
+
+		float dx = (windowHeight * 4.0f) / 3.0f;
+		float offSet = (windowWidth - dx) / 2.0f;
+
+		this->zPos = Vector3(offSet + (x / 1024.0f) * dx, (y / 768.0f) * windowHeight, 100.0f);
+		this->zDim = Vector2((30.0f / 1024.0f) * dx, (150.0f / 768.0f) * windowHeight);
+	}
+
 	this->zValue = value;
 
 	Vector3 tempPos = this->zPos;

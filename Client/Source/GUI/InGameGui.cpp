@@ -12,11 +12,11 @@ InGameGui::InGameGui()
 
 	Vector2 imageDim = Vector2((30.0f / 1024.0f) * dx, (150.0f / 768.0f) * windowHeight);
 
-	Vector3 healthPos = Vector3(offSet + (870.0f / 1024.0f) * dx, (610.0f / 768.0f) * windowHeight, 100.0f);
+	Vector3 healthPos = Vector3(offSet + (HEALTHXPOS / 1024.0f) * dx, (ALLYPOS / 768.0f) * windowHeight, 100.0f);
 
-	Vector3 hungerPos = Vector3(offSet + (920.0f / 1024.0f) * dx, (610.0f / 768.0f) * windowHeight, 100.0f);
+	Vector3 hungerPos = Vector3(offSet + (HUNGERXPOS / 1024.0f) * dx, (ALLYPOS / 768.0f) * windowHeight, 100.0f);
 
-	Vector3 hydratonPos = Vector3(offSet + (970.0f / 1024.0f) * dx, (610.0f / 768.0f) * windowHeight, 100.0f);
+	Vector3 hydratonPos = Vector3(offSet + (HYDRATIONXPOS / 1024.0f) * dx, (ALLYPOS / 768.0f) * windowHeight, 100.0f);
 
 	this->zAiu[HEALTH] = new AbilityIndicatorUi(healthPos, imageDim, HEALTH);
 	this->zAiu[HUNGER] = new AbilityIndicatorUi(hungerPos, imageDim, HUNGER);
@@ -33,7 +33,7 @@ InGameGui::~InGameGui()
 
 void InGameGui::Update( float health, float hunger, float hydration )
 {
-	this->zAiu[HEALTH]->Update(health);
-	this->zAiu[HUNGER]->Update(hunger);
-	this->zAiu[HYDRATION]->Update(hydration);
+	this->zAiu[HEALTH]->Update(health, HEALTHXPOS, ALLYPOS);
+	this->zAiu[HUNGER]->Update(hunger, HUNGERXPOS, ALLYPOS);
+	this->zAiu[HYDRATION]->Update(hydration, HYDRATIONXPOS, ALLYPOS);
 }
