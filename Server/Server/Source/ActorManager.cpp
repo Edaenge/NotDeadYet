@@ -21,6 +21,17 @@ ActorManager::~ActorManager()
 	// Remove Observer
 	RemoveObserver(this->zSynch);
 
+	// Delete Behaviors
+	for( auto i = this->zBehaviors.begin(); i != this->zBehaviors.end(); ++i )
+	{
+		Behavior* data = (*i);
+		RemoveObserver(data);
+		SAFE_DELETE(data);
+	}
+
+	// Clear Behavior Set
+	this->zBehaviors.clear();
+
 	// Delete Actors
 	auto it_actors_end = this->zActors.end();
 	for(auto it = this->zActors.begin(); it != it_actors_end; it++)
@@ -31,16 +42,6 @@ ActorManager::~ActorManager()
 
 	// Clear Actor Set
 	this->zActors.clear();
-
-	// Delete Behaviors
-	for( auto i = this->zBehaviors.begin(); i != this->zBehaviors.end(); ++i )
-	{
-		Behavior* data = (*i);
-		SAFE_DELETE(data);
-	}
-
-	// Clear Behavior Set
-	this->zBehaviors.clear();
 }
 
 void ActorManager::AddActor( Actor* actor )

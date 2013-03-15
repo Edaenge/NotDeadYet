@@ -114,9 +114,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	//DEBUG;
-	//this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnItemsDebug();
+//	this->SpawnAnimalsDebug();
+	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -178,12 +178,12 @@ Game::~Game()
 	this->zPlayers.clear();
 
 	// Delete Subsystems
-	SAFE_DELETE(zGameMode);
 	SAFE_DELETE(zSoundHandler);
-	SAFE_DELETE(zCraftingManager);
 	SAFE_DELETE(zMaterialSpawnManager);
-	SAFE_DELETE(zWorld);
+	SAFE_DELETE(zCraftingManager);
 	SAFE_DELETE(zActorManager);
+	SAFE_DELETE(zWorld);
+	SAFE_DELETE(zGameMode);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -1015,7 +1015,7 @@ void Game::OnEvent( Event* e )
 			selectedModel = &UDE->playerModel;
 		
 		// Create Player Actor
-		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("media/models/temp_guy.obj");
+		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("media/models/hitbox_token.obj");
 
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
 		pActor->SetModel(*selectedModel);
@@ -2555,7 +2555,7 @@ void Game::CheckToShotArrow(ClientData* cd)
 	float bowTimer = pActor->GetBowTimer();
 	if(bowTimer == -1)
 	{
-		MaloW::Debug("Too low loading time on bow.");
+		//MaloW::Debug("Too low loading time on bow.");
 		return;
 	}
 	if(bowTimer > ARROWMAXLOADTIME)
