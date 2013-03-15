@@ -397,13 +397,19 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 		goalY = this->zMaximumRange - 1;
 	}
 	
+	try
+	{
+		//Is the goal position in an impossible position
+		if(this->zWorld->IsBlockingAt(Vector2(goalX, goalY )))
+		{
+			return false;
+		}
 
-	//Is the goal position in an impossible position
-	if(this->zWorld->IsBlockingAt(Vector2(goalX, goalY )))
+	}
+	catch (...)
 	{
 		return false;
 	}
-
 
 	bool done = false;
 	bool valid = false;

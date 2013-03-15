@@ -560,6 +560,14 @@ void Host::HandleReceivedMessage( MaloW::NetworkChannel* cc, const std::string &
 	{
 		this->zRestartRequested = true;
 	}
+	else if(msgArray[0].find(M_PRINT_INVENTORY.c_str()) == 0)
+	{
+		PrintDebugDataEvent e;
+		e.clientData = cd;
+		e.type = this->zMessageConverter.ConvertStringToInt(M_PRINT_INVENTORY, msgArray[0]);
+
+		NotifyObservers(&e);
+	}
 	//Handles if client disconnects.
 	else if(msgArray[0].find(M_CONNECTION_CLOSED.c_str()) == 0)
 	{

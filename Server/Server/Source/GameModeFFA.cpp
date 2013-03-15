@@ -49,10 +49,12 @@ GameModeFFA::~GameModeFFA()
 
 bool GameModeFFA::Update( float dt )
 {
-	/*
-	if( !this->zGameStarted )
+	if(!this->zGameStarted)
+		return false;
+
+	if( this->zGameEnd )
 		return true;
-		*/
+
 
 	return false;
 }
@@ -121,11 +123,24 @@ void GameModeFFA::OnEvent( Event* e )
 					ClientData* cd = player->GetClientData();
 
 					if (cd)
-					{
-						std::stringstream ss;
-						ss << "You Did " << damage << " to your target";
 						cd->Send(msg);
-						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, ss.str()));
+				}
+				if (ATD->zActor != ATD->zDealer)
+				{
+					BioActor* bActor = dynamic_cast<BioActor*>(ATD->zDealer);
+					if (bActor)
+					{
+						player = bActor->GetPlayer();
+						if(player)
+						{
+							ClientData* cd = player->GetClientData();
+							if (cd)
+							{
+								std::stringstream ss;
+								ss << "You did " << damage << " damage to your target";
+								cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, ss.str()));
+							}
+						}
 					}
 				}
 			}
@@ -210,7 +225,7 @@ void GameModeFFA::OnEvent( Event* e )
 
 			if( counter >= this->zPlayers.size() )
 			{
-				this->zGame->RestartGame();
+				//this->zGame->RestartGame();
 				StartGameMode();
 			}
 		}
@@ -397,8 +412,7 @@ void GameModeFFA::PossessAnAnimal(GhostActor* gActor)
 	{
 		if(dynamic_cast<BioActor*>((*it_Actors))->IsAlive())
 		{
-			PhysicsCollisionData data = GetPhysics()->GetCollisionRayMeshBoundingOnly(gActor->GetPosition(), gActor->GetDir(), (*it_Actors)->GetPhysicsObject());
-			if(data.collision || data.BoundingSphereCollision)
+			if(GetPhysics()->GetCollisionRayMeshBoundingOnly(gActor->GetPosition(), gActor->GetDir(), (*it_Actors)->GetPhysicsObject()).collision)
 			{
 				foundAnimal = true;
 				target = it_Actors;
@@ -679,7 +693,7 @@ void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)
 	GhostActor* gActor = new GhostActor(player);
 	gActor->SetPosition(position);
 	gActor->SetDir(direction);
-
+	gActor->AddObserver(this);
 	gActor->SetEnergy(aActor->GetEnergy());
 
 	//Create Ghost behavior
@@ -716,7 +730,60 @@ bool GameModeFFA::StartGameMode()
 
 bool GameModeFFA::SpawnRandomDrop()
 {
-	return false;
+	World* world = zGame->GetWorld();
+	std::set<Item*> items = GenerateItems();
+	Vector2 pos = world->GetWorldSize();
+	Vector2 center = world->GetWorldCenter();
+
+	float radius = this->zGame->GetFogEnclosement();
+
+	float x = rand() / pos.x;
+	float z = rand() / pos.y;
+
+	Vector2 spawnPos = Vector2(x, z);
+	Vector2 dir = center - spawnPos;
+
+	dir = center - spawnPos;
+	float length = dir.GetLength();
+	dir.Normalize();
+
+	if( length > radius )
+	{
+		float value = length - radius;
+		spawnPos += dir * value;
+	}
+
+	if( !world->IsInside(spawnPos) )
+	{
+		MaloW::Debug("SupplyDrop is not inside ???");
+		return false;
+	}
+	
+	bool moved = false;
+	bool validLocation = false;
+
+	Sector* sector = world->GetSector( spawnPos.x, spawnPos.y );
+
+	while( !validLocation )
+	{
+		dir = center - spawnPos;
+		dir.Normalize();
+
+		if( world->IsBlockingAt(spawnPos) )
+		{
+			spawnPos += dir * 1.0f;
+		}
+		else if( world->GetWaterDepthAt(spawnPos) != 0.0f )
+		{
+			spawnPos += dir * 2.0f;
+		}
+		else
+		{
+			validLocation = true;
+		}
+	}
+
+	return true;
 }
 
 std::set<Item*> GameModeFFA::GenerateItems()

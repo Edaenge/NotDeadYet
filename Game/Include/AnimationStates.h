@@ -16,5 +16,6 @@ static const enum PlayerState
 	STATE_UNEQUIP_WEAPON,
 	STATE_IDLE_WEAPON,
 	STATE_BUSY,
+	STATE_DEAD,
 	STATE_NONE
 };

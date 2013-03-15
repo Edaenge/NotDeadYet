@@ -108,7 +108,8 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 		}
 	}
 	
-	if (this->zSlotsAvailable - item->GetSlotSize() <= 0)
+	int newSlotsSize = this->zSlotsAvailable - item->GetSlotSize();
+	if (newSlotsSize <= 0)
 		return false;
 
 	if((unsigned int)available_slots >= item->GetStackSize() )
@@ -119,7 +120,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 			Messages::Debug("Added Item " + item->GetItemName() + " ID: " + MaloW::convertNrToString((float)item->GetID()));
 
 		this->zWeightTotal += weight * item->GetStackSize();
-		this->zSlotsAvailable -= item->GetSlotSize() - 1;
+		this->zSlotsAvailable -= item->GetSlotSize();
 		return true;
 	}
 
@@ -240,6 +241,7 @@ Item* Inventory::Erase( const unsigned int Index )
 		Item* item = this->GetItem(Index);
 		float weight = item->GetWeight() * item->GetStackSize();
 		this->zWeightTotal -= weight;
+		this->zSlotsAvailable += item->GetSlotSize();
 
 		this->zItems.erase(this->zItems.begin() + Index);
 		if(zRangedWeapon && dynamic_cast<RangedWeapon*>(item) == this->zRangedWeapon)
@@ -258,11 +260,6 @@ Item* Inventory::Erase( const unsigned int Index )
 		return item;
 	}
 	return NULL;
-}
-
-float Inventory::GetInventoryCapacity() const
-{
-	return this->zInventoryCap;
 }
 
 int Inventory::SearchForItemType(const int Type, const int SubType)

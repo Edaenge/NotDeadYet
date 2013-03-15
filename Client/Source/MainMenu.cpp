@@ -20,10 +20,6 @@ MainMenu::~MainMenu()
 	zSets = 0;
 	SAFE_DELETE(this->zGame);
 
-	ambientMusic->Release();
-	delete ambientMusic;
-	ambientMusic = NULL;
-
 	menuClick->Release();
 	delete menuClick;
 	menuClick = NULL;
@@ -42,9 +38,6 @@ void MainMenu::Init()
 	}
 
 	AudioManager* am = AudioManager::GetInstance();
-	am->GetEventHandle(EVENTID_NOTDEADYET_AMBIENCE_FOREST, ambientMusic);
-	ambientMusic->Play();
-	ambientMusic->Setvolume(0.2f);
 	am->GetEventHandle(EVENTID_NOTDEADYET_MENU_N_BACKPACK_TOGGLE_N_CLICK, menuClick);
 	menuClick->Setvolume(0.2f);
 
@@ -76,6 +69,7 @@ void MainMenu::Init()
 		"media/mapmodels/target.obj",
 		"media/models/arrow_v01.obj",
 		"media/models/deer_temp.obj",
+		"media/models/canteen_01.obj",
 		"media/models/supplyaddon.obj",
 		"media/mapmodels/stone_01.obj",
 		"media/mapmodels/stone_02.obj",
@@ -284,10 +278,10 @@ void MainMenu::StartTestRun()
 	try
 	{
 		//result = zGame->InitGameClient("80.78.216.201", 11521); //Simon hem
-		result = zGame->InitGameClient("194.47.150.16", 11521); //server
+		//result = zGame->InitGameClient("194.47.150.16", 11521); //server
 		//result = zGame->InitGameClient("194.47.150.20", 11521); //Simon
 		//result = zGame->InitGameClient("194.47.150.12", 11521); //Christopher
-		//result = zGame->InitGameClient("127.0.0.1", 11521); // Local
+		result = zGame->InitGameClient("127.0.0.1", 11521); // Local
 	}
 	catch (NetworkException e)
 	{
@@ -331,7 +325,7 @@ void MainMenu::Run()
 		zSets[zPrimarySet].AddSetToRenderer(GetGraphics());
 		GraphicsEngine* eng = GetGraphics();
 
-		//eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 1.0f, 0.2f, 0.2f);
+		eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.0f, 0.0f, 0.0f);
 		bool run = true;
 
 		eng->GetCamera()->SetUpdateCamera(false);

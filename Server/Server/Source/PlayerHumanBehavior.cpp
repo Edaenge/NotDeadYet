@@ -21,6 +21,16 @@ PlayerHumanBehavior::PlayerHumanBehavior( Actor* actor, World* world, Player* pl
 	PlayerBehavior(actor, world, player)
 {
 	this->zIntervalCounter = 0.0f;
+	this->zLenght = 0.0f;
+
+	PhysicsObject* pObj = this->zActor->GetPhysicsObject();
+
+	if( pObj != NULL)
+	{
+		Vector3 center = pObj->GetBoundingSphere().center;
+		center = pObj->GetWorldMatrix() * center;
+		zLenght = ( ( center - actor->GetPosition() ) * 2).GetLength();
+	}
 }
 
 PlayerHumanBehavior::~PlayerHumanBehavior()
@@ -230,15 +240,25 @@ bool PlayerHumanBehavior::Update( float dt )
 
 	if(this->zVelocity.GetLength() > 0.1)
 	{
+		Vector3 pActor_position = pActor->GetPosition();
 		Vector3 pActor_rewind_dir;
 		Actor* collide = NULL;
-	
+		
+		/* Check if Actor is under the Water*/
+		if( zWorld->GetWaterDepthAt( pActor_position.GetXZ() ) >  zLenght * 0.5f )
+		{
+			pActor_rewind_dir = zVelocity;
+			pActor_rewind_dir.Normalize();
+			pActor->SetPosition( pActor_position - (pActor_rewind_dir * 0.1f), false );
+		}
+
+
 		/* Check Collisions against Dynamic Actors */
 		collide = DistanceDynamicActorCollision();
 
 		if( collide )
 		{
-			pActor_rewind_dir = ( collide->GetPosition() - zActor->GetPosition() );
+			pActor_rewind_dir = ( collide->GetPosition() - pActor_position );
 			pActor_rewind_dir.Normalize();
 			Vector3 target_rewind_dir = pActor_rewind_dir * -1;
 			
@@ -250,13 +270,13 @@ bool PlayerHumanBehavior::Update( float dt )
 					if( bioActor->HasMoved() )
 						bioActor->SetPosition( bioActor->GetPosition() - (target_rewind_dir * 0.1f) );
 
-					zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.1f) );
+					zActor->SetPosition( pActor_position - (pActor_rewind_dir * 0.1f) );
 					zVelocity = Vector3(.0f, .0f, .0f);
 				}
 			}
 			else
 			{
-				zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.1f) );
+				zActor->SetPosition( pActor_position - (pActor_rewind_dir * 0.1f) );
 				zVelocity = Vector3(.0f, .0f, .0f);
 			}
 
@@ -268,16 +288,16 @@ bool PlayerHumanBehavior::Update( float dt )
 
 			if( collide )
 			{
-				pActor_rewind_dir = (collide->GetPosition() - zActor->GetPosition());
+				pActor_rewind_dir = (collide->GetPosition() - pActor_position);
 				pActor_rewind_dir.Normalize();
 
-				zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.1f) );
+				zActor->SetPosition( pActor_position - (pActor_rewind_dir * 0.1f) );
 				zVelocity = Vector3(.0f, .0f, .0f);
 			}
 			else
 			{
 				//Sets position and notifies
-				zActor->SetPosition(newPosition);
+				zActor->SetPosition( pActor->GetPosition() );
 			}
 		}
 

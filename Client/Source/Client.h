@@ -21,6 +21,7 @@
 #include <AnimationFileReader.h>
 #include "GameTimer.h"
 #include "MaloWPerformance.h"
+#include "InGameGui.h"
 
 using namespace MaloW;
 
@@ -58,6 +59,7 @@ public:
 	bool GetCursorVisibility();
 
 	void SetBlackImage(iImage* image){ this->zBlackImage = image; }
+	void SetConnectingText(iText* text){ this->zConnectingText = text; }
 
 private:
 
@@ -109,7 +111,7 @@ private:
 	/*! Handle Keyboard Input */
 	void CheckKeyboardInput();
 	/*! Used to Equip weapons with Keyboard*/
-	void HandleWeaponEquips();
+	void CheckLogicDebug();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
 	void HandleDebugInfo();
@@ -188,6 +190,9 @@ protected:
 	virtual void OnEvent(Event* e);
 	
 private:
+	//Sound
+	IEventHandle* ambientMusic;
+
 	/*! Current Client ID*/
 	unsigned int zID;
 	int	zPort;
@@ -241,6 +246,7 @@ private:
 	float	zCurrentOffset;
 	
 	iImage* zBlackImage;
+	iText* zConnectingText;
 	InGameMenu* zIgm;
 	PickAnimalMenu* zPam;
 
@@ -250,6 +256,7 @@ private:
 	float zHunger;
 	float zHydration;
 	float zEnergy;
+	InGameGui* zIgg;
 	
 	Vector3 zMeshOffset;
 	std::map<std::string, Vector3> zMeshCameraOffsets;

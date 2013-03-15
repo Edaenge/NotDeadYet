@@ -25,6 +25,7 @@ ProjectileArrowBehavior::ProjectileArrowBehavior( Actor* actor, World* world, fl
 	}
 
 	this->zNearByRadius = 370.0f;
+	this->zHitTarget = NULL;
 }
 
 ProjectileArrowBehavior::~ProjectileArrowBehavior()
@@ -130,6 +131,7 @@ bool ProjectileArrowBehavior::Update( float dt )
 			}
 		}
 
+		this->zHitTarget = collide;
 		return true;
 	}
 
@@ -143,6 +145,7 @@ bool ProjectileArrowBehavior::Update( float dt )
 		PAC.zActor = collide;
 		NotifyObservers(&PAC);
 
+		this->zHitTarget = collide;
 		return true;
 	}
 

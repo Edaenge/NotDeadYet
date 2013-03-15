@@ -33,7 +33,7 @@ public:
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 	virtual void SetPosition(Vector2 pos);
 
-	int CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
+	int CheckCollision(float mouseX, float mouseY, bool mousePressed);
 	//void SetItemTexture(const std::string& itemTexName){this->zItemImageName = itemTexName;}
 	void FadeOut(float value);
 	void ShowGui();

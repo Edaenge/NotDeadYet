@@ -30,6 +30,7 @@
     <ClCompile Include="Source\ClientObjectHandler.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\GuiManager.cpp" />
+    <ClCompile Include="Source\GUI\AbilityIndicatorUi.cpp" />
     <ClCompile Include="Source\GUI\ApplyOptionsAndChangeSetEvent.cpp" />
     <ClCompile Include="Source\GUI\ChangeOptionEvent.cpp" />
     <ClCompile Include="Source\GUI\ChangeResEvent.cpp" />
@@ -44,6 +45,7 @@
     <ClCompile Include="Source\GUI\GUIEvent.cpp" />
     <ClCompile Include="Source\GUI\GUIPicture.cpp" />
     <ClCompile Include="Source\GUI\GUISet.cpp" />
+    <ClCompile Include="Source\GUI\InGameGui.cpp" />
     <ClCompile Include="Source\GUI\InventoryGui.cpp" />
     <ClCompile Include="Source\GUI\InventorySlotGui.cpp" />
     <ClCompile Include="Source\GUI\LootInventoryGui.cpp" />
@@ -66,11 +68,13 @@
     <ClCompile Include="Source\SoundEngine\AudioManager.cpp" />
     <ClCompile Include="Source\SoundEngine\EventHandle.cpp" />
     <ClCompile Include="Source\ClientActorManager.cpp" />
+    <ClCompile Include="Source\SoundEngine\Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Client.h" />
     <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\GuiManager.h" />
+    <ClInclude Include="Source\GUI\AbilityIndicatorUi.h" />
     <ClInclude Include="Source\GUI\ApplyOptionsAndChangeSetEvent.h" />
     <ClInclude Include="Source\GUI\ChangeOptionEvent.h" />
     <ClInclude Include="Source\GUI\ChangeResEvent.h" />
@@ -85,6 +89,7 @@
     <ClInclude Include="Source\GUI\GUIEvent.h" />
     <ClInclude Include="Source\GUI\GUIPicture.h" />
     <ClInclude Include="Source\GUI\GUISet.h" />
+    <ClInclude Include="Source\GUI\InGameGui.h" />
     <ClInclude Include="Source\GUI\InventoryGui.h" />
     <ClInclude Include="Source\GUI\InventorySlotGui.h" />
     <ClInclude Include="Source\GUI\LootInventoryGui.h" />
@@ -112,6 +117,7 @@
     <ClInclude Include="Source\SoundEngine\IEventHandle.h" />
     <ClInclude Include="Source\Actor.h" />
     <ClInclude Include="Source\ClientActorManager.h" />
+    <ClInclude Include="Source\SoundEngine\Sound.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FB7EE0D5-90C1-4BBD-8828-F5A39BE7D296}</ProjectGuid>

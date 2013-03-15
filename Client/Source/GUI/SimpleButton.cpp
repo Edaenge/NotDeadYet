@@ -75,7 +75,10 @@ GUIEvent* SimpleButton::CheckCollision(float mouseX, float mouseY, bool mousePre
 				if(this->mPressedImage == NULL)
 				{
 					if(this->mTextureNamePressed != "")
+					{
 						this->mPressedImage = ge->CreateImage(this->GetPosition(), this->GetDimension(), this->mTextureNamePressed.c_str()); 
+						this->mPressedImage->SetStrata(10.0f);
+					}
 				}
 
 				this->mHovered = false;
@@ -94,7 +97,10 @@ GUIEvent* SimpleButton::CheckCollision(float mouseX, float mouseY, bool mousePre
 				if(this->mHoveredImage == NULL)
 				{
 					if(this->mTextureNameHovered != "")
+					{
 						this->mHoveredImage = ge->CreateImage(this->GetPosition(), this->GetDimension(), this->mTextureNameHovered.c_str());
+						this->mHoveredImage->SetStrata(10.0f);
+					}
 				}
 
 				this->mPressed = false;
@@ -111,7 +117,10 @@ GUIEvent* SimpleButton::CheckCollision(float mouseX, float mouseY, bool mousePre
 				if(this->mHoveredImage == NULL)
 				{
 					if(this->mTextureNameHovered != "")
+					{
 						this->mHoveredImage = ge->CreateImage(this->GetPosition(), this->GetDimension(), this->mTextureNameHovered.c_str());
+						this->mHoveredImage->SetStrata(10.0f);
+					}
 				}
 			}
 		}

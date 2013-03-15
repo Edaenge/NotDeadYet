@@ -241,6 +241,14 @@ public:
 
 	ClientData* clientData;
 };
+class PrintDebugDataEvent : public Event
+{
+public:
+	virtual ~PrintDebugDataEvent() {}
+
+	ClientData* clientData;
+	int type;
+};
 
 class PlayerAnimalSwapEvent : public Event
 {

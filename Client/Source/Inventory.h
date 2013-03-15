@@ -53,8 +53,9 @@ public:
 	Item* RemoveItem(const unsigned int ID);
 	Item* RemoveItem(Item* item);
 
+	unsigned int GetSlotsAvailable() {return this->zSlotsAvailable;}
 	/*! Returns the Inventory Capacity == Max Weight allowed*/
-	float GetInventoryCapacity() const;
+	float GetInventoryCapacity() const {return this->zInventoryCap;}
 	/*! Returns the total Weight.*/
 	inline float GetTotalWeight() const {return this->zWeightTotal;}
 	/*! Returns amount of Items the player has in the inventory with itemType = TYPE*/

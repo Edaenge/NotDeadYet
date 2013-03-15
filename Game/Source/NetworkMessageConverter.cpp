@@ -131,6 +131,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_UPDATE_ACTOR:
 		ss << M_UPDATE_ACTOR;
 		break;
+	case MESSAGE_TYPE_PING:
+		ss << M_PING;
+		break;
 	case MESSAGE_TYPE_NEW_ACTOR:
 		ss << M_NEW_ACTOR;
 		break;
@@ -293,8 +296,8 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_ACKNOWLEDGE:
 		ss << M_ACKNOWLEDGE_MESSAGE;
 		break;
-	case MESSAGE_TYPE_PING:
-		ss << M_PING;
+	case MESSAGE_TYPE_PRINT_INVENTORY:
+		ss << M_PRINT_INVENTORY;
 		break;
 	default:
 		return "";

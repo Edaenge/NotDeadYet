@@ -134,6 +134,7 @@ void ActorManager::RemoveBehavior(Actor* actor, bool instantRemove)
 			else
 			{
 				temp->Remove();
+				it++;
 			}
 		}
 		else
@@ -166,6 +167,7 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range, const std::set
 
 	float rangeWithin = 1.0f + range;
 	Actor* collide = NULL;
+	PhysicsObject* targetObject = NULL;
 	PhysicsCollisionData data;
 	Vector3 pos = actor->GetPosition();
 	Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
@@ -173,6 +175,7 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range, const std::set
 	//Need offset if bioActor
 	if ( BioActor* bActor = dynamic_cast<BioActor*>(actor) )
 		offset = bActor->GetCameraOffset();
+
 	
 	auto it_end = actors.end();
 	for (auto it = actors.begin(); it != it_end; it++)
@@ -187,10 +190,10 @@ Actor* ActorManager::CheckCollisions( Actor* actor, float& range, const std::set
 		if(distance > rangeWithin)
 			continue;
 
-		PhysicsObject* targetObject = (*it)->GetPhysicsObject();
+		targetObject = (*it)->GetPhysicsObject();
 		data = GetPhysics()->GetCollisionRayMesh(actor->GetPosition() + offset, actor->GetDir(), targetObject);
 
-		if(data.collision && data.distance < range)
+		if(data.collision && data.distance <= range)
 		{
 			range = data.distance;
 			collide = (*it);

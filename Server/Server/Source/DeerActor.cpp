@@ -4,6 +4,7 @@ DeerActor::DeerActor(PhysicsObject* pObj) :
 	AnimalActor()
 {
 	this->SetPhysicsObject(pObj);
+	this->SetScale(Vector3(0.05f, 0.05f, 0.05f), false);
 	this->SetCameraOffset(Vector3(0.0f,1.4f,0.0f));
 	this->SetHealth(80.0f);
 	this->zHealthMax = 80.0f;

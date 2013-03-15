@@ -65,6 +65,9 @@ public:
 	void Resize(int width, int height);
 
 	int GetLootingActor();
+
+	std::vector<InventorySlotGui*> GetInventory(){ return this->zInvGui->GetInventory();}
+	std::map<int, InventorySlotGui*> GetEquipment() {return this->zInvGui->GetEquipment();}
 private:
 	bool zLooting;
 	bool zInventoryOpen;

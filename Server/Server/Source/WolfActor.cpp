@@ -5,6 +5,7 @@ WolfActor::WolfActor(PhysicsObject* pObj)
 
 {
 	this->SetPhysicsObject(pObj);
+	SetScale(Vector3(0.05f, 0.05f, 0.05f), false);
 }
 
 WolfActor::~WolfActor()

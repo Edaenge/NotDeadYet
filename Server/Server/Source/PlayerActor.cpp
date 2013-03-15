@@ -8,6 +8,9 @@ PlayerActor::PlayerActor(Player* player, PhysicsObject* physObj, Observer* game)
 	: BioActor(player, game)
 {
 	SetPhysicsObject(physObj);
+
+	this->SetScale(Vector3(0.05f, 0.05f, 0.05f), false);
+
 	/*InitValues();*/
 
 	this->zFullness = 100.0f;
@@ -94,11 +97,12 @@ float PlayerActor::GetBowTimer()
 {
 	if(this->zUsingBow)
 	{
-		float timeSenseStartShot = (std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) - zBowTimeStarted).count() * 0.000001;
+		float timeSenseStartShot = (std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now()) - zBowTimeStarted).count() * 0.000001f;
 		if(timeSenseStartShot > TAKEARROWANIMLENGTH && !this->zPlayer->GetKeys().GetKeyState(MOUSE_LEFT_PRESS))
 		{
 			this->zUsingBow = false;
 			return timeSenseStartShot;
-		}	}
+		}	
+	}
 	return -1;
 }

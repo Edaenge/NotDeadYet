@@ -38,6 +38,7 @@
 #include "BehaviorManager.h"
 
 
+
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
 static const float TOTAL_SUN_DEGREE_SHIFT = 140 * PI / 180;
@@ -64,7 +65,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zPerf = NULL;
 	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	
 	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
-	this->zCameraOffset["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["media/models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["media/models/ghost.obj"] = Vector3(0.0f, 0.0f, 0.0f);
 	
@@ -156,6 +156,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zFogTimer = 0.0f;
 
 	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
+
+	
+	//Used for caching fbx files dont change the function.
+	//this->Caching("media/models/token_anims.fbx");
 }
 
 Game::~Game()
@@ -191,9 +195,8 @@ Game::~Game()
 void Game::SpawnAnimalsDebug()
 {
 	srand((unsigned int)time(0));
-	int increment = 10;
 	
-	for(int i = 0; i < 1; i++)
+	for(int i = 0; i < 4; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -231,9 +234,6 @@ void Game::SpawnAnimalsDebug()
 
 		this->zActorManager->AddActor(dActor);
 	}
-
-	
-	
 }
 
 void Game::SpawnItemsDebug()
@@ -424,8 +424,21 @@ void Game::SpawnHumanDebug()
 	pActor->SetModel("media/models/token_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
-	pActor->SetHealth(100);
+	pActor->SetHealth(1000);
 	pActor->SetScale(pActor->GetScale());
+	this->zActorManager->AddActor(pActor);
+}
+
+void Game::Caching( const std::string& modelName )
+{
+	srand((unsigned int)time(0));
+	int increment = 10;
+	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
+	PlayerActor* pActor = new PlayerActor(NULL, NULL, this);
+	pActor->SetModel(modelName);
+	pActor->AddObserver(this->zGameMode);
+	pActor->SetPosition(position);
+	pActor->SetHealth(100000);
 	this->zActorManager->AddActor(pActor);
 }
 
@@ -494,7 +507,7 @@ bool Game::Update( float dt )
 	int counter = 0;
 	for(auto it = this->zPlayers.begin(); it != this->zPlayers.end(); it++)
 	{
-		PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>(it->second);
+		PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>(it->second->GetBehavior());
 		if(playerBehavior != NULL)
 		{
 			PlayerActor *pActor = dynamic_cast<PlayerActor *>(playerBehavior->GetActor());
@@ -502,10 +515,7 @@ bool Game::Update( float dt )
 			{
 				if(pActor->GetUsingBow())
 				{
-					if(pActor->GetBowTimer() != -1)
-					{
-						this->CheckToShotArrow(it->first);
-					}
+					this->CheckToShotArrow(it->first);
 				}
 			}
 		}
@@ -588,7 +598,7 @@ bool Game::Update( float dt )
 
 		for(i = behaviors.begin(); i != behaviors.end(); i++)
 		{
-			if(dynamic_cast<BioActor*>((*i)->GetActor()))
+			if( dynamic_cast<BioActor*>((*i)->GetActor()) )
 			{
 				aSet.insert( (*i)->GetActor());
 			}
@@ -1172,11 +1182,85 @@ void Game::OnEvent( Event* e )
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, IUBPW->model);
 		this->SendToAll(msg);
 	}
+	else if (PrintDebugDataEvent* PDDE = dynamic_cast<PrintDebugDataEvent*>(e))
+	{
+		PrintDebugData(PDDE->clientData, PDDE->type);
+	}
 
 	NotifyObservers(e);
-
 	if (this->zPerf)
 		this->zPerf->PostMeasure("Game Event Handling", 2);
+}
+
+void Game::PrintDebugData(ClientData* cd, int type)
+{
+	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
+
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+
+	if (!pActor)
+		return;
+
+	time_t t = time(0);
+	struct tm now;
+	localtime_s(&now, &t);
+
+	Inventory* inventory = pActor->GetInventory();
+
+	Item* ranged = inventory->GetRangedWeapon();
+	Item* melee = inventory->GetMeleeWeapon();
+	Item* projectile = inventory->GetProjectile();
+	auto items = inventory->GetItems();
+	float slots_calculated = 0.0f;
+	float weight_calculated = 0.0f;
+	std::stringstream ss;
+
+	ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<std::endl;
+	ss << now.tm_hour << "-" << now.tm_min << now.tm_sec <<endl;
+	ss << "Server Inventory Debug Data" <<endl;
+	ss << "Current Slots Left: " << 49 - inventory->GetSlotsAvailable() << "/" << 49 << endl;
+	ss << "Current Weight: " << inventory->GetTotalWeight() << "/" << inventory->GetInventoryCapacity() << endl;
+	ss << items.size() << " number of items" << endl;
+	ss << endl;
+
+	for (auto it = items.cbegin(); it != items.cend(); it++)
+	{
+		ss << "Item Name: " << (*it)->GetItemName() << endl;
+		ss << "Item ID: " << (*it)->GetID() << endl;
+		ss << "Item Slots: " << (*it)->GetSlotSize() << endl;
+		ss << "Item Stacks: " << (*it)->GetStackSize() << endl;
+		ss << "Item Weight: " << (*it)->GetWeight() << endl;
+		ss << endl;
+
+		slots_calculated += (*it)->GetSlotSize();
+		weight_calculated += ( (*it)->GetWeight() * (*it)->GetStackSize() );
+	}
+
+	ss << "Calculated Slots from items = " << slots_calculated << endl;
+	ss << "Calculated Weight from items = " << weight_calculated << endl;
+	ss << endl;
+
+	ss << "Equipment " <<endl;
+	if (ranged)
+		ss << "Ranged Weapon Equipped: " << ranged->GetItemName() << endl;
+	else
+		ss << "No Ranged Weapon Equipped" << endl;
+
+	if (melee)
+		ss << "Melee Weapon Equipped: " << melee->GetItemName() << endl;
+	else
+		ss << "No Melee Weapon Equipped" << endl;
+
+	if (projectile)
+		ss << "Projectile Equipped: " << projectile->GetItemName() << endl;
+	else
+		ss << "No Projectile Equipped" << endl;
+
+	ss << "===============================================================" << endl;
+
+	ss << endl;
+
+	Messages::DebugInventory(ss.str());
 }
 
 void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
@@ -1279,6 +1363,19 @@ ItemActor* Game::ConvertToItemActor(Behavior* behavior, Actor*& oldActorOut)
 
 	if(!projActor)
 		return NULL;
+
+	Actor* target = projBehavior->GetHitTarget();
+
+	//The arrow hit a BioActor. This is the reason why it stopped.
+	//Set old actor and return NULL.
+	//This means it found an old actor, but did not create an ItemActor.
+	//This oldActor then will be removed in Game Update.
+	if( dynamic_cast<BioActor*>(target) )
+	{
+		oldActorOut = projActor;
+		return NULL;
+	}
+	
 
 	//Get the item based on type
 	const Projectile* item = GetItemLookup()->GetProjectile(itemType);
@@ -1852,6 +1949,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 		return;
 	}
 
+
 	Inventory* inventory = pActor->GetInventory();
 	if( !(inventory) )
 	{
@@ -1968,6 +2066,16 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const unsigned int itemSubType)
 {
+	BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[cd]->GetBehavior()->GetActor());
+	if (NULL != bActor)
+	{
+		if(bActor->InAction())
+		{
+			NetworkMessageConverter NMC;
+			cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Player is in action"));
+			return false;
+		}
+	}
 	auto playerIterator = this->zPlayers.find(cd);
 	auto playerBehavior = playerIterator->second->GetBehavior();
 
@@ -2018,14 +2126,21 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 				if (craftedItem)
 				{
 					float newWeightChange = craftedItem->GetStackSize() * craftedItem->GetWeight();
+					int slotChange = 0;
 					auto item_it_end = item_stack_out.end();
 					for (auto it = item_stack_out.begin(); it != item_it_end; it++)
 					{
 						newWeightChange -= (it->first->GetWeight() * it->second);
+						
+						int slots = it->first->GetStackSize() - it->second;
+						if (slots <= 0)
+							slotChange += it->first->GetSlotSize();
 					}
+					int cap = inv->GetSlotsAvailable() + slotChange;
+					int reqCap = craftedItem->GetSlotSize();
 
 					//Check if the new Weight is less or equal to the max Weight.
-					if(inv->GetTotalWeight() + newWeightChange <= inv->GetInventoryCapacity())
+					if(inv->GetTotalWeight() + newWeightChange <= inv->GetInventoryCapacity() && cap >= reqCap)
 					{
 						for (auto it = item_stack_out.begin(); it != item_it_end; it++)
 						{
@@ -2065,7 +2180,6 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 								}
 							}
 
-							//cd->Send(add_msg);
 							return true;
 						}
 						else
@@ -2144,6 +2258,16 @@ void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
 
 void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 {
+	BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[cd]->GetBehavior()->GetActor());
+	if (NULL != bActor)
+	{
+		if(bActor->InAction())
+		{
+			NetworkMessageConverter NMC;
+			cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Player is in action"));
+			return;
+		}
+	}
 	std::string msg;
 	int slot = -1;
 
@@ -2196,6 +2320,17 @@ void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
 
 void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID )
 {
+	BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[cd]->GetBehavior()->GetActor());
+	if (NULL != bActor)
+	{
+		if(bActor->InAction())
+		{
+			NetworkMessageConverter NMC;
+			cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Player is in action"));
+			return;
+		}
+	}
+
 	std::string msg;
 	NetworkMessageConverter NMC;
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
@@ -2380,10 +2515,11 @@ void Game::RestartGame()
 
 	SpawnItemsDebug();
 	SpawnAnimalsDebug();
-	//SpawnHumanDebug();
+	SpawnHumanDebug();
 }
 
-void Game::CheckPlayerUseBow(Player* player){
+void Game::CheckPlayerUseBow(Player* player)
+{
 	if(player->GetKeys().GetKeyState(MOUSE_LEFT_PRESS))
 	{
 		if(BioActor *bActor = dynamic_cast<BioActor *>(player->GetBehavior()->GetActor()))
@@ -2417,7 +2553,7 @@ void Game::CheckToShotArrow(ClientData* cd)
 		return;
 	}
 	float bowTimer = pActor->GetBowTimer();
-	if(bowTimer != -1)
+	if(bowTimer == -1)
 	{
 		MaloW::Debug("Too low loading time on bow.");
 		return;

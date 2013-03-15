@@ -26,11 +26,13 @@ public:
 	/*! Stops the movement.*/
 	inline void Stop(){zMoving = false;}
 	float GetLength() const {return zLength;}
+	Actor* GetHitTarget() const {return zHitTarget;}
 
 	/*! Check collisions using ray vs mesh. Ignores owner*/
 	virtual Actor* RayVsMeshCollision( const Actor* actor, const Vector3& rayOrigin, float& range, const std::set<Actor*>& actors );
 
 private:
 	float zLength;
+	Actor* zHitTarget;
 
 };

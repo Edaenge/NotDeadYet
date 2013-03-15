@@ -47,7 +47,6 @@ private:
 
 	IAudioManager* _sound;
 	IAudioLoader* _soundLoader;
-	IEventHandle* ambientMusic;
 	IEventHandle* menuClick;
 
 	Game* zGame;

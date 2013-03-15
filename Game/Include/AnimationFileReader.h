@@ -46,6 +46,8 @@ static const std::string MACHETE_IDLE_02	= "mach_idle_02";
 static const std::string PKNIFE_EQUIP		= "pknife_equip";
 
 static const std::string BUSY				= "idle_03";
+static const std::string DEAD				= "final_rest";
+static const std::string DEATH				= "death";
 	
 class AnimationFileReader : public FileReader
 {
