@@ -137,6 +137,9 @@
     <ClInclude Include="Include\CraftingReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\PlayerConfigReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\World\Sector.cpp">
@@ -225,6 +228,9 @@
     </ClCompile>
     <ClCompile Include="Source\World\EntQuadTree.cpp">
       <Filter>Source Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PlayerConfigReader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

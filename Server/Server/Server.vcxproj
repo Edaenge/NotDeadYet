@@ -45,7 +45,6 @@
     <ClCompile Include="Source\PhysicsEngine\ObjectDataResource.cpp" />
     <ClCompile Include="Source\PhysicsEngine\PhysicsResourceManager.cpp" />
     <ClCompile Include="Source\PlayerBearBehavior.cpp" />
-    <ClCompile Include="Source\PlayerConfigReader.cpp" />
     <ClCompile Include="Source\PlayerGhostBehavior.cpp" />
     <ClCompile Include="Source\Host.cpp" />
     <ClCompile Include="Source\ItemActor.cpp" />
@@ -104,7 +103,6 @@
     <ClInclude Include="Source\PhysicsEngine\PhysicsResourceManager.h" />
     <ClInclude Include="Source\PhysicsEngine\ReferenceCounted.h" />
     <ClInclude Include="Source\PlayerBearBehavior.h" />
-    <ClInclude Include="Source\PlayerConfigReader.h" />
     <ClInclude Include="Source\PlayerEvent.h" />
     <ClInclude Include="Source\PlayerGhostBehavior.h" />
     <ClInclude Include="Source\Host.h" />
