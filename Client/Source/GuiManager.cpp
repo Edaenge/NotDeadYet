@@ -316,7 +316,7 @@ Menu_select_data GuiManager::CheckCollisionInv()
 	if(this->zCircularInventorySelectionOpen)
 	{
 		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
-		this->zSelectedCircMenu = this->zInvCircGui->CheckCollision(mousePos.x, mousePos.y, (zEng->GetKeyListener()->IsClicked(1) || !zEng->GetKeyListener()->IsClicked(2)), zEng);
+		this->zSelectedCircMenu = this->zInvCircGui->CheckCollision(mousePos.x, mousePos.y, (zEng->GetKeyListener()->IsClicked(1) || !zEng->GetKeyListener()->IsClicked(2)));
 
 		if(this->zSelectedCircMenu != -1 || !zEng->GetKeyListener()->IsClicked(2))
 		{
@@ -331,7 +331,7 @@ Menu_select_data GuiManager::CheckCollisionInv()
 	else if( this->zInventoryOpen )
 	{
 		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
-		zSir = this->zInvGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(2), zEng);
+		zSir = this->zInvGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(2));
 		this->zInvCircGui->Adjust(zSir.gid.zType, zSir.inventory);
 		if(zSir.gid.zID != -1 && !this->zCircularInventorySelectionOpen && !zMinorFix)
 		{
@@ -363,7 +363,7 @@ Menu_select_data GuiManager::CheckCrafting()
 	if( this->zCraftOpen )
 	{
 		Vector2 mousePos = zEng->GetKeyListener()->GetMousePosition();
-		Gui_Item_Data gid = this->zCraftingGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(1), zEng);
+		Gui_Item_Data gid = this->zCraftingGui->CheckCollision(mousePos.x, mousePos.y, zEng->GetKeyListener()->IsClicked(1));
 		if(zEng->GetKeyListener()->IsClicked(1) && gid.zID != -1)
 		{
 			Menu_select_data msd;

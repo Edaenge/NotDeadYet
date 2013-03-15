@@ -265,7 +265,7 @@ bool InventoryGui::RemoveFromRenderer(GraphicsEngine* ge)
 	return true;
 }
 
-Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
+Selected_Item_ReturnData InventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed)
 {
 	Vector2 dimension = this->GetDimension();
 	bool bCollision = false;

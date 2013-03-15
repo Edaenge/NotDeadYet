@@ -34,7 +34,7 @@ public:
 	virtual bool AddToRenderer(GraphicsEngine* ge);
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
 
-	Selected_Item_ReturnData CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge);
+	Selected_Item_ReturnData CheckCollision(float mouseX, float mouseY, bool mousePressed);
 
 	bool AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);
 	bool RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge);

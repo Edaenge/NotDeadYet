@@ -82,7 +82,7 @@ CraftingMenu::~CraftingMenu()
 	}
 }
 
-Gui_Item_Data CraftingMenu::CheckCollision( float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge )
+Gui_Item_Data CraftingMenu::CheckCollision( float mouseX, float mouseY, bool mousePressed)
 {
 
 	for(auto it = this->zSlotGui.begin(); it != this->zSlotGui.end(); it++)
