@@ -98,6 +98,8 @@ Client::Client()
 	AudioManager* am = AudioManager::GetInstance();
 	am->GetEventHandle(EVENTID_NOTDEADYET_AMBIENCE_FOREST, ambientMusic);
 	
+	zIgg = new InGameGui();
+
 	InitCraftingRecipes();
 }
 
@@ -178,6 +180,9 @@ Client::~Client()
 	delete ambientMusic;
 	ambientMusic = NULL;
 
+	if(this->zIgg)
+		delete this->zIgg;
+
 	FreeCraftingRecipes();
 }
 
@@ -193,6 +198,8 @@ void Client::Update()
 	if (this->zGuiManager)
 		this->zGuiManager->Update(this->zDeltaTime);
 	this->zPerf->PostMeasure("Gui Updates", 3);
+
+	this->zIgg->Update(this->zHealth, this->zHunger, this->zHydration);
 
 	// Anchors with the world to decide what to render.
 	if(zWorld)

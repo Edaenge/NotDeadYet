@@ -230,15 +230,23 @@ bool PlayerHumanBehavior::Update( float dt )
 
 	if(this->zVelocity.GetLength() > 0.1)
 	{
+		Vector3 pActor_Position = pActor->GetPosition();
 		Vector3 pActor_rewind_dir;
 		Actor* collide = NULL;
-	
+		
+		/* Check if Actor is under the Water*/
+		if( zWorld->GetWaterDepthAt( pActor_Position.GetXZ() ) < pActor_Position.y * 0.5f )
+		{
+			//Do Something
+		}
+
+
 		/* Check Collisions against Dynamic Actors */
 		collide = DistanceDynamicActorCollision();
 
 		if( collide )
 		{
-			pActor_rewind_dir = ( collide->GetPosition() - zActor->GetPosition() );
+			pActor_rewind_dir = ( collide->GetPosition() - pActor_Position );
 			pActor_rewind_dir.Normalize();
 			Vector3 target_rewind_dir = pActor_rewind_dir * -1;
 			
@@ -250,13 +258,13 @@ bool PlayerHumanBehavior::Update( float dt )
 					if( bioActor->HasMoved() )
 						bioActor->SetPosition( bioActor->GetPosition() - (target_rewind_dir * 0.1f) );
 
-					zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.1f) );
+					zActor->SetPosition( pActor_Position - (pActor_rewind_dir * 0.1f) );
 					zVelocity = Vector3(.0f, .0f, .0f);
 				}
 			}
 			else
 			{
-				zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.1f) );
+				zActor->SetPosition( pActor_Position - (pActor_rewind_dir * 0.1f) );
 				zVelocity = Vector3(.0f, .0f, .0f);
 			}
 
@@ -268,10 +276,10 @@ bool PlayerHumanBehavior::Update( float dt )
 
 			if( collide )
 			{
-				pActor_rewind_dir = (collide->GetPosition() - zActor->GetPosition());
+				pActor_rewind_dir = (collide->GetPosition() - pActor_Position);
 				pActor_rewind_dir.Normalize();
 
-				zActor->SetPosition( zActor->GetPosition() - (pActor_rewind_dir * 0.1f) );
+				zActor->SetPosition( pActor_Position - (pActor_rewind_dir * 0.1f) );
 				zVelocity = Vector3(.0f, .0f, .0f);
 			}
 			else

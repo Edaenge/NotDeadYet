@@ -49,7 +49,7 @@ bool Game::InitGameClient(const std::string &IP, const unsigned int &port)
 	this->zClient = new Client();
 	iImage* blackImage = GetGraphics()->CreateImage(Vector2(0,0), Vector2( (float)GetGraphics()->GetEngineParameters().WindowWidth, 
 		(float)GetGraphics()->GetEngineParameters().WindowHeight), "Media/LoadingScreen/FadeTexture.png" );
-
+	blackImage->SetStrata(50.0f);
 	float windowHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 
