@@ -46,6 +46,7 @@ bool CheckBox::AddToRenderer(GraphicsEngine* ge)
 	{
 		Vector2 temp = this->GetPosition();
 		this->mCheckedImage = GetGraphics()->CreateImage(temp, this->GetDimension(), this->mCheckedTextureName.c_str());
+		this->mCheckedImage->SetStrata(10.0f);
 	}
 	return false;
 }
@@ -76,8 +77,10 @@ GUIEvent* CheckBox::CheckCollision(float mouseX, float mouseY, bool mousePressed
 				this->mOn = true;
 				Vector2 temp = this->GetPosition();
 				if(this->mCheckedImage == NULL)
+				{
 					this->mCheckedImage = ge->CreateImage(temp, this->GetDimension(), this->mCheckedTextureName.c_str());
-
+					this->mCheckedImage->SetStrata(10.0f);
+				}
 				ChangeOptionEvent* newTempEvent = (ChangeOptionEvent*)this->mEvent;
 				newTempEvent->SetValue("true");
 
@@ -111,6 +114,7 @@ void CheckBox::SetChecked(bool checked)
 		if(this->mOn && this->mCheckedImage == NULL)
 		{
 			this->mCheckedImage = GetGraphics()->CreateImage(this->GetPosition(), this->GetDimension(), this->mCheckedTextureName.c_str());
+			this->mCheckedImage->SetStrata(10.0f);
 		}
 		else if(!this->mOn && this->mCheckedImage != NULL)
 		{

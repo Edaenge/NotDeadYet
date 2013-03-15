@@ -101,7 +101,8 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 				break;
 			}
 			this->zTextImages[i] = ge->CreateImage(Vector2(this->zTextImagePos[i].x - (imageWidth * 0.5f), 
-				this->zTextImagePos[i].y - (imageHeight * 0.5f)), Vector2(imageWidth, imageHeight), texName.c_str());
+			this->zTextImagePos[i].y - (imageHeight * 0.5f)), Vector2(imageWidth, imageHeight), texName.c_str());
+			this->zTextImages[i]->SetStrata(9.0f);
 		}
 		return true;
 	}

@@ -51,8 +51,10 @@ bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)
 			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/new");
 
 		if(!this->zSlotImage && this->zGid.zFilePath != "Unknown")
+		{
 			this->zSlotImage = ge->CreateImage(Vector2(this->zX, this->zY), this->GetDimension(), this->zGid.zFilePath.c_str());
-
+			this->zSlotImage->SetStrata(10.0f);
+		}
 		this->ShowGui();
 		return true;
 	}
@@ -152,7 +154,10 @@ void InventorySlotGui::AddItemToSlot( Gui_Item_Data gid, bool invOpen, GraphicsE
 			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/new");
 
 		if(!this->zSlotImage && this->zGid.zFilePath != "Unknown")
+		{
 			this->zSlotImage = ge->CreateImage(Vector2(this->zX, this->zY), this->GetDimension(), this->zGid.zFilePath.c_str());
+			this->zSlotImage->SetStrata(10.0f);
+		}
 	}
 	this->zBlocked = true;
 	this->zBlocker = false;
