@@ -718,11 +718,7 @@ bool AIDeerBehavior::Update( float dt )
 				this->zCurrentPath.pop_back();
 				//reachedNode = false;
 			}
-			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
-
-			result = result;
-			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
-
+		
 			if(this->zCurrentPath.size() > 0)
 			{
 				dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_WALKING);
@@ -831,6 +827,7 @@ bool AIDeerBehavior::Update( float dt )
 			}
 			else
 			{
+				
 				Vector3 direction = this->zDestination - dActor->GetPosition();
 				direction.Normalize();
 				dActor->SetDir( direction ); 
@@ -850,17 +847,21 @@ bool AIDeerBehavior::Update( float dt )
 
 			int testValue = 0;
 
-			if(!this->zWorld->IsBlockingAt(Vector2(nextPos.x,nextPos.z)))
+			if(this->zWorld->IsBlockingAt(Vector2(nextPos.x,nextPos.z)))
 			{
-				
+				if(this->zCurrentPath.size() == 0)
+				{
+					this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z,  this->zDestination.x,  this->zDestination.z, this->zCurrentPath, 5);
+				}
 			}
-			else if(this->zCurrentPath.size() == 0)
-			{
-				this->zCurrentPath.clear();
-				this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z,  dActor->GetPosition().x + dActor->GetDir().x * 5.0f,  dActor->GetPosition().z + dActor->GetDir().z * 5.0f, this->zCurrentPath, 5);
+			//else if(this->zCurrentPath.size() == 0)
+			//{
+			//	this->zCurrentPath.clear();
+				//this->zDestination = this->ExaminePathfindingArea();
+			//	this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z,  this->zDestination.x,  this->zDestination.z, this->zCurrentPath, 5);
 
 				//dActor->SetPosition(Vector3(50,0,50));
-			}
+			//}
 
 			
 

@@ -196,7 +196,7 @@ void Game::SpawnAnimalsDebug()
 {
 	srand((unsigned int)time(0));
 	
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < 1; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
