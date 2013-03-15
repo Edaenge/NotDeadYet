@@ -31,7 +31,8 @@ Host::Host() :
 	this->zSendUpdateDelayTimer = 0.0f;
 	this->zGameStarted = false;
 	this->zRestartRequested = false;
-
+	this->zKickRequest = false;
+	this->zKickedIP = "";
 	this->zPerf = new MaloWPerformance();
 	this->zPerf->SetFilePath("MPR_Server.txt");
 }
@@ -97,7 +98,13 @@ void Host::SendMessageToClient( const std::string& message )
 		}
 		else if(msg.find("kick"))
 		{
-
+			/*msg = this->zMessageConverter.ConvertStringToSubstring("kick", msg);
+			if (msg.find("ip"))
+			{
+				msg = this->zMessageConverter.ConvertStringToSubstring("ip", msg);
+				this->zKickRequest = true;
+				this->zKickedIP = msg;
+			}*/
 		}
 	}
 	else
@@ -203,6 +210,17 @@ void Host::UpdateGame()
 
 	if (this->zGame)
 	{
+		/*if (this->zKickRequest)
+		{
+		for (auto it = this->zClientChannels.cbegin(); it != this->zClientChannels.cend(); it++)
+		{
+		if ((*it)->GetIP() == this->zKickedIP)
+		{
+		this->zClients[dynamic_cast<MaloW::NetworkChannel*>(*it)]->Kick();
+		}
+		}
+		}*/
+
 		if (this->zRestartRequested)
 		{
 			this->zGame->RestartGame();
