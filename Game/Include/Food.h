@@ -10,7 +10,7 @@
 static const enum M_FOOD_ITEM_SUB_TYPE
 {
 	ITEM_SUB_TYPE_DEER_FOOD,
-	ITEM_SUB_TYPE_WOLF_FOOD
+	ITEM_SUB_TYPE_BEAR_FOOD
 };
 
 class Food : public Item
