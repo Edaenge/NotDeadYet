@@ -629,6 +629,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 		PCP->zBleedingLevel = bioActor->GetBleeding();
 		PCP->zHealth = bioActor->GetHealth();
 		PCP->zStamina = bioActor->GetStamina();
+		bioActor->SetCameraOffset(zGame->GetOffset( bioActor->GetModel() ));
 	}
 
 	PlayerActor* pTemp = dynamic_cast<PlayerActor*>(bioActor);
