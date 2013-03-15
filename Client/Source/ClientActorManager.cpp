@@ -370,6 +370,7 @@ void ClientActorManager::ClearAll()
 	zActors.clear();
 	zUpdates.clear();
 	zState.clear();
+
 }
 
 FMOD_VECTOR ClientActorManager::ConvertToFmodVector( const Vector3& v ) const
