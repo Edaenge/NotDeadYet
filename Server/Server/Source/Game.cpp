@@ -545,7 +545,8 @@ bool Game::Update( float dt )
 	// Update Behaviors
 	auto i = behaviors.begin();
 	int counter = 0;
-	for(auto it = this->zPlayers.begin(); it != this->zPlayers.end(); it++)
+	auto it_zplayers_end = this->zPlayers.end();
+	for(auto it = this->zPlayers.begin(); it != it_zplayers_end; it++)
 	{
 		PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>(it->second->GetBehavior());
 		if(playerBehavior != NULL)
