@@ -64,6 +64,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zPerf = NULL;
 	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	
 	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
+	this->zCameraOffset["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["media/models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["media/models/ghost.obj"] = Vector3(0.0f, 0.0f, 0.0f);
 	
@@ -192,7 +193,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < 1; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -2378,7 +2379,7 @@ void Game::RestartGame()
 	}
 
 	SpawnItemsDebug();
-	//SpawnAnimalsDebug();
+	SpawnAnimalsDebug();
 	//SpawnHumanDebug();
 }
 

@@ -802,7 +802,11 @@ bool AIBearBehavior::Update( float dt )
 		this->SetIfNeedPath(true);
 	}
 
+	float height = this->zWorld->CalcHeightAtWorldPos( Vector2(bActor->GetPosition().x, bActor->GetPosition().z));
 
+	Vector3 actorPosition = bActor->GetPosition();
+	actorPosition.y = height;
+	bActor->SetPosition(actorPosition);
 
 	
 	//Rotate Animal

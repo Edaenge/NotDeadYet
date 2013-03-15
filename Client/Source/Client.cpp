@@ -37,6 +37,7 @@ Client::Client()
 	//Temporary Ghost Model
 	this->zMeshCameraOffsets["media/models/ghost.obj"] = Vector3();
 	this->zMeshCameraOffsets["media/models/token_anims.fbx"] = Vector3(0.0f, 2.3f, 0.0f);
+	this->zMeshCameraOffsets["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zMeshCameraOffsets["media/models/deer_temp.obj"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zMeshCameraOffsets["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 2.3f, 0.0f);
 
