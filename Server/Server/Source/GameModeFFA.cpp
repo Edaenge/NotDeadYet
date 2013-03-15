@@ -49,10 +49,12 @@ GameModeFFA::~GameModeFFA()
 
 bool GameModeFFA::Update( float dt )
 {
-	/*
-	if( !this->zGameStarted )
+	if(!this->zGameStarted)
+		return false;
+
+	if( this->zGameEnd )
 		return true;
-		*/
+
 
 	return false;
 }
@@ -223,7 +225,7 @@ void GameModeFFA::OnEvent( Event* e )
 
 			if( counter >= this->zPlayers.size() )
 			{
-				this->zGame->RestartGame();
+				//this->zGame->RestartGame();
 				StartGameMode();
 			}
 		}
@@ -728,7 +730,60 @@ bool GameModeFFA::StartGameMode()
 
 bool GameModeFFA::SpawnRandomDrop()
 {
-	return false;
+	World* world = zGame->GetWorld();
+	std::set<Item*> items = GenerateItems();
+	Vector2 pos = world->GetWorldSize();
+	Vector2 center = world->GetWorldCenter();
+
+	float radius = this->zGame->GetFogEnclosement();
+
+	float x = rand() / pos.x;
+	float z = rand() / pos.y;
+
+	Vector2 spawnPos = Vector2(x, z);
+	Vector2 dir = center - spawnPos;
+
+	dir = center - spawnPos;
+	float length = dir.GetLength();
+	dir.Normalize();
+
+	if( length > radius )
+	{
+		float value = length - radius;
+		spawnPos += dir * value;
+	}
+
+	if( !world->IsInside(spawnPos) )
+	{
+		MaloW::Debug("SupplyDrop is not inside ???");
+		return false;
+	}
+	
+	bool moved = false;
+	bool validLocation = false;
+
+	Sector* sector = world->GetSector( spawnPos.x, spawnPos.y );
+
+	while( !validLocation )
+	{
+		dir = center - spawnPos;
+		dir.Normalize();
+
+		if( world->IsBlockingAt(spawnPos) )
+		{
+			spawnPos += dir * 1.0f;
+		}
+		else if( world->GetWaterDepthAt(spawnPos) != 0.0f )
+		{
+			spawnPos += dir * 2.0f;
+		}
+		else
+		{
+			validLocation = true;
+		}
+	}
+
+	return true;
 }
 
 std::set<Item*> GameModeFFA::GenerateItems()
