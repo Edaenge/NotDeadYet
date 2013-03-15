@@ -116,6 +116,7 @@
     <ClInclude Include="Include\World\WorldEvents.h" />
     <ClInclude Include="Include\World\WorldFile.h" />
     <ClInclude Include="Include\World\WorldRenderer.h" />
+    <ClInclude Include="Include\World\WorldRendererSettings.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Client\Source\KeyUtil\KeyBindConfig.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="Source\World\World.cpp" />
     <ClCompile Include="Source\World\WorldFile.cpp" />
     <ClCompile Include="Source\World\WorldRenderer.cpp" />
+    <ClCompile Include="Source\World\WorldRendererSettings.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

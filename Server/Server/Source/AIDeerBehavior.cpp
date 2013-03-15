@@ -638,11 +638,11 @@ bool AIDeerBehavior::Update( float dt )
 			{
 				this->zDestination = this->ExaminePathfindingArea();
 				
-				this->zCurrentPath.clear();
-				if(!this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath, maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
-				{
-					this->SetIfNeedPath(true);
-				}
+				//this->zCurrentPath.clear();
+				//if(!this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath, maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
+				//{
+				//	this->SetIfNeedPath(true);
+				//}
 			}
 			else if(this->zPanic == true)
 			{
@@ -668,11 +668,14 @@ bool AIDeerBehavior::Update( float dt )
 					awayFromThreatZ = dActor->GetPosition().z - this->zFleeDistance;
 				}
 				
-				this->zCurrentPath.clear();
-				if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, awayFromThreatX, awayFromThreatZ,this->zCurrentPath, maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
-				{
-					this->SetIfNeedPath(true);
-				}
+				this->zDestination.x = awayFromThreatX;
+				this->zDestination.z = awayFromThreatZ;
+
+				//this->zCurrentPath.clear();
+				//if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, awayFromThreatX, awayFromThreatZ,this->zCurrentPath, maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
+				//{
+				//	this->SetIfNeedPath(true);
+				//}
 			}
 			else //It has started to run, but still need to go further.
 			{
@@ -683,11 +686,11 @@ bool AIDeerBehavior::Update( float dt )
 				this->zDestination.x += ( direction.x * this->zFleeDistance );
 				this->zDestination.z += ( direction.z * this->zFleeDistance );
 				
-				this->zCurrentPath.clear();
-				if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath, maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
-				{
-					this->SetIfNeedPath(true);
-				}
+				//this->zCurrentPath.clear();
+				//if( !this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath, maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
+				//{
+				//	this->SetIfNeedPath(true);
+				//}
 			}
 		}
 		else//It is already running.
@@ -697,40 +700,39 @@ bool AIDeerBehavior::Update( float dt )
 	}
 
 	//Move the animal along path.
-	if(this->zCurrentPath.size() > 0)
-	{
-
 		this->zPreviousVelocity = dActor->GetVelocity();
 		this->zPanic = false;
 		
 		//this->zPreviousPos = this->GetPosition();
-
-		bool reachedNode = false;
-		if( (dActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && dActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( dActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && dActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
-		{
-			reachedNode = true;
-		}
-
-		if(reachedNode)
-		{
-			this->zCurrentPath.pop_back();
-			//reachedNode = false;
-		}
-
+	
 		if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 || this->GetMentalState() == SUSPICIOUS && this->zCurrentPath.size() > 0)
 		{
+			bool reachedNode = false;
+			if( (dActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && dActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( dActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && dActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
+			{
+				reachedNode = true;
+			}
+
+			if(reachedNode)
+			{
+				this->zCurrentPath.pop_back();
+				//reachedNode = false;
+			}
 			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
 
 			result = result;
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
 
-			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_WALKING);
+			if(this->zCurrentPath.size() > 0)
+			{
+				dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_WALKING);
 			
-			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
-			Vector3 direction = goal - dActor->GetPosition();
-			direction.Normalize();
-			dActor->SetDir( direction ); 
+				Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+				Vector3 direction = goal - dActor->GetPosition();
+				direction.Normalize();
+				dActor->SetDir( direction ); 
 
+			}
 			/*if(dActor->GetVelocity() > this->zWalkingVelocity)
 			{
 				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
@@ -752,18 +754,34 @@ bool AIDeerBehavior::Update( float dt )
 		}
 		else if(this->GetMentalState() == AGGRESSIVE  && this->zCurrentPath.size() > 0)
 		{
+			bool reachedNode = false;
+			if( (dActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && dActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( dActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && dActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
+			{
+				reachedNode = true;
+			}
+
+			if(reachedNode)
+			{
+				this->zCurrentPath.pop_back();
+				//reachedNode = false;
+			}
 			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
 
 			result = result;
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
 
-			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
 
-			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
-			Vector3 direction = goal - dActor->GetPosition();
-			direction.Normalize();
-			dActor->SetDir( direction ); 
+			if(this->zCurrentPath.size() > 0)
+			{
+
+				dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
+
+				Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+				Vector3 direction = goal - dActor->GetPosition();
+				direction.Normalize();
+				dActor->SetDir( direction ); 
 			
+			}
 		/*	if(dActor->GetVelocity() > this->zAttackingVelocity)
 			{
 				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
@@ -777,7 +795,7 @@ bool AIDeerBehavior::Update( float dt )
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 
 		}
-		else if(this->GetMentalState() == AFRAID && this->zCurrentPath.size() > 0)
+		else if(this->GetMentalState() == AFRAID /*&& this->zCurrentPath.size() > 0*/)
 		{
 			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
 
@@ -786,26 +804,74 @@ bool AIDeerBehavior::Update( float dt )
 
 			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
 			
-			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
-			Vector3 direction = goal - dActor->GetPosition();
-			direction.Normalize();
-			dActor->SetDir( direction ); 
+			//Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+			//Vector3 direction = goal - dActor->GetPosition();
+			
+			if(this->zCurrentPath.size() > 0)
+			{
+				bool reachedNode = false;
+				if( (dActor->GetPosition().x > this->zCurrentPath.back().x - 0.1 && dActor->GetPosition().x < this->zCurrentPath.back().x + 0.1) && ( dActor->GetPosition().z > this->zCurrentPath.back().y - 0.1 && dActor->GetPosition().z < this->zCurrentPath.back().y + 0.1 ) )
+				{
+					reachedNode = true;
+				}
 
-			/*if(dActor->GetVelocity() > this->zFleeingVelocity)
-			{
-				dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
+				if(reachedNode)
+				{
+					this->zCurrentPath.pop_back();
+					//reachedNode = false;
+				}
 			}
-			else if(dActor->GetVelocity() < this->zFleeingVelocity)
+
+			if(this->zCurrentPath.size() > 0)
 			{
-				dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
-			}*/
+				Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+				Vector3 direction = goal - dActor->GetPosition();
+				direction.Normalize();
+				dActor->SetDir( direction ); 
+			}
+			else
+			{
+				Vector3 direction = this->zDestination - dActor->GetPosition();
+				direction.Normalize();
+				dActor->SetDir( direction ); 
+			}
+
 			dActor->SetVelocity(this->zFleeingVelocity);
+
+			Vector3 nextPos = dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity();
+
 
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 			this->zCurrentDistanceFled += dt * dActor->GetVelocity();
 
+			float velocity = dActor->GetVelocity();
+			Vector3 dir = dActor->GetDir();
+			Vector3 p = dActor->GetPosition();
+
+			int testValue = 0;
+
+			if(!this->zWorld->IsBlockingAt(Vector2(nextPos.x,nextPos.z)))
+			{
+				
+			}
+			else if(this->zCurrentPath.size() == 0)
+			{
+				this->zCurrentPath.clear();
+				this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z,  dActor->GetPosition().x + dActor->GetDir().x * 5.0f,  dActor->GetPosition().z + dActor->GetDir().z * 5.0f, this->zCurrentPath, 5);
+
+				//dActor->SetPosition(Vector3(50,0,50));
+			}
+
+			
+
+
 		}
-		else if(this->GetMentalState() == AFRAID && this->zCurrentDistanceFled < this->zFleeDistance)
+		
+		if(this->GetMentalState() == AFRAID && this->zCurrentDistanceFled < this->zFleeDistance)
+		{
+			this->SetIfNeedPath(true);
+		}
+		else
 		{
 			this->SetIfNeedPath(true);
 		}
@@ -817,11 +883,8 @@ bool AIDeerBehavior::Update( float dt )
 
 		dActor->SetPosition(actorPosition);
 
-	}
-	else
-	{
-		this->SetIfNeedPath(true);
-	}
+	
+	
 
 	if(dActor->GetVelocity() == 0.0f)
 	{
