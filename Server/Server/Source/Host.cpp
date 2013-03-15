@@ -101,6 +101,7 @@ void Host::SendMessageToClient( const std::string& message )
 			/*msg = this->zMessageConverter.ConvertStringToSubstring("kick", msg);
 			if (msg.find("ip"))
 			{
+				//194.47.150.100 = Björn
 				msg = this->zMessageConverter.ConvertStringToSubstring("ip", msg);
 				this->zKickRequest = true;
 				this->zKickedIP = msg;
