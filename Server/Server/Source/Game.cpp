@@ -196,7 +196,8 @@ void Game::SpawnAnimalsDebug()
 {
 	srand((unsigned int)time(0));
 	
-	for(int i = 0; i < 4; i++)
+	int increment = 0;
+	for(int i = 0; i < 5; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -208,7 +209,7 @@ void Game::SpawnAnimalsDebug()
 
 		zActorManager->AddBehavior(aiDeerBehavior);
 
-		Vector3 position = this->CalcPlayerSpawnPoint(i);
+		Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 
 		dActor->SetPosition(position);
 		dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
@@ -233,6 +234,45 @@ void Game::SpawnAnimalsDebug()
 		}
 
 		this->zActorManager->AddActor(dActor);
+	}
+
+	for(int i = 0; i < 4; i++)
+	{
+		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
+		BearActor* bActor  = new BearActor(deerPhysics);
+
+		bActor->AddObserver(this->zGameMode);
+		bActor->SetModel("media/models/deer_anims.fbx");
+
+		AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
+
+		zActorManager->AddBehavior(aiBearBehavior);
+
+		Vector3 position = this->CalcPlayerSpawnPoint(increment++);
+
+		bActor->SetPosition(position);
+		bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
+
+		const Food* temp_Bear_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BEAR_FOOD);
+
+		int lootSize = (rand() % 5) + 1;
+		Food* new_Food = NULL;
+
+		Inventory* inv = bActor->GetInventory();
+		bool stacked = false;
+		if (temp_Bear_Food)
+		{
+			for (int i = 0; i < lootSize; i++)
+			{
+				new_Food = new Food((*temp_Bear_Food));
+
+				inv->AddItem(new_Food, stacked);
+				if( stacked && new_Food->GetStackSize() == 0 )
+					SAFE_DELETE(new_Food);
+			}
+		}
+
+		this->zActorManager->AddActor(bActor);
 	}
 }
 
@@ -505,7 +545,8 @@ bool Game::Update( float dt )
 	// Update Behaviors
 	auto i = behaviors.begin();
 	int counter = 0;
-	for(auto it = this->zPlayers.begin(); it != this->zPlayers.end(); it++)
+	auto it_zplayers_end = this->zPlayers.end();
+	for(auto it = this->zPlayers.begin(); it != it_zplayers_end; it++)
 	{
 		PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>(it->second->GetBehavior());
 		if(playerBehavior != NULL)
