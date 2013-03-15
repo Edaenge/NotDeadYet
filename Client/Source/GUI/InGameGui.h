@@ -11,5 +11,5 @@ public:
 	InGameGui();
 	virtual ~InGameGui();
 
-	void Update();
+	void Update(float health, float hunger, float hydration);
 };

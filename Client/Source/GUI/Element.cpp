@@ -34,7 +34,10 @@ Element::~Element()
 bool Element::AddToRenderer(GraphicsEngine* ge)
 {
 	if(!this->mImage && this->mTextureName != "")
+	{
 		this->mImage = ge->CreateImage(Vector2(this->mX, this->mY), Vector2(this->mWidth, this->mHeight), this->mTextureName.c_str());
+		this->mImage->SetStrata(10.0f);
+	}
 	return true;
 }
 bool Element::RemoveFromRenderer(GraphicsEngine* ge)

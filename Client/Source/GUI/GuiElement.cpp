@@ -41,7 +41,10 @@ bool GuiElement::AddToRenderer(GraphicsEngine* ge)
 	if (ge)
 	{
 		if(!this->zGuiImage && this->zTextureName != "")
+		{
 			this->zGuiImage = ge->CreateImage(Vector2(this->zX , this->zY), this->GetDimension(), this->zTextureName.c_str());
+			this->zGuiImage->SetStrata(10.0f);
+		}
 		this->ShowGui();
 		return true;
 	}

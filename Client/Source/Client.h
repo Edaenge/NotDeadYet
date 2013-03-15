@@ -21,6 +21,7 @@
 #include <AnimationFileReader.h>
 #include "GameTimer.h"
 #include "MaloWPerformance.h"
+#include "InGameGui.h"
 
 using namespace MaloW;
 
@@ -255,6 +256,7 @@ private:
 	float zHunger;
 	float zHydration;
 	float zEnergy;
+	InGameGui* zIgg;
 	
 	Vector3 zMeshOffset;
 	std::map<std::string, Vector3> zMeshCameraOffsets;
