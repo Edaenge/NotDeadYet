@@ -140,6 +140,9 @@
     <ClInclude Include="Include\PlayerConfigReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\World\WorldRendererSettings.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\World\Sector.cpp">
@@ -231,6 +234,9 @@
     </ClCompile>
     <ClCompile Include="Source\PlayerConfigReader.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\World\WorldRendererSettings.cpp">
+      <Filter>Source Files\World</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
