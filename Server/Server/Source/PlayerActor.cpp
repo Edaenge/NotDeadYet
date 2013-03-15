@@ -8,6 +8,9 @@ PlayerActor::PlayerActor(Player* player, PhysicsObject* physObj, Observer* game)
 	: BioActor(player, game)
 {
 	SetPhysicsObject(physObj);
+
+	this->SetScale(Vector3(0.05f, 0.05f, 0.05f), false);
+
 	/*InitValues();*/
 
 	this->zFullness = 100.0f;

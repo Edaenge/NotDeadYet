@@ -38,6 +38,7 @@
 #include "BehaviorManager.h"
 
 
+
 static const float PI = 3.14159265358979323846f;
 //Total Degrees for the sun to rotate (160 degrees atm)
 static const float TOTAL_SUN_DEGREE_SHIFT = 140 * PI / 180;
@@ -597,7 +598,7 @@ bool Game::Update( float dt )
 
 		for(i = behaviors.begin(); i != behaviors.end(); i++)
 		{
-			if(dynamic_cast<BioActor*>((*i)->GetActor()))
+			if( dynamic_cast<BioActor*>((*i)->GetActor()) )
 			{
 				aSet.insert( (*i)->GetActor());
 			}
@@ -1362,6 +1363,19 @@ ItemActor* Game::ConvertToItemActor(Behavior* behavior, Actor*& oldActorOut)
 
 	if(!projActor)
 		return NULL;
+
+	Actor* target = projBehavior->GetHitTarget();
+
+	//The arrow hit a BioActor. This is the reason why it stopped.
+	//Set old actor and return NULL.
+	//This means it found an old actor, but did not create an ItemActor.
+	//This oldActor then will be removed in Game Update.
+	if( dynamic_cast<BioActor*>(target) )
+	{
+		oldActorOut = projActor;
+		return NULL;
+	}
+	
 
 	//Get the item based on type
 	const Projectile* item = GetItemLookup()->GetProjectile(itemType);
