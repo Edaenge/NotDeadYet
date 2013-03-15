@@ -5,11 +5,11 @@
 #define BARPATHHEALTH "Media/InGameUI/Hp_hud_bar.png"
 #define BGPATHHEALTH "Media/InGameUI/Hp_hud.png"
 
-#define BARPATHHUNGER "Media/InGameUI/Hp_hud_bar.png"
-#define BGPATHHUNGER "Media/InGameUI/Hp_hud.png"
+#define BARPATHHUNGER "Media/InGameUI/Hunger_hud_bar.png"
+#define BGPATHHUNGER "Media/InGameUI/Hunger_hud.png"
 
-#define BARPATHHYDRATION "Media/InGameUI/Hp_hud_bar.png"
-#define BGPATHHYDRATION "Media/InGameUI/Hp_hud.png"
+#define BARPATHHYDRATION "Media/InGameUI/Thirst_hud_bar.png"
+#define BGPATHHYDRATION "Media/InGameUI/Thirst_hud.png"
 
 AbilityIndicatorUi::AbilityIndicatorUi(Vector3 pos, Vector2 dim, int type)
 {

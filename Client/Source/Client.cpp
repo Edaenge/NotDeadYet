@@ -46,9 +46,10 @@ Client::Client()
 	this->zStateCameraOffset[STATE_CROUCHING] = Vector3(0.0f, 1.0f, 0.0f);
 
 	this->zAnimationFileReader[0] = AnimationFileReader("media/models/token_anims.cfg");
+	this->zAnimationFileReader[2] = AnimationFileReader("media/models/deer_anims.cfg");
 
 	this->zModelToReaderMap["media/models/token_anims.fbx"] = zAnimationFileReader[0];
-
+	this->zModelToReaderMap["media/models/deer_anims.fbx"] = zAnimationFileReader[2];
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = GetGraphics();
@@ -1181,10 +1182,12 @@ void Client::CheckLogicDebug()
 	localtime_s(&now, &t);
 	
 	//Print Inventory to file
-	if (this->zEng->GetKeyListener()->IsPressed('I') && this->zEng->GetKeyListener()->IsPressed(VK_CONTROL))
+	if (this->zEng->GetKeyListener()->IsPressed(VK_F11))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_EQUIP))
 		{
+			this->AddDisplayText("Inventory Debug Data Added" , false);
+
 			Item* ranged = this->zPlayerInventory->GetRangedWeapon();
 			Item* melee = this->zPlayerInventory->GetMeleeWeapon();
 			Item* projectile = this->zPlayerInventory->GetProjectile();
@@ -1194,14 +1197,15 @@ void Client::CheckLogicDebug()
 			std::stringstream ss;
 
 			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
-			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << now.tm_sec << endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << "-" << now.tm_sec << endl;
 			ss << "Client Inventory Debug Data" <<endl;
 			ss << "Current Slots Left: " << 49 - this->zPlayerInventory->GetSlotsAvailable() << "/" << 49 << endl;
 			ss << "Current Weight: " << this->zPlayerInventory->GetTotalWeight() << "/" << this->zPlayerInventory->GetInventoryCapacity() << endl;
 			ss << items.size() << " number of items" << endl;
 			ss << endl;
 
-			for (auto it = items.cbegin(); it != items.cend(); it++)
+			auto it_items_end = items.cend();
+			for (auto it = items.cbegin(); it != it_items_end; it++)
 			{
 				ss << "Item Name: " << (*it)->GetItemName() << endl;
 				ss << "Item ID: " << (*it)->GetID() << endl;
@@ -1225,16 +1229,58 @@ void Client::CheckLogicDebug()
 				ss << "No Ranged Weapon Equipped" << endl;
 
 			if (melee)
-				ss << "Melee Weapon Equipped: " << ranged->GetItemName() << endl;
+				ss << "Melee Weapon Equipped: " << melee->GetItemName() << endl;
 			else
 				ss << "No Melee Weapon Equipped" << endl;
 
 			if (projectile)
-				ss << "Projectile Equipped: " << ranged->GetItemName() << endl;
+				ss << "Projectile Equipped: " << projectile->GetItemName() << endl;
 			else
 				ss << "No Projectile Equipped" << endl;
 
-			ss << "--------------------------" << endl;
+			ss << "-------------------------------------" << endl;
+			ss << endl;
+
+			std::vector<InventorySlotGui*> invSlots = this->zGuiManager->GetInventory();
+			std::map<int, InventorySlotGui*> equipmentSlots = this->zGuiManager->GetEquipment();
+
+			ss << "Gui Inventory Debug Data" << endl;
+
+			ss << "Inventory Gui" << endl;
+			auto it_invSlots_end = invSlots.cend();
+			for (auto it = invSlots.cbegin(); it != it_invSlots_end; it++)
+			{
+				Gui_Item_Data gid = (*it)->GetGid();
+
+				if (gid.zID <= 0)
+					continue;
+
+				ss << "Name: " << gid.zName << endl;
+				ss << "ID: " << gid.zID << endl;
+				ss << "Slots: " << gid.zSlots << endl;
+				ss << "Stacks: " << gid.zStacks << endl;
+				ss << "Weight: " << gid.zWeight << endl;
+				ss << endl;
+			}
+
+			ss << "Equipment Gui" << endl;
+			auto it_eqSlots_end = equipmentSlots.cend();
+			for (auto it = equipmentSlots.cbegin(); it != it_eqSlots_end; it++)
+			{
+				Gui_Item_Data gid = it->second->GetGid();
+
+				if (gid.zID <= 0)
+					continue;
+
+				ss << "Name: " << gid.zName << endl;
+				ss << "ID: " << gid.zID << endl;
+				ss << "Slots: " << gid.zSlots << endl;
+				ss << "Stacks: " << gid.zStacks << endl;
+				ss << "Weight: " << gid.zWeight << endl;
+				ss << endl;
+			}
+
+			ss << "-------------------------------------" << endl;
 			ss << endl;
 
 			Messages::DebugInventory(ss.str());
@@ -1257,16 +1303,20 @@ void Client::HandleDebugInfo()
 {
 	time_t t = time(0);
 
-	struct tm * now = localtime(&t);
+	struct tm now;
+	localtime_s(&now, &t);
 	//Graphical error Terrain debug
 	if (this->zEng->GetKeyListener()->IsPressed(VK_F1))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
+			this->AddDisplayText("Map Graphical Terrain Debug Data Added" , false);
+
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
+			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << "-" << now.tm_sec << endl;
 			ss << "Graphical Terrain error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1282,10 +1332,13 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
+			this->AddDisplayText("Map Graphical Object Debug Data Added" , false);
+
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
+			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << "-" << now.tm_sec << endl;
 			ss << "Graphical Object error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1301,10 +1354,13 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
+			this->AddDisplayText("Map Player Movement Debug Data Added" , false);
+
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
+			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << "-" << now.tm_sec << endl;
 			ss << "Player Movement blocked when shouldn't at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1320,10 +1376,13 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
+			this->AddDisplayText("Map Player Movement Debug Data Added" , false);
+
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
+			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << "-" << now.tm_sec << endl;
 			ss << "Player movement Should be blocked at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1339,10 +1398,13 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
+			this->AddDisplayText("Map AI Debug Data Added" , false);
+
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
+			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << "-" << now.tm_sec << endl;
 			ss << "AI Is Blocked but shouldn't be at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1358,10 +1420,13 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
+			this->AddDisplayText("Map AI Debug Data Added" , false);
+
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
+			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << "-" << now.tm_sec << endl;
 			ss << "AI should be blocked at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1377,10 +1442,13 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
+			this->AddDisplayText("Map Misc Debug Data Added" , false);
+
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
+			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << "-" << now.tm_sec << endl;
 			ss << "Misc Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1396,10 +1464,13 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
+			this->AddDisplayText("Map Sound Debug Data Added" , false);
+
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
+			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << "-" << now.tm_sec << endl;
 			ss << "Sound Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1415,10 +1486,13 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
+			this->AddDisplayText("Map Normals Debug Data Added" , false);
+
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
+			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << "-" << now.tm_sec << endl;
 			ss << "Terrain Normal Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;
@@ -1434,10 +1508,13 @@ void Client::HandleDebugInfo()
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_DEBUG_INFO))
 		{
+			this->AddDisplayText("Map Water Debug Data Added" , false);
+
 			std::stringstream ss;
 			Vector3 position = this->zEng->GetCamera()->GetPosition();
 			Vector3 direction = this->zEng->GetCamera()->GetForward();
-			ss << "Created on " << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday <<std::endl;
+			ss << "Created on " << now.tm_year + 1900 << "-" << now.tm_mon + 1 << "-" << now.tm_mday <<endl;
+			ss << "h-m-s: " << now.tm_hour << "-" << now.tm_min << "-" << now.tm_sec << endl;
 			ss << "Water Error at " << std::endl;
 			ss << "Camera Position = (" << position.x <<", " <<position.y <<", " <<position.z << ") " << std::endl;
 			ss << "Camera Direction = (" << direction.x <<", " <<direction.y <<", " <<direction.z << ") " << std::endl;

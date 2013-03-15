@@ -115,7 +115,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	//DEBUG;
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -1247,12 +1247,12 @@ void Game::PrintDebugData(ClientData* cd, int type)
 		ss << "No Ranged Weapon Equipped" << endl;
 
 	if (melee)
-		ss << "Melee Weapon Equipped: " << ranged->GetItemName() << endl;
+		ss << "Melee Weapon Equipped: " << melee->GetItemName() << endl;
 	else
 		ss << "No Melee Weapon Equipped" << endl;
 
 	if (projectile)
-		ss << "Projectile Equipped: " << ranged->GetItemName() << endl;
+		ss << "Projectile Equipped: " << projectile->GetItemName() << endl;
 	else
 		ss << "No Projectile Equipped" << endl;
 
