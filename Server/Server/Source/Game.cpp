@@ -115,7 +115,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	//DEBUG;
 	this->SpawnItemsDebug();
-//	this->SpawnAnimalsDebug();
+	this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
@@ -197,7 +197,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	int increment = 0;
-	for(int i = 0; i < 5; i++)
+	for(int i = 0; i < 1; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -236,7 +236,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < 0; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -565,15 +565,9 @@ bool Game::Update( float dt )
 	{
 		if (!(*i)->Removed())
 		{
-			PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i));
-			if( NULL != playerBehavior)
-			{
-				playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
-			}
-			else if( ProjectileArrowBehavior* projectileArrowBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i) )
-			{
-				projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
-			}
+
+			(*i)->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
+
 			
 			if ( (*i)->IsAwake() && (*i)->Update(dt) )
 			{
