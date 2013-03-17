@@ -146,4 +146,5 @@ private:
 	void UpdateFogEnclosement(float dt);
 	void Caching(const std::string& modelName);
 	void PrintDebugData(ClientData* cd, int type);
+	void ResetFogEnclosement();
 };

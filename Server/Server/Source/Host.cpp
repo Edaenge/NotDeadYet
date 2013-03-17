@@ -34,6 +34,7 @@ Host::Host() :
 	this->zKickRequest = false;
 	this->zKickedIP = "";
 	this->zPerf = new MaloWPerformance();
+
 	this->zPerf->SetFilePath("MPR_Server.txt");
 }
 

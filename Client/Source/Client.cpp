@@ -93,6 +93,7 @@ Client::Client()
 
 	this->zGameTimer = new GameTimer();
 	this->zPerf = new MaloWPerformance();
+
 	this->zPerf->SetFilePath("MPR_Client.txt");
 
 	AudioManager* am = AudioManager::GetInstance();
@@ -170,10 +171,7 @@ Client::~Client()
 	}
 
 	this->zDisplayedText.clear();
-	this->zPerf->PostMeasure("Deleting Client", 4);
-
-	this->zPerf->GenerateReport(this->zEng->GetEngineParameters());
-	SAFE_DELETE(this->zPerf);
+	
 
 	ambientMusic->Stop();
 	ambientMusic->Release();
@@ -184,6 +182,11 @@ Client::~Client()
 		delete this->zIgg;
 
 	FreeCraftingRecipes();
+
+	this->zPerf->PostMeasure("Deleting Client", 4);
+
+	this->zPerf->GenerateReport(this->zEng->GetEngineParameters());
+	SAFE_DELETE(this->zPerf);
 }
 
 void Client::Update()
@@ -486,6 +489,15 @@ void Client::CheckMenus()
 	if(this->zPam->GetShow())
 	{
 		int returnValue = this->zPam->Run((int)this->zEnergy);
+		if (returnValue == GHOST)
+		{
+			this->zPam->ToggleMenu();
+			zShowCursor = this->zPam->GetShow();
+
+			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_LEAVE_ANIMAL);
+
+			this->zServerChannel->Send(msg);
+		}
 		if(returnValue == DEER)
 		{
 			this->zPam->ToggleMenu();
@@ -974,7 +986,7 @@ void Client::CheckAnimalInput()
 	this->CheckKey(KEY_JUMP);
 
 	//Leave Animal An Become a Ghost again
-	if (/*this->zEng->GetKeyListener()->IsPressed(VK_CONTROL) && */this->zEng->GetKeyListener()->IsPressed('G'))
+	if (this->zEng->GetKeyListener()->IsPressed('G'))
 	{
 		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
 		{
@@ -989,6 +1001,26 @@ void Client::CheckAnimalInput()
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_TEST))
 			this->zKeyInfo.SetKeyState(KEY_TEST, false);
+	}
+
+	// Opens pick menu if you can do it.
+	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_PICKMENU)))
+	{
+		if(!this->zKeyInfo.GetKeyState(KEY_PICKMENU))
+		{
+			this->zKeyInfo.SetKeyState(KEY_PICKMENU, true);
+			this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
+			if(this->zPam->GetShow())
+				zShowCursor = true;
+			else
+				zShowCursor = false;
+		}
+
+	}
+	else
+	{
+		if(this->zKeyInfo.GetKeyState(KEY_PICKMENU))
+			this->zKeyInfo.SetKeyState(KEY_PICKMENU, false);
 	}
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
@@ -1106,7 +1138,6 @@ void Client::CheckKeyboardInput()
 			this->zKeyInfo.SetKeyState(KEY_MENU, true);
 			if(!this->zIgm->GetShow())
 			{
-				
 				if(this->zPam->GetShow())
 				{
 					this->zPam->ToggleMenu();
@@ -1151,21 +1182,6 @@ void Client::CheckKeyboardInput()
 	{
 		if(this->zKeyInfo.GetKeyState(KEY_READY))
 			this->zKeyInfo.SetKeyState(KEY_READY, false);
-	}
-
-	if (this->zEng->GetKeyListener()->IsPressed('Z'))
-	{
-		if (!this->zKeyInfo.GetKeyState(KEY_TEST))
-		{
-			this->zKeyInfo.SetKeyState(KEY_TEST, true);
-
-			this->zReady = true;
-		}
-	}
-	else
-	{
-		if(this->zKeyInfo.GetKeyState(KEY_TEST))
-			this->zKeyInfo.SetKeyState(KEY_TEST, false);
 	}
 	
 	this->HandleDebugInfo();
@@ -1857,7 +1873,16 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			this->zActorManager->SetCameraOffset(this->zMeshOffset);
 			this->zCreated = true;
 
-			this->zEng->GetCamera()->SetMesh(actor->GetMesh(), this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+			auto reader = this->zModelToReaderMap.find(actor->GetModel());
+			if (reader != this->zModelToReaderMap.end())	
+			{
+				std::string boneName = reader->second.GetBindingBone(BONE_CAMERA_OFFSET);
+				this->zEng->GetCamera()->SetMesh(actor->GetMesh(), boneName.c_str(), Vector3(0.0f, 0.0f, 1.0f));
+			}
+			else
+			{
+				this->zEng->GetCamera()->SetMesh(actor->GetMesh(), this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+			}
 		}
 		else
 		{
@@ -2386,27 +2411,27 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsi
 
 void Client::UpdateCameraOffset(unsigned int state)
 {
-	iMesh* mesh = NULL;
-	Vector3 position = this->zEng->GetCamera()->GetPosition();
-	if (Actor* actor = this->zActorManager->GetActor(this->zID))
-	{
-		mesh = actor->GetMesh();
-	}
-	
-	if (state == STATE_CROUCHING)
-	{
-		auto cameraPos = this->zStateCameraOffset.find(state);
+	//iMesh* mesh = NULL;
+	//Vector3 position = this->zEng->GetCamera()->GetPosition();
+	//if (Actor* actor = this->zActorManager->GetActor(this->zID))
+	//{
+	//	mesh = actor->GetMesh();
+	//}
+	//
+	//if (state == STATE_CROUCHING)
+	//{
+	//	auto cameraPos = this->zStateCameraOffset.find(state);
 
-		Vector3 offset = cameraPos->second;
+	//	Vector3 offset = cameraPos->second;
 
-		//this->zEng->GetCamera()->SetMesh(mesh, offset, Vector3(0.0f, 0.0f, 1.0f));
-		//this->zActorManager->SetCameraOffset(offset);
-	}
-	else
-	{
-		this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
-		this->zActorManager->SetCameraOffset(this->zMeshOffset);
-	}
+	//	//this->zEng->GetCamera()->SetMesh(mesh, offset, Vector3(0.0f, 0.0f, 1.0f));
+	//	//this->zActorManager->SetCameraOffset(offset);
+	//}
+	//else
+	//{
+	//	this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+	//	this->zActorManager->SetCameraOffset(this->zMeshOffset);
+	//}
 }
 
 void Client::UpdateText()

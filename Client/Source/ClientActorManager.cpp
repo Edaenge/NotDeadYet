@@ -128,9 +128,9 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID, 
 				Vector3 oldPosition;
 				if(update->GetID() == clientID)
 				{
-					position = this->InterpolatePosition(gEng->GetCamera()->GetPosition() - this->zCameraOffset, update->GetPosition(), t);
+					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
 					AudioManager::GetInstance()->SetPlayerPosition(&ConvertToFmodVector(position), &ConvertToFmodVector(gEng->GetCamera()->GetForward()), &ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
-					if(actor->GetModel() != "Media/Models/ghost.obj")
+					if(actor->GetModel() != "media/models/ghost.obj")
 					{
 						int mostUsedTex = this->GetMostUsedTexOnPos(position, world);
 						if(mostUsedTex == 0)
@@ -146,7 +146,25 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID, 
 							this->zFootStepsOnDirt[MAXFOOTSTEPS-1]->Play();
 						}
 					}
-					gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
+					/*if (dynamic_cast<iFBXMesh*>(actor->GetMesh()))
+					{
+						auto reader = this->zModelToReaderMap.find(actor->GetModel());
+						if (reader != this->zModelToReaderMap.end())	
+						{
+							std::string boneName = reader->second.GetBindingBone(BONE_CAMERA_OFFSET);
+							gEng->GetCamera()->SetMesh(actor->GetMesh(), boneName.c_str(), Vector3(0.0f, 0.0f, 1.0f));
+							actor->SetPosition(position);
+						}
+						else
+						{
+							gEng->GetCamera()->SetMesh(actor->GetMesh(), this->zCameraOffset, Vector3(0.0f, 0.0f, 1.0f));
+							gEng->GetCamera()->SetPosition(actor->GetPosition() + this->zCameraOffset);
+						}
+					}
+					else
+					{*/
+						gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
+					//}
 				}
 				else 
 				{
