@@ -268,5 +268,18 @@ bool PlayerDeerBehavior::Update( float dt )
 		zActor->SetPosition(center);
 	}
 
+	/***Add this if to get collisions in Player Behaviors***/
+	if(this->zVelocity.GetLength() > 0.1)
+	{
+		Actor* collision = NULL;
+		HandleWaterCollision();
+		collision = HandleCollision();
+
+		//Set pos and notify
+		if( !collision )
+			zActor->SetPosition( zActor->GetPosition() );
+	}
+
+
 	return false;
 }

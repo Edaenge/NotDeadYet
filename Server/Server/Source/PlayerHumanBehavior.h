@@ -5,8 +5,6 @@
 class PlayerHumanBehavior : public PlayerBehavior
 {
 private:
-
-	float zLenght;
 	float zIntervalCounter;
 	PlayerConfigReader* zPlayerConfigReader;
 

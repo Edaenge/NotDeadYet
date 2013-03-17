@@ -12,6 +12,7 @@ private:
 	SupplyDrop* zSupplyDrop;
 	bool zGameStarted;
 	bool zGameEnd;
+	float zCurrentRSPTime;
 
 public:
 	GameModeFFA(Game* game);
