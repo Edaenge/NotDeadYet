@@ -494,27 +494,47 @@ void Client::CheckMenus()
 			this->zPam->ToggleMenu();
 			zShowCursor = this->zPam->GetShow();
 
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_LEAVE_ANIMAL);
+			if (this->zActorType != GHOST)
+			{
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_LEAVE_ANIMAL);
 
-			this->zServerChannel->Send(msg);
+				this->zServerChannel->Send(msg);
+			}
 		}
 		if(returnValue == DEER)
 		{
-			this->zPam->ToggleMenu();
-			zShowCursor = this->zPam->GetShow();
-
-			// MAKE ME A DEER.
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
-			this->zServerChannel->Send(msg);
+			if (this->zActorType == GHOST)
+			{
+				this->zPam->ToggleMenu();
+				zShowCursor = this->zPam->GetShow();
+				// MAKE ME A DEER.
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
+				this->zServerChannel->Send(msg);
+			}
+			else
+			{
+				std::string msg = "Only Possible as a ghost";
+				this->AddDisplayText(msg, true);
+			}
 		}
 		if(returnValue == BEAR)
 		{
-			this->zPam->ToggleMenu();
-			zShowCursor = this->zPam->GetShow();
+			if (this->zActorType == GHOST)
+			{
+				this->zPam->ToggleMenu();
+				zShowCursor = this->zPam->GetShow();
 
-			// MAKE ME A BEAR.
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
-			this->zServerChannel->Send(msg);
+				// MAKE ME A BEAR.
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
+				this->zServerChannel->Send(msg);
+			}
+			else
+			{
+				std::string msg = "Only Possible as a ghost";
+				this->AddDisplayText(msg, true);
+			}
+
+			
 		}
 	}
 	if (this->zIgm->GetShow())
