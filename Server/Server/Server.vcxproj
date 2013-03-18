@@ -36,6 +36,7 @@
     <ClCompile Include="Source\ClientData.cpp" />
     <ClCompile Include="Source\CraftingManager.cpp" />
     <ClCompile Include="Source\DeerActor.cpp" />
+    <ClCompile Include="Source\FootStepServer.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\GameModeFFA.cpp" />
     <ClCompile Include="Source\GameModeTest.cpp" />
@@ -91,6 +92,7 @@
     <ClInclude Include="Source\CraftingManager.h" />
     <ClInclude Include="Source\Damage.h" />
     <ClInclude Include="Source\DeerActor.h" />
+    <ClInclude Include="Source\FootStepServer.h" />
     <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\GameEvents.h" />
     <ClInclude Include="Source\GameMode.h" />

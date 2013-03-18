@@ -72,17 +72,24 @@ void Client::AddActor( NewActorPacket* NAP )
 
 					this->zActorManager->SetCameraOffset(this->zMeshOffset);
 					
-					//auto reader = this->zModelToReaderMap.find(model);
-					//if (reader != this->zModelToReaderMap.end())	
-					//{
-					//	std::string boneName = reader->second.GetBindingBone(BONE_CAMERA_OFFSET);
-					//	this->zEng->GetCamera()->SetMesh(mesh, boneName.c_str(), Vector3(0.0f, 0.0f, 1.0f));
-					//}
-					//else
-					//{
+					auto reader = this->zModelToReaderMap.find(model);
+					if (reader != this->zModelToReaderMap.end())	
+					{
+						std::string boneName = reader->second.GetBindingBone(BONE_CAMERA_OFFSET);
+						if (boneName != "")
+							this->zEng->GetCamera()->SetMesh(mesh, &boneName[0], Vector3(0.0f, 0.0f, 1.0f));
+						
+						else 
+						{
+							this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+							this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
+						}
+					}
+					else
+					{
 						this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
 						this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
-					//}
+					}
 					
 					if (this->zActorType == GHOST)
 					{
