@@ -67,6 +67,12 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zCameraOffset["media/models/ghost.obj"] = Vector3(0.0f, 0.0f, 0.0f);
+
+	//Models
+	this->zPlayerModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
+	this->zPlayerModels["media/models/token_anims.fbx"] = "media/models/hitbox_token.obj";
+	this->zPlayerModels["media/models/deer_anims.fbx"] = "media/models/deer_temp.obj";
+	this->zPlayerModels["media/models/ghost.obj"] = "media/models/ghost.obj";
 	
 // Create World
 	if(worldFile != "")
@@ -115,8 +121,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	//DEBUG;
 	this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
-	this->SpawnHumanDebug();
+//	this->SpawnAnimalsDebug();
+//	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -443,7 +449,7 @@ void Game::SpawnHumanDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/temp_guy.obj");
+	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/hitbox_token.obj");
 	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics, this);
 	pActor->SetModel("media/models/token_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
@@ -666,8 +672,18 @@ void Game::OnEvent( Event* e )
 
 	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
 	{
+		NetworkMessageConverter NMC;
 		this->zPerf->PreMeasure("Player Connecting", 2);
-		this->HandleConnection(PCE->clientData);
+
+		if( IsFull() )
+		{
+			PCE->clientData->Send( NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Server is full.") );
+			PCE->clientData->Kick();
+		}
+		else if( zGameMode->CanConnect(PCE->clientData) )
+			this->HandleConnection(PCE->clientData);
+		else
+			PCE->clientData->Kick();
 	}
 	else if( UserReadyEvent* URE = dynamic_cast<UserReadyEvent*>(e) )
 	{
@@ -730,23 +746,31 @@ void Game::OnEvent( Event* e )
 	}
 	else if(PlayerLootObjectEvent* PLOE = dynamic_cast<PlayerLootObjectEvent*>(e))
 	{
-		this->HandleLootObject(PLOE->clientData, PLOE->actorID);
+		if(zGameMode->IsGameStarted())
+			this->HandleLootObject(PLOE->clientData, PLOE->actorID);
 	}
 	else if ( PlayerLootItemEvent* PLIE = dynamic_cast<PlayerLootItemEvent*>(e) )
 	{
-		this->zPerf->PreMeasure("Loot Event Handling", 3);
-		this->HandleLootItem(PLIE->clientData, PLIE->itemID, PLIE->itemType, PLIE->objID, PLIE->subType);
-		this->zPerf->PostMeasure("Loot Event Handling", 3);	
+		if(zGameMode->IsGameStarted())
+		{
+			this->zPerf->PreMeasure("Loot Event Handling", 3);
+			this->HandleLootItem(PLIE->clientData, PLIE->itemID, PLIE->itemType, PLIE->objID, PLIE->subType);
+			this->zPerf->PostMeasure("Loot Event Handling", 3);	
+		}
 	}
 	else if ( PlayerDropItemEvent* PDIE = dynamic_cast<PlayerDropItemEvent*>(e) )
 	{
-		this->HandleDropItem(PDIE->clientData, PDIE->itemID);
+		if(zGameMode->IsGameStarted())
+			this->HandleDropItem(PDIE->clientData, PDIE->itemID);
 	}
 	else if (PlayerUseItemEvent* PUIE = dynamic_cast<PlayerUseItemEvent*>(e))
 	{
-		this->zPerf->PreMeasure("Use Event Handling", 3);
-		this->HandleUseItem(PUIE->clientData, PUIE->itemID);
-		this->zPerf->PostMeasure("Use Event Handling", 3);
+		if(zGameMode->IsGameStarted())
+		{
+			this->zPerf->PreMeasure("Use Event Handling", 3);
+			this->HandleUseItem(PUIE->clientData, PUIE->itemID);
+			this->zPerf->PostMeasure("Use Event Handling", 3);
+		}
 	}
 	else if (PlayerCraftItemEvent* PCIE = dynamic_cast<PlayerCraftItemEvent*>(e))
 	{
@@ -773,35 +797,38 @@ void Game::OnEvent( Event* e )
 	}
 	else if(PlayerAnimalAttackEvent* PAAE = dynamic_cast<PlayerAnimalAttackEvent*>(e))
 	{
-		auto playerIterator = this->zPlayers.find(PAAE->clientData);
-		Player* player = playerIterator->second;
-		auto it = playerIterator->second->GetBehavior();
-		Actor* self = it->GetActor();
-
-		float range = 0.0f;
-		Damage damage;
-		
-		if(BearActor* bActor = dynamic_cast<BearActor*>(self))
+		if(zGameMode->IsGameStarted())
 		{
-			if(player)
+			auto playerIterator = this->zPlayers.find(PAAE->clientData);
+			Player* player = playerIterator->second;
+			auto it = playerIterator->second->GetBehavior();
+			Actor* self = it->GetActor();
+
+			float range = 0.0f;
+			Damage damage;
+
+			if(BearActor* bActor = dynamic_cast<BearActor*>(self))
 			{
-				if(PAAE->mouseButton == MOUSE_LEFT_PRESS)
+				if(player)
 				{
-					range = 2.2f;
-					damage.blunt = 10.0f;
-				}
-				else if(PAAE->mouseButton == MOUSE_RIGHT_PRESS)
-				{
-					range = 1.5f;
-					damage.piercing = 5.0f;
-					damage.slashing = 25.0f;
-				}
-				if(Actor* target = this->zActorManager->CheckCollisions(self, range))
-				{
-					BioActor* bActor = dynamic_cast<BioActor*>(target);
-					if(bActor->IsAlive())
+					if(PAAE->mouseButton == MOUSE_LEFT_PRESS)
 					{
-						bActor->TakeDamage(damage,self);
+						range = 2.2f;
+						damage.blunt = 10.0f;
+					}
+					else if(PAAE->mouseButton == MOUSE_RIGHT_PRESS)
+					{
+						range = 1.5f;
+						damage.piercing = 5.0f;
+						damage.slashing = 25.0f;
+					}
+					if(Actor* target = this->zActorManager->CheckCollisions(self, range))
+					{
+						BioActor* bActor = dynamic_cast<BioActor*>(target);
+						if(bActor->IsAlive())
+						{
+							bActor->TakeDamage(damage,self);
+						}
 					}
 				}
 			}
@@ -1032,12 +1059,22 @@ void Game::OnEvent( Event* e )
 		// Filter Player Models
 		static const std::string defaultModel = "media/models/token_anims.fbx";
 		const std::string* selectedModel = &defaultModel;
-
-		if ( UDE->playerModel == "media/models/token_anims.fbx" )
+		
+		auto found = zPlayerModels.find(UDE->playerModel);
+		
+		if ( found != zPlayerModels.end() )
+		{
 			selectedModel = &UDE->playerModel;
+		}
+		else
+		{
+			UDE->playerModel = defaultModel;
+		}
+
+		std::string objModel = zPlayerModels[UDE->playerModel];
 		
 		// Create Player Actor
-		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("media/models/hitbox_token.obj");
+		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(objModel);
 
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
 		pActor->SetModel(*selectedModel);
@@ -1446,6 +1483,12 @@ void Game::HandleDisconnect( ClientData* cd )
 {
 	// Delete Player Behavior
 	auto playerIterator = zPlayers.find(cd);
+
+	//If no player was found, this client do not have any mesh nor actor.
+	//He does not exist, return.
+	if( playerIterator == zPlayers.end() )
+		return;
+
 	auto playerBehavior = playerIterator->second->GetBehavior();
 		
 	// Create AI Behavior For Players That Disconnected
@@ -2526,26 +2569,51 @@ void Game::RestartGame()
 
 	//Remove old messages
 	this->zSyncher->ClearAll();
-
-	//Remove loaded entities
-	this->zWorldActors.clear();
 	
 	//Recreate Actors
+
+	//Create WorldActors
+	auto it_worldActors_end = this->zWorldActors.end();
+	for (auto it = this->zWorldActors.begin(); it != it_worldActors_end; it++)
+	{
+		Entity* entity = (*it).first;
+		PhysicsObject* phys = NULL;
+
+		if( !entity )
+			continue;
+
+		float blockRadius = GetEntBlockRadius(entity->GetType());
+		if ( blockRadius > 0.0f )
+		{
+			// Create Physics Object
+			phys = zPhysicsEngine->CreatePhysicsObject(GetEntModel(entity->GetType()));
+		}
+		WorldActor* actor = new WorldActor(phys, blockRadius);
+		actor->SetPosition(entity->GetPosition());
+		actor->SetScale(actor->GetScale());
+		actor->AddObserver(this->zGameMode);
+
+		this->zWorldActors[entity] = actor;
+		this->zActorManager->AddActor(actor);
+	}
+
 	std::string message = "";
 	auto it_zPlayers_end = zPlayers.end();
 	for (auto it = zPlayers.begin(); it != it_zPlayers_end; it++)
 	{
 		(*it).second->GetKeys().ClearStates();
 
-		PhysicsObject* physObj = zPhysicsEngine->CreatePhysicsObject("Media/Models/temp_guy.obj");
+		std::string model = (*it).second->GetModelPath();
+		PhysicsObject* physObj = zPhysicsEngine->CreatePhysicsObject( zPlayerModels[model] );
 		
 		PlayerActor* pActor = new PlayerActor((*it).second, physObj, this);
-		pActor->SetModel( (*it).second->GetModelPath() );
+		pActor->SetModel( model );
 		PlayerHumanBehavior* pBehavior = new PlayerHumanBehavior(pActor, zWorld, (*it).second);
 
 		pActor->SetPosition(CalcPlayerSpawnPoint(32), false);
 		pActor->SetScale(pActor->GetScale(), false);
 		pActor->AddObserver(this->zGameMode);
+		pActor->SetCameraOffset(zCameraOffset[model]);
 
 		this->zActorManager->AddActor(pActor);
 		SetPlayerBehavior((*it).second, pBehavior);
@@ -2561,18 +2629,15 @@ void Game::RestartGame()
 		message += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, (float)1);
 		(*it).first->Send(message);
 	}
+	
+	this->zGameMode->StopGameMode();
+
 	//Debug
 	//SpawnAnimalsDebug();
 
-	//Set everyone to false
-	for (auto it = zPlayers.begin(); it != zPlayers.end(); it++)
-	{
-		(*it).second->SetReady(false);
-	}
-
-	SpawnItemsDebug();
-	SpawnAnimalsDebug();
-	SpawnHumanDebug();
+	//SpawnItemsDebug();
+	//SpawnAnimalsDebug();
+	//SpawnHumanDebug();
 
 	this->ResetFogEnclosement();
 }
@@ -2700,4 +2765,12 @@ void Game::CheckToShotArrow(ClientData* cd)
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
 		}
 	}
+}
+
+bool Game::IsFull() const
+{
+	if(zPlayers.size() == zMaxNrOfPlayers)
+		return true;
+
+	return false;
 }

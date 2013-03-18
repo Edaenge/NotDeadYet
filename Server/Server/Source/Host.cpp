@@ -250,6 +250,11 @@ void Host::UpdateGame()
 				
 			}
 		}
+		else
+		{
+			//Game finished, Restart
+			zGame->RestartGame();
+		}
 	}
 	this->zPerf->PostMeasure("Updating Game", 0);
 }
