@@ -159,6 +159,9 @@
     <ClCompile Include="Source\GUI\AbilityIndicatorUi.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\FootStepClient.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Client.h">
@@ -298,6 +301,9 @@
     </ClInclude>
     <ClInclude Include="Source\GUI\AbilityIndicatorUi.h">
       <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FootStepClient.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

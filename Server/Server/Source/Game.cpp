@@ -117,7 +117,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	// Debug Functions
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 
 	// Sun Direction
@@ -167,7 +167,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 1; i++)
+	for(unsigned int i = 0; i < 8; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -206,7 +206,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 0; i++)
+	for(unsigned int i = 0; i < 3; i++)	
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -221,7 +221,7 @@ void Game::SpawnAnimalsDebug()
 		Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 
 		bActor->SetPosition(position);
-		bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
+		bActor->SetScale(Vector3(0.09f, 0.09f, 0.09f));
 
 		const Food* temp_Bear_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BEAR_FOOD);
 
@@ -511,7 +511,7 @@ bool Game::Update( float dt )
 	this->UpdateFogEnclosement(dt);
 	NetworkMessageConverter NMC;
 	std::string msg;
-
+;
 	if ( zPerf ) this->zPerf->PreMeasure("Updating Behaviors", 1);
 	std::set<Behavior*> &behaviors = this->zActorManager->GetBehaviors();
 
@@ -595,6 +595,7 @@ bool Game::Update( float dt )
 	// Update World
 	this->zWorld->Update();
 
+
 	if ( zPerf ) this->zPerf->PostMeasure("Updating World", 4);
 
 	//Updating animals and Check fog.
@@ -652,9 +653,7 @@ void Game::OnEvent( Event* e )
 {
 	// TODO: Incoming Message
 	if (this->zPerf) 
-	{
 		this->zPerf->PreMeasure("Game Event Handling", 2);
-	}
 
 	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
 	{
@@ -672,9 +671,7 @@ void Game::OnEvent( Event* e )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
 		if(KDE->key == MOUSE_LEFT_PRESS)
-		{
 			this->CheckPlayerUseBow(this->zPlayers[KDE->clientData]);
-		}
 	}
 	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )
 	{
@@ -802,15 +799,23 @@ void Game::OnEvent( Event* e )
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{
-		if ( zPerf ) this->zPerf->PreMeasure("Equip Event Handling", 3);
+		if ( zPerf ) 
+			this->zPerf->PreMeasure("Equip Event Handling", 3);
+
 		this->HandleEquipItem(PEIE->clientData, PEIE->itemID);
-		if ( zPerf ) this->zPerf->PostMeasure("Equip Event Handling", 3);
+		
+		if ( zPerf ) 
+			this->zPerf->PostMeasure("Equip Event Handling", 3);
 	}
 	else if (PlayerUnEquipItemEvent* PUEIE = dynamic_cast<PlayerUnEquipItemEvent*>(e) )
 	{
-		if ( zPerf ) this->zPerf->PreMeasure("UnEquip Event Handling", 3);
+		if ( zPerf ) 
+			this->zPerf->PreMeasure("UnEquip Event Handling", 3);
+
 		this->HandleUnEquipItem(PUEIE->clientData, PUEIE->itemID);
-		if ( zPerf ) this->zPerf->PostMeasure("UnEquip Event Handling", 3);
+
+		if ( zPerf ) 
+			this->zPerf->PostMeasure("UnEquip Event Handling", 3);
 	}
 	else if(PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
 	{

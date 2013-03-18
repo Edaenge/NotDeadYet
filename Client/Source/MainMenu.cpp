@@ -24,6 +24,10 @@ MainMenu::~MainMenu()
 	delete menuClick;
 	menuClick = NULL;
 
+	menuSound->Release();
+	delete menuSound;
+	menuSound = NULL;
+
 	AudioManager::ReleaseInstance();
 }
 
@@ -41,6 +45,9 @@ void MainMenu::Init()
 	am->GetEventHandle(EVENTID_NOTDEADYET_MENU_N_BACKPACK_TOGGLE_N_CLICK, menuClick);
 	menuClick->Setvolume(0.2f);
 
+	am->GetEventHandle(EVENTID_NOTDEADYET_MUSIC_LOADING, menuSound);
+	menuSound->Setvolume(0.2f);
+	menuSound->Play();
 	GraphicsEngine* eng = GetGraphics();
 
 	eng->CreateSkyBox("Media/skymap.dds");
@@ -362,9 +369,13 @@ void MainMenu::Run()
 							this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet);
 
 							this->EnableMouse(false);
+							
+							menuSound->Stop();
 
 							this->StartTestRun();
 							
+							menuSound->Play();
+
 							delete this->zGame;
 
 							this->zGame = new Game();
@@ -709,7 +720,11 @@ void MainMenu::StartGameWithIPField()
 	}
 	if (result)
 	{
+		menuSound->Stop();
+
 		this->zGame->Run();
+
+		menuSound->Play();
 	}
 
 	delete this->zGame;
