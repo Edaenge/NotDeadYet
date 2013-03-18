@@ -54,6 +54,7 @@ CircularListGui::~CircularListGui()
 bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 {
 	GuiElement::AddToRenderer(ge);
+	this->SetStrata(110.0f);
 	if (ge)
 	{
 		float windowWidth = (float)(ge->GetEngineParameters().WindowWidth);
@@ -102,7 +103,7 @@ bool CircularListGui::AddToRenderer(GraphicsEngine* ge)
 			}
 			this->zTextImages[i] = ge->CreateImage(Vector2(this->zTextImagePos[i].x - (imageWidth * 0.5f), 
 			this->zTextImagePos[i].y - (imageHeight * 0.5f)), Vector2(imageWidth, imageHeight), texName.c_str());
-			this->zTextImages[i]->SetStrata(9.0f);
+			this->zTextImages[i]->SetStrata(100.0f);
 		}
 		return true;
 	}

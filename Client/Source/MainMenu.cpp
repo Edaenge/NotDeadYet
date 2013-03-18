@@ -123,6 +123,7 @@ void MainMenu::Init()
 	float AdressY = ((384.0f / 768.0f) * windowHeight) - (((137.0f / 768.0f) * windowHeight) / 2);
 	temp = new GUIPicture(AdressX, AdressY, 1, 
 		"Media/Menu/ConnectMenu/Connect_BG.png", (564.0f / 1024.0f) * dx, (137.0f / 768.0f) * windowHeight);
+
 	zSets[GETIPADRESS].AddElement(temp);
 
 	//IPAddress

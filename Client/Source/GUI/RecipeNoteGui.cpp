@@ -44,11 +44,13 @@ RecipeNoteGui::RecipeNoteGui(Vector2 pos, const std::map<unsigned int, unsigned 
 		((TEXTSTARTY + (this->zNrOfTexts * TEXTHEIGHT) + TEXTSTARTY) / 768.0f) * windowHeight));
 
 	GuiElement::AddToRenderer(GetGraphics());
+	this->SetStrata(150.0f);
 	int lCurrentText = 0;
 	for(int i = 0; i < this->zNrOfTexts; i++)
 	{
 		Vector2 pos = Vector2(this->zX + TEXTSTARTX, this->zY + TEXTSTARTY + (i * TEXTHEIGHT));
 		this->zRenderTextes[lCurrentText] = GetGraphics()->CreateText(this->zMatsText[lCurrentText].c_str(), pos, TEXTSIZE, "Media/Fonts/new");
+		this->zRenderTextes[lCurrentText]->SetStrata(100.0f);
 		lCurrentText++;
 	}
 	
