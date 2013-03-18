@@ -584,6 +584,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 	pActor->GetInventory()->UnEquipAll();
+	pActor->GetInventory()->RemoveObserver(player);
 
 	this->zGame->ModifyLivingPlayers(-1);
 

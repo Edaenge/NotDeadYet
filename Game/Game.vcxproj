@@ -89,6 +89,8 @@
     <ClInclude Include="Include\Food.h" />
     <ClInclude Include="Include\GameTimer.h" />
     <ClInclude Include="Include\Gear.h" />
+    <ClInclude Include="Include\Inventory.h" />
+    <ClInclude Include="Include\InventoryEvents.h" />
     <ClInclude Include="Include\Item.h" />
     <ClInclude Include="Include\ItemLookup.h" />
     <ClInclude Include="Include\KeyStates.h" />
@@ -131,6 +133,7 @@
     <ClCompile Include="Source\GameTimer.cpp" />
     <ClCompile Include="Source\Gear.cpp" />
     <ClCompile Include="Source\Graphics.cpp" />
+    <ClCompile Include="Source\Inventory.cpp" />
     <ClCompile Include="Source\Item.cpp" />
     <ClCompile Include="Source\ItemLookup.cpp" />
     <ClCompile Include="Source\KeyStates.cpp" />
