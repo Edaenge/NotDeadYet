@@ -709,7 +709,6 @@ void MainMenu::StartGameWithIPField()
 	}
 	if (result)
 	{
-		GetGraphics()->ShowLoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 10.2f);
 		this->zGame->Run();
 	}
 

@@ -1900,6 +1900,11 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 							}
 						}
 					}
+					else
+					{
+						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You Are not Bleeding");
+						cd->Send(msg);
+					}
 				}
 			}
 		}
