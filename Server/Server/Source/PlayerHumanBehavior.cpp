@@ -30,13 +30,14 @@ PlayerHumanBehavior::~PlayerHumanBehavior()
 
 bool PlayerHumanBehavior::Update( float dt )
 {
-	this->zIntervalCounter += dt;
 
 	if ( !zPlayer )
 		return true;
 
 	if ( PlayerBehavior::Update(dt) )
 		return true;
+
+	this->PhysicalConditionCalculator(dt);
 
 	if(BioActor *bActor = dynamic_cast<BioActor*>(this->zActor))
 	{
@@ -276,13 +277,15 @@ bool PlayerHumanBehavior::Update( float dt )
 		bActor->SetState(newState);
 	}
 
-	this->PhysicalConditionCalculator(dt);
+	
 
 	return false;
 }
 
 bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 {
+	this->zIntervalCounter += dt;
+
 	static PlayerConfigReader* playerConfig = GetPlayerConfig();
 
 	static const float Regen_Scale = playerConfig->GetVariable(REGEN_SCALE);
@@ -319,7 +322,8 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		if(pActor->GetState() != STATE_RUNNING && pActor->GetStamina() < pActor->GetStaminaMax() /*&& pActor->GetBleeding() == 0*/)
 		{
 			float stamina = pActor->GetStamina();
-			pActor->SetStamina(stamina += 1.0f);
+			stamina += Stamina_Sprint_Coeff / 2 * dt;
+			pActor->SetStamina(stamina);
 		
 			if(pActor->GetStamina() > pActor->GetStaminaMax())
 				pActor->SetStamina(pActor->GetStaminaMax());
@@ -334,27 +338,28 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 					pActor->SetExhausted(true);
 				}
 			}
-			if(pActor->GetExhausted() == false)
+		}
+
+		if(pActor->GetExhausted() == false)
+		{
+			float fullness = pActor->GetFullness(); 
+			float hydration = pActor->GetHydration(); 
+
+			fullness -= Hunger_Sprint_Coeff * dt;//zHungerSprintingCof;
+			hydration -= Hydration_Sprint_Coeff * dt;//zHydrationSprintingCof;
+			pActor->SetFullness(fullness);
+			pActor->SetHydration(hydration);
+
+			if(pActor->GetHasSprinted())
 			{
-				float fullness = pActor->GetFullness(); 
-				float hydration = pActor->GetHydration(); 
-
-				fullness -= Hunger_Sprint_Coeff;//zHungerSprintingCof;
-				hydration -= Hydration_Sprint_Coeff;//zHydrationSprintingCof;
-				pActor->SetFullness(fullness);
-				pActor->SetHydration(hydration);
-
-				if(pActor->GetHasSprinted())
+				float stamina = pActor->GetStamina();
+				stamina -= Stamina_Sprint_Coeff * dt;//zStaminaSprintingCof;
+				pActor->SetStamina(stamina);
+				if(stamina < 0.0f)
 				{
-					float stamina = pActor->GetStamina();
-					stamina -= Stamina_Sprint_Coeff;//zStaminaSprintingCof;
-					pActor->SetStamina(stamina);
-					if(stamina < 0.0f)
-					{
-						pActor->SetStamina(0.0f);
-					}
-					pActor->SetHasSprinted(false);
+					pActor->SetStamina(0.0f);
 				}
+				pActor->SetHasSprinted(false);
 			}
 		}
 
@@ -366,9 +371,9 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		float fullness = pActor->GetFullness();
 		float hydration = pActor->GetHydration();
 
-		fullness -= Hunger_Coeff;//zHungerCof;
+		fullness -= Hunger_Coeff * dt;//zHungerCof;
 		pActor->SetFullness(fullness);
-		hydration -= Hydration_Coeff;//zHydrationCof;
+		hydration -= Hydration_Coeff * dt;//zHydrationCof;
 		pActor->SetHydration(hydration);
 
 		if(pActor->GetBleeding() > 0)//Player is bleeding.
@@ -394,7 +399,7 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		else */if(pActor->GetFullness() / Fullness_Max < Lower_Hunger)//zLowerHunger) //The hunger is at a bad level
 		{
 			float stamina = pActor->GetStamina();
-			stamina -= Stamina_Decrease_Coeff_Hunger;//zStaminaDecreaseCofWithHunger;
+			stamina -= Stamina_Decrease_Coeff_Hunger * dt;//zStaminaDecreaseCofWithHunger;
 			pActor->SetStamina(stamina);
 		}
 
@@ -405,7 +410,7 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		else*/ if(pActor->GetHydration() / Hydration_Max < Lower_Hydration) //The thirst is at a bad level.
 		{
 			float stamina = pActor->GetStamina();
-			stamina -= Stamina_Decrease_Coeff_Hydration;
+			stamina -= Stamina_Decrease_Coeff_Hydration * dt;
 			pActor->SetStamina(stamina);
 		}
 
@@ -418,10 +423,10 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 			float fullness = pActor->GetFullness();
 			float hydration = pActor->GetHydration();
 
-			fullness -= Hunger_Stamina_Coeff;
+			fullness -= Hunger_Stamina_Coeff * dt;
 			pActor->SetFullness(fullness);
 
-			hydration -= Hydration_Stamina_Coeff;
+			hydration -= Hydration_Stamina_Coeff * dt;
 			pActor->SetHydration(hydration);
 		}
 
@@ -429,13 +434,13 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		if(pActor->GetFullness() < 0)
 		{
 			pActor->SetFullness(0.0f);
-			bleedingAndConditionDamage.internalDamage += Starvation_Damage_Coeff;
+			bleedingAndConditionDamage.internalDamage += Starvation_Damage_Coeff * dt;
 			//pActor->TakeDamage(hurting, pActor);
 		}
 		if(pActor->GetHydration() < 0)
 		{
 			pActor->SetHydration(0.0f);
-			bleedingAndConditionDamage.internalDamage += Thirst_Damage_Coeff;
+			bleedingAndConditionDamage.internalDamage += Thirst_Damage_Coeff * dt;
 			//pActor->TakeDamage(hurting, pActor);
 		}
 
@@ -445,13 +450,13 @@ bool PlayerHumanBehavior::PhysicalConditionCalculator(float dt)
 		if(regeneratedHealth < 0.0f)
 		{
 			//Damage bleedingDamage;
-			bleedingAndConditionDamage.internalDamage += -(regeneratedHealth / Regen_Scale);
+			bleedingAndConditionDamage.internalDamage += -(regeneratedHealth / Regen_Scale) * dt;
 			//pActor->TakeDamage(bleedingDamage,pActor);
 		}
 		else
 		{
-			health = regeneratedHealth / Regen_Scale;
-			pActor->SetHealth(pActor->GetHealth() + health);  
+			health = (regeneratedHealth / Regen_Scale) * dt;
+			pActor->SetHealth(pActor->GetHealth() + health );  
 		}
 		
 		if(pActor->GetHealth() > pActor->GetHealthMax())

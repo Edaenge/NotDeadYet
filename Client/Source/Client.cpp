@@ -233,6 +233,13 @@ void Client::Update()
 	{
 		this->UpdateHealthAndBleedingImage();
 	}
+	else
+	{
+		if(this->zBleedingAndHealthIndicator)
+		{
+			this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
+		}
+	}
 
 	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
 
@@ -2557,7 +2564,7 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 void Client::UpdatePhysicalCondition( PhysicalConditionPacket* PCP )
 {
 	if(PCP->zHealth != -1.0f)
-		this->zHealth = PCP->zHealth;
+		this->zHealth = PCP->zHealth; // this->zHealth = PCP->zStamina;//
 
 	if(PCP->zEnergy != -1.0f)
 		this->zEnergy = PCP->zEnergy;
