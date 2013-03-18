@@ -151,11 +151,13 @@ void CraftingMenu::UpdateCrafting(std::vector<InventorySlotGui*> inventory)
 			for(auto item = inventory.begin(); item != inventory.end(); item++)
 			{
 				if((*item)->GetGid().zSubType == (int)subType->first)
-					if((*item)->GetGid().zStacks >= subType->second)
+				{
+					if((*item)->GetGid().zStacks >= (int)subType->second)
 					{
 						materialFound = true;
 						break;
 					}
+				}
 			}
 			if(!materialFound)
 			{

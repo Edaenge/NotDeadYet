@@ -22,8 +22,8 @@ public:
 	bool Update(float dt);
 
 protected:
-		virtual Actor* HandleCollision();
-		virtual bool HandleWaterCollision();
+	virtual Actor* HandleCollision();
+	virtual bool HandleWaterCollision();
 
 protected:
 	Player* zPlayer;

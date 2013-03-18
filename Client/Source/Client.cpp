@@ -71,6 +71,7 @@ Client::Client()
 	this->zAnchor = NULL;
 	this->zCrossHair = NULL;
 	this->zDamageIndicator = NULL;
+	this->zBlackImage = NULL;
 	this->zBleedingAndHealthIndicator = NULL;
 	this->zDamageOpacity = 0.0f;
 
