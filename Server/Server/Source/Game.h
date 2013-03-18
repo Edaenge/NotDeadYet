@@ -143,7 +143,7 @@ private:
 	void HandleFillItem(ClientData* cd, const unsigned int itemID);
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID);
-	void HandleBindings(ClientData* cd, const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType);
+	void HandleBindings(const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType);
 
 	// Game Stuff
 	void UpdateSunDirection(float dt);
@@ -151,4 +151,5 @@ private:
 	void Caching(const std::string& modelName);
 	void PrintDebugData(ClientData* cd, int type);
 	void ResetFogEnclosement();
+	void ResetSunDirection();
 };

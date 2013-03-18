@@ -17,7 +17,6 @@
 #include <vector>
 #include <World/Observer.h>
 #include "InventoryEvents.h"
-#include "Player.h"
 
 enum EQUIPMENT_SLOT
 {
@@ -34,8 +33,8 @@ enum EQUIPMENT_SLOT
 class Inventory : public Observed
 {
 public:
-	Inventory();
-	Inventory(const float inventorySize);
+	Inventory(const unsigned int ownerID = 0);
+	Inventory(const float inventorySize, const unsigned int ownerID = 0);
 	virtual ~Inventory();
 	/*! Search for the Item in and returns its position*/
 	int Search(const unsigned int ID) const;
@@ -99,7 +98,6 @@ public:
 	bool SwapWeapon();
 
 	void ClearAll();
-	void SetPlayer(Player* player) {this->zPlayer = player;}
 private:
 	/*Removes the item from the list.*/
 	Item* Erase(const unsigned int Index);
@@ -121,5 +119,5 @@ private:
 	MeleeWeapon* zMeleeWeapon;
 	std::vector<Gear*> zGear;
 
-	Player* zPlayer;
+	unsigned int zOwnerID;
 };

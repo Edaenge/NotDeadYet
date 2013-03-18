@@ -120,33 +120,16 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	//DEBUG;
 	this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
-	this->SpawnHumanDebug();
+	//this->SpawnAnimalsDebug();
+	//this->SpawnHumanDebug();
 
-	//Initialize Sun Direction
-	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
-
-	float radius = mapCenter2D.x;
-	float angle = TOTAL_SUN_DEGREE_SHIFT * 0.5f;
-	float x = mapCenter2D.x + radius * sin(angle);
-
-	this->zMapCenter = Vector3(mapCenter2D.x, 0.0f, mapCenter2D.y);
-	this->zCurrentSunPosition = Vector3(x, 10000.0f, 0.0f);
-
-	this->zCurrentSunDirection =  zMapCenter - this->zCurrentSunPosition;
-	this->zCurrentSunDirection.Normalize();
-
-	this->zSunTimer = 0.0f;
-
-	this->zTotalSunRadiansShift = 0.0f;
-	this->zSunRadiansShiftPerUpdate = TOTAL_SUN_DEGREE_SHIFT / (SUN_UPDATE_DELAY * TOTAL_SUN_UPDATE_TIME);
+	// Sun Direction
+	this->ResetSunDirection();
 
 	//Fog Enclosement
 	this->zPlayersAlive = 0;
-
 	this->ResetFogEnclosement();
 
-	
 	//Used for caching fbx files dont change the function.
 	//this->Caching("media/models/token_anims.fbx");
 }
@@ -1139,73 +1122,15 @@ void Game::OnEvent( Event* e )
 		if (bActor)
 			bActor->Kill();
 	}
-	else if (InventoryAddItemEvent* IAIE = dynamic_cast<InventoryAddItemEvent*>(e))
-	{
-		NetworkMessageConverter NMC;
-		std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-		msg += IAIE->item->ToMessageString(&NMC);
-
-		IAIE->cd->Send(msg);
-	}
-	else if (InventoryRemoveItemEvent* IRIE = dynamic_cast<InventoryRemoveItemEvent*>(e))
-	{
-		NetworkMessageConverter NMC;
-		std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)IRIE->ID);
-
-		IRIE->cd->Send(msg);
-	}
-	else if (InventoryEquipItemEvent* IEIE = dynamic_cast<InventoryEquipItemEvent*>(e))
-	{
-		NetworkMessageConverter NMC;
-
-		std::string msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)IEIE->id);
-		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)IEIE->slot);
-		IEIE->cd->Send(msg);
-	}
-	else if (InventoryUnEquipItemEvent* IUIE = dynamic_cast<InventoryUnEquipItemEvent*>(e))
-	{
-		NetworkMessageConverter NMC;
-
-		std::string msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)IUIE->id);
-		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)IUIE->slot);
-		IUIE->cd->Send(msg);
-	}
 	else if (InventoryBindPrimaryWeapon* IBPW = dynamic_cast<InventoryBindPrimaryWeapon*>(e))
 	{
-		this->HandleBindings(IBPW->clientData, IBPW->ID, IBPW->model, IBPW->type, IBPW->subType);
+		this->HandleBindings(IBPW->ID, IBPW->model, IBPW->type, IBPW->subType);
 	}
 	else if (InventoryUnBindPrimaryWeapon* IUBPW = dynamic_cast<InventoryUnBindPrimaryWeapon*>(e))
 	{
 		NetworkMessageConverter NMC;
 		std::string msg;
 
-		Actor* actor = this->zPlayers[IUBPW->clientData]->GetBehavior()->GetActor();
-
-		if (PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
-		{
-			Inventory* inv = pActor->GetInventory();
-
-			Item* item = inv->GetPrimaryEquip();
-
-			if (item)
-			{
-				if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
-				{
-					pActor->SetState(STATE_UNEQUIP_WEAPON);
-				}
-				else if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
-				{
-					if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
-					{
-						pActor->SetState(STATE_UNEQUIP_WEAPON);
-					}
-					else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
-					{
-
-					}
-				}
-			}
-		}
 		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)IUBPW->ID);
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, IUBPW->model);
 		this->SendToAll(msg);
@@ -2429,15 +2354,8 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID )
 	}
 }
 
-void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType)
+void Game::HandleBindings(const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType)
 {
-	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
-
-	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
-
-	if (!pActor)
-		return;
-
 	std::string msg;
 	NetworkMessageConverter NMC;
 
@@ -2449,7 +2367,6 @@ void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::stri
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
-			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 	}
 	else if (type == ITEM_TYPE_WEAPON_MELEE)
@@ -2460,8 +2377,6 @@ void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::stri
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
-
-			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 		else if (subType == ITEM_SUB_TYPE_POCKET_KNIFE)
 		{
@@ -2469,8 +2384,6 @@ void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::stri
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
-
-			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 	}
 	else if (type == ITEM_TYPE_PROJECTILE && subType == ITEM_SUB_TYPE_ROCK)
@@ -2510,6 +2423,27 @@ void Game::ResetFogEnclosement()
 	this->zFogTimer = 0.0f;
 
 	this->zCurrentFogEnclosement = this->zInitalFogEnclosement * this->zFogTotalDecreaseCoeff;
+}
+
+void Game::ResetSunDirection()
+{
+	//Initialize Sun Direction
+	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
+
+	float radius = mapCenter2D.x;
+	float angle = TOTAL_SUN_DEGREE_SHIFT * 0.5f;
+	float x = mapCenter2D.x + radius * sin(angle);
+
+	this->zMapCenter = Vector3(mapCenter2D.x, 0.0f, mapCenter2D.y);
+	this->zCurrentSunPosition = Vector3(x, 10000.0f, 0.0f);
+
+	this->zCurrentSunDirection =  zMapCenter - this->zCurrentSunPosition;
+	this->zCurrentSunDirection.Normalize();
+
+	this->zSunTimer = 0.0f;
+
+	this->zTotalSunRadiansShift = 0.0f;
+	this->zSunRadiansShiftPerUpdate = TOTAL_SUN_DEGREE_SHIFT / (SUN_UPDATE_DELAY * TOTAL_SUN_UPDATE_TIME);
 }
 
 Vector3 Game::GetOffset(const std::string& model)
@@ -2582,6 +2516,8 @@ void Game::RestartGame()
 	SpawnItemsDebug();
 	SpawnAnimalsDebug();
 	SpawnHumanDebug();
+
+	this->ResetSunDirection();
 
 	this->ResetFogEnclosement();
 }

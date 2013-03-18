@@ -51,7 +51,6 @@ bool Game::InitGameClient(const std::string &IP, const unsigned int &port)
 		(float)GetGraphics()->GetEngineParameters().WindowHeight), "Media/LoadingScreen/FadeTexture.png" );
 	blackImage->SetStrata(50.0f);
 	float windowHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
-	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 
 	/*iText* connectingText =  GetGraphics()->CreateText("Connecting...", Vector2((50.0f / 1024.0f) * dx, (700.0f / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight), 2.0f, "Media/Fonts/new");*/
 	this->zClient->SetBlackImage(blackImage);

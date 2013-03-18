@@ -7,7 +7,7 @@ class ClientData;
 class Behavior;
 
 
-class Player : public Observed
+class Player : public Observed, public Observer
 {
 	// The Client Data
 	ClientData* zClient;
@@ -52,6 +52,9 @@ public:
 	std::string GetModelPath() const {return this->zUserModel;}
 	//
 	bool IsReady() const {return this->zReady;}
+
+protected:
+	virtual void OnEvent( Event* e);
 
 private:
 	friend class Game;
