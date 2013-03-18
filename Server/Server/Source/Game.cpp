@@ -117,7 +117,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	//DEBUG;
 	this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
+	this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 
 	// Sun Direction
@@ -167,7 +167,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	int increment = 0;
-	for(unsigned int i = 0; i < 1; i++)
+	for(unsigned int i = 0; i < 8; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -206,7 +206,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(int i = 0; i < 0; i++)
+	for(int i = 0; i < 3; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -221,7 +221,7 @@ void Game::SpawnAnimalsDebug()
 		Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 
 		bActor->SetPosition(position);
-		bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
+		bActor->SetScale(Vector3(0.09f, 0.09f, 0.09f));
 
 		const Food* temp_Bear_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BEAR_FOOD);
 
