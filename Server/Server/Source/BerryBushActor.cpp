@@ -17,10 +17,10 @@ void BerryBushActor::SetPicked( bool pickedFlag )
 	
 	if ( zPicked )
 	{
-		SetModel("Media/Models/Cube_02.obj");
+		SetModel("Media/Models/BerryBush/BerryBush_02.obj");
 	}
 	else
 	{
-		SetModel("Media/Models/Cube_01.obj");
+		SetModel("Media/Models/BerryBush/BerryBush_01.obj");
 	}
 }

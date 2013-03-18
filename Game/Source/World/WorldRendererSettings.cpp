@@ -7,8 +7,18 @@ WorldRendererSettings::WorldRendererSettings(Observer* observer, const std::stri
 	zSettingsFile(fileName),
 	zSameAsFile(true)
 {
-	// Set Default Values
+	// Grass Default Values
 	zSettings["GrassDensity"] = 2500u;
+	zSettings["GrassNearDistance"] = 2.0f;
+	zSettings["GrassFarDistance"] = 64.0f;
+	zSettings["GrassUpdateDistance"] = 1.0f;
+	zSettings["GrassWidthMin"] = 0.5f;
+	zSettings["GrassWidthMax"] = 1.0f;
+	zSettings["GrassHeightMin"] = 0.25f;
+	zSettings["GrassHeightMax"] = 0.5f;
+	zSettings["GrassMinNeightbourDistance"] = 0.2f;
+
+	// LOD Default Settings
 	zSettings["LODUpdateDistance"] = 10.0f;
 
 	// Read From File
@@ -36,7 +46,7 @@ WorldRendererSettings::WorldRendererSettings(Observer* observer, const std::stri
 				if ( *val.rbegin() == 'f' )
 				{
 					float fVal;
-					if ( sscanf(val.c_str(), "%f", &fVal) )
+					if ( sscanf_s(val.c_str(), "%f", &fVal) )
 					{
 						SetValue(var, fVal);
 					}
@@ -44,7 +54,7 @@ WorldRendererSettings::WorldRendererSettings(Observer* observer, const std::stri
 				else if ( *val.rbegin() == 'u' )
 				{
 					unsigned int uVal;
-					if ( sscanf(val.c_str(), "%u", &uVal) )
+					if ( sscanf_s(val.c_str(), "%u", &uVal) )
 					{
 						SetValue(var, uVal);
 					}
@@ -52,7 +62,7 @@ WorldRendererSettings::WorldRendererSettings(Observer* observer, const std::stri
 				else
 				{
 					int sVal;
-					if ( sscanf(val.c_str(), "%d", &sVal) )
+					if ( sscanf_s(val.c_str(), "%d", &sVal) )
 					{
 						SetValue(var, sVal);
 					}
