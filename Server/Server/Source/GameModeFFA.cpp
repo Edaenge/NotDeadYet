@@ -229,6 +229,9 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if( PlayerReadyEvent* PLRE = dynamic_cast<PlayerReadyEvent*>(e) )
 	{
+		SpawnRandomDrop();
+		return;
+
 		if(!zGameStarted)
 		{
 			PLRE->player->SetReady(true);
@@ -795,29 +798,64 @@ bool GameModeFFA::SpawnRandomDrop()
 {
 	World* world = zGame->GetWorld();
 	std::set<Item*> items = GenerateItems();
-	Vector2 pos = world->GetWorldSize();
 	Vector2 center = world->GetWorldCenter();
 
 	//Get Fog Enclosure radius from the world center.
 	float radius = this->zGame->GetFogEnclosement();
 
 	//Randomize position
-	float x = static_cast<float>( rand()% (int)pos.x + 1 );
-	float z = static_cast<float>( rand()% (int)pos.y +1 );
+//Vector2 pos = world->GetWorldSize();
+// 	float x = static_cast<float>( rand()% (int)pos.x + 1 );
+// 	float z = static_cast<float>( rand()% (int)pos.y + 1 );
 
-	Vector2 spawnPos = Vector2(x, z);
-	Vector2 dir;
-	dir = center - spawnPos;
+	/***Randomize two players and calculate the pos between them.***/
+	std::vector<Actor*> aliveActors;
 
-	float length = dir.GetLength();
-	dir.Normalize();
-
-	//If the pos is within fog enclosure, move it
-	if( length > radius )
+	//Fetch all alive actors
+	for (auto it = zPlayers.begin(); it != zPlayers.end(); it++)
 	{
-		float value = length - radius;
-		spawnPos += (dir * value);
+		if( PlayerActor* pActor = dynamic_cast<PlayerActor*>( (*it)->GetBehavior()->GetActor() ) )
+		{
+			if( pActor->IsAlive() )
+				aliveActors.push_back(pActor);
+		}
 	}
+
+	//Randomize two indicies
+	const unsigned int NR_OF_ALIVE_PLAYERS = this->zGame->GetLivingPlayers();
+	unsigned int playerOne = rand()% NR_OF_ALIVE_PLAYERS;
+	unsigned int playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+
+	while(playerTwo == playerOne && NR_OF_ALIVE_PLAYERS > 2)
+	{
+		playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+	}
+
+	//Get Two Positions
+	Vector2 posOne = aliveActors[playerOne]->GetPosition().GetXZ();
+	Vector2 posTwo;
+
+	if( NR_OF_ALIVE_PLAYERS < 2 )
+		posTwo = center;
+	else
+		posTwo = aliveActors[playerTwo]->GetPosition().GetXZ();
+
+	Vector2 spawnPos;
+	spawnPos = ( (posOne - posTwo) * 0.5f );
+	spawnPos = posTwo + spawnPos;
+	
+	Vector2 dir;
+ 	dir = center - spawnPos;
+ 
+ 	float length = dir.GetLength();
+ 	dir.Normalize();
+ 
+ 	//If the pos is within fog enclosure, move it
+ 	if( length > radius )
+ 	{
+ 		float value = length - radius;
+ 		spawnPos += (dir * value);
+ 	}
 
 	//If not inside, something is wrong. World Size is not correct.
 	if( !world->IsInside(spawnPos) )
@@ -834,9 +872,6 @@ bool GameModeFFA::SpawnRandomDrop()
 	//Check if pos is valid, not blocking, not in water
 	while( !validLocation && tries < 100)
 	{
-		dir = center - spawnPos; 
-		dir.Normalize();
-
 		if( world->IsBlockingAt(spawnPos) )
 		{
 			spawnPos += dir * 1.0f;
@@ -859,8 +894,8 @@ bool GameModeFFA::SpawnRandomDrop()
 
 	this->zSupplyDrop->SpawnAirbornSupplyDrop(spawnPos, 200.0f, items);
 	
-	auto it = zPlayers.begin();
-	(*it)->GetBehavior()->GetActor()->SetPosition(Vector3(spawnPos.x, 100, spawnPos.y));
+// 	auto it = zPlayers.begin();
+// 	(*it)->GetBehavior()->GetActor()->SetPosition(Vector3(spawnPos.x, 100, spawnPos.y));
 
 	return true;
 }
