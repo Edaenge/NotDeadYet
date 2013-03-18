@@ -850,7 +850,7 @@ bool AIDeerBehavior::Update( float dt )
 
 			int testValue = 0;
 
-			if(!this->zWorld->IsBlockingAt(Vector2(nextPos.x,nextPos.z)))
+			if( zWorld->IsInside(nextPos.GetXZ()) && !this->zWorld->IsBlockingAt(nextPos.GetXZ()))
 			{
 				
 			}

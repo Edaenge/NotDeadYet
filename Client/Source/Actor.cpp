@@ -78,7 +78,8 @@ void Actor::SetRotation(const Vector4& rot)
 
 void Actor::SetStaticMesh(iMesh* mesh) 
 { 
-	this->zMesh = mesh; 
+	this->zMesh = mesh;
+	if ( zMesh ) zMesh->SetPosition(zPosition);
 }
 
 void Actor::SetID(const int clientID) 

@@ -128,7 +128,7 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 				// Check if this is me
 				if(update->GetID() == clientID)
 				{
-					AudioManager::GetInstance()->SetPlayerPosition(&ConvertToFmodVector(position), &ConvertToFmodVector(gEng->GetCamera()->GetForward()), &ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
+					AudioManager::GetInstance()->SetPlayerPosition(ConvertToFmodVector(position), ConvertToFmodVector(gEng->GetCamera()->GetForward()), ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
 					if(actor->GetModel() != "media/models/ghost.obj")
 					{
 						int mostUsedTex = this->GetMostUsedTexOnPos(position.GetXZ(), world);
@@ -421,15 +421,23 @@ FMOD_VECTOR ClientActorManager::ConvertToFmodVector( const Vector3& v ) const
 
 unsigned int ClientActorManager::GetMostUsedTexOnPos( const Vector2& pos, World* world ) const
 {
-	float grassSum = 0.0f;
-	grassSum += world->GetAmountOfTexture(pos, "01_v02-Moss.png");
-	grassSum += world->GetAmountOfTexture(pos, "06_v01-MossDark.png");
-	grassSum += world->GetAmountOfTexture(pos, "07_v01-MossLight.png");
+	try
+	{
+		float grassSum = 0.0f;
+		grassSum += world->GetAmountOfTexture(pos, "01_v02-Moss.png");
+		grassSum += world->GetAmountOfTexture(pos, "06_v01-MossDark.png");
+		grassSum += world->GetAmountOfTexture(pos, "07_v01-MossLight.png");
 
-	float dirtSum = 0.0f;
-	dirtSum += world->GetAmountOfTexture(pos, "05_v01-Sandpng.png");
-	dirtSum += world->GetAmountOfTexture(pos, "04_v02-Gravel.png");
-	dirtSum += world->GetAmountOfTexture(pos, "03_v02-Mix.png");
+		float dirtSum = 0.0f;
+		dirtSum += world->GetAmountOfTexture(pos, "05_v01-Sandpng.png");
+		dirtSum += world->GetAmountOfTexture(pos, "04_v02-Gravel.png");
+		dirtSum += world->GetAmountOfTexture(pos, "03_v02-Mix.png");
 
-	return ( dirtSum > grassSum );
+		return ( dirtSum > grassSum );
+	}
+	catch(...)
+	{
+	}
+
+	return 0;
 }

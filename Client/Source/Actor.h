@@ -10,6 +10,10 @@
 #include <string>
 #include <map>
 
+class ActorMovedEvent;
+class Actor;
+
+
 class ActorMovedEvent : public Event
 {
 public:
@@ -34,7 +38,7 @@ public:
 	inline const std::string& GetModel() const { return this->zModel; }
 	inline iMesh* GetMesh() const { return this->zMesh; }
 	inline const Vector3& GetScale() const { return this->zMesh->GetScaling(); }
-	inline const Vector3& GetPosition() const { return this->zMesh->GetPosition();}
+	inline const Vector3& GetPosition() const { return this->zPosition; }
 	inline const Vector4& GetRotation() const { return this->zMesh->GetRotationQuaternion(); }
 	inline const unsigned int& GetID() const { return this->zID; }
 

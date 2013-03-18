@@ -12,6 +12,11 @@
 #include "World/World.h"
 #include "Sound.h"
 
+class Updates;
+class ActorAddedEvent;
+class ActorRemovedEvent;
+class ClientActorManager;
+
 
 class Updates
 {

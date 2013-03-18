@@ -91,7 +91,7 @@ Client::Client() :
 	this->zHealth = 100.0f;
 	this->zHydration = 100.0f;
 	this->zHunger = 100.0f;	
-	
+
 	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
 
@@ -271,12 +271,19 @@ void Client::InitGraphics(const std::string& mapName)
 {
 	if (!this->zActorManager)
 	{
-		this->zActorManager = new ClientActorManager(zFootSteps);
+		this->zActorManager = new ClientActorManager();
 	}
 	else
 	{
 		this->zActorManager->ClearAll();
 	}
+
+	// Footstep Manager
+	if ( this->zFootSteps )
+	{
+		delete zFootSteps;
+	}
+	zFootSteps = new FootStepClient(zEng, zActorManager);
 
 	if (!this->zPlayerInventory)
 	{
