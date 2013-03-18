@@ -63,11 +63,11 @@ void KeyBindConfig::CreateDefaultIni(char* bindings)
 		'E',
 		VK_ESCAPE,
 		'B',
-		'C',
+		'I',
 		'F',
 		'Q',
 		'M',
-		'P'
+		'C'
 	};
 
 	memcpy(bindings, defaultBindings, sizeof(defaultBindings));

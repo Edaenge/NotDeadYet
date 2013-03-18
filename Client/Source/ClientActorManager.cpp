@@ -8,15 +8,6 @@
 #define NROFDIRTTEX 3
 ClientActorManager::ClientActorManager()
 {
-	AudioManager* am = AudioManager::GetInstance();
-
-	/*this->zFootStepGrass = new IEventHandle*[MAXFOOTSTEPS];
-	for(int i = 0; i < MAXFOOTSTEPS; i++)
-		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_GRASS, this->zFootStepGrass[i]);
-
-	this->zFootStepDirt = new IEventHandle*[MAXFOOTSTEPS];
-	for(int i = 0; i < MAXFOOTSTEPS; i++)
-		am->GetEventHandle(EVENTID_NOTDEADYET_WALK_DIRT, this->zFootStepDirt[i]);*/
 
 	this->zFootStepsOnGrass = new Sound*[MAXFOOTSTEPS];
 	for(int i = 0; i < MAXFOOTSTEPS; i++)
@@ -100,7 +91,6 @@ void ClientActorManager::UpdateObjects( float deltaTime, unsigned int clientID, 
 
 	//std::vector<Actor*> actors;
 	float latency = 1.0f / (float)this->zLatency;
-	float server_DeltaTime = 1.0f / (float)this->zUpdatesPerSec;
 	float t = deltaTime + latency;//GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
 	static GraphicsEngine* gEng = GetGraphics();
 	int stepsPlayedThisUpdate = 1;
