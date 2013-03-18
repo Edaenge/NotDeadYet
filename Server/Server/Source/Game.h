@@ -25,6 +25,7 @@ class AnimalActor;
 class CraftingManager;
 class MaterialSpawnManager;
 class BehaviorManager;
+class BerryBushSpawner;
 
 
 class Game : public Observer, public Observed
@@ -41,7 +42,10 @@ private:
 	SoundHandler* zSoundHandler;
 	PhysicsEngine* zPhysicsEngine;
 	ActorSynchronizer* zSyncher;
+
+	// Spawners
 	MaterialSpawnManager* zMaterialSpawnManager;
+	BerryBushSpawner* zBerryBushSpawner;
 
 	std::map<std::string, Vector3> zCameraOffset;
 	std::map<ClientData*, Player*> zPlayers;

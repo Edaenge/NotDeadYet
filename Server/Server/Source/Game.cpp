@@ -36,7 +36,7 @@
 #include "sounds.h"
 #include "SupplyActor.h"
 #include "BehaviorManager.h"
-
+#include "BerryBushSpawner.h"
 
 
 static const float PI = 3.14159265358979323846f;
@@ -74,10 +74,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	else
 		this->zWorld = new World(this, 10, 10);  // Handle Error.
 
-//Create Crafting Manager
+	// Create Crafting Manager
 	this->zCraftingManager = new CraftingManager();
 
-// Load Entities
+	// Load Entities
 	LoadEntList("Entities.txt");
 
 	// Actor Manager
@@ -92,14 +92,19 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	// Material Spawner
 	zMaterialSpawnManager = new MaterialSpawnManager(zWorld, zActorManager);
 
+	// Berry Bush Spawner
+	zBerryBushSpawner = new BerryBushSpawner(zWorld, zActorManager);
+
+	// Items and Crafting
 	InitItemLookup();
 	InitCraftingRecipes();
-//Initialize Player Configuration file
+
+	//Initialize Player Configuration file
 	InitPlayerConfig();
 
 	this->zMaxNrOfPlayers = maxClients;
 	
-//Create GameMode
+	//Create GameMode
 	if (mode.find("FFA") == 0 )
 	{
 		this->zGameMode = new GameModeFFA(this);
@@ -118,7 +123,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->SpawnAnimalsDebug();
 	this->SpawnHumanDebug();
 
-//Initialize Sun Direction
+	//Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
 
 	float radius = mapCenter2D.x;
@@ -163,6 +168,7 @@ Game::~Game()
 
 	// Delete Subsystems
 	SAFE_DELETE(zSoundHandler);
+	SAFE_DELETE(zBerryBushSpawner);
 	SAFE_DELETE(zMaterialSpawnManager);
 	SAFE_DELETE(zCraftingManager);
 	SAFE_DELETE(zActorManager);
@@ -181,7 +187,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	int increment = 0;
-	for(int i = 0; i < 1; i++)
+	for(unsigned int i = 0; i < 1; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -278,17 +284,17 @@ void Game::SpawnItemsDebug()
 	const Misc*			temp_Trap		= GetItemLookup()->GetMisc(ITEM_SUB_TYPE_REGULAR_TRAP);
 
 	unsigned int increment = 0;
-	int maxPoints = 10;
+	unsigned int maxPoints = 10;
 	float radius = 3.5f;
 	int numberOfObjects = 12;
 	int total = 0;
 	Vector3 center;
 	Vector3 position;
 	Vector2 tempCenter = this->zWorld->GetWorldCenter();
-	for (int i = 0; i < maxPoints; i++)
+	for (unsigned int i = 0; i < maxPoints; i++)
 	{
 		center = Vector3(tempCenter.x, 0, tempCenter.y);
-		int currentPoint = i % maxPoints;
+		unsigned int currentPoint = i % maxPoints;
 
 		center = this->CalcPlayerSpawnPoint(currentPoint, maxPoints, 17.0f, center);
 
@@ -548,6 +554,7 @@ bool Game::Update( float dt )
 			}
 		}
 	}
+
 	while( i != behaviors.end() )
 	{
 		if (!(*i)->Removed())
@@ -1208,7 +1215,9 @@ void Game::OnEvent( Event* e )
 		PrintDebugData(PDDE->clientData, PDDE->type);
 	}
 
+	// TODO: Not supposed to be here, managers should directly observe things
 	NotifyObservers(e);
+
 	if (this->zPerf)
 		this->zPerf->PostMeasure("Game Event Handling", 2);
 }
@@ -1308,7 +1317,7 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 
 Vector3 Game::CalcPlayerSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center)
 {
-	float slice  = 2 * PI / maxPoints;
+	float slice  = 2.0f * PI / maxPoints;
 
 	float angle = slice * currentPoint;
 
