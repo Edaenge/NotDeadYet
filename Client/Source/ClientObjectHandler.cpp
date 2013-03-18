@@ -48,16 +48,7 @@ void Client::AddActor( NewActorPacket* NAP )
 
 				if (ID == this->zID)
 				{
-					if (!this->zReady)
-					{
-						this->zEng->DeleteImage(this->zBlackImage);
-						this->zBlackImage = NULL;
-						this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.2f, 0.2f, 0.2f);
-						ambientMusic->Play();
-						ambientMusic->Setvolume(0.2f);
-
-						this->zReady = true;
-					}
+					
 					this->zGuiManager->ResetGui();
 					this->zPlayerInventory->ClearAll();
 
@@ -91,6 +82,16 @@ void Client::AddActor( NewActorPacket* NAP )
 							zShowCursor = true;
 						else
 							zShowCursor = false;
+					}
+					if (!this->zReady)
+					{
+						this->zEng->DeleteImage(this->zBlackImage);
+						this->zBlackImage = NULL;
+						this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.2f, 0.2f, 0.2f);
+						ambientMusic->Play();
+						ambientMusic->Setvolume(0.2f);
+
+						this->zReady = true;
 					}
 				}
 			}

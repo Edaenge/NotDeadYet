@@ -72,7 +72,10 @@ void PickAnimalMenu::ToggleMenu()
 	{
 		this->zSets[this->zPrimarySet].AddSetToRenderer(this->zEng);
 		if(!this->zEnergyText)
+		{
 			this->zEnergyText = this->zEng->CreateText("0", this->zTextPos, 2.0f, "Media/Fonts/new");
+			this->zEnergyText->SetColor(Vector3(0, -55, -245));
+		}
 		this->zShow = true;
 	}
 	else

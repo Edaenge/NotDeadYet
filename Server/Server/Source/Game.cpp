@@ -115,8 +115,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	//DEBUG;
 	this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
-	this->SpawnHumanDebug();
+	//this->SpawnAnimalsDebug();
+	//this->SpawnHumanDebug();
 
 	this->ResetSunDirection();
 	//Fog Enclosement
