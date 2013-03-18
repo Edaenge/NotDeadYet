@@ -229,9 +229,6 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if( PlayerReadyEvent* PLRE = dynamic_cast<PlayerReadyEvent*>(e) )
 	{
-		SpawnRandomDrop();
-		return;
-
 		if(!zGameStarted)
 		{
 			PLRE->player->SetReady(true);
