@@ -47,22 +47,24 @@ bool Game::InitGameClient(const std::string &IP, const unsigned int &port)
 	//Connects to a Host With the IP Address and port in the parameters
 	// TODO: RAII
 	this->zClient = new Client();
-	iImage* blackImage = GetGraphics()->CreateImage(Vector2(0,0), Vector2( (float)GetGraphics()->GetEngineParameters().WindowWidth, 
-		(float)GetGraphics()->GetEngineParameters().WindowHeight), "Media/LoadingScreen/FadeTexture.png" );
-	blackImage->SetStrata(50.0f);
-	float windowHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
-	float dx = ((float)windowHeight * 4.0f) / 3.0f;
+	//iImage* blackImage = GetGraphics()->CreateImage(Vector2(0,0), Vector2( (float)GetGraphics()->GetEngineParameters().WindowWidth, 
+	//	(float)GetGraphics()->GetEngineParameters().WindowHeight), "Media/LoadingScreen/FadeTexture.png" );
+	//blackImage->SetStrata(50.0f);
+	//float windowHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
 
 	/*iText* connectingText =  GetGraphics()->CreateText("Connecting...", Vector2((50.0f / 1024.0f) * dx, (700.0f / 768.0f) * GetGraphics()->GetEngineParameters().WindowHeight), 2.0f, "Media/Fonts/new");*/
-	this->zClient->SetBlackImage(blackImage);
-	blackImage = NULL;
+	//this->zClient->SetBlackImage(blackImage);
+	//blackImage = NULL;
 
 	bool result = this->zClient->Connect(IP, port);
 
 	/*GetGraphics()->DeleteText(connectingText);
 	connectingText = NULL;*/
 	if (result)
+	{
+		GetGraphics()->ShowLoadingScreen("media/loadingScreen/loadingscreenbg.png", "media/loadingscreen/loadingscreenpb.png", 1.0f, 0.2f);
 		this->zClient->Start();
+	}
 
 	return result;
 }

@@ -86,8 +86,6 @@ void MainMenu::Init()
 
 	eng->PreLoadResources(27, object);
 
-	eng->StartRendering();
-
 	Element* temp;
 
 	//MAINMENU
@@ -123,6 +121,7 @@ void MainMenu::Init()
 	float AdressY = ((384.0f / 768.0f) * windowHeight) - (((137.0f / 768.0f) * windowHeight) / 2);
 	temp = new GUIPicture(AdressX, AdressY, 1, 
 		"Media/Menu/ConnectMenu/Connect_BG.png", (564.0f / 1024.0f) * dx, (137.0f / 768.0f) * windowHeight);
+
 	zSets[GETIPADRESS].AddElement(temp);
 
 	//IPAddress
@@ -324,8 +323,9 @@ void MainMenu::Run()
 	{
 		zSets[zPrimarySet].AddSetToRenderer(GetGraphics());
 		GraphicsEngine* eng = GetGraphics();
+		eng->StartRendering();
 
-		eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.0f, 0.0f, 0.0f);
+		//eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.0f, 0.0f, 0.0f);
 		bool run = true;
 
 		eng->GetCamera()->SetUpdateCamera(false);
@@ -709,7 +709,6 @@ void MainMenu::StartGameWithIPField()
 	}
 	if (result)
 	{
-		GetGraphics()->ShowLoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 10.2f);
 		this->zGame->Run();
 	}
 

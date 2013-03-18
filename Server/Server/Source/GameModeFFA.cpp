@@ -559,8 +559,6 @@ void GameModeFFA::PossessAnAnimal(GhostActor* gActor)
 				this->zGame->GetActorManager()->RemoveActor(gActor);
 			}
 		}
-
-
 	}
 	else
 	{
@@ -584,6 +582,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 	pActor->GetInventory()->UnEquipAll();
+	pActor->GetInventory()->RemoveObserver(player);
 
 	this->zGame->ModifyLivingPlayers(-1);
 
@@ -617,7 +616,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 		if (model.length() > 4)
 		{
 			if (model.substr(model.length() - 4) == ".fbx")
-				model = "Media/Models/temp_guy.obj";
+				model = "media/models/temp_guy.obj";
 		}
 
 		PhysicsObject* pObj = GetPhysics()->CreatePhysicsObject(model, position);
@@ -682,7 +681,6 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	aManager->AddActor(newActor);
 
 	delete PCP;
-
 }
 
 void GameModeFFA::OnPlayerAnimalDeath(AnimalActor* aActor)

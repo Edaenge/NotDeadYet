@@ -46,14 +46,17 @@ bool InventorySlotGui::AddToRenderer(GraphicsEngine* ge)
 	if (ge)
 	{
 		GuiElement::AddToRenderer(ge); 
-
+		this->SetStrata(310.0f);
 		if(this->zGid.zCanStack && !this->zStackText)
+		{
 			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/new");
+			this->zStackText->SetStrata(250.0f);
+		}
 
 		if(!this->zSlotImage && this->zGid.zFilePath != "Unknown")
 		{
 			this->zSlotImage = ge->CreateImage(Vector2(this->zX, this->zY), this->GetDimension(), this->zGid.zFilePath.c_str());
-			this->zSlotImage->SetStrata(10.0f);
+			this->zSlotImage->SetStrata(300.0f);
 		}
 		this->ShowGui();
 		return true;
@@ -151,12 +154,14 @@ void InventorySlotGui::AddItemToSlot( Gui_Item_Data gid, bool invOpen, GraphicsE
 	if(invOpen)
 	{
 		if(this->zGid.zCanStack && !this->zStackText)
+		{
 			this->zStackText = ge->CreateText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str(), GetPosition(), 0.5f, "Media/Fonts/new");
-
+			this->zStackText->SetStrata(150.0f);
+		}
 		if(!this->zSlotImage && this->zGid.zFilePath != "Unknown")
 		{
 			this->zSlotImage = ge->CreateImage(Vector2(this->zX, this->zY), this->GetDimension(), this->zGid.zFilePath.c_str());
-			this->zSlotImage->SetStrata(10.0f);
+			this->zSlotImage->SetStrata(200.0f);
 		}
 	}
 	this->zBlocked = true;

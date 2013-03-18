@@ -8,6 +8,7 @@ PlayerActor::PlayerActor(Player* player, PhysicsObject* physObj, Observer* game)
 	: BioActor(player, game)
 {
 	SetPhysicsObject(physObj);
+	this->zInventory->AddObserver(player);
 
 	this->SetScale(Vector3(0.05f, 0.05f, 0.05f), false);
 

@@ -107,9 +107,7 @@ void ActorSynchronizer::AddAnimation(BioActor* bActor)
 				animation = WALK_RIGHT;
 			break;
 		case STATE_RUNNING:
-
 			animation = SPRINT;
-
 			break;
 		case STATE_EQUIP_WEAPON:
 			item = bActor->GetInventory()->GetPrimaryEquip();
@@ -155,6 +153,9 @@ void ActorSynchronizer::AddAnimation(BioActor* bActor)
 			break;
 		case STATE_BUSY:
 			animation = BUSY;
+			break;
+		case STATE_DEAD:
+			animation = IDLE_O1;
 			break;
 		default:
 			animation = "";

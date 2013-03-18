@@ -48,20 +48,21 @@ void Client::AddActor( NewActorPacket* NAP )
 
 				if (ID == this->zID)
 				{
+					this->zGuiManager->ResetGui();
+					this->zPlayerInventory->ClearAll();
+
+					this->zCreated = true;
+
 					if (!this->zReady)
 					{
-						this->zEng->DeleteImage(this->zBlackImage);
-						this->zBlackImage = NULL;
-						this->zEng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.2f, 0.2f, 0.2f);
+						//this->zEng->DeleteImage(this->zBlackImage);
+						//this->zBlackImage = NULL;
+						this->zEng->LoadingScreen("media/loadingScreen/loadingscreenbg.png", "media/loadingscreen/loadingscreenpb.png", 0.0f, 0.2f, 0.2f, 0.2f);
 						ambientMusic->Play();
 						ambientMusic->Setvolume(0.2f);
 
 						this->zReady = true;
 					}
-					this->zGuiManager->ResetGui();
-					this->zPlayerInventory->ClearAll();
-
-					this->zCreated = true;
 
 					auto meshOffsetsIterator = this->zMeshCameraOffsets.find(model);
 					if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
@@ -82,7 +83,6 @@ void Client::AddActor( NewActorPacket* NAP )
 						this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
 						this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
 					//}
-					
 					
 					if (this->zActorType == GHOST)
 					{

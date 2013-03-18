@@ -141,5 +141,5 @@ public:
 	void SetCameraOffset(Vector3 offset) {this->zCameraOffset = offset;}
 
 	Player* GetPlayer(){ return this->zPlayer; }
-	void SetPlayer(Player* player) {this->zPlayer = player; this->zInventory->SetPlayer(player);}
+	void SetPlayer(Player* player) {this->zPlayer = player;}
 };

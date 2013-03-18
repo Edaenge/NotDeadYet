@@ -169,7 +169,7 @@ bool PlayerHumanBehavior::Update( float dt )
 			}
 		}
 	}
-	else if(keyStates.GetKeyState(KEY_SPRINT) && !pActor->GetExhausted() && !pActor->GetUsingBow())
+	else if(keyStates.GetKeyState(KEY_SPRINT) && !pActor->GetExhausted() && !pActor->GetUsingBow() && keyStates.GetKeyState(KEY_FORWARD))
 	{
 		pActor->SetHasSprinted(true);
 

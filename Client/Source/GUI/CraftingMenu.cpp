@@ -151,11 +151,13 @@ void CraftingMenu::UpdateCrafting(std::vector<InventorySlotGui*> inventory)
 			for(auto item = inventory.begin(); item != inventory.end(); item++)
 			{
 				if((*item)->GetGid().zSubType == (int)subType->first)
-					if((*item)->GetGid().zStacks >= subType->second)
+				{
+					if((*item)->GetGid().zStacks >= (int)subType->second)
 					{
 						materialFound = true;
 						break;
 					}
+				}
 			}
 			if(!materialFound)
 			{
@@ -186,6 +188,7 @@ void CraftingMenu::UpdateCrafting(std::vector<InventorySlotGui*> inventory)
 bool CraftingMenu::AddToRenderer( GraphicsEngine* ge )
 {
 	GuiElement::AddToRenderer(ge);
+	this->SetStrata(350.0f);
 	for (auto x = this->zSlotGui.begin(); x != this->zSlotGui.end(); x++)
 	{
 		(*x)->AddToRenderer(ge);
