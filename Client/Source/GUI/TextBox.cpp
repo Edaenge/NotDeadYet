@@ -67,6 +67,7 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 {
 	Element::AddToRenderer(ge);
 	this->mPointText = ge->CreateText(this->mText.c_str(), this->GetPosition() + Vector2(3.0f, -1.0f), mTextSize, "Media/Fonts/new");
+	this->mPointText->SetStrata(300.0f);
 
 	return true;
 }

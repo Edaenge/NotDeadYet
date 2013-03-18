@@ -36,7 +36,7 @@
 #include "sounds.h"
 #include "SupplyActor.h"
 #include "BehaviorManager.h"
-
+#include "BerryBushSpawner.h"
 
 
 static const float PI = 3.14159265358979323846f;
@@ -48,9 +48,6 @@ static const float SUN_UPDATE_DELAY = 0.5f;
 //Total Sun Update Time in Seconds (6h atm) 
 static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 
-//Expected playtime
-static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
-
 #define ARROWMAXSPEED 35.0f
 #define ARROWMAXLOADTIME 2.0f
 #define ARROWSPEEDPERSEC (ARROWMAXSPEED / ARROWMAXLOADTIME)
@@ -59,10 +56,13 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	zSyncher(syncher),
 	zPhysicsEngine(physics),
 	zMaterialSpawnManager(0),
-	zBehaviorManager(0)
+	zBehaviorManager(0),
+	zMaxNrOfPlayers(maxClients),
+	zPlayersAlive(0),
+	zPerf(0)
 {	
 
-	this->zPerf = NULL;
+	// Camera Offsets
 	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	
 	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
 	this->zCameraOffset["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
@@ -74,16 +74,16 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zPlayerModels["media/models/deer_anims.fbx"] = "media/models/deer_temp.obj";
 	this->zPlayerModels["media/models/ghost.obj"] = "media/models/ghost.obj";
 	
-// Create World
+	// Create World
 	if(worldFile != "")
 		this->zWorld = new World(this, worldFile.c_str());
 	else
 		this->zWorld = new World(this, 10, 10);  // Handle Error.
 
-//Create Crafting Manager
+	// Create Crafting Manager
 	this->zCraftingManager = new CraftingManager();
 
-// Load Entities
+	// Load Entities
 	LoadEntList("Entities.txt");
 
 	// Actor Manager
@@ -98,14 +98,17 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	// Material Spawner
 	zMaterialSpawnManager = new MaterialSpawnManager(zWorld, zActorManager);
 
+	// Berry Bush Spawner
+	zBerryBushSpawner = new BerryBushSpawner(zWorld, zActorManager);
+
+	// Items and Crafting
 	InitItemLookup();
 	InitCraftingRecipes();
-//Initialize Player Configuration file
-	InitPlayerConfig();
 
-	this->zMaxNrOfPlayers = maxClients;
+	//Initialize Player Configuration file
+	InitPlayerConfig();
 	
-//Create GameMode
+	//Create GameMode
 	if (mode.find("FFA") == 0 )
 	{
 		this->zGameMode = new GameModeFFA(this);
@@ -119,42 +122,24 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 		this->zGameMode = new GameModeFFA(this);
 	}
 
-	//DEBUG;
+	// Debug Functions
 	this->SpawnItemsDebug();
-//	this->SpawnAnimalsDebug();
-//	this->SpawnHumanDebug();
+	this->SpawnAnimalsDebug();
+	//this->SpawnHumanDebug();
+	// Sun Direction
+	this->ResetSunDirection();
 
-//Initialize Sun Direction
-	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
-
-	float radius = mapCenter2D.x;
-	float angle = TOTAL_SUN_DEGREE_SHIFT * 0.5f;
-	float x = mapCenter2D.x + radius * sin(angle);
-
-	this->zMapCenter = Vector3(mapCenter2D.x, 0.0f, mapCenter2D.y);
-	this->zCurrentSunPosition = Vector3(x, 10000.0f, 0.0f);
-
-	this->zCurrentSunDirection =  zMapCenter - this->zCurrentSunPosition;
-	this->zCurrentSunDirection.Normalize();
-
-	this->zSunTimer = 0.0f;
-
-	this->zTotalSunRadiansShift = 0.0f;
-	this->zSunRadiansShiftPerUpdate = TOTAL_SUN_DEGREE_SHIFT / (SUN_UPDATE_DELAY * TOTAL_SUN_UPDATE_TIME);
-
-	//Fog Enclosement
-	this->zPlayersAlive = 0;
-
+	// Fog Enclosement
 	this->ResetFogEnclosement();
 
-	
 	//Used for caching fbx files dont change the function.
 	//this->Caching("media/models/token_anims.fbx");
 }
 
 Game::~Game()
 {
-	this->zPerf->PreMeasure("Deleting Game", 3);
+	if ( zPerf ) this->zPerf->PreMeasure("Deleting Game", 3);
+
 	// Delete Players
 	for( auto i = this->zPlayers.begin(); i != this->zPlayers.end(); ++i )
 	{
@@ -169,6 +154,7 @@ Game::~Game()
 
 	// Delete Subsystems
 	SAFE_DELETE(zSoundHandler);
+	SAFE_DELETE(zBerryBushSpawner);
 	SAFE_DELETE(zMaterialSpawnManager);
 	SAFE_DELETE(zCraftingManager);
 	SAFE_DELETE(zActorManager);
@@ -179,15 +165,15 @@ Game::~Game()
 	FreePlayerConfig();
 	FreeCraftingRecipes();
 
-	this->zPerf->PostMeasure("Deleting Game", 3);
+	if ( zPerf ) this->zPerf->PostMeasure("Deleting Game", 3);
 }
 
 void Game::SpawnAnimalsDebug()
 {
 	srand((unsigned int)time(0));
 	
-	int increment = 0;
-	for(int i = 0; i < 1; i++)
+	unsigned int increment = 0;
+	for(unsigned int i = 0; i < 8; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -226,7 +212,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(int i = 0; i < 0; i++)
+	for(unsigned int i = 0; i < 3; i++)	
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -241,7 +227,7 @@ void Game::SpawnAnimalsDebug()
 		Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 
 		bActor->SetPosition(position);
-		bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
+		bActor->SetScale(Vector3(0.09f, 0.09f, 0.09f));
 
 		const Food* temp_Bear_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BEAR_FOOD);
 
@@ -284,17 +270,17 @@ void Game::SpawnItemsDebug()
 	const Misc*			temp_Trap		= GetItemLookup()->GetMisc(ITEM_SUB_TYPE_REGULAR_TRAP);
 
 	unsigned int increment = 0;
-	int maxPoints = 10;
+	unsigned int maxPoints = 10;
 	float radius = 3.5f;
 	int numberOfObjects = 12;
 	int total = 0;
 	Vector3 center;
 	Vector3 position;
 	Vector2 tempCenter = this->zWorld->GetWorldCenter();
-	for (int i = 0; i < maxPoints; i++)
+	for (unsigned int i = 0; i < maxPoints; i++)
 	{
 		center = Vector3(tempCenter.x, 0, tempCenter.y);
-		int currentPoint = i % maxPoints;
+		unsigned int currentPoint = i % maxPoints;
 
 		center = this->CalcPlayerSpawnPoint(currentPoint, maxPoints, 17.0f, center);
 
@@ -531,8 +517,8 @@ bool Game::Update( float dt )
 	this->UpdateFogEnclosement(dt);
 	NetworkMessageConverter NMC;
 	std::string msg;
-
-	this->zPerf->PreMeasure("Updating Behaviors", 1);
+;
+	if ( zPerf ) this->zPerf->PreMeasure("Updating Behaviors", 1);
 	std::set<Behavior*> &behaviors = this->zActorManager->GetBehaviors();
 
 	// Update Behaviors
@@ -554,6 +540,7 @@ bool Game::Update( float dt )
 			}
 		}
 	}
+
 	while( i != behaviors.end() )
 	{
 		if (!(*i)->Removed())
@@ -600,18 +587,22 @@ bool Game::Update( float dt )
 		}
 		
 	}
-	this->zPerf->PostMeasure("Updating Behaviors", 1);
 
-	this->zPerf->PreMeasure("Updating GameMode", 4);
+	if ( zPerf ) this->zPerf->PostMeasure("Updating Behaviors", 1);
+	if ( zPerf ) this->zPerf->PreMeasure("Updating GameMode", 4);
+
 	// Update Game Mode, Might Notify That GameMode is Finished
 	if ( this->zGameMode->Update(dt) )
 		return false;
-	this->zPerf->PostMeasure("Updating GameMode", 4);
 
-	this->zPerf->PreMeasure("Updating World", 4);
+	if ( zPerf ) this->zPerf->PostMeasure("Updating GameMode", 4);
+	if ( zPerf ) this->zPerf->PreMeasure("Updating World", 4);
+
 	// Update World
 	this->zWorld->Update();
-	this->zPerf->PostMeasure("Updating World", 4);
+
+
+	if ( zPerf ) this->zPerf->PostMeasure("Updating World", 4);
 
 	//Updating animals and Check fog.
 	static float testUpdater = 0.0f;
@@ -620,7 +611,7 @@ bool Game::Update( float dt )
 
 	if(testUpdater > 4.0f)
 	{
-		this->zPerf->PreMeasure("Updating animal targets", 2);
+		if ( zPerf ) this->zPerf->PreMeasure("Updating animal targets", 2);
 		//Creating targets to insert into the animals' behaviors
 		std::set<Actor*> aSet;
 
@@ -657,7 +648,7 @@ bool Game::Update( float dt )
 			}
 		}
 		testUpdater = 0.0f;
-		this->zPerf->PostMeasure("Updating animal targets", 2);
+		if ( zPerf ) this->zPerf->PostMeasure("Updating animal targets", 2);
 	}
 
 	// Game Still Active
@@ -667,7 +658,7 @@ bool Game::Update( float dt )
 void Game::OnEvent( Event* e )
 {
 	// TODO: Incoming Message
-	if (this->zPerf)
+	if (this->zPerf) 
 		this->zPerf->PreMeasure("Game Event Handling", 2);
 
 	if ( PlayerConnectedEvent* PCE = dynamic_cast<PlayerConnectedEvent*>(e) )
@@ -696,9 +687,7 @@ void Game::OnEvent( Event* e )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
 		if(KDE->key == MOUSE_LEFT_PRESS)
-		{
 			this->CheckPlayerUseBow(this->zPlayers[KDE->clientData]);
-		}
 	}
 	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )
 	{
@@ -751,11 +740,11 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerLootItemEvent* PLIE = dynamic_cast<PlayerLootItemEvent*>(e) )
 	{
+
 		if(zGameMode->IsGameStarted())
-		{
-			this->zPerf->PreMeasure("Loot Event Handling", 3);
+		{			if ( zPerf ) this->zPerf->PreMeasure("Loot Event Handling", 3);
 			this->HandleLootItem(PLIE->clientData, PLIE->itemID, PLIE->itemType, PLIE->objID, PLIE->subType);
-			this->zPerf->PostMeasure("Loot Event Handling", 3);	
+			if ( zPerf ) this->zPerf->PostMeasure("Loot Event Handling", 3);	
 		}
 	}
 	else if ( PlayerDropItemEvent* PDIE = dynamic_cast<PlayerDropItemEvent*>(e) )
@@ -767,14 +756,13 @@ void Game::OnEvent( Event* e )
 	{
 		if(zGameMode->IsGameStarted())
 		{
-			this->zPerf->PreMeasure("Use Event Handling", 3);
+			if ( zPerf ) this->zPerf->PreMeasure("Use Event Handling", 3);
 			this->HandleUseItem(PUIE->clientData, PUIE->itemID);
-			this->zPerf->PostMeasure("Use Event Handling", 3);
-		}
-	}
+			if ( zPerf ) this->zPerf->PostMeasure("Use Event Handling", 3);
+		}	}
 	else if (PlayerCraftItemEvent* PCIE = dynamic_cast<PlayerCraftItemEvent*>(e))
 	{
-		this->zPerf->PreMeasure("Craft Event Handling", 3);
+		if ( zPerf ) this->zPerf->PreMeasure("Craft Event Handling", 3);
 		if(this->HandleCraftItem(PCIE->clientData, PCIE->craftedItemType, PCIE->craftedItemSubType))
 		{
 			if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PCIE->clientData]->zBehavior->GetActor()))
@@ -783,7 +771,7 @@ void Game::OnEvent( Event* e )
 				this->zPlayers[PCIE->clientData]->zBehavior->Sleep(5.0f);
 			}
 		}
-		this->zPerf->PostMeasure("Craft Event Handling", 3);
+		if ( zPerf ) this->zPerf->PostMeasure("Craft Event Handling", 3);
 	}
 	else if (PlayerFillItemEvent* PFIE = dynamic_cast<PlayerFillItemEvent*>(e))
 	{
@@ -791,9 +779,9 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
-		this->zPerf->PreMeasure("Weapon Use Event Handling", 3);
+		if ( zPerf ) this->zPerf->PreMeasure("Weapon Use Event Handling", 3);
 		this->HandleUseWeapon(PUEWE->clientData, PUEWE->itemID);
-		this->zPerf->PostMeasure("Weapon Use Event Handling", 3);
+		if ( zPerf ) this->zPerf->PostMeasure("Weapon Use Event Handling", 3);
 	}
 	else if(PlayerAnimalAttackEvent* PAAE = dynamic_cast<PlayerAnimalAttackEvent*>(e))
 	{
@@ -837,15 +825,23 @@ void Game::OnEvent( Event* e )
 	}
 	else if (PlayerEquipItemEvent* PEIE = dynamic_cast<PlayerEquipItemEvent*>(e) )
 	{
-		this->zPerf->PreMeasure("Equip Event Handling", 3);
+		if ( zPerf ) 
+			this->zPerf->PreMeasure("Equip Event Handling", 3);
+
 		this->HandleEquipItem(PEIE->clientData, PEIE->itemID);
-		this->zPerf->PostMeasure("Equip Event Handling", 3);
+		
+		if ( zPerf ) 
+			this->zPerf->PostMeasure("Equip Event Handling", 3);
 	}
 	else if (PlayerUnEquipItemEvent* PUEIE = dynamic_cast<PlayerUnEquipItemEvent*>(e) )
 	{
-		this->zPerf->PreMeasure("UnEquip Event Handling", 3);
+		if ( zPerf ) 
+			this->zPerf->PreMeasure("UnEquip Event Handling", 3);
+
 		this->HandleUnEquipItem(PUEIE->clientData, PUEIE->itemID);
-		this->zPerf->PostMeasure("UnEquip Event Handling", 3);
+
+		if ( zPerf ) 
+			this->zPerf->PostMeasure("UnEquip Event Handling", 3);
 	}
 	else if(PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
 	{
@@ -1152,7 +1148,7 @@ void Game::OnEvent( Event* e )
 		message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 		this->SendToAll(message);
 
-		this->zPerf->PostMeasure("Player Connecting", 2);
+		if ( zPerf ) this->zPerf->PostMeasure("Player Connecting", 2);
 	}
 	else if ( WorldLoadedEvent* WLE = dynamic_cast<WorldLoadedEvent*>(e) )
 	{
@@ -1169,73 +1165,15 @@ void Game::OnEvent( Event* e )
 		if (bActor)
 			bActor->Kill();
 	}
-	else if (InventoryAddItemEvent* IAIE = dynamic_cast<InventoryAddItemEvent*>(e))
-	{
-		NetworkMessageConverter NMC;
-		std::string msg = NMC.Convert(MESSAGE_TYPE_ADD_INVENTORY_ITEM);
-		msg += IAIE->item->ToMessageString(&NMC);
-
-		IAIE->cd->Send(msg);
-	}
-	else if (InventoryRemoveItemEvent* IRIE = dynamic_cast<InventoryRemoveItemEvent*>(e))
-	{
-		NetworkMessageConverter NMC;
-		std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)IRIE->ID);
-
-		IRIE->cd->Send(msg);
-	}
-	else if (InventoryEquipItemEvent* IEIE = dynamic_cast<InventoryEquipItemEvent*>(e))
-	{
-		NetworkMessageConverter NMC;
-
-		std::string msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)IEIE->id);
-		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)IEIE->slot);
-		IEIE->cd->Send(msg);
-	}
-	else if (InventoryUnEquipItemEvent* IUIE = dynamic_cast<InventoryUnEquipItemEvent*>(e))
-	{
-		NetworkMessageConverter NMC;
-
-		std::string msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)IUIE->id);
-		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)IUIE->slot);
-		IUIE->cd->Send(msg);
-	}
 	else if (InventoryBindPrimaryWeapon* IBPW = dynamic_cast<InventoryBindPrimaryWeapon*>(e))
 	{
-		this->HandleBindings(IBPW->clientData, IBPW->ID, IBPW->model, IBPW->type, IBPW->subType);
+		this->HandleBindings(IBPW->ID, IBPW->model, IBPW->type, IBPW->subType);
 	}
 	else if (InventoryUnBindPrimaryWeapon* IUBPW = dynamic_cast<InventoryUnBindPrimaryWeapon*>(e))
 	{
 		NetworkMessageConverter NMC;
 		std::string msg;
 
-		Actor* actor = this->zPlayers[IUBPW->clientData]->GetBehavior()->GetActor();
-
-		if (PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor))
-		{
-			Inventory* inv = pActor->GetInventory();
-
-			Item* item = inv->GetPrimaryEquip();
-
-			if (item)
-			{
-				if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
-				{
-					pActor->SetState(STATE_UNEQUIP_WEAPON);
-				}
-				else if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
-				{
-					if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
-					{
-						pActor->SetState(STATE_UNEQUIP_WEAPON);
-					}
-					else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
-					{
-
-					}
-				}
-			}
-		}
 		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)IUBPW->ID);
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, IUBPW->model);
 		this->SendToAll(msg);
@@ -1245,7 +1183,9 @@ void Game::OnEvent( Event* e )
 		PrintDebugData(PDDE->clientData, PDDE->type);
 	}
 
+	// TODO: Not supposed to be here, managers should directly observe things
 	NotifyObservers(e);
+
 	if (this->zPerf)
 		this->zPerf->PostMeasure("Game Event Handling", 2);
 }
@@ -1345,7 +1285,7 @@ void Game::SetPlayerBehavior( Player* player, PlayerBehavior* behavior )
 
 Vector3 Game::CalcPlayerSpawnPoint(int currentPoint, int maxPoints, float radius, Vector3 center)
 {
-	float slice  = 2 * PI / maxPoints;
+	float slice  = 2.0f * PI / maxPoints;
 
 	float angle = slice * currentPoint;
 
@@ -1482,7 +1422,7 @@ void Game::HandleConnection( ClientData* cd )
 void Game::HandleDisconnect( ClientData* cd )
 {
 	// Delete Player Behavior
-	auto playerIterator = zPlayers.find(cd);
+	auto playerIterator = this->zPlayers.find(cd);
 
 	//If no player was found, this client do not have any mesh nor actor.
 	//He does not exist, return.
@@ -1507,6 +1447,10 @@ void Game::HandleDisconnect( ClientData* cd )
 	{
 		Actor* pActor = pHuman->GetActor();
 		dynamic_cast<BioActor*>(pActor)->Kill();
+		Behavior* behavior = playerIterator->second->GetBehavior();
+		if (behavior && behavior->GetActor())
+			this->zActorManager->RemoveActor(behavior->GetActor());
+		
 		this->zPlayersAlive--;
 	}
 		
@@ -2019,6 +1963,11 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 							}
 						}
 					}
+					else
+					{
+						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You Are not Bleeding");
+						cd->Send(msg);
+					}
 				}
 			}
 		}
@@ -2463,15 +2412,8 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID )
 	}
 }
 
-void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType)
+void Game::HandleBindings(const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType)
 {
-	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
-
-	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
-
-	if (!pActor)
-		return;
-
 	std::string msg;
 	NetworkMessageConverter NMC;
 
@@ -2483,7 +2425,6 @@ void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::stri
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
-			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 	}
 	else if (type == ITEM_TYPE_WEAPON_MELEE)
@@ -2494,8 +2435,6 @@ void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::stri
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
-
-			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 		else if (subType == ITEM_SUB_TYPE_POCKET_KNIFE)
 		{
@@ -2503,8 +2442,6 @@ void Game::HandleBindings(ClientData* cd, const unsigned int ID, const std::stri
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
-
-			pActor->SetState(STATE_EQUIP_WEAPON);
 		}
 	}
 	else if (type == ITEM_TYPE_PROJECTILE && subType == ITEM_SUB_TYPE_ROCK)
@@ -2532,18 +2469,42 @@ void Game::ModifyLivingPlayers( const int value )
 
 void Game::ResetFogEnclosement()
 {
+	//Expected playtime
+	static const float EXPECTED_PLAYTIME = 60.0f * 10.0f;
+
 	Vector2 worldSize = this->zWorld->GetWorldSize();
 
 	float radius = (worldSize.x + worldSize.y) * 0.25f;
 
 	this->zInitalFogEnclosement = radius;
 
-	this->zFogUpdateDelay = 30.0f;
+	this->zFogUpdateDelay = 1.0f;
 	this->zFogDecreaseCoeff = this->zFogUpdateDelay / EXPECTED_PLAYTIME;
 	this->zFogTotalDecreaseCoeff = 1.0f;
 	this->zFogTimer = 0.0f;
 
 	this->zCurrentFogEnclosement = this->zInitalFogEnclosement * this->zFogTotalDecreaseCoeff;
+}
+
+void Game::ResetSunDirection()
+{
+	//Initialize Sun Direction
+	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
+
+	float radius = mapCenter2D.x;
+	float angle = TOTAL_SUN_DEGREE_SHIFT * 0.5f;
+	float x = mapCenter2D.x + radius * sin(angle);
+
+	this->zMapCenter = Vector3(mapCenter2D.x, 0.0f, mapCenter2D.y);
+	this->zCurrentSunPosition = Vector3(x, 10000.0f, 0.0f);
+
+	this->zCurrentSunDirection =  zMapCenter - this->zCurrentSunPosition;
+	this->zCurrentSunDirection.Normalize();
+
+	this->zSunTimer = 0.0f;
+
+	this->zTotalSunRadiansShift = 0.0f;
+	this->zSunRadiansShiftPerUpdate = TOTAL_SUN_DEGREE_SHIFT / (SUN_UPDATE_DELAY * TOTAL_SUN_UPDATE_TIME);
 }
 
 Vector3 Game::GetOffset(const std::string& model)
@@ -2569,6 +2530,7 @@ void Game::RestartGame()
 
 	//Remove old messages
 	this->zSyncher->ClearAll();
+
 	
 	//Recreate Actors
 
@@ -2638,6 +2600,8 @@ void Game::RestartGame()
 	//SpawnItemsDebug();
 	//SpawnAnimalsDebug();
 	//SpawnHumanDebug();
+
+	this->ResetSunDirection();
 
 	this->ResetFogEnclosement();
 }

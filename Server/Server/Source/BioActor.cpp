@@ -6,7 +6,7 @@ BioActor::BioActor() : Actor()
 {
 	this->zPlayer = NULL;
 
-	zInventory = new Inventory();
+	zInventory = new Inventory(this->GetID());
 	this->zState = STATE_IDLE;
 	this->zVelocity = V_WALK_SPEED;
 
@@ -30,9 +30,8 @@ BioActor::BioActor(Player* player, Observer* game) : Actor()
 {
 	this->zPlayer = player;
 
-	this->zInventory = new Inventory();
+	this->zInventory = new Inventory(this->GetID());
 	this->zInventory->AddObserver(game);
-	this->zInventory->SetPlayer(player);
 
 	this->zState = STATE_IDLE;
 	this->zVelocity = V_WALK_SPEED;
@@ -129,6 +128,8 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 			GetPhysics()->DeletePhysicsObject(pObject);
 			this->SetPhysicsObject(NULL);
 		}
+
+		this->SetState(STATE_DEAD);
 	}
 	
 	return this->zAlive;

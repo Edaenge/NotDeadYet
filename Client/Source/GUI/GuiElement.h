@@ -45,6 +45,7 @@ public:
 	virtual bool AddToRenderer(GraphicsEngine* ge);
 	/*! Removes the GuiElement From the Renderer and Stops Rendering it*/
 	virtual bool RemoveFromRenderer(GraphicsEngine* ge);
+	void SetStrata(float value){ if(this->zGuiImage) this->zGuiImage->SetStrata(value); this->zStrata = value; }
 
 	void SetDimension(Vector2 dim){ if(this->zGuiImage) zGuiImage->SetDimensions(dim); this->SetWidth(dim.x); this->SetHeight(dim.y); }
 
@@ -61,6 +62,7 @@ protected:
 	bool zHidden;
 	bool zPressed;
 	bool zHovered;
+	float zStrata;
 	float zOpacity;
 	iImage* zGuiImage;
 	std::string zTextureName;

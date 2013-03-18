@@ -259,8 +259,8 @@ void AIDeerBehavior::SetFearLevel(float fear)
 
 bool AIDeerBehavior::InitPathfinder()
 {
-	this->zPathfinder.InitAI(0.5,3840); //For big map.
-	//this->zPathfinder.InitAI(0.5,90); //For small testing map.
+	//this->zPathfinder.InitAI(0.5,3840); //For big map.
+	this->zPathfinder.InitAI(0.5,90); //For small testing map.
 	this->zPathfinder.SetWorldPointer(this->zWorld);
 	return true;
 }
@@ -861,10 +861,6 @@ bool AIDeerBehavior::Update( float dt )
 
 				//dActor->SetPosition(Vector3(50,0,50));
 			}
-
-			
-
-
 		}
 		
 		if(this->GetMentalState() == AFRAID && this->zCurrentDistanceFled < this->zFleeDistance)
@@ -875,15 +871,20 @@ bool AIDeerBehavior::Update( float dt )
 		{
 			this->SetIfNeedPath(true);
 		}
+		
+		float groundHeight = 0.0f;
+		try
+		{
+			groundHeight = this->zWorld->CalcHeightAtWorldPos( Vector2(dActor->GetPosition().x, dActor->GetPosition().z));
+		}
+		catch(...)
+		{
 
-		float height = this->zWorld->CalcHeightAtWorldPos( Vector2(dActor->GetPosition().x, dActor->GetPosition().z));
-
+		}
+		
 		Vector3 actorPosition = dActor->GetPosition();
-		actorPosition.y = height;
-
+		actorPosition.y = groundHeight;
 		dActor->SetPosition(actorPosition);
-
-	
 	
 
 	if(dActor->GetVelocity() == 0.0f)

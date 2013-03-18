@@ -24,6 +24,10 @@ MainMenu::~MainMenu()
 	delete menuClick;
 	menuClick = NULL;
 
+	menuSound->Release();
+	delete menuSound;
+	menuSound = NULL;
+
 	AudioManager::ReleaseInstance();
 }
 
@@ -41,6 +45,9 @@ void MainMenu::Init()
 	am->GetEventHandle(EVENTID_NOTDEADYET_MENU_N_BACKPACK_TOGGLE_N_CLICK, menuClick);
 	menuClick->Setvolume(0.2f);
 
+	am->GetEventHandle(EVENTID_NOTDEADYET_MUSIC_LOADING, menuSound);
+	menuSound->Setvolume(0.2f);
+	menuSound->Play();
 	GraphicsEngine* eng = GetGraphics();
 
 	eng->CreateSkyBox("Media/skymap.dds");
@@ -86,8 +93,6 @@ void MainMenu::Init()
 
 	eng->PreLoadResources(27, object);
 
-	eng->StartRendering();
-
 	Element* temp;
 
 	//MAINMENU
@@ -123,6 +128,7 @@ void MainMenu::Init()
 	float AdressY = ((384.0f / 768.0f) * windowHeight) - (((137.0f / 768.0f) * windowHeight) / 2);
 	temp = new GUIPicture(AdressX, AdressY, 1, 
 		"Media/Menu/ConnectMenu/Connect_BG.png", (564.0f / 1024.0f) * dx, (137.0f / 768.0f) * windowHeight);
+
 	zSets[GETIPADRESS].AddElement(temp);
 
 	//IPAddress
@@ -324,8 +330,9 @@ void MainMenu::Run()
 	{
 		zSets[zPrimarySet].AddSetToRenderer(GetGraphics());
 		GraphicsEngine* eng = GetGraphics();
+		eng->StartRendering();
 
-		eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.0f, 0.0f, 0.0f);
+		//eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.0f, 0.0f, 0.0f);
 		bool run = true;
 
 		eng->GetCamera()->SetUpdateCamera(false);
@@ -362,9 +369,13 @@ void MainMenu::Run()
 							this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet);
 
 							this->EnableMouse(false);
+							
+							menuSound->Stop();
 
 							this->StartTestRun();
 							
+							menuSound->Play();
+
 							delete this->zGame;
 
 							this->zGame = new Game();
@@ -709,8 +720,11 @@ void MainMenu::StartGameWithIPField()
 	}
 	if (result)
 	{
-		GetGraphics()->ShowLoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 10.2f);
+		menuSound->Stop();
+
 		this->zGame->Run();
+
+		menuSound->Play();
 	}
 
 	delete this->zGame;

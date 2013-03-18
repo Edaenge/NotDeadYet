@@ -165,10 +165,16 @@
     <ClCompile Include="Source\SupplyDropBehavior.cpp">
       <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Inventory.cpp">
+    <ClCompile Include="Source\BehaviorManager.cpp">
+      <Filter>Source\Handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BerryBushActor.cpp">
+      <Filter>Source\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BerryBushSpawner.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\BehaviorManager.cpp">
+    <ClCompile Include="Source\FootStepServer.cpp">
       <Filter>Source\Handlers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -335,14 +341,17 @@
     <ClInclude Include="Source\SupplyDropBehavior.h">
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Inventory.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\BehaviorManager.h">
       <Filter>Source\Handlers</Filter>
     </ClInclude>
-    <ClInclude Include="Source\InventoryEvents.h">
+    <ClInclude Include="Source\BerryBushActor.h">
+      <Filter>Source\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BerryBushSpawner.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FootStepServer.h">
+      <Filter>Source\Handlers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

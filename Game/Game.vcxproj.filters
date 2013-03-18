@@ -143,6 +143,12 @@
     <ClInclude Include="Include\World\WorldRendererSettings.h">
       <Filter>Header Files\World</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Inventory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\InventoryEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\World\Sector.cpp">
@@ -237,6 +243,9 @@
     </ClCompile>
     <ClCompile Include="Source\World\WorldRendererSettings.cpp">
       <Filter>Source Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Inventory.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

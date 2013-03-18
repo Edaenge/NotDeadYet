@@ -1,13 +1,15 @@
 #include "Client.h"
 #include "Graphics.h"
-#include <NetworkPacket.h>
-#include <ClientServerMessages.h>
-#include <ClientServerMessages.h>
-#include <World/EntityList.h>
-#include <World/Entity.h>
 #include "DebugMessages.h"
-#include <DisconnectedEvent.h>
 #include "PlayerConfig/PlayerSettings.h"
+#include "FootStepClient.h"
+
+#include <ClientServerMessages.h>
+#include <ClientServerMessages.h>
+#include <DisconnectedEvent.h>
+#include <World/EntityList.h>
+#include <NetworkPacket.h>
+#include <World/Entity.h>
 #include <algorithm>
 #include <ctime>
 
@@ -16,7 +18,8 @@ using namespace MaloW;
 // Timeout_value = 10 sek
 static const float TIMEOUT_VALUE = 10.0f;
 
-Client::Client()
+Client::Client() :
+	zFootSteps(0)
 {
 	Messages::ClearDebug();
 
@@ -71,6 +74,7 @@ Client::Client()
 	this->zAnchor = NULL;
 	this->zCrossHair = NULL;
 	this->zDamageIndicator = NULL;
+	this->zBlackImage = NULL;
 	this->zBleedingAndHealthIndicator = NULL;
 	this->zDamageOpacity = 0.0f;
 
@@ -104,20 +108,6 @@ Client::Client()
 	InitCraftingRecipes();
 }
 
-bool Client::Connect(const std::string &IPAddress, const unsigned int &port)
-{
-	bool result;
-	this->zIP = IPAddress;
-	this->zPort = port;
-	this->zServerChannel = new ServerChannel(this);
-	
-	result = this->zServerChannel->Connect(IPAddress, port);
-	if (result)
-		this->zServerChannel->Start();
-
-	return result;
-}
-
 Client::~Client()
 {
 	this->zPerf->PreMeasure("Deleting Client", 4);
@@ -125,6 +115,9 @@ Client::~Client()
 
 	this->Close();
 	this->WaitUntillDone();
+
+	// Delete Footsteps
+	if ( zFootSteps ) delete zFootSteps;
 
 	SAFE_DELETE(this->zGuiManager);
 	SAFE_DELETE(this->zActorManager);
@@ -189,6 +182,20 @@ Client::~Client()
 	SAFE_DELETE(this->zPerf);
 }
 
+bool Client::Connect(const std::string &IPAddress, const unsigned int &port)
+{
+	bool result;
+	this->zIP = IPAddress;
+	this->zPort = port;
+	this->zServerChannel = new ServerChannel(this);
+
+	result = this->zServerChannel->Connect(IPAddress, port);
+	if (result)
+		this->zServerChannel->Start();
+
+	return result;
+}
+
 void Client::Update()
 {
 	this->UpdateText();
@@ -209,7 +216,8 @@ void Client::Update()
 	{
 		if (zAnchor)
 		{
-			Vector2 cameraPos = this->zEng->GetCamera()->GetPosition().GetXZ();
+			iCamera* camera = this->zEng->GetCamera();
+			Vector2 cameraPos = camera->GetPosition().GetXZ();
 
 			this->zAnchor->position = cameraPos;
 			this->zEng->SetSceneAmbientLight(this->zWorld->GetAmbientAtWorldPos(cameraPos));
@@ -232,8 +240,15 @@ void Client::Update()
 	{
 		this->UpdateHealthAndBleedingImage();
 	}
+	else
+	{
+		if(this->zBleedingAndHealthIndicator)
+		{
+			this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
+		}
+	}
 
-	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
+	this->zDamageOpacity -= this->zDeltaTime * 0.15f;
 
 	if(this->zDamageIndicator)
 	{
@@ -255,20 +270,32 @@ void Client::Update()
 void Client::InitGraphics(const std::string& mapName)
 {
 	if (!this->zActorManager)
-		this->zActorManager = new ClientActorManager();
+	{
+		this->zActorManager = new ClientActorManager(zFootSteps);
+	}
 	else
+	{
 		this->zActorManager->ClearAll();
+	}
 
 	if (!this->zPlayerInventory)
+	{
 		this->zPlayerInventory = new Inventory();
+	}
 	else
+	{
 		this->zPlayerInventory->ClearAll();
+	}
 
 	if (!this->zGuiManager)
+	{
 		this->zGuiManager = new GuiManager(this->zEng);
+	}
 	else
+	{
 		this->zGuiManager->ResetGui();
-	
+	}
+
 	this->zActorManager->SetFBXMapping(this->zModelToReaderMap);
 
 	LoadEntList("Entities.txt");
@@ -318,9 +345,10 @@ void Client::InitGraphics(const std::string& mapName)
 	float yPos = (windowHeight / 2.0f) - length * 0.5f;
 
 	this->zWorld->Update();
-	for(int i = 0; i < 50; i++)
+	
+	while(this->zWorldRenderer->Update())
 	{
-		this->zWorldRenderer->Update();
+
 	}
 	
 	
@@ -494,27 +522,47 @@ void Client::CheckMenus()
 			this->zPam->ToggleMenu();
 			zShowCursor = this->zPam->GetShow();
 
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_LEAVE_ANIMAL);
+			if (this->zActorType != GHOST)
+			{
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_LEAVE_ANIMAL);
 
-			this->zServerChannel->Send(msg);
+				this->zServerChannel->Send(msg);
+			}
 		}
 		if(returnValue == DEER)
 		{
-			this->zPam->ToggleMenu();
-			zShowCursor = this->zPam->GetShow();
-
-			// MAKE ME A DEER.
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
-			this->zServerChannel->Send(msg);
+			if (this->zActorType == GHOST)
+			{
+				this->zPam->ToggleMenu();
+				zShowCursor = this->zPam->GetShow();
+				// MAKE ME A DEER.
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 0);
+				this->zServerChannel->Send(msg);
+			}
+			else
+			{
+				std::string msg = "Only Possible as a ghost";
+				this->AddDisplayText(msg, true);
+			}
 		}
 		if(returnValue == BEAR)
 		{
-			this->zPam->ToggleMenu();
-			zShowCursor = this->zPam->GetShow();
+			if (this->zActorType == GHOST)
+			{
+				this->zPam->ToggleMenu();
+				zShowCursor = this->zPam->GetShow();
 
-			// MAKE ME A BEAR.
-			std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
-			this->zServerChannel->Send(msg);
+				// MAKE ME A BEAR.
+				std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_PLAY_AS_ANIMAL, 2);
+				this->zServerChannel->Send(msg);
+			}
+			else
+			{
+				std::string msg = "Only Possible as a ghost";
+				this->AddDisplayText(msg, true);
+			}
+
+			
 		}
 	}
 	if (this->zIgm->GetShow())
@@ -2049,7 +2097,7 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 	Actor* actor = this->zActorManager->GetActor(ID);
 	Actor* player = this->zActorManager->GetActor(this->zID);
 
-	this->zHealth -= damageTaken;
+	//this->zHealth -= damageTaken;
 
 	if(!player)
 	{
@@ -2067,7 +2115,7 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 	Vector3 resultingVector = actorPos - playerPos;
 	resultingVector.Normalize();
 
-	if(this->zDamageIndicator == NULL && this->zHealth < 0.0f)
+	if(this->zDamageIndicator == NULL && this->zHealth > 0.0f)
 	{
 		float windowHeight = (float)this->zEng->GetEngineParameters().WindowHeight;
 		float windowWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
@@ -2536,7 +2584,7 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 void Client::UpdatePhysicalCondition( PhysicalConditionPacket* PCP )
 {
 	if(PCP->zHealth != -1.0f)
-		this->zHealth = PCP->zHealth;
+		this->zHealth = PCP->zHealth; // this->zHealth = PCP->zStamina;//
 
 	if(PCP->zEnergy != -1.0f)
 		this->zEnergy = PCP->zEnergy;

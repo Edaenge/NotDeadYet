@@ -83,6 +83,10 @@ bool PlayerGhostBehavior::Update( float dt )
 		{
 			newPlayerPos.y = newGroundHeight;
 		}
+		else if (newPlayerPos.y > newGroundHeight + 50.0f)
+		{
+			newPlayerPos.y = newGroundHeight + 50.0f;
+		}
 
 		zActor->SetPosition(newPlayerPos);
 	}

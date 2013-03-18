@@ -25,6 +25,7 @@ class AnimalActor;
 class CraftingManager;
 class MaterialSpawnManager;
 class BehaviorManager;
+class BerryBushSpawner;
 
 class Game : public Observer, public Observed
 {
@@ -40,14 +41,17 @@ private:
 	SoundHandler* zSoundHandler;
 	PhysicsEngine* zPhysicsEngine;
 	ActorSynchronizer* zSyncher;
+
+	// Spawners
 	MaterialSpawnManager* zMaterialSpawnManager;
+	BerryBushSpawner* zBerryBushSpawner;
 
 	std::map<std::string, Vector3> zCameraOffset;
 	std::map<ClientData*, Player*> zPlayers;
 	std::map<Entity*, WorldActor*> zWorldActors;
 	std::map<std::string, std::string> zPlayerModels;
 
-	int zMaxNrOfPlayers;
+	unsigned int zMaxNrOfPlayers;
 
 	Vector3 zCurrentSunPosition;
 	Vector3 zCurrentSunDirection;
@@ -115,17 +119,20 @@ public:
 	// Fog Update when Living Players Change
 	void ModifyLivingPlayers(const int value);
 	
-	int GetLivingPlayers() {return this->zPlayersAlive;}	
+	// Current count of living players
+	inline int GetLivingPlayers() const { return this->zPlayersAlive; }	
 
-	float GetFogEnclosement() {return this->zCurrentFogEnclosement;}
-// Player model Offset	
+	// Current Fog Enclosement
+	inline float GetFogEnclosement() const { return this->zCurrentFogEnclosement; }
+
+	// Player model Offset	
 	Vector3 GetOffset(const std::string& model);
 	void CheckPlayerUseBow(Player* player);
 	void CheckToShotArrow(ClientData* cd);
 	const std::map<std::string, std::string>& GetPlayerModels() const {return this->zPlayerModels;}
 	const std::map<std::string, Vector3> GetCameraOffsets() const {return this->zCameraOffset;}
 private:
-	//Test function, spawns items/Animals
+	//Test functions, spawns items/Animals
 	void SpawnItemsDebug();
 	void SpawnAnimalsDebug();
 	void SpawnHumanDebug();
@@ -142,7 +149,7 @@ private:
 	void HandleFillItem(ClientData* cd, const unsigned int itemID);
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID);
-	void HandleBindings(ClientData* cd, const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType);
+	void HandleBindings(const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType);
 
 	// Game Stuff
 	void UpdateSunDirection(float dt);
@@ -150,4 +157,5 @@ private:
 	void Caching(const std::string& modelName);
 	void PrintDebugData(ClientData* cd, int type);
 	void ResetFogEnclosement();
+	void ResetSunDirection();
 };

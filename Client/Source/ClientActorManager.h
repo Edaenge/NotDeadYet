@@ -12,37 +12,36 @@
 #include "World/World.h"
 #include "Sound.h"
 
+class FootStepClient;
+
+
 class Updates
 {
+	unsigned int zID;
+	Vector3 zNextPosition;
+	unsigned int zState;
+	bool zStateChange;
+	bool zPositionChange;
+
 public:
-	Updates()
-	{
-		this->zID = 0;
-		this->zPositionChange = false;
-		//this->zRotationChange = false;
-	}
-	Updates(const unsigned int ID) 
+	Updates(const unsigned int& ID=0) 
 	{
 		this->zID = ID;
-		//this->zStateChange = false;
 		this->zPositionChange = false;
-		//this->zRotationChange = false;
 	}
 
-	unsigned int GetID() const {return this->zID;}
-	Vector3 GetPosition() const {return this->zNextPosition;}
-	//Vector4 GetRotation() const {return this->zRotation;}
-	unsigned int GetState() const {return this->zState;}
+	inline const unsigned int& GetID() const { return this->zID; }
+	inline const Vector3& GetPosition() const { return this->zNextPosition; }
+	inline const unsigned int& GetState() const { return this->zState; }
+	inline const bool& HasStateChanged() const { return this->zStateChange; }
+	inline const bool& HasPositionChanged() const { return this->zPositionChange; }
 
-	bool HasPositionChanged() const {return this->zPositionChange;}
-	//bool HasRotationChanged() const {return this->zRotationChange;}
-	bool HasStateChanged() const {return this->zStateChange;}
-
-	void SetPosition(Vector3 position) 
+	void SetPosition(const Vector3& position) 
 	{
 		this->zNextPosition = position;
 		this->zPositionChange = true;
 	}
+
 	bool ComparePosition(const Vector3& position)
 	{
 		if ((this->zNextPosition - position).GetLength() < 0.5f)
@@ -50,42 +49,16 @@ public:
 
 		return this->zPositionChange;
 	}
-	//void SetRotation(Vector4 rotation) 
-	//{
-	//	this->zRotation = rotation;
-	//	this->zRotationChange = true;
-	//}
-	void SetState(unsigned int state) 
+
+	void SetState(const unsigned int& state) 
 	{
 		this->zState = state;
 		this->zStateChange = true;
 	}
-	void SetStateChange(bool value)
+	void SetStateChange(const bool& value)
 	{
 		this->zStateChange = value;
 	}
-	
-	//bool CompareRotation(const Vector4& rotation)
-	//{
-	//	if ((this->zRotation - rotation).GetLength() < 0.5f)
-	//		this->zRotationChange = false;
-
-	//	return this->zRotationChange;
-	//}
-
-	//void SetRotationChanged(bool value)
-	//{
-	//	this->zRotationChange = value;
-	//}
-private:
-	unsigned int zID;
-	Vector3 zNextPosition;
-	//Vector4 zRotation;
-	unsigned int zState;
-
-	bool zStateChange;
-	bool zPositionChange;
-	//bool zRotationChange;
 };
 
 static const enum INTERPOLATION_TYPES
@@ -99,29 +72,47 @@ static const enum INTERPOLATION_TYPES
 
 class ClientActorManager
 {
+	FootStepClient* zFootSteps;
+	
+	float zInterpolationVelocity;
+	int zUpdatesPerSec;
+	int zLatency;
+	Vector3 zCameraOffset;
+
+	Sound** zFootStepsOnGrass;
+	Sound** zFootStepsOnDirt;
+
+	std::map<unsigned int, Actor*> zActors;
+	std::map<Actor*, unsigned int> zState;
+	std::map<unsigned int, Updates*> zUpdates;
+	std::map<std::string, AnimationFileReader> zModelToReaderMap;
+
 public:
-	ClientActorManager();
+	ClientActorManager(FootStepClient* footSteps);
 	virtual ~ClientActorManager();
 
 	/*! Interpolates all the Objects towards their final Position*/
-	void UpdateObjects(float deltaTime, unsigned int ignoreID, World* world);
+	void UpdateObjects(const float& deltaTime, const unsigned int& ignoreID, World* world);
 
 	unsigned int GetState(Actor* actor);
-	void AddActorState(Actor* actor, unsigned int state);
+	void AddActorState(Actor* actor, const unsigned int& state);
 	bool AddActor(Actor* actor);
-	Actor* GetActor(unsigned int ID);
-	std::map<unsigned int, Actor*> GetActors();
-	void RemoveActor(const unsigned int ID);
+	Actor* GetActor(const unsigned int& ID);
+	void RemoveActor(const unsigned int& ID);
 
 	void AddUpdate(Updates* update);
-	Updates* GetUpdate(const int ID);
+	Updates* GetUpdate(const unsigned int& ID) const;
 
-	void SetFBXMapping(std::map<std::string, AnimationFileReader> map) {this->zModelToReaderMap = map;}
 	Vector4 InterpolateRotation(const Vector4& currentRotation, const Vector4& newRotation, float t);
 	Vector3 InterpolatePosition(const Vector3& currentPosition, const Vector3& newPosition, float t);
-	
-	void SetLatency(int latency) {this->zLatency = latency;}
-	void SetUpdatesPerSec(int ups) {this->zUpdatesPerSec = ups;}
+
+	inline const std::map<unsigned int, Actor*>& GetActors() const { return this->zActors; }
+	inline void SetFBXMapping(const std::map<std::string, AnimationFileReader>& map) { this->zModelToReaderMap = map; }
+	inline void SetLatency(const int& latency) { this->zLatency = latency; }
+	inline void SetUpdatesPerSec(const int& ups) { this->zUpdatesPerSec = ups; }
+	inline void SetCameraOffset(const Vector3& offset) { this->zCameraOffset = offset; }
+	inline const Vector3& GetCameraOffset() { return this->zCameraOffset; }
+
 	/*! Returns time Value depending on type
 	IT_LINEAR,
 	IT_COSINE,
@@ -129,28 +120,12 @@ public:
 	IT_SMOOTH_STEP,
 	IT_DECELERATION
 	*/
-	float GetInterpolationType(const float deltaTime, const unsigned int type);
-	void SetCameraOffset(Vector3 offset) {this->zCameraOffset = offset;}
-	Vector3 GetCameraOffset() {return this->zCameraOffset;}
-
+	float GetInterpolationType(const float& deltaTime, const unsigned int& type);
+	
 	/*! Deletes all actors and updates.*/
 	void ClearAll();
 
-private:
-	std::map<unsigned int, Actor*> zActors;
-	std::map<Actor*, unsigned int> zState;
-	std::map<unsigned int, Updates*> zUpdates;
-	float zInterpolationVelocity;
-	int zUpdatesPerSec;
-	int zLatency;
-	Vector3 zCameraOffset;
-
+protected:
 	FMOD_VECTOR ConvertToFmodVector(const Vector3& v) const;
-	int GetMostUsedTexOnPos(Vector3 pos, World* world);
-	/*IEventHandle** zFootStepGrass;
-	IEventHandle** zFootStepDirt;*/
-	Sound** zFootStepsOnGrass;
-	Sound** zFootStepsOnDirt;
-
-	std::map<std::string, AnimationFileReader> zModelToReaderMap;
+	unsigned int GetMostUsedTexOnPos(const Vector2& pos, World* world) const;
 };

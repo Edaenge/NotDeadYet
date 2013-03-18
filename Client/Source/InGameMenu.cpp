@@ -134,12 +134,11 @@ int InGameMenu::Run()
 			this->SwapMenus(cEvent->GetSet());
 			zPrimarySet = cEvent->GetSet();
 		}
-		else if(this->zEng->GetKeyListener()->IsPressed(VK_ESCAPE))
-		{
-			returnValue = IGRESUME;
-			removeMenu = true;
-		}
-			
+	}
+	if(this->zEng->GetKeyListener()->IsPressed(VK_ESCAPE))
+	{
+		returnValue = IGRESUME;
+		removeMenu = true;
 	}
 	if(removeMenu)
 		this->zSets[this->zPrimarySet].RemoveSetFromRenderer(this->zEng);

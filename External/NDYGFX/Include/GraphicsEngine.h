@@ -83,9 +83,12 @@ extern "C"
 
 		virtual void UseShadow(bool useShadow) = 0;
 
-		// Grass settings
+		
+		// Must be set if toggling grass on/off is to work.
 		virtual void SetGrassFilePath(const char* filePath) = 0;
+		// Grass file path must have been set for this to work.
 		virtual void RenderGrass(bool flag) = 0;
+		virtual bool GetRenderGrassFlag() const = 0;
 
 		/*! OBS! InnerRadius has to be greater than zero. */
 		virtual void SetSpecialCircle(float innerRadius, float outerRadius, Vector2& targetPos) const = 0;

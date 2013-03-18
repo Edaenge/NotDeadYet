@@ -48,6 +48,7 @@ private:
 	IAudioManager* _sound;
 	IAudioLoader* _soundLoader;
 	IEventHandle* menuClick;
+	IEventHandle* menuSound;
 
 	Game* zGame;
 	bool zClientConnected;

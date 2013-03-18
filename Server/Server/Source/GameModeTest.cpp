@@ -167,6 +167,7 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	//Remove Player Pointer From the Actor
 	pActor->SetPlayer(NULL);
 	pActor->GetInventory()->UnEquipAll();
+	pActor->GetInventory()->RemoveObserver(player);
 
 	ClientData* cd = player->GetClientData();
 	std::map<std::string, std::string> playerModels = zGame->GetPlayerModels();

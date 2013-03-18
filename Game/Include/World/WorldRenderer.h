@@ -63,9 +63,18 @@ class WorldRenderer : Observer
 	bool zShowWaterBoxes;
 
 	// Billboard collections
-	unsigned int zGrassDensity; //Nr of grass objects per terrain.
-	std::map<iTerrain*, iBillboardCollection*> zGrass;
-
+	unsigned int zGrassDensity;		// Number of grass objects per terrain.
+	float zGrassNearDistance;		// Distance between camera and grass
+	float zGrassFarDistance;		// Distance between grass and far clip
+	float zGrassUpdateDistance;		// Distance you have to walk to update grass
+	float zGrassWidthMin;			// Minimum grass width
+	float zGrassWidthMax;			// Maximum grass width
+	float zGrassHeightMin;			// Minimum grass height
+	float zGrassHeightMax;			// Maximum grass height
+	float zGrassNeightbourDistance;	// Minimal distance between grass
+	Vector2 zLastGrassUpdatePos;	// Last camera position when grass was generated
+	std::map<Vector2UINT, iBillboardCollection*> zGrass;
+	
 public:
 	WorldRenderer(World* world, GraphicsEngine* graphics);
 	virtual ~WorldRenderer();
@@ -75,13 +84,17 @@ public:
 	Entity* Get3DRayCollisionWithMesh();
 	float GetYPosFromHeightMap(float x, float y);
 
-	void Update();
+	// Returns true when there is more to be processed
+	bool Update();
+
+	// Show or don't show AI grid
 	void ToggleAIGrid(bool state);
+	
+	// Show or don't show water corner boxes
 	void ToggleWaterBoxes(bool flag);
 
-	virtual void OnEvent( Event* e );
-
 protected:
+	virtual void OnEvent( Event* e );
 	void UpdateWaterBoxes( WaterQuad* water );
 	void UpdateTerrain();
 
@@ -89,5 +102,5 @@ protected:
 	void SetEntityTransformation( Entity* e );
 	void DeleteEntity( Entity* e );
 
-	void GenerateGrass(iTerrain* ptrTerrain);
+	void GenerateGrass(const Vector2UINT& terrainCoords);
 };

@@ -25,9 +25,11 @@
     <ResourceCompile Include="NotDeadYet.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Actor.cpp" />
     <ClCompile Include="Source\Client.cpp" />
     <ClCompile Include="Source\ClientItemHandler.cpp" />
     <ClCompile Include="Source\ClientObjectHandler.cpp" />
+    <ClCompile Include="Source\FootStepClient.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\GuiManager.cpp" />
     <ClCompile Include="Source\GUI\AbilityIndicatorUi.cpp" />
@@ -54,7 +56,6 @@
     <ClCompile Include="Source\GUI\SimpleButton.cpp" />
     <ClCompile Include="Source\GUI\TextBox.cpp" />
     <ClCompile Include="Source\InGameMenu.cpp" />
-    <ClCompile Include="Source\Inventory.cpp" />
     <ClCompile Include="Source\KeyUtil\KeyBindConfig.cpp" />
     <ClCompile Include="Source\KeyUtil\Keybinds.cpp" />
     <ClCompile Include="Source\KeyUtil\KeyConverter.cpp" />
@@ -72,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Client.h" />
+    <ClInclude Include="Source\FootStepClient.h" />
     <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\GuiManager.h" />
     <ClInclude Include="Source\GUI\AbilityIndicatorUi.h" />
@@ -98,7 +100,6 @@
     <ClInclude Include="Source\GUI\SimpleButton.h" />
     <ClInclude Include="Source\GUI\TextBox.h" />
     <ClInclude Include="Source\InGameMenu.h" />
-    <ClInclude Include="Source\Inventory.h" />
     <ClInclude Include="Source\KeyUtil\KeyBindConfig.h" />
     <ClInclude Include="Source\KeyUtil\Keybinds.h" />
     <ClInclude Include="Source\KeyUtil\KeyConverter.h" />

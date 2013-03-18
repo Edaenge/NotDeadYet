@@ -150,9 +150,6 @@
     <ClCompile Include="Source\MaloWPerformance.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Inventory.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\SoundEngine\Sound.cpp">
       <Filter>Source\Sound</Filter>
     </ClCompile>
@@ -161,6 +158,12 @@
     </ClCompile>
     <ClCompile Include="Source\GUI\AbilityIndicatorUi.cpp">
       <Filter>Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FootStepClient.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Actor.cpp">
+      <Filter>Source\Actors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -293,9 +296,6 @@
     <ClInclude Include="Source\MaloWPerformance.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Inventory.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SoundEngine\Sound.h">
       <Filter>Source\Sound</Filter>
     </ClInclude>
@@ -304,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="Source\GUI\AbilityIndicatorUi.h">
       <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FootStepClient.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
