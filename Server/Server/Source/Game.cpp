@@ -37,6 +37,7 @@
 #include "SupplyActor.h"
 #include "BehaviorManager.h"
 #include "BerryBushSpawner.h"
+#include "BerryBushActor.h"
 
 
 static const float PI = 3.14159265358979323846f;
@@ -63,9 +64,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 {	
 
 	// Camera Offsets
-	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	
-	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
-	this->zCameraOffset["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.6f, 0.0f);	
+	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zCameraOffset["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.41f, 0.0f);
+	this->zCameraOffset["media/models/bear_anims.fbx"] = Vector3(0.0f, 0.92f, 0.0f);
 	this->zCameraOffset["media/models/ghost.obj"] = Vector3(0.0f, 0.0f, 0.0f);
 
 	//Models
@@ -1546,7 +1548,24 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 							}
 							bLooted = true;
 						}
-						
+					}
+				}
+				else if(BerryBushActor* bbActor = dynamic_cast<BerryBushActor*>(*it_actor))
+				{
+					if( !bbActor->IsPicked())
+					{
+						const Food* berry_temp = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BERRY_BUSH);
+						if (berry_temp)
+						{
+							Food* berry = new Food(*berry_temp);
+							if (berry)
+							{
+								msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE, (float)bbActor->GetID());
+								msg += berry->ToMessageString(&NMC);
+								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED);
+								bLooted = true;
+							}
+						}
 					}
 				}
 				//Check if the Actor is an AnimalActor.
@@ -1752,6 +1771,34 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 				{
 					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
 					return;
+				}
+			}
+		}
+	}
+	else if (BerryBushActor* bbActor = dynamic_cast<BerryBushActor*>(actor))
+	{
+		const Food* berry_temp = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BERRY_BUSH);
+		if (berry_temp)
+		{
+			Food* berry = new Food(*berry_temp);
+			if (berry)
+			{
+				if (berry->GetItemType() == itemType)// && item->GetItemSubType() == subType)
+				{
+					//Add item
+					if(pActor->GetInventory()->AddItem(berry, stacked))
+					{
+						if( stacked && item->GetStackSize() == 0 )
+						{
+							SAFE_DELETE(item);
+						}
+						bbActor->SetPicked(true);
+					}
+					else
+					{
+						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
+						return;
+					}
 				}
 			}
 		}
