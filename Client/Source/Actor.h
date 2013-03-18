@@ -4,15 +4,20 @@
 */
 #pragma once
 
-#include "iMesh.h"
-#include "Graphics.h"
 #include <AnimationStates.h>
+#include <World/Observer.h>
+#include <Graphics.h>
 #include <string>
 #include <map>
-#include "Safe.h"
 
-/*! Base class for World Objects*/
-class Actor
+class ActorMovedEvent : public Event
+{
+public:
+	Actor* zActor;
+};
+
+/*! Base class for Actors */
+class Actor : public Observed
 {
 	std::string zModel;
 	iMesh* zMesh;

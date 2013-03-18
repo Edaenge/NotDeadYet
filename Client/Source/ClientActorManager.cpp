@@ -9,8 +9,7 @@ static const unsigned int NROFGRASSTEX = 3;
 static const unsigned int NROFDIRTTEX = 3;
 
 
-ClientActorManager::ClientActorManager(FootStepClient* footSteps) :
-	zFootSteps(footSteps)
+ClientActorManager::ClientActorManager()
 {
 	this->zFootStepsOnGrass = new Sound*[MAXFOOTSTEPS];
 	for(int i = 0; i < MAXFOOTSTEPS; i++)
@@ -120,12 +119,15 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 
 				update->SetStateChange(false);
 			}
+
 			if (update->HasPositionChanged())
 			{
-				Vector3 oldPosition;
+				// New Position
+				Vector3 position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
+
+				// Check if this is me
 				if(update->GetID() == clientID)
 				{
-					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
 					AudioManager::GetInstance()->SetPlayerPosition(&ConvertToFmodVector(position), &ConvertToFmodVector(gEng->GetCamera()->GetForward()), &ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
 					if(actor->GetModel() != "media/models/ghost.obj")
 					{
@@ -161,12 +163,12 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 					else
 					{*/
 						//gEng->GetCamera()->SetPosition(position);
+
 					actor->SetPosition(position);
 					//}
 				}
 				else 
 				{
-					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
 					actor->SetPosition(position);
 					if(actor->GetModel() != "Media/Models/ghost.obj")
 					{
@@ -186,6 +188,7 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 					}
 
 				}
+
 				update->ComparePosition(position);
 			}
 			//if((*it_Update)->GetID() != clientID)
@@ -250,19 +253,31 @@ Updates* ClientActorManager::GetUpdate(const unsigned int& ID) const
 
 void ClientActorManager::RemoveActor( const unsigned int& ID )
 {
+	// Actor
 	auto actorIterator = this->zActors.find(ID);
-
-	Actor* actor = actorIterator->second;
-
-	auto actorStateIterator = this->zState.find(actor);
-	if (actorStateIterator != this->zState.end())
+	if ( actorIterator != zActors.end() )
 	{
-		this->zState.erase(actorStateIterator);
+		// Actor pointer
+		Actor* actor = actorIterator->second;
+
+		// Notify observers
+		ActorRemovedEvent ARE;
+		ARE.zActorManager = this;
+		ARE.zActor = actor;
+
+		// State
+		auto actorStateIterator = this->zState.find(actor);
+		if (actorStateIterator != this->zState.end())
+		{
+			this->zState.erase(actorStateIterator);
+		}
+
+		// Delete actor object
+		SAFE_DELETE(actor);
+
+		// Erase from map
+		this->zActors.erase(actorIterator);
 	}
-
-	SAFE_DELETE(actor);
-
-	this->zActors.erase(actorIterator);
 }
 
 void ClientActorManager::AddActorState( Actor* actor, const unsigned int& state )
@@ -292,6 +307,13 @@ bool ClientActorManager::AddActor(Actor* actor)
 	if (actor)
 	{
 		this->zActors[actor->GetID()] = actor;
+
+		// Notify Observers
+		ActorAddedEvent AAE;
+		AAE.zActorManager = this;
+		AAE.zActor = actor;
+		NotifyObservers(&AAE);
+
 		return true;
 	}
 
