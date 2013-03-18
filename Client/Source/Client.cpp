@@ -248,7 +248,7 @@ void Client::Update()
 		}
 	}
 
-	this->zDamageOpacity -= this->zDeltaTime * 0.25f;
+	this->zDamageOpacity -= this->zDeltaTime * 0.15f;
 
 	if(this->zDamageIndicator)
 	{
@@ -2096,7 +2096,7 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 	Actor* actor = this->zActorManager->GetActor(ID);
 	Actor* player = this->zActorManager->GetActor(this->zID);
 
-	this->zHealth -= damageTaken;
+	//this->zHealth -= damageTaken;
 
 	if(!player)
 	{
@@ -2114,7 +2114,7 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 	Vector3 resultingVector = actorPos - playerPos;
 	resultingVector.Normalize();
 
-	if(this->zDamageIndicator == NULL && this->zHealth < 0.0f)
+	if(this->zDamageIndicator == NULL && this->zHealth > 0.0f)
 	{
 		float windowHeight = (float)this->zEng->GetEngineParameters().WindowHeight;
 		float windowWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
