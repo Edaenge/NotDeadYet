@@ -1,13 +1,15 @@
 #include "Client.h"
 #include "Graphics.h"
-#include <NetworkPacket.h>
-#include <ClientServerMessages.h>
-#include <ClientServerMessages.h>
-#include <World/EntityList.h>
-#include <World/Entity.h>
 #include "DebugMessages.h"
-#include <DisconnectedEvent.h>
 #include "PlayerConfig/PlayerSettings.h"
+#include "FootStepClient.h"
+
+#include <ClientServerMessages.h>
+#include <ClientServerMessages.h>
+#include <DisconnectedEvent.h>
+#include <World/EntityList.h>
+#include <NetworkPacket.h>
+#include <World/Entity.h>
 #include <algorithm>
 #include <ctime>
 
@@ -16,7 +18,8 @@ using namespace MaloW;
 // Timeout_value = 10 sek
 static const float TIMEOUT_VALUE = 10.0f;
 
-Client::Client()
+Client::Client() :
+	zFootSteps(0)
 {
 	Messages::ClearDebug();
 
@@ -105,20 +108,6 @@ Client::Client()
 	InitCraftingRecipes();
 }
 
-bool Client::Connect(const std::string &IPAddress, const unsigned int &port)
-{
-	bool result;
-	this->zIP = IPAddress;
-	this->zPort = port;
-	this->zServerChannel = new ServerChannel(this);
-	
-	result = this->zServerChannel->Connect(IPAddress, port);
-	if (result)
-		this->zServerChannel->Start();
-
-	return result;
-}
-
 Client::~Client()
 {
 	this->zPerf->PreMeasure("Deleting Client", 4);
@@ -126,6 +115,9 @@ Client::~Client()
 
 	this->Close();
 	this->WaitUntillDone();
+
+	// Delete Footsteps
+	if ( zFootSteps ) delete zFootSteps;
 
 	SAFE_DELETE(this->zGuiManager);
 	SAFE_DELETE(this->zActorManager);
@@ -188,6 +180,20 @@ Client::~Client()
 
 	this->zPerf->GenerateReport(this->zEng->GetEngineParameters());
 	SAFE_DELETE(this->zPerf);
+}
+
+bool Client::Connect(const std::string &IPAddress, const unsigned int &port)
+{
+	bool result;
+	this->zIP = IPAddress;
+	this->zPort = port;
+	this->zServerChannel = new ServerChannel(this);
+
+	result = this->zServerChannel->Connect(IPAddress, port);
+	if (result)
+		this->zServerChannel->Start();
+
+	return result;
 }
 
 void Client::Update()
@@ -263,20 +269,32 @@ void Client::Update()
 void Client::InitGraphics(const std::string& mapName)
 {
 	if (!this->zActorManager)
-		this->zActorManager = new ClientActorManager();
+	{
+		this->zActorManager = new ClientActorManager(zFootSteps);
+	}
 	else
+	{
 		this->zActorManager->ClearAll();
+	}
 
 	if (!this->zPlayerInventory)
+	{
 		this->zPlayerInventory = new Inventory();
+	}
 	else
+	{
 		this->zPlayerInventory->ClearAll();
+	}
 
 	if (!this->zGuiManager)
+	{
 		this->zGuiManager = new GuiManager(this->zEng);
+	}
 	else
+	{
 		this->zGuiManager->ResetGui();
-	
+	}
+
 	this->zActorManager->SetFBXMapping(this->zModelToReaderMap);
 
 	LoadEntList("Entities.txt");
