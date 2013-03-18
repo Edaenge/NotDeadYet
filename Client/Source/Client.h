@@ -25,14 +25,17 @@
 
 using namespace MaloW;
 
+class FootStepClient;
+
+
 enum CLIENT_ACTOR_TYPE
 {
 	NONE,
 	HUMAN,
 	GHOST,
 	ANIMAL
-
 };
+
 struct TextDisplay
 {
 	TextDisplay(iText* text, float time, bool error)
@@ -41,20 +44,30 @@ struct TextDisplay
 		zTimer = time;
 		zError = error;
 	}
+
 	iText* zText;
 	float zTimer;
 	bool zError;
 };
+
 class Client : public MaloW::Process, public Observer
 {
+private:
+	FootStepClient* zFootSteps;
+
 public:
 	Client();
+	virtual ~Client();
+
 	/*! Connects to a Host with the specified parameters*/
 	bool Connect(const std::string& IPAddress, const unsigned int &port);
-	virtual ~Client();
+
+	// Thread Function
 	void Life();
+
 	/*! Checks if Thread is alive*/
 	bool IsAlive();
+
 	/*! Checks if Cursor should be Visible*/
 	bool GetCursorVisibility();
 
