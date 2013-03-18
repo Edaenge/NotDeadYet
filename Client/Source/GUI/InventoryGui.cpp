@@ -217,6 +217,7 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
 {
 	GuiElement::AddToRenderer(ge);
+	this->SetStrata(350.0f);
 	for (auto x = this->zSlotGui.begin(); x < this->zSlotGui.end(); x++)
 	{
 		if(x == this->zSlotGui.end())
@@ -240,7 +241,10 @@ bool InventoryGui::AddToRenderer(GraphicsEngine* ge)
 			this->zCurrentWeight) + ":" + MaloW::convertNrToString(this->zMaxWeight)).c_str(), 
 			Vector2(this->zX + ((10.0f / 1024.0f) * dx), this->zY + ((10.0f / 768.0f) * windowHeight)), 1, "Media/Fonts/new");
 		if(this->zWeightText)
+		{
+			this->zWeightText->SetStrata(325.0f);
 			UpdateInventoryWeight(this->zCurrentWeight);
+		}
 	}
 
 	return true;

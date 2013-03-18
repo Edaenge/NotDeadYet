@@ -128,6 +128,8 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 			GetPhysics()->DeletePhysicsObject(pObject);
 			this->SetPhysicsObject(NULL);
 		}
+
+		this->SetState(STATE_DEAD);
 	}
 	
 	return this->zAlive;

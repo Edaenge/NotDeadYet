@@ -48,9 +48,6 @@ static const float SUN_UPDATE_DELAY = 0.5f;
 //Total Sun Update Time in Seconds (6h atm) 
 static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 
-//Expected playtime
-static const float EXPECTED_PLAYTIME = 60.0f * 60.0f * 2.0f;
-
 #define ARROWMAXSPEED 35.0f
 #define ARROWMAXLOADTIME 2.0f
 #define ARROWSPEEDPERSEC (ARROWMAXSPEED / ARROWMAXLOADTIME)
@@ -1384,7 +1381,7 @@ void Game::HandleConnection( ClientData* cd )
 void Game::HandleDisconnect( ClientData* cd )
 {
 	// Delete Player Behavior
-	auto playerIterator = zPlayers.find(cd);
+	auto playerIterator = this->zPlayers.find(cd);
 	auto playerBehavior = playerIterator->second->GetBehavior();
 		
 	// Create AI Behavior For Players That Disconnected
@@ -1403,6 +1400,10 @@ void Game::HandleDisconnect( ClientData* cd )
 	{
 		Actor* pActor = pHuman->GetActor();
 		dynamic_cast<BioActor*>(pActor)->Kill();
+		Behavior* behavior = playerIterator->second->GetBehavior();
+		if (behavior && behavior->GetActor())
+			this->zActorManager->RemoveActor(behavior->GetActor());
+		
 		this->zPlayersAlive--;
 	}
 		
@@ -1915,6 +1916,11 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 							}
 						}
 					}
+					else
+					{
+						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You Are not Bleeding");
+						cd->Send(msg);
+					}
 				}
 			}
 		}
@@ -2416,13 +2422,16 @@ void Game::ModifyLivingPlayers( const int value )
 
 void Game::ResetFogEnclosement()
 {
+	//Expected playtime
+	static const float EXPECTED_PLAYTIME = 60.0f * 10.0f;
+
 	Vector2 worldSize = this->zWorld->GetWorldSize();
 
 	float radius = (worldSize.x + worldSize.y) * 0.25f;
 
 	this->zInitalFogEnclosement = radius;
 
-	this->zFogUpdateDelay = 30.0f;
+	this->zFogUpdateDelay = 1.0f;
 	this->zFogDecreaseCoeff = this->zFogUpdateDelay / EXPECTED_PLAYTIME;
 	this->zFogTotalDecreaseCoeff = 1.0f;
 	this->zFogTimer = 0.0f;

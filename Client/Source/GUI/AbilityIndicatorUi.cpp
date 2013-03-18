@@ -56,8 +56,8 @@ AbilityIndicatorUi::AbilityIndicatorUi(Vector3 pos, Vector2 dim, int type)
 
 	this->zBG = GetGraphics()->CreateImage(this->zPos.GetXY(), this->zDim, bg.c_str());
 	this->zFillerBar = GetGraphics()->CreateImage(tempPos.GetXY(), tempDim, filler.c_str());
-	this->zBG->SetStrata(this->zPos.z - 10.0f);
-	this->zFillerBar->SetStrata(this->zPos.z);
+	this->zBG->SetStrata(400.0f);
+	this->zFillerBar->SetStrata(450.0f);
 }
 
 AbilityIndicatorUi::~AbilityIndicatorUi()

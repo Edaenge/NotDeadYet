@@ -11,6 +11,7 @@ GuiElement::GuiElement()
 	this->zOpacity = 0.0f;
 	this->zHidden = true;
 	this->zTextureName = "Unknown";
+	this->zStrata = 500.0f;
 }
 
 GuiElement::GuiElement(float x, float y, float width, float height, std::string textureName)
@@ -23,6 +24,7 @@ GuiElement::GuiElement(float x, float y, float width, float height, std::string 
 	this->zWidth = width;
 	this->zHeight = height;
 	this->zTextureName = textureName;
+	this->zStrata = 500.0f;
 }
 
 GuiElement::~GuiElement()
@@ -43,7 +45,7 @@ bool GuiElement::AddToRenderer(GraphicsEngine* ge)
 		if(!this->zGuiImage && this->zTextureName != "")
 		{
 			this->zGuiImage = ge->CreateImage(Vector2(this->zX , this->zY), this->GetDimension(), this->zTextureName.c_str());
-			this->zGuiImage->SetStrata(10.0f);
+			this->zGuiImage->SetStrata(this->zStrata);
 		}
 		this->ShowGui();
 		return true;
