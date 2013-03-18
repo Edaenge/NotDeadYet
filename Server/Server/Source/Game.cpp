@@ -63,9 +63,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	zPerf(0)
 {	
 	// Camera Offsets
-	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);	
-	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
-	this->zCameraOffset["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.6f, 0.0f);	
+	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
+	this->zCameraOffset["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.41f, 0.0f);
+	this->zCameraOffset["media/models/bear_anims.fbx"] = Vector3(0.0f, 0.92f, 0.0f);
 	this->zCameraOffset["media/models/ghost.obj"] = Vector3(0.0f, 0.0f, 0.0f);
 	
 	// Create World
