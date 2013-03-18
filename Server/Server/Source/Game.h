@@ -51,7 +51,7 @@ private:
 	std::map<ClientData*, Player*> zPlayers;
 	std::map<Entity*, WorldActor*> zWorldActors;
 
-	int zMaxNrOfPlayers;
+	unsigned int zMaxNrOfPlayers;
 
 	Vector3 zCurrentSunPosition;
 	Vector3 zCurrentSunDirection;
@@ -117,16 +117,19 @@ public:
 	// Fog Update when Living Players Change
 	void ModifyLivingPlayers(const int value);
 	
-	int GetLivingPlayers() {return this->zPlayersAlive;}	
+	// Current count of living players
+	inline int GetLivingPlayers() const { return this->zPlayersAlive; }	
 
-	float GetFogEnclosement() {return this->zCurrentFogEnclosement;}
-// Player model Offset	
+	// Current Fog Enclosement
+	inline float GetFogEnclosement() const { return this->zCurrentFogEnclosement; }
+
+	// Player model Offset	
 	Vector3 GetOffset(const std::string& model);
 	void CheckPlayerUseBow(Player* player);
 	void CheckToShotArrow(ClientData* cd);
 
 private:
-	//Test function, spawns items/Animals
+	//Test functions, spawns items/Animals
 	void SpawnItemsDebug();
 	void SpawnAnimalsDebug();
 	void SpawnHumanDebug();
