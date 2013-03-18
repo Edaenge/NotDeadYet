@@ -1,105 +1,6 @@
 #include "Client.h"
 #include <ClientServerMessages.h>
 
-bool Client::AddActor(const std::vector<std::string>& msgArray, const unsigned int ID)
-{
-	if (this->zActorManager->GetActor(ID))
-	{
-		MaloW::Debug("Cant create a new Player Object. ID: " + MaloW::convertNrToString((float)ID) + " already exists");
-		return false;
-	}
-	Vector3 position = Vector3(0, 0, 0);
-	Vector3 scale = Vector3(0.05f, 0.05f, 0.05f);
-	Vector4 rotation = Vector4(0, 0, 0, 0);
-	std::string filename = "";
-
-	Actor* actor = new Actor(ID);
-
-	char key[512];
-	for(auto it = msgArray.begin() + 1; it < msgArray.end(); it++)
-	{
-		sscanf_s((*it).c_str(), "%s ", key, sizeof(key));
-
-		if(strcmp(key, M_POSITION.c_str()) == 0)
-		{
-			position = this->zMsgHandler.ConvertStringToVector(M_POSITION, (*it));
-		}
-		else if(strcmp(key, M_ROTATION.c_str()) == 0)
-		{
-			rotation = this->zMsgHandler.ConvertStringToQuaternion(M_ROTATION, (*it));
-		}
-		else if(strcmp(key, M_STATE.c_str()) == 0)
-		{
-			int state = this->zMsgHandler.ConvertStringToInt(M_STATE, (*it));
-			this->zActorManager->AddActorState(actor, state);
-		}
-		else if(strcmp(key, M_SCALE.c_str()) == 0)
-		{
-			scale = this->zMsgHandler.ConvertStringToVector(M_SCALE, (*it));
-		}
-		else if(strcmp(key, M_MESH_MODEL.c_str()) == 0)
-		{
-			filename = this->zMsgHandler.ConvertStringToSubstring(M_MESH_MODEL, (*it));
-		}
-		else
-		{
-			MaloW::Debug("C: Unknown Message Was sent from server " + (*it) + " in AddNewPlayerObject");
-		}
-	}
-	
-	if (Messages::FileWrite())
-		Messages::Debug("Actor ID: " + MaloW::convertNrToString((float)ID) +" Added");
-
-	//Creates a StaticMesh from the given Filename
-	iMesh* mesh = this->zEng->CreateStaticMesh(filename.c_str(), position);
-	mesh->ResetRotation();
-	mesh->SetQuaternion(rotation);
-	mesh->SetScale(scale);
-
-	//Create player data
-	actor->SetStaticMesh(mesh);
-	actor->SetModel(filename);
-
-	if (!this->zCreated)
-	{
-		if (ID == this->zID)
-		{
-			if (this->zGuiManager)
-				SAFE_DELETE(this->zGuiManager);
-					
-			this->zGuiManager = new GuiManager(this->zEng);
-			this->zCreated = true;
-
-			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(filename);
-			if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
-			{
-				this->zMeshOffset = meshOffsetsIterator->second;
-			}
-			else
-			{
-				this->zMeshOffset = Vector3(0.0f, 0.5f, 0.0f);
-			}
-
-			this->zActorManager->SetCameraOffset(this->zMeshOffset);
-			this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset + this->zEng->GetCamera()->GetForward(), Vector3(0.0f, 0.0f, 1.0f));
-			this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
-
-			if (this->zActorType == GHOST)
-			{
-				this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.
-				if(this->zPam->GetShow())
-					zShowCursor = true;
-				else
-					zShowCursor = false;
-			}
-		}
-	}
-
-	this->zActorManager->AddActor(actor);
-
-	return true;
-}
-
 void Client::AddActor( NewActorPacket* NAP )
 {
 	Actor* actor = NULL;
@@ -169,9 +70,20 @@ void Client::AddActor( NewActorPacket* NAP )
 						this->zMeshOffset = Vector3(0.0f, 1.0f, 0.0f);
 
 					this->zActorManager->SetCameraOffset(this->zMeshOffset);
-					this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset , Vector3(0.0f, 0.0f, 1.0f));
-					this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
-
+					
+					//auto reader = this->zModelToReaderMap.find(model);
+					//if (reader != this->zModelToReaderMap.end())	
+					//{
+					//	std::string boneName = reader->second.GetBindingBone(BONE_CAMERA_OFFSET);
+					//	this->zEng->GetCamera()->SetMesh(mesh, boneName.c_str(), Vector3(0.0f, 0.0f, 1.0f));
+					//}
+					//else
+					//{
+						this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+						this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
+					//}
+					
+					
 					if (this->zActorType == GHOST)
 					{
 						this->zPam->ToggleMenu(); // Shows the menu and sets Show to true.

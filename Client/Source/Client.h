@@ -152,9 +152,6 @@ private:
 	void AddActor(NewActorPacket* NAP);
 	bool RemoveActor(const unsigned int ID);
 	bool HandleTakeDamage(const unsigned int ID, float damageTaken);
-	/*! Adds A Player Object.*/
-	bool AddActor(const std::vector<std::string>& msgArray, const unsigned int ID);
-	
 
 	void HandleDeadPlayerMessage(const int ID);
 	//////////////////////

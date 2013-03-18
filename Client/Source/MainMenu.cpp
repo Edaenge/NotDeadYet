@@ -708,7 +708,10 @@ void MainMenu::StartGameWithIPField()
 		gEng->DeleteText(errorText);
 	}
 	if (result)
+	{
+		GetGraphics()->ShowLoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 10.2f);
 		this->zGame->Run();
+	}
 
 	delete this->zGame;
 

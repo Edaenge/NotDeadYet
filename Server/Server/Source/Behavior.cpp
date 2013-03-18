@@ -90,7 +90,7 @@ bool Behavior::Update( float )
 bool Behavior::RefreshNearCollideableActors( const std::set<Actor*>& actors )
 {
 	if( !this->zActor || !this->zActor->CanCollide() )
-		return NULL;
+		return false;
 
 	unsigned int size = actors.size();
 	// Increment 10%

@@ -81,7 +81,7 @@ void PlayerConfigReader::WriteToFile()
 
 PlayerConfigReader::~PlayerConfigReader()
 {
-
+	this->zVariables.clear();
 }
 
 bool PlayerConfigReader::ReadFromFile()

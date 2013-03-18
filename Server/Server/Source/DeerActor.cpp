@@ -8,6 +8,7 @@ DeerActor::DeerActor(PhysicsObject* pObj) :
 	this->SetCameraOffset(Vector3(0.0f,1.4f,0.0f));
 	this->SetHealth(80.0f);
 	this->zHealthMax = 80.0f;
+
 	/*this->SetIfPlayerControlled(isPlayerControlled);
 	this->InitDeer();*/
 }

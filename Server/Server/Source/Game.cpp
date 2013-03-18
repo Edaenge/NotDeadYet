@@ -114,9 +114,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	//DEBUG;
-	//this->SpawnItemsDebug();
+	this->SpawnItemsDebug();
 	this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnHumanDebug();
 
 //Initialize Sun Direction
 	Vector2 mapCenter2D = this->zWorld->GetWorldCenter();
@@ -139,23 +139,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	//Fog Enclosement
 	this->zPlayersAlive = 0;
 
-	Vector2 worldSize = this->zWorld->GetWorldSize();
-
-	radius = (worldSize.x + worldSize.y) * 0.5f;
-
-	float percent = 0.1f;
-	if (worldFile.find("3x3.map"))
-		percent = 0.5f;
-
-	this->zInitalFogEnclosement = radius * percent;
-	this->zIncrementFogEnclosement = (radius - this->zInitalFogEnclosement) / this->zMaxNrOfPlayers;
-
-	this->zFogUpdateDelay = 30.0f;
-	this->zFogDecreaseCoeff = this->zFogUpdateDelay / EXPECTED_PLAYTIME;
-	this->zFogTotalDecreaseCoeff = 1.0f;
-	this->zFogTimer = 0.0f;
-
-	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
+	this->ResetFogEnclosement();
 
 	
 	//Used for caching fbx files dont change the function.
@@ -178,12 +162,12 @@ Game::~Game()
 	this->zPlayers.clear();
 
 	// Delete Subsystems
-	SAFE_DELETE(zGameMode);
 	SAFE_DELETE(zSoundHandler);
-	SAFE_DELETE(zCraftingManager);
 	SAFE_DELETE(zMaterialSpawnManager);
-	SAFE_DELETE(zWorld);
+	SAFE_DELETE(zCraftingManager);
 	SAFE_DELETE(zActorManager);
+	SAFE_DELETE(zWorld);
+	SAFE_DELETE(zGameMode);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -196,7 +180,8 @@ void Game::SpawnAnimalsDebug()
 {
 	srand((unsigned int)time(0));
 	
-	for(int i = 0; i < 1; i++)
+	int increment = 0;
+	for(int i = 0; i < 0; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -208,7 +193,7 @@ void Game::SpawnAnimalsDebug()
 
 		zActorManager->AddBehavior(aiDeerBehavior);
 
-		Vector3 position = this->CalcPlayerSpawnPoint(i);
+		Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 
 		dActor->SetPosition(position);
 		dActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
@@ -233,6 +218,45 @@ void Game::SpawnAnimalsDebug()
 		}
 
 		this->zActorManager->AddActor(dActor);
+	}
+
+	for(int i = 0; i < 0; i++)
+	{
+		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
+		BearActor* bActor  = new BearActor(deerPhysics);
+
+		bActor->AddObserver(this->zGameMode);
+		bActor->SetModel("media/models/deer_anims.fbx");
+
+		AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
+
+		zActorManager->AddBehavior(aiBearBehavior);
+
+		Vector3 position = this->CalcPlayerSpawnPoint(increment++);
+
+		bActor->SetPosition(position);
+		bActor->SetScale(Vector3(0.08f, 0.08f, 0.08f));
+
+		const Food* temp_Bear_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BEAR_FOOD);
+
+		int lootSize = (rand() % 5) + 1;
+		Food* new_Food = NULL;
+
+		Inventory* inv = bActor->GetInventory();
+		bool stacked = false;
+		if (temp_Bear_Food)
+		{
+			for (int i = 0; i < lootSize; i++)
+			{
+				new_Food = new Food((*temp_Bear_Food));
+
+				inv->AddItem(new_Food, stacked);
+				if( stacked && new_Food->GetStackSize() == 0 )
+					SAFE_DELETE(new_Food);
+			}
+		}
+
+		this->zActorManager->AddActor(bActor);
 	}
 }
 
@@ -483,8 +507,11 @@ void Game::UpdateFogEnclosement( float dt )
 		{
 			this->zFogTotalDecreaseCoeff -= this->zFogDecreaseCoeff;
 
-			this->zCurrentFogEnclosement = (this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
+			this->zCurrentFogEnclosement = this->zInitalFogEnclosement * this->zFogTotalDecreaseCoeff;
 			
+			if (this->zCurrentFogEnclosement <= 10.0f)
+				this->zCurrentFogEnclosement = 10.0f;
+
 			NetworkMessageConverter NMC;
 			this->SendToAll(NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement));
 		}
@@ -505,7 +532,8 @@ bool Game::Update( float dt )
 	// Update Behaviors
 	auto i = behaviors.begin();
 	int counter = 0;
-	for(auto it = this->zPlayers.begin(); it != this->zPlayers.end(); it++)
+	auto it_zplayers_end = this->zPlayers.end();
+	for(auto it = this->zPlayers.begin(); it != it_zplayers_end; it++)
 	{
 		PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>(it->second->GetBehavior());
 		if(playerBehavior != NULL)
@@ -524,15 +552,9 @@ bool Game::Update( float dt )
 	{
 		if (!(*i)->Removed())
 		{
-			PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>((*i));
-			if( NULL != playerBehavior)
-			{
-				playerBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
-			}
-			else if( ProjectileArrowBehavior* projectileArrowBehavior = dynamic_cast<ProjectileArrowBehavior*>(*i) )
-			{
-				projectileArrowBehavior->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
-			}
+
+			(*i)->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
+
 			
 			if ( (*i)->IsAwake() && (*i)->Update(dt) )
 			{
@@ -622,7 +644,7 @@ bool Game::Update( float dt )
 					if (radiusFromCenter > this->zCurrentFogEnclosement)
 					{
 						Damage dmg;
-						dmg.fogDamage = 1.0f * dt;
+						dmg.fogDamage = 10.0f * dt;
 						bActor->TakeDamage(dmg, bActor);
 					}
 				}
@@ -1015,7 +1037,7 @@ void Game::OnEvent( Event* e )
 			selectedModel = &UDE->playerModel;
 		
 		// Create Player Actor
-		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("media/models/temp_guy.obj");
+		PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject("media/models/hitbox_token.obj");
 
 		PlayerActor* pActor = new PlayerActor(zPlayers[UDE->clientData], pObj, this);
 		pActor->SetModel(*selectedModel);
@@ -1089,7 +1111,6 @@ void Game::OnEvent( Event* e )
 		delete NAP;
 
 		this->zPlayersAlive++;
-		this->zCurrentFogEnclosement = this->zInitalFogEnclosement + ( this->zIncrementFogEnclosement * this->zPlayersAlive);
 
 		message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 		this->SendToAll(message);
@@ -1443,6 +1464,7 @@ void Game::HandleDisconnect( ClientData* cd )
 	{
 		Actor* pActor = pHuman->GetActor();
 		dynamic_cast<BioActor*>(pActor)->Kill();
+		this->zPlayersAlive--;
 	}
 		
 	this->SetPlayerBehavior(playerIterator->second, NULL);
@@ -1839,94 +1861,119 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 				unsigned int ID = 0;
 				if (Food* food = dynamic_cast<Food*>(item))
 				{
+					float food_value = food->GetHunger();
 					ID = food->GetID();
-					if (food->Use())
+					if( (pActor->GetFullness() + (food_value * 0.5f) ) < pActor->GetFullnessMax())
 					{
-						//To do fix Values and stuff.
-						float value = food->GetHunger();
+						if (food->Use())
+						{
+							//To do fix Values and stuff.
 
-						float fullness = pActor->GetFullness();
+							float fullness = food_value + pActor->GetFullness();
 
-						pActor->SetFullness(fullness + value);
+							if (fullness > pActor->GetFullnessMax())
+								fullness = pActor->GetFullnessMax();
 
-						//Sending Message to client And removing stack from inventory.
-						inv->RemoveItemStack(ID, 1);
-						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+							pActor->SetFullness(fullness);
 
-						cd->Send(msg);
+							//Sending Message to client And removing stack from inventory.
+							inv->RemoveItemStack(ID, 1);
+							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+
+							cd->Send(msg);
+						}
+						else
+						{
+							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Food_Stack_is_Empty");
+							cd->Send(msg);
+						}
+
+						if (food->GetStackSize() <= 0)
+						{
+							item = inv->RemoveItem(food);
+
+							if(item)
+							{
+								delete item, item = NULL;
+							}
+						}
 					}
 					else
 					{
-						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Food_Stack_is_Empty");
+						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You aren't hungry");
 						cd->Send(msg);
 					}
-					if (food->GetStackSize() <= 0)
-					{
-						item = inv->RemoveItem(food);
-
-						if(item)
-						{
-							//msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)ID);
-							//cd->Send(msg);
-							
-							delete item, item = NULL;
-						}
-					}
+					
+					
 				}
 				else if (Container* container = dynamic_cast<Container*>(item))
 				{
-			
-					if (container->Use())
+					static float drink_value = 15.0f;
+					if ( (pActor->GetHydration() + (drink_value * 0.5f) ) < pActor->GetHydrationMax())
 					{
-						//To do fix values and stuff
-						float hydration = 2.0f + pActor->GetHydration();
+						if (container->Use())
+						{
+							//To do fix values and stuff
+							float hydration = drink_value + pActor->GetHydration();
 
-						pActor->SetHydration(hydration);
-						ID = container->GetID();
-						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-						cd->Send(msg);
+							if (hydration > pActor->GetHydrationMax())
+								hydration = pActor->GetHydrationMax();
+
+							pActor->SetHydration(hydration);
+							ID = container->GetID();
+							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+							cd->Send(msg);
+						}
+						else
+						{
+							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Container_is_Empty");
+							cd->Send(msg);
+						}
 					}
 					else
 					{
-						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Container_Stack_is_Empty");
+						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "You Are not thirsty");
 						cd->Send(msg);
 					}
+					
 				}
 				else if(Bandage* bandage = dynamic_cast<Bandage*>(item))
 				{
 					ID = bandage->GetID();
 					
-					if (bandage->Use())
-					{				
-						float bleedingLevel = pActor->GetBleeding();
-						if(bandage->GetItemSubType() == 0) //Used poor bandage
-						{
-							pActor->SetBleeding(bleedingLevel - 1);
-						}
-						else if(bandage->GetItemSubType() == 1) //Used great bandage
-						{
-							pActor->SetBleeding(bleedingLevel - 3);
-						}
-						//pActor->SetBleeding(false);
-						
-						//Sending Message to client And removing stack from inventory.
-						inv->RemoveItemStack(ID, 1);
-						msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
-
-						cd->Send(msg);
-					}
-					else
+					if (pActor->GetBleeding() < 0)
 					{
-						msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Bandage_Stack_is_Empty");
-						cd->Send(msg);
-					}
-					if (bandage->GetStackSize() <= 0)
-					{
-						item = inv->RemoveItem(bandage);
+						if (bandage->Use())
+						{				
+							float bleedingLevel = pActor->GetBleeding();
+							if(bandage->GetItemSubType() == 0) //Used poor bandage
+							{
+								pActor->SetBleeding(bleedingLevel - 1);
+							}
+							else if(bandage->GetItemSubType() == 1) //Used great bandage
+							{
+								pActor->SetBleeding(bleedingLevel - 3);
+							}
 
-						if(item)
+							//Sending Message to client And removing stack from inventory.
+							inv->RemoveItemStack(ID, 1);
+							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
+
+							cd->Send(msg);
+						}
+						else
 						{
-							delete item, item = NULL;
+							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Bandage_Stack_is_Empty");
+							cd->Send(msg);
+						}
+						if (bandage->GetStackSize() <= 0)
+						{
+							item = inv->RemoveItem(bandage);
+
+							if(item)
+							{
+								delete item, item = NULL;
+							}
 						}
 					}
 				}
@@ -2438,12 +2485,22 @@ void Game::SendToAll( const std::string& msg)
 void Game::ModifyLivingPlayers( const int value )
 {
 	this->zPlayersAlive += value;
+}
 
-	this->zCurrentFogEnclosement = ( this->zInitalFogEnclosement + (this->zIncrementFogEnclosement * this->zPlayersAlive) ) * this->zFogTotalDecreaseCoeff;
-	
-	NetworkMessageConverter NMC;
-	std::string message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
-	this->SendToAll(message);
+void Game::ResetFogEnclosement()
+{
+	Vector2 worldSize = this->zWorld->GetWorldSize();
+
+	float radius = (worldSize.x + worldSize.y) * 0.25f;
+
+	this->zInitalFogEnclosement = radius;
+
+	this->zFogUpdateDelay = 30.0f;
+	this->zFogDecreaseCoeff = this->zFogUpdateDelay / EXPECTED_PLAYTIME;
+	this->zFogTotalDecreaseCoeff = 1.0f;
+	this->zFogTimer = 0.0f;
+
+	this->zCurrentFogEnclosement = this->zInitalFogEnclosement * this->zFogTotalDecreaseCoeff;
 }
 
 Vector3 Game::GetOffset(const std::string& model)
@@ -2516,6 +2573,8 @@ void Game::RestartGame()
 	SpawnItemsDebug();
 	SpawnAnimalsDebug();
 	SpawnHumanDebug();
+
+	this->ResetFogEnclosement();
 }
 
 void Game::CheckPlayerUseBow(Player* player)
@@ -2555,7 +2614,7 @@ void Game::CheckToShotArrow(ClientData* cd)
 	float bowTimer = pActor->GetBowTimer();
 	if(bowTimer == -1)
 	{
-		MaloW::Debug("Too low loading time on bow.");
+		//MaloW::Debug("Too low loading time on bow.");
 		return;
 	}
 	if(bowTimer > ARROWMAXLOADTIME)

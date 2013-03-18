@@ -24,11 +24,11 @@ SupplyDrop::~SupplyDrop()
 
 bool SupplyDrop::SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, float height )
 {
-	unsigned int weight = CalculateTotalWeight(items);
+	const float weight = CalculateTotalWeight(items);
 	return SpawnSupplyDrop(landPoint, items, weight, height);
 }
 
-bool SupplyDrop::SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, const unsigned int itemCapacity, float height )
+bool SupplyDrop::SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, const float itemCapacity, float height )
 {
 	SupplyActor* spActor = new SupplyActor(itemCapacity);
 
@@ -78,11 +78,11 @@ bool SupplyDrop::SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, co
 
 bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::set<Item*>& items )
 {
-	unsigned int weight = CalculateTotalWeight(items);
+	const float weight = CalculateTotalWeight(items);
 	return SpawnAirbornSupplyDrop(landPoint, height, items, weight);
 }
 
-bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::set<Item*>& items, const unsigned int itemCapacity )
+bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::set<Item*>& items, const float itemCapacity )
 {
 	SupplyActor* spActor = new SupplyActor(itemCapacity);
 
@@ -135,7 +135,7 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 	return true;
 }
 
-unsigned int SupplyDrop::CalculateTotalWeight( std::set<Item*>& items ) const
+const float SupplyDrop::CalculateTotalWeight( std::set<Item*>& items ) const
 {
 	float weight = 0.0f;
 	//Calculate total weight

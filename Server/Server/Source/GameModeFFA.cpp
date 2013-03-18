@@ -30,12 +30,16 @@ static const unsigned int MATERIAL_MIN	= 3;
 
 static const unsigned int VAR			= 5;
 
+//Spawn Random Drop every 10 min
+static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
+
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
 	srand((unsigned int)time(0));
 	this->zSupplyDrop = new SupplyDrop( game->GetActorManager(), game->GetWorld(), game->GetSoundHandler() );
 	this->zGameStarted = false;
 	this->zGameEnd = false;
+	this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX;
 	//zKillLimit = killLimit;
 }
 
@@ -55,6 +59,15 @@ bool GameModeFFA::Update( float dt )
 	if( this->zGameEnd )
 		return true;
 
+	//Spawn random supply
+	this->zCurrentRSPTime -= dt;
+	if( zCurrentRSPTime <= 0.0f )
+	{
+		if( this->SpawnRandomDrop() )
+			this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX;
+		else
+			this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX * 0.5f;
+	}
 
 	return false;
 }
@@ -82,7 +95,7 @@ void GameModeFFA::OnEvent( Event* e )
 				{
 					Player* dealer = pDealer->GetPlayer();
 					
-					if( !player && !dealer )
+					if( player && dealer )
 					{
 						killsMsg = "You were killed by " + dealer->GetPlayerName();
 						msg = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, killsMsg);
@@ -629,6 +642,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 		PCP->zBleedingLevel = bioActor->GetBleeding();
 		PCP->zHealth = bioActor->GetHealth();
 		PCP->zStamina = bioActor->GetStamina();
+		bioActor->SetCameraOffset(zGame->GetOffset( bioActor->GetModel() ));
 	}
 
 	PlayerActor* pTemp = dynamic_cast<PlayerActor*>(bioActor);
@@ -659,7 +673,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	//Tell Client his new ID and actor type
 	ActorManager* aManager = this->zGame->GetActorManager();
 	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float) newActor->GetID());
-	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, type);
+	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, (float)type);
 
 	cd->Send(msg);
 	cd->Send(*PCP);
@@ -722,7 +736,9 @@ bool GameModeFFA::StartGameMode()
 	this->zGameStarted = true;
 
 	std::set<Item*> items = GenerateItems();
-	this->zSupplyDrop->SpawnSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), items, 50.0f);
+	Vector2 center = this->zGame->GetWorld()->GetWorldCenter();
+
+	this->zSupplyDrop->SpawnSupplyDrop(center, items, 50.0f);
 	//this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 150.0f, items);
 
 	return true;
@@ -735,36 +751,41 @@ bool GameModeFFA::SpawnRandomDrop()
 	Vector2 pos = world->GetWorldSize();
 	Vector2 center = world->GetWorldCenter();
 
+	//Get Fog Enclosure radius from the world center.
 	float radius = this->zGame->GetFogEnclosement();
 
+	//Randomize position
 	float x = rand() / pos.x;
 	float z = rand() / pos.y;
 
 	Vector2 spawnPos = Vector2(x, z);
-	Vector2 dir = center - spawnPos;
-
+	Vector2 dir;
 	dir = center - spawnPos;
+
 	float length = dir.GetLength();
 	dir.Normalize();
 
+	//If the pos is within fog enclosure, move it
 	if( length > radius )
 	{
 		float value = length - radius;
 		spawnPos += dir * value;
 	}
 
+	//If not inside, something is wrong. World Size is not correct.
 	if( !world->IsInside(spawnPos) )
 	{
 		MaloW::Debug("SupplyDrop is not inside ???");
 		return false;
 	}
 	
-	bool moved = false;
 	bool validLocation = false;
 
-	Sector* sector = world->GetSector( spawnPos.x, spawnPos.y );
+	unsigned int tries = 50;
+	unsigned int counter = 0;
 
-	while( !validLocation )
+	//Check if pos is valid, not blocking, not in water
+	while( !validLocation && tries < 100)
 	{
 		dir = center - spawnPos;
 		dir.Normalize();
@@ -781,7 +802,15 @@ bool GameModeFFA::SpawnRandomDrop()
 		{
 			validLocation = true;
 		}
+
+		counter++;
 	}
+
+	//If not valid after checking x times, give up
+	if( !validLocation )
+		return false;
+
+	this->zSupplyDrop->SpawnAirbornSupplyDrop(spawnPos, 200.0f, items);
 
 	return true;
 }

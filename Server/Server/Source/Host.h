@@ -33,6 +33,8 @@ class Host : public MaloW::Process, public Observed
 	int zPort;
 	bool zGameStarted;
 	bool zRestartRequested;
+	bool zKickRequest;
+	std::string zKickedIP;
 	float zDeltaTime;
 	GameTimer* zGameTimer;
 	float zTimeOut;
