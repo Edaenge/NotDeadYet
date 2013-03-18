@@ -31,7 +31,8 @@ static const unsigned int MATERIAL_MIN	= 3;
 static const unsigned int VAR			= 5;
 
 //Spawn Random Drop every 10 min
-static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
+//static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
+static const float SPAWN_DROP_TIMER_MAX	= 20.0f;
 
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
@@ -801,8 +802,8 @@ bool GameModeFFA::SpawnRandomDrop()
 	float radius = this->zGame->GetFogEnclosement();
 
 	//Randomize position
-	float x = rand() / pos.x;
-	float z = rand() / pos.y;
+	float x = static_cast<float>( rand()% (int)pos.x + 1 );
+	float z = static_cast<float>( rand()% (int)pos.y +1 );
 
 	Vector2 spawnPos = Vector2(x, z);
 	Vector2 dir;
@@ -815,7 +816,7 @@ bool GameModeFFA::SpawnRandomDrop()
 	if( length > radius )
 	{
 		float value = length - radius;
-		spawnPos += dir * value;
+		spawnPos += (dir * value);
 	}
 
 	//If not inside, something is wrong. World Size is not correct.
@@ -833,7 +834,7 @@ bool GameModeFFA::SpawnRandomDrop()
 	//Check if pos is valid, not blocking, not in water
 	while( !validLocation && tries < 100)
 	{
-		dir = center - spawnPos;
+		dir = center - spawnPos; 
 		dir.Normalize();
 
 		if( world->IsBlockingAt(spawnPos) )
@@ -857,6 +858,9 @@ bool GameModeFFA::SpawnRandomDrop()
 		return false;
 
 	this->zSupplyDrop->SpawnAirbornSupplyDrop(spawnPos, 200.0f, items);
+	
+	auto it = zPlayers.begin();
+	(*it)->GetBehavior()->GetActor()->SetPosition(Vector3(spawnPos.x, 100, spawnPos.y));
 
 	return true;
 }
