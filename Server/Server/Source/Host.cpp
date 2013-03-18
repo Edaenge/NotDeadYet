@@ -92,13 +92,15 @@ void Host::SendMessageToClient( const std::string& message )
 	{
 		std::string msg = this->zMessageConverter.ConvertStringToSubstring("EV", message, true);
 
+		// lowercase
 		std::transform(msg.begin(), msg.end(), msg.begin(), ::tolower);
+		
+		// Handle commands
 		if (msg.find("restart") == 0)
 		{
 			this->zRestartRequested = true;
 		}
-		else if(msg.find("kick") == 0)
-		{
+		else if(msg.find("kick") == 0)		{
 			/*msg = this->zMessageConverter.ConvertStringToSubstring("kick", msg);
 			if (msg.find("ip"))
 			{

@@ -186,6 +186,7 @@ void CraftingMenu::UpdateCrafting(std::vector<InventorySlotGui*> inventory)
 bool CraftingMenu::AddToRenderer( GraphicsEngine* ge )
 {
 	GuiElement::AddToRenderer(ge);
+	this->SetStrata(350.0f);
 	for (auto x = this->zSlotGui.begin(); x != this->zSlotGui.end(); x++)
 	{
 		(*x)->AddToRenderer(ge);
