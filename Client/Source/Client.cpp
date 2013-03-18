@@ -327,9 +327,10 @@ void Client::InitGraphics(const std::string& mapName)
 	float yPos = (windowHeight / 2.0f) - length * 0.5f;
 
 	this->zWorld->Update();
-	for(int i = 0; i < 50; i++)
+	
+	while(this->zWorldRenderer->Update())
 	{
-		this->zWorldRenderer->Update();
+
 	}
 	
 	
