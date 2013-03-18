@@ -86,8 +86,6 @@ void MainMenu::Init()
 
 	eng->PreLoadResources(27, object);
 
-	eng->StartRendering();
-
 	Element* temp;
 
 	//MAINMENU
@@ -325,8 +323,9 @@ void MainMenu::Run()
 	{
 		zSets[zPrimarySet].AddSetToRenderer(GetGraphics());
 		GraphicsEngine* eng = GetGraphics();
+		eng->StartRendering();
 
-		eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.0f, 0.0f, 0.0f);
+		//eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.0f, 0.0f, 0.0f);
 		bool run = true;
 
 		eng->GetCamera()->SetUpdateCamera(false);
