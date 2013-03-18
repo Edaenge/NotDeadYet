@@ -216,7 +216,8 @@ void Client::Update()
 	{
 		if (zAnchor)
 		{
-			Vector2 cameraPos = this->zEng->GetCamera()->GetPosition().GetXZ();
+			iCamera* camera = this->zEng->GetCamera();
+			Vector2 cameraPos = camera->GetPosition().GetXZ();
 
 			this->zAnchor->position = cameraPos;
 			this->zEng->SetSceneAmbientLight(this->zWorld->GetAmbientAtWorldPos(cameraPos));

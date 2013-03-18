@@ -160,7 +160,8 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 					}
 					else
 					{*/
-						gEng->GetCamera()->SetPosition(position + this->zCameraOffset);
+						//gEng->GetCamera()->SetPosition(position);
+					actor->SetPosition(position);
 					//}
 				}
 				else 
