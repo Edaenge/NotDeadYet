@@ -259,8 +259,8 @@ void AIDeerBehavior::SetFearLevel(float fear)
 
 bool AIDeerBehavior::InitPathfinder()
 {
-	this->zPathfinder.InitAI(0.5,3840); //For big map.
-	//this->zPathfinder.InitAI(0.5,90); //For small testing map.
+	//this->zPathfinder.InitAI(0.5,3840); //For big map.
+	this->zPathfinder.InitAI(0.5,90); //For small testing map.
 	this->zPathfinder.SetWorldPointer(this->zWorld);
 	return true;
 }
@@ -841,23 +841,34 @@ bool AIDeerBehavior::Update( float dt )
 			Vector3 nextPos = dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity();
 
 
-			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
-			this->zCurrentDistanceFled += dt * dActor->GetVelocity();
+			
 
-			float velocity = dActor->GetVelocity();
-			Vector3 dir = dActor->GetDir();
-			Vector3 p = dActor->GetPosition();
-
-			int testValue = 0;
-
-			if(!this->zWorld->IsBlockingAt(Vector2(nextPos.x,nextPos.z)))
+			if(!this->zWorld->IsBlockingAt(Vector2(nextPos.x,nextPos.z)) && this->zCurrentPath.size() == 0)
 			{
-				
+				dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
+				this->zCurrentDistanceFled += dt * dActor->GetVelocity();
+
+				float velocity = dActor->GetVelocity();
+				Vector3 dir = dActor->GetDir();
+				Vector3 p = dActor->GetPosition();
+
+				int testValue = 0;
+			}
+			else if(this->zCurrentPath.size() > 0)
+			{
+				dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
+				this->zCurrentDistanceFled += dt * dActor->GetVelocity();
+
+				float velocity = dActor->GetVelocity();
+				Vector3 dir = dActor->GetDir();
+				Vector3 p = dActor->GetPosition();
+
+				int testValue = 0;
 			}
 			else if(this->zCurrentPath.size() == 0)
 			{
 				this->zCurrentPath.clear();
-				this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z,  dActor->GetPosition().x + dActor->GetDir().x * 5.0f,  dActor->GetPosition().z + dActor->GetDir().z * 5.0f, this->zCurrentPath, 5);
+				this->zPathfinder.Pathfinding(dActor->GetPosition().x, dActor->GetPosition().z,  dActor->GetPosition().x + dActor->GetDir().x * 5.0f,  dActor->GetPosition().z + dActor->GetDir().z * 5.0f, this->zCurrentPath, 40);
 
 				//dActor->SetPosition(Vector3(50,0,50));
 			}
