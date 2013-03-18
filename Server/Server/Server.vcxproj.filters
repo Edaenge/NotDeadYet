@@ -165,9 +165,6 @@
     <ClCompile Include="Source\SupplyDropBehavior.cpp">
       <Filter>Source\Actors\Behavior</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Inventory.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\BehaviorManager.cpp">
       <Filter>Source\Handlers</Filter>
     </ClCompile>
@@ -335,14 +332,8 @@
     <ClInclude Include="Source\SupplyDropBehavior.h">
       <Filter>Source\Actors\Behavior</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Inventory.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\BehaviorManager.h">
       <Filter>Source\Handlers</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\InventoryEvents.h">
-      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

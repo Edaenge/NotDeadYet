@@ -150,9 +150,6 @@
     <ClCompile Include="Source\MaloWPerformance.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Inventory.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\SoundEngine\Sound.cpp">
       <Filter>Source\Sound</Filter>
     </ClCompile>
@@ -291,9 +288,6 @@
       <Filter>Source\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Source\MaloWPerformance.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Inventory.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\SoundEngine\Sound.h">

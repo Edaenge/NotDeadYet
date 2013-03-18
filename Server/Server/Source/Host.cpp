@@ -97,7 +97,7 @@ void Host::SendMessageToClient( const std::string& message )
 		{
 			this->zRestartRequested = true;
 		}
-		else if(msg.find("kick"))
+		else if(msg.find("kick") == 0)
 		{
 			/*msg = this->zMessageConverter.ConvertStringToSubstring("kick", msg);
 			if (msg.find("ip"))
@@ -748,10 +748,7 @@ void Host::HandleUserData( const std::vector<std::string> &msgArray, ClientData*
 			e.playerModel = this->zMessageConverter.ConvertStringToSubstring(M_MESH_MODEL, (*it_m));
 
 			// Force Lowercase on Model
-			for( unsigned int x=0; x<e.playerModel.length(); ++x )
-			{
-				e.playerModel[x] = tolower((int)e.playerModel[x]);
-			}
+			std::transform(e.playerModel.begin(), e.playerModel.end(), e.playerModel.begin(), ::tolower);
 		}
 		else if(it_m->find(M_DIRECTION) == 0)
 		{
