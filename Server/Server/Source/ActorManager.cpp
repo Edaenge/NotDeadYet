@@ -5,6 +5,7 @@
 #include "BioActor.h"
 #include "ItemActor.h"
 #include "SupplyActor.h"
+#include "BerryBushActor.h"
 #include "WorldActor.h"
 #include "ProjectileActor.h"
 #include "Behavior.h"
@@ -54,7 +55,7 @@ void ActorManager::AddActor( Actor* actor )
 	if( actor->CanCollide() )
 		this->zCollideableActors.insert(actor);
 
-	if (dynamic_cast<ItemActor*>(actor) || dynamic_cast<BioActor*>(actor) || dynamic_cast<SupplyActor*>(actor))
+	if (dynamic_cast<ItemActor*>(actor) || dynamic_cast<BioActor*>(actor) || dynamic_cast<SupplyActor*>(actor) || dynamic_cast<BerryBushActor*>(actor))
 		zLootableActors.insert(actor);
 
 	// Notify Observers
