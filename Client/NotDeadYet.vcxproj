@@ -25,6 +25,7 @@
     <ResourceCompile Include="NotDeadYet.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Actor.cpp" />
     <ClCompile Include="Source\Client.cpp" />
     <ClCompile Include="Source\ClientItemHandler.cpp" />
     <ClCompile Include="Source\ClientObjectHandler.cpp" />

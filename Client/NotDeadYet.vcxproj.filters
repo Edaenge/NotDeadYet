@@ -162,6 +162,9 @@
     <ClCompile Include="Source\FootStepClient.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Actor.cpp">
+      <Filter>Source\Actors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Client.h">
