@@ -323,12 +323,43 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 			continue;
 		}
 
+		iMesh* oldMesh = actor->GetMesh();
+
 		Vector3 position = actor->GetPosition();
 		Vector4 rotation = actor->GetRotation();
 		Vector3 scale = actor->GetScale();
 
-		iMesh* oldMesh = actor->GetMesh();
-		
+		if (this->zID == ID)
+		{
+			this->zEng->GetCamera()->RemoveMesh();
+
+			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(modelName);
+			if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
+				this->zMeshOffset = meshOffsetsIterator->second;
+			else
+				this->zMeshOffset = Vector3(0.0f, 1.0f, 0.0f);
+
+			this->zActorManager->SetCameraOffset(this->zMeshOffset);
+
+			auto reader = this->zModelToReaderMap.find(modelName);
+			if (reader != this->zModelToReaderMap.end())	
+			{
+				std::string boneName = reader->second.GetBindingBone(BONE_CAMERA_OFFSET);
+				if (boneName != "")
+					this->zEng->GetCamera()->SetMesh(mesh, &boneName[0], Vector3(0.0f, 0.0f, 1.0f));
+
+				else 
+				{
+					this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+					this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
+				}
+			}
+			else
+			{
+				this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+				this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
+			}
+		}
 		this->zEng->DeleteMesh(oldMesh);
 		
 		actor->SetMesh(mesh);

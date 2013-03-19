@@ -1941,7 +1941,9 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		this->zID = this->zMsgHandler.ConvertStringToInt(M_SELF_ID, msgArray[0]);
 		this->ResetPhysicalConditions();
-		if (Actor* actor = this->zActorManager->GetActor(this->zID))
+
+		Actor* actor = this->zActorManager->GetActor(this->zID);
+		if (actor)
 		{
 			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(actor->GetModel());
 			if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
@@ -2485,10 +2487,14 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsi
 	}
 	if(this->zGuiManager->IsCraftOpen())
 		this->zGuiManager->ToggleCraftingGui();
-	this->zGuiManager->ToggleInventoryGui();
-	this->zGuiManager->ToggleLootGui(ActorID);
+	
+	if (!this->zGuiManager->IsInventoryOpen())
+		this->zGuiManager->ToggleInventoryGui();
+
+	if (!this->zGuiManager->IsLootingOpen())
+		this->zGuiManager->ToggleLootGui(ActorID);
+
 	this->zShowCursor = true;
-	//this->SendLootItemMessage(ActorID, gid.zID, gid.zType, gid.zSubType);
 }
 
 void Client::UpdateCameraOffset(unsigned int state)

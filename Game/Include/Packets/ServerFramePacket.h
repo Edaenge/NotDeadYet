@@ -145,6 +145,17 @@ public:
 
 	inline virtual bool IsEmpty() const
 	{
+		unsigned int size = 0;
+		size += newPositions.size();
+		size += newRotations.size();
+		size += newScales.size();
+		size += newStates.size();
+		size += newMesh.size();
+		size += newAnimations.size();
+
+		if( size == 0)
+			return true;
+
 		return false;
 	}
 };

@@ -842,7 +842,7 @@ bool GameModeFFA::SpawnRandomDrop()
 	unsigned int playerOne = rand()% NR_OF_ALIVE_PLAYERS;
 	unsigned int playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
 
-	while(playerTwo == playerOne && NR_OF_ALIVE_PLAYERS > 2)
+	while(playerTwo == playerOne && NR_OF_ALIVE_PLAYERS >= 2)
 	{
 		playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
 	}
@@ -1025,7 +1025,7 @@ bool GameModeFFA::CanConnect( ClientData* cd )
 
 	if( zGameStarted )
 	{
-		cd->Send( NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Game is allready running.") );
+		cd->Send( NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Game is already running.") );
 		return false;
 	}
 	
