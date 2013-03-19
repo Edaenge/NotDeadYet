@@ -801,6 +801,10 @@ void Game::OnEvent( Event* e )
 	{
 		this->HandleFillItem(PFIE->clientData, PFIE->itemID);
 	}
+	else if(PlayerDrinkWaterEvent* PDWE = dynamic_cast<PlayerDrinkWaterEvent*>(e))
+	{
+		this->HandleDrinkWater(PDWE->clientData);
+	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
 		if ( zPerf ) this->zPerf->PreMeasure("Weapon Use Event Handling", 3);
@@ -2368,6 +2372,20 @@ void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
 		msg += NMC.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)container->GetRemainingUses());
 		cd->Send(msg);
 	}
+}
+
+void Game::HandleDrinkWater( ClientData* cd )
+{
+	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+	
+	float hydration = pActor->GetHydration() + 15.0f;
+	
+	if (hydration > pActor->GetHydrationMax())
+		hydration = pActor->GetHydrationMax();
+	
+	pActor->SetHydration( hydration );
+
 }
 
 void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
