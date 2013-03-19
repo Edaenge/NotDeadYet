@@ -66,7 +66,7 @@ void Actor::SetRotation(const Vector4& rot)
 	this->zMesh->SetQuaternion(rot);
 }
 
-void Actor::SetStaticMesh(iMesh* mesh) 
+void Actor::SetMesh(iMesh* mesh) 
 { 
 	this->zMesh = mesh; 
 }

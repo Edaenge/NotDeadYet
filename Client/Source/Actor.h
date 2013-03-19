@@ -46,7 +46,7 @@ public:
 	void SetRotation(const Vector4& rot);
 
 	/*! Adds a Pointer to the Player Model Mesh*/
-	void SetStaticMesh(iMesh* mesh);
+	void SetMesh(iMesh* mesh);
 
 	/*! Sets the Client Id given from the server*/
 	void SetID(const int clientID);

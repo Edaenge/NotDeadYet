@@ -162,3 +162,15 @@ void Actor::CalculateCollisionPoints()
 	zCollisionPoints[2] = three;
 	zCollisionPoints[3] = four;
 }
+
+void Actor::SetMesh( const std::string meshName )
+{
+	this->zModel = meshName;
+
+	if (zPhysicsObject)
+		this->zPhysicsObject->SetModel(meshName);
+
+	ActorMeshChangeEvent e;
+	e.zActor = this;
+	NotifyObservers(&e);
+}

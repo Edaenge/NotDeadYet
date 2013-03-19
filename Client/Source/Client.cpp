@@ -1757,7 +1757,18 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		//Could Crash
 		if(this->zGuiManager)
+		{
+			if (this->zGuiManager->IsInventoryOpen())
+				this->zGuiManager->ToggleInventoryGui();
+
+			if (this->zGuiManager->IsCraftOpen())
+				this->zGuiManager->ToggleCraftingGui();
+
+			if (this->zGuiManager->IsLootingOpen())
+				this->zGuiManager->ToggleLootGui(0);
+
 			this->zGuiManager->ResetGui();
+		}
 		else
 			this->zGuiManager = new GuiManager(GetGraphics());
 

@@ -66,6 +66,7 @@ public:
 
 	std::vector<unsigned int> actorID;
 };
+
 /*Event when a player wants to loot items from a loot able object.*/
 class PlayerLootItemEvent : public Event
 {

@@ -40,7 +40,6 @@ Host::Host() :
 
 Host::~Host()
 {
-	
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 

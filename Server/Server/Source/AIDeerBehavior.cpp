@@ -773,9 +773,6 @@ bool AIDeerBehavior::Update( float dt )
 
 			if(this->zCurrentPath.size() > 0)
 			{
-
-				dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
-
 				Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 				Vector3 direction = goal - dActor->GetPosition();
 				direction.Normalize();
@@ -793,6 +790,8 @@ bool AIDeerBehavior::Update( float dt )
 			dActor->SetVelocity(this->zAttackingVelocity);
 
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
+
+			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
 
 		}
 		else if(this->GetMentalState() == AFRAID /*&& this->zCurrentPath.size() > 0*/)
@@ -893,13 +892,13 @@ bool AIDeerBehavior::Update( float dt )
 	}
 
 	//Rotate Animal
-	static Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, -1.0f);
+	static Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, 1.0f);
 	Vector3 meshDirection = dActor->GetDir();
 	meshDirection.y = 0;
 	meshDirection.Normalize();
 
 	Vector3 around = Vector3(0.0f, 1.0f, 0.0f);
-	float angle = acos(meshDirection.GetDotProduct(defaultMeshDir));
+	float angle = -acos(meshDirection.GetDotProduct(defaultMeshDir));
 
 	if (meshDirection.x > 0.0f)
 	 angle *= -1;
