@@ -4,15 +4,24 @@
 */
 #pragma once
 
-#include "iMesh.h"
-#include "Graphics.h"
 #include <AnimationStates.h>
+#include <World/Observer.h>
+#include <Graphics.h>
 #include <string>
 #include <map>
-#include "Safe.h"
 
-/*! Base class for World Objects*/
-class Actor
+class ActorMovedEvent;
+class Actor;
+
+
+class ActorMovedEvent : public Event
+{
+public:
+	Actor* zActor;
+};
+
+/*! Base class for Actors */
+class Actor : public Observed
 {
 	std::string zModel;
 	iMesh* zMesh;
@@ -29,7 +38,7 @@ public:
 	inline const std::string& GetModel() const { return this->zModel; }
 	inline iMesh* GetMesh() const { return this->zMesh; }
 	inline const Vector3& GetScale() const { return this->zMesh->GetScaling(); }
-	inline const Vector3& GetPosition() const { return this->zMesh->GetPosition();}
+	inline const Vector3& GetPosition() const { return this->zPosition; }
 	inline const Vector4& GetRotation() const { return this->zMesh->GetRotationQuaternion(); }
 	inline const unsigned int& GetID() const { return this->zID; }
 

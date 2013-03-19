@@ -9,8 +9,7 @@ static const unsigned int NROFGRASSTEX = 3;
 static const unsigned int NROFDIRTTEX = 3;
 
 
-ClientActorManager::ClientActorManager(FootStepClient* footSteps) :
-	zFootSteps(footSteps)
+ClientActorManager::ClientActorManager()
 {
 	this->zFootStepsOnGrass = new Sound*[MAXFOOTSTEPS];
 	for(int i = 0; i < MAXFOOTSTEPS; i++)
@@ -101,7 +100,7 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 	float t = deltaTime + latency;//GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
 	static GraphicsEngine* gEng = GetGraphics();
 	int stepsPlayedThisUpdate = 1;
-
+	Actor* playerActor = this->GetActor(clientID);
 	Vector3 position;
 	auto it_Update = this->zUpdates.begin();
 	while( it_Update != this->zUpdates.end() )
@@ -120,13 +119,16 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 
 				update->SetStateChange(false);
 			}
+
 			if (update->HasPositionChanged())
 			{
-				Vector3 oldPosition;
+				// New Position
+				Vector3 position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
+
+				// Check if this is me
 				if(update->GetID() == clientID)
 				{
-					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
-					AudioManager::GetInstance()->SetPlayerPosition(&ConvertToFmodVector(position), &ConvertToFmodVector(gEng->GetCamera()->GetForward()), &ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
+					AudioManager::GetInstance()->SetPlayerPosition(ConvertToFmodVector(position), ConvertToFmodVector(gEng->GetCamera()->GetForward()), ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
 					if(actor->GetModel() != "media/models/ghost.obj")
 					{
 						int mostUsedTex = this->GetMostUsedTexOnPos(position.GetXZ(), world);
@@ -161,31 +163,35 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 					else
 					{*/
 						//gEng->GetCamera()->SetPosition(position);
+
 					actor->SetPosition(position);
 					//}
 				}
 				else 
 				{
-					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
 					actor->SetPosition(position);
-					if(actor->GetModel() != "Media/Models/ghost.obj")
+					if((playerActor->GetPosition() - position).GetLength() < 100.0f)
 					{
-						if(stepsPlayedThisUpdate < MAXFOOTSTEPS)
+						if(actor->GetModel() != "Media/Models/ghost.obj")
 						{
-							if(this->GetMostUsedTexOnPos(position.GetXZ(), world) == 0)
+							if(stepsPlayedThisUpdate < MAXFOOTSTEPS)
 							{
-								this->zFootStepsOnGrass[stepsPlayedThisUpdate]->SetPosition(position);
-								this->zFootStepsOnGrass[stepsPlayedThisUpdate]->Play();
-							}
-							else
-							{
-								this->zFootStepsOnDirt[stepsPlayedThisUpdate]->SetPosition(position);
-								this->zFootStepsOnDirt[stepsPlayedThisUpdate]->Play();
+								if(this->GetMostUsedTexOnPos(position.GetXZ(), world) == 0)
+								{
+									this->zFootStepsOnGrass[stepsPlayedThisUpdate]->SetPosition(position);
+									this->zFootStepsOnGrass[stepsPlayedThisUpdate]->Play();
+								}
+								else
+								{
+									this->zFootStepsOnDirt[stepsPlayedThisUpdate]->SetPosition(position);
+									this->zFootStepsOnDirt[stepsPlayedThisUpdate]->Play();
+								}
 							}
 						}
 					}
 
 				}
+
 				update->ComparePosition(position);
 			}
 			//if((*it_Update)->GetID() != clientID)
@@ -250,19 +256,31 @@ Updates* ClientActorManager::GetUpdate(const unsigned int& ID) const
 
 void ClientActorManager::RemoveActor( const unsigned int& ID )
 {
+	// Actor
 	auto actorIterator = this->zActors.find(ID);
-
-	Actor* actor = actorIterator->second;
-
-	auto actorStateIterator = this->zState.find(actor);
-	if (actorStateIterator != this->zState.end())
+	if ( actorIterator != zActors.end() )
 	{
-		this->zState.erase(actorStateIterator);
+		// Actor pointer
+		Actor* actor = actorIterator->second;
+
+		// Notify observers
+		ActorRemovedEvent ARE;
+		ARE.zActorManager = this;
+		ARE.zActor = actor;
+
+		// State
+		auto actorStateIterator = this->zState.find(actor);
+		if (actorStateIterator != this->zState.end())
+		{
+			this->zState.erase(actorStateIterator);
+		}
+
+		// Delete actor object
+		SAFE_DELETE(actor);
+
+		// Erase from map
+		this->zActors.erase(actorIterator);
 	}
-
-	SAFE_DELETE(actor);
-
-	this->zActors.erase(actorIterator);
 }
 
 void ClientActorManager::AddActorState( Actor* actor, const unsigned int& state )
@@ -292,6 +310,13 @@ bool ClientActorManager::AddActor(Actor* actor)
 	if (actor)
 	{
 		this->zActors[actor->GetID()] = actor;
+
+		// Notify Observers
+		ActorAddedEvent AAE;
+		AAE.zActorManager = this;
+		AAE.zActor = actor;
+		NotifyObservers(&AAE);
+
 		return true;
 	}
 
@@ -399,15 +424,23 @@ FMOD_VECTOR ClientActorManager::ConvertToFmodVector( const Vector3& v ) const
 
 unsigned int ClientActorManager::GetMostUsedTexOnPos( const Vector2& pos, World* world ) const
 {
-	float grassSum = 0.0f;
-	grassSum += world->GetAmountOfTexture(pos, "01_v02-Moss.png");
-	grassSum += world->GetAmountOfTexture(pos, "06_v01-MossDark.png");
-	grassSum += world->GetAmountOfTexture(pos, "07_v01-MossLight.png");
+	try
+	{
+		float grassSum = 0.0f;
+		grassSum += world->GetAmountOfTexture(pos, "01_v02-Moss.png");
+		grassSum += world->GetAmountOfTexture(pos, "06_v01-MossDark.png");
+		grassSum += world->GetAmountOfTexture(pos, "07_v01-MossLight.png");
 
-	float dirtSum = 0.0f;
-	dirtSum += world->GetAmountOfTexture(pos, "05_v01-Sandpng.png");
-	dirtSum += world->GetAmountOfTexture(pos, "04_v02-Gravel.png");
-	dirtSum += world->GetAmountOfTexture(pos, "03_v02-Mix.png");
+		float dirtSum = 0.0f;
+		dirtSum += world->GetAmountOfTexture(pos, "05_v01-Sandpng.png");
+		dirtSum += world->GetAmountOfTexture(pos, "04_v02-Gravel.png");
+		dirtSum += world->GetAmountOfTexture(pos, "03_v02-Mix.png");
 
-	return ( dirtSum > grassSum );
+		return ( dirtSum > grassSum );
+	}
+	catch(...)
+	{
+	}
+
+	return 0;
 }

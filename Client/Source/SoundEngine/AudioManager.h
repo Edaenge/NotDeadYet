@@ -49,7 +49,7 @@ class AudioManager: public IAudioManager, public IAudioLoader, public IAudioMusi
 
 		//AudioEvents
 		virtual int GetEventHandle(int group,int eventId,IEventHandle* &handle);
-		virtual int SetPlayerPosition(FMOD_VECTOR* position,FMOD_VECTOR* forward,FMOD_VECTOR* up);
+		virtual int SetPlayerPosition(const FMOD_VECTOR& position, const FMOD_VECTOR& forward, const FMOD_VECTOR& up);
 		virtual int GetEventHandle(int eventId,IEventHandle* &handle);
 
 		//AudioMusic

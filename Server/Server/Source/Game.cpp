@@ -125,9 +125,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+//	this->SpawnItemsDebug();
+//	this->SpawnAnimalsDebug();
+//this->SpawnHumanDebug();
+	this->SpawnHumanDebug();
 	// Sun Direction
 	this->ResetSunDirection();
 
@@ -175,7 +176,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 20; i++)
+	for(unsigned int i = 0; i < 1; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -462,6 +463,9 @@ void Game::Caching( const std::string& modelName )
 
 void Game::UpdateSunDirection(float dt)
 {
+	if(!zGameMode->IsGameStarted())
+		return;
+
 	//Update Sun
 	this->zSunTimer += dt;
 
@@ -493,6 +497,9 @@ void Game::UpdateSunDirection(float dt)
 
 void Game::UpdateFogEnclosement( float dt )
 {
+	if( !zGameMode->IsGameStarted() )
+		return;
+
 	this->zFogTimer += dt;
 
 	if (this->zFogTimer >= this->zFogUpdateDelay)
@@ -778,10 +785,6 @@ void Game::OnEvent( Event* e )
 	else if (PlayerFillItemEvent* PFIE = dynamic_cast<PlayerFillItemEvent*>(e))
 	{
 		this->HandleFillItem(PFIE->clientData, PFIE->itemID);
-	}
-	else if (PlayerDrinkWaterEvent* PDWE = dynamic_cast<PlayerDrinkWaterEvent*>(e) )
-	{
-		this->HandleDrinkWater(PDWE->clientData);
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
@@ -1126,6 +1129,7 @@ void Game::OnEvent( Event* e )
 
 		UDE->clientData->Send(*PCP);
 		delete PCP;
+	
 
 		// Gather Actors Information and send to client
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
@@ -1153,6 +1157,9 @@ void Game::OnEvent( Event* e )
 
 		message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 		this->SendToAll(message);
+
+		message = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "\"" + UDE->playerName + "\"" + " Has Connected with ip: " + UDE->clientData->GetChannel()->GetIP());
+		SendToAll(message);
 
 		if ( zPerf ) this->zPerf->PostMeasure("Player Connecting", 2);
 	}
@@ -2146,6 +2153,8 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 			if(meele->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
 				dmg.slashing = meele->GetDamage();
+			else if(meele->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+				dmg.piercing = meele->GetDamage();
 
 			victim->TakeDamage(dmg, pActor);
 
@@ -2344,15 +2353,6 @@ void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
 		msg += NMC.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)container->GetRemainingUses());
 		cd->Send(msg);
 	}
-}
-
-void Game::HandleDrinkWater(ClientData* cd)
-{
-	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
-	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
-
-	pActor->SetHydration(pActor->GetHydration() + 15.0f );
-
 }
 
 void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )

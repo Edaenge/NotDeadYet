@@ -107,6 +107,15 @@ void Client::HandleUseItem(const unsigned int ID)
 		this->zGuiManager->RemoveInventoryItemFromGui(gid);
 
 		this->zGuiManager->UpdateInventoryWeight((float)this->zPlayerInventory->GetTotalWeight());
+
+		AudioManager* am = AudioManager::GetInstance();
+		IEventHandle* temp;
+		int FMOD_RESULT_TEMP = am->GetEventHandle(EVENTID_NOTDEADYET_MENU_N_BACKPACK_EAT, temp);
+		if(FMOD_RESULT_TEMP == FMOD_OK)
+		{
+			temp->Play();
+			delete temp;
+		}
 	}
 	/*else if (item->GetItemType() == ITEM_TYPE_MATERIAL)
 	{

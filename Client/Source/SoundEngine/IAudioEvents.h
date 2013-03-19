@@ -22,7 +22,7 @@ class IAudioEvents
 		///<param name="forward">The forward vector, this must be perpendicular with the up-vector</param>
 		///<param name="up">The up vector, this must be perpendicular with the forward-vector</param>
 		///<returns>A value indicating success, anything but the value 0 is some form of failure, see FMOD_RESULT in fmod.h for more detail</returns>
-		virtual int SetPlayerPosition(FMOD_VECTOR* position,FMOD_VECTOR* forward,FMOD_VECTOR* up) = 0;
+		virtual int SetPlayerPosition(const FMOD_VECTOR& position, const FMOD_VECTOR& forward, const FMOD_VECTOR& up) = 0;
 		
 		///<Summary>Gets an new instance of an eventhandle, the FEV-file has to have been loaded first but the eventdata doesn't and will be loaded on call, this may result in a certain slowdown so use wisely</summary>
 		///<param name="group">The Project-unique event id for the group to load, see sounds.h</param>
