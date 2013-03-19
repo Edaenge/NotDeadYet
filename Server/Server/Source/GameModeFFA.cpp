@@ -827,15 +827,10 @@ bool GameModeFFA::SpawnRandomDrop()
 {
 	World* world = zGame->GetWorld();
 	std::set<Item*> items = GenerateItems();
-	Vector2 center = world->GetWorldCenter();
+	Vector2 worldCenter = world->GetWorldCenter();
 
 	//Get Fog Enclosure radius from the world center.
 	float radius = this->zGame->GetFogEnclosement();
-
-	//Randomize position
-//Vector2 pos = world->GetWorldSize();
-// 	float x = static_cast<float>( rand()% (int)pos.x + 1 );
-// 	float z = static_cast<float>( rand()% (int)pos.y + 1 );
 
 	/***Randomize two players and calculate the pos between them.***/
 	std::vector<Actor*> aliveActors;
@@ -850,41 +845,119 @@ bool GameModeFFA::SpawnRandomDrop()
 		}
 	}
 
-	//Randomize two indicies
-	const unsigned int NR_OF_ALIVE_PLAYERS = zAlivePlayers;
-	unsigned int playerOne = rand()% NR_OF_ALIVE_PLAYERS;
-	unsigned int playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
-
-	while(playerTwo == playerOne && NR_OF_ALIVE_PLAYERS >= 2)
+	if( zAlivePlayers != aliveActors.size() )
 	{
-		playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+		MaloW::Debug("zAlivePlayers and aliveActors vector size is no the same: In GameModeFFA, SpawnRandomDrop.");
+		zAlivePlayers = aliveActors.size();
 	}
 
-	//Get Two Positions
-	Vector2 posOne = aliveActors[playerOne]->GetPosition().GetXZ();
+	Vector2 size = zGame->GetWorld()->GetWorldSize();
+	Vector2 posOne; 
 	Vector2 posTwo;
+	
+	const unsigned int NR_OF_ALIVE_PLAYERS = zAlivePlayers;
+	unsigned int playerOne;
+	unsigned int playerTwo;
 
-	if( NR_OF_ALIVE_PLAYERS <= 2 )
-		posTwo = center;
+	//Randomize two indicies
+	if( NR_OF_ALIVE_PLAYERS > 2 )
+	{
+		playerOne = rand()% NR_OF_ALIVE_PLAYERS;
+		playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+		bool stop = false;
+		const unsigned int TRIES = 50;
+		unsigned int counter = 0;
+
+		//Make sure the values are Good
+		while(!stop && counter < TRIES)
+		{
+			counter++;
+
+			if(playerOne == playerTwo)
+			{
+				playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+				continue;
+			}
+
+			posOne = aliveActors[playerOne]->GetPosition().GetXZ();
+			posTwo = aliveActors[playerTwo]->GetPosition().GetXZ();
+
+			//if the pos is not within the world size given
+			if( posOne.x > size.x || posOne.y > size.y )
+			{
+				playerOne = rand()% NR_OF_ALIVE_PLAYERS;
+				continue;
+			}
+			
+			//if the pos is not within the world size given
+			if( posTwo.x > size.x || posTwo.y == size.y )
+			{
+				playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+				continue;
+			}
+
+			stop = true;
+		}
+
+		//If stop is still false, just use the center points
+		if( !stop )
+		{
+			posOne = worldCenter;
+			posTwo = worldCenter;
+		}
+	}
+	//if only two, use them
+	else if( NR_OF_ALIVE_PLAYERS == 2 )
+	{
+		posOne = aliveActors[0]->GetPosition().GetXZ();
+		posTwo = aliveActors[1]->GetPosition().GetXZ();
+
+		//if the pos is not within the world size given
+		if( posOne.x > size.x || posOne.y > size.y )
+		{
+			posOne = worldCenter;
+		}
+
+		//if the pos is not within the world size given
+		if( posTwo.x > size.x || posTwo.y == size.y )
+		{
+			posTwo = worldCenter;
+		}
+	}
+	//if only one, use it and the world center pos
+	else if(NR_OF_ALIVE_PLAYERS == 1)
+	{
+		posOne = aliveActors[0]->GetPosition().GetXZ();
+		posTwo = worldCenter;
+
+		//if the pos is not within the world size given
+		if( posOne.x > size.x || posOne.y > size.y )
+		{
+			posOne = worldCenter;
+		}
+	}
+	//No players?
 	else
-		posTwo = aliveActors[playerTwo]->GetPosition().GetXZ();
+	{
+		return false;
+	}
 
 	Vector2 spawnPos;
+	Vector2 dir;
+
 	spawnPos = ( (posOne - posTwo) * 0.5f );
 	spawnPos = posTwo + spawnPos;
-	
-	Vector2 dir;
- 	dir = center - spawnPos;
- 
- 	float length = dir.GetLength();
- 	dir.Normalize();
- 
- 	//If the pos is within fog enclosure, move it
- 	if( length > radius )
- 	{
- 		float value = length - radius;
- 		spawnPos += (dir * value);
- 	}
+	dir = worldCenter - spawnPos;
+
+	float length = dir.GetLength();
+	dir.Normalize();
+
+	//If the pos is within fog enclosure, move it
+	if( length > radius )
+	{
+		float value = length - radius;
+		spawnPos += (dir * value);
+	}
 
 	//If not inside, something is wrong. World Size is not correct.
 	if( !world->IsInside(spawnPos) )
@@ -892,27 +965,23 @@ bool GameModeFFA::SpawnRandomDrop()
 		MaloW::Debug("SupplyDrop is not inside ???");
 		return false;
 	}
-	
+
 	bool validLocation = false;
 
-	unsigned int tries = 50;
+	const unsigned int TRIES = 50;
 	unsigned int counter = 0;
 
 	//Check if pos is valid, not blocking, not in water
-	while( !validLocation && tries < 100)
+	while( !validLocation && TRIES > counter)
 	{
 		if( world->IsBlockingAt(spawnPos) )
-		{
 			spawnPos += dir * 1.0f;
-		}
+		
 		else if( world->GetWaterDepthAt(spawnPos) != 0.0f )
-		{
 			spawnPos += dir * 2.0f;
-		}
+
 		else
-		{
 			validLocation = true;
-		}
 
 		counter++;
 	}
@@ -922,9 +991,6 @@ bool GameModeFFA::SpawnRandomDrop()
 		return false;
 
 	this->zSupplyDrop->SpawnAirbornSupplyDrop(spawnPos, 200.0f, items);
-	
-// 	auto it = zPlayers.begin();
-// 	(*it)->GetBehavior()->GetActor()->SetPosition(Vector3(spawnPos.x, 100, spawnPos.y));
 
 	return true;
 }
