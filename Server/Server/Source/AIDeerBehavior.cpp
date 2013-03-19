@@ -259,8 +259,8 @@ void AIDeerBehavior::SetFearLevel(float fear)
 
 bool AIDeerBehavior::InitPathfinder()
 {
-	//this->zPathfinder.InitAI(0.5,3840); //For big map.
-	this->zPathfinder.InitAI(0.5,90); //For small testing map.
+	this->zPathfinder.InitAI(0.5,3840); //For big map.
+	//this->zPathfinder.InitAI(0.5,90); //For small testing map.
 	this->zPathfinder.SetWorldPointer(this->zWorld);
 	return true;
 }
@@ -306,43 +306,45 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 		foundPath = true;
 	}
 
-	while(foundPath == false)
-	{
 		getEmergencyDirection = false;
 		
-		while(this->zWorld->IsBlockingAt(Vector2(dest.x, dest.z)) && ( dest - dActor->GetPosition() ).GetLength() > 2)
-		{
-			dest = (dest - dActor->GetPosition());
-			dest = dActor->GetPosition() + (dest - dest * 0.75);
-						
-		}
-		if(( dest - dActor->GetPosition() ).GetLength() < 2)
-		{
-			getEmergencyDirection = true; //There is basically a thick wall in the way...
-		}
+		//this while loop takes a lot of work. Try to optimize however possible.
+		//if(this->zWorld->IsBlockingAt(Vector2(dest.x, dest.z)))
+		//{
+		//	getEmergencyDirection = true;
+		//	//dest = (dest - dActor->GetPosition());
+		//	//dest = dActor->GetPosition() + (dest - dest * 0.75);
+		//				
+		//}
+		//if(( dest - dActor->GetPosition() ).GetLength() < 2)
+		//{
+		//	getEmergencyDirection = true; //There is basically a thick wall in the way...
+		//}
 
-		if(getEmergencyDirection) //...so let's find another direction.
-		{
-			//this->zDestination.Normalize();
-			counter++;
-			float angle = (-10 * counter) * 3.14f/180;
-			float oldX, oldY;
-			oldX = dest.x;
-			oldY = dest.z;
+		//if(getEmergencyDirection) //...so let's find another direction.
+		//{
+		//	//this->zDestination.Normalize();
+		//	counter++;
+		//	float angle = (-10 * counter) * 3.14f/180;
+		//	float oldX, oldY;
+		//	oldX = dest.x;
+		//	oldY = dest.z;
 
-			dest.x = cos(angle) * oldX - sin(angle) * oldY;
-			dest.z = cos(angle) * oldY + sin(angle) * oldX;
-			dest.Normalize();
-			dest = dest * (float)zFleeDistance;
-
-					
-		}
-		else
-		{
-			foundPath = true;
-			return dest;
-		}
-	}
+		//	dest.x = cos(angle) * oldX - sin(angle) * oldY;
+		//	dest.z = cos(angle) * oldY + sin(angle) * oldX;
+		//	dest.Normalize();
+		//	dest = dest * (float)zFleeDistance;
+		//	
+		//	foundPath = true;
+		//	return dest;
+		//			
+		//}
+		//else
+		//{
+		//	foundPath = true;
+		//	return dest;
+		//}
+	//}
 	return dest;
 }
 
@@ -732,6 +734,12 @@ bool AIDeerBehavior::Update( float dt )
 				direction.Normalize();
 				dActor->SetDir( direction ); 
 
+				Vector2 testProperDirection;
+				testProperDirection.x = dActor->GetDir().x;
+				testProperDirection.y = dActor->GetDir().z;
+				testProperDirection.Normalize();
+				dActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
+
 			}
 			/*if(dActor->GetVelocity() > this->zWalkingVelocity)
 			{
@@ -780,6 +788,13 @@ bool AIDeerBehavior::Update( float dt )
 				Vector3 direction = goal - dActor->GetPosition();
 				direction.Normalize();
 				dActor->SetDir( direction ); 
+
+
+				Vector2 testProperDirection;
+				testProperDirection.x = dActor->GetDir().x;
+				testProperDirection.y = dActor->GetDir().z;
+				testProperDirection.Normalize();
+				dActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
 			
 			}
 		/*	if(dActor->GetVelocity() > this->zAttackingVelocity)
@@ -810,7 +825,7 @@ bool AIDeerBehavior::Update( float dt )
 			if(this->zCurrentPath.size() > 0)
 			{
 				bool reachedNode = false;
-				if( (dActor->GetPosition().x > this->zCurrentPath.back().x - 0.1 && dActor->GetPosition().x < this->zCurrentPath.back().x + 0.1) && ( dActor->GetPosition().z > this->zCurrentPath.back().y - 0.1 && dActor->GetPosition().z < this->zCurrentPath.back().y + 0.1 ) )
+				if( (dActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && dActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( dActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && dActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
 				{
 					reachedNode = true;
 				}
@@ -845,25 +860,27 @@ bool AIDeerBehavior::Update( float dt )
 
 			if(!this->zWorld->IsBlockingAt(Vector2(nextPos.x,nextPos.z)) && this->zCurrentPath.size() == 0)
 			{
+				Vector2 testProperDirection;
+				testProperDirection.x = dActor->GetDir().x;
+				testProperDirection.y = dActor->GetDir().z;
+				testProperDirection.Normalize();
+				dActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
+
 				dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 				this->zCurrentDistanceFled += dt * dActor->GetVelocity();
 
-				float velocity = dActor->GetVelocity();
-				Vector3 dir = dActor->GetDir();
-				Vector3 p = dActor->GetPosition();
-
-				int testValue = 0;
 			}
 			else if(this->zCurrentPath.size() > 0)
 			{
+				Vector2 testProperDirection;
+				testProperDirection.x = dActor->GetDir().x;
+				testProperDirection.y = dActor->GetDir().z;
+				testProperDirection.Normalize();
+				dActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
+
 				dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 				this->zCurrentDistanceFled += dt * dActor->GetVelocity();
 
-				float velocity = dActor->GetVelocity();
-				Vector3 dir = dActor->GetDir();
-				Vector3 p = dActor->GetPosition();
-
-				int testValue = 0;
 			}
 			else if(this->zCurrentPath.size() == 0)
 			{
@@ -904,13 +921,13 @@ bool AIDeerBehavior::Update( float dt )
 	}
 
 	//Rotate Animal
-	static Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, -1.0f);
+	static Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, 1.0f);
 	Vector3 meshDirection = dActor->GetDir();
 	meshDirection.y = 0;
 	meshDirection.Normalize();
 
 	Vector3 around = Vector3(0.0f, 1.0f, 0.0f);
-	float angle = acos(meshDirection.GetDotProduct(defaultMeshDir));
+	float angle = -acos(meshDirection.GetDotProduct(defaultMeshDir));
 
 	if (meshDirection.x > 0.0f)
 	 angle *= -1;

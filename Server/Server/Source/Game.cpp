@@ -2238,7 +2238,7 @@ void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
 	//Logic for filling container here.
 	Vector2 position = Vector2(pActor->GetPosition().x, pActor->GetPosition().z);
 	float depth = this->zWorld->GetWaterDepthAt(position);
-	if(depth > 0.3f)
+	if(depth > 0.2f)
 	{
 		dynamic_cast<Container*>(item)->SetRemainingUses(dynamic_cast<Container*>(item)->GetMaxUses());
 	}
