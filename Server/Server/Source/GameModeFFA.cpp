@@ -39,7 +39,7 @@ GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 	srand((unsigned int)time(0));
 	this->zSupplyDrop = new SupplyDrop( game->GetActorManager(), game->GetWorld(), game->GetSoundHandler() );
 	this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX;
-	//zKillLimit = killLimit;
+	this->zAlivePlayers = 0;
 }
 
 GameModeFFA::~GameModeFFA()
@@ -69,9 +69,7 @@ bool GameModeFFA::Update( float dt )
 	}
 
 	if( CheckEndCondition() )
-	{
 		return true;
-	}
 
 	return false;
 }
@@ -193,7 +191,30 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if (BioActorDeathEvent* BADE = dynamic_cast<BioActorDeathEvent*>(e))
 	{
-		BADE->zActor;
+		PlayerActor* pActor = dynamic_cast<PlayerActor*>(BADE->zActor);
+		
+		if( pActor )
+		{
+			Player* player = pActor->GetPlayer();
+			if( player )
+			{
+				//Iterate and count alive players
+				this->zAlivePlayers = 0;
+				auto it_end = zPlayers.end();
+				for(auto it = zPlayers.begin(); it != it_end; it++)
+				{
+					Behavior* behavior = (*it)->GetBehavior();
+					if( behavior )
+					{
+						BioActor* bActor = dynamic_cast<BioActor*>(behavior->GetActor());
+						if( bActor && bActor->IsAlive() )
+						{
+							this->zAlivePlayers++;
+						}
+					}
+				}
+			}
+		}
 
 		auto models = this->zGame->GetDeadActorModels();
 
@@ -212,7 +233,6 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if(PlayerAnimalPossessEvent* POSSESSE = dynamic_cast<PlayerAnimalPossessEvent*>(e))
 	{
-
 		GhostActor* gActor = dynamic_cast<GhostActor*>(POSSESSE->zActor);
 
 		if(gActor)
@@ -229,14 +249,6 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if( PlayerRemoveEvent* PRE = dynamic_cast<PlayerRemoveEvent*>(e) )
 	{
-		auto playerBehavior = PRE->player->GetBehavior();
-		if (playerBehavior)
-		{
-			Actor* actor = playerBehavior->GetActor();
-
-			this->zGame->GetActorManager()->RemoveActor(actor);
-		}
-
 		this->zPlayers.erase(PRE->player);
 	}
 	else if( PlayerReadyEvent* PLRE = dynamic_cast<PlayerReadyEvent*>(e) )
@@ -605,8 +617,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	Actor* newActor = NULL;
 	if( zGameStarted )
 	{
-		this->zGame->ModifyLivingPlayers(-1);
-
+		this->zAlivePlayers++;
 		//Create Spirit
 		Vector3 position = pActor->GetPosition();
 		Vector3 direction = pActor->GetDir();
@@ -789,6 +800,8 @@ bool GameModeFFA::StartGameMode()
 	}
 
 	this->zSupplyDrop->SpawnSupplyDrop(center, items, 50.0f);
+
+	this->zAlivePlayers = nrOfPlayers;
 	//this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 150.0f, items);
 
 	return true;
@@ -838,7 +851,7 @@ bool GameModeFFA::SpawnRandomDrop()
 	}
 
 	//Randomize two indicies
-	const unsigned int NR_OF_ALIVE_PLAYERS = this->zGame->GetLivingPlayers();
+	const unsigned int NR_OF_ALIVE_PLAYERS = zAlivePlayers;
 	unsigned int playerOne = rand()% NR_OF_ALIVE_PLAYERS;
 	unsigned int playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
 
@@ -1034,10 +1047,9 @@ bool GameModeFFA::CanConnect( ClientData* cd )
 
 bool GameModeFFA::CheckEndCondition()
 {
-	int playersAlive = zGame->GetLivingPlayers();
 	NetworkMessageConverter NMC;
 
-	if( playersAlive == 1 )
+	if( zAlivePlayers == 1 )
 	{
 		Player* winner_player = NULL;
 

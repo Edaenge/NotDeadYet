@@ -59,7 +59,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	zMaterialSpawnManager(0),
 	zBehaviorManager(0),
 	zMaxNrOfPlayers(maxClients),
-	zPlayersAlive(0),
 	zPerf(0)
 {	
 	// Camera Offsets
@@ -131,7 +130,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	this->SpawnItemsDebug();
+	//this->SpawnItemsDebug();
 //	this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 // Sun Direction
@@ -1169,8 +1168,6 @@ void Game::OnEvent( Event* e )
 		UDE->clientData->Send(*NAP);
 		delete NAP;
 
-		this->zPlayersAlive++;
-
 		message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 		this->SendToAll(message);
 
@@ -1459,7 +1456,7 @@ void Game::HandleDisconnect( ClientData* cd )
 		return;
 
 	auto playerBehavior = playerIterator->second->GetBehavior();
-		
+
 	// Create AI Behavior For Players That Disconnected
 	if ( PlayerDeerBehavior* playerDeer = dynamic_cast<PlayerDeerBehavior*>(playerBehavior) )
 	{
@@ -1480,19 +1477,21 @@ void Game::HandleDisconnect( ClientData* cd )
 		if (behavior && behavior->GetActor())
 			this->zActorManager->RemoveActor(behavior->GetActor());
 		
-		this->zPlayersAlive--;
 	}
 		
 	this->SetPlayerBehavior(playerIterator->second, NULL);
 
+	//Notify GameMode
 	PlayerRemoveEvent PRE;
 	PRE.player = playerIterator->second;
 	NotifyObservers(&PRE);
 
 	Player* temp = playerIterator->second;
+	zPlayers.erase(playerIterator);
 	delete temp;
 	temp = NULL;
-	zPlayers.erase(playerIterator);
+
+
 }
 
 void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID )
@@ -2536,11 +2535,6 @@ void Game::SendToAll( const std::string& msg)
 	{
 		it->first->Send(msg);
 	}
-}
-
-void Game::ModifyLivingPlayers( const int value )
-{
-	this->zPlayersAlive += value;
 }
 
 void Game::ResetFogEnclosement()

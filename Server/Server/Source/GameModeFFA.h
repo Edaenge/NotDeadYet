@@ -11,6 +11,7 @@ private:
 	std::set<Player*> zPlayers;
 	SupplyDrop* zSupplyDrop;
 	float zCurrentRSPTime;
+	unsigned int zAlivePlayers;
 
 public:
 	GameModeFFA(Game* game);
@@ -23,6 +24,7 @@ public:
 	virtual bool CanConnect( ClientData* cd );
 	//Checks if the game has ended, returns true if it has ended.
 	bool CheckEndCondition();
+	unsigned int GetNrOfAlivePlayers() const {return this->zAlivePlayers;}
 
 private:
 	std::set<Item*> GenerateItems();
