@@ -1,5 +1,6 @@
 #include "Actor.h"
 
+
 Actor::Actor(const unsigned int& ID)
 {
 	this->zMesh = 0; 
@@ -49,9 +50,21 @@ void Actor::SetModel(const std::string& model)
 
 void Actor::SetPosition(const Vector3& pos)
 {
-	if (this->zMesh)
+	if ( zPosition != pos )
 	{
-		this->zMesh->SetPosition(pos);
+		// Update Position
+		zPosition = pos;
+
+		// Update Mesh
+		if (this->zMesh)
+		{
+			this->zMesh->SetPosition(pos);
+		}
+
+		// Notify Movement
+		ActorMovedEvent AME;
+		AME.zActor = this;
+		NotifyObservers(&AME);
 	}
 }
 
@@ -68,7 +81,8 @@ void Actor::SetRotation(const Vector4& rot)
 
 void Actor::SetStaticMesh(iMesh* mesh) 
 { 
-	this->zMesh = mesh; 
+	this->zMesh = mesh;
+	if ( zMesh ) zMesh->SetPosition(zPosition);
 }
 
 void Actor::SetID(const int clientID) 

@@ -95,7 +95,7 @@ Client::Client() :
 	this->zHealth = 100.0f;
 	this->zHydration = 100.0f;
 	this->zHunger = 100.0f;	
-	
+
 	this->zIgm = new InGameMenu();
 	this->zPam = new PickAnimalMenu();
 
@@ -204,6 +204,10 @@ void Client::Update()
 {
 	this->UpdateText();
 
+	if ( zPerf ) zPerf->PreMeasure("Footprints Update", 0);
+	if ( zFootSteps ) zFootSteps->Update();
+	if ( zPerf ) zPerf->PostMeasure("Footprints Update", 0);
+
 	this->zPerf->PreMeasure("Actor Updates", 0);
 	this->zActorManager->UpdateObjects(this->zGameTimer->GetDeltaTime(), this->zID, this->zWorld);
 	this->zPerf->PostMeasure("Actor Updates", 0);
@@ -275,7 +279,7 @@ void Client::InitGraphics(const std::string& mapName)
 {
 	if (!this->zActorManager)
 	{
-		this->zActorManager = new ClientActorManager(zFootSteps);
+		this->zActorManager = new ClientActorManager();
 	}
 	else
 	{
@@ -330,6 +334,13 @@ void Client::InitGraphics(const std::string& mapName)
 		this->CloseConnection("Map Not Found");
 		return;
 	}
+
+	// Footstep Manager
+	if ( this->zFootSteps )
+	{
+		delete zFootSteps;
+	}
+	zFootSteps = new FootStepClient(zEng, zActorManager, zWorld);
 	
 	Vector2 center = this->zWorld->GetWorldCenter();
 
@@ -793,6 +804,9 @@ void Client::CheckPlayerSpecificKeys()
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
 	{
+
+		Actor* clientPlayer = this->zActorManager->GetActor(this->zID);
+		
 		if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
 		{
 			std::string msg =  "";
@@ -805,6 +819,10 @@ void Client::CheckPlayerSpecificKeys()
 					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_LOOT_OBJECT, (float)(*it));
 				}
 				this->zServerChannel->Send(msg);
+			}
+			else if(this->zWorld->GetWaterDepthAt(Vector2 (clientPlayer->GetPosition().x,clientPlayer->GetPosition().z) ) > 0.2f)
+			{
+				//
 			}
 			else
 			{
