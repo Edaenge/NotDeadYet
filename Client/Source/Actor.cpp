@@ -50,19 +50,22 @@ void Actor::SetModel(const std::string& model)
 
 void Actor::SetPosition(const Vector3& pos)
 {
-	// Update Position
-	zPosition = pos;
-
-	// Update Mesh
-	if (this->zMesh)
+	if ( zPosition != pos )
 	{
-		this->zMesh->SetPosition(pos);
-	}
+		// Update Position
+		zPosition = pos;
 
-	// Notify Movement
-	ActorMovedEvent AME;
-	AME.zActor = this;
-	NotifyObservers(&AME);
+		// Update Mesh
+		if (this->zMesh)
+		{
+			this->zMesh->SetPosition(pos);
+		}
+
+		// Notify Movement
+		ActorMovedEvent AME;
+		AME.zActor = this;
+		NotifyObservers(&AME);
+	}
 }
 
 void Actor::SetScale(const Vector3& scale) 
