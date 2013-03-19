@@ -25,6 +25,7 @@ public:
 private:
 	SoundHandler* zSoundHandler;
 	bool zMoving;
+	bool zSupplyCrateLanded;
 	Vector3 zDestination;
 	Vector3 zVelocity;
 };

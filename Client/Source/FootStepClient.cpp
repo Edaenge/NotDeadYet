@@ -30,7 +30,7 @@ FootStepClient::~FootStepClient()
 	// Delete Steps
 	for( auto i = zFootSteps.cbegin(); i != zFootSteps.cend(); ++i )
 	{
-		zGraphics->DeleteDecal(*i);
+		zGraphics->DeleteDecal(i->second);
 	}
 }
 
@@ -41,9 +41,9 @@ void FootStepClient::PurgeSteps()
 
 	for ( auto i = zFootSteps.cbegin(); i != zFootSteps.cend(); )
 	{
-		if ( (camPos - (*i)->GetPosition()).GetLength() >= clipRange )
+		if ( (camPos - (i->second)->GetPosition()).GetLength() >= clipRange )
 		{
-			zGraphics->DeleteDecal(*i);
+			zGraphics->DeleteDecal(i->second);
 			i = zFootSteps.erase(i);
 		}
 		else
@@ -59,6 +59,12 @@ void FootStepClient::Update()
 	{
 		PurgeSteps();
 		zLastPurgePos = zGraphics->GetCamera()->GetPosition();
+	}
+
+	while ( zFootSteps.size() > 100 )
+	{
+		zGraphics->DeleteDecal(zFootSteps.cbegin()->second);
+		zFootSteps.erase(zFootSteps.begin());
 	}
 }
 
@@ -80,8 +86,9 @@ void FootStepClient::PlaceFootStep( Actor* actor )
 	// Ground Position
 	if ( actor->GetPosition().y - groundHeight < 0.1f )
 	{
-		iDecal* data = zGraphics->CreateDecal(Vector3(actor->GetPosition().x, actor->GetPosition().z), "Media/Models/Red.png", Vector3(0.0f, -1.0f, 0.0f), Vector3(forwardDir.x, 0.0f, forwardDir.y));
-		zFootSteps.insert(data);
+		iDecal* data = zGraphics->CreateDecal(Vector3(actor->GetPosition().x, groundHeight, actor->GetPosition().z), "media/models/shoeprint.png", Vector3(0.0f, -1.0f, 0.0f), Vector3(forwardDir.x, 0.0f, forwardDir.y));
+		data->SetSize(0.5f);
+		zFootSteps.insert(std::pair<unsigned int, iDecal*>(++zCurrentDecal, data));
 	}	
 }
 

@@ -125,8 +125,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	//this->SpawnItemsDebug();
-	//this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 	// Sun Direction
 	this->ResetSunDirection();

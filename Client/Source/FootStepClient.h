@@ -17,7 +17,8 @@ class FootStepClient : public Observer
 
 	std::map<Actor*, Vector2> zLastPositions;
 	std::set<Actor*> zActors;
-	std::set<iDecal*> zFootSteps;
+	std::set<std::pair<unsigned int, iDecal*>> zFootSteps;
+	unsigned int zCurrentDecal;
 
 	// Purging
 	Vector3 zLastPurgePos;
