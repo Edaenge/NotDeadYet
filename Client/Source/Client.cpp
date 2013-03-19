@@ -39,9 +39,10 @@ Client::Client() :
 
 	//Temporary Ghost Model
 	this->zMeshCameraOffsets["media/models/ghost.obj"] = Vector3();
-	this->zMeshCameraOffsets["media/models/token_anims.fbx"] = Vector3(0.0f, 1.9f, 0.0f);
+	this->zMeshCameraOffsets["media/models/token_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zMeshCameraOffsets["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
 	this->zMeshCameraOffsets["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 2.3f, 0.0f);
+	this->zMeshCameraOffsets["media/models/bear_anims.fbx"] = Vector3(0.0f, 1.5f, 0.0f);
 
 	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
 	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
@@ -50,9 +51,12 @@ Client::Client() :
 
 	this->zAnimationFileReader[0] = AnimationFileReader("media/models/token_anims.cfg");
 	this->zAnimationFileReader[2] = AnimationFileReader("media/models/deer_anims.cfg");
+	this->zAnimationFileReader[3] = AnimationFileReader("media/models/bear_anims.cfg");
 
 	this->zModelToReaderMap["media/models/token_anims.fbx"] = zAnimationFileReader[0];
 	this->zModelToReaderMap["media/models/deer_anims.fbx"] = zAnimationFileReader[2];
+	this->zModelToReaderMap["media/models/bear_anims.fbx"] = zAnimationFileReader[3];
+
 	this->zSendUpdateDelayTimer = 0.0f;
 
 	this->zEng = GetGraphics();
@@ -200,6 +204,10 @@ void Client::Update()
 {
 	this->UpdateText();
 
+	if ( zPerf ) zPerf->PreMeasure("Footprints Update", 0);
+	if ( zFootSteps ) zFootSteps->Update();
+	if ( zPerf ) zPerf->PostMeasure("Footprints Update", 0);
+
 	this->zPerf->PreMeasure("Actor Updates", 0);
 	this->zActorManager->UpdateObjects(this->zGameTimer->GetDeltaTime(), this->zID, this->zWorld);
 	this->zPerf->PostMeasure("Actor Updates", 0);
@@ -278,13 +286,6 @@ void Client::InitGraphics(const std::string& mapName)
 		this->zActorManager->ClearAll();
 	}
 
-	// Footstep Manager
-	if ( this->zFootSteps )
-	{
-		delete zFootSteps;
-	}
-	zFootSteps = new FootStepClient(zEng, zActorManager);
-
 	if (!this->zPlayerInventory)
 	{
 		this->zPlayerInventory = new Inventory();
@@ -333,6 +334,13 @@ void Client::InitGraphics(const std::string& mapName)
 		this->CloseConnection("Map Not Found");
 		return;
 	}
+
+	// Footstep Manager
+	if ( this->zFootSteps )
+	{
+		delete zFootSteps;
+	}
+	zFootSteps = new FootStepClient(zEng, zActorManager, zWorld);
 	
 	Vector2 center = this->zWorld->GetWorldCenter();
 

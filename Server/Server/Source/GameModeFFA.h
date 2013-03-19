@@ -10,8 +10,6 @@ class GameModeFFA : public GameMode
 private:
 	std::set<Player*> zPlayers;
 	SupplyDrop* zSupplyDrop;
-	bool zGameStarted;
-	bool zGameEnd;
 	float zCurrentRSPTime;
 
 public:
@@ -20,8 +18,11 @@ public:
 
 	bool Update(float dt);
 	bool SpawnRandomDrop();
-	bool HasGameStarted() const {return this->zGameStarted;}
-	bool StartGameMode();
+	virtual bool StartGameMode();
+	virtual bool StopGameMode();
+	virtual bool CanConnect( ClientData* cd );
+	//Checks if the game has ended, returns true if it has ended.
+	bool CheckEndCondition();
 
 private:
 	std::set<Item*> GenerateItems();

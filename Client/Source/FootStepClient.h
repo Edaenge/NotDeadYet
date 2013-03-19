@@ -6,20 +6,31 @@ class ClientActorManager;
 class Actor;
 class iDecal;
 class GraphicsEngine;
+class World;
 
 
 class FootStepClient : public Observer
 {
 	GraphicsEngine* zGraphics;
 	ClientActorManager* zActorManager;
-	std::map<Actor*, Vector2> zLastPositions;
+	World* zWorld;
 
+	std::map<Actor*, Vector2> zLastPositions;
 	std::set<Actor*> zActors;
 	std::set<iDecal*> zFootSteps;
 
+	// Purging
+	Vector3 zLastPurgePos;
+
 public:
-	FootStepClient(GraphicsEngine* graphics, ClientActorManager* actorManager);
+	FootStepClient(GraphicsEngine* graphics, ClientActorManager* actorManager, World* zWorld);
 	virtual ~FootStepClient();
+
+	// Purge footsteps outside far clip
+	void PurgeSteps();
+
+	// Update Required Footsteps
+	void Update();
 
 	// Place Foot Step
 	void PlaceFootStep(Actor* actor);

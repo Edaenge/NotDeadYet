@@ -27,7 +27,6 @@ class MaterialSpawnManager;
 class BehaviorManager;
 class BerryBushSpawner;
 
-
 class Game : public Observer, public Observed
 {
 
@@ -50,6 +49,7 @@ private:
 	std::map<std::string, Vector3> zCameraOffset;
 	std::map<ClientData*, Player*> zPlayers;
 	std::map<Entity*, WorldActor*> zWorldActors;
+	std::map<std::string, std::string> zPlayerModels;
 
 	unsigned int zMaxNrOfPlayers;
 
@@ -114,6 +114,8 @@ public:
 	// Restart Game Logic
 	void RestartGame();	
 
+	//Return tru if the server is full.
+	bool IsFull() const;
 	// Fog Update when Living Players Change
 	void ModifyLivingPlayers(const int value);
 	
@@ -127,7 +129,8 @@ public:
 	Vector3 GetOffset(const std::string& model);
 	void CheckPlayerUseBow(Player* player);
 	void CheckToShotArrow(ClientData* cd);
-
+	const std::map<std::string, std::string>& GetPlayerModels() const {return this->zPlayerModels;}
+	const std::map<std::string, Vector3> GetCameraOffsets() const {return this->zCameraOffset;}
 private:
 	//Test functions, spawns items/Animals
 	void SpawnItemsDebug();

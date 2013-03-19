@@ -128,7 +128,7 @@ public:
 
 	inline float GetLength() const
 	{
-		return sqrtf(powf(this->x, 2.0f) + powf(this->y, 2.0f));
+		return sqrt(pow(this->x, 2) + pow(this->y, 2));
 	}
 
 	inline void Normalize()

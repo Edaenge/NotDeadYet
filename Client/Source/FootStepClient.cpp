@@ -4,9 +4,10 @@
 #include "Graphics.h"
 
 
-FootStepClient::FootStepClient(GraphicsEngine* graphics, ClientActorManager* actorManager) :
+FootStepClient::FootStepClient(GraphicsEngine* graphics, ClientActorManager* actorManager, World* world) :
 	zGraphics(graphics),
-	zActorManager(actorManager)
+	zActorManager(actorManager),
+	zWorld(world)
 {
 	if ( zActorManager )
 	{
@@ -25,12 +26,63 @@ FootStepClient::~FootStepClient()
 	{
 		zActorManager->RemoveObserver(this);
 	}
+
+	// Delete Steps
+	for( auto i = zFootSteps.cbegin(); i != zFootSteps.cend(); ++i )
+	{
+		zGraphics->DeleteDecal(*i);
+	}
+}
+
+void FootStepClient::PurgeSteps()
+{
+	Vector3 camPos = zGraphics->GetCamera()->GetPosition();
+	float clipRange = zGraphics->GetEngineParameters().FarClip;
+
+	for ( auto i = zFootSteps.cbegin(); i != zFootSteps.cend(); )
+	{
+		if ( (camPos - (*i)->GetPosition()).GetLength() >= clipRange )
+		{
+			zGraphics->DeleteDecal(*i);
+			i = zFootSteps.erase(i);
+		}
+		else
+		{
+			++i;
+		}
+	}
+}
+
+void FootStepClient::Update()
+{
+	if ( (zGraphics->GetCamera()->GetPosition() - zLastPurgePos).GetLength() > 1.0f )
+	{
+		PurgeSteps();
+		zLastPurgePos = zGraphics->GetCamera()->GetPosition();
+	}
 }
 
 void FootStepClient::PlaceFootStep( Actor* actor )
 {
-	iDecal* data = zGraphics->CreateDecal(actor->GetPosition(), "Red.png", Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f));
-	zFootSteps.insert(data);
+	Vector2 forwardDir = actor->GetPosition().GetXZ() - zLastPositions[actor];
+	forwardDir.Normalize();
+
+	// Height Above Ground
+	float groundHeight = 0.0f;
+	try
+	{
+		groundHeight = zWorld->CalcHeightAtWorldPos(actor->GetPosition().GetXZ());
+	}
+	catch(...)
+	{
+	}
+
+	// Ground Position
+	if ( actor->GetPosition().y - groundHeight < 0.1f )
+	{
+		iDecal* data = zGraphics->CreateDecal(Vector3(actor->GetPosition().x, actor->GetPosition().z), "Media/Models/Red.png", Vector3(0.0f, -1.0f, 0.0f), Vector3(forwardDir.x, 0.0f, forwardDir.y));
+		zFootSteps.insert(data);
+	}	
 }
 
 void FootStepClient::OnEvent(Event* e)

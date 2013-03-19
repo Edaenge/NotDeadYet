@@ -37,6 +37,9 @@ PlayerBehavior::~PlayerBehavior()
 
 bool PlayerBehavior::ProcessClientData( const Vector3& direction, const Vector4& rotation )
 {
+	if( !zActor )
+		return false;
+
 	this->zActor->SetDir(direction);
 	this->zActor->SetRotation(rotation);
 

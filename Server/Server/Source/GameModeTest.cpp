@@ -15,6 +15,8 @@ GameModeTest::GameModeTest(Game* game, int killLimit) : GameMode(game)
 {
 	srand((unsigned int)time(0));
 	zKillLimit = killLimit;
+
+	StartGameMode();
 }
 
 GameModeTest::~GameModeTest()
@@ -168,6 +170,7 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	pActor->GetInventory()->RemoveObserver(player);
 
 	ClientData* cd = player->GetClientData();
+	std::map<std::string, std::string> playerModels = zGame->GetPlayerModels();
 
 	//Create new Player
 	int maxPlayers = zPlayers.size();
@@ -176,17 +179,18 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 
 	Vector3 direction = pActor->GetDir();
 	std::string model = pActor->GetModel();
+	std::string objModel = playerModels[model];
 
-	if (model.length() > 4)
-	{
-		if (model.substr(model.length() - 4) == ".fbx")
-			model = "Media/Models/temp_guy.obj";
-	}
+// 	if (model.length() > 4)
+// 	{
+// 		if (model.substr(model.length() - 4) == ".fbx")
+// 			model = "Media/Models/temp_guy.obj";
+// 	}
 
-	PhysicsObject* pObj = GetPhysics()->CreatePhysicsObject(model, position);
+	PhysicsObject* pObj = GetPhysics()->CreatePhysicsObject(objModel, position);
 	
 	PlayerActor* newPActor = new PlayerActor(player, pObj, this->zGame);
-	newPActor->SetModel(pActor->GetModel());
+	newPActor->SetModel(model);
 	newPActor->SetPosition(position, false);
 	newPActor->SetDir(direction, false);
 	newPActor->AddObserver(this);	
@@ -220,4 +224,19 @@ void GameModeTest::OnPlayerDeath(PlayerActor* pActor)
 	delete PCP;
 
 	aManager->AddActor(newPActor);
+}
+
+bool GameModeTest::StartGameMode()
+{
+	if(zGameStarted)
+		return false;
+
+	zGameStarted = true;
+
+	return true;
+}
+
+bool GameModeTest::StopGameMode()
+{
+	return false;
 }
