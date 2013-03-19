@@ -12,7 +12,10 @@
 #include "World/World.h"
 #include "Sound.h"
 
-class FootStepClient;
+class Updates;
+class ActorAddedEvent;
+class ActorRemovedEvent;
+class ClientActorManager;
 
 
 class Updates
@@ -45,7 +48,9 @@ public:
 	bool ComparePosition(const Vector3& position)
 	{
 		if ((this->zNextPosition - position).GetLength() < 0.5f)
+		{
 			this->zPositionChange = false;
+		}
 
 		return this->zPositionChange;
 	}
@@ -55,6 +60,7 @@ public:
 		this->zState = state;
 		this->zStateChange = true;
 	}
+
 	void SetStateChange(const bool& value)
 	{
 		this->zStateChange = value;
@@ -70,10 +76,22 @@ static const enum INTERPOLATION_TYPES
 	IT_DECELERATION
 };
 
-class ClientActorManager
+class ActorAddedEvent : public Event
 {
-	FootStepClient* zFootSteps;
-	
+public:
+	ClientActorManager* zActorManager;
+	Actor* zActor;
+};
+
+class ActorRemovedEvent : public Event
+{
+public:
+	ClientActorManager* zActorManager;
+	Actor* zActor;
+};
+
+class ClientActorManager : public Observed
+{	
 	float zInterpolationVelocity;
 	int zUpdatesPerSec;
 	int zLatency;
@@ -88,7 +106,7 @@ class ClientActorManager
 	std::map<std::string, AnimationFileReader> zModelToReaderMap;
 
 public:
-	ClientActorManager(FootStepClient* footSteps);
+	ClientActorManager();
 	virtual ~ClientActorManager();
 
 	/*! Interpolates all the Objects towards their final Position*/

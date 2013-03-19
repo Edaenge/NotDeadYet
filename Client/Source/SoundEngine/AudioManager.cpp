@@ -337,7 +337,7 @@ int AudioManager::GetEventHandle(int eventId,IEventHandle* &handle)
 }
 
 
-int AudioManager::SetPlayerPosition(FMOD_VECTOR* position,FMOD_VECTOR* forward,FMOD_VECTOR* up)
+int AudioManager::SetPlayerPosition(const FMOD_VECTOR& position, const FMOD_VECTOR& forward, const FMOD_VECTOR& up)
 {
-	return system->set3DListenerAttributes(0,position,0,forward,up);
+	return system->set3DListenerAttributes(0, &position, 0, &forward, &up);
 }
