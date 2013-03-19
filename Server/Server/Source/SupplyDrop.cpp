@@ -86,7 +86,7 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 {
 	SupplyActor* spActor = new SupplyActor(itemCapacity);
 
-	for( auto it = items.begin(); it != items.end(); it++ )
+	for( auto it = items.begin(); it != items.end();)
 	{
 		if( !spActor->AddItem(*it) )
 		{
@@ -95,6 +95,10 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 			it = items.erase(it);
 
 			SAFE_DELETE(temp);
+		}
+		else
+		{
+			it++;
 		}
 	}
 

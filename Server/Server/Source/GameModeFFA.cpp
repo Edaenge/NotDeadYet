@@ -32,7 +32,7 @@ static const unsigned int VAR			= 5;
 
 //Spawn Random Drop every 10 min
 //static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
-static const float SPAWN_DROP_TIMER_MAX	= 20.0f;
+static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
@@ -252,7 +252,7 @@ void GameModeFFA::OnEvent( Event* e )
 					counter++;
 			}
 
-			if( counter >= this->zPlayers.size() )
+			if( counter > this->zPlayers.size() / 2)
 			{
 				StartGameMode();
 			}
@@ -599,14 +599,14 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	pActor->GetInventory()->UnEquipAll();
 	pActor->GetInventory()->RemoveObserver(player);
 
-	this->zGame->ModifyLivingPlayers(-1);
-
 	ClientData* cd = player->GetClientData();
 	std::map<std::string, std::string> playerModels = zGame->GetPlayerModels();
 
 	Actor* newActor = NULL;
 	if( zGameStarted )
 	{
+		this->zGame->ModifyLivingPlayers(-1);
+
 		//Create Spirit
 		Vector3 position = pActor->GetPosition();
 		Vector3 direction = pActor->GetDir();
@@ -614,7 +614,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 		float energy = pActor->GetEnergy();
 
 		newActor = new GhostActor(player);
-		newActor->SetPosition(position, false);
+		newActor->SetPosition(position + pActor->GetCameraOffset(), false);
 		newActor->SetDir(direction, false);
 		newActor->SetEnergy(energy + 25.0f, false);
 		newActor->AddObserver(this);
@@ -777,6 +777,13 @@ bool GameModeFFA::StartGameMode()
 			pActor->SetBleeding( 0 );
 			pActor->SetHydration( pActor->GetHydrationMax() );
 			pActor->SetFullness( pActor->GetFullnessMax() );
+
+			//Create And Add pocket knife
+			bool stacked;
+			const MeleeWeapon* pocketKnife_temp = GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_POCKET_KNIFE);
+			MeleeWeapon* pocketKnife = new MeleeWeapon(*pocketKnife_temp);
+
+			pActor->GetInventory()->AddItem(pocketKnife, stacked);
 		}
 
 	}
