@@ -52,6 +52,7 @@ static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 #define ARROWMAXSPEED 35.0f
 #define ARROWMAXLOADTIME 2.0f
 #define ARROWSPEEDPERSEC (ARROWMAXSPEED / ARROWMAXLOADTIME)
+#define FOG_DMG 15.0f
 
 Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* syncher, const std::string& mode, const std::string& worldFile ) :
 	zSyncher(syncher),
@@ -530,7 +531,7 @@ bool Game::Update( float dt )
 	this->UpdateFogEnclosement(dt);
 	NetworkMessageConverter NMC;
 	std::string msg;
-;
+
 	if ( zPerf ) this->zPerf->PreMeasure("Updating Behaviors", 1);
 	std::set<Behavior*> &behaviors = this->zActorManager->GetBehaviors();
 
@@ -558,10 +559,8 @@ bool Game::Update( float dt )
 	{
 		if (!(*i)->Removed())
 		{
-
 			(*i)->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 
-			
 			if ( (*i)->IsAwake() && (*i)->Update(dt) )
 			{
 				Behavior* temp = (*i);
@@ -617,6 +616,29 @@ bool Game::Update( float dt )
 	if ( zPerf ) this->zPerf->PostMeasure("Updating World", 4);
 
 	//Updating animals and Check fog.
+
+	//Check if Players Are in Fog.
+	auto it_behaviors_end = behaviors.end();
+	for(i = behaviors.begin(); i != it_behaviors_end; i++)
+	{
+		if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
+		{
+			if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
+			{
+				Vector2 center = this->zWorld->GetWorldCenter();
+
+				float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
+
+				if (radiusFromCenter > this->zCurrentFogEnclosement)
+				{
+					Damage dmg;
+					dmg.fogDamage = FOG_DMG * dt;
+					bActor->TakeDamage(dmg, bActor);
+				}
+			}
+		}
+	}
+	
 	static float testUpdater = 0.0f;
 
 	testUpdater += dt;
@@ -626,8 +648,8 @@ bool Game::Update( float dt )
 		if ( zPerf ) this->zPerf->PreMeasure("Updating animal targets", 2);
 		//Creating targets to insert into the animals' behaviors
 		std::set<Actor*> aSet;
-
-		for(i = behaviors.begin(); i != behaviors.end(); i++)
+		auto it_behaviors_end = behaviors.end();
+		for(i = behaviors.begin(); i != it_behaviors_end; i++)
 		{
 			if( dynamic_cast<BioActor*>((*i)->GetActor()) )
 			{
@@ -636,27 +658,11 @@ bool Game::Update( float dt )
 		}
 
 		//Updating animals' targets and Check if Players Are in Fog.
-		for(i = behaviors.begin(); i != behaviors.end(); i++)
+		for(i = behaviors.begin(); i != it_behaviors_end; i++)
 		{
 			if(AIBehavior* animalBehavior = dynamic_cast<AIBehavior*>( (*i) ))
 			{
 				animalBehavior->SetTargets(aSet);
-			}
-			else if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
-			{
-				if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
-				{
-					Vector2 center = this->zWorld->GetWorldCenter();
-
-					float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
-
-					if (radiusFromCenter > this->zCurrentFogEnclosement)
-					{
-						Damage dmg;
-						dmg.fogDamage = 10.0f * dt;
-						bActor->TakeDamage(dmg, bActor);
-					}
-				}
 			}
 		}
 		testUpdater = 0.0f;
@@ -2566,7 +2572,7 @@ void Game::ResetFogEnclosement()
 
 	this->zInitalFogEnclosement = radius;
 
-	this->zFogUpdateDelay = 1.0f;
+	this->zFogUpdateDelay = 0.5f;
 	this->zFogDecreaseCoeff = this->zFogUpdateDelay / EXPECTED_PLAYTIME;
 	this->zFogTotalDecreaseCoeff = 1.0f;
 	this->zFogTimer = 0.0f;

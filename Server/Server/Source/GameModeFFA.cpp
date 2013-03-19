@@ -1115,7 +1115,7 @@ bool GameModeFFA::CheckEndCondition()
 {
 	NetworkMessageConverter NMC;
 
-	if( zAlivePlayers == 1 )
+	if( zAlivePlayers == 10 )
 	{
 		Player* winner_player = NULL;
 
