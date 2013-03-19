@@ -38,7 +38,7 @@ void Client::AddActor( NewActorPacket* NAP )
 			{
 				actor = new Actor(ID);
 
-				actor->SetStaticMesh(mesh);
+				actor->SetMesh(mesh);
 				actor->SetModel(model);
 
 				if (Messages::FileWrite())
@@ -265,27 +265,107 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 	{
 		if (this->zReady)
 		{
-			unsigned int id = animIterator->first;
+			ID = animIterator->first;
 			std::string animationName = animIterator->second;
 
-			Actor* actor = this->zActorManager->GetActor(id);
-			if (actor)
-			{
-				iFBXMesh* mesh = dynamic_cast<iFBXMesh*>(actor->GetMesh());
-				if (mesh)
-				{
-					std::string model = actor->GetModel();
-					auto it = this->zModelToReaderMap.find(model);
-					if (it != this->zModelToReaderMap.end())
-					{
-						std::string animation = it->second.GetAnimation(animationName);
+			Actor* actor = this->zActorManager->GetActor(ID);
+			if (!actor)
+				continue;
 
-						if (animation != "")
-							mesh->SetAnimation(animation.c_str());
-					}
+			iFBXMesh* mesh = dynamic_cast<iFBXMesh*>(actor->GetMesh());
+			if (mesh)
+			{
+				std::string model = actor->GetModel();
+				auto it = this->zModelToReaderMap.find(model);
+				if (it != this->zModelToReaderMap.end())
+				{
+					std::string animation = it->second.GetAnimation(animationName);
+
+					if (animation != "")
+						mesh->SetAnimation(animation.c_str());
 				}
 			}
 		}
+	}
+
+	auto it_mesh_end = SFP->newMesh.end();
+	for (auto meshIterator = SFP->newMesh.begin(); meshIterator != it_mesh_end; meshIterator++)
+	{
+		ID = meshIterator->first;
+		std::string modelName = meshIterator->second;
+
+		Actor* actor = this->zActorManager->GetActor(ID);
+		if (!actor)
+			continue;
+
+		iMesh* mesh = NULL;
+		//Creates a Mesh from the given Filename
+		if (modelName.length() > 4)
+		{
+			std::string substring = modelName.substr(modelName.length() - 4);
+			if (substring == ".obj")
+			{
+				mesh = this->zEng->CreateStaticMesh(modelName.c_str(), Vector3());
+			}
+			else if (substring == ".fbx")
+			{
+				mesh = this->zEng->CreateFBXMesh(modelName.c_str(), Vector3());
+			}
+			else if (substring == ".ani")
+			{
+				mesh = this->zEng->CreateAnimatedMesh(modelName.c_str(), Vector3());
+			}
+		}
+
+		if (!mesh)
+		{
+			MaloW::Debug("Failed to Create new Mesh with ModelName " + modelName);
+			continue;
+		}
+
+		iMesh* oldMesh = actor->GetMesh();
+
+		Vector3 position = actor->GetPosition();
+		Vector4 rotation = actor->GetRotation();
+		Vector3 scale = actor->GetScale();
+
+		if (this->zID == ID)
+		{
+			this->zEng->GetCamera()->RemoveMesh();
+
+			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(modelName);
+			if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
+				this->zMeshOffset = meshOffsetsIterator->second;
+			else
+				this->zMeshOffset = Vector3(0.0f, 1.0f, 0.0f);
+
+			this->zActorManager->SetCameraOffset(this->zMeshOffset);
+
+			auto reader = this->zModelToReaderMap.find(modelName);
+			if (reader != this->zModelToReaderMap.end())	
+			{
+				std::string boneName = reader->second.GetBindingBone(BONE_CAMERA_OFFSET);
+				if (boneName != "")
+					this->zEng->GetCamera()->SetMesh(mesh, &boneName[0], Vector3(0.0f, 0.0f, 1.0f));
+
+				else 
+				{
+					this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+					this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
+				}
+			}
+			else
+			{
+				this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+				this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
+			}
+		}
+		this->zEng->DeleteMesh(oldMesh);
+		
+		actor->SetMesh(mesh);
+		actor->SetPosition(position);
+		actor->SetRotation(rotation);
+		actor->SetScale(scale);
 	}
 }
 

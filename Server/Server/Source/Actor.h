@@ -61,7 +61,8 @@ public:
 	void SetScale(const Vector3& scale, const bool notify = true);
 	void SetDir(const Vector3& dir, const bool notify = true);
 	void SetEnergy(float energy, const bool notify = true);
-	virtual void SetModel(const std::string& model);	
+	virtual void SetModel(const std::string& model);
+	void SetMesh(const std::string meshName);
 	void SetCollisionRadius(const float radius) {this->zCollisionRadius = radius;}	
 	bool CanCollide() const;
 

@@ -143,29 +143,29 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 							this->zFootStepsOnDirt[MAXFOOTSTEPS-1]->Play();
 						}
 
-
 					}
-					/*if (dynamic_cast<iFBXMesh*>(actor->GetMesh()))
+			
+					if (dynamic_cast<iFBXMesh*>(actor->GetMesh()))
 					{
-						auto reader = this->zModelToReaderMap.find(actor->GetModel());
-						if (reader != this->zModelToReaderMap.end())	
-						{
-							std::string boneName = reader->second.GetBindingBone(BONE_CAMERA_OFFSET);
-							gEng->GetCamera()->SetMesh(actor->GetMesh(), boneName.c_str(), Vector3(0.0f, 0.0f, 1.0f));
-							actor->SetPosition(position);
-						}
-						else
-						{
-							gEng->GetCamera()->SetMesh(actor->GetMesh(), this->zCameraOffset, Vector3(0.0f, 0.0f, 1.0f));
-							gEng->GetCamera()->SetPosition(actor->GetPosition() + this->zCameraOffset);
-						}
+// 						auto reader = this->zModelToReaderMap.find(actor->GetModel());
+// 						if (reader != this->zModelToReaderMap.end())	
+// 						{
+// 							std::string boneName = reader->second.GetBindingBone(BONE_CAMERA_OFFSET);
+// 							gEng->GetCamera()->SetMesh(actor->GetMesh(), boneName.c_str(), Vector3(0.0f, 0.0f, 1.0f));
+// 							actor->SetPosition(position);
+// 						}
+// 						else
+// 						{
+// 							gEng->GetCamera()->SetMesh(actor->GetMesh(), this->zCameraOffset, Vector3(0.0f, 0.0f, 1.0f));
+// 							gEng->GetCamera()->SetPosition(actor->GetPosition() + this->zCameraOffset);
+// 						}
+
+						actor->SetPosition(position);
 					}
 					else
-					{*/
-						//gEng->GetCamera()->SetPosition(position);
-
-					actor->SetPosition(position);
-					//}
+					{
+						gEng->GetCamera()->SetPosition(position);
+					}
 				}
 				else 
 				{

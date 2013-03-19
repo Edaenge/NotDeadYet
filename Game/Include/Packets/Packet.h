@@ -33,4 +33,6 @@ public:
 			return false;
 		}
 	}
+
+	inline virtual bool IsEmpty() const = 0;
 };

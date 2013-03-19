@@ -24,6 +24,12 @@ public:
 	Actor* zDealer;
 };
 
+class BioActorDeathEvent : public Event 
+{
+public:
+	Actor* zActor;
+};
+
 class BioActorStateEvent : public Event
 {
 public:

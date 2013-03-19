@@ -62,7 +62,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	zPlayersAlive(0),
 	zPerf(0)
 {	
-
 	// Camera Offsets
 	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.6f, 0.0f);	
 	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
@@ -74,8 +73,15 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zPlayerModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zPlayerModels["media/models/token_anims.fbx"] = "media/models/hitbox_token.obj";
 	this->zPlayerModels["media/models/deer_anims.fbx"] = "media/models/deer_temp.obj";
+	this->zPlayerModels["media/models/bear_anims.fbx"] = "media/models/deer_temp.obj"; 
 	this->zPlayerModels["media/models/ghost.obj"] = "media/models/ghost.obj";
 	
+	//Dead Actor Model Maps
+	this->zDeadActorModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
+	this->zDeadActorModels["media/models/token_anims.fbx"] = "media/models/hitbox_token.obj";
+	this->zDeadActorModels["media/models/deer_anims.fbx"] = "media/models/deer_dead.obj";
+	this->zDeadActorModels["media/models/bear_anims.fbx"] = "media/models/bear_dead.obj";
+
 	// Create World
 	if(worldFile != "")
 		this->zWorld = new World(this, worldFile.c_str());
@@ -125,11 +131,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-//	this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
-//this->SpawnHumanDebug();
-	this->SpawnHumanDebug();
-	// Sun Direction
+	this->SpawnItemsDebug();
+//	this->SpawnAnimalsDebug();
+	//this->SpawnHumanDebug();
+// Sun Direction
 	this->ResetSunDirection();
 
 	// Fog Enclosement
@@ -176,7 +181,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 0; i++)
+	for(unsigned int i = 0; i < 1; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -215,22 +220,22 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 4; i++)	
+	for(unsigned int i = 0; i < 0; i++)		
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
 
 		bActor->AddObserver(this->zGameMode);
-		bActor->SetModel("media/models/deer_anims.fbx");
+		bActor->SetModel("media/models/bear_anims.fbx");
 
 		AIBearBehavior* aiBearBehavior = new AIBearBehavior(bActor, this->zWorld);
 
-		zActorManager->AddBehavior(aiBearBehavior);
+		this->zActorManager->AddBehavior(aiBearBehavior);
 
 		Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 
 		bActor->SetPosition(position);
-		bActor->SetScale(Vector3(0.09f, 0.09f, 0.09f));
+		bActor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
 
 		const Food* temp_Bear_Food = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BEAR_FOOD);
 
@@ -610,7 +615,6 @@ bool Game::Update( float dt )
 	// Update World
 	this->zWorld->Update();
 
-
 	if ( zPerf ) this->zPerf->PostMeasure("Updating World", 4);
 
 	//Updating animals and Check fog.
@@ -751,9 +755,14 @@ void Game::OnEvent( Event* e )
 	{
 
 		if(zGameMode->IsGameStarted())
-		{			if ( zPerf ) this->zPerf->PreMeasure("Loot Event Handling", 3);
+		{	
+			if ( zPerf ) 
+				this->zPerf->PreMeasure("Loot Event Handling", 3);
+
 			this->HandleLootItem(PLIE->clientData, PLIE->itemID, PLIE->itemType, PLIE->objID, PLIE->subType);
-			if ( zPerf ) this->zPerf->PostMeasure("Loot Event Handling", 3);	
+
+			if ( zPerf ) 
+				this->zPerf->PostMeasure("Loot Event Handling", 3);	
 		}
 	}
 	else if ( PlayerDropItemEvent* PDIE = dynamic_cast<PlayerDropItemEvent*>(e) )
@@ -765,10 +774,17 @@ void Game::OnEvent( Event* e )
 	{
 		if(zGameMode->IsGameStarted())
 		{
-			if ( zPerf ) this->zPerf->PreMeasure("Use Event Handling", 3);
+			if ( zPerf ) 
+				this->zPerf->PreMeasure("Use Event Handling", 3);
+
 			this->HandleUseItem(PUIE->clientData, PUIE->itemID);
-			if ( zPerf ) this->zPerf->PostMeasure("Use Event Handling", 3);
-		}	}
+			
+			
+			if ( zPerf ) 
+				this->zPerf->PostMeasure("Use Event Handling", 3);
+
+		}	
+	}
 	else if (PlayerCraftItemEvent* PCIE = dynamic_cast<PlayerCraftItemEvent*>(e))
 	{
 		if ( zPerf ) this->zPerf->PreMeasure("Craft Event Handling", 3);

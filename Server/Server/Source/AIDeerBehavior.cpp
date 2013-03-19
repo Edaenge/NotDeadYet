@@ -781,9 +781,6 @@ bool AIDeerBehavior::Update( float dt )
 
 			if(this->zCurrentPath.size() > 0)
 			{
-
-				dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
-
 				Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 				Vector3 direction = goal - dActor->GetPosition();
 				direction.Normalize();
@@ -808,6 +805,8 @@ bool AIDeerBehavior::Update( float dt )
 			dActor->SetVelocity(this->zAttackingVelocity);
 
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
+
+			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
 
 		}
 		else if(this->GetMentalState() == AFRAID /*&& this->zCurrentPath.size() > 0*/)

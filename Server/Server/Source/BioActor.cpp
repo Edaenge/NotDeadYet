@@ -111,23 +111,28 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 	if(!zAlive)
 	{
 		//RotateMesh
-		Vector3 up = Vector3(0, 1, 0);
-		Vector3 forward = this->GetDir();
-		forward.y = 0;
-		forward.Normalize();
-		Vector3 around = up.GetCrossProduct(forward);
-		around.Normalize();
-		float angle = 3.14f * 0.5f;
+		//Vector3 up = Vector3(0, 1, 0);
+		//Vector3 forward = this->GetDir();
+		//forward.y = 0;
+		//forward.Normalize();
+		//Vector3 around = up.GetCrossProduct(forward);
+		//around.Normalize();
+		//float angle = 3.14f * 0.5f;
 		
 		PhysicsObject* pObject = this->GetPhysicsObject();
 		if (pObject)
 		{
-			this->GetPhysicsObject()->SetQuaternion(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-			this->SetRotation(around,angle);
+			//this->GetPhysicsObject()->SetQuaternion(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+			//this->SetRotation(around,angle);
 
 			GetPhysics()->DeletePhysicsObject(pObject);
 			this->SetPhysicsObject(NULL);
 		}
+
+		BioActorDeathEvent e;
+		e.zActor = this;
+
+		NotifyObservers(&e);
 
 		this->SetState(STATE_DEAD);
 	}

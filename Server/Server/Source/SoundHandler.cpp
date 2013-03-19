@@ -190,7 +190,7 @@ void SoundHandler::OnEvent( Event* e )
 	}
 	else if(ActorRemovedEvent* AR = dynamic_cast<ActorRemovedEvent*>(e))
 	{
-		if(BearActor* bActor = dynamic_cast<BearActor*> (AD->zActor))
+		if(BearActor* bActor = dynamic_cast<BearActor*> (AR->zActor))
 			bActor->RemoveObserver(this);
 	}
 }

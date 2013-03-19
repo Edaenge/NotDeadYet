@@ -191,6 +191,18 @@ void GameModeFFA::OnEvent( Event* e )
 			}
 		}
 	}
+	else if (BioActorDeathEvent* BADE = dynamic_cast<BioActorDeathEvent*>(e))
+	{
+		BADE->zActor;
+
+		auto models = this->zGame->GetDeadActorModels();
+
+		auto models_it = models.find(BADE->zActor->GetModel());
+		if (models_it != models.end())
+		{
+			BADE->zActor->SetMesh(models_it->second);
+		}
+	}
 	else if (PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
 	{
 		GhostActor* gActor = dynamic_cast<GhostActor*>(PASE->zActor);
@@ -830,7 +842,7 @@ bool GameModeFFA::SpawnRandomDrop()
 	unsigned int playerOne = rand()% NR_OF_ALIVE_PLAYERS;
 	unsigned int playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
 
-	while(playerTwo == playerOne && NR_OF_ALIVE_PLAYERS > 2)
+	while(playerTwo == playerOne && NR_OF_ALIVE_PLAYERS >= 2)
 	{
 		playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
 	}
@@ -839,7 +851,7 @@ bool GameModeFFA::SpawnRandomDrop()
 	Vector2 posOne = aliveActors[playerOne]->GetPosition().GetXZ();
 	Vector2 posTwo;
 
-	if( NR_OF_ALIVE_PLAYERS < 2 )
+	if( NR_OF_ALIVE_PLAYERS <= 2 )
 		posTwo = center;
 	else
 		posTwo = aliveActors[playerTwo]->GetPosition().GetXZ();
@@ -1013,7 +1025,7 @@ bool GameModeFFA::CanConnect( ClientData* cd )
 
 	if( zGameStarted )
 	{
-		cd->Send( NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Game is allready running.") );
+		cd->Send( NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Game is already running.") );
 		return false;
 	}
 	

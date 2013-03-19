@@ -211,6 +211,10 @@ void ActorSynchronizer::OnEvent( Event* e )
 	{
 		this->zFrameData->newScales[USE->zActor->GetID()] = USE->zActor->GetScale();
 	}
+	else if (ActorMeshChangeEvent* AMCE = dynamic_cast<ActorMeshChangeEvent*>(e))
+	{
+		this->zFrameData->newMesh[AMCE->zActor->GetID()] = AMCE->zActor->GetModel();
+	}
 	else if (BioActorStateEvent* BASE = dynamic_cast<BioActorStateEvent*>(e))
 	{
 		BioActor* bActor =  dynamic_cast<BioActor*>(BASE->zBioActor);
