@@ -62,7 +62,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	zPlayersAlive(0),
 	zPerf(0)
 {	
-
 	// Camera Offsets
 	this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.6f, 0.0f);	
 	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
@@ -74,6 +73,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zPlayerModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zPlayerModels["media/models/token_anims.fbx"] = "media/models/hitbox_token.obj";
 	this->zPlayerModels["media/models/deer_anims.fbx"] = "media/models/deer_temp.obj";
+	this->zPlayerModels["media/models/bear_anims.fbx"] = "media/models/deer_temp.obj"; 
 	this->zPlayerModels["media/models/ghost.obj"] = "media/models/ghost.obj";
 	
 	//Dead Actor Model Maps
