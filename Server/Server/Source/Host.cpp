@@ -40,7 +40,6 @@ Host::Host() :
 
 Host::~Host()
 {
-	
 	//Sends to all clients, the server is hutting down.
 	BroadCastServerShutdown();
 
@@ -447,6 +446,14 @@ void Host::HandleReceivedMessage( MaloW::NetworkChannel* cc, const std::string &
 		e.clientData = cd;
 		e.itemID = id;
 		NotifyObservers(&e);
+	}
+	else if(msgArray[0].find(M_DRINK_WATER.c_str()) == 0)
+	{
+		PlayerDrinkWaterEvent e;
+		
+		e.clientData = cd;
+		NotifyObservers(&e);
+
 	}
 	//Handle Equip Item
 	else if (msgArray[0].find(M_EQUIP_ITEM.c_str()) == 0)

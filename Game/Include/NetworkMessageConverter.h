@@ -108,7 +108,8 @@ enum MESSAGE_TYPE
 	MESSAGE_TYPE_MESH_BINDING,
 	MESSAGE_TYPE_MESH_UNBIND,
 	MESSAGE_TYPE_FOG_ENCLOSEMENT,
-	MESSAGE_TYPE_PRINT_INVENTORY
+	MESSAGE_TYPE_PRINT_INVENTORY,
+	MESSAGE_TYPE_DRINK_FROM_WATER
 };
 
 static const std::string M_PRINT_INVENTORY			= "PI";
@@ -128,6 +129,7 @@ static const std::string M_ACTOR_TAKE_DAMAGE		= "ATD";
 static const std::string M_ACTOR_TYPE				= "AT";
 static const std::string M_ACTOR_KILL				= "AK";
 static const std::string M_RESTART_GAME_REQUEST		= "RGR";
+static const std::string M_DRINK_WATER				= "DW";
 /*
 	DEER = 0
 	WOLF = 1

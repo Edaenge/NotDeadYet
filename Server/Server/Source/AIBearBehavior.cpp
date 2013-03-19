@@ -4,6 +4,7 @@
 
 AIBearBehavior::AIBearBehavior( Actor* actor, World* world ) : AIBehavior(actor, world)
 {
+	srand((unsigned int)time(0));
 	InitValues();
 }
 
@@ -535,7 +536,6 @@ bool AIBearBehavior::Update( float dt )
 		if(this->zIntervalCounter > this->zCalmActionInterval && this->GetIfNeedPath())
 		{
 			this->zIntervalCounter = 0;
-			srand((unsigned int)time(0));
 			this->zCalmActionInterval = (float)(rand() % this->zCalmRandomInterval + this->zCalmRandomAddition); 
 			this->zCurrentPath.clear(); //Since a new path is gotten, and the old one might not have been completed, we clear it just in case.
 			//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->GetPosition().x + rand() % 14 - 7, this->GetPosition().z + rand() % 14 - 7, this->zCurrentPath, 20); //Get a small path to walk, short and does not have to lead anywhere.
@@ -629,6 +629,7 @@ bool AIBearBehavior::Update( float dt )
 								bearAttack.slashing = 15;
 								if(dynamic_cast<BioActor*>(this->zMainActorTarget)->IsAlive())
 								{
+									dynamic_cast<BioActor*>(this->zActor)->SetState(STATE_ATTACK);
 									dynamic_cast<BioActor*>(this->zMainActorTarget)->TakeDamage(bearAttack,this->GetActor());
 								}
 							}
@@ -669,7 +670,6 @@ bool AIBearBehavior::Update( float dt )
 	}
 	else if(this->GetMentalState() == AFRAID) //Is afraid, needs to run.
 	{
-
 		if(this->GetIfNeedPath() == true)
 		{
 			this->SetIfNeedPath(false);
@@ -689,9 +689,9 @@ bool AIBearBehavior::Update( float dt )
 			{
 				this->zPanic = false;
 			}
-			
-			
 		}
+
+		
 	}
 
 
@@ -736,7 +736,8 @@ bool AIBearBehavior::Update( float dt )
 			//}
 			
 			bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
-		
+			
+			dynamic_cast<BioActor*>(this->zActor)->SetState(STATE_WALKING);
 		}
 		else if(this->GetMentalState() == AGGRESSIVE  && this->zCurrentPath.size() > 0)
 		{
@@ -773,6 +774,8 @@ bool AIBearBehavior::Update( float dt )
 
 			bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
 
+			dynamic_cast<BioActor*>(this->zActor)->SetState(STATE_RUNNING);
+
 		}
 		else if(this->GetMentalState() == AFRAID && this->zCurrentPath.size() > 0)
 		{
@@ -790,6 +793,7 @@ bool AIBearBehavior::Update( float dt )
 			bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
 			zCurrentDistanceFled += dt * bActor->GetVelocity();
 
+			dynamic_cast<BioActor*>(this->zActor)->SetState(STATE_RUNNING);
 		}
 		else if(this->GetMentalState() == AFRAID && this->zCurrentDistanceFled < this->zFleeDistance)
 		{
@@ -802,6 +806,11 @@ bool AIBearBehavior::Update( float dt )
 		this->SetIfNeedPath(true);
 	}
 
+	if (bActor->GetVelocity() <= 0.0f)
+	{
+		dynamic_cast<BioActor*>(this->zActor)->SetState(STATE_IDLE);
+	}
+
 	float height = this->zWorld->CalcHeightAtWorldPos( Vector2(bActor->GetPosition().x, bActor->GetPosition().z));
 
 	Vector3 actorPosition = bActor->GetPosition();
@@ -810,13 +819,13 @@ bool AIBearBehavior::Update( float dt )
 
 	
 	//Rotate Animal
-	static Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, -1.0f);
+	static Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, 1.0f);
 	Vector3 meshDirection = bActor->GetDir();
 	meshDirection.y = 0;
 	meshDirection.Normalize();
 
 	Vector3 around = Vector3(0.0f, 1.0f, 0.0f);
-	float angle = acos(meshDirection.GetDotProduct(defaultMeshDir));
+	float angle = -acos(meshDirection.GetDotProduct(defaultMeshDir));
 
 	if (meshDirection.x > 0.0f)
 	 angle *= -1;

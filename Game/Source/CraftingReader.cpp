@@ -62,21 +62,21 @@ CraftingReader::CraftingReader()
 		this->zMappedTypesToMaterialsReq[craft_Bandage] = Bandage_Materials;
 		this->zCraftingList.push_back(craft_Bandage);
 
-		CraftedTypes* craft_Trap = new CraftedTypes(ITEM_TYPE_MISC, ITEM_SUB_TYPE_REGULAR_TRAP, "Media/Icons/Trap_Icon_Temp.png");
-		std::map<unsigned int, unsigned int> Trap_Materials;
-		Trap_Materials[ITEM_SUB_TYPE_LARGE_STICK] = 8;
-		Trap_Materials[ITEM_SUB_TYPE_MEDIUM_STICK] = 10;
-		Trap_Materials[ITEM_SUB_TYPE_THREAD] = 4;
-		this->zMappedTypesToMaterialsReq[craft_Trap] = Trap_Materials;
-		this->zCraftingList.push_back(craft_Trap);
+		//CraftedTypes* craft_Trap = new CraftedTypes(ITEM_TYPE_MISC, ITEM_SUB_TYPE_REGULAR_TRAP, "Media/Icons/Trap_Icon_Temp.png");
+		//std::map<unsigned int, unsigned int> Trap_Materials;
+		//Trap_Materials[ITEM_SUB_TYPE_LARGE_STICK] = 8;
+		//Trap_Materials[ITEM_SUB_TYPE_MEDIUM_STICK] = 10;
+		//Trap_Materials[ITEM_SUB_TYPE_THREAD] = 4;
+		//this->zMappedTypesToMaterialsReq[craft_Trap] = Trap_Materials;
+		//this->zCraftingList.push_back(craft_Trap);
 
-		CraftedTypes* craft_Campfire = new CraftedTypes(ITEM_TYPE_MISC, ITEM_SUB_TYPE_CAMPFIRE, "Media/Icons/Campfire_Icon_Temp.png");
-		std::map<unsigned int, unsigned int> Campfire_Materials;
-		Campfire_Materials[ITEM_SUB_TYPE_LARGE_STICK] = 2;
-		Campfire_Materials[ITEM_SUB_TYPE_MEDIUM_STICK] = 3;
-		Campfire_Materials[ITEM_SUB_TYPE_SMALL_STICK] = 4;
-		this->zMappedTypesToMaterialsReq[craft_Campfire] = Campfire_Materials;
-		this->zCraftingList.push_back(craft_Campfire);
+		//CraftedTypes* craft_Campfire = new CraftedTypes(ITEM_TYPE_MISC, ITEM_SUB_TYPE_CAMPFIRE, "Media/Icons/Campfire_Icon_Temp.png");
+		//std::map<unsigned int, unsigned int> Campfire_Materials;
+		//Campfire_Materials[ITEM_SUB_TYPE_LARGE_STICK] = 2;
+		//Campfire_Materials[ITEM_SUB_TYPE_MEDIUM_STICK] = 3;
+		//Campfire_Materials[ITEM_SUB_TYPE_SMALL_STICK] = 4;
+		//this->zMappedTypesToMaterialsReq[craft_Campfire] = Campfire_Materials;
+		//this->zCraftingList.push_back(craft_Campfire);
 
 		this->WriteToFile();
 	}
@@ -112,6 +112,9 @@ bool CraftingReader::ReadFromFile()
 		std::getline(read, line);
 
 		if (line.empty())
+			continue;
+
+		if (line.find("//") == 0)
 			continue;
 
 		if (line == RECIPE)

@@ -299,6 +299,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID, const float 
 	case MESSAGE_TYPE_PRINT_INVENTORY:
 		ss << M_PRINT_INVENTORY;
 		break;
+	case MESSAGE_TYPE_DRINK_FROM_WATER:
+		ss << M_DRINK_WATER;
+		break;
 	default:
 		return "";
 		break;
@@ -353,6 +356,9 @@ std::string NetworkMessageConverter::Convert(const unsigned int ID)
 		break;
 	case MESSAGE_TYPE_SERVER_RESTART:
 		ss << M_SERVER_RESTART;
+		break;
+	case MESSAGE_TYPE_DRINK_FROM_WATER:
+		ss << M_DRINK_WATER;
 		break;
 	default:
 		return "";

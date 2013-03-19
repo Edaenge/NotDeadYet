@@ -66,6 +66,7 @@ public:
 
 	std::vector<unsigned int> actorID;
 };
+
 /*Event when a player wants to loot items from a loot able object.*/
 class PlayerLootItemEvent : public Event
 {
@@ -134,6 +135,15 @@ public:
 	ClientData* clientData;
 
 	unsigned int itemID;
+};
+
+class PlayerDrinkWaterEvent : public Event
+{
+public:
+	virtual ~PlayerDrinkWaterEvent() {}
+
+	ClientData* clientData;
+
 };
 
 class PlayerCraftItemEvent : public Event

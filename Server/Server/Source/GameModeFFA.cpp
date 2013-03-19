@@ -191,6 +191,18 @@ void GameModeFFA::OnEvent( Event* e )
 			}
 		}
 	}
+	else if (BioActorDeathEvent* BADE = dynamic_cast<BioActorDeathEvent*>(e))
+	{
+		BADE->zActor;
+
+		auto models = this->zGame->GetDeadActorModels();
+
+		auto models_it = models.find(BADE->zActor->GetModel());
+		if (models_it != models.end())
+		{
+			BADE->zActor->SetMesh(models_it->second);
+		}
+	}
 	else if (PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
 	{
 		GhostActor* gActor = dynamic_cast<GhostActor*>(PASE->zActor);

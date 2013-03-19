@@ -50,7 +50,7 @@ private:
 	std::map<ClientData*, Player*> zPlayers;
 	std::map<Entity*, WorldActor*> zWorldActors;
 	std::map<std::string, std::string> zPlayerModels;
-
+	std::map<std::string, std::string> zDeadActorModels;
 	unsigned int zMaxNrOfPlayers;
 
 	Vector3 zCurrentSunPosition;
@@ -131,6 +131,7 @@ public:
 	void CheckToShotArrow(ClientData* cd);
 	const std::map<std::string, std::string>& GetPlayerModels() const {return this->zPlayerModels;}
 	const std::map<std::string, Vector3> GetCameraOffsets() const {return this->zCameraOffset;}
+	const std::map<std::string, std::string> GetDeadActorModels() const {return this->zDeadActorModels;}
 private:
 	//Test functions, spawns items/Animals
 	void SpawnItemsDebug();
@@ -147,6 +148,7 @@ private:
 	void HandleUseWeapon(ClientData* cd, unsigned int itemID);
 	bool HandleCraftItem(ClientData* cd, const unsigned int itemType, const unsigned int itemSubType);
 	void HandleFillItem(ClientData* cd, const unsigned int itemID);
+	void HandleDrinkWater(ClientData* cd);
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleBindings(const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType);

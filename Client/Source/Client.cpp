@@ -822,7 +822,8 @@ void Client::CheckPlayerSpecificKeys()
 			}
 			else if(this->zWorld->GetWaterDepthAt(Vector2 (clientPlayer->GetPosition().x,clientPlayer->GetPosition().z) ) > 0.2f)
 			{
-				//
+				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DRINK_FROM_WATER);
+				this->zServerChannel->Send(msg);
 			}
 			else
 			{
@@ -1775,7 +1776,18 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		//Could Crash
 		if(this->zGuiManager)
+		{
+			if (this->zGuiManager->IsInventoryOpen())
+				this->zGuiManager->ToggleInventoryGui();
+
+			if (this->zGuiManager->IsCraftOpen())
+				this->zGuiManager->ToggleCraftingGui();
+
+			if (this->zGuiManager->IsLootingOpen())
+				this->zGuiManager->ToggleLootGui(0);
+
 			this->zGuiManager->ResetGui();
+		}
 		else
 			this->zGuiManager = new GuiManager(GetGraphics());
 

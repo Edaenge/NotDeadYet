@@ -12,6 +12,7 @@ public:
 	std::map< unsigned int, Vector4 > newRotations;
 	std::map< unsigned int, Vector3 > newScales;
 	std::map< unsigned int, unsigned int> newStates;
+	std::map<unsigned int, std::string> newMesh;
 	std::map<unsigned int, std::string> newAnimations;
 
 	virtual ~ServerFramePacket() {}
@@ -53,6 +54,17 @@ public:
 		num = newAnimations.size();
 		ss.write(reinterpret_cast<const char*>(&num), sizeof(size_t));
 		for( auto i = newAnimations.begin(); i != newAnimations.end(); ++i )
+		{
+			unsigned int size = i->second.length();
+			ss.write(reinterpret_cast<const char*>(&i->first), sizeof(i->first));
+			ss.write(reinterpret_cast<const char*>(&size), sizeof(unsigned int));
+			ss.write(&i->second[0], i->second.length());
+
+		}
+
+		num = newMesh.size();
+		ss.write(reinterpret_cast<const char*>(&num), sizeof(size_t));
+		for( auto i = newMesh.begin(); i != newMesh.end(); ++i )
 		{
 			unsigned int size = i->second.length();
 			ss.write(reinterpret_cast<const char*>(&i->first), sizeof(i->first));
@@ -114,6 +126,18 @@ public:
 			value.resize(size);
 			ss.read(&value[0], size);
 			newAnimations[key] = value;
+		}
+
+		ss.read(reinterpret_cast<char*>(&num), sizeof(size_t));
+		for( unsigned int i = 0; i != num; i++)
+		{
+			std::string value;
+			unsigned int size = 0;
+			ss.read(reinterpret_cast<char*>(&key), sizeof(unsigned int));
+			ss.read(reinterpret_cast<char*>(&size), sizeof(unsigned int));
+			value.resize(size);
+			ss.read(&value[0], size);
+			newMesh[key] = value;
 		}
 
 		return true;
