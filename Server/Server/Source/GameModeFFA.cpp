@@ -851,7 +851,7 @@ bool GameModeFFA::SpawnRandomDrop()
 	Vector2 posOne = aliveActors[playerOne]->GetPosition().GetXZ();
 	Vector2 posTwo;
 
-	if( NR_OF_ALIVE_PLAYERS < 2 )
+	if( NR_OF_ALIVE_PLAYERS <= 2 )
 		posTwo = center;
 	else
 		posTwo = aliveActors[playerTwo]->GetPosition().GetXZ();
@@ -1037,7 +1037,7 @@ bool GameModeFFA::CheckEndCondition()
 	int playersAlive = zGame->GetLivingPlayers();
 	NetworkMessageConverter NMC;
 
-	if( playersAlive == 2 )
+	if( playersAlive == 1 )
 	{
 		Player* winner_player = NULL;
 
