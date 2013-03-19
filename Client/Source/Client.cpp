@@ -2070,7 +2070,7 @@ bool Client::CheckHumanSpecificMessages(std::vector<std::string> msgArray)
 	}
 	else if(msgArray[0].find(M_ITEM_FILL.c_str()) == 0)
 	{
-		if (msgArray.size() > 2)
+		if (msgArray.size() == 2)
 		{
 			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_FILL, msgArray[0]);
 			unsigned int currentUses = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_CURRENT, msgArray[1]);

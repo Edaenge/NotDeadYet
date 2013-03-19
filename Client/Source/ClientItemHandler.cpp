@@ -215,7 +215,7 @@ void Client::HandleFillItem(const unsigned int ID, const int currentUses)
 
 		IEventHandle* temp;
 		AudioManager* am = AudioManager::GetInstance();
-		int FMOD_RESULT_TEMP = am->GetEventHandle(EVENTID_NOTDEADYET_MAN_DRINKWATER, temp);
+		int FMOD_RESULT_TEMP = am->GetEventHandle(EVENTID_NOTDEADYET_MENU_N_BACKPACK_FILLUP_WATER, temp);
 
 		if(FMOD_RESULT_TEMP == FMOD_OK)
 		{
