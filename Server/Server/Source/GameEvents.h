@@ -136,6 +136,15 @@ public:
 	unsigned int itemID;
 };
 
+class PlayerDrinkWaterEvent : public Event
+{
+public:
+	virtual ~PlayerDrinkWaterEvent() {}
+
+	ClientData* clientData;
+
+};
+
 class PlayerCraftItemEvent : public Event
 {
 public:

@@ -126,7 +126,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	// Debug Functions
 	this->SpawnItemsDebug();
-//	this->SpawnAnimalsDebug();
+	this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 	// Sun Direction
 	this->ResetSunDirection();
@@ -175,7 +175,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 1; i++)
+	for(unsigned int i = 0; i < 20; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -778,6 +778,10 @@ void Game::OnEvent( Event* e )
 	else if (PlayerFillItemEvent* PFIE = dynamic_cast<PlayerFillItemEvent*>(e))
 	{
 		this->HandleFillItem(PFIE->clientData, PFIE->itemID);
+	}
+	else if (PlayerDrinkWaterEvent* PDWE = dynamic_cast<PlayerDrinkWaterEvent*>(e) )
+	{
+		this->HandleDrinkWater(PDWE->clientData);
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
@@ -2340,6 +2344,15 @@ void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
 		msg += NMC.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)container->GetRemainingUses());
 		cd->Send(msg);
 	}
+}
+
+void Game::HandleDrinkWater(ClientData* cd)
+{
+	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
+
+	pActor->SetHydration(pActor->GetHydration() + 15.0f );
+
 }
 
 void Game::HandleEquipItem( ClientData* cd, unsigned int itemID )
