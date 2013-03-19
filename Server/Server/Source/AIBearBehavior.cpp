@@ -238,81 +238,92 @@ void AIBearBehavior::SetFearLevel(float fear)
 
 bool AIBearBehavior::InitPathfinder()
 {
-	//this->zPathfinder.InitAI(0.5,3840); //For big map.
-	this->zPathfinder.InitAI(0.5,90); //For small testing map.
+	this->zPathfinder.InitAI(0.5,3840); //For big map.
+	//this->zPathfinder.InitAI(0.5,90); //For small testing map.
 	this->zPathfinder.SetWorldPointer(this->zWorld);
 	return true;
 }
 
 Vector3 AIBearBehavior::ExaminePathfindingArea()
 {
-	BearActor* dActor = dynamic_cast<BearActor*>(this->zActor);
+	BearActor* bActor = dynamic_cast<BearActor*>(this->zActor);
 
 	Vector3 dest;
 	//We make a check to see if the position is available, to avoid wasting time in the pathfinder functions.
-	dest = this->zMainActorTarget->GetPosition() - dActor->GetPosition();
+	//dest = this->zMainTarget.position - dActor->GetPosition();
+	dest = this->zMainActorTarget->GetPosition() - bActor->GetPosition();
 	dest.Normalize();
 	dest = dest * -1;
 	dest *= (float)this->zFleeDistance;
 
-	dest = dActor->GetPosition() + dest;
+	dest = bActor->GetPosition() + dest;
 				
 	bool getEmergencyDirection = false;
 	bool foundPath = false;
 	int counter = 0; //Just for testing stuff
 	getEmergencyDirection = false;
 
-	while(foundPath == false)
+
+	if(dest.x < 0)
 	{
-		getEmergencyDirection = false;
-		if(dest.x < 0)
-		{
-			dest.x = 0;
-		}
-		else if(dest.x > this->zWorld->GetWorldSize().x)
-		{
-			dest.x = this->zWorld->GetWorldSize().x - 1; 
-		}
-
-		if(dest.z < 0)
-		{
-			dest.z = 0;
-		}
-		else if(dest.z > this->zWorld->GetWorldSize().y)
-		{
-			dest.z = this->zWorld->GetWorldSize().y - 1;
-		}
-		while(this->zWorld->IsBlockingAt(Vector2(dest.x, dest.z)) && ( dest - dActor->GetPosition() ).GetLength() > 2)
-		{
-			dest = (dest - dActor->GetPosition());
-			dest = dActor->GetPosition() + (dest - dest * 0.75);
-						
-		}
-		if(( dest - dActor->GetPosition() ).GetLength() < 2)
-		{
-			getEmergencyDirection = true; //There is basically a thick wall in the way...
-		}
-
-		if(getEmergencyDirection) //...so let's find another direction.
-		{
-			//this->zDestination.Normalize();
-			counter++;
-			float angle = (-10 * counter) * 3.14f/180;
-			float oldX, oldY;
-			oldX = dest.x;
-			oldY = dest.z;
-
-			dest.x = cos(angle) * oldX - sin(angle) * oldY;
-			dest.z = cos(angle) * oldY + sin(angle) * oldX;
-			dest.Normalize();
-			dest = dest * (float)zFleeDistance;			
-		}
-		else
-		{
-			foundPath = true;
-			return dest;
-		}
+		dest.x = 0;
+		foundPath = true;
 	}
+	else if(dest.x > this->zWorld->GetWorldSize().x)
+	{
+		dest.x = this->zWorld->GetWorldSize().x - 1; 
+		foundPath = true;
+	}
+	if(dest.z < 0)
+	{
+		dest.z = 0;
+		foundPath = true;
+	}
+	else if(dest.z > this->zWorld->GetWorldSize().y)
+	{
+		dest.z = this->zWorld->GetWorldSize().y - 1;
+		foundPath = true;
+	}
+
+		getEmergencyDirection = false;
+		
+		//this while loop takes a lot of work. Try to optimize however possible.
+		//if(this->zWorld->IsBlockingAt(Vector2(dest.x, dest.z)))
+		//{
+		//	getEmergencyDirection = true;
+		//	//dest = (dest - dActor->GetPosition());
+		//	//dest = dActor->GetPosition() + (dest - dest * 0.75);
+		//				
+		//}
+		//if(( dest - dActor->GetPosition() ).GetLength() < 2)
+		//{
+		//	getEmergencyDirection = true; //There is basically a thick wall in the way...
+		//}
+
+		//if(getEmergencyDirection) //...so let's find another direction.
+		//{
+		//	//this->zDestination.Normalize();
+		//	counter++;
+		//	float angle = (-10 * counter) * 3.14f/180;
+		//	float oldX, oldY;
+		//	oldX = dest.x;
+		//	oldY = dest.z;
+
+		//	dest.x = cos(angle) * oldX - sin(angle) * oldY;
+		//	dest.z = cos(angle) * oldY + sin(angle) * oldX;
+		//	dest.Normalize();
+		//	dest = dest * (float)zFleeDistance;
+		//	
+		//	foundPath = true;
+		//	return dest;
+		//			
+		//}
+		//else
+		//{
+		//	foundPath = true;
+		//	return dest;
+		//}
+	//}
 	return dest;
 }
 
@@ -516,11 +527,23 @@ bool AIBearBehavior::Update( float dt )
 	}*/
 	else if(this->GetFearLevel() > this->zCalmToAggressiveThreshold && nearbyPredatorsExist)
 	{
-		this->SetMentalState(AGGRESSIVE);
+		if(this->GetMentalState() != AGGRESSIVE)
+		{
+			this->zCurrentPath.clear();
+			this->SetIfNeedPath(true);
+			this->SetMentalState(AGGRESSIVE);
+			//this->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+		}
 	}
 	else if(this->zPanic == true)
 	{
-		this->SetMentalState(AFRAID);
+		if(this->GetMentalState() != AFRAID)
+		{
+			this->zCurrentPath.clear();
+			this->SetIfNeedPath(true);
+			this->SetMentalState(AFRAID);
+			//this->SetScale(Vector3(3.09f, 3.09f, 3.09f));
+		}
 	}
 	else
 	{
@@ -559,112 +582,116 @@ bool AIBearBehavior::Update( float dt )
 	//}
 	else if(this->GetMentalState() == AGGRESSIVE) //Is outright trying to harm the target.
 	{
-		this->zCurrentDistanceFled = 0;
-		this->zPanic = false;
-		xDistance = bActor->GetPosition().x - this->zMainActorTarget->GetPosition().x;
-		//yDistance = this->GetPosition().y - this->zMainTarget.position.y;
-		zDistance = bActor->GetPosition().z - this->zMainActorTarget->GetPosition().z;
-		float lastDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
-		if( this->GetIfNeedPath() == true )
-		{
-			this->SetIfNeedPath(false);
-			this->zCurrentPath.clear();
-			//if( !this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainActorTarget->GetPosition().x, this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest) == false ) //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large. //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40) == false
-			//{
-			//	this->SetIfNeedPath(true);
-			//}
-			this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainActorTarget->GetPosition().x, this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest);
-			this->SetLastDistanceCheck( lastDistance );
-		}
-		if( this->zIntervalCounter > 1.5 && this->GetIfNeedPath() == false )
-		{
-			this->zIntervalCounter = 0;
+		//this->zCurrentDistanceFled = 0;
+		//this->zPanic = false;
 
-			if( lastDistance < this->GetLastDistanceCheck() / 2) // The animal has traveled towards its goal halfway, at this point, it is safe to asume the goal has moved.
-			{
-				this->zCurrentPath.clear();
-				this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainActorTarget->GetPosition().x, this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest);
-				//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40);
-			}
+		//xDistance = bActor->GetPosition().x - this->zMainActorTarget->GetPosition().x;
+		////yDistance = this->GetPosition().y - this->zMainTarget.position.y;
+		//zDistance = bActor->GetPosition().z - this->zMainActorTarget->GetPosition().z;
+		//float lastDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
+		////if( this->GetIfNeedPath() == true )
+		////{
+		////	this->SetIfNeedPath(false);
+		////	this->zCurrentPath.clear();
+		////	//if( !this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainActorTarget->GetPosition().x, this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest) == false ) //Get the path, with the target that is to be attacked as the goal position. Depending on the animal, make the distance slightly large. //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40) == false
+		////	//{
+		////	//	this->SetIfNeedPath(true);
+		////	//}
+		////	this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainActorTarget->GetPosition().x, this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest);
+		////	this->SetLastDistanceCheck( lastDistance );
+		////}
 
-			xDistance = 0;
-			yDistance = 0;
-			zDistance = 0;
-			float distance;
-			float shortestDistance = 99999;
-			//Target mostLikelyTarget = this->zMainTarget;
-			Actor* mostLikelyTarget = this->zMainActorTarget; 
+		//if( this->zIntervalCounter > 1.5 && this->GetIfNeedPath() == false )
+		//{
+		//	this->zIntervalCounter = 0;
+
+		//	this->zDestination = this->zMainActorTarget->GetPosition();
+
+		//	//if( lastDistance < this->GetLastDistanceCheck() / 2) // The animal has traveled towards its goal halfway, at this point, it is safe to asume the goal has moved.
+		//	//{
+		//	//	this->zCurrentPath.clear();
+		//	//	this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainActorTarget->GetPosition().x, this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest);
+		//	//	//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40);
+		//	//}
+
+		//	xDistance = 0;
+		//	yDistance = 0;
+		//	zDistance = 0;
+		//	float distance;
+		//	float shortestDistance = 99999;
+		//	//Target mostLikelyTarget = this->zMainTarget;
+		//	Actor* mostLikelyTarget = this->zMainActorTarget; 
 
 
-			auto i = this->GetTargets().begin();
-			for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
-			{
-				if(dynamic_cast<BioActor*>((*i)))
-				{
-				
-					if(dynamic_cast<BioActor*>((*i))->zValid == true)
-					{
-						xDistance = bActor->GetPosition().x - (*i)->GetPosition().x;
-						//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
-						zDistance = bActor->GetPosition().z - (*i)->GetPosition().z;
-						distance = sqrt(xDistance * xDistance + zDistance * zDistance);
-					
-						if(distance < shortestDistance) //Something that is a larger threat is based on distance.
-						{
-							shortestDistance = distance;
-							mostLikelyTarget = (*i);
-						}
-						if(distance < 1.5f)
-						{
-							Vector3 direction = (*i)->GetPosition() - bActor->GetPosition();
-							direction.Normalize();
-							bActor->SetDir( direction ); 
+		//	auto i = this->GetTargets().begin();
+		//	for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
+		//	{
+		//		if(dynamic_cast<BioActor*>((*i)))
+		//		{
+		//		
+		//			if(dynamic_cast<BioActor*>((*i))->zValid == true)
+		//			{
+		//				xDistance = bActor->GetPosition().x - (*i)->GetPosition().x;
+		//				//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
+		//				zDistance = bActor->GetPosition().z - (*i)->GetPosition().z;
+		//				distance = sqrt(xDistance * xDistance + zDistance * zDistance);
+		//			
+		//				if(distance < shortestDistance) //Something that is a larger threat is based on distance.
+		//				{
+		//					shortestDistance = distance;
+		//					mostLikelyTarget = (*i);
+		//				}
+		//				if(distance < 1.5f)
+		//				{
+		//					Vector3 direction = (*i)->GetPosition() - bActor->GetPosition();
+		//					direction.Normalize();
+		//					bActor->SetDir( direction ); 
 
-							float dotProduct = bActor->GetDir().GetDotProduct( (*i)->GetPosition() - bActor->GetPosition() );
+		//					float dotProduct = bActor->GetDir().GetDotProduct( (*i)->GetPosition() - bActor->GetPosition() );
 
-							if(dotProduct > this->zFieldOfView)//It is looking at the target.
-							{
-								//Attack!
-								Damage bearAttack;
-								bearAttack.slashing = 15;
-								if(dynamic_cast<BioActor*>(this->zMainActorTarget)->IsAlive())
-								{
-									dynamic_cast<BioActor*>(this->zMainActorTarget)->TakeDamage(bearAttack,this->GetActor());
-								}
-							}
-							
-						}
-					}
-				}
-			}
-			//for(int i = 0; i < this->GetCurrentTargets(); i++)
-			//{
-			//	
-			//	if(this->zTargets[i].valid == true)
-			//	{
-			//		xDistance = bActor->GetPosition().x - this->zTargets[i].position.x;
-			//		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
-			//		zDistance = bActor->GetPosition().z - this->zTargets[i].position.z;
-			//		distance = sqrt(xDistance * xDistance + zDistance * zDistance);
-			//		
-			//		if(distance < shortestDistance) //Something that is a larger threat is based on distance.
-			//		{
-			//			shortestDistance = distance;
-			//			mostLikelyTarget = this->zTargets[i];
-			//		}
-			//		if(distance < 1.0f)
-			//		{
-			//			int testing = 0;
-			//		}
-			//	}
-			//}
-			if(shortestDistance < this->GetLastDistanceCheck() / this->zNewTargetCloseByAFactorOf) // The animal has gotten closer to another threat and is following that now.
-			{
-				this->SetIfNeedPath(true);
-				//this->zMainTarget = mostLikelyTarget;
-				this->zMainActorTarget = mostLikelyTarget;
-			}
-		}
+		//					if(dotProduct > this->zFieldOfView)//It is looking at the target.
+		//					{
+		//						//Attack!
+		//						Damage bearAttack;
+		//						bearAttack.slashing = 15;
+		//						if(dynamic_cast<BioActor*>(this->zMainActorTarget)->IsAlive())
+		//						{
+		//							dynamic_cast<BioActor*>(this->zMainActorTarget)->TakeDamage(bearAttack,this->GetActor());
+		//						}
+		//					}
+		//					
+		//				}
+		//			}
+		//		}
+		//	}
+		//	//for(int i = 0; i < this->GetCurrentTargets(); i++)
+		//	//{
+		//	//	
+		//	//	if(this->zTargets[i].valid == true)
+		//	//	{
+		//	//		xDistance = bActor->GetPosition().x - this->zTargets[i].position.x;
+		//	//		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
+		//	//		zDistance = bActor->GetPosition().z - this->zTargets[i].position.z;
+		//	//		distance = sqrt(xDistance * xDistance + zDistance * zDistance);
+		//	//		
+		//	//		if(distance < shortestDistance) //Something that is a larger threat is based on distance.
+		//	//		{
+		//	//			shortestDistance = distance;
+		//	//			mostLikelyTarget = this->zTargets[i];
+		//	//		}
+		//	//		if(distance < 1.0f)
+		//	//		{
+		//	//			int testing = 0;
+		//	//		}
+		//	//	}
+		//	//}
+		//	if(shortestDistance < this->GetLastDistanceCheck() / this->zNewTargetCloseByAFactorOf) // The animal has gotten closer to another threat and is following that now.
+		//	{
+		//		this->SetIfNeedPath(true);
+		//		//this->zMainTarget = mostLikelyTarget;
+		//		this->zMainActorTarget = mostLikelyTarget;
+		//	}
+		//}
 		
 	}
 	else if(this->GetMentalState() == AFRAID) //Is afraid, needs to run.
@@ -678,11 +705,11 @@ bool AIBearBehavior::Update( float dt )
 			{
 				
 				this->zDestination = this->ExaminePathfindingArea();				
-				this->zCurrentPath.clear();
-				if(!this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath,maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
-				{
-					this->SetIfNeedPath(true);
-				}
+				//this->zCurrentPath.clear();
+				//if(!this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zDestination.x, this->zDestination.z,this->zCurrentPath,maximumNodesTest) ) //!this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, awayFromThreatX, awayFromThreatZ,this->zCurrentPath,80)
+				//{
+				//	this->SetIfNeedPath(true);
+				//}
 
 			}
 			else
@@ -695,128 +722,295 @@ bool AIBearBehavior::Update( float dt )
 	}
 
 
+
 	//Move the animal along path.
-	if(this->zCurrentPath.size() > 0)
-	{
 		this->zPreviousVelocity = bActor->GetVelocity();
 		this->zPanic = false;
-
-	//	this->zPreviousPos = bActor->GetPosition();
-
-		bool reachedNode = false;
-		if( (bActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && bActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( bActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && bActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
-		{
-			reachedNode = true;
-		}
-
-		if(reachedNode)
-		{
-			this->zCurrentPath.pop_back();
-			//reachedNode = false;
-		}
-
-		if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 )
-		{
-
-			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
-
-			result = result;
-			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
-
-
-			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
-			Vector3 direction = goal - bActor->GetPosition();
-			direction.Normalize();
-			bActor->SetDir( direction ); 
-			bActor->SetVelocity(this->zWalkingVelocity);
-			//if(testInterval > 1.0) //Mainly for testing purposes.
-			//{
-			//	testInterval = 0;
-			//	this->SetPosition(Vector3(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y) );
-			//}
-			
-			bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
 		
-		}
-		else if(this->GetMentalState() == AGGRESSIVE  && this->zCurrentPath.size() > 0)
+		//this->zPreviousPos = this->GetPosition();
+	
+		if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 || this->GetMentalState() == SUSPICIOUS && this->zCurrentPath.size() > 0)
 		{
+			bool reachedNode = false;
+			if( (bActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && bActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( bActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && bActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
+			{
+				reachedNode = true;
+			}
+
+			if(reachedNode)
+			{
+				this->zCurrentPath.pop_back();
+				//reachedNode = false;
+			}
 			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
 
 			result = result;
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
 
+			if(this->zCurrentPath.size() > 0)
+			{
+				dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_WALKING);
+			
+				Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+				Vector3 direction = goal - bActor->GetPosition();
+				direction.Normalize();
+				bActor->SetDir( direction ); 
 
-			//Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
-			//
-			//Vector3 ADirection = bActor->GetDir();
-			//Vector3 BDirection = goal - bActor->GetPosition();
-			//BDirection.Normalize();
+				Vector2 testProperDirection;
+				testProperDirection.x = bActor->GetDir().x;
+				testProperDirection.y = bActor->GetDir().z;
+				testProperDirection.Normalize();
+				bActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
 
-			//float factor = 0.98f;
-			////float factorTwo = 0.0f;
+			}
 
-			////factor = ADirection.GetDotProduct(BDirection);
-			////factorTwo = BDirection.GetDotProduct(ADirection);
-
-
-			//Vector3 CDirection = ADirection * (1.0 - factor) + BDirection * factor;
-
-			//CDirection.Normalize();
-
-			//bActor->SetDir( CDirection ); 
-
-			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
-			Vector3 direction = goal - bActor->GetPosition();
-			direction.Normalize();
-			bActor->SetDir( direction ); 
-			bActor->SetVelocity(this->zAttackingVelocity);
+			bActor->SetVelocity(this->zWalkingVelocity);
 
 			bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
 
 		}
-		else if(this->GetMentalState() == AFRAID && this->zCurrentPath.size() > 0)
+		else if(this->GetMentalState() == AGGRESSIVE /* && this->zCurrentPath.size() > 0*/)
+		{
+
+		//	dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
+		//	
+		//	//Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+		//	//Vector3 direction = goal - dActor->GetPosition();
+		//	
+		//	if(this->zCurrentPath.size() > 0)
+		//	{
+		//		bool reachedNode = false;
+		//		if( (bActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && bActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( bActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && bActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
+		//		{
+		//			reachedNode = true;
+		//		}
+
+		//		if(reachedNode)
+		//		{
+		//			this->zCurrentPath.pop_back();
+		//			//reachedNode = false;
+		//		}
+		//	}
+
+		//	if(this->zCurrentPath.size() > 0)
+		//	{
+		//		Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+		//		Vector3 direction = goal - bActor->GetPosition();
+		//		direction.Normalize();
+		//		bActor->SetDir( direction ); 
+		//	}
+		//	else
+		//	{
+		//		Vector3 direction = this->zDestination - bActor->GetPosition();
+		//		direction.Normalize();
+		//		bActor->SetDir( direction ); 
+		//	}
+
+		//	bActor->SetVelocity(this->zFleeingVelocity);
+
+		//	Vector3 nextPos = bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity();
+
+
+		//	
+
+		//	if(!this->zWorld->IsBlockingAt(Vector2(nextPos.x,nextPos.z)) && this->zCurrentPath.size() == 0)
+		//	{
+		//		Vector2 testProperDirection;
+		//		testProperDirection.x = bActor->GetDir().x;
+		//		testProperDirection.y = bActor->GetDir().z;
+		//		testProperDirection.Normalize();
+		//		bActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
+
+		//		bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
+		//		this->zCurrentDistanceFled += dt * bActor->GetVelocity();
+
+		//	}
+		//	else if(this->zCurrentPath.size() > 0)
+		//	{
+		//		Vector2 testProperDirection;
+		//		testProperDirection.x = bActor->GetDir().x;
+		//		testProperDirection.y = bActor->GetDir().z;
+		//		testProperDirection.Normalize();
+		//		bActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
+
+		//		bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
+		//		this->zCurrentDistanceFled += dt * bActor->GetVelocity();
+
+		//	}
+		//	else if(this->zCurrentPath.size() == 0)
+		//	{
+		//		this->zCurrentPath.clear();
+		//		this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z,  bActor->GetPosition().x + bActor->GetDir().x * 5.0f,  bActor->GetPosition().z + bActor->GetDir().z * 5.0f, this->zCurrentPath, 40);
+
+		//		//dActor->SetPosition(Vector3(50,0,50));
+		//	}
+
+		////	bool reachedNode = false;
+		////	if( (bActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && bActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( bActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && bActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
+		////	{
+		////		reachedNode = true;
+		////	}
+
+		////	if(reachedNode)
+		////	{
+		////		this->zCurrentPath.pop_back();
+		////		//reachedNode = false;
+		////	}
+		////	/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
+
+		////	result = result;
+		////	this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
+
+
+		////	if(this->zCurrentPath.size() > 0)
+		////	{
+
+		////		dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
+
+		////		Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+		////		Vector3 direction = goal - bActor->GetPosition();
+		////		direction.Normalize();
+		////		bActor->SetDir( direction ); 
+
+
+		////		Vector2 testProperDirection;
+		////		testProperDirection.x = bActor->GetDir().x;
+		////		testProperDirection.y = bActor->GetDir().z;
+		////		testProperDirection.Normalize();
+		////		bActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
+		////	
+		////	}
+		/////*	if(dActor->GetVelocity() > this->zAttackingVelocity)
+		////	{
+		////		dActor->SetVelocity(this->zPreviousVelocity - 100 * dt);
+		////	}
+		////	else if(dActor->GetVelocity() < this->zAttackingVelocity)
+		////	{
+		////		dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
+		////	}*/
+		////	bActor->SetVelocity(this->zAttackingVelocity);
+
+		////	bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
+
+		}
+		else if(this->GetMentalState() == AFRAID /*&& this->zCurrentPath.size() > 0*/)
 		{
 			/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
 
 			result = result;
 			this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
 
-			Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
-			Vector3 direction = goal - bActor->GetPosition();
-			direction.Normalize();
-			bActor->SetDir( direction ); 
+			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
+			
+			//Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+			//Vector3 direction = goal - dActor->GetPosition();
+			
+			if(this->zCurrentPath.size() > 0)
+			{
+				bool reachedNode = false;
+				if( (bActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && bActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( bActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && bActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
+				{
+					reachedNode = true;
+				}
+
+				if(reachedNode)
+				{
+					this->zCurrentPath.pop_back();
+					//reachedNode = false;
+				}
+			}
+
+			if(this->zCurrentPath.size() > 0)
+			{
+				Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+				Vector3 direction = goal - bActor->GetPosition();
+				direction.Normalize();
+				bActor->SetDir( direction ); 
+			}
+			else
+			{
+				Vector3 direction = this->zDestination - bActor->GetPosition();
+				direction.Normalize();
+				bActor->SetDir( direction ); 
+			}
+
 			bActor->SetVelocity(this->zFleeingVelocity);
 
-			bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
-			zCurrentDistanceFled += dt * bActor->GetVelocity();
+			Vector3 nextPos = bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity();
 
+
+			
+
+			if(!this->zWorld->IsBlockingAt(Vector2(nextPos.x,nextPos.z)) && this->zCurrentPath.size() == 0)
+			{
+				Vector2 testProperDirection;
+				testProperDirection.x = bActor->GetDir().x;
+				testProperDirection.y = bActor->GetDir().z;
+				testProperDirection.Normalize();
+				bActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
+
+				bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
+				this->zCurrentDistanceFled += dt * bActor->GetVelocity();
+
+			}
+			else if(this->zCurrentPath.size() > 0)
+			{
+				Vector2 testProperDirection;
+				testProperDirection.x = bActor->GetDir().x;
+				testProperDirection.y = bActor->GetDir().z;
+				testProperDirection.Normalize();
+				bActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
+
+				bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
+				this->zCurrentDistanceFled += dt * bActor->GetVelocity();
+
+			}
+			else if(this->zCurrentPath.size() == 0)
+			{
+				this->zCurrentPath.clear();
+				this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z,  bActor->GetPosition().x + bActor->GetDir().x * 5.0f,  bActor->GetPosition().z + bActor->GetDir().z * 5.0f, this->zCurrentPath, 40);
+
+				//dActor->SetPosition(Vector3(50,0,50));
+			}
 		}
-		else if(this->GetMentalState() == AFRAID && this->zCurrentDistanceFled < this->zFleeDistance)
+		
+		if(this->GetMentalState() == AFRAID && this->zCurrentDistanceFled < this->zFleeDistance)
 		{
 			this->SetIfNeedPath(true);
 		}
+		else
+		{
+			this->SetIfNeedPath(true);
+		}
+		
+		float groundHeight = 0.0f;
+		try
+		{
+			groundHeight = this->zWorld->CalcHeightAtWorldPos( Vector2(bActor->GetPosition().x, bActor->GetPosition().z));
+		}
+		catch(...)
+		{
+
+		}
+		
+		Vector3 actorPosition = bActor->GetPosition();
+		actorPosition.y = groundHeight;
+		bActor->SetPosition(actorPosition);
 	
-	}
-	else
+
+	if(bActor->GetVelocity() == 0.0f)
 	{
-		this->SetIfNeedPath(true);
+		dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_IDLE);		
 	}
 
-	float height = this->zWorld->CalcHeightAtWorldPos( Vector2(bActor->GetPosition().x, bActor->GetPosition().z));
-
-	Vector3 actorPosition = bActor->GetPosition();
-	actorPosition.y = height;
-	bActor->SetPosition(actorPosition);
-
-	
 	//Rotate Animal
-	static Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, -1.0f);
+	static Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, 1.0f);
 	Vector3 meshDirection = bActor->GetDir();
 	meshDirection.y = 0;
 	meshDirection.Normalize();
 
 	Vector3 around = Vector3(0.0f, 1.0f, 0.0f);
-	float angle = acos(meshDirection.GetDotProduct(defaultMeshDir));
+	float angle = -acos(meshDirection.GetDotProduct(defaultMeshDir));
 
 	if (meshDirection.x > 0.0f)
 	 angle *= -1;
@@ -825,4 +1019,136 @@ bool AIBearBehavior::Update( float dt )
 	bActor->SetRotation(around, angle);
 
 	return false;
+
+	/*
+	////Move the animal along path.
+	//if(this->zCurrentPath.size() > 0)
+	//{
+	//	this->zPreviousVelocity = bActor->GetVelocity();
+	//	this->zPanic = false;
+
+	////	this->zPreviousPos = bActor->GetPosition();
+
+	//	bool reachedNode = false;
+	//	if( (bActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && bActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( bActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && bActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
+	//	{
+	//		reachedNode = true;
+	//	}
+
+	//	if(reachedNode)
+	//	{
+	//		this->zCurrentPath.pop_back();
+	//		//reachedNode = false;
+	//	}
+
+	//	if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 )
+	//	{
+
+	//		/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
+
+	//		result = result;
+	//		this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
+
+
+	//		Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+	//		Vector3 direction = goal - bActor->GetPosition();
+	//		direction.Normalize();
+	//		bActor->SetDir( direction ); 
+	//		bActor->SetVelocity(this->zWalkingVelocity);
+	//		//if(testInterval > 1.0) //Mainly for testing purposes.
+	//		//{
+	//		//	testInterval = 0;
+	//		//	this->SetPosition(Vector3(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y) );
+	//		//}
+	//		
+	//		bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
+	//	
+	//	}
+	//	else if(this->GetMentalState() == AGGRESSIVE  && this->zCurrentPath.size() > 0)
+	//	{
+	//		/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
+
+	//		result = result;
+	//		this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
+
+
+	//		//Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+	//		//
+	//		//Vector3 ADirection = bActor->GetDir();
+	//		//Vector3 BDirection = goal - bActor->GetPosition();
+	//		//BDirection.Normalize();
+
+	//		//float factor = 0.98f;
+	//		////float factorTwo = 0.0f;
+
+	//		////factor = ADirection.GetDotProduct(BDirection);
+	//		////factorTwo = BDirection.GetDotProduct(ADirection);
+
+
+	//		//Vector3 CDirection = ADirection * (1.0 - factor) + BDirection * factor;
+
+	//		//CDirection.Normalize();
+
+	//		//bActor->SetDir( CDirection ); 
+
+	//		Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+	//		Vector3 direction = goal - bActor->GetPosition();
+	//		direction.Normalize();
+	//		bActor->SetDir( direction ); 
+	//		bActor->SetVelocity(this->zAttackingVelocity);
+
+	//		bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
+
+	//	}
+	//	else if(this->GetMentalState() == AFRAID && this->zCurrentPath.size() > 0)
+	//	{
+	//		/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
+
+	//		result = result;
+	//		this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
+
+	//		Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
+	//		Vector3 direction = goal - bActor->GetPosition();
+	//		direction.Normalize();
+	//		bActor->SetDir( direction ); 
+	//		bActor->SetVelocity(this->zFleeingVelocity);
+
+	//		bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
+	//		zCurrentDistanceFled += dt * bActor->GetVelocity();
+
+	//	}
+	//	else if(this->GetMentalState() == AFRAID && this->zCurrentDistanceFled < this->zFleeDistance)
+	//	{
+	//		this->SetIfNeedPath(true);
+	//	}
+	//
+	//}
+	//else
+	//{
+	//	this->SetIfNeedPath(true);
+	//}
+	
+	//float height = this->zWorld->CalcHeightAtWorldPos( Vector2(bActor->GetPosition().x, bActor->GetPosition().z));
+
+	//Vector3 actorPosition = bActor->GetPosition();
+	//actorPosition.y = height;
+	//bActor->SetPosition(actorPosition);
+
+	//
+	////Rotate Animal
+	//static Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, -1.0f);
+	//Vector3 meshDirection = bActor->GetDir();
+	//meshDirection.y = 0;
+	//meshDirection.Normalize();
+
+	//Vector3 around = Vector3(0.0f, 1.0f, 0.0f);
+	//float angle = acos(meshDirection.GetDotProduct(defaultMeshDir));
+
+	//if (meshDirection.x > 0.0f)
+	// angle *= -1;
+
+	//bActor->SetRotation(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+	//bActor->SetRotation(around, angle);
+
+	//return false;
 }
