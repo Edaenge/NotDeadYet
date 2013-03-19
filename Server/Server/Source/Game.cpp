@@ -79,8 +79,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	//Dead Actor Model Maps
 	this->zDeadActorModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zDeadActorModels["media/models/token_anims.fbx"] = "media/models/hitbox_token.obj";
-	this->zDeadActorModels["media/models/deer_anims.fbx"] = "media/models/deer_temp.obj";
-	this->zDeadActorModels["media/models/bear_anims.fbx"] = "media/models/deer_temp.obj";
+	this->zDeadActorModels["media/models/deer_anims.fbx"] = "media/models/deer_dead.obj";
+	this->zDeadActorModels["media/models/bear_anims.fbx"] = "media/models/bear_dead.obj";
 
 	// Create World
 	if(worldFile != "")
@@ -220,8 +220,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 1; i++)	
-	{
+	for(unsigned int i = 0; i < 0; i++)		{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
 
@@ -519,7 +518,7 @@ void Game::UpdateFogEnclosement( float dt )
 	}
 }
 
-bool Game::Update( float dt ) 
+bool Game::Update( float dt )
 {
 	this->UpdateSunDirection(dt);
 	this->UpdateFogEnclosement(dt);
@@ -772,6 +771,7 @@ void Game::OnEvent( Event* e )
 				this->zPerf->PreMeasure("Use Event Handling", 3);
 
 			this->HandleUseItem(PUIE->clientData, PUIE->itemID);
+			
 			
 			if ( zPerf ) 
 				this->zPerf->PostMeasure("Use Event Handling", 3);
@@ -2343,7 +2343,7 @@ void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
 	//Logic for filling container here.
 	Vector2 position = Vector2(pActor->GetPosition().x, pActor->GetPosition().z);
 	float depth = this->zWorld->GetWaterDepthAt(position);
-	if(depth > 0.3f)
+	if(depth > 0.2f)
 	{
 		dynamic_cast<Container*>(item)->SetRemainingUses(dynamic_cast<Container*>(item)->GetMaxUses());
 	}
