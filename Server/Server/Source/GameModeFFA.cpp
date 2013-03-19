@@ -1025,7 +1025,7 @@ bool GameModeFFA::CheckEndCondition()
 	int playersAlive = zGame->GetLivingPlayers();
 	NetworkMessageConverter NMC;
 
-	if( playersAlive == 1 )
+	if( playersAlive == 2 )
 	{
 		Player* winner_player = NULL;
 

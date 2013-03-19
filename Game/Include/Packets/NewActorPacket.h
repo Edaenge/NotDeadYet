@@ -137,4 +137,19 @@ public:
 		}
 		return true;
 	}
+
+	inline virtual bool IsEmpty() const
+	{
+		unsigned int size = 0;
+		size += actorPosition.size();
+		size += actorRotation.size();
+		size += actorScale.size();
+		size += actorModel.size();
+		size += actorState.size();
+
+		if( size == 0)
+			return true;
+
+		return false;
+	}
 };

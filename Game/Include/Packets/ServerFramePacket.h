@@ -118,4 +118,9 @@ public:
 
 		return true;
 	}
+
+	inline virtual bool IsEmpty() const
+	{
+		return false;
+	}
 };

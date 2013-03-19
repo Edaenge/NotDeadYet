@@ -53,7 +53,7 @@ void ClientData::AddLatency( const float time )
 
 void ClientData::Send( const Packet& packet )
 {
-	if ( zClient )
+	if ( zClient && !packet.IsEmpty() )
 	{
 		std::stringstream ss;
 

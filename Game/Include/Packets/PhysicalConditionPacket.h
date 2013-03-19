@@ -46,6 +46,11 @@ public:
 		return true;
 	}
 
+	inline virtual bool IsEmpty() const
+	{
+		return false;
+	}
+
 public:
 	float zEnergy;
 	float zStamina;

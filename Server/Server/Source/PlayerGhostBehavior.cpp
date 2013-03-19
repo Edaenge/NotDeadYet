@@ -90,6 +90,12 @@ bool PlayerGhostBehavior::Update( float dt )
 
 		zActor->SetPosition(newPlayerPos);
 	}
+	else
+	{
+		Vector2 center = zWorld->GetWorldCenter();
+		Vector3 posTemp = Vector3(center.x, 5.0f, center.y);
+		zActor->SetPosition(posTemp);
+	}
 
 	return false;
 }
