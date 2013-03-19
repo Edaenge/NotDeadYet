@@ -19,6 +19,7 @@ SupplyDropBehavior::SupplyDropBehavior( Actor* actor, World* world, Vector2& des
 	AddObserver(this->zSoundHandler);
 
 	this->zMoving = true;
+	this->zSupplyCrateLanded= false;
 
 	if(!world->IsInside( destination) )
 		destination = this->zWorld->GetWorldCenter();
@@ -85,7 +86,6 @@ bool SupplyDropBehavior::Update( float dt )
 	Actor* parachute = sActor->GetParachute();
 	Vector3 newPos;
 	Vector3 newParachutePos;
-	static bool crateLanded = false;
 
 	//Get Positions
 	newPos = sActor->GetPosition();
@@ -125,7 +125,7 @@ bool SupplyDropBehavior::Update( float dt )
 	//No Parachute Attached
 	else
 	{
-		if( !crateLanded )
+		if( !zSupplyCrateLanded )
 		{
 			//If velocity fall is bigger than max, constant velocity has been reached
 			if( fabs(zVelocity.y) > MAX_FALL_VELOCITY_NONE_PARACHUTE )
@@ -157,7 +157,7 @@ bool SupplyDropBehavior::Update( float dt )
 	}
 
 	/***Check if the crate has hit the destination***/
-	if( !crateLanded && newPos.y <= zDestination.y )
+	if( !zSupplyCrateLanded && newPos.y <= zDestination.y )
 	{
 		sActor->SetPosition(zDestination);
 
@@ -167,7 +167,7 @@ bool SupplyDropBehavior::Update( float dt )
 			return true;
 		}
 
-		crateLanded = true;
+		zSupplyCrateLanded = true;
 
 		//Notify Observers
 		SupplyDropLanded e;

@@ -13,6 +13,8 @@ public:
 	virtual ~GameModeTest();
 
 	bool Update(float dt);
+	virtual bool StartGameMode();
+	virtual bool StopGameMode();
 
 private:
 	virtual void OnEvent( Event* e );
