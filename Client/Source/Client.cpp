@@ -804,7 +804,6 @@ void Client::CheckPlayerSpecificKeys()
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
 	{
-
 		Actor* clientPlayer = this->zActorManager->GetActor(this->zID);
 		
 		if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
@@ -820,7 +819,7 @@ void Client::CheckPlayerSpecificKeys()
 				}
 				this->zServerChannel->Send(msg);
 			}
-			else if(this->zWorld->GetWaterDepthAt(Vector2 (clientPlayer->GetPosition().x,clientPlayer->GetPosition().z) ) > 0.2f)
+			else if(this->zWorld->GetWaterDepthAt(Vector2(clientPlayer->GetPosition().x, clientPlayer->GetPosition().z) ) > 0.2f)
 			{
 				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DRINK_FROM_WATER);
 				this->zServerChannel->Send(msg);

@@ -172,7 +172,7 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 					actor->SetPosition(position);
 					if((playerActor->GetPosition() - position).GetLength() < 100.0f)
 					{
-						if(actor->GetModel() != "Media/Models/ghost.obj")
+						if(actor->GetModel() != "media/models/ghost.obj")
 						{
 							if(stepsPlayedThisUpdate < MAXFOOTSTEPS)
 							{
