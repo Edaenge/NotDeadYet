@@ -41,5 +41,8 @@ public:
 	/*! kicks the client.*/
 	void Kick();
 
+	/* ! Returns the channel.*/
+	const MaloW::ClientChannel* GetChannel() const {return this->zClient;}
+
 	friend class Host;
 };
