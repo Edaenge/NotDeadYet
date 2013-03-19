@@ -127,7 +127,15 @@ void SoundHandler::OnEvent( Event* e )
 	}
 	else if( SupplyDropLanded *SDL = dynamic_cast<SupplyDropLanded*>(e) )
 	{
-		//Implement here
+		NetworkMessageConverter NMC;
+		std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_EASTER_EGGS_DON_T_EAT_ME);
+		msg += NMC.Convert(MESSAGE_TYPE_POSITION, SDL->zActor->GetPosition());
+
+		for(auto it = zPlayers.begin(); it != zPlayers.end(); it++)
+		{
+			(*it)->GetClientData()->Send(msg);
+		}
+
 	}
 	else if(PlayerAddEvent *PAE = dynamic_cast<PlayerAddEvent *>(e))
 	{

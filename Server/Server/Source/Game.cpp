@@ -125,7 +125,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	//this->SpawnHumanDebug();
+//	this->SpawnItemsDebug();
+//	this->SpawnAnimalsDebug();
+//this->SpawnHumanDebug();
+	this->SpawnHumanDebug();
 	// Sun Direction
 	this->ResetSunDirection();
 
@@ -460,6 +463,9 @@ void Game::Caching( const std::string& modelName )
 
 void Game::UpdateSunDirection(float dt)
 {
+	if(!zGameMode->IsGameStarted())
+		return;
+
 	//Update Sun
 	this->zSunTimer += dt;
 
@@ -491,6 +497,9 @@ void Game::UpdateSunDirection(float dt)
 
 void Game::UpdateFogEnclosement( float dt )
 {
+	if( !zGameMode->IsGameStarted() )
+		return;
+
 	this->zFogTimer += dt;
 
 	if (this->zFogTimer >= this->zFogUpdateDelay)
@@ -1120,6 +1129,7 @@ void Game::OnEvent( Event* e )
 
 		UDE->clientData->Send(*PCP);
 		delete PCP;
+	
 
 		// Gather Actors Information and send to client
 		std::set<Actor*>& actors = this->zActorManager->GetActors();
@@ -1147,6 +1157,9 @@ void Game::OnEvent( Event* e )
 
 		message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 		this->SendToAll(message);
+
+		message = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "\"" + UDE->playerName + "\"" + " Has Connected with ip: " + UDE->clientData->GetChannel()->GetIP());
+		SendToAll(message);
 
 		if ( zPerf ) this->zPerf->PostMeasure("Player Connecting", 2);
 	}
@@ -2140,6 +2153,8 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 			if(meele->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
 				dmg.slashing = meele->GetDamage();
+			else if(meele->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+				dmg.piercing = meele->GetDamage();
 
 			victim->TakeDamage(dmg, pActor);
 
