@@ -49,6 +49,7 @@ void Actor::SetModel(const std::string& model)
 
 void Actor::SetPosition(const Vector3& pos)
 {
+	this->zPosition = pos;
 	if (this->zMesh)
 	{
 		this->zMesh->SetPosition(pos);

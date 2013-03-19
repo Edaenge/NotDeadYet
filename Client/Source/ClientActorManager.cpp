@@ -101,7 +101,7 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 	float t = deltaTime + latency;//GetInterpolationType(deltaTime, IT_SMOOTH_STEP);
 	static GraphicsEngine* gEng = GetGraphics();
 	int stepsPlayedThisUpdate = 1;
-
+	Actor* playerActor = this->GetActor(clientID);
 	Vector3 position;
 	auto it_Update = this->zUpdates.begin();
 	while( it_Update != this->zUpdates.end() )
@@ -168,19 +168,22 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 				{
 					position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
 					actor->SetPosition(position);
-					if(actor->GetModel() != "Media/Models/ghost.obj")
+					if((playerActor->GetPosition() - position).GetLength() < 100.0f)
 					{
-						if(stepsPlayedThisUpdate < MAXFOOTSTEPS)
+						if(actor->GetModel() != "Media/Models/ghost.obj")
 						{
-							if(this->GetMostUsedTexOnPos(position.GetXZ(), world) == 0)
+							if(stepsPlayedThisUpdate < MAXFOOTSTEPS)
 							{
-								this->zFootStepsOnGrass[stepsPlayedThisUpdate]->SetPosition(position);
-								this->zFootStepsOnGrass[stepsPlayedThisUpdate]->Play();
-							}
-							else
-							{
-								this->zFootStepsOnDirt[stepsPlayedThisUpdate]->SetPosition(position);
-								this->zFootStepsOnDirt[stepsPlayedThisUpdate]->Play();
+								if(this->GetMostUsedTexOnPos(position.GetXZ(), world) == 0)
+								{
+									this->zFootStepsOnGrass[stepsPlayedThisUpdate]->SetPosition(position);
+									this->zFootStepsOnGrass[stepsPlayedThisUpdate]->Play();
+								}
+								else
+								{
+									this->zFootStepsOnDirt[stepsPlayedThisUpdate]->SetPosition(position);
+									this->zFootStepsOnDirt[stepsPlayedThisUpdate]->Play();
+								}
 							}
 						}
 					}

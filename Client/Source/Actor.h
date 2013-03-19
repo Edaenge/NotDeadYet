@@ -29,7 +29,7 @@ public:
 	inline const std::string& GetModel() const { return this->zModel; }
 	inline iMesh* GetMesh() const { return this->zMesh; }
 	inline const Vector3& GetScale() const { return this->zMesh->GetScaling(); }
-	inline const Vector3& GetPosition() const { return this->zMesh->GetPosition();}
+	inline const Vector3& GetPosition() const { if(this->zMesh) return this->zMesh->GetPosition(); return this->zPosition; }
 	inline const Vector4& GetRotation() const { return this->zMesh->GetRotationQuaternion(); }
 	inline const unsigned int& GetID() const { return this->zID; }
 
