@@ -48,6 +48,11 @@ void PlayerActor::SetFullness(float fullness, const bool notify /*notify = true*
 	{
 		this->zFullness = fullness;
 
+		if(this->zFullness > this->zFullnessMax)
+		{
+			this->zFullness = this->zFullnessMax;
+		}
+
 		if(notify)
 		{
 			PlayerActorPhysicalConditionHungerEvent e;
@@ -63,6 +68,11 @@ void PlayerActor::SetHydration(float hydration, const bool notify /*notify = tru
 	if(this->zHydration != hydration)
 	{
 		this->zHydration = hydration;
+
+		if(this->zHydration > this->zHydrationMax)
+		{
+			this->zHydration = this->zHydrationMax;
+		}
 
 		if(notify)
 		{
