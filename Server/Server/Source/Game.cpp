@@ -1618,9 +1618,13 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 								Inventory* inv = bioPlayerActor->GetInventory();
 								if ( inv )
 								{
+									bool stacked;
 									Item* berries = new Food(*berry_temp);
-									if ( inv->AddItem(berries) )
+									if ( inv->AddItem(berries, &stacked) )
 									{
+										if (stacked)
+											delete berries;
+
 										bbActor->SetPicked(true);
 									}
 									else
@@ -1846,34 +1850,6 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 				{
 					cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
 					return;
-				}
-			}
-		}
-	}
-	else if (BerryBushActor* bbActor = dynamic_cast<BerryBushActor*>(actor))
-	{
-		const Food* berry_temp = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BERRY_BUSH);
-		if (berry_temp)
-		{
-			Food* berry = new Food(*berry_temp);
-			if (berry)
-			{
-				if (berry->GetItemType() == itemType)// && item->GetItemSubType() == subType)
-				{
-					//Add item
-					if(pActor->GetInventory()->AddItem(berry, &stacked))
-					{
-						if( stacked && item->GetStackSize() == 0 )
-						{
-							SAFE_DELETE(item);
-						}
-						bbActor->SetPicked(true);
-					}
-					else
-					{
-						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
-						return;
-					}
 				}
 			}
 		}
