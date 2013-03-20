@@ -225,8 +225,8 @@ void GameModeFFA::OnEvent( Event* e )
 
 		auto models_it = models.find(BADE->zActor->GetModel());
 		if (models_it != models.end())
-		{
-			BADE->zActor->SetMesh(models_it->second);
+		{			
+			BADE->zActor->SetModel(models_it->second);
 		}
 
 		zDeadActors.push_back(BADE->zActor);
@@ -797,11 +797,10 @@ bool GameModeFFA::StartGameMode()
 			pActor->SetFullness( pActor->GetFullnessMax() );
 
 			//Create And Add pocket knife
-			bool stacked;
 			const MeleeWeapon* pocketKnife_temp = GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_POCKET_KNIFE);
 			MeleeWeapon* pocketKnife = new MeleeWeapon(*pocketKnife_temp);
 
-			pActor->GetInventory()->AddItem(pocketKnife, stacked);
+			pActor->GetInventory()->AddItem(pocketKnife);
 		}
 
 	}
