@@ -83,8 +83,7 @@ Actor* PlayerBehavior::HandleCollision()
 		{
 			if( bioActor->IsAlive() )
 			{
-				if( bioActor->HasMoved() )
-					bioActor->SetPosition( bioActor->GetPosition() - (target_rewind_dir * 0.1f) );
+				bioActor->SetPosition( bioActor->GetPosition() - (target_rewind_dir * 0.1f) );
 
 				zActor->SetPosition( pActor_position - (pActor_rewind_dir * 0.1f) );
 			}
