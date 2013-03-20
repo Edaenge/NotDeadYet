@@ -20,6 +20,12 @@ public:
 	Actor* zActor;
 };
 
+class ActorChangedModelEvent : public Event
+{
+public:
+	Actor* zActor;
+};
+
 /*! Base class for Actors */
 class Actor : public Observed
 {
@@ -54,7 +60,7 @@ public:
 	// Set Rotation
 	void SetRotation(const Vector4& rot);
 
-	/*! Adds a Pointer to the Player Model Mesh*/
+	/*! Sets the pointer to actor mesh */
 	void SetMesh(iMesh* mesh);
 
 	/*! Sets the Client Id given from the server*/
