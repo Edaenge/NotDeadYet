@@ -181,7 +181,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 2; i++)
+	for(unsigned int i = 0; i < 10; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -220,7 +220,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 4; i++)		
+	for(unsigned int i = 0; i < 10; i++)		
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -1526,7 +1526,7 @@ void Game::HandleDisconnect( ClientData* cd )
 
 void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID )
 {
-	std::set<Actor*> actors = this->zActorManager->GetLootableActors();
+	std::set<Actor*>& actors = this->zActorManager->GetLootableActors();
 	std::vector<Item*> lootedItems;
 
 	auto playerIterator = this->zPlayers.find(cd);
