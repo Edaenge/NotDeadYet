@@ -33,7 +33,7 @@ private:
 	/*! Prints the error message to the client*/
 	void PrintToScreen(const std::string msg);
 
-	void StartTestRun();
+	//void StartTestRun();
 	void StartGameWithIPField();
 	void SwapMenus(SET primary, SET secondary);
 	void EnableMouse(bool value);

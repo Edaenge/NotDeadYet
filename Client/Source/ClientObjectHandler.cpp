@@ -19,6 +19,12 @@ void Client::AddActor( NewActorPacket* NAP )
 			//Creates a Mesh from the given Filename
 			if (model.length() > 4)
 			{
+				//if (this->zID == ID)
+				//{
+				//	auto it = this->zMeshfirstPersonMap.find(model);
+				//	if (it != this->zMeshfirstPersonMap.end())
+				//		model = it->second;
+				//}
 				std::string substring = model.substr(model.length() - 4);
 				if (substring == ".obj")
 				{
@@ -64,14 +70,6 @@ void Client::AddActor( NewActorPacket* NAP )
 						this->zReady = true;
 					}
 
-					auto meshOffsetsIterator = this->zMeshCameraOffsets.find(model);
-					if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
-						this->zMeshOffset = meshOffsetsIterator->second;
-					else
-						this->zMeshOffset = Vector3(0.0f, 1.0f, 0.0f);
-
-					this->zActorManager->SetCameraOffset(this->zMeshOffset);
-					
 					auto reader = this->zModelToReaderMap.find(model);
 					if (reader != this->zModelToReaderMap.end())	
 					{
@@ -81,14 +79,14 @@ void Client::AddActor( NewActorPacket* NAP )
 						
 						else 
 						{
-							this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
-							this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
+							this->zEng->GetCamera()->SetMesh(mesh, Vector3(), Vector3(0.0f, 0.0f, 1.0f));
+							this->zEng->GetCamera()->SetPosition(mesh->GetPosition());
 						}
 					}
 					else
 					{
-						this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
-						this->zEng->GetCamera()->SetPosition(mesh->GetPosition() + this->zMeshOffset);
+						this->zEng->GetCamera()->SetMesh(mesh, Vector3(), Vector3(0.0f, 0.0f, 1.0f));
+						this->zEng->GetCamera()->SetPosition(mesh->GetPosition());
 					}
 					
 					if (this->zActorType == GHOST)
@@ -120,9 +118,6 @@ void Client::AddActor( NewActorPacket* NAP )
 		if (actor)
 		{
 			actor->SetPosition(position);
-
-			//if (this->zID == ID)
-				//this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
 		}
 		else
 			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
@@ -253,15 +248,9 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 			update->SetState(actorState);
 			this->zActorManager->AddUpdate(update);
 		}
-		if (actor)
-		{
-			if (this->zID == ID)
-				this->UpdateCameraOffset(actorState);
-		}
 	}
 
 	auto it_anim_Queue_end = SFP->newAnimQueue.end();
-
 	for (auto queueIterator = SFP->newAnimQueue.begin(); queueIterator != it_anim_Queue_end; queueIterator++)
 	{
 		ID = queueIterator->first;
@@ -272,7 +261,7 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		if (!actor)
 			continue;
 
-		const int size = queue.zAnimations.size();
+		const unsigned int size = queue.zAnimations.size();
 		if (size != queue.zAnimationTimes.size())
 			MaloW::Debug("Size Mismatch for animation Queue");
 
@@ -337,14 +326,6 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		{
 			this->zEng->GetCamera()->RemoveMesh();
 
-			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(modelName);
-			if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
-				this->zMeshOffset = meshOffsetsIterator->second;
-			else
-				this->zMeshOffset = Vector3(0.0f, 1.0f, 0.0f);
-
-			this->zActorManager->SetCameraOffset(this->zMeshOffset);
-
 			auto reader = this->zModelToReaderMap.find(modelName);
 			if (reader != this->zModelToReaderMap.end())	
 			{
@@ -354,14 +335,14 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 
 				else 
 				{
-					this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
-					this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
+					this->zEng->GetCamera()->SetMesh(mesh, Vector3(), Vector3(0.0f, 0.0f, 1.0f));
+					this->zEng->GetCamera()->SetPosition(position);
 				}
 			}
 			else
 			{
-				this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
-				this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
+				this->zEng->GetCamera()->SetMesh(mesh, Vector3(), Vector3(0.0f, 0.0f, 1.0f));
+				this->zEng->GetCamera()->SetPosition(position);
 			}
 		}
 		this->zEng->DeleteMesh(oldMesh);

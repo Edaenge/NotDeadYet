@@ -132,8 +132,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	// Debug Functions
 	//this->SpawnItemsDebug();
-//	this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+    //this->SpawnAnimalsDebug();
+	this->SpawnHumanDebug();
 // Sun Direction
 	this->ResetSunDirection();
 
@@ -181,7 +181,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 10; i++)
+	for(unsigned int i = 0; i < 1; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -220,7 +220,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 10; i++)		
+	for(unsigned int i = 0; i < 0; i++)		
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -445,7 +445,7 @@ void Game::SpawnHumanDebug()
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/hitbox_token.obj");
 	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics, this);
-	pActor->SetModel("media/models/token_anims.fbx");
+	pActor->SetModel("media/models/token_anims_fpp.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
 	pActor->SetHealth(1000);
