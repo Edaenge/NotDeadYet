@@ -116,12 +116,8 @@ void Actor::SetEnergy( float energy, const bool notify /*= true*/ )
 	}
 }
 
-const std::string Actor::GetModel() const
+const std::string& Actor::GetModel() const
 {
-	if (zPhysicsObject)
-		return zPhysicsObject->GetModel();
-
-
 	return this->zModel;
 }
 
@@ -129,14 +125,13 @@ void Actor::SetModel( const std::string& model )
 {
 	if ( zModel != model )
 	{
+		// Model
 		this->zModel = model;
-
-		if (zPhysicsObject)
-			this->zPhysicsObject->SetModel(model);
 
 		// Notify Observers
 		ActorChangedModelEvent ACME;
 		ACME.zActor = this;
+		NotifyObservers(&ACME);
 	}
 }
 
@@ -168,16 +163,4 @@ void Actor::CalculateCollisionPoints()
 	zCollisionPoints[1] = two;
 	zCollisionPoints[2] = three;
 	zCollisionPoints[3] = four;
-}
-
-void Actor::SetMesh( const std::string meshName )
-{
-	this->zModel = meshName;
-
-	if (zPhysicsObject)
-		this->zPhysicsObject->SetModel(meshName);
-
-	ActorMeshChangeEvent e;
-	e.zActor = this;
-	NotifyObservers(&e);
 }

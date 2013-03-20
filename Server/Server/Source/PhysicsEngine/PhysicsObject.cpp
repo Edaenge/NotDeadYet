@@ -26,7 +26,6 @@ PhysicsObject::PhysicsObject(PhysicsEngine* engine, const std::string& model, co
 	pos(position),
 	zModel(model)
 {
-	this->file = "";
 	this->pos = position;
 	this->indicies = NULL;
 	this->mesh = NULL;
@@ -154,7 +153,8 @@ inline void DoMinMax(Vector3& min, Vector3& max, Vector3 v)
 
 bool PhysicsObject::LoadFromFile( string file )
 {
-	this->file = file;
+	this->zModel = file;
+
 	// if substr of the last 4 = .obj do this:    - else load other format / print error
 	if(file.substr(file.length()-4) == ".ani")
 	{
@@ -179,7 +179,7 @@ bool PhysicsObject::LoadFromFile( string file )
 		anifile.close();
 	}
 	
-	ObjData* od = GetPhysicsResourceManager()->LoadObjectDataResourceFromFile(this->file.c_str())->GetObjectDataPointer();
+	ObjData* od = GetPhysicsResourceManager()->LoadObjectDataResourceFromFile(this->zModel.c_str())->GetObjectDataPointer();
 
 	if(od)
 	{

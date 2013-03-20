@@ -31,7 +31,7 @@ struct Vertex
 class PhysicsObject
 {
 private:
-	string file; //identifier
+	std::string zModel;
 	PhysicsEngine* zEngine;
 
 	Vector3 velocity;
@@ -48,7 +48,6 @@ private:
 	int* indicies;
 
 	BoundingSphere bs;
-	std::string zModel;
 	void RecreateWorldMatrix();
 
 public:
@@ -88,5 +87,4 @@ public:
 	BoundingSphere GetBoundingSphere() const { return this->bs; }
 	void SetBoundingSphere(BoundingSphere bs) { this->bs = bs; }
 	const std::string& GetModel() const;
-	void SetModel(const std::string& model) {this->zModel = model;}
 };

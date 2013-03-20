@@ -24,7 +24,7 @@ GameModeTest::~GameModeTest()
 	this->zGame->RemoveObserver(this);
 }
 
-bool GameModeTest::Update( float dt )
+bool GameModeTest::Update( float )
 {
 	for(auto it = zPlayers.begin(); it != zPlayers.end(); it++)
 	{

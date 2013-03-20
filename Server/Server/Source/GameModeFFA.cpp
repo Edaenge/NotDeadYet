@@ -220,8 +220,8 @@ void GameModeFFA::OnEvent( Event* e )
 
 		auto models_it = models.find(BADE->zActor->GetModel());
 		if (models_it != models.end())
-		{
-			BADE->zActor->SetMesh(models_it->second);
+		{			
+			BADE->zActor->SetModel(models_it->second);
 		}
 	}
 	else if (PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
