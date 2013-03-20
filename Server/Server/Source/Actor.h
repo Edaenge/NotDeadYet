@@ -55,6 +55,7 @@ public:
 
 	// Set Transformation Functions
 	void SetPosition(const Vector3& pos, const bool notify = true);
+	inline void SetPreviousPos(const Vector3 pos) { this->zPreviousPos = pos; }
 	void SetRotation(const Vector4& rot, const bool notify = true);
 	void SetRotation(const Vector3& around, const float angle, const bool notify = true);
 	void SetPhysicsObject( PhysicsObject* object );
