@@ -84,6 +84,7 @@ Process::~Process()
 			delete this->EvQueue->Dequeue();
 	
 		delete this->EvQueue;
+		EvQueue = 0;
 	}
 	
 	CloseHandle(this->ProcMtx);
@@ -223,7 +224,9 @@ void Process::PutEvent(ProcessEvent* ev, bool important)
 void Process::WaitUntillDone()
 {
 	while(this->state != FINISHED && this->state != NOT_STARTED)
+	{
 		Sleep(1);
+	}
 }
 
 void Process::Close()

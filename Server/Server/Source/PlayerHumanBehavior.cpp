@@ -140,7 +140,6 @@ bool PlayerHumanBehavior::Update( float dt )
 	BioActor* bActor = dynamic_cast<BioActor*>(zActor);
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(zActor);
 
-	int currentState = bActor->GetState();
 	//static float animationTimer = 0.0f;
 	//static const float ANIMATION_WAIT_TIME = 1.0f;
 

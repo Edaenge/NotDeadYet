@@ -22,7 +22,10 @@ namespace MaloW
 
 		// Running Process
 		virtual void Life();
-	
+		
+		// Thread has been asked to close
+		virtual void CloseSpecific();
+
 		friend ClientChannel;
 	};
 }

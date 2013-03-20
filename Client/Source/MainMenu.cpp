@@ -11,7 +11,21 @@ MainMenu::MainMenu()
 	this->zGame			= new Game();
 	this->zPrimarySet	= MAINMENU;
 	this->zSecondarySet = NOMENU;
-
+	float width = GetGraphics()->GetEngineParameters().WindowWidth;
+	float height = GetGraphics()->GetEngineParameters().WindowHeight;
+	string filePath = "";
+	string ending = ".png";
+	for(int i = 0; i < BGSCREENSHOTS; i++)
+	{
+		filePath = "media/screens/ScreenShot" + MaloW::convertNrToString(i+1) + ending;
+		this->zBGScreens[i] = GetGraphics()->CreateImage(Vector2(0.0f, 0.0f), Vector2(width, height), filePath.c_str());
+		this->zBGScreens[i]->SetStrata(800.0f);
+		this->zBGScreens[i]->SetOpacity(0.0f);
+	}
+	this->zPause = PAUSEBETWEENIMAGES;
+	this->zCurrentImage = 0;
+	this->zNextImage = 1;
+	this->zBGScreens[this->zCurrentImage]->SetOpacity(1.0f);
 }
 
 MainMenu::~MainMenu()
@@ -29,6 +43,11 @@ MainMenu::~MainMenu()
 	menuSound = NULL;
 
 	AudioManager::ReleaseInstance();
+	for(int i = 0; i < BGSCREENSHOTS; i++)
+	{
+		GetGraphics()->DeleteImage(this->zBGScreens[i]);
+		this->zBGScreens[i] = NULL;
+	}
 }
 
 void MainMenu::Init()
@@ -42,12 +61,13 @@ void MainMenu::Init()
 	}
 
 	AudioManager* am = AudioManager::GetInstance();
+	am->SetVolume(EVENTCATEGORY_NOTDEADYET_MASTER_MUSIC, 0.2f);
+	am->SetVolume(EVENTCATEGORY_NOTDEADYET_MASTER_SOUND, 0.2f);
 	am->GetEventHandle(EVENTID_NOTDEADYET_MENU_N_BACKPACK_TOGGLE_N_CLICK, menuClick);
-	menuClick->Setvolume(0.2f);
-
+	
 	am->GetEventHandle(EVENTID_NOTDEADYET_MUSIC_LOADING, menuSound);
-	menuSound->Setvolume(0.2f);
 	menuSound->Play();
+
 	GraphicsEngine* eng = GetGraphics();
 
 	eng->CreateSkyBox("Media/skymap.dds");
@@ -65,8 +85,8 @@ void MainMenu::Init()
 		"media/mapmodels/bush_01.ani",
 		"media/mapmodels/bush_02.ani",
 		"media/mapmodels/bern_02.ani",
-		"media/mapmodels/Tree_01.ani",
-		"media/mapmodels/Tree_02.ani",
+		"media/mapmodels/tree_01.ani",
+		"media/mapmodels/tree_02.ani",
 		"media/mapmodels/grassplant_01.ani",
 		"media/mapmodels/watergrass_02.ani",
 		"media/models/ghost.obj",
@@ -89,9 +109,12 @@ void MainMenu::Init()
 		"media/mapmodels/bush_misc_01.obj",
 		"media/models/stoneItem_01_v01.obj",
 		"media/models/branchesitem_01_v01.obj",
-		"media/models/supplycrate_01_v03.obj"};
+		"media/models/supplycrate_01_v03.obj",
+		"media/models/berrybush/berrybush_01.obj",
+		"media/models/berrybush/berrybush_02.obj"
+	};
 
-	eng->PreLoadResources(27, object);
+	eng->PreLoadResources(30, object);
 
 	Element* temp;
 
@@ -273,6 +296,24 @@ void MainMenu::Init()
 		(71.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp);
 
+	//Sound tech
+	//Master volume
+	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(20), 
+		"MasterVolume", 1.0f, 2, NR);
+	zSets[OPTIONS].AddElement(temp);
+
+	//Music Volume
+	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(20), 
+		"MusicVolume", 1.0f, 2, NR);
+	zSets[OPTIONS].AddElement(temp);
+
+	//Normal Volume
+	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(20), 
+		"NormalVolume", 1.0f, 2, NR);
+	zSets[OPTIONS].AddElement(temp);
 
 	this->zPrimarySet = MAINMENU;
 	this->zSecondarySet = NOMENU;
@@ -343,7 +384,8 @@ void MainMenu::Run()
 		GUIEvent* retEvent = NULL;
 		while(run)
 		{
-			eng->Update();
+			float dt = eng->Update();
+			this->UpdateBackground(dt);
 			mousePos = GetGraphics()->GetKeyListener()->GetMousePosition();
 			if(mousePos.x != -1 || mousePos.y != -1)
 			{
@@ -371,9 +413,12 @@ void MainMenu::Run()
 							this->EnableMouse(false);
 							
 							menuSound->Stop();
+							this->zBGScreens[this->zCurrentImage]->SetOpacity(0.0f);
+							this->zBGScreens[this->zNextImage]->SetOpacity(0.0f);
 
 							this->StartTestRun();
 							
+							this->zBGScreens[this->zCurrentImage]->SetOpacity(1.0f);
 							menuSound->Play();
 
 							delete this->zGame;
@@ -493,6 +538,21 @@ void MainMenu::Run()
 						//View Distance
 						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ViewDistance");
 						GEP.FarClip = MaloW::convertStringToFloat(tbTemp);
+
+						AudioManager* am = AudioManager::GetInstance();
+						//Master Volume
+						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MasterVolume");
+						float masterVolume = MaloW::convertStringToFloat(tbTemp) / 100;
+
+						//Music Volume
+						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MusicVolume");
+						float temp = (MaloW::convertStringToFloat(tbTemp) * masterVolume) / 100;
+						am->SetVolume(EVENTCATEGORY_NOTDEADYET_MASTER_MUSIC, temp);
+
+						//Normal Volume
+						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("NormalVolume");
+						temp = (MaloW::convertStringToFloat(tbTemp) * masterVolume) / 100;
+						am->SetVolume(EVENTCATEGORY_NOTDEADYET_MASTER_SOUND, temp);
 
 						GEP.SaveToFile("Config.cfg");
 
@@ -721,9 +781,10 @@ void MainMenu::StartGameWithIPField()
 	if (result)
 	{
 		menuSound->Stop();
-
+		this->zBGScreens[this->zCurrentImage]->SetOpacity(0.0f);
+		this->zBGScreens[this->zNextImage]->SetOpacity(0.0f);
 		this->zGame->Run();
-
+		this->zBGScreens[this->zCurrentImage]->SetOpacity(1.0f);
 		menuSound->Play();
 	}
 
@@ -734,4 +795,27 @@ void MainMenu::StartGameWithIPField()
 	this->EnableMouse(true);
 
 	this->SwapMenus(MAINMENU, this->zSecondarySet);
+}
+
+void MainMenu::UpdateBackground( float dt )
+{
+	if(this->zPause > 0)
+	{
+		this->zPause -= dt*0.001;
+		return;
+	}
+	if(this->zBGScreens[this->zCurrentImage]->GetOpacity() < 0)
+	{
+		this->zBGScreens[this->zCurrentImage]->SetOpacity(0.0f);
+		this->zBGScreens[this->zNextImage]->SetOpacity(1.0f);
+		this->zCurrentImage = this->zNextImage;
+		this->zNextImage++;
+		if(this->zNextImage >= BGSCREENSHOTS)
+		{
+			this->zNextImage = 0;
+		}
+		this->zPause = PAUSEBETWEENIMAGES;
+	}
+	this->zBGScreens[this->zCurrentImage]->SetOpacity(this->zBGScreens[this->zCurrentImage]->GetOpacity() - (dt * OPACITYDIVIDERSPEED));
+	this->zBGScreens[this->zNextImage]->SetOpacity(this->zBGScreens[this->zNextImage]->GetOpacity() + (dt * OPACITYDIVIDERSPEED));
 }

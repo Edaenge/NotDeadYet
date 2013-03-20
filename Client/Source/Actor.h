@@ -20,6 +20,12 @@ public:
 	Actor* zActor;
 };
 
+class ActorChangedModelEvent : public Event
+{
+public:
+	Actor* zActor;
+};
+
 /*! Base class for Actors */
 class Actor : public Observed
 {
@@ -38,7 +44,7 @@ public:
 	inline const std::string& GetModel() const { return this->zModel; }
 	inline iMesh* GetMesh() const { return this->zMesh; }
 	inline const Vector3& GetScale() const { return this->zMesh->GetScaling(); }
-	inline const Vector3& GetPosition() const { if (this->zMesh) return this->zMesh->GetPosition(); return this->zPosition; }
+	inline const Vector3& GetPosition() const { return this->zPosition; }
 	inline const Vector4& GetRotation() const { return this->zMesh->GetRotationQuaternion(); }
 	inline const unsigned int& GetID() const { return this->zID; }
 
@@ -54,7 +60,7 @@ public:
 	// Set Rotation
 	void SetRotation(const Vector4& rot);
 
-	/*! Adds a Pointer to the Player Model Mesh*/
+	/*! Sets the pointer to actor mesh */
 	void SetMesh(iMesh* mesh);
 
 	/*! Sets the Client Id given from the server*/

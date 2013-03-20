@@ -122,16 +122,12 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 		PhysicsObject* pObject = this->GetPhysicsObject();
 		if (pObject)
 		{
-			//this->GetPhysicsObject()->SetQuaternion(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-			//this->SetRotation(around,angle);
-
 			GetPhysics()->DeletePhysicsObject(pObject);
 			this->SetPhysicsObject(NULL);
 		}
 
 		BioActorDeathEvent e;
 		e.zActor = this;
-
 		NotifyObservers(&e);
 
 		this->SetState(STATE_DEAD);

@@ -85,25 +85,38 @@ void ActorManager::RemoveActor( Actor* actor )
 	if(!actor)
 		return;
 
-	if( SupplyActor* sActor =  dynamic_cast<SupplyActor*>(actor) )
+	// Find Actor
+	auto i = zActors.find(actor);
+	if ( i != zActors.cend() )
 	{
-		if( sActor->HasParachute() )
+		if( SupplyActor* sActor =  dynamic_cast<SupplyActor*>(actor) )
 		{
-			Actor* parachute = sActor->GetParachute();
-			RemoveActor(parachute);
+			if( sActor->HasParachute() )
+			{
+				Actor* parachute = sActor->GetParachute();
+				RemoveActor(parachute);
+			}
 		}
+
+		this->zActors.erase(actor);
+		this->zCollideableActors.erase(actor);
+		this->zLootableActors.erase(actor);
+
+		// Notify Observers
+		ActorRemovedEvent e;
+		e.zActor = actor;
+		NotifyObservers(&e);
+
+		// Collideable
+		if( actor->CanCollide() )
+		{
+			PhysicsObject* pObj = actor->GetPhysicsObject();
+			GetPhysics()->DeletePhysicsObject( pObj );
+			actor->SetPhysicsObject(NULL);
+		}
+
+		delete actor;
 	}
-
-	this->zActors.erase(actor);
-	this->zCollideableActors.erase(actor);
-	this->zLootableActors.erase(actor);
-
-	// Notify Observers
-	ActorRemovedEvent e;
-	e.zActor = actor;
-	NotifyObservers(&e);
-
-	delete actor;
 } 
 
 void ActorManager::RemoveBehavior(Actor* actor, bool instantRemove)
@@ -160,56 +173,6 @@ void ActorManager::RemoveBehavior( Behavior* behavior )
 
 	// Delete
 	SAFE_DELETE(behavior);
-}
-
-Actor* ActorManager::CheckCollisions( Actor* actor, float& range, const std::set<Actor*>& actors )
-{
-	if(!actor)
-		return NULL;
-
-	float rangeWithin = 1.0f + range;
-	Actor* collide = NULL;
-	PhysicsObject* targetObject = NULL;
-	PhysicsCollisionData data;
-	Vector3 pos = actor->GetPosition();
-	Vector3 offset = Vector3(0.0f, 0.0f, 0.0f);
-
-	//Need offset if bioActor
-	if ( BioActor* bActor = dynamic_cast<BioActor*>(actor) )
-		offset = bActor->GetCameraOffset();
-
-	
-	auto it_end = actors.end();
-	for (auto it = actors.begin(); it != it_end; it++)
-	{
-		if( (*it) == actor )
-			continue;
-		if( !(*it)->CanCollide() )
-			continue;
-
-		float distance = ( pos.GetXZ() - (*it)->GetPosition().GetXZ() ).GetLength();
-
-		if(distance > rangeWithin)
-			continue;
-
-		targetObject = (*it)->GetPhysicsObject();
-		data = GetPhysics()->GetCollisionRayMesh(actor->GetPosition() + offset, actor->GetDir(), targetObject);
-
-		if(data.collision && data.distance <= range)
-		{
-			range = data.distance;
-			collide = (*it);
-		}
-		
-	}
-
-	// Returns the closest actor
-	return collide;
-}
-
-Actor* ActorManager::CheckCollisions( Actor* actor, float& range )
-{
-	return CheckCollisions(actor, range, this->zCollideableActors);
 }
 
 Actor* ActorManager::GetActor( const unsigned int ID ) const

@@ -54,7 +54,9 @@ bool SupplyDrop::SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, co
 	//Check if physObj is not null and if the pos given is inside the world.
 	if( !phyOBj && !zWorld->IsInside(landPoint) )
 	{
-		delete spActor, spActor = NULL;
+		delete spActor;
+		spActor = NULL;
+
 		this->zPhyEngine->DeletePhysicsObject(phyOBj);
 
 		return false;
@@ -64,8 +66,10 @@ bool SupplyDrop::SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, co
 
 	//Set Values
 	spActor->SetPhysicsObject(phyOBj);
+	spActor->SetModel(phyOBj->GetModel());
 	spActor->SetPosition(position, false);
 	spActor->SetScale(spActor->GetScale(), false);
+	spActor->SetModel(SUPPLY_ACTOR_FILENAME);
 
 	//Create Behavior
 	SupplyDropBehavior* behavior = new SupplyDropBehavior(spActor, zWorld, landPoint, zSoundHandler);
@@ -111,6 +115,7 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 		delete spActor, spActor = NULL;
 		this->zPhyEngine->DeletePhysicsObject(phyOBj);
 
+		MaloW::Debug("SupplyDrop: Pos not inside world.");
 		return false;
 	}
 
@@ -119,8 +124,10 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 
 	//Set Values
 	spActor->SetPhysicsObject(phyOBj);
+	spActor->SetModel(phyOBj->GetModel());
 	spActor->SetPosition(position3D, false);
 	spActor->SetScale(spActor->GetScale(), false);
+	spActor->SetModel(SUPPLY_ACTOR_FILENAME);
 
 	//Create parachute
 	Actor* paraActor = new Actor();
