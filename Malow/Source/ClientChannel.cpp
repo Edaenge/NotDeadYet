@@ -35,10 +35,7 @@ ClientChannel::~ClientChannel()
 	// Makes the threads quit
 	if ( zSocket )
 	{
-		if ( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
-		{
-			throw NetworkException("Failed Shutting Down Socket!", WSAGetLastError());
-		}
+		shutdown(zSocket, SD_BOTH);
 	}
 
 	// Wait For Receiver Process

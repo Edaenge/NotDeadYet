@@ -886,15 +886,14 @@ bool GameModeFFA::SpawnRandomDrop()
 	Vector2 posOne; 
 	Vector2 posTwo;
 	
-	const unsigned int NR_OF_ALIVE_PLAYERS = this->zAlivePlayers;
 	unsigned int playerOne;
 	unsigned int playerTwo;
 
 	//Randomize two indicies
-	if( NR_OF_ALIVE_PLAYERS > 2 )
+	if( this->zAlivePlayers > 2 )
 	{
-		playerOne = rand()% NR_OF_ALIVE_PLAYERS;
-		playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+		playerOne = rand()% this->zAlivePlayers;
+		playerTwo = rand()% this->zAlivePlayers;
 		bool stop = false;
 		const unsigned int TRIES = 50;
 		unsigned int counter = 0;
@@ -906,7 +905,7 @@ bool GameModeFFA::SpawnRandomDrop()
 
 			if(playerOne == playerTwo)
 			{
-				playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+				playerTwo = rand()% this->zAlivePlayers;
 				continue;
 			}
 
@@ -916,14 +915,14 @@ bool GameModeFFA::SpawnRandomDrop()
 			//if the pos is not within the world size given
 			if( posOne.x > size.x || posOne.y > size.y )
 			{
-				playerOne = rand()% NR_OF_ALIVE_PLAYERS;
+				playerOne = rand()% this->zAlivePlayers;
 				continue;
 			}
 			
 			//if the pos is not within the world size given
 			if( posTwo.x > size.x || posTwo.y == size.y )
 			{
-				playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+				playerTwo = rand()% this->zAlivePlayers;
 				continue;
 			}
 
@@ -938,7 +937,7 @@ bool GameModeFFA::SpawnRandomDrop()
 		}
 	}
 	//if only two, use them
-	else if( NR_OF_ALIVE_PLAYERS == 2 )
+	else if( this->zAlivePlayers == 2 )
 	{
 		posOne = aliveActors[0]->GetPosition().GetXZ();
 		posTwo = aliveActors[1]->GetPosition().GetXZ();
@@ -956,7 +955,7 @@ bool GameModeFFA::SpawnRandomDrop()
 		}
 	}
 	//if only one, use it and the world center pos
-	else if(NR_OF_ALIVE_PLAYERS == 1)
+	else if(this->zAlivePlayers == 1)
 	{
 		posOne = aliveActors[0]->GetPosition().GetXZ();
 		posTwo = worldCenter;

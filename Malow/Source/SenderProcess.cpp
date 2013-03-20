@@ -4,6 +4,11 @@
 
 using namespace MaloW;
 
+class QuitProcessMessage : public MaloW::ProcessEvent
+{
+public:
+
+};
 
 SenderProcess::SenderProcess(MaloW::Process* observerProcess, MaloW::ClientChannel* channel) :
 	zObserverProcess(observerProcess),
@@ -30,6 +35,11 @@ void SenderProcess::Life()
 					zClientChannel->GetNetworkChannel()->Send(SPE->GetMessage());
 				}
 			}
+			else if ( QuitProcessMessage* QPE = dynamic_cast<QuitProcessMessage*>(PE) )
+			{
+				delete PE;
+				return;
+			}
 		}
 		catch(...)
 		{
@@ -38,4 +48,9 @@ void SenderProcess::Life()
 
 		delete PE;
 	}
+}
+
+void SenderProcess::CloseSpecific()
+{
+	this->PutEvent( new QuitProcessMessage() );
 }

@@ -43,6 +43,11 @@ void ReceiverProcess::Life()
 	}
 	catch(...)
 	{
-		zObserverProcess->PutEvent(new ClientDisconnectedEvent(zClientChannel));
+		if ( zObserverProcess ) zObserverProcess->PutEvent(new ClientDisconnectedEvent(zClientChannel));
 	}
+}
+
+void ReceiverProcess::CloseSpecific()
+{
+	zObserverProcess = 0;
 }

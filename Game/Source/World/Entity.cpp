@@ -13,9 +13,9 @@ Entity::Entity( unsigned int type, const Vector3& pos, const Vector3& rot, const
 
 Entity::~Entity()
 {
-	//	EntityDeletedEvent EDE;
-	//	EDE.entity = this;
-	//	NotifyObservers( &EDE );
+	EntityDeletedEvent EDE;
+	EDE.entity = this;
+	NotifyObservers( &EDE );
 }
 
 void Entity::SetPosition( const Vector3& pos )
