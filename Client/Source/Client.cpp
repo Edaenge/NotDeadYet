@@ -475,8 +475,8 @@ void Client::Life()
 {
 	MaloW::Debug("Client Process Started");
 	
-	static const float FRAME_TIME = 60.0f;
-	static const float TARGET_DT = 1.0f / FRAME_TIME;
+	static float FRAME_TIME = 60.0f;
+	static float TARGET_DT = 1.0f / FRAME_TIME;
 
 	this->zGameTimer->Init();
 	while(this->zEng->IsRunning() && this->stayAlive)
@@ -489,8 +489,24 @@ void Client::Life()
 		{
 			if (this->zDeltaTime < TARGET_DT)
 			{
-				float sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
-				Sleep((DWORD)sleepTime);
+				DWORD sleepTimeMil = 0;
+				float intPart = 0.0f;
+				float fractPart = 0.0f;
+				float sleepTime = 0.0f;
+
+				sleepTime = (TARGET_DT - this->zDeltaTime) * 1000.0f;
+				fractPart = modf(sleepTime, &intPart);
+
+				if(fractPart >= 0.5f)
+				{
+					sleepTimeMil = (DWORD)ceilf(sleepTime);
+				}
+				else
+				{
+					sleepTimeMil = (DWORD)floorf(sleepTime);
+				}
+
+				Sleep((DWORD)sleepTimeMil);
 			}
 		}
 	}
