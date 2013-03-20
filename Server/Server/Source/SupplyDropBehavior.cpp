@@ -10,7 +10,7 @@ static const Vector3 GRAVITY = Vector3(.0f, -9.82f, .0f);
 static const float MAX_AIRBORN_HEIGHT = 200.0f;
 static const float MAX_FALL_HEIGHT = 20.0f;
 //MAX y velocity
-static const float MAX_FALL_VELOCITY_PARACHUTE			= 10.0f;
+static const float MAX_FALL_VELOCITY_PARACHUTE			= 15.0f;
 static const float MAX_FALL_VELOCITY_NONE_PARACHUTE		= 45.0f;
 
 SupplyDropBehavior::SupplyDropBehavior( Actor* actor, World* world, Vector2& destination, SoundHandler* soundHandler )

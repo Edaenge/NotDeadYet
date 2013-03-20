@@ -1522,7 +1522,7 @@ void Game::HandleDisconnect( ClientData* cd )
 
 void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID )
 {
-	std::set<Actor*> actors = this->zActorManager->GetLootableActors();
+	std::set<Actor*>& actors = this->zActorManager->GetLootableActors();
 	std::vector<Item*> lootedItems;
 
 	auto playerIterator = this->zPlayers.find(cd);
