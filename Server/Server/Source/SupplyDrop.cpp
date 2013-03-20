@@ -69,6 +69,7 @@ bool SupplyDrop::SpawnSupplyDrop( Vector2& landPoint, std::set<Item*>& items, co
 	spActor->SetModel(phyOBj->GetModel());
 	spActor->SetPosition(position, false);
 	spActor->SetScale(spActor->GetScale(), false);
+	spActor->SetModel(SUPPLY_ACTOR_FILENAME);
 
 	//Create Behavior
 	SupplyDropBehavior* behavior = new SupplyDropBehavior(spActor, zWorld, landPoint, zSoundHandler);
@@ -125,6 +126,7 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 	spActor->SetModel(phyOBj->GetModel());
 	spActor->SetPosition(position3D, false);
 	spActor->SetScale(spActor->GetScale(), false);
+	spActor->SetModel(SUPPLY_ACTOR_FILENAME);
 
 	//Create parachute
 	Actor* paraActor = new Actor();

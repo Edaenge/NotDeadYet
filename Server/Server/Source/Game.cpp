@@ -131,9 +131,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	this->SpawnItemsDebug();
+	//this->SpawnItemsDebug();
 //	this->SpawnAnimalsDebug();
-	this->SpawnHumanDebug();
+	//this->SpawnHumanDebug();
 // Sun Direction
 	this->ResetSunDirection();
 
@@ -468,9 +468,6 @@ void Game::Caching( const std::string& modelName )
 
 void Game::UpdateSunDirection(float dt)
 {
-	if(!zGameMode->IsGameStarted())
-		return;
-
 	//Update Sun
 	this->zSunTimer += dt;
 
