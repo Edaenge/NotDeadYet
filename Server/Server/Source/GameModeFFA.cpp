@@ -280,7 +280,8 @@ void GameModeFFA::OnEvent( Event* e )
 					counter++;
 			}
 
-			if( counter >= this->zPlayers.size() / 2)
+			unsigned int nrOfNoneClickers = this->zPlayers.size() - counter;
+			if( nrOfNoneClickers < counter )
 			{
 				StartGameMode();
 			}
