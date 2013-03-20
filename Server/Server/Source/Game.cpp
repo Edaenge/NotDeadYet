@@ -211,7 +211,7 @@ void Game::SpawnAnimalsDebug()
 			{
 				new_Food = new Food((*temp_Deer_Food));
 
-				inv->AddItem(new_Food, stacked);
+				inv->AddItem(new_Food, &stacked);
 				if( stacked && new_Food->GetStackSize() == 0 )
 					SAFE_DELETE(new_Food);
 			}
@@ -250,7 +250,7 @@ void Game::SpawnAnimalsDebug()
 			{
 				new_Food = new Food((*temp_Bear_Food));
 
-				inv->AddItem(new_Food, stacked);
+				inv->AddItem(new_Food, &stacked);
 				if( stacked && new_Food->GetStackSize() == 0 )
 					SAFE_DELETE(new_Food);
 			}
@@ -1593,13 +1593,14 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 						const Food* berry_temp = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BERRY_BUSH);
 						if (berry_temp)
 						{
-							Food* berry = new Food(*berry_temp);
-							if (berry)
+							if (BioActor* bioPlayerActor = dynamic_cast<BioActor*>(actor))
 							{
-								msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE, (float)bbActor->GetID());
-								msg += berry->ToMessageString(&NMC);
-								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED);
-								bLooted = true;
+								Inventory* inv = bioPlayerActor->GetInventory();
+								if ( inv )
+								{
+									inv->AddItem(new Food(*berry_temp));
+									bbActor->SetPicked(true);
+								}
 							}
 						}
 					}
@@ -1717,7 +1718,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 			}
 
 			//add item
-			if(pActor->GetInventory()->AddItem(item, stacked))
+			if(pActor->GetInventory()->AddItem(item, &stacked))
 			{
 				if( stacked && item->GetStackSize() == 0 )
 				{
@@ -1756,7 +1757,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 			{
 				//msg += item->ToMessageString(&NMC);
 				//Add item
-				if(pActor->GetInventory()->AddItem(item, stacked))
+				if(pActor->GetInventory()->AddItem(item, &stacked))
 				{
 					bActor->GetInventory()->RemoveItem(item);
 
@@ -1791,7 +1792,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 			if (item->GetItemType() == itemType)// && item->GetItemSubType() == subType)
 			{
 				//Add item
-				if(pActor->GetInventory()->AddItem(item, stacked))
+				if(pActor->GetInventory()->AddItem(item, &stacked))
 				{
 					supplyActor->GetInventory()->RemoveItem(item);
 
@@ -1822,7 +1823,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 				if (berry->GetItemType() == itemType)// && item->GetItemSubType() == subType)
 				{
 					//Add item
-					if(pActor->GetInventory()->AddItem(berry, stacked))
+					if(pActor->GetInventory()->AddItem(berry, &stacked))
 					{
 						if( stacked && item->GetStackSize() == 0 )
 						{
@@ -2283,7 +2284,7 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 
 						//Try to add the crafted item to the inventory.
 						bool stacked = false;
-						if (inv->AddItem(craftedItem, stacked))
+						if (inv->AddItem(craftedItem, &stacked))
 						{					
 							if (stacked)
 							{
@@ -2314,7 +2315,7 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 								inv->RemoveItem(it->first);
 
 								it->first->IncreaseStackSize(it->second);
-								if(inv->AddItem(it->first, stacked))
+								if(inv->AddItem(it->first, &stacked))
 								{
 									if (stacked)
 									{

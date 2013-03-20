@@ -790,11 +790,10 @@ bool GameModeFFA::StartGameMode()
 			pActor->SetFullness( pActor->GetFullnessMax() );
 
 			//Create And Add pocket knife
-			bool stacked;
 			const MeleeWeapon* pocketKnife_temp = GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_POCKET_KNIFE);
 			MeleeWeapon* pocketKnife = new MeleeWeapon(*pocketKnife_temp);
 
-			pActor->GetInventory()->AddItem(pocketKnife, stacked);
+			pActor->GetInventory()->AddItem(pocketKnife);
 		}
 
 	}

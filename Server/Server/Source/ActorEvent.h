@@ -56,5 +56,10 @@ class SupplyDropLanded : public Event
 {
 public:
 	Actor *zActor;
+};
 
+class ActorChangedModelEvent : public Event
+{
+public:
+	Actor* zActor;
 };

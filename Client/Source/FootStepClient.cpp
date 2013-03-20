@@ -86,9 +86,33 @@ void FootStepClient::PlaceFootStep( Actor* actor )
 	// Ground Position
 	if ( actor->GetPosition().y - groundHeight < 0.1f )
 	{
-		iDecal* data = zGraphics->CreateDecal(Vector3(actor->GetPosition().x, groundHeight, actor->GetPosition().z), "media/models/shoeprint.png", Vector3(0.0f, -1.0f, 0.0f), Vector3(forwardDir.x, 0.0f, forwardDir.y));
-		data->SetSize(0.5f);
-		zFootSteps.insert(std::pair<unsigned int, iDecal*>(++zCurrentDecal, data));
+		// Print Texture
+		const char* name = 0;
+
+		// Make Prints
+		if ( actor->GetModel() == "media/models/token_anims.fbx" )
+		{
+			unsigned int lastFoot = zLastFoot[actor];
+
+			// Check Last Foot
+			if ( !lastFoot )
+			{
+				name = "media/models/token_print_r.png";
+			}
+			else
+			{
+				name = "media/models/token_print_l.png";
+			}
+
+			zLastFoot[actor] = (lastFoot+1) % 2;
+		}
+
+		if ( name )
+		{
+			iDecal* data = zGraphics->CreateDecal(Vector3(actor->GetPosition().x, groundHeight, actor->GetPosition().z), name, Vector3(0.0f, -1.0f, 0.0f), Vector3(forwardDir.x, 0.0f, forwardDir.y));
+			data->SetSize(0.5f);
+			zFootSteps.insert(std::pair<unsigned int, iDecal*>(++zCurrentDecal, data));
+		}
 	}	
 }
 
@@ -96,7 +120,7 @@ void FootStepClient::OnEvent(Event* e)
 {
 	if ( ActorMovedEvent* AME = dynamic_cast<ActorMovedEvent*>(e) )
 	{
-		if ( (AME->zActor->GetPosition().GetXZ() - zLastPositions[AME->zActor]).GetLength() > 0.5f )
+		if ( (AME->zActor->GetPosition().GetXZ() - zLastPositions[AME->zActor]).GetLength() > 1.0f )
 		{
 			PlaceFootStep(AME->zActor);
 			zLastPositions[AME->zActor] = AME->zActor->GetPosition().GetXZ();

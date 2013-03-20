@@ -127,10 +127,17 @@ const std::string Actor::GetModel() const
 
 void Actor::SetModel( const std::string& model )
 {
-	this->zModel = model;
+	if ( zModel != model )
+	{
+		this->zModel = model;
 
-	if (zPhysicsObject)
-		this->zPhysicsObject->SetModel(model);
+		if (zPhysicsObject)
+			this->zPhysicsObject->SetModel(model);
+
+		// Notify Observers
+		ActorChangedModelEvent ACME;
+		ACME.zActor = this;
+	}
 }
 
 bool Actor::CanCollide() const
