@@ -195,6 +195,10 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		actorPosition = positionIterator->second;
 		actor = this->zActorManager->GetActor(ID);
 
+		std::stringstream ss;
+		ss << "Server Position: " << actorPosition.x << ", " << actorPosition.y << ", " << actorPosition.z;
+		MaloW::Debug(ss.str());
+
 		update = this->zActorManager->GetUpdate(ID);
 		if (update)
 		{
