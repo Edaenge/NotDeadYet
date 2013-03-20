@@ -181,7 +181,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 0; i++)
+	for(unsigned int i = 0; i < 1; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -220,7 +220,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 0; i++)		
+	for(unsigned int i = 0; i < 1; i++)		
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -1036,6 +1036,14 @@ void Game::OnEvent( Event* e )
 							}
 							toBeRemoved = iActor;
 							bEaten = true;
+						}
+						else if(BerryBushActor* bbActor = dynamic_cast<BerryBushActor*>(*it_actor))
+						{
+							if( !bbActor->IsPicked())
+							{
+								bbActor->SetPicked(true);
+								thePlayerActor->SetEnergy(thePlayerActor->GetEnergy() + 2.0f);
+							}
 						}
 					}
 				}
