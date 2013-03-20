@@ -137,10 +137,10 @@ private:
 	void HandleLootObject(ClientData* cd, std::vector<unsigned int>& actorID);
 	void HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType );
 	void HandleDropItem(ClientData* cd, unsigned int objectID);
-	void HandleUseItem(ClientData* cd, unsigned int itemID);
+	bool HandleUseItem(ClientData* cd, unsigned int itemID);
 	void HandleUseWeapon(ClientData* cd, unsigned int itemID);
 	bool HandleCraftItem(ClientData* cd, const unsigned int itemType, const unsigned int itemSubType);
-	void HandleFillItem(ClientData* cd, const unsigned int itemID);
+	bool HandleFillItem(ClientData* cd, const unsigned int itemID);
 	void HandleDrinkWater(ClientData* cd);
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID);

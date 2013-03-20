@@ -322,10 +322,12 @@ Item* Inventory::EquipRangedWeapon(RangedWeapon* weapon, bool& success)
 	Item* ret = NULL;
 	success = true;
 
+	if (this->zRangedWeapon)
+		this->UnEquipRangedWeapon();
+
 	if(!this->zPrimaryEquip)
 	{
 		zPrimaryEquip = weapon;
-
 
 		InventoryBindPrimaryWeapon e;
 		e.ID = this->zOwnerID;
@@ -374,6 +376,9 @@ Item* Inventory::EquipMeleeWeapon(MeleeWeapon* weapon, bool& success)
 	Item* ret = NULL;
 	success = true;
 
+	if (this->zMeleeWeapon)
+		this->UnEquipMeleeWeapon();
+
 	if(!this->zPrimaryEquip)
 	{
 		zPrimaryEquip = weapon;
@@ -384,7 +389,6 @@ Item* Inventory::EquipMeleeWeapon(MeleeWeapon* weapon, bool& success)
 		e.type = this->zPrimaryEquip->GetItemType();
 		e.subType = this->zPrimaryEquip->GetItemSubType();
 		NotifyObservers(&e);
-
 	}
 	else if(zPrimaryEquip->GetItemSubType() == weapon->GetItemSubType())
 	{
@@ -462,8 +466,19 @@ Item* Inventory::EquipProjectile(Projectile* projectile)
 		InventoryEquipItemEvent e;
 		e.id = projectile->GetID();
 		e.slot = EQUIPMENT_SLOT_PROJECTILE;
+
 		NotifyObservers(&e);
-		
+
+		if (this->zMeleeWeapon && this->zPrimaryEquip != this->zMeleeWeapon)
+		{
+			InventoryBindPrimaryWeapon e2;
+			e2.ID = this->zOwnerID;
+			e2.model = this->zPrimaryEquip->GetModel();
+			e2.type = this->zPrimaryEquip->GetItemType();
+			e2.subType = this->zPrimaryEquip->GetItemSubType();
+
+			NotifyObservers(&e2);
+		}
 	}
 
 	return ret;
@@ -516,13 +531,11 @@ void Inventory::UnEquipRangedWeapon()
 
 	if(zPrimaryEquip == item)
 	{
-		
 		InventoryUnBindPrimaryWeapon e;
 		e.ID = this->zOwnerID;
 		e.model = this->zPrimaryEquip->GetModel();
 		NotifyObservers(&e);
 		
-
 		this->zPrimaryEquip = NULL;
 		this->zPrimaryEquip = zSecondaryEquip;
 		this->zSecondaryEquip = NULL;
@@ -556,14 +569,13 @@ void Inventory::UnEquipMeleeWeapon()
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Melee Weapon");
 
-	Item* item = dynamic_cast<MeleeWeapon*>(this->zMeleeWeapon);
+	Item* item = this->zMeleeWeapon;
 
 	if (!item)
 		return;
 
 	if(this->zPrimaryEquip == item)
 	{
-
 		InventoryUnBindPrimaryWeapon e;
 		e.ID = this->zOwnerID;
 		e.model = this->zPrimaryEquip->GetModel();
@@ -594,7 +606,6 @@ void Inventory::UnEquipMeleeWeapon()
 	e.id = item->GetID();
 	e.slot = EQUIPMENT_SLOT_MELEE_WEAPON;
 	NotifyObservers(&e);
-	
 
 	this->zMeleeWeapon = NULL;
 }
@@ -691,6 +702,13 @@ bool Inventory::SwapWeapon()
 	e.model = this->zPrimaryEquip->GetModel();
 	NotifyObservers(&e);
 	
+	if (this->zRangedWeapon == this->zPrimaryEquip && this->zProjectile)
+	{
+		InventoryUnBindPrimaryWeapon e;
+		e.ID = this->zOwnerID;
+		e.model = this->zProjectile->GetModel();
+		NotifyObservers(&e);
+	}
 
 	this->zPrimaryEquip = this->zSecondaryEquip;
 
@@ -703,6 +721,14 @@ bool Inventory::SwapWeapon()
 	e1.subType = this->zPrimaryEquip->GetItemSubType();
 	NotifyObservers(&e1);
 	
+	if (this->zRangedWeapon == this->zPrimaryEquip && this->zProjectile)
+	{
+		InventoryUnBindPrimaryWeapon e;
+		e.ID = this->zOwnerID;
+		e.model = this->zProjectile->GetModel();
+		NotifyObservers(&e);
+	}
+
 	this->zSecondaryEquip = item;
 
 	return true;

@@ -36,8 +36,16 @@ Client::Client(std::string playerModel) :
 	this->zShowCursor = false;
 	this->zFrameTime = 0.0f;
 	this->zTimeSinceLastPing = 0.0f;
-	this->zMeshID	= GetPlayerSettings()->GetPlayerModel();
 	this->zName		= GetPlayerSettings()->GetPlayerName();
+
+	if (this->zPlayerModel == "MALEMODEL")
+	{
+		this->zMeshID = "media/models/token_anims.fbx";
+	}
+	else if (this->zPlayerModel == "FEMALEMODEL")
+	{
+		this->zMeshID = "media/models/bear_anims.fbx";
+	}
 
 	//Temporary Ghost Model
 	this->zMeshfirstPersonMap["media/models/ghost.obj"] = "media/models/ghost.obj";

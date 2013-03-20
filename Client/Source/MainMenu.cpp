@@ -84,37 +84,46 @@ void MainMenu::Init()
 	const char* object[] = {
 		"media/mapmodels/bush_01.ani",
 		"media/mapmodels/bush_02.ani",
-		"media/mapmodels/bern_02.ani",
+		"media/mapmodels/fern_02.ani",
 		"media/mapmodels/tree_01.ani",
 		"media/mapmodels/tree_02.ani",
+		"media/mapmodels/tree_03.ani",
+		"media/mapmodels/tree_04.ani",
 		"media/mapmodels/grassplant_01.ani",
 		"media/mapmodels/watergrass_02.ani",
 		"media/models/ghost.obj",
 		"media/mapmodels/deer.obj",
 		"media/models/bow_v01.obj",
-		"media/models/temp_guy.obj",
 		"media/mapmodels/target.obj",
+		"media/models/bear_dead.obj",
+		"media/models/deer_dead.obj",
 		"media/models/arrow_v01.obj",
 		"media/models/deer_temp.obj",
 		"media/models/canteen_01.obj",
+		"media/models/token_dead.obj",
+		"media/models/Thread_v01.obj",
 		"media/models/supplyaddon.obj",
 		"media/mapmodels/stone_01.obj",
 		"media/mapmodels/stone_02.obj",
 		"media/mapmodels/stone_03.obj",
 		"media/mapmodels/veins_01.obj",
 		"media/models/machete_v01.obj",
+		"media/models/hitbox_token.obj",
+		"media/models/firstaid_bad.obj",
+		"media/models/firstaid_good.obj",
 		"media/models/armyration_v01.obj",
 		"media/models/campfire_01_v01.obj",
 		"media/models/pocketknife_v02.obj",
 		"media/mapmodels/bush_misc_01.obj",
 		"media/models/stoneItem_01_v01.obj",
-		"media/models/branchesitem_01_v01.obj",
+		"media/mapmodels/WaterGrass_01.obj",
 		"media/models/supplycrate_01_v03.obj",
+		"media/models/branchesitem_01_v01.obj",
 		"media/models/berrybush/berrybush_01.obj",
 		"media/models/berrybush/berrybush_02.obj"
 	};
 
-	eng->PreLoadResources(30, object);
+	eng->PreLoadResources(39, object);
 
 	Element* temp;
 

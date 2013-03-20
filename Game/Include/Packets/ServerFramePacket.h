@@ -133,15 +133,15 @@ public:
 		ss.read(reinterpret_cast<char*>(&num), sizeof(size_t));
 		for(unsigned int i = 0; i != num; i++)
 		{
-			std::string value;
 			AnimationQueue queue;
 			size_t vecSize = 0;
 			unsigned int size = 0;
 			ss.read(reinterpret_cast<char*>(&key), sizeof(unsigned int));
 
 			ss.read(reinterpret_cast<char*>(&vecSize), sizeof(size_t));
-			for (unsigned int i = 0; i != vecSize; i++)
+			for (unsigned int it = 0; it != vecSize; it++)
 			{
+				std::string value;
 				ss.read(reinterpret_cast<char*>(&size), sizeof(unsigned int));
 				value.resize(size);
 				ss.read(&value[0], size);
@@ -149,7 +149,7 @@ public:
 			}
 
 			ss.read(reinterpret_cast<char*>(&vecSize), sizeof(size_t));
-			for (unsigned int i = 0; i != vecSize; i++)
+			for (unsigned int it = 0; it != vecSize; it++)
 			{
 				float fValue;
 				ss.read(reinterpret_cast<char*>(&fValue), sizeof(float));

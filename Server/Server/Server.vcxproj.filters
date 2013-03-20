@@ -178,7 +178,7 @@
       <Filter>Source\Handlers</Filter>
     </ClCompile>
     <ClCompile Include="Source\AnimationManager.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Handlers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -357,7 +357,7 @@
       <Filter>Source\Handlers</Filter>
     </ClInclude>
     <ClInclude Include="Source\AnimationManager.h">
-      <Filter>Source</Filter>
+      <Filter>Source\Handlers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

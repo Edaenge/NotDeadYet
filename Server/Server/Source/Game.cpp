@@ -779,13 +779,19 @@ void Game::OnEvent( Event* e )
 			if ( zPerf ) 
 				this->zPerf->PreMeasure("Use Event Handling", 3);
 
-			this->HandleUseItem(PUIE->clientData, PUIE->itemID);
-			
+			if(this->HandleUseItem(PUIE->clientData, PUIE->itemID))
+			{
+				if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PUIE->clientData]->zBehavior->GetActor()))
+				{
+					bActor->SetAction("Using Item", 4.7f);
+					bActor->SetState(STATE_USE);
+					this->zPlayers[PUIE->clientData]->zBehavior->Sleep(4.7f);
+				}
+			}
 			
 			if ( zPerf ) 
 				this->zPerf->PostMeasure("Use Event Handling", 3);
-
-		}	
+		}
 	}
 	else if (PlayerCraftItemEvent* PCIE = dynamic_cast<PlayerCraftItemEvent*>(e))
 	{
@@ -794,15 +800,24 @@ void Game::OnEvent( Event* e )
 		{
 			if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PCIE->clientData]->zBehavior->GetActor()))
 			{
-				bActor->SetAction("Crafting", 5.0f);
-				this->zPlayers[PCIE->clientData]->zBehavior->Sleep(5.0f);
+				bActor->SetAction("Crafting", 3.0f);
+				bActor->SetState(STATE_CRAFTING);
+				this->zPlayers[PCIE->clientData]->zBehavior->Sleep(3.0f);
 			}
 		}
 		if ( zPerf ) this->zPerf->PostMeasure("Craft Event Handling", 3);
 	}
 	else if (PlayerFillItemEvent* PFIE = dynamic_cast<PlayerFillItemEvent*>(e))
 	{
-		this->HandleFillItem(PFIE->clientData, PFIE->itemID);
+		if(this->HandleFillItem(PFIE->clientData, PFIE->itemID))
+		{
+			if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PFIE->clientData]->zBehavior->GetActor()))
+			{
+				bActor->SetAction("Filling Bottle", 5.7f);
+				bActor->SetState(STATE_FILLING_BOTTLE);
+				this->zPlayers[PFIE->clientData]->zBehavior->Sleep(5.7f);
+			}
+		}
 	}
 	else if(PlayerDrinkWaterEvent* PDWE = dynamic_cast<PlayerDrinkWaterEvent*>(e))
 	{
@@ -1925,7 +1940,7 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 	//cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
 }
 
-void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
+bool Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 {
 	auto playerIterator = this->zPlayers.find(cd);
 	auto playerBehavior = playerIterator->second->GetBehavior();
@@ -1966,6 +1981,8 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 
 							cd->Send(msg);
+
+							return true;
 						}
 						else
 						{
@@ -2008,6 +2025,8 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 							ID = container->GetID();
 							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 							cd->Send(msg);
+
+							return true;
 						}
 						else
 						{
@@ -2026,7 +2045,7 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 				{
 					ID = bandage->GetID();
 					
-					if (pActor->GetBleeding() < 0)
+					if (pActor->GetBleeding() > 0)
 					{
 						if (bandage->Use())
 						{				
@@ -2045,6 +2064,8 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 
 							cd->Send(msg);
+
+							return true;
 						}
 						else
 						{
@@ -2070,6 +2091,7 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 			}
 		}
 	}
+	return false;
 }
 
 void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
@@ -2300,7 +2322,7 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 						//Try to add the crafted item to the inventory.
 						bool stacked = false;
 						if (inv->AddItem(craftedItem, &stacked))
-						{					
+						{
 							if (stacked)
 							{
 								if (craftedItem->GetStackSize() <= 0)
@@ -2362,20 +2384,20 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 	return false;
 }
 
-void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
+bool Game::HandleFillItem(ClientData* cd, const unsigned int itemID)
 {
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
 
 	if (!pActor)
-		return;
+		return false;
 
 	Item* item = pActor->GetInventory()->SearchAndGetItem(itemID);
 
 	if (!item)
 	{
 		MaloW::Debug("Failed to find item in Game::HandleFillItem");
-		return;
+		return false;
 	}
 
 	//Logic for filling container here.
@@ -2383,17 +2405,20 @@ void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
 	float depth = this->zWorld->GetWaterDepthAt(position);
 	if(depth > 0.2f)
 	{
-		dynamic_cast<Container*>(item)->SetRemainingUses(dynamic_cast<Container*>(item)->GetMaxUses());
-	}
-	//Sending Message to client
-	NetworkMessageConverter NMC;
-	std::string msg = NMC.Convert(MESSAGE_TYPE_ITEM_FILL, (float)itemID);
+		if (Container* container = dynamic_cast<Container*>(item))
+		{
+			container->SetRemainingUses(container->GetMaxUses());
+			//Sending Message to client
+			NetworkMessageConverter NMC;
+			std::string msg = NMC.Convert(MESSAGE_TYPE_ITEM_FILL, (float)itemID);
+			msg += NMC.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)container->GetRemainingUses());
+			cd->Send(msg);
 
-	if (Container* container = dynamic_cast<Container*>(item))
-	{
-		msg += NMC.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)container->GetRemainingUses());
-		cd->Send(msg);
+			return true;
+		}
 	}
+
+	return false;
 }
 
 void Game::HandleDrinkWater( ClientData* cd )
@@ -2730,6 +2755,7 @@ void Game::CheckPlayerUseBow(Player* player)
 					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_BOW_BOWSTRETCH);
 					msg += NMC.Convert(MESSAGE_TYPE_POSITION, bActor->GetPosition());
 					this->SendToAll(msg);
+					bActor->SetState(STATE_DRAW_BOW);
 				}
 			}
 		}

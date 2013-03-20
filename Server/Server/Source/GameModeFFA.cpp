@@ -36,6 +36,8 @@ static const float SPAWN_DROP_TIMER_MAX	= 20.0f;
 
 static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 1;
 
+#define DEBUGGING true
+
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
 	srand((unsigned int)time(0));
@@ -1150,7 +1152,7 @@ bool GameModeFFA::CheckEndCondition()
 {
 	NetworkMessageConverter NMC;
 
-	if( zAlivePlayers == NR_PLAYERS_ALIVE_GAME_END_CONDITION )
+	if( zAlivePlayers == NR_PLAYERS_ALIVE_GAME_END_CONDITION  && !DEBUGGING)
 	{
 		Player* winner_player = NULL;
 
