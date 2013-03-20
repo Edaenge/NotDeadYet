@@ -9,6 +9,7 @@ class GameModeFFA : public GameMode
 {
 private:
 	std::set<Player*> zPlayers;
+	std::vector<Actor*> zDeadActors;
 	SupplyDrop* zSupplyDrop;
 	float zCurrentRSPTime;
 	unsigned int zAlivePlayers;

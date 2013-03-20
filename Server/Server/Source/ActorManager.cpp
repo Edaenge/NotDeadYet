@@ -103,6 +103,13 @@ void ActorManager::RemoveActor( Actor* actor )
 	e.zActor = actor;
 	NotifyObservers(&e);
 
+	if( actor->CanCollide() )
+	{
+		PhysicsObject* pObj = actor->GetPhysicsObject();
+		GetPhysics()->DeletePhysicsObject( pObj );
+		actor->SetPhysicsObject(NULL);
+	}
+
 	delete actor;
 } 
 

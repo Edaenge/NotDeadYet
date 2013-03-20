@@ -1066,7 +1066,7 @@ void Game::OnEvent( Event* e )
 		WorldActor* actor = new WorldActor(phys, blockRadius);
 		actor->SetPosition(ELE->entity->GetPosition());
 		actor->SetScale(actor->GetScale());
-		actor->AddObserver(this->zGameMode);
+/*		actor->AddObserver(this->zGameMode);*/
 		
 		this->zWorldActors[ELE->entity] = actor;
 		this->zActorManager->AddActor(actor);
@@ -2647,7 +2647,6 @@ void Game::RestartGame()
 		WorldActor* actor = new WorldActor(phys, blockRadius);
 		actor->SetPosition(entity->GetPosition());
 		actor->SetScale(actor->GetScale());
-		actor->AddObserver(this->zGameMode);
 
 		this->zWorldActors[entity] = actor;
 		this->zActorManager->AddActor(actor);

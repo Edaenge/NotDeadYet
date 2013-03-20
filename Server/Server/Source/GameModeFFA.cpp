@@ -34,6 +34,8 @@ static const unsigned int VAR			= 5;
 //static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 
+static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 2;
+
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
 	srand((unsigned int)time(0));
@@ -191,25 +193,28 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if (BioActorDeathEvent* BADE = dynamic_cast<BioActorDeathEvent*>(e))
 	{
-		PlayerActor* pActor = dynamic_cast<PlayerActor*>(BADE->zActor);
-		
-		if( pActor )
+		if( zGameStarted )
 		{
-			Player* player = pActor->GetPlayer();
-			if( player )
+			PlayerActor* pActor = dynamic_cast<PlayerActor*>(BADE->zActor);
+
+			if( pActor )
 			{
-				//Iterate and count alive players
-				this->zAlivePlayers = 0;
-				auto it_end = zPlayers.end();
-				for(auto it = zPlayers.begin(); it != it_end; it++)
+				Player* player = pActor->GetPlayer();
+				if( player )
 				{
-					Behavior* behavior = (*it)->GetBehavior();
-					if( behavior )
+					//Iterate and count alive players
+					this->zAlivePlayers = 0;
+					auto it_end = zPlayers.end();
+					for(auto it = zPlayers.begin(); it != it_end; it++)
 					{
-						BioActor* bActor = dynamic_cast<BioActor*>(behavior->GetActor());
-						if( bActor && bActor->IsAlive() )
+						Behavior* behavior = (*it)->GetBehavior();
+						if( behavior )
 						{
-							this->zAlivePlayers++;
+							BioActor* bActor = dynamic_cast<BioActor*>(behavior->GetActor());
+							if( bActor && bActor->IsAlive() )
+							{
+								this->zAlivePlayers++;
+							}
 						}
 					}
 				}
@@ -223,6 +228,9 @@ void GameModeFFA::OnEvent( Event* e )
 		{
 			BADE->zActor->SetMesh(models_it->second);
 		}
+
+		zDeadActors.push_back(BADE->zActor);
+		
 	}
 	else if (PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
 	{
@@ -598,7 +606,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 {
 	NetworkMessageConverter NMC;
 	std::string msg = "";
-
+	ActorManager* aManager = this->zGame->GetActorManager();
 	Player* player = pActor->GetPlayer();
 
 	if( !player )
@@ -653,7 +661,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 		newActor->SetModel(model);
 		newActor->SetPosition(position, false);
 		newActor->SetDir(direction, false);
-		newActor->AddObserver(this);	
+		newActor->AddObserver(this);
 	}
 
 	PhysicalConditionPacket* PCP = new PhysicalConditionPacket();
@@ -697,7 +705,6 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	this->zGame->SetPlayerBehavior(player, pBehavior);
 
 	//Tell Client his new ID and actor type
-	ActorManager* aManager = this->zGame->GetActorManager();
 	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float) newActor->GetID());
 	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, (float)type);
 
@@ -762,7 +769,7 @@ bool GameModeFFA::StartGameMode()
 	std::set<Item*> items = GenerateItems();
 	World* world = this->zGame->GetWorld();
 	unsigned int nrOfPlayers = zPlayers.size();
-
+	unsigned int increment = 0; 
 	Vector2 center = world->GetWorldCenter();
 
 	//Iterate all players, give them new start positions
@@ -776,7 +783,7 @@ bool GameModeFFA::StartGameMode()
 			continue;
 		}
 
-		Vector3 pos = this->zGame->CalcPlayerSpawnPoint(nrOfPlayers, center);
+		Vector3 pos = this->zGame->CalcPlayerSpawnPoint(increment++, nrOfPlayers, 10.0f, Vector3(center.x, 0.0f, center.y));
 
 		actor->SetPosition(pos);
 		actor->SetEnergy(0);
@@ -799,10 +806,26 @@ bool GameModeFFA::StartGameMode()
 
 	}
 
+	//Remove Dead Actors
+	ActorManager* aManager = zGame->GetActorManager();
+	auto it_end = zDeadActors.end();
+	for (auto it = zDeadActors.begin(); it != it_end; it++)
+	{
+		if( (*it) )
+		{
+			Actor* temp = *it;
+			aManager->RemoveActor(temp);
+		}
+	}
+	zDeadActors.clear();
+
 	this->zSupplyDrop->SpawnSupplyDrop(center, items, 50.0f);
 
 	this->zAlivePlayers = nrOfPlayers;
-	//this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 150.0f, items);
+
+	NetworkMessageConverter NMC;
+	std::string message = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Game Started! Good Luck, Stay Safe.");
+	this->zGame->SendToAll(message);
 
 	return true;
 }
@@ -1115,7 +1138,7 @@ bool GameModeFFA::CheckEndCondition()
 {
 	NetworkMessageConverter NMC;
 
-	if( zAlivePlayers == 10 )
+	if( zAlivePlayers == NR_PLAYERS_ALIVE_GAME_END_CONDITION )
 	{
 		Player* winner_player = NULL;
 
