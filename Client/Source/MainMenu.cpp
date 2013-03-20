@@ -65,8 +65,8 @@ void MainMenu::Init()
 		"media/mapmodels/bush_01.ani",
 		"media/mapmodels/bush_02.ani",
 		"media/mapmodels/bern_02.ani",
-		"media/mapmodels/Tree_01.ani",
-		"media/mapmodels/Tree_02.ani",
+		"media/mapmodels/tree_01.ani",
+		"media/mapmodels/tree_02.ani",
 		"media/mapmodels/grassplant_01.ani",
 		"media/mapmodels/watergrass_02.ani",
 		"media/models/ghost.obj",
@@ -89,9 +89,12 @@ void MainMenu::Init()
 		"media/mapmodels/bush_misc_01.obj",
 		"media/models/stoneItem_01_v01.obj",
 		"media/models/branchesitem_01_v01.obj",
-		"media/models/supplycrate_01_v03.obj"};
+		"media/models/supplycrate_01_v03.obj",
+		"media/models/berrybush/berrybush_01.obj",
+		"media/models/berrybush/berrybush_02.obj",
+	};
 
-	eng->PreLoadResources(27, object);
+	eng->PreLoadResources(30, object);
 
 	Element* temp;
 
