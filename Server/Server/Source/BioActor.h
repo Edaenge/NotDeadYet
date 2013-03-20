@@ -91,6 +91,9 @@ protected:
 	std::chrono::time_point<std::chrono::system_clock, std::chrono::microseconds> zActionTimeStarted;
 	std::chrono::microseconds zActionTimeLength;
 
+	std::string zPreviousAnimation;
+	unsigned int zPreviousState;
+
 public:
 	bool zValid;
 
@@ -148,4 +151,8 @@ public:
 
 	Player* GetPlayer() { return this->zPlayer; }
 	inline void SetPlayer(Player* player) {this->zPlayer = player;}
+
+	void SetPreviousAnimation(const std::string& animation) {this->zPreviousAnimation = animation;}
+	const std::string& GetPreviousAnimation() {return this->zPreviousAnimation;}
+	const unsigned int GetPreviousState() {return this->zPreviousState;}
 };

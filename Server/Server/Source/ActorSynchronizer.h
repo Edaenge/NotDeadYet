@@ -7,6 +7,7 @@
 #include <World/Observer.h>
 #include "ClientData.h"
 #include "NetworkMessageConverter.h"
+#include "AnimationManager.h"
 
 #include <set>
 #include <map>
@@ -17,12 +18,12 @@ class ServerFramePacket;
 class NewActorPacket;
 class PhysicalConditionPacket;
 
-
 class ActorSynchronizer : public Observer
 {
 private:
 	ServerFramePacket* zFrameData;
 	NewActorPacket* zActorData;
+	AnimationManager* zAnimManager;
 
 	std::set<Actor*> zUpdateSet;
 	std::set<Actor*> zNewActorSet;

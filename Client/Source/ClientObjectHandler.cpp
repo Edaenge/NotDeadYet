@@ -195,10 +195,6 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		actorPosition = positionIterator->second;
 		actor = this->zActorManager->GetActor(ID);
 
-		std::stringstream ss;
-		ss << "Server Position: " << actorPosition.x << ", " << actorPosition.y << ", " << actorPosition.z;
-		MaloW::Debug(ss.str());
-
 		update = this->zActorManager->GetUpdate(ID);
 		if (update)
 		{
@@ -264,31 +260,35 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		}
 	}
 
-	auto it_animation_end = SFP->newAnimations.end();
-	for (auto animIterator = SFP->newAnimations.begin(); animIterator != it_animation_end; animIterator++)
+	auto it_anim_Queue_end = SFP->newAnimQueue.end();
+
+	for (auto queueIterator = SFP->newAnimQueue.begin(); queueIterator != it_anim_Queue_end; queueIterator++)
 	{
-		if (this->zReady)
+		ID = queueIterator->first;
+		AnimationQueue queue = queueIterator->second;
+
+		Actor* actor = this->zActorManager->GetActor(ID);
+
+		if (!actor)
+			continue;
+
+		const int size = queue.zAnimations.size();
+		if (size != queue.zAnimationTimes.size())
+			MaloW::Debug("Size Mismatch for animation Queue");
+
+		char** queueNames = new char*[size];
+		float* queueTimes = new float[size];
+		for (unsigned int i = 0; i < size; i++)
 		{
-			ID = animIterator->first;
-			std::string animationName = animIterator->second;
+			queueNames[i] = &queue.zAnimations[i][0];
+			queueTimes[i] = queue.zAnimationTimes[i];
+		}
 
-			Actor* actor = this->zActorManager->GetActor(ID);
-			if (!actor)
-				continue;
+		iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(actor->GetMesh());
 
-			iFBXMesh* mesh = dynamic_cast<iFBXMesh*>(actor->GetMesh());
-			if (mesh)
-			{
-				std::string model = actor->GetModel();
-				auto it = this->zModelToReaderMap.find(model);
-				if (it != this->zModelToReaderMap.end())
-				{
-					std::string animation = it->second.GetAnimation(animationName);
-
-					if (animation != "")
-						mesh->SetAnimation(animation.c_str());
-				}
-			}
+		if (fbxMesh)
+		{
+			fbxMesh->SetAnimationQueue(queueNames, queueTimes, size);
 		}
 	}
 

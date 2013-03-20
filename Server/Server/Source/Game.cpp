@@ -131,9 +131,10 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	//this->SpawnItemsDebug();
-//	this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnItemsDebug();
+    this->SpawnAnimalsDebug();
+	this->SpawnHumanDebug();
+
 // Sun Direction
 	this->ResetSunDirection();
 
@@ -181,7 +182,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 1; i++)
+	for(unsigned int i = 0; i < 3; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -220,7 +221,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 0; i++)		
+	for(unsigned int i = 0; i < 1; i++)		
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -1812,34 +1813,6 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 			}
 		}
 	}
-	else if (BerryBushActor* bbActor = dynamic_cast<BerryBushActor*>(actor))
-	{
-		const Food* berry_temp = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BERRY_BUSH);
-		if (berry_temp)
-		{
-			Food* berry = new Food(*berry_temp);
-			if (berry)
-			{
-				if (berry->GetItemType() == itemType)// && item->GetItemSubType() == subType)
-				{
-					//Add item
-					if(pActor->GetInventory()->AddItem(berry, &stacked))
-					{
-						if( stacked && item->GetStackSize() == 0 )
-						{
-							SAFE_DELETE(item);
-						}
-						bbActor->SetPicked(true);
-					}
-					else
-					{
-						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
-						return;
-					}
-				}
-			}
-		}
-	}
 }
 
 void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
@@ -1886,18 +1859,6 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 
 	if (item && Messages::FileWrite())	
 		Messages::Debug("Removed successes: " + MaloW::convertNrToString((float)objectID));
-	
-	//if (wasPrimary)
-	//{
-	//	msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)pActor->GetID());
-	//	msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, item->GetModel());
-	//	cd->Send(msg);
-
-	//	Item* newPrimary = inventory->GetPrimaryEquip();
-
-	//	if (newPrimary)
-	//		this->HandleBindings(newPrimary, pActor->GetID());
-	//}
 
 	if(!item)
 		return;
@@ -1906,9 +1867,6 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 	actor = new ItemActor(item);
 	actor->SetPosition(pActor->GetPosition(), false);
 	this->zActorManager->AddActor(actor);
-
-	//NetworkMessageConverter NMC;
-	//cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
 }
 
 void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
@@ -2690,11 +2648,9 @@ void Game::RestartGame()
 	this->zGameMode->StopGameMode();
 
 	//Debug
-	//SpawnAnimalsDebug();
-
-	//SpawnItemsDebug();
-	//SpawnAnimalsDebug();
-	//SpawnHumanDebug();
+	SpawnItemsDebug();
+	SpawnAnimalsDebug();
+	SpawnHumanDebug();
 
 	this->ResetSunDirection();
 
