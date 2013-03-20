@@ -107,7 +107,7 @@ Client::Client() :
 	AudioManager* am = AudioManager::GetInstance();
 	am->GetEventHandle(EVENTID_NOTDEADYET_AMBIENCE_FOREST, ambientMusic);
 	
-	zIgg = new InGameGui();
+	this->zIgg = new InGameGui();
 
 	InitCraftingRecipes();
 }
@@ -121,21 +121,64 @@ Client::~Client()
 	this->WaitUntillDone();
 
 	// Delete Footsteps
-	if ( zFootSteps ) delete zFootSteps;
+	if ( zFootSteps ) 
+		delete zFootSteps;
 
-	SAFE_DELETE(this->zGuiManager);
-	SAFE_DELETE(this->zActorManager);
-	SAFE_DELETE(this->zServerChannel);
-	SAFE_DELETE(this->zPlayerInventory);
+	this->zPerf->PreMeasure("Deleting Actors", 5);
 
-	SAFE_DELETE(this->zIgm);
-	SAFE_DELETE(this->zPam);
+	if(this->zActorManager)
+		delete this->zActorManager;
 
-	SAFE_DELETE(this->zWorld);
-	SAFE_DELETE(this->zGameTimer);
+	this->zPerf->PostMeasure("Deleting Actors", 5);
+
+	this->zPerf->PreMeasure("Deleting ServerChannel", 5);
+
+	if(this->zServerChannel)
+		delete this->zServerChannel;
+
+	this->zPerf->PostMeasure("Deleting ServerChannel", 5);
+
+	if(this->zPlayerInventory)
+		delete this->zPlayerInventory;
+
+	this->zPerf->PreMeasure("Deleting World", 5);
+
+	if(this->zWorld)
+		delete this->zWorld;
+
+	this->zPerf->PostMeasure("Deleting World", 5);
+
+	if(this->zGameTimer)
+		delete this->zGameTimer;
 
 	this->zMeshCameraOffsets.clear();
 	this->zStateCameraOffset.clear();
+
+	this->zPerf->PreMeasure("Deleting Gui", 5);
+
+	//Close Gui's that are still open
+	if ( zGuiManager )
+	{
+		if(this->zGuiManager->IsCraftOpen())
+			this->zGuiManager->ToggleCraftingGui();
+
+		if (this->zGuiManager->IsInventoryOpen())
+			this->zGuiManager->ToggleInventoryGui();
+
+		if (this->zGuiManager->IsLootingOpen())
+			this->zGuiManager->ToggleLootGui(0);
+
+		delete this->zGuiManager;
+	}
+	
+	if(this->zIgm)
+		delete this->zIgm;
+
+	if(this->zPam)
+		delete this->zPam;
+
+	if(this->zIgg)
+		delete this->zIgg;
 
 	if (this->zBlackImage)
 		this->zEng->DeleteImage(this->zBlackImage);
@@ -164,19 +207,19 @@ Client::~Client()
 		TextDisplay* temp = (*it);
 
 		this->zEng->DeleteText(temp->zText);
-		SAFE_DELETE(temp);
+
+		if (temp)
+			delete temp;
 	}
 
 	this->zDisplayedText.clear();
 	
+	this->zPerf->PostMeasure("Deleting Gui", 5);
 
 	ambientMusic->Stop();
 	ambientMusic->Release();
 	delete ambientMusic;
 	ambientMusic = NULL;
-
-	if(this->zIgg)
-		delete this->zIgg;
 
 	FreeCraftingRecipes();
 
@@ -325,12 +368,13 @@ void Client::InitGraphics(const std::string& mapName)
 		{
 			errorMessage = "Map: " + mapName + " Could be corrupt";
 		}
-
+		this->zEng->HideLoadingScreen();
 		this->CloseConnection(errorMessage);
 		return;
 	}
 	catch (...)
 	{
+		this->zEng->HideLoadingScreen();
 		this->CloseConnection("Map Not Found");
 		return;
 	}
@@ -804,7 +848,6 @@ void Client::CheckPlayerSpecificKeys()
 
 	if(this->zEng->GetKeyListener()->IsPressed(this->zKeyInfo.GetKey(KEY_INTERACT)))
 	{
-
 		Actor* clientPlayer = this->zActorManager->GetActor(this->zID);
 		
 		if (!this->zKeyInfo.GetKeyState(KEY_INTERACT))
@@ -820,7 +863,7 @@ void Client::CheckPlayerSpecificKeys()
 				}
 				this->zServerChannel->Send(msg);
 			}
-			else if(this->zWorld->GetWaterDepthAt(Vector2 (clientPlayer->GetPosition().x,clientPlayer->GetPosition().z) ) > 0.2f)
+			else if(this->zWorld->GetWaterDepthAt(Vector2(clientPlayer->GetPosition().x, clientPlayer->GetPosition().z) ) > 0.2f)
 			{
 				msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DRINK_FROM_WATER);
 				this->zServerChannel->Send(msg);
@@ -2070,7 +2113,7 @@ bool Client::CheckHumanSpecificMessages(std::vector<std::string> msgArray)
 	}
 	else if(msgArray[0].find(M_ITEM_FILL.c_str()) == 0)
 	{
-		if (msgArray.size() > 2)
+		if (msgArray.size() == 2)
 		{
 			unsigned int id = this->zMsgHandler.ConvertStringToInt(M_ITEM_FILL, msgArray[0]);
 			unsigned int currentUses = this->zMsgHandler.ConvertStringToInt(M_CONTAINER_CURRENT, msgArray[1]);

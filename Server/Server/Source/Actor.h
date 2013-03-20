@@ -10,6 +10,7 @@ for project Not Dead Yet at Blekinge tekniska högskola.
 #include <World/Observer.h>
 #include "PhysicsObject.h"
 #include "ActorEvent.h"
+
 static const enum ACTOR_TYPE
 {
 	ACTOR_TYPE_NONE,
@@ -40,12 +41,11 @@ private:
 	PhysicsObject* zPhysicsObject;
 
 protected:
-		unsigned int zType;
-		float zEnergy;
-		float	zCollisionRadius;
-		Vector2 zCollisionPoints[4];		std::string zModel;
-protected:
-	virtual void CalculateCollisionPoints();
+	unsigned int zType;
+	float zEnergy;
+	float	zCollisionRadius;
+	Vector2 zCollisionPoints[4];		
+	std::string zModel;
 
 public:
 	Actor();
@@ -63,7 +63,6 @@ public:
 	void SetDir(const Vector3& dir, const bool notify = true);
 	void SetEnergy(float energy, const bool notify = true);
 	virtual void SetModel(const std::string& model);
-	void SetMesh(const std::string meshName);
 	void SetCollisionRadius(const float radius) {this->zCollisionRadius = radius;}	
 	bool CanCollide() const;
 
@@ -73,13 +72,15 @@ public:
 	inline const Vector4& GetRotation() const { return zRot; }
 	inline const Vector3& GetScale() const { return zScale; }
 	inline const Vector3& GetDir() const { return zDir; }
-	virtual const std::string GetModel() const;
+	virtual const std::string& GetModel() const;
 	PhysicsObject* GetPhysicsObject() {return this->zPhysicsObject;}
 	inline unsigned int GetType() const {return this->zType;}
 	inline float GetEnergy() {return this->zEnergy;}
 
 	inline float GetCollisionRadius() const {return this->zCollisionRadius;}
 	/*!Returns an array of CollisionPoints. There are 4 points.*/
-	inline const Vector2* GetCollisionPoints() {return this->zCollisionPoints;}
+	inline const Vector2* GetCollisionPoints() const {return this->zCollisionPoints;}
 
+protected:
+	virtual void CalculateCollisionPoints();
 };

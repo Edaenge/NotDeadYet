@@ -34,12 +34,14 @@ static const unsigned int VAR			= 5;
 //static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 
+static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 2;
+
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
 	srand((unsigned int)time(0));
 	this->zSupplyDrop = new SupplyDrop( game->GetActorManager(), game->GetWorld(), game->GetSoundHandler() );
 	this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX;
-	//zKillLimit = killLimit;
+	this->zAlivePlayers = 0;
 }
 
 GameModeFFA::~GameModeFFA()
@@ -69,9 +71,7 @@ bool GameModeFFA::Update( float dt )
 	}
 
 	if( CheckEndCondition() )
-	{
 		return true;
-	}
 
 	return false;
 }
@@ -193,15 +193,44 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if (BioActorDeathEvent* BADE = dynamic_cast<BioActorDeathEvent*>(e))
 	{
-		BADE->zActor;
+		if( zGameStarted )
+		{
+			PlayerActor* pActor = dynamic_cast<PlayerActor*>(BADE->zActor);
+
+			if( pActor )
+			{
+				Player* player = pActor->GetPlayer();
+				if( player )
+				{
+					//Iterate and count alive players
+					this->zAlivePlayers = 0;
+					auto it_end = zPlayers.end();
+					for(auto it = zPlayers.begin(); it != it_end; it++)
+					{
+						Behavior* behavior = (*it)->GetBehavior();
+						if( behavior )
+						{
+							BioActor* bActor = dynamic_cast<BioActor*>(behavior->GetActor());
+							if( bActor && bActor->IsAlive() )
+							{
+								this->zAlivePlayers++;
+							}
+						}
+					}
+				}
+			}
+		}
 
 		auto models = this->zGame->GetDeadActorModels();
 
 		auto models_it = models.find(BADE->zActor->GetModel());
 		if (models_it != models.end())
-		{
-			BADE->zActor->SetMesh(models_it->second);
+		{			
+			BADE->zActor->SetModel(models_it->second);
 		}
+
+		zDeadActors.push_back(BADE->zActor);
+		
 	}
 	else if (PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
 	{
@@ -212,7 +241,6 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if(PlayerAnimalPossessEvent* POSSESSE = dynamic_cast<PlayerAnimalPossessEvent*>(e))
 	{
-
 		GhostActor* gActor = dynamic_cast<GhostActor*>(POSSESSE->zActor);
 
 		if(gActor)
@@ -229,14 +257,6 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if( PlayerRemoveEvent* PRE = dynamic_cast<PlayerRemoveEvent*>(e) )
 	{
-		auto playerBehavior = PRE->player->GetBehavior();
-		if (playerBehavior)
-		{
-			Actor* actor = playerBehavior->GetActor();
-
-			this->zGame->GetActorManager()->RemoveActor(actor);
-		}
-
 		this->zPlayers.erase(PRE->player);
 	}
 	else if( PlayerReadyEvent* PLRE = dynamic_cast<PlayerReadyEvent*>(e) )
@@ -586,7 +606,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 {
 	NetworkMessageConverter NMC;
 	std::string msg = "";
-
+	ActorManager* aManager = this->zGame->GetActorManager();
 	Player* player = pActor->GetPlayer();
 
 	if( !player )
@@ -605,8 +625,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	Actor* newActor = NULL;
 	if( zGameStarted )
 	{
-		this->zGame->ModifyLivingPlayers(-1);
-
+		this->zAlivePlayers++;
 		//Create Spirit
 		Vector3 position = pActor->GetPosition();
 		Vector3 direction = pActor->GetDir();
@@ -642,7 +661,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 		newActor->SetModel(model);
 		newActor->SetPosition(position, false);
 		newActor->SetDir(direction, false);
-		newActor->AddObserver(this);	
+		newActor->AddObserver(this);
 	}
 
 	PhysicalConditionPacket* PCP = new PhysicalConditionPacket();
@@ -686,7 +705,6 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	this->zGame->SetPlayerBehavior(player, pBehavior);
 
 	//Tell Client his new ID and actor type
-	ActorManager* aManager = this->zGame->GetActorManager();
 	msg = NMC.Convert(MESSAGE_TYPE_SELF_ID, (float) newActor->GetID());
 	msg += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, (float)type);
 
@@ -751,7 +769,7 @@ bool GameModeFFA::StartGameMode()
 	std::set<Item*> items = GenerateItems();
 	World* world = this->zGame->GetWorld();
 	unsigned int nrOfPlayers = zPlayers.size();
-
+	unsigned int increment = 0; 
 	Vector2 center = world->GetWorldCenter();
 
 	//Iterate all players, give them new start positions
@@ -765,7 +783,7 @@ bool GameModeFFA::StartGameMode()
 			continue;
 		}
 
-		Vector3 pos = this->zGame->CalcPlayerSpawnPoint(nrOfPlayers, center);
+		Vector3 pos = this->zGame->CalcPlayerSpawnPoint(increment++, nrOfPlayers, 10.0f, Vector3(center.x, 0.0f, center.y));
 
 		actor->SetPosition(pos);
 		actor->SetEnergy(0);
@@ -779,17 +797,34 @@ bool GameModeFFA::StartGameMode()
 			pActor->SetFullness( pActor->GetFullnessMax() );
 
 			//Create And Add pocket knife
-			bool stacked;
 			const MeleeWeapon* pocketKnife_temp = GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_POCKET_KNIFE);
 			MeleeWeapon* pocketKnife = new MeleeWeapon(*pocketKnife_temp);
 
-			pActor->GetInventory()->AddItem(pocketKnife, stacked);
+			pActor->GetInventory()->AddItem(pocketKnife);
 		}
 
 	}
 
+	//Remove Dead Actors
+	ActorManager* aManager = zGame->GetActorManager();
+	auto it_end = zDeadActors.end();
+	for (auto it = zDeadActors.begin(); it != it_end; it++)
+	{
+		if( (*it) )
+		{
+			Actor* temp = *it;
+			aManager->RemoveActor(temp);
+		}
+	}
+	zDeadActors.clear();
+
 	this->zSupplyDrop->SpawnSupplyDrop(center, items, 50.0f);
-	//this->zSupplyDrop->SpawnAirbornSupplyDrop(this->zGame->GetWorld()->GetWorldCenter(), 150.0f, items);
+
+	this->zAlivePlayers = nrOfPlayers;
+
+	NetworkMessageConverter NMC;
+	std::string message = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "Game Started! Good Luck, Stay Safe.");
+	this->zGame->SendToAll(message);
 
 	return true;
 }
@@ -814,15 +849,10 @@ bool GameModeFFA::SpawnRandomDrop()
 {
 	World* world = zGame->GetWorld();
 	std::set<Item*> items = GenerateItems();
-	Vector2 center = world->GetWorldCenter();
+	Vector2 worldCenter = world->GetWorldCenter();
 
 	//Get Fog Enclosure radius from the world center.
 	float radius = this->zGame->GetFogEnclosement();
-
-	//Randomize position
-//Vector2 pos = world->GetWorldSize();
-// 	float x = static_cast<float>( rand()% (int)pos.x + 1 );
-// 	float z = static_cast<float>( rand()% (int)pos.y + 1 );
 
 	/***Randomize two players and calculate the pos between them.***/
 	std::vector<Actor*> aliveActors;
@@ -837,41 +867,119 @@ bool GameModeFFA::SpawnRandomDrop()
 		}
 	}
 
-	//Randomize two indicies
-	const unsigned int NR_OF_ALIVE_PLAYERS = this->zGame->GetLivingPlayers();
-	unsigned int playerOne = rand()% NR_OF_ALIVE_PLAYERS;
-	unsigned int playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
-
-	while(playerTwo == playerOne && NR_OF_ALIVE_PLAYERS >= 2)
+	if( zAlivePlayers != aliveActors.size() )
 	{
-		playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+		MaloW::Debug("zAlivePlayers and aliveActors vector size is no the same: In GameModeFFA, SpawnRandomDrop.");
+		zAlivePlayers = aliveActors.size();
 	}
 
-	//Get Two Positions
-	Vector2 posOne = aliveActors[playerOne]->GetPosition().GetXZ();
+	Vector2 size = zGame->GetWorld()->GetWorldSize();
+	Vector2 posOne; 
 	Vector2 posTwo;
+	
+	const unsigned int NR_OF_ALIVE_PLAYERS = zAlivePlayers;
+	unsigned int playerOne;
+	unsigned int playerTwo;
 
-	if( NR_OF_ALIVE_PLAYERS <= 2 )
-		posTwo = center;
+	//Randomize two indicies
+	if( NR_OF_ALIVE_PLAYERS > 2 )
+	{
+		playerOne = rand()% NR_OF_ALIVE_PLAYERS;
+		playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+		bool stop = false;
+		const unsigned int TRIES = 50;
+		unsigned int counter = 0;
+
+		//Make sure the values are Good
+		while(!stop && counter < TRIES)
+		{
+			counter++;
+
+			if(playerOne == playerTwo)
+			{
+				playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+				continue;
+			}
+
+			posOne = aliveActors[playerOne]->GetPosition().GetXZ();
+			posTwo = aliveActors[playerTwo]->GetPosition().GetXZ();
+
+			//if the pos is not within the world size given
+			if( posOne.x > size.x || posOne.y > size.y )
+			{
+				playerOne = rand()% NR_OF_ALIVE_PLAYERS;
+				continue;
+			}
+			
+			//if the pos is not within the world size given
+			if( posTwo.x > size.x || posTwo.y == size.y )
+			{
+				playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+				continue;
+			}
+
+			stop = true;
+		}
+
+		//If stop is still false, just use the center points
+		if( !stop )
+		{
+			posOne = worldCenter;
+			posTwo = worldCenter;
+		}
+	}
+	//if only two, use them
+	else if( NR_OF_ALIVE_PLAYERS == 2 )
+	{
+		posOne = aliveActors[0]->GetPosition().GetXZ();
+		posTwo = aliveActors[1]->GetPosition().GetXZ();
+
+		//if the pos is not within the world size given
+		if( posOne.x > size.x || posOne.y > size.y )
+		{
+			posOne = worldCenter;
+		}
+
+		//if the pos is not within the world size given
+		if( posTwo.x > size.x || posTwo.y == size.y )
+		{
+			posTwo = worldCenter;
+		}
+	}
+	//if only one, use it and the world center pos
+	else if(NR_OF_ALIVE_PLAYERS == 1)
+	{
+		posOne = aliveActors[0]->GetPosition().GetXZ();
+		posTwo = worldCenter;
+
+		//if the pos is not within the world size given
+		if( posOne.x > size.x || posOne.y > size.y )
+		{
+			posOne = worldCenter;
+		}
+	}
+	//No players?
 	else
-		posTwo = aliveActors[playerTwo]->GetPosition().GetXZ();
+	{
+		return false;
+	}
 
 	Vector2 spawnPos;
+	Vector2 dir;
+
 	spawnPos = ( (posOne - posTwo) * 0.5f );
 	spawnPos = posTwo + spawnPos;
-	
-	Vector2 dir;
- 	dir = center - spawnPos;
- 
- 	float length = dir.GetLength();
- 	dir.Normalize();
- 
- 	//If the pos is within fog enclosure, move it
- 	if( length > radius )
- 	{
- 		float value = length - radius;
- 		spawnPos += (dir * value);
- 	}
+	dir = worldCenter - spawnPos;
+
+	float length = dir.GetLength();
+	dir.Normalize();
+
+	//If the pos is within fog enclosure, move it
+	if( length > radius )
+	{
+		float value = length - radius;
+		spawnPos += (dir * value);
+	}
 
 	//If not inside, something is wrong. World Size is not correct.
 	if( !world->IsInside(spawnPos) )
@@ -879,27 +987,23 @@ bool GameModeFFA::SpawnRandomDrop()
 		MaloW::Debug("SupplyDrop is not inside ???");
 		return false;
 	}
-	
+
 	bool validLocation = false;
 
-	unsigned int tries = 50;
+	const unsigned int TRIES = 50;
 	unsigned int counter = 0;
 
 	//Check if pos is valid, not blocking, not in water
-	while( !validLocation && tries < 100)
+	while( !validLocation && TRIES > counter)
 	{
 		if( world->IsBlockingAt(spawnPos) )
-		{
 			spawnPos += dir * 1.0f;
-		}
+		
 		else if( world->GetWaterDepthAt(spawnPos) != 0.0f )
-		{
 			spawnPos += dir * 2.0f;
-		}
+
 		else
-		{
 			validLocation = true;
-		}
 
 		counter++;
 	}
@@ -909,9 +1013,6 @@ bool GameModeFFA::SpawnRandomDrop()
 		return false;
 
 	this->zSupplyDrop->SpawnAirbornSupplyDrop(spawnPos, 200.0f, items);
-	
-// 	auto it = zPlayers.begin();
-// 	(*it)->GetBehavior()->GetActor()->SetPosition(Vector3(spawnPos.x, 100, spawnPos.y));
 
 	return true;
 }
@@ -1034,10 +1135,9 @@ bool GameModeFFA::CanConnect( ClientData* cd )
 
 bool GameModeFFA::CheckEndCondition()
 {
-	int playersAlive = zGame->GetLivingPlayers();
 	NetworkMessageConverter NMC;
 
-	if( playersAlive == 1 )
+	if( zAlivePlayers == NR_PLAYERS_ALIVE_GAME_END_CONDITION )
 	{
 		Player* winner_player = NULL;
 
@@ -1066,6 +1166,12 @@ bool GameModeFFA::CheckEndCondition()
 			MaloW::Debug("No winner was found");
 
 		zGame->SendToAll(message);
+		return true;
+	}
+
+	else if( zPlayers.size() == 0 )
+	{
+		this->zGameEnd = true;
 		return true;
 	}
 	

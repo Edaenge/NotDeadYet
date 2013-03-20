@@ -281,7 +281,6 @@ Vector3 AIDeerBehavior::ExaminePathfindingArea()
 				
 	bool getEmergencyDirection = false;
 	bool foundPath = false;
-	int counter = 0; //Just for testing stuff
 	getEmergencyDirection = false;
 
 
@@ -559,7 +558,7 @@ bool AIDeerBehavior::Update( float dt )
 		if(this->zIntervalCounter > this->zCalmActionInterval && this->GetIfNeedPath()) //The increase in time is supposed to represent listening, waiting for something to happen.
 		{
 			this->zIntervalCounter = 0;
-			srand(time(0));
+			srand((unsigned int)time(0));
 			this->zCalmActionInterval = (float)(rand() % this->zSupsiciousRandomInterval + this->zSupsiciousAddition);
 			this->zCurrentPath.clear();
 			//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->GetPosition().x + rand() % 8 - 4, this->GetPosition().z + rand() % 8 - 4, this->zCurrentPath, 20); //Get a small path to walk, quite short (since the animal is nervous) and does not have to lead anywhere.

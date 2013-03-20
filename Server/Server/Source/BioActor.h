@@ -123,29 +123,29 @@ public:
 	*/
 
 	int	GetState() const {return this->zState;}
-	float GetVelocity() const {return this->zVelocity;}
-	float GetStamina() const {return this->zStamina;}
-	float GetHealth() const {return this->zHealth;}
-	float GetStaminaMax() const {return this->zStaminaMax;}
-	float GetStaminaCof() const {return this->zStaminaCof;}
-	float GetHealthMax() const {return this->zHealthMax;}
+	inline const float& GetVelocity() const {return this->zVelocity;}
+	inline const float& GetStamina() const {return this->zStamina;}
+	inline const float& GetHealth() const {return this->zHealth;}
+	inline const float& GetStaminaMax() const {return this->zStaminaMax;}
+	inline const float& GetStaminaCof() const {return this->zStaminaCof;}
+	inline const float& GetHealthMax() const {return this->zHealthMax;}
 
 	/*! Sets the player state.
 		Enum is defined in AnimationStates.h.
 	*/
 	void SetState(const int state, const bool notify = true);
-	void SetVelocity(const float velocity) {this->zVelocity = velocity;}
-	void SetHealth(const float health, const bool notify = true); 
-	void SetStamina(const float stamina, const bool notify = true); 
-	void SetStaminaMax(const float max) {this->zStaminaMax = max;}
-	void SetStaminaCof(const float cof) {this->zStaminaCof = cof;}
+	void SetVelocity(const float& velocity) {this->zVelocity = velocity;}
+	void SetHealth(const float& health, const bool notify = true); 
+	void SetStamina(const float& stamina, const bool notify = true); 
+	void SetStaminaMax(const float& max) {this->zStaminaMax = max;}
+	void SetStaminaCof(const float& cof) {this->zStaminaCof = cof;}
 
-	void SetBleeding(const float levelBleeding, const bool notify = true);
-	inline float GetBleeding() const {return this->zBleedingLevel;}
-	Inventory* GetInventory() const {return this->zInventory;}
-	Vector3 GetCameraOffset() {return this->zCameraOffset;}
-	void SetCameraOffset(Vector3 offset) {this->zCameraOffset = offset;}
+	void SetBleeding(const float& levelBleeding, const bool notify = true);
+	inline float GetBleeding() const { return this->zBleedingLevel; }
+	Inventory* GetInventory() const { return this->zInventory; }
+	const Vector3& GetCameraOffset() const { return this->zCameraOffset; }
+	void SetCameraOffset( const Vector3& offset ) { this->zCameraOffset = offset; }
 
-	Player* GetPlayer(){ return this->zPlayer; }
-	void SetPlayer(Player* player) {this->zPlayer = player;}
+	Player* GetPlayer() { return this->zPlayer; }
+	inline void SetPlayer(Player* player) {this->zPlayer = player;}
 };

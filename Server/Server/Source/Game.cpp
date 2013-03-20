@@ -52,6 +52,7 @@ static const float TOTAL_SUN_UPDATE_TIME = 60.0f * 60.0f * 6.0f;
 #define ARROWMAXSPEED 35.0f
 #define ARROWMAXLOADTIME 2.0f
 #define ARROWSPEEDPERSEC (ARROWMAXSPEED / ARROWMAXLOADTIME)
+#define FOG_DMG 15.0f
 
 Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* syncher, const std::string& mode, const std::string& worldFile ) :
 	zSyncher(syncher),
@@ -59,7 +60,6 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	zMaterialSpawnManager(0),
 	zBehaviorManager(0),
 	zMaxNrOfPlayers(maxClients),
-	zPlayersAlive(0),
 	zPerf(0)
 {	
 	// Camera Offsets
@@ -133,7 +133,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	// Debug Functions
 	this->SpawnItemsDebug();
 //	this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnHumanDebug();
 // Sun Direction
 	this->ResetSunDirection();
 
@@ -211,7 +211,7 @@ void Game::SpawnAnimalsDebug()
 			{
 				new_Food = new Food((*temp_Deer_Food));
 
-				inv->AddItem(new_Food, stacked);
+				inv->AddItem(new_Food, &stacked);
 				if( stacked && new_Food->GetStackSize() == 0 )
 					SAFE_DELETE(new_Food);
 			}
@@ -250,7 +250,7 @@ void Game::SpawnAnimalsDebug()
 			{
 				new_Food = new Food((*temp_Bear_Food));
 
-				inv->AddItem(new_Food, stacked);
+				inv->AddItem(new_Food, &stacked);
 				if( stacked && new_Food->GetStackSize() == 0 )
 					SAFE_DELETE(new_Food);
 			}
@@ -531,7 +531,7 @@ bool Game::Update( float dt )
 	this->UpdateFogEnclosement(dt);
 	NetworkMessageConverter NMC;
 	std::string msg;
-;
+
 	if ( zPerf ) this->zPerf->PreMeasure("Updating Behaviors", 1);
 	std::set<Behavior*> &behaviors = this->zActorManager->GetBehaviors();
 
@@ -559,10 +559,8 @@ bool Game::Update( float dt )
 	{
 		if (!(*i)->Removed())
 		{
-
 			(*i)->RefreshNearCollideableActors(zActorManager->GetCollideableActors());
 
-			
 			if ( (*i)->IsAwake() && (*i)->Update(dt) )
 			{
 				Behavior* temp = (*i);
@@ -618,6 +616,29 @@ bool Game::Update( float dt )
 	if ( zPerf ) this->zPerf->PostMeasure("Updating World", 4);
 
 	//Updating animals and Check fog.
+
+	//Check if Players Are in Fog.
+	auto it_behaviors_end = behaviors.end();
+	for(i = behaviors.begin(); i != it_behaviors_end; i++)
+	{
+		if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
+		{
+			if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
+			{
+				Vector2 center = this->zWorld->GetWorldCenter();
+
+				float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
+
+				if (radiusFromCenter > this->zCurrentFogEnclosement)
+				{
+					Damage dmg;
+					dmg.fogDamage = FOG_DMG * dt;
+					bActor->TakeDamage(dmg, bActor);
+				}
+			}
+		}
+	}
+	
 	static float testUpdater = 0.0f;
 
 	testUpdater += dt;
@@ -627,8 +648,8 @@ bool Game::Update( float dt )
 		if ( zPerf ) this->zPerf->PreMeasure("Updating animal targets", 2);
 		//Creating targets to insert into the animals' behaviors
 		std::set<Actor*> aSet;
-
-		for(i = behaviors.begin(); i != behaviors.end(); i++)
+		auto it_behaviors_end = behaviors.end();
+		for(i = behaviors.begin(); i != it_behaviors_end; i++)
 		{
 			if( dynamic_cast<BioActor*>((*i)->GetActor()) )
 			{
@@ -637,27 +658,11 @@ bool Game::Update( float dt )
 		}
 
 		//Updating animals' targets and Check if Players Are in Fog.
-		for(i = behaviors.begin(); i != behaviors.end(); i++)
+		for(i = behaviors.begin(); i != it_behaviors_end; i++)
 		{
 			if(AIBehavior* animalBehavior = dynamic_cast<AIBehavior*>( (*i) ))
 			{
 				animalBehavior->SetTargets(aSet);
-			}
-			else if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
-			{
-				if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
-				{
-					Vector2 center = this->zWorld->GetWorldCenter();
-
-					float radiusFromCenter = (Vector3(center.x, 0.0f, center.y) - bActor->GetPosition()).GetLength();
-
-					if (radiusFromCenter > this->zCurrentFogEnclosement)
-					{
-						Damage dmg;
-						dmg.fogDamage = 10.0f * dt;
-						bActor->TakeDamage(dmg, bActor);
-					}
-				}
 			}
 		}
 		testUpdater = 0.0f;
@@ -839,7 +844,8 @@ void Game::OnEvent( Event* e )
 						damage.piercing = 5.0f;
 						damage.slashing = 25.0f;
 					}
-					if(Actor* target = this->zActorManager->CheckCollisions(self, range))
+					if( Actor* target = it->RayVsMeshCollision(bActor, 
+						bActor->GetPosition() + bActor->GetCameraOffset(), range, it->GetNearDynamicActors()) )
 					{
 						BioActor* bActor = dynamic_cast<BioActor*>(target);
 						if(bActor->IsAlive())
@@ -1061,7 +1067,7 @@ void Game::OnEvent( Event* e )
 		WorldActor* actor = new WorldActor(phys, blockRadius);
 		actor->SetPosition(ELE->entity->GetPosition());
 		actor->SetScale(actor->GetScale());
-		actor->AddObserver(this->zGameMode);
+/*		actor->AddObserver(this->zGameMode);*/
 		
 		this->zWorldActors[ELE->entity] = actor;
 		this->zActorManager->AddActor(actor);
@@ -1172,8 +1178,6 @@ void Game::OnEvent( Event* e )
 		}
 		UDE->clientData->Send(*NAP);
 		delete NAP;
-
-		this->zPlayersAlive++;
 
 		message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 		this->SendToAll(message);
@@ -1463,7 +1467,7 @@ void Game::HandleDisconnect( ClientData* cd )
 		return;
 
 	auto playerBehavior = playerIterator->second->GetBehavior();
-		
+
 	// Create AI Behavior For Players That Disconnected
 	if ( PlayerDeerBehavior* playerDeer = dynamic_cast<PlayerDeerBehavior*>(playerBehavior) )
 	{
@@ -1484,19 +1488,21 @@ void Game::HandleDisconnect( ClientData* cd )
 		if (behavior && behavior->GetActor())
 			this->zActorManager->RemoveActor(behavior->GetActor());
 		
-		this->zPlayersAlive--;
 	}
 		
 	this->SetPlayerBehavior(playerIterator->second, NULL);
 
+	//Notify GameMode
 	PlayerRemoveEvent PRE;
 	PRE.player = playerIterator->second;
 	NotifyObservers(&PRE);
 
 	Player* temp = playerIterator->second;
+	zPlayers.erase(playerIterator);
 	delete temp;
 	temp = NULL;
-	zPlayers.erase(playerIterator);
+
+
 }
 
 void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID )
@@ -1588,15 +1594,26 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 						const Food* berry_temp = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BERRY_BUSH);
 						if (berry_temp)
 						{
-							Food* berry = new Food(*berry_temp);
-							if (berry)
+							if (BioActor* bioPlayerActor = dynamic_cast<BioActor*>(actor))
 							{
-								msg = NMC.Convert(MESSAGE_TYPE_LOOT_OBJECT_RESPONSE, (float)bbActor->GetID());
-								msg += berry->ToMessageString(&NMC);
-								msg += NMC.Convert(MESSAGE_TYPE_ITEM_FINISHED);
-								bLooted = true;
+								Inventory* inv = bioPlayerActor->GetInventory();
+								if ( inv )
+								{
+									Item* berries = new Food(*berry_temp);
+									if ( inv->AddItem(berries) )
+									{
+										bbActor->SetPicked(true);
+									}
+									else
+									{
+										delete berries;
+										cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory Full!"));
+									}
+								}
 							}
 						}
+
+						bLooted = true;
 					}
 				}
 				//Check if the Actor is an AnimalActor.
@@ -1640,10 +1657,18 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 			}
 		}
 	}
+
 	if (bLooted)
-		cd->Send(msg);
+	{
+		if ( !msg.empty() )
+		{
+			cd->Send(msg);
+		}
+	}
 	else
+	{
 		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No Lootable Objects Found."));
+	}
 }
 
 void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType )
@@ -1712,7 +1737,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 			}
 
 			//add item
-			if(pActor->GetInventory()->AddItem(item, stacked))
+			if(pActor->GetInventory()->AddItem(item, &stacked))
 			{
 				if( stacked && item->GetStackSize() == 0 )
 				{
@@ -1751,7 +1776,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 			{
 				//msg += item->ToMessageString(&NMC);
 				//Add item
-				if(pActor->GetInventory()->AddItem(item, stacked))
+				if(pActor->GetInventory()->AddItem(item, &stacked))
 				{
 					bActor->GetInventory()->RemoveItem(item);
 
@@ -1786,7 +1811,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 			if (item->GetItemType() == itemType)// && item->GetItemSubType() == subType)
 			{
 				//Add item
-				if(pActor->GetInventory()->AddItem(item, stacked))
+				if(pActor->GetInventory()->AddItem(item, &stacked))
 				{
 					supplyActor->GetInventory()->RemoveItem(item);
 
@@ -1817,7 +1842,7 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 				if (berry->GetItemType() == itemType)// && item->GetItemSubType() == subType)
 				{
 					//Add item
-					if(pActor->GetInventory()->AddItem(berry, stacked))
+					if(pActor->GetInventory()->AddItem(berry, &stacked))
 					{
 						if( stacked && item->GetStackSize() == 0 )
 						{
@@ -2165,7 +2190,8 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 		//Check Collisions
 		range = meele->GetRange();
-		victim = dynamic_cast<BioActor*>( zActorManager->CheckCollisions( actor, range, pBehavior->GetNearDynamicActors() ) );
+		victim = dynamic_cast<BioActor*>( pBehavior->RayVsMeshCollision(pActor, pActor->GetPosition() 
+			+ pActor->GetCameraOffset(), range, pBehavior->GetNearDynamicActors() ) );
 		
 		if(victim)
 		{
@@ -2278,7 +2304,7 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 
 						//Try to add the crafted item to the inventory.
 						bool stacked = false;
-						if (inv->AddItem(craftedItem, stacked))
+						if (inv->AddItem(craftedItem, &stacked))
 						{					
 							if (stacked)
 							{
@@ -2309,7 +2335,7 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 								inv->RemoveItem(it->first);
 
 								it->first->IncreaseStackSize(it->second);
-								if(inv->AddItem(it->first, stacked))
+								if(inv->AddItem(it->first, &stacked))
 								{
 									if (stacked)
 									{
@@ -2556,11 +2582,6 @@ void Game::SendToAll( const std::string& msg)
 	}
 }
 
-void Game::ModifyLivingPlayers( const int value )
-{
-	this->zPlayersAlive += value;
-}
-
 void Game::ResetFogEnclosement()
 {
 	//Expected playtime
@@ -2572,7 +2593,7 @@ void Game::ResetFogEnclosement()
 
 	this->zInitalFogEnclosement = radius;
 
-	this->zFogUpdateDelay = 1.0f;
+	this->zFogUpdateDelay = 0.5f;
 	this->zFogDecreaseCoeff = this->zFogUpdateDelay / EXPECTED_PLAYTIME;
 	this->zFogTotalDecreaseCoeff = 1.0f;
 	this->zFogTimer = 0.0f;
@@ -2647,7 +2668,6 @@ void Game::RestartGame()
 		WorldActor* actor = new WorldActor(phys, blockRadius);
 		actor->SetPosition(entity->GetPosition());
 		actor->SetScale(actor->GetScale());
-		actor->AddObserver(this->zGameMode);
 
 		this->zWorldActors[entity] = actor;
 		this->zActorManager->AddActor(actor);

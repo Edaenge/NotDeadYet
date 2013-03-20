@@ -47,6 +47,9 @@ bool MaloW::ServerChannel::Connect( const std::string &IP, const unsigned int &p
 	saServer.sin_addr.s_addr = inet_addr(IP.c_str());
 	saServer.sin_family = AF_INET;
 
+	int timeOut = 10000;
+	setsockopt(zSocket, SOL_SOCKET, SO_RCVTIMEO,(char *)&timeOut, sizeof(int));
+
 	// Attempt connection
 	if( connect(zSocket, (sockaddr*)&saServer, sizeof(saServer)) == SOCKET_ERROR )
 	{

@@ -22,8 +22,7 @@ SupplyActor::~SupplyActor()
 
 bool SupplyActor::AddItem( Item* item )
 {
-	bool stacked = false;
-	return this->zInventory->AddItem(item, stacked);
+	return this->zInventory->AddItem(item);
 }
 
 Item* SupplyActor::DropItem( Item* item )

@@ -39,8 +39,12 @@ public:
 	/*! Search for the Item in and returns its position*/
 	int Search(const unsigned int ID) const;
 	int Search(Item* item) const;
-	/*! Adds an item to the array*/
-	bool AddItem(Item* item, bool &stacked);
+
+	// Adds an item to the array
+	// if succesfull will return true
+	// if successfull outstacked will return if the item has been stacked
+	bool AddItem(Item* item, bool* outStacked = 0);
+
 	/*! Calculate how many slots this item can use.*/
 	int CalcMaxAvailableSlots(Item* item);
 	/*! Check if the item will stack if added.*/

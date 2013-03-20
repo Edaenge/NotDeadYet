@@ -2,6 +2,7 @@
 #include "Safe.h"
 #include "Graphics.h"
 #include "FootStepClient.h"
+#include "MaloWFileDebug.h"
 
 static const float PI = 3.14159265358979323846f;
 static const unsigned int MAXFOOTSTEPS = 6;
@@ -122,12 +123,24 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 
 			if (update->HasPositionChanged())
 			{
-				// New Position
-				Vector3 position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
-
 				// Check if this is me
 				if(update->GetID() == clientID)
 				{
+					if (dynamic_cast<iFBXMesh*>(actor->GetMesh()))
+					{
+						// New Position
+						Vector3 position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
+
+						actor->SetPosition(position);
+					}
+					else
+					{
+						// New Position
+						Vector3 position = this->InterpolatePosition(gEng->GetCamera()->GetPosition(), update->GetPosition(), t);
+
+						gEng->GetCamera()->SetPosition(position);
+					}
+
 					AudioManager::GetInstance()->SetPlayerPosition(ConvertToFmodVector(position), ConvertToFmodVector(gEng->GetCamera()->GetForward()), ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
 					if(actor->GetModel() != "media/models/ghost.obj")
 					{
@@ -144,35 +157,16 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 						}
 
 					}
-			
-					if (dynamic_cast<iFBXMesh*>(actor->GetMesh()))
-					{
-// 						auto reader = this->zModelToReaderMap.find(actor->GetModel());
-// 						if (reader != this->zModelToReaderMap.end())	
-// 						{
-// 							std::string boneName = reader->second.GetBindingBone(BONE_CAMERA_OFFSET);
-// 							gEng->GetCamera()->SetMesh(actor->GetMesh(), boneName.c_str(), Vector3(0.0f, 0.0f, 1.0f));
-// 							actor->SetPosition(position);
-// 						}
-// 						else
-// 						{
-// 							gEng->GetCamera()->SetMesh(actor->GetMesh(), this->zCameraOffset, Vector3(0.0f, 0.0f, 1.0f));
-// 							gEng->GetCamera()->SetPosition(actor->GetPosition() + this->zCameraOffset);
-// 						}
-
-						actor->SetPosition(position);
-					}
-					else
-					{
-						gEng->GetCamera()->SetPosition(position);
-					}
 				}
 				else 
 				{
+					// New Position
+					Vector3 position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
+
 					actor->SetPosition(position);
 					if((playerActor->GetPosition() - position).GetLength() < 100.0f)
 					{
-						if(actor->GetModel() != "Media/Models/ghost.obj")
+						if(actor->GetModel() != "media/models/ghost.obj")
 						{
 							if(stepsPlayedThisUpdate < MAXFOOTSTEPS)
 							{
@@ -189,7 +183,6 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 							}
 						}
 					}
-
 				}
 
 				update->ComparePosition(position);

@@ -121,8 +121,8 @@ void Client::AddActor( NewActorPacket* NAP )
 		{
 			actor->SetPosition(position);
 
-			if (this->zID == ID)
-				this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
+			//if (this->zID == ID)
+				//this->zEng->GetCamera()->SetPosition(position + this->zMeshOffset);
 		}
 		else
 			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
@@ -194,6 +194,10 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		ID = positionIterator->first;
 		actorPosition = positionIterator->second;
 		actor = this->zActorManager->GetActor(ID);
+
+		std::stringstream ss;
+		ss << "Server Position: " << actorPosition.x << ", " << actorPosition.y << ", " << actorPosition.z;
+		MaloW::Debug(ss.str());
 
 		update = this->zActorManager->GetUpdate(ID);
 		if (update)

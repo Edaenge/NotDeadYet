@@ -260,7 +260,6 @@ Vector3 AIBearBehavior::ExaminePathfindingArea()
 				
 	bool getEmergencyDirection = false;
 	bool foundPath = false;
-	int counter = 0; //Just for testing stuff
 	getEmergencyDirection = false;
 
 
@@ -352,10 +351,10 @@ bool AIBearBehavior::Update( float dt )
 
 	int shortestDistance = 99999;
 
-	float xDistance = 0;
-	float yDistance = 0;
-	float zDistance = 0;
-	float finalDistance = 0;
+	float xDistance = 0.0f;
+	float yDistance = 0.0f;
+	float zDistance = 0.0f;
+	float finalDistance = 0.0f;
 
 	int maximumNodesTest = 5;
 
