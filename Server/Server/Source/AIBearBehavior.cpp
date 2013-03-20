@@ -352,7 +352,6 @@ bool AIBearBehavior::Update( float dt )
 	int shortestDistance = 99999;
 
 	float xDistance = 0.0f;
-	float yDistance = 0.0f;
 	float zDistance = 0.0f;
 	float finalDistance = 0.0f;
 

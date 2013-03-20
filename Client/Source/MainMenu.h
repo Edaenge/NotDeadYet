@@ -5,6 +5,10 @@
 #include "Game.h"
 #include "GUI/GUISet.h"
 
+#define BGSCREENSHOTS 9
+#define PAUSEBETWEENIMAGES 8
+#define OPACITYDIVIDERSPEED 0.001
+
 enum SET{
 	NOMENU,
 	MAINMENU,
@@ -37,6 +41,7 @@ private:
 	void AddResolutionsToDropBox(DropDownList* ddl);
 
 	void UpdateOptionsMenu();
+	void UpdateBackground(float dt);
 
 	void Resize();
 private:
@@ -49,6 +54,11 @@ private:
 	IAudioLoader* _soundLoader;
 	IEventHandle* menuClick;
 	IEventHandle* menuSound;
+
+	iImage* zBGScreens[BGSCREENSHOTS];
+	float zPause;
+	int zCurrentImage;
+	int zNextImage;
 
 	Game* zGame;
 	bool zClientConnected;

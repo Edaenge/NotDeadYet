@@ -191,11 +191,11 @@ int AudioManager::LoadFEV(std::string file)
 
 	}
 
-	for(int i=0;i<cats+1;i++)
+	for(int i=0;i<cats;i++)
 	{
 
 		FMOD::EventCategory* temp;
-		result = system->getCategoryByIndex(i-1,&temp);
+		result = system->getCategoryByIndex(i,&temp);
 		
 		if (result != FMOD_OK)
 		{
