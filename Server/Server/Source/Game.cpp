@@ -181,7 +181,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 30; i++)
+	for(unsigned int i = 0; i < 2; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -220,7 +220,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 30; i++)		
+	for(unsigned int i = 0; i < 4; i++)		
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -654,7 +654,7 @@ bool Game::Update( float dt )
 			}
 		}
 
-		//Updating animals' targets and Check if Players Are in Fog.
+		//Updating animals' targets
 		for(i = behaviors.begin(); i != it_behaviors_end; i++)
 		{
 			if(AIBehavior* animalBehavior = dynamic_cast<AIBehavior*>( (*i) ))
