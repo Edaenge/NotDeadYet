@@ -181,7 +181,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 1; i++)
+	for(unsigned int i = 0; i < 10; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -220,7 +220,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 0; i++)		
+	for(unsigned int i = 0; i < 10; i++)		
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -468,9 +468,6 @@ void Game::Caching( const std::string& modelName )
 
 void Game::UpdateSunDirection(float dt)
 {
-	if(!zGameMode->IsGameStarted())
-		return;
-
 	//Update Sun
 	this->zSunTimer += dt;
 
@@ -657,7 +654,7 @@ bool Game::Update( float dt )
 			}
 		}
 
-		//Updating animals' targets and Check if Players Are in Fog.
+		//Updating animals' targets
 		for(i = behaviors.begin(); i != it_behaviors_end; i++)
 		{
 			if(AIBehavior* animalBehavior = dynamic_cast<AIBehavior*>( (*i) ))
@@ -844,7 +841,8 @@ void Game::OnEvent( Event* e )
 						damage.piercing = 5.0f;
 						damage.slashing = 25.0f;
 					}
-					if(Actor* target = this->zActorManager->CheckCollisions(self, range))
+					if( Actor* target = it->RayVsMeshCollision(bActor, 
+						bActor->GetPosition() + bActor->GetCameraOffset(), range, it->GetNearDynamicActors()) )
 					{
 						BioActor* bActor = dynamic_cast<BioActor*>(target);
 						if(bActor->IsAlive())
@@ -1033,8 +1031,26 @@ void Game::OnEvent( Event* e )
 
 								thePlayerActor->TakeDamage(idiotDamage,actor);
 							}
+							else if(theItem->GetItemType() == ITEM_TYPE_FOOD && theItem->GetItemSubType() == ITEM_SUB_TYPE_DEER_FOOD)
+							{
+								thePlayerActor->SetEnergy(thePlayerActor->GetEnergy() + 5.0f);
+							}
+							else if(theItem->GetItemType() == ITEM_TYPE_FOOD && theItem->GetItemSubType() == ITEM_SUB_TYPE_BEAR_FOOD)
+							{
+								thePlayerActor->SetEnergy(thePlayerActor->GetEnergy() + 20.0f);
+							}
+
+							
 							toBeRemoved = iActor;
 							bEaten = true;
+						}
+						else if(BerryBushActor* bbActor = dynamic_cast<BerryBushActor*>(*it_actor))
+						{
+							if( !bbActor->IsPicked())
+							{
+								bbActor->SetPicked(true);
+								thePlayerActor->SetEnergy(thePlayerActor->GetEnergy() + 2.0f);
+							}
 						}
 					}
 				}
@@ -1506,7 +1522,7 @@ void Game::HandleDisconnect( ClientData* cd )
 
 void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID )
 {
-	std::set<Actor*> actors = this->zActorManager->GetLootableActors();
+	std::set<Actor*>& actors = this->zActorManager->GetLootableActors();
 	std::vector<Item*> lootedItems;
 
 	auto playerIterator = this->zPlayers.find(cd);
@@ -1598,11 +1614,21 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 								Inventory* inv = bioPlayerActor->GetInventory();
 								if ( inv )
 								{
-									inv->AddItem(new Food(*berry_temp));
-									bbActor->SetPicked(true);
+									Item* berries = new Food(*berry_temp);
+									if ( inv->AddItem(berries) )
+									{
+										bbActor->SetPicked(true);
+									}
+									else
+									{
+										delete berries;
+										cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory Full!"));
+									}
 								}
 							}
 						}
+
+						bLooted = true;
 					}
 				}
 				//Check if the Actor is an AnimalActor.
@@ -1646,10 +1672,18 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 			}
 		}
 	}
+
 	if (bLooted)
-		cd->Send(msg);
+	{
+		if ( !msg.empty() )
+		{
+			cd->Send(msg);
+		}
+	}
 	else
+	{
 		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No Lootable Objects Found."));
+	}
 }
 
 void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType )
@@ -2171,7 +2205,8 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 		//Check Collisions
 		range = meele->GetRange();
-		victim = dynamic_cast<BioActor*>( zActorManager->CheckCollisions( actor, range, pBehavior->GetNearDynamicActors() ) );
+		victim = dynamic_cast<BioActor*>( pBehavior->RayVsMeshCollision(pActor, pActor->GetPosition() 
+			+ pActor->GetCameraOffset(), range, pBehavior->GetNearDynamicActors() ) );
 		
 		if(victim)
 		{
@@ -2689,7 +2724,7 @@ void Game::RestartGame()
 	this->zGameMode->StopGameMode();
 
 	//Debug
-	//SpawnAnimalsDebug();
+	SpawnAnimalsDebug();
 
 	//SpawnItemsDebug();
 	//SpawnAnimalsDebug();

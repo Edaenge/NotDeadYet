@@ -45,7 +45,15 @@ Actor::~Actor()
 
 void Actor::SetModel(const std::string& model) 
 {
-	this->zModel = model;
+	if ( zModel != model )
+	{
+		this->zModel = model;
+
+		// Notify Observers
+		ActorChangedModelEvent ACME;
+		ACME.zActor = this;
+		NotifyObservers(&ACME);
+	}
 }
 
 void Actor::SetPosition(const Vector3& pos)

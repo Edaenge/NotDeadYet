@@ -32,9 +32,9 @@ static const unsigned int VAR			= 5;
 
 //Spawn Random Drop every 10 min
 //static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
-static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
+static const float SPAWN_DROP_TIMER_MAX	= 20.0f;
 
-static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 2;
+static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 1;
 
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
@@ -124,7 +124,6 @@ void GameModeFFA::OnEvent( Event* e )
 					player->GetClientData()->Send(msg);
 				}
 
-				this->OnPlayerHumanDeath(pActor);
 			}
 			else
 			{
@@ -193,10 +192,13 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if (BioActorDeathEvent* BADE = dynamic_cast<BioActorDeathEvent*>(e))
 	{
+		if( !BADE->zActor )
+			return;
+
+		PlayerActor* pActor = dynamic_cast<PlayerActor*>(BADE->zActor);
+
 		if( zGameStarted )
 		{
-			PlayerActor* pActor = dynamic_cast<PlayerActor*>(BADE->zActor);
-
 			if( pActor )
 			{
 				Player* player = pActor->GetPlayer();
@@ -210,15 +212,21 @@ void GameModeFFA::OnEvent( Event* e )
 						Behavior* behavior = (*it)->GetBehavior();
 						if( behavior )
 						{
-							BioActor* bActor = dynamic_cast<BioActor*>(behavior->GetActor());
-							if( bActor && bActor->IsAlive() )
+							PlayerActor* pActor = dynamic_cast<PlayerActor*>(behavior->GetActor());
+							if( pActor && pActor->IsAlive() )
 							{
 								this->zAlivePlayers++;
 							}
 						}
 					}
 				}
+
 			}
+		}
+
+		if( pActor )
+		{
+			this->OnPlayerHumanDeath(pActor);
 		}
 
 		auto models = this->zGame->GetDeadActorModels();
@@ -272,7 +280,7 @@ void GameModeFFA::OnEvent( Event* e )
 					counter++;
 			}
 
-			if( counter > this->zPlayers.size() / 2)
+			if( counter >= this->zPlayers.size() / 2)
 			{
 				StartGameMode();
 			}
@@ -625,7 +633,6 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	Actor* newActor = NULL;
 	if( zGameStarted )
 	{
-		this->zAlivePlayers++;
 		//Create Spirit
 		Vector3 position = pActor->GetPosition();
 		Vector3 direction = pActor->GetDir();
@@ -840,6 +847,8 @@ bool GameModeFFA::StopGameMode()
 	}
 
 	this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX;
+	this->zAlivePlayers = 0;
+	this->zDeadActors.clear();
 
 
 	return true;
@@ -877,7 +886,7 @@ bool GameModeFFA::SpawnRandomDrop()
 	Vector2 posOne; 
 	Vector2 posTwo;
 	
-	const unsigned int NR_OF_ALIVE_PLAYERS = zAlivePlayers;
+	const unsigned int NR_OF_ALIVE_PLAYERS = this->zAlivePlayers;
 	unsigned int playerOne;
 	unsigned int playerTwo;
 
@@ -961,6 +970,7 @@ bool GameModeFFA::SpawnRandomDrop()
 	//No players?
 	else
 	{
+		MaloW::Debug("Supplier: No drop, No Players.");
 		return false;
 	}
 
@@ -1010,7 +1020,10 @@ bool GameModeFFA::SpawnRandomDrop()
 
 	//If not valid after checking x times, give up
 	if( !validLocation )
+	{
+		MaloW::Debug("Supplier: No drop, No Players.");
 		return false;
+	}
 
 	this->zSupplyDrop->SpawnAirbornSupplyDrop(spawnPos, 200.0f, items);
 

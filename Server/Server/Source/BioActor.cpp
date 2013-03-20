@@ -126,11 +126,11 @@ bool BioActor::TakeDamage(Damage& dmg, Actor* dealer)
 			this->SetPhysicsObject(NULL);
 		}
 
-		this->SetState(STATE_DEAD);
-
 		BioActorDeathEvent e;
 		e.zActor = this;
 		NotifyObservers(&e);
+
+		this->SetState(STATE_DEAD);
 	}
 	
 	return this->zAlive;
