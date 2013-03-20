@@ -132,7 +132,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	// Debug Functions
 	//this->SpawnItemsDebug();
-	this->SpawnAnimalsDebug();
+//	this->SpawnAnimalsDebug();
 	//this->SpawnHumanDebug();
 // Sun Direction
 	this->ResetSunDirection();
@@ -220,7 +220,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 2; i++)		
+	for(unsigned int i = 0; i < 10; i++)		
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);

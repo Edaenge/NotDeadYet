@@ -385,9 +385,10 @@ bool AIBearBehavior::Update( float dt )
 	//	
 	//}
 
+	std::set<Actor*> aSet = this->GetTargets();
 
-	auto i = this->GetTargets().begin();
-	for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
+	auto i = aSet.begin();
+	for(i = aSet.begin(); i != aSet.end(); i++)
 	{
 		xDistance = bActor->GetPosition().x - (*i)->GetPosition().x; //Math, could use optimization, I think.
 		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
