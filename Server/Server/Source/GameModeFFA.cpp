@@ -1168,6 +1168,12 @@ bool GameModeFFA::CheckEndCondition()
 		zGame->SendToAll(message);
 		return true;
 	}
+
+	else if( zPlayers.size() == 0 )
+	{
+		this->zGameEnd = true;
+		return true;
+	}
 	
 	return false;
 }
