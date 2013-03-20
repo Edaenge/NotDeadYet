@@ -60,7 +60,7 @@ void MaloWPerformance::PostMeasure( string perfName, int tier )
 void MaloWPerformance::GenerateReport()
 {
 	fstream writeFile;
-	writeFile.open (this->filePath, ios::out | ios::trunc);
+	writeFile.open ("Performance/" + this->filePath, ios::out | ios::trunc);
 	writeFile << "Performance report, times in milliseconds, IE 100 in the file = 0.1 seconds." << endl << endl;
 
 	for(int u = 0; u < NR_OF_TIERS; u++)

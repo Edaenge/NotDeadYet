@@ -59,8 +59,4 @@ public:
 
 	// Returns set of lootable actors
 	std::set<Actor*>& GetLootableActors();
-
-	/*! Checks if this actor collides with BioActors/WorldActors in the game using physics calculations.*/
-	Actor* CheckCollisions(Actor* actor, float& range);
-	Actor* CheckCollisions(Actor* actor, float& range, const std::set<Actor*>& actors);
 };

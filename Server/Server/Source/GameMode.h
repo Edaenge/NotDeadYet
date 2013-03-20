@@ -31,5 +31,5 @@ public:
 	virtual void OnEvent(Event* e) = 0;
 	virtual bool StartGameMode() = 0;
 	virtual bool StopGameMode() = 0;
-	virtual bool CanConnect( ClientData* cd ) {return true;}
+	virtual bool CanConnect( ClientData* ) { return true; }
 };

@@ -68,8 +68,6 @@ private:
 	float zIncrementFogEnclosement;
 	/*! Fog radius that is sent to the clients.*/
 	float zCurrentFogEnclosement;
-	/*! How Many players that are alive.*/
-	int zPlayersAlive;
 	/*! How often the fog is updated.*/
 	float zFogUpdateDelay;
 	/*! How much the percent decrease each update.*/
@@ -116,11 +114,6 @@ public:
 
 	//Return tru if the server is full.
 	bool IsFull() const;
-	// Fog Update when Living Players Change
-	void ModifyLivingPlayers(const int value);
-	
-	// Current count of living players
-	inline int GetLivingPlayers() const { return this->zPlayersAlive; }	
 
 	// Current Fog Enclosement
 	inline float GetFogEnclosement() const { return this->zCurrentFogEnclosement; }
