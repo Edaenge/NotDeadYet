@@ -115,6 +115,7 @@ bool SupplyDrop::SpawnAirbornSupplyDrop( Vector2& landPoint, float height, std::
 		delete spActor, spActor = NULL;
 		this->zPhyEngine->DeletePhysicsObject(phyOBj);
 
+		MaloW::Debug("SupplyDrop: Pos not inside world.");
 		return false;
 	}
 
