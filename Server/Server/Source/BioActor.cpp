@@ -163,6 +163,8 @@ void BioActor::SetState( const int state, const bool notify /*= true*/ )
 {
 	if (state != this->zState)
 	{
+		this->zPreviousState = this->zState;
+
 		this->zState = state;
 
 		if(notify)

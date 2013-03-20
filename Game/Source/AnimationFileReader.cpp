@@ -1,7 +1,9 @@
 #include "AnimationFileReader.h"
 #include <time.h>
+#include "MaloW.h"
 
 static const std::string ANIMATIONS		= "[Animations]";
+static const std::string ANIMATIONTIMES = "[AnimationTimes]";
 static const std::string BINDINGBONES	= "[BindingBones]";
 static const std::string MISCELLANEOUS	= "[Misc]";
 static const std::string END			= "#END";
@@ -53,6 +55,17 @@ bool AnimationFileReader::ReadFromFile()
 				TrimAndSet(line, key, value);
 
 				this->zAnimationNames[key] = value;
+			}
+		}
+		else if (line == ANIMATIONTIMES)
+		{
+			while (!read.eof() && line != END)
+			{
+				std::getline(read, line);
+
+				TrimAndSet(line, key, value);
+
+				this->zAnimationTimes[key] = MaloW::convertStringToFloat(value);
 			}
 		}
 		else if(line == BINDINGBONES)
@@ -130,4 +143,15 @@ const std::string& AnimationFileReader::GetBindingBone( const unsigned int bone 
 
 	static const std::string emptyString = "";
 	return emptyString;
+}
+
+const float AnimationFileReader::GetAnimationTime( const std::string& animationName )
+{
+	auto it = this->zAnimationTimes.find(animationName);
+
+	if (it != this->zAnimationTimes.end())
+		return it->second / 30.0f;
+
+	static const float zero = 0.0f;
+	return zero;
 }

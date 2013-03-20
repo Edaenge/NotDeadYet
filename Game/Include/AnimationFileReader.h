@@ -3,6 +3,7 @@
 #include "FileReader.h"
 #include <map>
 #include <Vector.h>
+#include <vector>
 
 enum ANIMATION_INFORMATION
 {
@@ -12,6 +13,16 @@ enum ANIMATION_INFORMATION
 	BONE_CAMERA_OFFSET,
 	MISC_CAMERA_OFFSET_VALUE,
 
+};
+
+struct AnimationQueue
+{
+	std::vector<std::string> zAnimations;
+	std::vector<float> zAnimationTimes;
+	bool empty()
+	{
+		return zAnimations.size() == 0 || zAnimationTimes.size() == 0;
+	}
 };
 
 static const std::string IDLE_O1			= "idle_01";
@@ -45,6 +56,8 @@ static const std::string MACHETE_IDLE_01	= "mach_idle_01";
 static const std::string MACHETE_IDLE_02	= "mach_idle_02";
 static const std::string PKNIFE_EQUIP		= "pknife_equip";
 
+static const std::string ANIMAL_ATTACK_01   = "attack_01";
+static const std::string ANIMAL_ATTACK_02	= "attack_02";
 static const std::string BUSY				= "idle_03";
 static const std::string DEAD				= "final_rest";
 static const std::string DEATH				= "death";
@@ -61,11 +74,13 @@ public:
 	unsigned int InterpCommand(const std::string& key);
 	const std::string& GetAnimation(const std::string& animationName) const;
 	const std::string& GetBindingBone(const unsigned int bone) const;
+	const float GetAnimationTime(const std::string& animationName);
 private:
 	std::string zFileName;
 
 	//Maps animation type with animation Name
 	std::map<std::string, std::string> zAnimationNames;
+	std::map<std::string, float> zAnimationTimes;
 	std::map<unsigned int, std::string> zBindingBones;
 	std::map<unsigned int, Vector3> zMiscStuff;
 };

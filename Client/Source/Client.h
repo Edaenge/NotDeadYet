@@ -290,3 +290,4 @@ private:
 	AnimationFileReader zAnimationFileReader[4];
 	MaloWPerformance* zPerf;
 };
+

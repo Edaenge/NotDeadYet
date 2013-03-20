@@ -370,13 +370,11 @@ void Client::InitGraphics(const std::string& mapName)
 		{
 			errorMessage = "Map: " + mapName + " Could be corrupt";
 		}
-		this->zEng->HideLoadingScreen();
 		this->CloseConnection(errorMessage);
 		return;
 	}
 	catch (...)
 	{
-		this->zEng->HideLoadingScreen();
 		this->CloseConnection("Map Not Found");
 		return;
 	}
@@ -2391,6 +2389,7 @@ void Client::UpdateHealthAndBleedingImage()
 
 void Client::CloseConnection(const std::string& reason)
 {
+	this->zEng->HideLoadingScreen();
 	//MaloW::Debug("Client Shutdown: " + reason);
 	this->AddDisplayText("Client Shutdown: " + reason, false);
 	//Todo Skriv ut vilket reason som gavs

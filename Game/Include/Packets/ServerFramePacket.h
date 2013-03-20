@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AnimationFileReader.h"
 #include "Packet.h"
 #include <Vector.h>
 #include <map>
@@ -13,7 +14,7 @@ public:
 	std::map< unsigned int, Vector3 > newScales;
 	std::map< unsigned int, unsigned int> newStates;
 	std::map<unsigned int, std::string> newMesh;
-	std::map<unsigned int, std::string> newAnimations;
+	std::map<unsigned int, AnimationQueue> newAnimQueue;
 
 	virtual ~ServerFramePacket() {}
 
@@ -51,15 +52,28 @@ public:
 			ss.write(reinterpret_cast<const char*>(&i->second), sizeof(i->second));
 		}
 
-		num = newAnimations.size();
+		num = newAnimQueue.size();
 		ss.write(reinterpret_cast<const char*>(&num), sizeof(size_t));
-		for( auto i = newAnimations.begin(); i != newAnimations.end(); ++i )
+		for (auto i = newAnimQueue.begin(); i != newAnimQueue.end(); ++i)
 		{
-			unsigned int size = i->second.length();
+			unsigned int size = 0;
 			ss.write(reinterpret_cast<const char*>(&i->first), sizeof(i->first));
-			ss.write(reinterpret_cast<const char*>(&size), sizeof(unsigned int));
-			ss.write(&i->second[0], i->second.length());
 
+			size_t vecSize = i->second.zAnimations.size();
+			ss.write(reinterpret_cast<const char*>(&vecSize), sizeof(size_t));
+			for(auto it = i->second.zAnimations.begin(); it != i->second.zAnimations.end(); it++)
+			{
+				size = (*it).length();
+				ss.write(reinterpret_cast<const char*>(&size), sizeof(unsigned int));
+				ss.write(&(*it)[0], (*it).length());
+			}
+			
+			vecSize = i->second.zAnimationTimes.size();
+			ss.write(reinterpret_cast<const char*>(&vecSize), sizeof(size_t));
+			for(auto it = i->second.zAnimationTimes.begin(); it != i->second.zAnimationTimes.end(); it++)
+			{
+				ss.write(reinterpret_cast<const char*>(&(*it)), sizeof(float));
+			}
 		}
 
 		num = newMesh.size();
@@ -117,15 +131,31 @@ public:
 		}
 
 		ss.read(reinterpret_cast<char*>(&num), sizeof(size_t));
-		for( unsigned int i = 0; i != num; i++)
+		for(unsigned int i = 0; i != num; i++)
 		{
 			std::string value;
+			AnimationQueue queue;
+			size_t vecSize = 0;
 			unsigned int size = 0;
 			ss.read(reinterpret_cast<char*>(&key), sizeof(unsigned int));
-			ss.read(reinterpret_cast<char*>(&size), sizeof(unsigned int));
-			value.resize(size);
-			ss.read(&value[0], size);
-			newAnimations[key] = value;
+
+			ss.read(reinterpret_cast<char*>(&vecSize), sizeof(size_t));
+			for (unsigned int i = 0; i != vecSize; i++)
+			{
+				ss.read(reinterpret_cast<char*>(&size), sizeof(unsigned int));
+				value.resize(size);
+				ss.read(&value[0], size);
+				queue.zAnimations.push_back(value);
+			}
+
+			ss.read(reinterpret_cast<char*>(&vecSize), sizeof(size_t));
+			for (unsigned int i = 0; i != vecSize; i++)
+			{
+				float fValue;
+				ss.read(reinterpret_cast<char*>(&fValue), sizeof(float));
+				queue.zAnimationTimes.push_back(fValue);
+			}
+			newAnimQueue[key] = queue;
 		}
 
 		ss.read(reinterpret_cast<char*>(&num), sizeof(size_t));
@@ -151,7 +181,7 @@ public:
 		size += newScales.size();
 		size += newStates.size();
 		size += newMesh.size();
-		size += newAnimations.size();
+		size += newAnimQueue.size();
 
 		if( size == 0)
 			return true;
