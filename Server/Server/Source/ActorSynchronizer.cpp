@@ -211,7 +211,7 @@ void ActorSynchronizer::OnEvent( Event* e )
 	{
 		this->zFrameData->newScales[USE->zActor->GetID()] = USE->zActor->GetScale();
 	}
-	else if (ActorMeshChangeEvent* AMCE = dynamic_cast<ActorMeshChangeEvent*>(e))
+	else if (ActorChangedModelEvent* AMCE = dynamic_cast<ActorChangedModelEvent*>(e))
 	{
 		this->zFrameData->newMesh[AMCE->zActor->GetID()] = AMCE->zActor->GetModel();
 	}

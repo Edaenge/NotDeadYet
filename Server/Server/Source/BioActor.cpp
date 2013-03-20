@@ -178,7 +178,7 @@ void BioActor::SetState( const int state, const bool notify /*= true*/ )
 	}
 }
 
-void BioActor::SetBleeding( const float levelBleeding, const bool notify /*= true*/ )
+void BioActor::SetBleeding( const float& levelBleeding, const bool notify /*= true*/ )
 {
 	if( levelBleeding != this->zBleedingLevel )
 	{
@@ -196,7 +196,7 @@ void BioActor::SetBleeding( const float levelBleeding, const bool notify /*= tru
 	}
 }
 
-void BioActor::SetHealth( const float health, const bool notify /*= true*/)
+void BioActor::SetHealth( const float& health, const bool notify /*= true*/)
 {
 	if(this->zHealth != health)
 	{
@@ -211,7 +211,7 @@ void BioActor::SetHealth( const float health, const bool notify /*= true*/)
 	}
 }
 
-void BioActor::SetStamina( const float stamina, const bool notify /*= true*/ )
+void BioActor::SetStamina( const float& stamina, const bool notify /*= true*/ )
 {
 	if(this->zStamina != stamina )
 	{

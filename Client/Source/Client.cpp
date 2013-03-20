@@ -157,18 +157,20 @@ Client::~Client()
 	this->zPerf->PreMeasure("Deleting Gui", 5);
 
 	//Close Gui's that are still open
-	if(this->zGuiManager->IsCraftOpen())
-		this->zGuiManager->ToggleCraftingGui();
+	if ( zGuiManager )
+	{
+		if(this->zGuiManager->IsCraftOpen())
+			this->zGuiManager->ToggleCraftingGui();
 
-	if (this->zGuiManager->IsInventoryOpen())
-		this->zGuiManager->ToggleInventoryGui();
+		if (this->zGuiManager->IsInventoryOpen())
+			this->zGuiManager->ToggleInventoryGui();
 
-	if (this->zGuiManager->IsLootingOpen())
-		this->zGuiManager->ToggleLootGui(0);
+		if (this->zGuiManager->IsLootingOpen())
+			this->zGuiManager->ToggleLootGui(0);
 
-	if(this->zGuiManager)
 		delete this->zGuiManager;
-
+	}
+	
 	if(this->zIgm)
 		delete this->zIgm;
 
