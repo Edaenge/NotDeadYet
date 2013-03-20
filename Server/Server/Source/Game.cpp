@@ -1090,14 +1090,18 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
-		auto i = zWorldActors.find(ERE->entity);
-		if ( i != zWorldActors.end() )
+		if ( zActorManager )
 		{
-			PhysicsObject* Pobj = i->second->GetPhysicsObject();
-			zPhysicsEngine->DeletePhysicsObject(Pobj);
-			i->second->SetPhysicsObject(NULL);
-			this->zActorManager->RemoveActor(i->second);
-			this->zWorldActors.erase(i);
+			auto i = zWorldActors.find(ERE->entity);
+			if ( i != zWorldActors.end() )
+			{
+				PhysicsObject* Pobj = i->second->GetPhysicsObject();
+				if ( Pobj ) zPhysicsEngine->DeletePhysicsObject(Pobj);
+				i->second->SetPhysicsObject(0);
+
+				if ( zActorManager ) this->zActorManager->RemoveActor(i->second);
+				this->zWorldActors.erase(i);
+			}
 		}
 	}
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
