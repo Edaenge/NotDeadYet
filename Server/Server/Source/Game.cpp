@@ -181,7 +181,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 1; i++)
+	for(unsigned int i = 0; i < 0; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -1596,11 +1596,21 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 								Inventory* inv = bioPlayerActor->GetInventory();
 								if ( inv )
 								{
-									inv->AddItem(new Food(*berry_temp));
-									bbActor->SetPicked(true);
+									Item* berries = new Food(*berry_temp);
+									if ( inv->AddItem(berries) )
+									{
+										bbActor->SetPicked(true);
+									}
+									else
+									{
+										delete berries;
+										cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory Full!"));
+									}
 								}
 							}
 						}
+
+						bLooted = true;
 					}
 				}
 				//Check if the Actor is an AnimalActor.
@@ -1644,10 +1654,18 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 			}
 		}
 	}
+
 	if (bLooted)
-		cd->Send(msg);
+	{
+		if ( !msg.empty() )
+		{
+			cd->Send(msg);
+		}
+	}
 	else
+	{
 		cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No Lootable Objects Found."));
+	}
 }
 
 void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType )
@@ -2688,7 +2706,7 @@ void Game::RestartGame()
 	this->zGameMode->StopGameMode();
 
 	//Debug
-	//SpawnAnimalsDebug();
+	SpawnAnimalsDebug();
 
 	//SpawnItemsDebug();
 	//SpawnAnimalsDebug();

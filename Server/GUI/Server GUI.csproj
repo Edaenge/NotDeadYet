@@ -73,10 +73,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Bin\Release\Server CLI.dll</HintPath>
     </Reference>
-    <Reference Include="Server CLID, Version=1.0.4826.36820, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Bin\Debug\Server CLID.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

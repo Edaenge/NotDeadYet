@@ -631,12 +631,14 @@ bool AIDeerBehavior::Update( float dt )
 	}
 	else if(this->GetMentalState() == AFRAID) //Is afraid, need to run.
 	{
+		//if( this->zIntervalCounter > 1.5 && this->GetIfNeedPath() == false )
 		if(this->GetIfNeedPath() == true)
 		{
 			this->SetIfNeedPath(false);
 			
-			if(nearbyPredatorsExist)
+			if(nearbyPredatorsExist && this->zIntervalCounter > 2.5)
 			{
+				this->zIntervalCounter = 0.0f;
 				this->zDestination = this->ExaminePathfindingArea();
 				
 				//this->zCurrentPath.clear();
@@ -702,12 +704,14 @@ bool AIDeerBehavior::Update( float dt )
 
 	//Move the animal along path.
 		this->zPreviousVelocity = dActor->GetVelocity();
+		Vector3 oldPos = dActor->GetPosition();
 		this->zPanic = false;
 		
 		//this->zPreviousPos = this->GetPosition();
 	
 		if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 || this->GetMentalState() == SUSPICIOUS && this->zCurrentPath.size() > 0)
 		{
+			
 			bool reachedNode = false;
 			if( (dActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && dActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( dActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && dActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
 			{
@@ -726,7 +730,7 @@ bool AIDeerBehavior::Update( float dt )
 
 			if(this->zCurrentPath.size() > 0)
 			{
-				dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_WALKING);
+				
 			
 				Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 				Vector3 direction = goal - dActor->GetPosition();
@@ -755,12 +759,14 @@ bool AIDeerBehavior::Update( float dt )
 			//	testInterval = 0;
 			//	dActor->SetPosition(Vector3(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y) );
 			//}
-
+			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_WALKING);
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 
 		}
 		else if(this->GetMentalState() == AGGRESSIVE  && this->zCurrentPath.size() > 0)
 		{
+			
+
 			bool reachedNode = false;
 			if( (dActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && dActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( dActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && dActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
 			{
@@ -802,10 +808,10 @@ bool AIDeerBehavior::Update( float dt )
 				dActor->SetVelocity(this->zPreviousVelocity + 100 * dt);
 			}*/
 			dActor->SetVelocity(this->zAttackingVelocity);
-
+			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
 			dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 
-			dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
+			
 
 		}
 		else if(this->GetMentalState() == AFRAID /*&& this->zCurrentPath.size() > 0*/)
@@ -863,7 +869,7 @@ bool AIDeerBehavior::Update( float dt )
 				testProperDirection.y = dActor->GetDir().z;
 				testProperDirection.Normalize();
 				dActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
-
+				dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
 				dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 				this->zCurrentDistanceFled += dt * dActor->GetVelocity();
 
@@ -875,7 +881,7 @@ bool AIDeerBehavior::Update( float dt )
 				testProperDirection.y = dActor->GetDir().z;
 				testProperDirection.Normalize();
 				dActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
-
+				dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
 				dActor->SetPosition(dActor->GetPosition() + dActor->GetDir() * dt * dActor->GetVelocity());
 				this->zCurrentDistanceFled += dt * dActor->GetVelocity();
 
@@ -909,11 +915,11 @@ bool AIDeerBehavior::Update( float dt )
 		}
 		
 		Vector3 actorPosition = dActor->GetPosition();
+		Vector3 currentPos = actorPosition;
 		actorPosition.y = groundHeight;
 		dActor->SetPosition(actorPosition);
 	
-
-	if(dActor->GetVelocity() == 0.0f)
+	if(oldPos == currentPos)
 	{
 		dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_IDLE);		
 	}
