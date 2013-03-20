@@ -74,7 +74,7 @@ void FootStepClient::PlaceFootStep( Actor* actor )
 	Vector2 printPos = actor->GetPosition().GetXZ();
 	Vector2 forwardDir = actor->GetPosition().GetXZ() - zLastPositions[actor];
 	forwardDir.Normalize();
-	Vector2 rightDir = Vector3(forwardDir.x, 0.0f, forwardDir.y).GetCrossProduct(Vector3(0.0f, 1.0f, 0.0f)).GetXZ();
+	Vector2 rightDir = Vector3(0.0f, 1.0f, 0.0f).GetCrossProduct(Vector3(forwardDir.x, 0.0f, forwardDir.y)).GetXZ();
 	rightDir.Normalize();
 
 	// Print Texture
@@ -89,12 +89,12 @@ void FootStepClient::PlaceFootStep( Actor* actor )
 		if ( !lastFoot )
 		{
 			name = "media/models/token_print_r.png";
-			printPos += rightDir;
+			printPos += rightDir * 0.2f;
 		}
 		else
 		{
 			name = "media/models/token_print_l.png";
-			printPos += Vector2(-rightDir.x, -rightDir.y);
+			printPos += Vector2(-rightDir.x, -rightDir.y) * 0.2f;
 		}
 
 		zLastFoot[actor] = (lastFoot+1) % 2;
@@ -157,19 +157,16 @@ void FootStepClient::OnEvent(Event* e)
 		if ( AEE->zActor->GetModel() == "media/models/token_anims.fbx" )
 		{
 			zLastPositions[AEE->zActor] = Vector2(0.0f, 0.0f);
+			AEE->zActor->AddObserver(this);
 		}
-
-		AEE->zActor->AddObserver(this);
 	}
 	else if ( ActorRemovedEvent* ARE = dynamic_cast<ActorRemovedEvent*>(e) )
 	{
-		// Stop observing
-		AEE->zActor->RemoveObserver(this);
-		
 		// Remove from map
 		auto i = zLastPositions.find(ARE->zActor);
 		if ( i != zLastPositions.cend() )
 		{
+			AEE->zActor->RemoveObserver(this);
 			zLastPositions.erase(i);
 		}
 	}
