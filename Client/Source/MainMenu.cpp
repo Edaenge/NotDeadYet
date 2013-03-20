@@ -91,7 +91,7 @@ void MainMenu::Init()
 		"media/models/branchesitem_01_v01.obj",
 		"media/models/supplycrate_01_v03.obj",
 		"media/models/berrybush/berrybush_01.obj",
-		"media/models/berrybush/berrybush_02.obj",
+		"media/models/berrybush/berrybush_02.obj"
 	};
 
 	eng->PreLoadResources(30, object);
