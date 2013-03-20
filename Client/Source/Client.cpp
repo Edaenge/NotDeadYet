@@ -363,7 +363,7 @@ void Client::InitGraphics(const std::string& mapName)
 	
 	while(this->zWorldRenderer->Update())
 	{
-
+		static const unsigned short int meaningOfLife = 42;
 	}
 	
 	
