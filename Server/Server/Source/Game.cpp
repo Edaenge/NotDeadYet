@@ -131,9 +131,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	//this->SpawnItemsDebug();
+	this->SpawnItemsDebug();
 //	this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+	this->SpawnHumanDebug();
 // Sun Direction
 	this->ResetSunDirection();
 
@@ -844,7 +844,8 @@ void Game::OnEvent( Event* e )
 						damage.piercing = 5.0f;
 						damage.slashing = 25.0f;
 					}
-					if(Actor* target = this->zActorManager->CheckCollisions(self, range))
+					if( Actor* target = it->RayVsMeshCollision(bActor, 
+						bActor->GetPosition() + bActor->GetCameraOffset(), range, it->GetNearDynamicActors()) )
 					{
 						BioActor* bActor = dynamic_cast<BioActor*>(target);
 						if(bActor->IsAlive())
@@ -2189,7 +2190,8 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 		//Check Collisions
 		range = meele->GetRange();
-		victim = dynamic_cast<BioActor*>( zActorManager->CheckCollisions( actor, range, pBehavior->GetNearDynamicActors() ) );
+		victim = dynamic_cast<BioActor*>( pBehavior->RayVsMeshCollision(pActor, pActor->GetPosition() 
+			+ pActor->GetCameraOffset(), range, pBehavior->GetNearDynamicActors() ) );
 		
 		if(victim)
 		{
