@@ -58,7 +58,6 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 	const unsigned int currState = bActor->GetState();
 	unsigned int prevState = bActor->GetPreviousState();
 	std::string animation = "";
-	std::string idle = "";
 	Item* item = NULL;
 	KeyStates keystates = bActor->GetPlayer()->GetKeys();
 
@@ -105,7 +104,7 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 					}
 					else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
 					{
-						animation = reader.GetAnimation(MACHETE_IDLE_01);
+						animation = reader.GetAnimation(PKNIFE_IDLE);
 
 						queue.zAnimations.push_back(animation);
 						queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
@@ -115,7 +114,7 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 				}
 				else if(item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
 				{
-					animation = reader.GetAnimation(MACHETE_IDLE_01);
+					animation = reader.GetAnimation(BOW_EQUIPPED_IDLE);
 
 					queue.zAnimations.push_back(animation);
 					queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
@@ -180,7 +179,7 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 					queue.zAnimations.push_back(animation);
 					queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
 
-					idle == MACHETE_IDLE_01;
+					bActor->SetPreviousAnimation(animation);
 				}
 				else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
 				{
@@ -189,7 +188,7 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 					queue.zAnimations.push_back(animation);
 					queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
 
-					idle = PKNIFE_IDLE;
+					bActor->SetPreviousAnimation(animation);
 				}
 			}
 			else if(item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
@@ -199,29 +198,8 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 				queue.zAnimations.push_back(animation);
 				queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
 
-				idle == BOW_EQUIPPED_IDLE;
-			}
-		}
-		if (prevState == STATE_IDLE)
-		{
-			std::string anim = reader.GetAnimation(idle);
-			if (anim != "")
-			{
-				queue.zAnimations.push_back(anim);
-				queue.zAnimationTimes.push_back(reader.GetAnimationTime(anim));
-
 				bActor->SetPreviousAnimation(animation);
 			}
-			else
-			{
-				queue.zAnimations.push_back(bActor->GetPreviousAnimation());
-				queue.zAnimationTimes.push_back(reader.GetAnimationTime(bActor->GetPreviousAnimation()));
-			}
-		}
-		else
-		{
-			queue.zAnimations.push_back(bActor->GetPreviousAnimation());
-			queue.zAnimationTimes.push_back(reader.GetAnimationTime(bActor->GetPreviousAnimation()));
 		}
 		break;
 	case STATE_UNEQUIP_WEAPON:
@@ -236,6 +214,8 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 
 					queue.zAnimations.push_back(animation);
 					queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
+
+					bActor->SetPreviousAnimation(animation);
 				}
 				else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
 				{
@@ -243,6 +223,8 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 
 					queue.zAnimations.push_back(animation);
 					queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
+
+					bActor->SetPreviousAnimation(animation);
 				}
 			}
 			else if(item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
@@ -251,28 +233,9 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 
 				queue.zAnimations.push_back(animation);
 				queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
-			}
-		}
-		if (prevState == STATE_IDLE)
-		{
-			std::string anim = reader.GetAnimation(IDLE_O1);
-			if (anim != "")
-			{
-				queue.zAnimations.push_back(anim);
-				queue.zAnimationTimes.push_back(reader.GetAnimationTime(anim));
 
 				bActor->SetPreviousAnimation(animation);
 			}
-			else
-			{
-				queue.zAnimations.push_back(bActor->GetPreviousAnimation());
-				queue.zAnimationTimes.push_back(reader.GetAnimationTime(bActor->GetPreviousAnimation()));
-			}
-		}
-		else
-		{
-			queue.zAnimations.push_back(bActor->GetPreviousAnimation());
-			queue.zAnimationTimes.push_back(reader.GetAnimationTime(bActor->GetPreviousAnimation()));
 		}
 		break;
 	case STATE_ATTACK:
