@@ -153,8 +153,6 @@ private:
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
 	bool CheckCollision();
 
-	void UpdateCameraOffset(unsigned int state);
-
 	//////////////////////
 	//					//
 	//	   Actors		//
@@ -268,9 +266,7 @@ private:
 	float zEnergy;
 	InGameGui* zIgg;
 	
-	Vector3 zMeshOffset;
-	std::map<std::string, Vector3> zMeshCameraOffsets;
-	std::map<unsigned int, Vector3> zStateCameraOffset;
+	std::map<std::string, std::string> zMeshfirstPersonMap;
 	
 	iText* zServerUpsText;
 	iText* zLatencyText;

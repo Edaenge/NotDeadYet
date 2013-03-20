@@ -38,16 +38,11 @@ Client::Client() :
 	this->zName		= GetPlayerSettings()->GetPlayerName();
 
 	//Temporary Ghost Model
-	this->zMeshCameraOffsets["media/models/ghost.obj"] = Vector3();
-	this->zMeshCameraOffsets["media/models/token_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
-	this->zMeshCameraOffsets["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
-	this->zMeshCameraOffsets["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 2.3f, 0.0f);
-	this->zMeshCameraOffsets["media/models/bear_anims.fbx"] = Vector3(0.0f, 1.5f, 0.0f);
-
-	this->zStateCameraOffset[STATE_IDLE] = Vector3(0.0f, 0.0f, 0.0f);
-	this->zStateCameraOffset[STATE_RUNNING] = Vector3(0.0f, 0.0f, 0.0f);
-	this->zStateCameraOffset[STATE_WALKING] = Vector3(0.0f, 0.0f, 0.0f);
-	this->zStateCameraOffset[STATE_CROUCHING] = Vector3(0.0f, 1.0f, 0.0f);
+	this->zMeshfirstPersonMap["media/models/ghost.obj"] = "media/models/ghost.obj";
+	this->zMeshfirstPersonMap["media/models/token_anims.fbx"] = "media/models/token_anims_fpp.fbx";
+	this->zMeshfirstPersonMap["media/models/deer_anims.fbx"] = "media/models/deer_anims.fbx";
+	this->zMeshfirstPersonMap["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.fbx";
+	this->zMeshfirstPersonMap["media/models/bear_anims.fbx"] = "media/models/bear_anims.fbx";
 
 	this->zAnimationFileReader[0] = AnimationFileReader("media/models/token_anims.cfg");
 	this->zAnimationFileReader[2] = AnimationFileReader("media/models/deer_anims.cfg");
@@ -151,9 +146,8 @@ Client::~Client()
 	if(this->zGameTimer)
 		delete this->zGameTimer;
 
-	this->zMeshCameraOffsets.clear();
-	this->zStateCameraOffset.clear();
-
+	this->zMeshfirstPersonMap.clear();
+	
 	this->zPerf->PreMeasure("Deleting Gui", 5);
 
 	//Close Gui's that are still open
@@ -1986,16 +1980,6 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		Actor* actor = this->zActorManager->GetActor(this->zID);
 		if (actor)
 		{
-			auto meshOffsetsIterator = this->zMeshCameraOffsets.find(actor->GetModel());
-			if (meshOffsetsIterator != this->zMeshCameraOffsets.end())
-			{
-				this->zMeshOffset = meshOffsetsIterator->second;
-			}
-			else
-			{
-				this->zMeshOffset = Vector3();
-			}
-			this->zActorManager->SetCameraOffset(this->zMeshOffset);
 			this->zCreated = true;
 
 			auto reader = this->zModelToReaderMap.find(actor->GetModel());
@@ -2006,7 +1990,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			}
 			else
 			{
-				this->zEng->GetCamera()->SetMesh(actor->GetMesh(), this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
+				this->zEng->GetCamera()->SetMesh(actor->GetMesh(), Vector3(), Vector3(0.0f, 0.0f, 1.0f));
 			}
 		}
 		else
@@ -2537,31 +2521,6 @@ void Client::HandleDisplayLootData(std::vector<std::string> msgArray, const unsi
 		this->zGuiManager->ToggleLootGui(ActorID);
 
 	this->zShowCursor = true;
-}
-
-void Client::UpdateCameraOffset(unsigned int state)
-{
-	//iMesh* mesh = NULL;
-	//Vector3 position = this->zEng->GetCamera()->GetPosition();
-	//if (Actor* actor = this->zActorManager->GetActor(this->zID))
-	//{
-	//	mesh = actor->GetMesh();
-	//}
-	//
-	//if (state == STATE_CROUCHING)
-	//{
-	//	auto cameraPos = this->zStateCameraOffset.find(state);
-
-	//	Vector3 offset = cameraPos->second;
-
-	//	//this->zEng->GetCamera()->SetMesh(mesh, offset, Vector3(0.0f, 0.0f, 1.0f));
-	//	//this->zActorManager->SetCameraOffset(offset);
-	//}
-	//else
-	//{
-	//	this->zEng->GetCamera()->SetMesh(mesh, this->zMeshOffset, Vector3(0.0f, 0.0f, 1.0f));
-	//	this->zActorManager->SetCameraOffset(this->zMeshOffset);
-	//}
 }
 
 void Client::UpdateText()

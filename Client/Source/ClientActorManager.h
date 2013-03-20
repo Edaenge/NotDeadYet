@@ -95,7 +95,6 @@ class ClientActorManager : public Observed
 	float zInterpolationVelocity;
 	int zUpdatesPerSec;
 	int zLatency;
-	Vector3 zCameraOffset;
 
 	Sound** zFootStepsOnGrass;
 	Sound** zFootStepsOnDirt;
@@ -128,8 +127,6 @@ public:
 	inline void SetFBXMapping(const std::map<std::string, AnimationFileReader>& map) { this->zModelToReaderMap = map; }
 	inline void SetLatency(const int& latency) { this->zLatency = latency; }
 	inline void SetUpdatesPerSec(const int& ups) { this->zUpdatesPerSec = ups; }
-	inline void SetCameraOffset(const Vector3& offset) { this->zCameraOffset = offset; }
-	inline const Vector3& GetCameraOffset() { return this->zCameraOffset; }
 
 	/*! Returns time Value depending on type
 	IT_LINEAR,
