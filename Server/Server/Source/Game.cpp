@@ -181,7 +181,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 1; i++)
+	for(unsigned int i = 0; i < 30; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -220,7 +220,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 1; i++)		
+	for(unsigned int i = 0; i < 30; i++)		
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -1034,6 +1034,16 @@ void Game::OnEvent( Event* e )
 
 								thePlayerActor->TakeDamage(idiotDamage,actor);
 							}
+							else if(theItem->GetItemType() == ITEM_TYPE_FOOD && theItem->GetItemSubType() == ITEM_SUB_TYPE_DEER_FOOD)
+							{
+								thePlayerActor->SetEnergy(thePlayerActor->GetEnergy() + 5.0f);
+							}
+							else if(theItem->GetItemType() == ITEM_TYPE_FOOD && theItem->GetItemSubType() == ITEM_SUB_TYPE_BEAR_FOOD)
+							{
+								thePlayerActor->SetEnergy(thePlayerActor->GetEnergy() + 20.0f);
+							}
+
+							
 							toBeRemoved = iActor;
 							bEaten = true;
 						}
