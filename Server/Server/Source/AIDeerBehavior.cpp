@@ -384,8 +384,10 @@ bool AIDeerBehavior::Update( float dt )
 
 	//Determine closest threat/target
 	
-	auto i = this->GetTargets().begin();
-	for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
+	std::set<Actor*> aSet = this->GetTargets();
+
+	auto i = aSet.begin();
+	for(i = aSet.begin(); i != aSet.end(); i++)
 	{
 		xDistance = dActor->GetPosition().x - (*i)->GetPosition().x; //Math, could use optimization, I think.
 		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
