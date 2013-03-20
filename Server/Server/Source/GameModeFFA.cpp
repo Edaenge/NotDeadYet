@@ -34,7 +34,7 @@ static const unsigned int VAR			= 5;
 //static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 
-static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 2;
+static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 1;
 
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
@@ -124,7 +124,6 @@ void GameModeFFA::OnEvent( Event* e )
 					player->GetClientData()->Send(msg);
 				}
 
-				this->OnPlayerHumanDeath(pActor);
 			}
 			else
 			{
@@ -193,10 +192,13 @@ void GameModeFFA::OnEvent( Event* e )
 	}
 	else if (BioActorDeathEvent* BADE = dynamic_cast<BioActorDeathEvent*>(e))
 	{
+		if( !BADE->zActor )
+			return;
+
+		PlayerActor* pActor = dynamic_cast<PlayerActor*>(BADE->zActor);
+
 		if( zGameStarted )
 		{
-			PlayerActor* pActor = dynamic_cast<PlayerActor*>(BADE->zActor);
-
 			if( pActor )
 			{
 				Player* player = pActor->GetPlayer();
@@ -218,7 +220,13 @@ void GameModeFFA::OnEvent( Event* e )
 						}
 					}
 				}
+
 			}
+		}
+
+		if( pActor )
+		{
+			this->OnPlayerHumanDeath(pActor);
 		}
 
 		auto models = this->zGame->GetDeadActorModels();
@@ -272,7 +280,7 @@ void GameModeFFA::OnEvent( Event* e )
 					counter++;
 			}
 
-			if( counter > this->zPlayers.size() / 2)
+			if( counter >= this->zPlayers.size() / 2)
 			{
 				StartGameMode();
 			}
@@ -625,7 +633,6 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 	Actor* newActor = NULL;
 	if( zGameStarted )
 	{
-		this->zAlivePlayers++;
 		//Create Spirit
 		Vector3 position = pActor->GetPosition();
 		Vector3 direction = pActor->GetDir();
@@ -840,6 +847,8 @@ bool GameModeFFA::StopGameMode()
 	}
 
 	this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX;
+	this->zAlivePlayers = 0;
+	this->zDeadActors.clear();
 
 
 	return true;
