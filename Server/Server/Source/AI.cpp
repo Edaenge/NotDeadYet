@@ -464,7 +464,6 @@ bool AI::Pathfinding(float startXPos, float startYPos, float goalXPos, float goa
 			valid = false;
 			add = false;
 
-			int nextNode = -1;
 			float nextX = x;
 			float nextY = y;
 

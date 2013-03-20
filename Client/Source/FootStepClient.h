@@ -16,6 +16,8 @@ class FootStepClient : public Observer
 	World* zWorld;
 
 	std::map<Actor*, Vector2> zLastPositions;
+	std::map<Actor*, unsigned int> zLastFoot;
+
 	std::set<Actor*> zActors;
 	std::set<std::pair<unsigned int, iDecal*>> zFootSteps;
 	unsigned int zCurrentDecal;

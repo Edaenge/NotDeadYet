@@ -40,12 +40,6 @@ public:
 	Actor *zActor;
 };
 
-class ActorMeshChangeEvent : public Event
-{
-public:
-	Actor* zActor;
-};
-
 class ProjectileArrowCollide : public Event
 {
 public:
@@ -56,5 +50,10 @@ class SupplyDropLanded : public Event
 {
 public:
 	Actor *zActor;
+};
 
+class ActorChangedModelEvent : public Event
+{
+public:
+	Actor* zActor;
 };

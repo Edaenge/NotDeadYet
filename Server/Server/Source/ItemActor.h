@@ -10,6 +10,9 @@
 
 class ItemActor : public Actor
 {
+private:
+	Item* zItem;
+
 public:
 
 	ItemActor(Item* item);
@@ -18,8 +21,5 @@ public:
 	inline Item* GetItem() const { return this->zItem; }
 	/*! Sets Item pointer to NULL.*/
 	inline void RemoveItem() {this->zItem = NULL;}
-	virtual const std::string GetModel() const;
-
-private:
-	Item* zItem;
+	virtual const std::string& GetModel() const;
 };

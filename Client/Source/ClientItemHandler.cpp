@@ -899,7 +899,7 @@ void Client::HandleAddInventoryItem(const std::vector<std::string>& msgArray)
 	bool stacked = false;
 	
 	Gui_Item_Data unstacked_Gid = this->MakeGID(item);
-	if (this->zPlayerInventory->AddItem(item, stacked))
+	if (this->zPlayerInventory->AddItem(item, &stacked))
 	{
 		if(stacked)
 		{

@@ -69,14 +69,14 @@ std::vector<Item*> Inventory::GetItems() const
 	return this->zItems;
 }
 
-bool Inventory::AddItem(Item* item, bool &stacked)
+bool Inventory::AddItem(Item* item, bool* outStacked)
 {
 	if (!item)
 		return false;
 
 	float weight = item->GetWeight();
 	int available_slots = this->CalcMaxAvailableSlots(item);
-	stacked = false;
+	if ( outStacked ) *outStacked = false;
 	
 	//No slots, return false
 	if( available_slots <= 0 )
@@ -115,7 +115,7 @@ bool Inventory::AddItem(Item* item, bool &stacked)
 
 			item->DecreaseStackSize(stack);
 
-			stacked = true;
+			if ( outStacked ) *outStacked = true;
 			this->zWeightTotal += weight * stack;
 			return true;
 		}
