@@ -85,32 +85,38 @@ void ActorManager::RemoveActor( Actor* actor )
 	if(!actor)
 		return;
 
-	if( SupplyActor* sActor =  dynamic_cast<SupplyActor*>(actor) )
+	// Find Actor
+	auto i = zActors.find(actor);
+	if ( i != zActors.cend() )
 	{
-		if( sActor->HasParachute() )
+		if( SupplyActor* sActor =  dynamic_cast<SupplyActor*>(actor) )
 		{
-			Actor* parachute = sActor->GetParachute();
-			RemoveActor(parachute);
+			if( sActor->HasParachute() )
+			{
+				Actor* parachute = sActor->GetParachute();
+				RemoveActor(parachute);
+			}
 		}
+
+		this->zActors.erase(actor);
+		this->zCollideableActors.erase(actor);
+		this->zLootableActors.erase(actor);
+
+		// Notify Observers
+		ActorRemovedEvent e;
+		e.zActor = actor;
+		NotifyObservers(&e);
+
+		// Collideable
+		if( actor->CanCollide() )
+		{
+			PhysicsObject* pObj = actor->GetPhysicsObject();
+			GetPhysics()->DeletePhysicsObject( pObj );
+			actor->SetPhysicsObject(NULL);
+		}
+
+		delete actor;
 	}
-
-	this->zActors.erase(actor);
-	this->zCollideableActors.erase(actor);
-	this->zLootableActors.erase(actor);
-
-	// Notify Observers
-	ActorRemovedEvent e;
-	e.zActor = actor;
-	NotifyObservers(&e);
-
-	if( actor->CanCollide() )
-	{
-		PhysicsObject* pObj = actor->GetPhysicsObject();
-		GetPhysics()->DeletePhysicsObject( pObj );
-		actor->SetPhysicsObject(NULL);
-	}
-
-	delete actor;
 } 
 
 void ActorManager::RemoveBehavior(Actor* actor, bool instantRemove)
