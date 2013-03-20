@@ -56,7 +56,7 @@ private:
 	FootStepClient* zFootSteps;
 
 public:
-	Client();
+	Client(std::string playerModel);
 	virtual ~Client();
 
 	/*! Connects to a Host with the specified parameters*/
@@ -200,6 +200,7 @@ protected:
 	virtual void OnEvent(Event* e);
 	
 private:
+	string zPlayerModel;
 	//Sound
 	IEventHandle* ambientMusic;
 

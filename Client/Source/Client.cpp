@@ -18,10 +18,12 @@ using namespace MaloW;
 // Timeout_value = 10 sek
 static const float TIMEOUT_VALUE = 10.0f;
 
-Client::Client() :
+Client::Client(std::string playerModel) :
 	zFootSteps(0)
 {
 	Messages::ClearDebug();
+
+	this->zPlayerModel = playerModel;
 
 	this->zID = 0;
 	this->zIP = "";
