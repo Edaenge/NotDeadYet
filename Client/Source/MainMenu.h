@@ -44,6 +44,8 @@ private:
 	void UpdateBackground(float dt);
 
 	void Resize();
+
+	void ResizeWallpapers();
 private:
 	GUISet*	zSets;
 	int		zNrOfSets;
@@ -55,7 +57,7 @@ private:
 	IEventHandle* menuClick;
 	IEventHandle* menuSound;
 
-	iImage* zBGScreens[BGSCREENSHOTS];
+	iImage* zBGScreens[BGSCREENSHOTS+1];
 	float zPause;
 	int zCurrentImage;
 	int zNextImage;

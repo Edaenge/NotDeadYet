@@ -11,6 +11,8 @@ Element::Element()
 	this->mWidth = 0;
 	this->mHeight = 0;
 
+	this->mRatio = 0;
+
 	this->mImage = NULL;
 }
 
@@ -24,7 +26,9 @@ Element::Element(float x, float y, float z, string textureName, float width, flo
 
 	this->mWidth = width;
 	this->mHeight = height;
-	
+
+	this->mRatio = 0;
+
 	this->mImage = NULL;
 }
 Element::~Element()
@@ -51,6 +55,19 @@ bool Element::RemoveFromRenderer(GraphicsEngine* ge)
 
 void Element::Resize(float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight)
 {
+	if(this->mRatio == 0)
+	{
+		this->SquareResize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
+	}
+	else
+	{
+		this->WidescreenResize(oldWindowWidth, oldWindowHeight, windowWidth, windowHeight);
+	}
+
+}
+
+void Element::SquareResize( float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight )
+{
 	float dx = ((float)windowHeight * 4.0f) / 3.0f;
 	float oldDx = ((float)oldWindowHeight * 4.0f) / 3.0f;
 	float oldOffSet = (float)(oldWindowWidth - oldDx) / 2.0f;
@@ -68,5 +85,9 @@ void Element::Resize(float oldWindowWidth, float oldWindowHeight, float windowWi
 		this->mImage->SetPosition(Vector2(this->mX, this->mY));
 		this->mImage->SetDimensions(Vector2(this->mWidth, this->mHeight));
 	}
+}
 
+void Element::WidescreenResize( float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight )
+{
+	return;
 }
