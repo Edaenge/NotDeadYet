@@ -755,7 +755,6 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerLootItemEvent* PLIE = dynamic_cast<PlayerLootItemEvent*>(e) )
 	{
-
 		if(zGameMode->IsGameStarted())
 		{	
 			if ( zPerf ) 
@@ -1238,15 +1237,21 @@ void Game::OnEvent( Event* e )
 	}
 	else if (InventoryBindPrimaryWeapon* IBPW = dynamic_cast<InventoryBindPrimaryWeapon*>(e))
 	{
-		this->HandleBindings(IBPW->ID, IBPW->model, IBPW->type, IBPW->subType);
+		this->HandleBindings(IBPW->ID, IBPW->item);
 	}
 	else if (InventoryUnBindPrimaryWeapon* IUBPW = dynamic_cast<InventoryUnBindPrimaryWeapon*>(e))
 	{
 		NetworkMessageConverter NMC;
 		std::string msg;
 
+		std::string model;
+		if (IUBPW->item->GetItemType() == ITEM_TYPE_WEAPON_RANGED && IUBPW->item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
+			model = "media/models/bow_anims.fbx";
+		else
+			model = IUBPW->item->GetModel();
+
 		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)IUBPW->ID);
-		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, IUBPW->model);
+		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 		this->SendToAll(msg);
 	}
 	else if (PrintDebugDataEvent* PDDE = dynamic_cast<PrintDebugDataEvent*>(e))
@@ -2552,14 +2557,20 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID )
 	}
 }
 
-void Game::HandleBindings(const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType)
+void Game::HandleBindings(const unsigned int ID, Item* item)
 {
 	std::string msg;
 	NetworkMessageConverter NMC;
+	std::string model;
 
-	if (type == ITEM_TYPE_WEAPON_RANGED)
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED && item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
+		model = "media/models/bow_anims.fbx";
+	else
+		model = item->GetModel();
+
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
 	{
-		if (subType == ITEM_SUB_TYPE_BOW)
+		if (item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
 		{
 			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
@@ -2567,16 +2578,16 @@ void Game::HandleBindings(const unsigned int ID, const std::string& model, const
 			this->SendToAll(msg);
 		}
 	}
-	else if (type == ITEM_TYPE_WEAPON_MELEE)
+	else if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
 	{
-		if (subType == ITEM_SUB_TYPE_MACHETE)
+		if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
 		{
 			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
 		}
-		else if (subType == ITEM_SUB_TYPE_POCKET_KNIFE)
+		else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
 		{
 			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
@@ -2584,7 +2595,7 @@ void Game::HandleBindings(const unsigned int ID, const std::string& model, const
 			this->SendToAll(msg);
 		}
 	}
-	else if (type == ITEM_TYPE_PROJECTILE && subType == ITEM_SUB_TYPE_ROCK)
+	else if (item->GetItemType() == ITEM_TYPE_PROJECTILE && item->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
 	{
 		msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);

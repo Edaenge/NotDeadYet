@@ -36,7 +36,7 @@ static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 
 static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 1;
 
-#define DEBUGGING false
+#define DEBUGGING true
 
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
