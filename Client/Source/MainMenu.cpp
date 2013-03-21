@@ -123,12 +123,14 @@ void MainMenu::Init()
 		"media/models/stoneItem_01_v01.obj",
 		"media/mapmodels/WaterGrass_01.obj",
 		"media/models/supplycrate_01_v03.obj",
-		"media/models/branchesitem_01_v01.obj",
+		"media/models/Branches_Small_01.obj",
+		"media/models/Branches_Medium_01.obj",
+		"media/models/Branches_Large_01.obj",
 		"media/models/berrybush/berrybush_01.obj",
 		"media/models/berrybush/berrybush_02.obj"
 	};
 
-	eng->PreLoadResources(39, object);
+	eng->PreLoadResources(41, object);
 
 	Element* temp;
 
