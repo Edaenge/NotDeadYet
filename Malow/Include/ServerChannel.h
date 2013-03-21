@@ -25,9 +25,6 @@ namespace MaloW
 	private:
 		Process* zNotifier;
 
-	protected:
-		void CloseSpecific();
-
 	public:
 		ServerChannel(MaloW::Process* observerProcess);
 		virtual ~ServerChannel();
