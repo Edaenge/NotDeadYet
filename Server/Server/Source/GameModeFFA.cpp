@@ -22,7 +22,7 @@
 static const unsigned int WEAPON_MIN	= 1;
 static const unsigned int WEAPON_MAX	= 2;
 
-static const unsigned int MISC_MAX		= 3;
+static const unsigned int MISC_MAX		= 4;
 static const unsigned int MISC_MIN		= 2;
 
 static const unsigned int MATERIAL_MAX	= 4;
@@ -36,7 +36,7 @@ static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 
 static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 1;
 
-#define DEBUGGING false
+#define DEBUGGING true
 
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
@@ -794,7 +794,7 @@ bool GameModeFFA::StartGameMode()
 		}
 
 		Vector3 pos = this->zGame->CalcPlayerSpawnPoint(increment++, nrOfPlayers, 10.0f, Vector3(center.x, 0.0f, center.y));
-
+		
 		actor->SetPosition(pos);
 		actor->SetEnergy(0);
 
@@ -1101,7 +1101,7 @@ std::set<Item*> GameModeFFA::GenerateItems()
 	for (unsigned int i = 0; i < misc; i++)
 	{
 		Item* item = NULL;
-		unsigned int nr = rand() % 3;
+		unsigned int nr = rand() % 4;
 
 		if( nr == 0 )
 		{
@@ -1123,6 +1123,10 @@ std::set<Item*> GameModeFFA::GenerateItems()
 			{
 				item = new Bandage( *GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT) );
 			}
+		}
+		else if( nr == 3)
+		{
+			item = new Projectile( *GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW) );
 		}
 
 		if(item)

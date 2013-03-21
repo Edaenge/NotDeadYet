@@ -279,6 +279,15 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		{
 			fbxMesh->SetAnimationQueue(queueNames, queueTimes, size);
 		}
+		if (queue.zAnimations[0].find("arch_") == 0)
+		{
+			iFBXMesh* subMesh = dynamic_cast<iFBXMesh*>(actor->GetSubMesh("media/models/bow_anims.fbx"));
+
+			if (subMesh)
+			{
+				subMesh->SetAnimationQueue(queueNames, queueTimes, size);
+			}
+		}
 	}
 
 	auto it_mesh_end = SFP->newMesh.end();

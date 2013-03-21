@@ -144,8 +144,7 @@ private:
 	bool HandleDrinkWater(ClientData* cd);
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID);
-	void HandleBindings(const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType);
-
+	void HandleBindings(const unsigned int ID, Item* item);
 	// Game Stuff
 	void UpdateSunDirection(float dt);
 	void UpdateFogEnclosement(float dt);
