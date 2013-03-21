@@ -181,7 +181,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 6; i++)
+	for(unsigned int i = 0; i < 0; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -220,7 +220,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 2; i++)		
+	for(unsigned int i = 0; i < 1; i++)		
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -755,7 +755,6 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( PlayerLootItemEvent* PLIE = dynamic_cast<PlayerLootItemEvent*>(e) )
 	{
-
 		if(zGameMode->IsGameStarted())
 		{	
 			if ( zPerf ) 
@@ -821,7 +820,16 @@ void Game::OnEvent( Event* e )
 	}
 	else if(PlayerDrinkWaterEvent* PDWE = dynamic_cast<PlayerDrinkWaterEvent*>(e))
 	{
-		this->HandleDrinkWater(PDWE->clientData);
+		if(	this->HandleDrinkWater(PDWE->clientData))
+		{
+			if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PDWE->clientData]->zBehavior->GetActor()))
+			{
+				bActor->SetAction("Drink water", 4.7f);
+				bActor->SetState(STATE_USE);
+				this->zPlayers[PDWE->clientData]->zBehavior->Sleep(4.7f);
+			}
+		}
+		
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
@@ -1238,15 +1246,21 @@ void Game::OnEvent( Event* e )
 	}
 	else if (InventoryBindPrimaryWeapon* IBPW = dynamic_cast<InventoryBindPrimaryWeapon*>(e))
 	{
-		this->HandleBindings(IBPW->ID, IBPW->model, IBPW->type, IBPW->subType);
+		this->HandleBindings(IBPW->ID, IBPW->item);
 	}
 	else if (InventoryUnBindPrimaryWeapon* IUBPW = dynamic_cast<InventoryUnBindPrimaryWeapon*>(e))
 	{
 		NetworkMessageConverter NMC;
 		std::string msg;
 
+		std::string model;
+		if (IUBPW->item->GetItemType() == ITEM_TYPE_WEAPON_RANGED && IUBPW->item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
+			model = "media/models/bow_anims.fbx";
+		else
+			model = IUBPW->item->GetModel();
+
 		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)IUBPW->ID);
-		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, IUBPW->model);
+		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 		this->SendToAll(msg);
 	}
 	else if (PrintDebugDataEvent* PDDE = dynamic_cast<PrintDebugDataEvent*>(e))
@@ -2421,7 +2435,7 @@ bool Game::HandleFillItem(ClientData* cd, const unsigned int itemID)
 	return false;
 }
 
-void Game::HandleDrinkWater( ClientData* cd )
+bool Game::HandleDrinkWater( ClientData* cd )
 {
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
@@ -2429,9 +2443,12 @@ void Game::HandleDrinkWater( ClientData* cd )
 	float hydration = pActor->GetHydration() + 15.0f;
 	
 	if (hydration > pActor->GetHydrationMax())
+	{
 		hydration = pActor->GetHydrationMax();
+	}
 	
 	pActor->SetHydration( hydration );
+	return true;
 
 }
 
@@ -2552,14 +2569,20 @@ void Game::HandleUnEquipItem( ClientData* cd, unsigned int itemID )
 	}
 }
 
-void Game::HandleBindings(const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType)
+void Game::HandleBindings(const unsigned int ID, Item* item)
 {
 	std::string msg;
 	NetworkMessageConverter NMC;
+	std::string model;
 
-	if (type == ITEM_TYPE_WEAPON_RANGED)
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED && item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
+		model = "media/models/bow_anims.fbx";
+	else
+		model = item->GetModel();
+
+	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
 	{
-		if (subType == ITEM_SUB_TYPE_BOW)
+		if (item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
 		{
 			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
@@ -2567,16 +2590,16 @@ void Game::HandleBindings(const unsigned int ID, const std::string& model, const
 			this->SendToAll(msg);
 		}
 	}
-	else if (type == ITEM_TYPE_WEAPON_MELEE)
+	else if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
 	{
-		if (subType == ITEM_SUB_TYPE_MACHETE)
+		if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
 		{
 			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
 		}
-		else if (subType == ITEM_SUB_TYPE_POCKET_KNIFE)
+		else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
 		{
 			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
@@ -2584,12 +2607,22 @@ void Game::HandleBindings(const unsigned int ID, const std::string& model, const
 			this->SendToAll(msg);
 		}
 	}
-	else if (type == ITEM_TYPE_PROJECTILE && subType == ITEM_SUB_TYPE_ROCK)
+	else if (item->GetItemType() == ITEM_TYPE_PROJECTILE)
 	{
-		msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
-		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
-		msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
-		this->SendToAll(msg);
+		if (item->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
+		else if (item->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
 	}
 }
 
@@ -2731,7 +2764,7 @@ void Game::RestartGame()
 	//Debug
 
 	//SpawnItemsDebug();
-	//SpawnAnimalsDebug();
+	SpawnAnimalsDebug();
 	//SpawnHumanDebug();
 
 	this->ResetSunDirection();

@@ -50,6 +50,7 @@ Client::Client(std::string playerModel) :
 	this->zAnimationFileReader[3] = AnimationFileReader("media/models/bear_anims.cfg");
 
 	this->zModelToReaderMap["media/models/token_anims.fbx"] = zAnimationFileReader[0];
+	this->zModelToReaderMap["media/models/token_anims_fpp.fbx"] = zAnimationFileReader[0];
 	this->zModelToReaderMap["media/models/deer_anims.fbx"] = zAnimationFileReader[2];
 	this->zModelToReaderMap["media/models/bear_anims.fbx"] = zAnimationFileReader[3];
 
@@ -255,8 +256,10 @@ void Client::Update()
 		this->zGuiManager->Update(this->zDeltaTime);
 	this->zPerf->PostMeasure("Gui Updates", 3);
 
-	this->zIgg->Update(this->zHealth, this->zHunger, this->zHydration);
-
+	if(this->zIgg)
+	{
+		this->zIgg->Update(this->zHealth, this->zHunger, this->zHydration);
+	}
 	// Anchors with the world to decide what to render.
 	if(zWorld)
 	{
@@ -281,7 +284,7 @@ void Client::Update()
 
 	//	this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
-
+	
 	if(this->zHealth > 0.0f)
 	{
 		this->UpdateHealthAndBleedingImage();

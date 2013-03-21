@@ -38,7 +38,8 @@ ServerListener::ServerListener( Process *observer, const unsigned int &port ) :
 
 ServerListener::~ServerListener()
 {
-	if ( zListenSocket ) closesocket(zListenSocket);
+	if ( zListenSocket ) 
+		closesocket(zListenSocket);
 
 	this->Close();
 	this->WaitUntillDone();

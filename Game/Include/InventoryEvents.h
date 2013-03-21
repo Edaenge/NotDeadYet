@@ -15,7 +15,7 @@ class InventoryRemoveItemEvent : public Event
 public:
 	virtual ~InventoryRemoveItemEvent() {}
 
-	unsigned int ID;
+	Item* item;
 };
 
 class InventoryEquipItemEvent : public Event
@@ -23,8 +23,7 @@ class InventoryEquipItemEvent : public Event
 public:
 	virtual ~InventoryEquipItemEvent() {}
 
-	unsigned int id;
-	unsigned int slot;
+	Item* item;
 };
 
 class InventoryUnEquipItemEvent : public Event
@@ -32,8 +31,7 @@ class InventoryUnEquipItemEvent : public Event
 public:
 	virtual ~InventoryUnEquipItemEvent() {}
 
-	unsigned int id;
-	unsigned int slot;
+	Item* item;
 };
 
 class InventoryBindPrimaryWeapon : public Event
@@ -41,10 +39,8 @@ class InventoryBindPrimaryWeapon : public Event
 public:
 	virtual ~InventoryBindPrimaryWeapon() {}
 
-	std::string model;
+	Item* item;
 	unsigned int ID;
-	unsigned int type;
-	unsigned int subType;
 };
 
 class InventoryUnBindPrimaryWeapon : public Event
@@ -52,6 +48,6 @@ class InventoryUnBindPrimaryWeapon : public Event
 public:
 	virtual ~InventoryUnBindPrimaryWeapon() {}
 
-	std::string model;
+	Item* item;
 	unsigned int ID;
 };

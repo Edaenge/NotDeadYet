@@ -19,12 +19,12 @@ void Client::AddActor( NewActorPacket* NAP )
 			//Creates a Mesh from the given Filename
 			if (model.length() > 4)
 			{
-				//if (this->zID == ID)
-				//{
-				//	auto it = this->zMeshfirstPersonMap.find(model);
-				//	if (it != this->zMeshfirstPersonMap.end())
-				//		model = it->second;
-				//}
+				if (this->zID == ID)
+				{
+					auto it = this->zMeshfirstPersonMap.find(model);
+					if (it != this->zMeshfirstPersonMap.end())
+						model = it->second;
+				}
 				std::string substring = model.substr(model.length() - 4);
 				if (substring == ".obj")
 				{
@@ -278,6 +278,15 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 		if (fbxMesh)
 		{
 			fbxMesh->SetAnimationQueue(queueNames, queueTimes, size);
+		}
+		if (queue.zAnimations[0].find("arch_") == 0)
+		{
+			iFBXMesh* subMesh = dynamic_cast<iFBXMesh*>(actor->GetSubMesh("media/models/bow_anims.fbx"));
+
+			if (subMesh)
+			{
+				subMesh->SetAnimationQueue(queueNames, queueTimes, size);
+			}
 		}
 	}
 

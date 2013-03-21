@@ -34,7 +34,7 @@ void Player::OnEvent( Event* e)
 	else if (InventoryRemoveItemEvent* IRIE = dynamic_cast<InventoryRemoveItemEvent*>(e))
 	{
 		NetworkMessageConverter NMC;
-		std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)IRIE->ID);
+		std::string msg = NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)IRIE->item->GetID());
 
 		this->zClient->Send(msg);
 	}
@@ -42,16 +42,32 @@ void Player::OnEvent( Event* e)
 	{
 		NetworkMessageConverter NMC;
 
-		std::string msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)IEIE->id);
-		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)IEIE->slot);
+		unsigned int slot = 10;
+		if (IEIE->item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
+			slot = EQUIPMENT_SLOT_RANGED_WEAPON;
+		else if(IEIE->item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
+			slot = EQUIPMENT_SLOT_MELEE_WEAPON;
+		else if(IEIE->item->GetItemType() == ITEM_TYPE_PROJECTILE)
+			slot = EQUIPMENT_SLOT_PROJECTILE;
+
+		std::string msg = NMC.Convert(MESSAGE_TYPE_EQUIP_ITEM, (float)IEIE->item->GetID());
+		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)slot);
 		this->zClient->Send(msg);
 	}
 	else if (InventoryUnEquipItemEvent* IUIE = dynamic_cast<InventoryUnEquipItemEvent*>(e))
 	{
 		NetworkMessageConverter NMC;
 
-		std::string msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)IUIE->id);
-		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)IUIE->slot);
+		unsigned int slot = 10;
+		if (IUIE->item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
+			slot = EQUIPMENT_SLOT_RANGED_WEAPON;
+		else if(IUIE->item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
+			slot = EQUIPMENT_SLOT_MELEE_WEAPON;
+		else if(IUIE->item->GetItemType() == ITEM_TYPE_PROJECTILE)
+			slot = EQUIPMENT_SLOT_PROJECTILE;
+
+		std::string msg = NMC.Convert(MESSAGE_TYPE_UNEQUIP_ITEM, (float)IUIE->item->GetID());
+		msg += NMC.Convert(MESSAGE_TYPE_EQUIPMENT_SLOT, (float)slot);
 		this->zClient->Send(msg);
 	}
 	else if (InventoryBindPrimaryWeapon* IBPW = dynamic_cast<InventoryBindPrimaryWeapon*>(e))
@@ -61,25 +77,25 @@ void Player::OnEvent( Event* e)
 		if (!pActor)
 			return;
 
-		if (IBPW->type == ITEM_TYPE_WEAPON_RANGED)
+		if (IBPW->item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
 		{
-			if (IBPW->subType == ITEM_SUB_TYPE_BOW)
+			if (IBPW->item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
 			{
 				pActor->SetState(STATE_EQUIP_WEAPON);
 			}
 		}
-		else if (IBPW->type == ITEM_TYPE_WEAPON_MELEE)
+		else if (IBPW->item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
 		{
-			if (IBPW->subType == ITEM_SUB_TYPE_MACHETE)
+			if (IBPW->item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
 			{
 				pActor->SetState(STATE_EQUIP_WEAPON);
 			}
-			else if (IBPW->subType == ITEM_SUB_TYPE_POCKET_KNIFE)
+			else if (IBPW->item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
 			{
 				pActor->SetState(STATE_EQUIP_WEAPON);
 			}
 		}
-		else if (IBPW->type == ITEM_TYPE_PROJECTILE && IBPW->subType == ITEM_SUB_TYPE_ROCK)
+		else if (IBPW->item->GetItemType() == ITEM_TYPE_PROJECTILE && IBPW->item->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
 		{
 			
 		}
@@ -111,7 +127,7 @@ void Player::OnEvent( Event* e)
 					}
 					else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
 					{
-
+						pActor->SetState(STATE_UNEQUIP_WEAPON);
 					}
 				}
 			}

@@ -46,7 +46,6 @@ bool PlayerGhostBehavior::Update( float dt )
 
 	}
 	
-
 	// Calc the movement vector
 	moveDir += currentPlayerDir * (float)(keyStates.GetKeyState(KEY_FORWARD) - //if KEY_BACKWARD then currentPlayerDir inverse 
 		keyStates.GetKeyState(KEY_BACKWARD));
@@ -57,7 +56,16 @@ bool PlayerGhostBehavior::Update( float dt )
 
 	moveDir *= 10.0f;
 
-	this->zVelocity += moveDir * dt;
+	if(moveDir == Vector3(0.0f, 0.0f, 0.0f))
+	{
+		this->zVelocity = Vector3(0.0f, 0.0f, 0.0f);
+	}
+	else
+	{
+		this->zVelocity += moveDir * dt;
+	}
+
+	
 
 	if(this->zVelocity.GetLength() > MAX_VELOCITY)
 	{

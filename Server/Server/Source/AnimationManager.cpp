@@ -149,10 +149,13 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 		else
 			break;
 
-		queue.zAnimations.push_back(animation);
-		queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
+		if(bActor->GetPreviousAnimation() != animation)
+		{
+			queue.zAnimations.push_back(animation);
+			queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
 
-		bActor->SetPreviousAnimation(animation);
+			bActor->SetPreviousAnimation(animation);
+		}
 		break;
 	case STATE_WALKING:
 		if(keystates.GetKeyState(KEY_FORWARD))
@@ -290,8 +293,12 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 				queue.zAnimations.push_back(animation);
 				queue.zAnimationTimes.push_back(it->second.GetAnimationTime(animation));
 
-				queue.zAnimations.push_back(bActor->GetPreviousAnimation());
-				queue.zAnimationTimes.push_back(it->second.GetAnimationTime(bActor->GetPreviousAnimation()));
+				animation = it->second.GetAnimation(BOW_EQUIPPED_IDLE);
+
+				queue.zAnimations.push_back(animation);
+				queue.zAnimationTimes.push_back(it->second.GetAnimationTime(animation));
+
+				bActor->SetPreviousAnimation(animation);
 			}
 		}
 		break;

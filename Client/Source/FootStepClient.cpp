@@ -81,7 +81,7 @@ void FootStepClient::PlaceFootStep( Actor* actor )
 	const char* name = 0;
 
 	// Make Prints
-	if ( actor->GetModel() == "media/models/token_anims.fbx" )
+	if ( actor->GetModel() == "media/models/token_anims.fbx" || actor->GetModel() == "media/models/token_anims_fpp.fbx")
 	{
 		unsigned int lastFoot = zLastFoot[actor];
 
