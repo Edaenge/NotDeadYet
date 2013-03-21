@@ -754,10 +754,10 @@ void MainMenu::StartGameWithIPField()
 	bool result = false;
 	try
 	{
-		string lPlayerModel = "FEMALEMODEL";
+		string lPlayerModel = "media/models/token_anims.fbx";
 		if(this->zSets[GETIPADRESS].GetCheckBox("MaleCheckBox")->GetOn() == true)
 		{
-			lPlayerModel = "MALEMODEL";
+			lPlayerModel = "media/models/token_anims.fbx";
 		}
 		result = zGame->InitGameClient(temp, 11521, lPlayerModel);	 // Save to connect IP
 	}
