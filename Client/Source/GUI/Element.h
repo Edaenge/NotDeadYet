@@ -31,10 +31,14 @@ private:
 	float mWidth;
 	float mHeight;
 	
+	float mRatio;
+
 	string mTextureName;
 
 	iImage* mImage;
 
+	void SquareResize(float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight);
+	void WidescreenResize(float oldWindowWidth, float oldWindowHeight, float windowWidth, float windowHeight);
 public:
 	Element();
 	Element(float x, float y, float z, string textureName, float width, float height);
@@ -71,6 +75,9 @@ public:
 	void SetImage(iImage* image){ this->mImage = image; }
 	/*! Saves the image in the parameter*/
 	iImage* GetImage(){ return this->mImage; }
+
+	void SetRatio(float value){ this->mRatio = value; }
+	float GetRatio(){ return this->mRatio; }
 
 	/*! Adds the element to the renderer*/
 	virtual bool AddToRenderer(GraphicsEngine* ge);
