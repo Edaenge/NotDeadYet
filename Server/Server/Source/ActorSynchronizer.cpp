@@ -10,6 +10,7 @@
 #include "AnimationFileReader.h"
 #include <time.h>
 #include "ActorManager.h"
+#include "AnimalActor.h"
 
 ActorSynchronizer::ActorSynchronizer()
 {
@@ -42,7 +43,10 @@ void ActorSynchronizer::AddAnimation(BioActor* bActor)
 
 	if(bActor->GetPlayer() != NULL)
 	{
-		queue = this->zAnimManager->CreatePlayerAnimationQueue(bActor);
+		if (dynamic_cast<AnimalActor*>(bActor))
+			queue = this->zAnimManager->CreateAnimalAnimationQueue(bActor);
+		else
+			queue = this->zAnimManager->CreatePlayerAnimationQueue(bActor);
 	}
 	else
 	{
