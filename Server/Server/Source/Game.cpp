@@ -821,7 +821,16 @@ void Game::OnEvent( Event* e )
 	}
 	else if(PlayerDrinkWaterEvent* PDWE = dynamic_cast<PlayerDrinkWaterEvent*>(e))
 	{
-		this->HandleDrinkWater(PDWE->clientData);
+		if(	this->HandleDrinkWater(PDWE->clientData))
+		{
+			if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PDWE->clientData]->zBehavior->GetActor()))
+			{
+				bActor->SetAction("Drink water", 4.7f);
+				bActor->SetState(STATE_USE);
+				this->zPlayers[PDWE->clientData]->zBehavior->Sleep(4.7f);
+			}
+		}
+		
 	}
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
@@ -2421,7 +2430,7 @@ bool Game::HandleFillItem(ClientData* cd, const unsigned int itemID)
 	return false;
 }
 
-void Game::HandleDrinkWater( ClientData* cd )
+bool Game::HandleDrinkWater( ClientData* cd )
 {
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
@@ -2429,9 +2438,12 @@ void Game::HandleDrinkWater( ClientData* cd )
 	float hydration = pActor->GetHydration() + 15.0f;
 	
 	if (hydration > pActor->GetHydrationMax())
+	{
 		hydration = pActor->GetHydrationMax();
+	}
 	
 	pActor->SetHydration( hydration );
+	return true;
 
 }
 

@@ -141,7 +141,7 @@ private:
 	void HandleUseWeapon(ClientData* cd, unsigned int itemID);
 	bool HandleCraftItem(ClientData* cd, const unsigned int itemType, const unsigned int itemSubType);
 	bool HandleFillItem(ClientData* cd, const unsigned int itemID);
-	void HandleDrinkWater(ClientData* cd);
+	bool HandleDrinkWater(ClientData* cd);
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleBindings(const unsigned int ID, const std::string& model, const unsigned int type, const unsigned int subType);
