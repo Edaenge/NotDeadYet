@@ -34,7 +34,7 @@ cbuffer EveryStrip
 	matrix worldMatrixInverseTranspose;
 	bool textured;
 
-	float4 AmbientLight; //**tillman opt - används inte
+	float4 AmbientLight; //unused
 	float SpecularPower;
 	float4 SpecularColor;
 	float4 DiffuseColor;
@@ -148,5 +148,6 @@ technique11 BasicTech
 
 		SetDepthStencilState( EnableDepth, 0 );
 	    SetRasterizerState( NoCulling );
+		SetBlendState(NoBlend, float4( 0.0f, 0.0f, 0.0f, 0.0f ), 0xFFFFFFFF );
     }  
 }
