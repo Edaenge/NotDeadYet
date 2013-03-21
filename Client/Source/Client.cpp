@@ -50,6 +50,7 @@ Client::Client(std::string playerModel) :
 	this->zAnimationFileReader[3] = AnimationFileReader("media/models/bear_anims.cfg");
 
 	this->zModelToReaderMap["media/models/token_anims.fbx"] = zAnimationFileReader[0];
+	this->zModelToReaderMap["media/models/token_anims_fpp.fbx"] = zAnimationFileReader[0];
 	this->zModelToReaderMap["media/models/deer_anims.fbx"] = zAnimationFileReader[2];
 	this->zModelToReaderMap["media/models/bear_anims.fbx"] = zAnimationFileReader[3];
 
