@@ -32,7 +32,7 @@ static const unsigned int VAR			= 5;
 
 //Spawn Random Drop every 10 min
 //static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
-static const float SPAWN_DROP_TIMER_MAX	= 20.0f;
+static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 
 static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 1;
 
