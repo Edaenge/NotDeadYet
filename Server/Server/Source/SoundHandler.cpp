@@ -14,6 +14,8 @@ SoundHandler::SoundHandler(Game* game, ActorManager* actorManager) :
 {
 	zGame->AddObserver(this);
 	zActorManager->AddObserver(this);
+
+	srand((unsigned int)time(0));
 }
 
 SoundHandler::~SoundHandler()
@@ -155,7 +157,6 @@ void SoundHandler::OnEvent( Event* e )
 				NetworkMessageConverter NMC;
 				std::string msg;
 			
-				srand(time(NULL));
 				int sound = rand() % 4;
 
 				if(sound == 0)

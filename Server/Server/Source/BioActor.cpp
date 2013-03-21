@@ -63,7 +63,6 @@ void BioActor::SetAction(const std::string& actionName, float seconds)
 	zActionTimeStarted = std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now());
 	zActionTimeLength = std::chrono::microseconds((long long)(seconds * 1000000.0f));
 	zCurrentAction = actionName;
-	this->SetState(STATE_BUSY);
 }
 
 const std::string& BioActor::GetCurrentAction()
@@ -163,6 +162,8 @@ void BioActor::SetState( const int state, const bool notify /*= true*/ )
 {
 	if (state != this->zState)
 	{
+		this->zPreviousState = this->zState;
+
 		this->zState = state;
 
 		if(notify)

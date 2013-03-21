@@ -352,7 +352,6 @@ bool AIBearBehavior::Update( float dt )
 	int shortestDistance = 99999;
 
 	float xDistance = 0.0f;
-	float yDistance = 0.0f;
 	float zDistance = 0.0f;
 	float finalDistance = 0.0f;
 
@@ -385,9 +384,10 @@ bool AIBearBehavior::Update( float dt )
 	//	
 	//}
 
+	std::set<Actor*> aSet = this->GetTargets();
 
-	auto i = this->GetTargets().begin();
-	for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
+	auto i = aSet.begin();
+	for(i = aSet.begin(); i != aSet.end(); i++)
 	{
 		xDistance = bActor->GetPosition().x - (*i)->GetPosition().x; //Math, could use optimization, I think.
 		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
@@ -616,7 +616,6 @@ bool AIBearBehavior::Update( float dt )
 			//}
 
 			xDistance = 0;
-			yDistance = 0;
 			zDistance = 0;
 			float distance;
 			float shortestDistance = 99999;

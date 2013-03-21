@@ -1016,13 +1016,16 @@ void WorldRenderer::GenerateGrass(const Vector2UINT& sectorCoords)
 			grassPos.x += rand() * rndMaxInv * 2.0f * minMaxDistX - minMaxDistX;
 			grassPos.y += rand() * rndMaxInv * 2.0f * minMaxDistZ - minMaxDistZ;
 
-			try
+			if ( zWorld->IsInside(grassPos) )
 			{
-				terrainY = zWorld->CalcHeightAtWorldPos(grassPos);
-			}
-			catch (...)
-			{
-				continue;
+				try
+				{
+					terrainY = zWorld->CalcHeightAtWorldPos(grassPos);
+				}
+				catch (...)
+				{
+					continue;
+				}
 			}
 
 			//Always set variables using random to ensure same pattern.

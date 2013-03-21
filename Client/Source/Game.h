@@ -20,7 +20,7 @@ class Game
 		Game();
 		/*! Creates a Client that connects to the IP and Port in the Parameters.
 			The function will start the thread if succeeded.*/
-		bool InitGameClient(const std::string &IP, const unsigned int &port);
+		bool InitGameClient(const std::string &IP, const unsigned int &port, const std::string &playerModel);
 		/*! Initialize the sounds.
 			It will read and load all sounds.
 		*/

@@ -177,6 +177,9 @@
     <ClCompile Include="Source\FootStepServer.cpp">
       <Filter>Source\Handlers</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AnimationManager.cpp">
+      <Filter>Source\Handlers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\PhysicsEngine\Physics.h">
@@ -351,6 +354,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\FootStepServer.h">
+      <Filter>Source\Handlers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimationManager.h">
       <Filter>Source\Handlers</Filter>
     </ClInclude>
   </ItemGroup>

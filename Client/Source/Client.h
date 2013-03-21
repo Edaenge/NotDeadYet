@@ -56,7 +56,7 @@ private:
 	FootStepClient* zFootSteps;
 
 public:
-	Client();
+	Client(std::string playerModel);
 	virtual ~Client();
 
 	/*! Connects to a Host with the specified parameters*/
@@ -153,8 +153,6 @@ private:
 	/*! Checks PlayerMesh vs WorldMesh Collision*/
 	bool CheckCollision();
 
-	void UpdateCameraOffset(unsigned int state);
-
 	//////////////////////
 	//					//
 	//	   Actors		//
@@ -200,6 +198,7 @@ protected:
 	virtual void OnEvent(Event* e);
 	
 private:
+	string zPlayerModel;
 	//Sound
 	IEventHandle* ambientMusic;
 
@@ -268,9 +267,7 @@ private:
 	float zEnergy;
 	InGameGui* zIgg;
 	
-	Vector3 zMeshOffset;
-	std::map<std::string, Vector3> zMeshCameraOffsets;
-	std::map<unsigned int, Vector3> zStateCameraOffset;
+	std::map<std::string, std::string> zMeshfirstPersonMap;
 	
 	iText* zServerUpsText;
 	iText* zLatencyText;
@@ -289,3 +286,4 @@ private:
 	AnimationFileReader zAnimationFileReader[4];
 	MaloWPerformance* zPerf;
 };
+

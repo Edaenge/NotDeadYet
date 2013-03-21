@@ -41,7 +41,7 @@ CraftingReader::CraftingReader()
 {
 	if(!this->ReadFromFile())
 	{
-		CraftedTypes* craft_Bow = new CraftedTypes(ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW, "Media/Icons/Bow_Icon_Temp.png");
+		CraftedTypes* craft_Bow = new CraftedTypes(ITEM_TYPE_WEAPON_RANGED, ITEM_SUB_TYPE_BOW, "media/icons/bow_icon.png");
 
 		std::map<unsigned int, unsigned int> Bow_Materials;
 		Bow_Materials[ITEM_SUB_TYPE_MEDIUM_STICK] = 4;
@@ -49,13 +49,13 @@ CraftingReader::CraftingReader()
 		this->zMappedTypesToMaterialsReq[craft_Bow] = Bow_Materials;
 		this->zCraftingList.push_back(craft_Bow);
 
-		CraftedTypes* craft_Arrow = new CraftedTypes(ITEM_TYPE_PROJECTILE, ITEM_SUB_TYPE_ARROW, "Media/Icons/Arrow_Icon_Temp.png");
+		CraftedTypes* craft_Arrow = new CraftedTypes(ITEM_TYPE_PROJECTILE, ITEM_SUB_TYPE_ARROW, "media/icons/arrow_icon.png");
 		std::map<unsigned int, unsigned int> Arrow_Materials;
 		Arrow_Materials[ITEM_SUB_TYPE_SMALL_STICK] = 2;
 		this->zMappedTypesToMaterialsReq[craft_Arrow] = Arrow_Materials;
 		this->zCraftingList.push_back(craft_Arrow);
 
-		CraftedTypes* craft_Bandage = new CraftedTypes(ITEM_TYPE_BANDAGE, ITEM_SUB_TYPE_BANDAGE_POOR, "Media/Icons/Poor_Bandage_Icon_Temp.png");
+		CraftedTypes* craft_Bandage = new CraftedTypes(ITEM_TYPE_BANDAGE, ITEM_SUB_TYPE_BANDAGE_POOR, "media/icons/poor_bandage_icon_temp.png");
 		std::map<unsigned int, unsigned int> Bandage_Materials;
 		Bandage_Materials[ITEM_SUB_TYPE_DISENFECTANT_LEAF] = 1;
 		Bandage_Materials[ITEM_SUB_TYPE_THREAD] = 1;

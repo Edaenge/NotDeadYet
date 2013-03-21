@@ -23,6 +23,9 @@ namespace MaloW
 		// Running Process
 		virtual void Life();
 
+		// Specific Close
+		virtual void CloseSpecific();
+
 		friend ClientChannel;
 	};
 }

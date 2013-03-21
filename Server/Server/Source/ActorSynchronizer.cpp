@@ -11,19 +11,19 @@
 #include <time.h>
 #include "ActorManager.h"
 
-
 ActorSynchronizer::ActorSynchronizer()
 {
 	this->zFrameData = new ServerFramePacket();
 	this->zActorData = new NewActorPacket();
 
-	srand((unsigned int)time(0));
+	this->zAnimManager = new AnimationManager();
 }
 
 ActorSynchronizer::~ActorSynchronizer()
 {
 	SAFE_DELETE(this->zFrameData);
 	SAFE_DELETE(this->zActorData);
+	SAFE_DELETE(this->zAnimManager);
 
 	auto it_phys_end = this->zIndividualPhysicalConditions.end();
 	for ( auto it = this->zIndividualPhysicalConditions.begin(); it != it_phys_end; it++ )
@@ -38,163 +38,19 @@ ActorSynchronizer::~ActorSynchronizer()
 
 void ActorSynchronizer::AddAnimation(BioActor* bActor)
 {
-	std::string animation;
-	Player* player = bActor->GetPlayer();
-	unsigned int state = bActor->GetState();
-	float fRand = 0.0f;
-	if(player != NULL)
+	AnimationQueue queue;
+
+	if(bActor->GetPlayer() != NULL)
 	{
-		Item* item = NULL;
-		KeyStates keys = player->GetKeys();
-
-		switch (state)
-		{
-		case STATE_IDLE_WEAPON:
-			item = bActor->GetInventory()->GetLastUnequipped();
-			if (item)
-			{
-				if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
-				{
-					if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
-					{
-						animation = MACHETE_IDLE_01;
-						break;
-					}
-					else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
-					{
-					}
-				}
-				else if(item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
-				{
-				}
-			}
-		case STATE_IDLE:
-
-			fRand = (float)rand() / (float)RAND_MAX;
-
-			if (fRand > 0.0f && fRand <= 0.16f)//High Chance 16%
-				animation = IDLE_O1;
-			else if (fRand > 0.16f && fRand <= 0.26f)//Medium Chance 10%
-				animation = IDLE_O2;
-			else if (fRand > 0.27f && fRand <= 0.31f)//Low Chance 4%
-				animation = IDLE_O3;
-			else if (fRand > 0.31f && fRand <= 0.58f)//Very High Chance 27%
-				animation = IDLE_O4;
-			else if (fRand > 0.58f && fRand <= 0.85f)//Very High Chance 27%
-				animation = IDLE_O5;
-			else if (fRand > 0.85f && fRand <= 1.0f)//High Chance 16%
-				animation = IDLE_O6;
-
-			break;
-		case STATE_WALKING:
-			if(keys.GetKeyState(KEY_FORWARD))
-				animation = JOG_FORWARD;
-			else if (keys.GetKeyState(KEY_BACKWARD))
-				animation = JOG_BACKWARD;
-			else if(keys.GetKeyState(KEY_LEFT))
-				animation = JOG_LEFT;
-			else if (keys.GetKeyState(KEY_RIGHT))
-				animation = JOG_RIGHT;
-			break;
-		case STATE_CROUCHING:
-			if(keys.GetKeyState(KEY_FORWARD))
-				animation = WALK_FORWARD;
-			else if (keys.GetKeyState(KEY_BACKWARD))
-				animation = WALK_BACKWARD;
-			else if(keys.GetKeyState(KEY_LEFT))
-				animation = WALK_LEFT;
-			else if (keys.GetKeyState(KEY_RIGHT))
-				animation = WALK_RIGHT;
-			break;
-		case STATE_RUNNING:
-			animation = SPRINT;
-			break;
-		case STATE_EQUIP_WEAPON:
-			item = bActor->GetInventory()->GetPrimaryEquip();
-			if (item)
-			{
-				if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
-				{
-					if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
-					{
-						animation = MACHETE_EQUIP;
-					}
-					else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
-					{
-						animation = PKNIFE_EQUIP;
-					}
-				}
-				else if(item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
-				{
-					animation = BOW_EQUIP;
-				}
-			}
-			break;
-		case STATE_UNEQUIP_WEAPON:
-			item = bActor->GetInventory()->GetLastUnequipped();
-			if (item)
-			{
-				if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
-				{
-					if (item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
-					{
-						animation = MACHETE_UNEQUIP_01;
-					}
-					else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
-					{
-
-					}
-				}
-				else if(item->GetItemType() == ITEM_TYPE_WEAPON_RANGED)
-				{
-					animation = BOW_UNEQUIP;
-				}
-			}
-			break;
-		case STATE_BUSY:
-			animation = BUSY;
-			break;
-		case STATE_DEAD:
-			animation = IDLE_O1;
-			break;
-		default:
-			animation = "";
-			break;
-		}
+		queue = this->zAnimManager->CreatePlayerAnimationQueue(bActor);
 	}
 	else
 	{
-		switch (state)
-		{
-		case STATE_WALKING:
-			animation = WALK_FORWARD;
-			break;
-		case STATE_RUNNING:
-			animation = SPRINT;
-			break;
-		case STATE_IDLE:
-			fRand = (float)rand() / (float)RAND_MAX;
-
-			if (fRand > 0.0f && fRand <= 0.5f)//Very High Chance 50%
-				animation = IDLE_O1;
-			else if (fRand > 0.5f && fRand <= 0.66f)//Medium Chance 10%
-				animation = IDLE_O2;
-			else if (fRand > 0.66f && fRand <= 0.83f)//Medium Chance 4%
-				animation = IDLE_O3;
-			else if (fRand > 0.83f && fRand <= 1.0f)//Medium Chance 27%
-				animation = IDLE_O4;
-			break;
-		case STATE_DEAD:
-			animation = DEATH;
-			break;
-		default:
-			animation = "";
-			break;
-		}
+		queue = this->zAnimManager->CreateAnimalAnimationQueue(bActor);
 	}
 
-	if (animation != "")
-		this->zFrameData->newAnimations[bActor->GetID()] = animation;
+	if (!queue.empty())
+		this->zFrameData->newAnimQueue[bActor->GetID()] = queue;
 }
 
 void ActorSynchronizer::OnEvent( Event* e )

@@ -11,7 +11,21 @@ MainMenu::MainMenu()
 	this->zGame			= new Game();
 	this->zPrimarySet	= MAINMENU;
 	this->zSecondarySet = NOMENU;
-
+	float width = GetGraphics()->GetEngineParameters().WindowWidth;
+	float height = GetGraphics()->GetEngineParameters().WindowHeight;
+	string filePath = "";
+	string ending = ".png";
+	for(int i = 0; i < BGSCREENSHOTS; i++)
+	{
+		filePath = "media/screens/ScreenShot" + MaloW::convertNrToString(i+1) + ending;
+		this->zBGScreens[i] = GetGraphics()->CreateImage(Vector2(0.0f, 0.0f), Vector2(width, height), filePath.c_str());
+		this->zBGScreens[i]->SetStrata(800.0f);
+		this->zBGScreens[i]->SetOpacity(0.0f);
+	}
+	this->zPause = PAUSEBETWEENIMAGES;
+	this->zCurrentImage = 0;
+	this->zNextImage = 1;
+	this->zBGScreens[this->zCurrentImage]->SetOpacity(1.0f);
 }
 
 MainMenu::~MainMenu()
@@ -29,6 +43,11 @@ MainMenu::~MainMenu()
 	menuSound = NULL;
 
 	AudioManager::ReleaseInstance();
+	for(int i = 0; i < BGSCREENSHOTS; i++)
+	{
+		GetGraphics()->DeleteImage(this->zBGScreens[i]);
+		this->zBGScreens[i] = NULL;
+	}
 }
 
 void MainMenu::Init()
@@ -42,12 +61,13 @@ void MainMenu::Init()
 	}
 
 	AudioManager* am = AudioManager::GetInstance();
+	am->SetVolume(EVENTCATEGORY_NOTDEADYET_MASTER_MUSIC, 0.2f);
+	am->SetVolume(EVENTCATEGORY_NOTDEADYET_MASTER_SOUND, 0.2f);
 	am->GetEventHandle(EVENTID_NOTDEADYET_MENU_N_BACKPACK_TOGGLE_N_CLICK, menuClick);
-	menuClick->Setvolume(0.2f);
-
+	
 	am->GetEventHandle(EVENTID_NOTDEADYET_MUSIC_LOADING, menuSound);
-	menuSound->Setvolume(0.2f);
 	menuSound->Play();
+
 	GraphicsEngine* eng = GetGraphics();
 
 	eng->CreateSkyBox("Media/skymap.dds");
@@ -64,49 +84,50 @@ void MainMenu::Init()
 	const char* object[] = {
 		"media/mapmodels/bush_01.ani",
 		"media/mapmodels/bush_02.ani",
-		"media/mapmodels/bern_02.ani",
+		"media/mapmodels/fern_02.ani",
 		"media/mapmodels/tree_01.ani",
 		"media/mapmodels/tree_02.ani",
+		"media/mapmodels/tree_03.ani",
+		"media/mapmodels/tree_04.ani",
 		"media/mapmodels/grassplant_01.ani",
 		"media/mapmodels/watergrass_02.ani",
 		"media/models/ghost.obj",
 		"media/mapmodels/deer.obj",
 		"media/models/bow_v01.obj",
-		"media/models/temp_guy.obj",
 		"media/mapmodels/target.obj",
+		"media/models/bear_dead.obj",
+		"media/models/deer_dead.obj",
 		"media/models/arrow_v01.obj",
 		"media/models/deer_temp.obj",
 		"media/models/canteen_01.obj",
+		"media/models/token_dead.obj",
+		"media/models/Thread_v01.obj",
 		"media/models/supplyaddon.obj",
 		"media/mapmodels/stone_01.obj",
 		"media/mapmodels/stone_02.obj",
 		"media/mapmodels/stone_03.obj",
 		"media/mapmodels/veins_01.obj",
 		"media/models/machete_v01.obj",
+		"media/models/hitbox_token.obj",
+		"media/models/firstaid_bad.obj",
+		"media/models/firstaid_good.obj",
 		"media/models/armyration_v01.obj",
 		"media/models/campfire_01_v01.obj",
 		"media/models/pocketknife_v02.obj",
 		"media/mapmodels/bush_misc_01.obj",
 		"media/models/stoneItem_01_v01.obj",
-		"media/models/branchesitem_01_v01.obj",
+		"media/mapmodels/WaterGrass_01.obj",
 		"media/models/supplycrate_01_v03.obj",
+		"media/models/branchesitem_01_v01.obj",
 		"media/models/berrybush/berrybush_01.obj",
 		"media/models/berrybush/berrybush_02.obj"
 	};
 
-	eng->PreLoadResources(30, object);
+	eng->PreLoadResources(39, object);
 
 	Element* temp;
 
 	//MAINMENU
-	#if defined(DEBUG) || defined(_DEBUG)
-	temp = new SimpleButton(0, 0,  1.0f, "Media/Menu/MainMenu/DevButton.png", 
-		(150.0f / 1024.0f) * dx, (25.0f / 768.0f) * windowHeight, new ChangeSetEvent(NOMENU), 
-		"Media/Menu/MainMenu/DevButtonClick.png", "Media/Menu/MainMenu/DevButtonOver.png",
-		0, 0, (150.0f / 1024.0f) * dx, (25.0f / 768.0f) * windowHeight);
-	zSets[MAINMENU].AddElement(temp);
-	#endif
-
 	temp = new GUIPicture(offSet + (150.0f / 1024.0f) * dx, (0.0f / 768.0f) * windowHeight, 1, "Media/Menu/MainMenu/MainMenuLogo.png", 
 		(765.0f / 1024.0f) * dx, (360.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
@@ -150,6 +171,24 @@ void MainMenu::Init()
 		"Media/Menu/ConnectMenu/Connect.png", (111.0f / 1024.0f) * dx, (28.0f / 768.0f) * windowHeight, 
 		new ChangeTextAndMenuEvent(MAINMENU, "IPAdress"), "Media/Menu/ConnectMenu/ConnectPress.png", "Media/Menu/ConnectMenu/ConnectOver.png", AdressX + (348.0f / 1024.0f) * dx
 		, AdressY + (104.0f / 768.0f) * windowHeight, (111.0f / 1024.0f) * dx, (28.0f / 768.0f) * windowHeight);
+	zSets[GETIPADRESS].AddElement(temp);
+
+	temp = new CheckBox(AdressX + (20.0f / 1024.0f) * dx, AdressY + (102.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/CheckBoxFrame.png", 
+		(32.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, "Media/Menu/Options/CheckBoxCheck.png", true, 
+		new ChangeOptionEvent("male", "true"), "MaleCheckBox");
+	zSets[GETIPADRESS].AddElement(temp);
+
+	temp = new CheckBox(AdressX + (130.0f / 1024.0f) * dx, AdressY + (102.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/CheckBoxFrame.png", 
+		(32.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, "Media/Menu/Options/CheckBoxCheck.png", false, 
+		new ChangeOptionEvent("female", "false"), "FemaleCheckBox");
+	zSets[GETIPADRESS].AddElement(temp);
+
+	temp = new GUIPicture(AdressX + (53.0f / 1024.0f) * dx, AdressY + (104.0f / 768.0f) * windowHeight, 1, 
+		"Media/Menu/ConnectMenu/Male_Text.png", (75.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
+	zSets[GETIPADRESS].AddElement(temp);
+
+	temp = new GUIPicture(AdressX + (163.0f / 1024.0f) * dx, AdressY + (104.0f / 768.0f) * windowHeight, 1, 
+		"Media/Menu/ConnectMenu/Female_Text.png", (75.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight);
 	zSets[GETIPADRESS].AddElement(temp);
 
 	//Options Menu
@@ -276,12 +315,30 @@ void MainMenu::Init()
 		(71.0f / 1024.0f) * dx, (29.0f / 650.0f) * windowHeight);
 	zSets[OPTIONS].AddElement(temp);
 
+	//Sound tech
+	//Master volume
+	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(20), 
+		"MasterVolume", 1.0f, 2, NR);
+	zSets[OPTIONS].AddElement(temp);
+
+	//Music Volume
+	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(20), 
+		"MusicVolume", 1.0f, 2, NR);
+	zSets[OPTIONS].AddElement(temp);
+
+	//Normal Volume
+	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(20), 
+		"NormalVolume", 1.0f, 2, NR);
+	zSets[OPTIONS].AddElement(temp);
 
 	this->zPrimarySet = MAINMENU;
 	this->zSecondarySet = NOMENU;
 }
 
-void MainMenu::StartTestRun()
+/*void MainMenu::StartTestRun()
 {
 	bool result = false;
 	try
@@ -290,7 +347,7 @@ void MainMenu::StartTestRun()
 		//result = zGame->InitGameClient("194.47.150.16", 11521); //server
 		//result = zGame->InitGameClient("194.47.150.20", 11521); //Simon
 		//result = zGame->InitGameClient("194.47.150.12", 11521); //Christopher
-		result = zGame->InitGameClient("127.0.0.1", 11521); // Local
+		result = zGame->InitGameClient("127.0.0.1", 11521, "temp"); // Local
 	}
 	catch (NetworkException e)
 	{
@@ -320,205 +377,207 @@ void MainMenu::StartTestRun()
 	if (result)
 		zGame->Run();
 	
-}
+}*/
 
 void MainMenu::Run()
 {
-	bool proModeOrNot = true; // CHANGE HERE!!!!!!!
-	if(!proModeOrNot)
+	zSets[zPrimarySet].AddSetToRenderer(GetGraphics());
+	GraphicsEngine* eng = GetGraphics();
+	eng->StartRendering();
+
+	//eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.0f, 0.0f, 0.0f);
+	bool run = true;
+
+	eng->GetCamera()->SetUpdateCamera(false);
+	eng->GetKeyListener()->SetCursorVisibility(true);
+	eng->Update();
+
+	Vector2 mousePos;
+	GUIEvent* retEvent = NULL;
+	while(run)
 	{
-		this->StartTestRun();
-	}
-	else
-	{
-		zSets[zPrimarySet].AddSetToRenderer(GetGraphics());
-		GraphicsEngine* eng = GetGraphics();
-		eng->StartRendering();
-
-		//eng->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 0.0f, 0.0f, 0.0f, 0.0f);
-		bool run = true;
-
-		eng->GetCamera()->SetUpdateCamera(false);
-		eng->GetKeyListener()->SetCursorVisibility(true);
-		eng->Update();
-
-		Vector2 mousePos;
-		GUIEvent* retEvent = NULL;
-		while(run)
+		float dt = eng->Update();
+		this->UpdateBackground(dt);
+		mousePos = GetGraphics()->GetKeyListener()->GetMousePosition();
+		if(mousePos.x != -1 || mousePos.y != -1)
 		{
-			eng->Update();
-			mousePos = GetGraphics()->GetKeyListener()->GetMousePosition();
-			if(mousePos.x != -1 || mousePos.y != -1)
+			//Try to get an event from buttons, if no event from main set try second.
+			retEvent = zSets[this->zPrimarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
+			if(retEvent == NULL)
+				retEvent = zSets[this->zSecondarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
+
+			if(retEvent != NULL)
 			{
-				//Try to get an event from buttons, if no event from main set try second.
-				retEvent = zSets[this->zPrimarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
-				if(retEvent == NULL)
-					retEvent = zSets[this->zSecondarySet].UpdateAndCheckCollision(mousePos.x, mousePos.y, eng->GetKeyListener()->IsClicked(1), GetGraphics());
-
-				if(retEvent != NULL)
+				menuClick->Play();
+				if(retEvent->GetEventMessage() == "ChangeSetEvent")
 				{
-					menuClick->Play();
-					if(retEvent->GetEventMessage() == "ChangeSetEvent")
+					ChangeSetEvent* setEvent = (ChangeSetEvent*)retEvent;
+
+					this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet); // THIS IS ALWAYS DONE IN THIS FUNCTION!
+					zPrimarySet = (SET)setEvent->GetSet(); // THIS IS ALWAYS DONE IN THIS FUNCTION!
+
+					//Special Menu Things Are Done Below.
+					switch(setEvent->GetSet())
 					{
-						ChangeSetEvent* setEvent = (ChangeSetEvent*)retEvent;
+					case MAINMENU:
 
-						this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet); // THIS IS ALWAYS DONE IN THIS FUNCTION!
-						zPrimarySet = (SET)setEvent->GetSet(); // THIS IS ALWAYS DONE IN THIS FUNCTION!
+						break;
+					case FIND_SERVER:
 
-						//Special Menu Things Are Done Below.
-						switch(setEvent->GetSet())
-						{
-						case NOMENU:
-							this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet);
+						break;
+					case OPTIONS:
+						UpdateOptionsMenu();
+						break;
+					case QUIT:
+						run = false;
+						break;
+					default:
 
-							this->EnableMouse(false);
-							
-							menuSound->Stop();
-
-							this->StartTestRun();
-							
-							menuSound->Play();
-
-							delete this->zGame;
-
-							this->zGame = new Game();
-
-							this->EnableMouse(true);
-
-							this->SwapMenus(MAINMENU, this->zSecondarySet);
-
-							break;
-						case MAINMENU:
-
-							break;
-						case FIND_SERVER:
-
-							break;
-						case OPTIONS:
-							UpdateOptionsMenu();
-							break;
-						case QUIT:
-							run = false;
-							break;
-						default:
-
-							break;
-						}
-					}
-					else if(retEvent->GetEventMessage() == "ChangeTextAndMenuEvent")
-					{
-						this->StartGameWithIPField();
-					}
-					/*else if(retEvent->GetEventMessage() == "ChangeResEvent")
-					{
-						if(this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn())
-						{
-							ChangeResEvent* cEvent = (ChangeResEvent*)retEvent;
-
-							float windowWidth = (float)cEvent->GetWidth();
-							float windowHeight = (float)cEvent->GetHeight();
-							int i = NOMENU;
-							while(i != LASTMENU)
-							{
-								zSets[i].Resize((float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight, windowWidth, windowHeight);
-								i++;
-							}
-							GetGraphics()->ResizeGraphicsEngine((int)windowWidth, (int)windowHeight);
-						}
-
-					}*/
-					else if(retEvent->GetEventMessage() == "ApplyOptionsAndChangeSetEvent")
-					{
-						GraphicsEngine* ge = GetGraphics();
-						iGraphicsEngineParams& GEP = ge->GetEngineParameters();
-
-						ApplyOptionsAndChangeSetEvent* cEvent = (ApplyOptionsAndChangeSetEvent*)retEvent;
-
-						//Maximized
-						bool maximized = this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn();
-						GEP.Maximized = !maximized;
-						if(!maximized)
-						{
-							RECT desktop;
-							const HWND hDesktop = GetDesktopWindow();
-							GetWindowRect(hDesktop, &desktop);
-							float width = (float)desktop.right;
-							float height = (float)desktop.bottom;
-
-							int i = NOMENU;
-							while(i != LASTMENU)
-							{
-								zSets[i].Resize((float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight, width, height);
-								i++;
-							}
-							GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
-						}
-						else if(maximized)
-						{
-							float oldWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
-							float oldHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
-							
-							float width = oldWidth;
-							float height = oldHeight;
-
-							GUIEvent* temp = this->zSets[this->zPrimarySet].GetEventFromDropDown("Resolutions");
-							if(ChangeResEvent *cre = dynamic_cast<ChangeResEvent *>(temp))
-							{
-								if (NULL != cre)
-								{
-									width = (float)cre->GetWidth();
-									height = (float)cre->GetHeight();
-								}
-							}
-
-							int i = NOMENU;
-							while(i != LASTMENU)
-							{
-								zSets[i].Resize(oldWidth, oldHeight, width, height);
-								i++;
-							}
-							GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
-						}
-						// Getting shadow
-						std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");
-						ge->ChangeShadowQuality(MaloW::convertStringToInt(tbTemp));
-						GEP.ShadowMapSettings = MaloW::convertStringToInt(tbTemp);
-						//FXAA
-						CheckBox* cbTemp = this->zSets[this->zPrimarySet].GetCheckBox("FXAACheckBox");
-						if(cbTemp != NULL)
-						{
-							if(cbTemp->GetOn())
-								GEP.FXAAQuality = 4;
-							if(!cbTemp->GetOn())
-								GEP.FXAAQuality = 0;
-						}
-
-						//View Distance
-						tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ViewDistance");
-						GEP.FarClip = MaloW::convertStringToFloat(tbTemp);
-
-						GEP.SaveToFile("Config.cfg");
-
-						this->SwapMenus((SET)cEvent->GetSet(), NOMENU);
-						zPrimarySet = (SET)cEvent->GetSet();
+						break;
 					}
 				}
-				else if(this->zPrimarySet == GETIPADRESS)
+				else if(retEvent->GetEventMessage() == "ChangeTextAndMenuEvent")
 				{
-					if(GetGraphics()->GetKeyListener()->IsPressed(VK_RETURN))
+					this->StartGameWithIPField();
+				}
+				/*else if(retEvent->GetEventMessage() == "ChangeResEvent")
+				{
+					if(this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn())
 					{
-						this->StartGameWithIPField();
+						ChangeResEvent* cEvent = (ChangeResEvent*)retEvent;
+
+						float windowWidth = (float)cEvent->GetWidth();
+						float windowHeight = (float)cEvent->GetHeight();
+						int i = NOMENU;
+						while(i != LASTMENU)
+						{
+							zSets[i].Resize((float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight, windowWidth, windowHeight);
+							i++;
+						}
+						GetGraphics()->ResizeGraphicsEngine((int)windowWidth, (int)windowHeight);
 					}
-				}
-				else
+
+				}*/
+				else if(retEvent->GetEventMessage() == "ChangeOptionEvent")
 				{
-					//Returned no event
+					ChangeOptionEvent* cEvent = (ChangeOptionEvent*)retEvent;
+
+					if(cEvent->GetOption() == "male")
+					{
+						this->zSets[this->zPrimarySet].GetCheckBox("MaleCheckBox")->SetChecked(true);
+						this->zSets[this->zPrimarySet].GetCheckBox("FemaleCheckBox")->SetChecked(false);
+					}
+					else if(cEvent->GetOption() == "female")
+					{
+						this->zSets[this->zPrimarySet].GetCheckBox("FemaleCheckBox")->SetChecked(true);
+						this->zSets[this->zPrimarySet].GetCheckBox("MaleCheckBox")->SetChecked(false);
+					}
+
 				}
-				Sleep(50);
+				else if(retEvent->GetEventMessage() == "ApplyOptionsAndChangeSetEvent")
+				{
+					GraphicsEngine* ge = GetGraphics();
+					iGraphicsEngineParams& GEP = ge->GetEngineParameters();
+
+					ApplyOptionsAndChangeSetEvent* cEvent = (ApplyOptionsAndChangeSetEvent*)retEvent;
+
+					//Maximized
+					bool maximized = this->zSets[this->zPrimarySet].GetCheckBox("WindowedCheckBox")->GetOn();
+					GEP.Maximized = !maximized;
+					if(!maximized)
+					{
+						RECT desktop;
+						const HWND hDesktop = GetDesktopWindow();
+						GetWindowRect(hDesktop, &desktop);
+						float width = (float)desktop.right;
+						float height = (float)desktop.bottom;
+
+						int i = NOMENU;
+						while(i != LASTMENU)
+						{
+							zSets[i].Resize((float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight, width, height);
+							i++;
+						}
+						GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
+					}
+					else if(maximized)
+					{
+						float oldWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
+						float oldHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
+							
+						float width = oldWidth;
+						float height = oldHeight;
+
+						GUIEvent* temp = this->zSets[this->zPrimarySet].GetEventFromDropDown("Resolutions");
+						if(ChangeResEvent *cre = dynamic_cast<ChangeResEvent *>(temp))
+						{
+							if (NULL != cre)
+							{
+								width = (float)cre->GetWidth();
+								height = (float)cre->GetHeight();
+							}
+						}
+
+						int i = NOMENU;
+						while(i != LASTMENU)
+						{
+							zSets[i].Resize(oldWidth, oldHeight, width, height);
+							i++;
+						}
+						GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
+					}
+					// Getting shadow
+					std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");
+					ge->ChangeShadowQuality(MaloW::convertStringToInt(tbTemp));
+					GEP.ShadowMapSettings = MaloW::convertStringToInt(tbTemp);
+					//FXAA
+					CheckBox* cbTemp = this->zSets[this->zPrimarySet].GetCheckBox("FXAACheckBox");
+					if(cbTemp != NULL)
+					{
+						if(cbTemp->GetOn())
+							GEP.FXAAQuality = 4;
+						if(!cbTemp->GetOn())
+							GEP.FXAAQuality = 0;
+					}
+
+					//View Distance
+					tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ViewDistance");
+					GEP.FarClip = MaloW::convertStringToFloat(tbTemp);
+
+					AudioManager* am = AudioManager::GetInstance();
+					//Master Volume
+					tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MasterVolume");
+					float masterVolume = MaloW::convertStringToFloat(tbTemp) / 100;
+
+					//Music Volume
+					tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MusicVolume");
+					float temp = (MaloW::convertStringToFloat(tbTemp) * masterVolume) / 100;
+					am->SetVolume(EVENTCATEGORY_NOTDEADYET_MASTER_MUSIC, temp);
+
+					//Normal Volume
+					tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("NormalVolume");
+					temp = (MaloW::convertStringToFloat(tbTemp) * masterVolume) / 100;
+					am->SetVolume(EVENTCATEGORY_NOTDEADYET_MASTER_SOUND, temp);
+
+					GEP.SaveToFile("Config.cfg");
+
+					this->SwapMenus((SET)cEvent->GetSet(), NOMENU);
+					zPrimarySet = (SET)cEvent->GetSet();
+				}
 			}
+			else if(this->zPrimarySet == GETIPADRESS)
+			{
+				if(GetGraphics()->GetKeyListener()->IsPressed(VK_RETURN))
+				{
+					this->StartGameWithIPField();
+				}
+			}
+			else
+			{
+				//Returned no event
+			}
+			Sleep(50);
 		}
-
-		
 	}
 
 	/*
@@ -695,7 +754,12 @@ void MainMenu::StartGameWithIPField()
 	bool result = false;
 	try
 	{
-		result = zGame->InitGameClient(temp, 11521);	 // Save to connect IP
+		string lPlayerModel = "FEMALEMODEL";
+		if(this->zSets[GETIPADRESS].GetCheckBox("MaleCheckBox")->GetOn() == true)
+		{
+			lPlayerModel = "MALEMODEL";
+		}
+		result = zGame->InitGameClient(temp, 11521, lPlayerModel);	 // Save to connect IP
 	}
 	catch (NetworkException e)
 	{
@@ -724,9 +788,10 @@ void MainMenu::StartGameWithIPField()
 	if (result)
 	{
 		menuSound->Stop();
-
+		this->zBGScreens[this->zCurrentImage]->SetOpacity(0.0f);
+		this->zBGScreens[this->zNextImage]->SetOpacity(0.0f);
 		this->zGame->Run();
-
+		this->zBGScreens[this->zCurrentImage]->SetOpacity(1.0f);
 		menuSound->Play();
 	}
 
@@ -737,4 +802,27 @@ void MainMenu::StartGameWithIPField()
 	this->EnableMouse(true);
 
 	this->SwapMenus(MAINMENU, this->zSecondarySet);
+}
+
+void MainMenu::UpdateBackground( float dt )
+{
+	if(this->zPause > 0)
+	{
+		this->zPause -= dt*0.001;
+		return;
+	}
+	if(this->zBGScreens[this->zCurrentImage]->GetOpacity() < 0)
+	{
+		this->zBGScreens[this->zCurrentImage]->SetOpacity(0.0f);
+		this->zBGScreens[this->zNextImage]->SetOpacity(1.0f);
+		this->zCurrentImage = this->zNextImage;
+		this->zNextImage++;
+		if(this->zNextImage >= BGSCREENSHOTS)
+		{
+			this->zNextImage = 0;
+		}
+		this->zPause = PAUSEBETWEENIMAGES;
+	}
+	this->zBGScreens[this->zCurrentImage]->SetOpacity(this->zBGScreens[this->zCurrentImage]->GetOpacity() - (dt * OPACITYDIVIDERSPEED));
+	this->zBGScreens[this->zNextImage]->SetOpacity(this->zBGScreens[this->zNextImage]->GetOpacity() + (dt * OPACITYDIVIDERSPEED));
 }

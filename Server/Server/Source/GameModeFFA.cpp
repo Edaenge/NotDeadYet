@@ -32,9 +32,11 @@ static const unsigned int VAR			= 5;
 
 //Spawn Random Drop every 10 min
 //static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
-static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
+static const float SPAWN_DROP_TIMER_MAX	= 20.0f;
 
 static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 1;
+
+#define DEBUGGING true
 
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
@@ -212,8 +214,8 @@ void GameModeFFA::OnEvent( Event* e )
 						Behavior* behavior = (*it)->GetBehavior();
 						if( behavior )
 						{
-							BioActor* bActor = dynamic_cast<BioActor*>(behavior->GetActor());
-							if( bActor && bActor->IsAlive() )
+							PlayerActor* pActor = dynamic_cast<PlayerActor*>(behavior->GetActor());
+							if( pActor && pActor->IsAlive() )
 							{
 								this->zAlivePlayers++;
 							}
@@ -280,7 +282,8 @@ void GameModeFFA::OnEvent( Event* e )
 					counter++;
 			}
 
-			if( counter >= this->zPlayers.size() / 2)
+			unsigned int nrOfNoneClickers = this->zPlayers.size() - counter;
+			if( nrOfNoneClickers < counter )
 			{
 				StartGameMode();
 			}
@@ -886,15 +889,14 @@ bool GameModeFFA::SpawnRandomDrop()
 	Vector2 posOne; 
 	Vector2 posTwo;
 	
-	const unsigned int NR_OF_ALIVE_PLAYERS = zAlivePlayers;
 	unsigned int playerOne;
 	unsigned int playerTwo;
 
 	//Randomize two indicies
-	if( NR_OF_ALIVE_PLAYERS > 2 )
+	if( this->zAlivePlayers > 2 )
 	{
-		playerOne = rand()% NR_OF_ALIVE_PLAYERS;
-		playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+		playerOne = rand()% this->zAlivePlayers;
+		playerTwo = rand()% this->zAlivePlayers;
 		bool stop = false;
 		const unsigned int TRIES = 50;
 		unsigned int counter = 0;
@@ -906,7 +908,7 @@ bool GameModeFFA::SpawnRandomDrop()
 
 			if(playerOne == playerTwo)
 			{
-				playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+				playerTwo = rand()% this->zAlivePlayers;
 				continue;
 			}
 
@@ -916,14 +918,14 @@ bool GameModeFFA::SpawnRandomDrop()
 			//if the pos is not within the world size given
 			if( posOne.x > size.x || posOne.y > size.y )
 			{
-				playerOne = rand()% NR_OF_ALIVE_PLAYERS;
+				playerOne = rand()% this->zAlivePlayers;
 				continue;
 			}
 			
 			//if the pos is not within the world size given
 			if( posTwo.x > size.x || posTwo.y == size.y )
 			{
-				playerTwo = rand()% NR_OF_ALIVE_PLAYERS;
+				playerTwo = rand()% this->zAlivePlayers;
 				continue;
 			}
 
@@ -938,7 +940,7 @@ bool GameModeFFA::SpawnRandomDrop()
 		}
 	}
 	//if only two, use them
-	else if( NR_OF_ALIVE_PLAYERS == 2 )
+	else if( this->zAlivePlayers == 2 )
 	{
 		posOne = aliveActors[0]->GetPosition().GetXZ();
 		posTwo = aliveActors[1]->GetPosition().GetXZ();
@@ -956,7 +958,7 @@ bool GameModeFFA::SpawnRandomDrop()
 		}
 	}
 	//if only one, use it and the world center pos
-	else if(NR_OF_ALIVE_PLAYERS == 1)
+	else if(this->zAlivePlayers == 1)
 	{
 		posOne = aliveActors[0]->GetPosition().GetXZ();
 		posTwo = worldCenter;
@@ -970,6 +972,7 @@ bool GameModeFFA::SpawnRandomDrop()
 	//No players?
 	else
 	{
+		MaloW::Debug("Supplier: No drop, No Players.");
 		return false;
 	}
 
@@ -1019,7 +1022,10 @@ bool GameModeFFA::SpawnRandomDrop()
 
 	//If not valid after checking x times, give up
 	if( !validLocation )
+	{
+		MaloW::Debug("Supplier: No drop, No Players.");
 		return false;
+	}
 
 	this->zSupplyDrop->SpawnAirbornSupplyDrop(spawnPos, 200.0f, items);
 
@@ -1146,7 +1152,7 @@ bool GameModeFFA::CheckEndCondition()
 {
 	NetworkMessageConverter NMC;
 
-	if( zAlivePlayers == NR_PLAYERS_ALIVE_GAME_END_CONDITION )
+	if( zAlivePlayers == NR_PLAYERS_ALIVE_GAME_END_CONDITION  && !DEBUGGING)
 	{
 		Player* winner_player = NULL;
 

@@ -72,13 +72,13 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	//Models
 	this->zPlayerModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zPlayerModels["media/models/token_anims.fbx"] = "media/models/hitbox_token.obj";
-	this->zPlayerModels["media/models/deer_anims.fbx"] = "media/models/deer_temp.obj";
-	this->zPlayerModels["media/models/bear_anims.fbx"] = "media/models/deer_temp.obj"; 
+	this->zPlayerModels["media/models/deer_anims.fbx"] = "media/models/deer_hitbox.obj";
+	this->zPlayerModels["media/models/bear_anims.fbx"] = "media/models/bear_hitbox.obj"; 
 	this->zPlayerModels["media/models/ghost.obj"] = "media/models/ghost.obj";
 	
 	//Dead Actor Model Maps
 	this->zDeadActorModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
-	this->zDeadActorModels["media/models/token_anims.fbx"] = "media/models/hitbox_token.obj";
+	this->zDeadActorModels["media/models/token_anims.fbx"] = "media/models/token_dead.obj";
 	this->zDeadActorModels["media/models/deer_anims.fbx"] = "media/models/deer_dead.obj";
 	this->zDeadActorModels["media/models/bear_anims.fbx"] = "media/models/bear_dead.obj";
 
@@ -132,8 +132,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	// Debug Functions
 	//this->SpawnItemsDebug();
-//	this->SpawnAnimalsDebug();
-	//this->SpawnHumanDebug();
+    //this->SpawnAnimalsDebug();
+	this->SpawnHumanDebug();
 // Sun Direction
 	this->ResetSunDirection();
 
@@ -181,7 +181,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 2; i++)
+	for(unsigned int i = 0; i < 1; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -220,7 +220,7 @@ void Game::SpawnAnimalsDebug()
 		this->zActorManager->AddActor(dActor);
 	}
 
-	for(unsigned int i = 0; i < 4; i++)		
+	for(unsigned int i = 0; i < 0; i++)		
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
@@ -445,7 +445,7 @@ void Game::SpawnHumanDebug()
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/hitbox_token.obj");
 	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics, this);
-	pActor->SetModel("media/models/token_anims.fbx");
+	pActor->SetModel("media/models/token_anims_fpp.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
 	pActor->SetHealth(1000);
@@ -779,13 +779,19 @@ void Game::OnEvent( Event* e )
 			if ( zPerf ) 
 				this->zPerf->PreMeasure("Use Event Handling", 3);
 
-			this->HandleUseItem(PUIE->clientData, PUIE->itemID);
-			
+			if(this->HandleUseItem(PUIE->clientData, PUIE->itemID))
+			{
+				if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PUIE->clientData]->zBehavior->GetActor()))
+				{
+					bActor->SetAction("Using Item", 4.7f);
+					bActor->SetState(STATE_USE);
+					this->zPlayers[PUIE->clientData]->zBehavior->Sleep(4.7f);
+				}
+			}
 			
 			if ( zPerf ) 
 				this->zPerf->PostMeasure("Use Event Handling", 3);
-
-		}	
+		}
 	}
 	else if (PlayerCraftItemEvent* PCIE = dynamic_cast<PlayerCraftItemEvent*>(e))
 	{
@@ -794,15 +800,24 @@ void Game::OnEvent( Event* e )
 		{
 			if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PCIE->clientData]->zBehavior->GetActor()))
 			{
-				bActor->SetAction("Crafting", 5.0f);
-				this->zPlayers[PCIE->clientData]->zBehavior->Sleep(5.0f);
+				bActor->SetAction("Crafting", 3.0f);
+				bActor->SetState(STATE_CRAFTING);
+				this->zPlayers[PCIE->clientData]->zBehavior->Sleep(3.0f);
 			}
 		}
 		if ( zPerf ) this->zPerf->PostMeasure("Craft Event Handling", 3);
 	}
 	else if (PlayerFillItemEvent* PFIE = dynamic_cast<PlayerFillItemEvent*>(e))
 	{
-		this->HandleFillItem(PFIE->clientData, PFIE->itemID);
+		if(this->HandleFillItem(PFIE->clientData, PFIE->itemID))
+		{
+			if(BioActor *bActor = dynamic_cast<BioActor *>(this->zPlayers[PFIE->clientData]->zBehavior->GetActor()))
+			{
+				bActor->SetAction("Filling Bottle", 5.7f);
+				bActor->SetState(STATE_FILLING_BOTTLE);
+				this->zPlayers[PFIE->clientData]->zBehavior->Sleep(5.7f);
+			}
+		}
 	}
 	else if(PlayerDrinkWaterEvent* PDWE = dynamic_cast<PlayerDrinkWaterEvent*>(e))
 	{
@@ -1090,14 +1105,18 @@ void Game::OnEvent( Event* e )
 	}
 	else if ( EntityRemovedEvent* ERE = dynamic_cast<EntityRemovedEvent*>(e) )
 	{
-		auto i = zWorldActors.find(ERE->entity);
-		if ( i != zWorldActors.end() )
+		if ( zActorManager )
 		{
-			PhysicsObject* Pobj = i->second->GetPhysicsObject();
-			zPhysicsEngine->DeletePhysicsObject(Pobj);
-			i->second->SetPhysicsObject(NULL);
-			this->zActorManager->RemoveActor(i->second);
-			this->zWorldActors.erase(i);
+			auto i = zWorldActors.find(ERE->entity);
+			if ( i != zWorldActors.end() )
+			{
+				PhysicsObject* Pobj = i->second->GetPhysicsObject();
+				if ( Pobj ) zPhysicsEngine->DeletePhysicsObject(Pobj);
+				i->second->SetPhysicsObject(0);
+
+				if ( zActorManager ) this->zActorManager->RemoveActor(i->second);
+				this->zWorldActors.erase(i);
+			}
 		}
 	}
 	else if ( UserDataEvent* UDE = dynamic_cast<UserDataEvent*>(e) )
@@ -1522,7 +1541,7 @@ void Game::HandleDisconnect( ClientData* cd )
 
 void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID )
 {
-	std::set<Actor*> actors = this->zActorManager->GetLootableActors();
+	std::set<Actor*>& actors = this->zActorManager->GetLootableActors();
 	std::vector<Item*> lootedItems;
 
 	auto playerIterator = this->zPlayers.find(cd);
@@ -1614,9 +1633,13 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 								Inventory* inv = bioPlayerActor->GetInventory();
 								if ( inv )
 								{
+									bool stacked;
 									Item* berries = new Food(*berry_temp);
-									if ( inv->AddItem(berries) )
+									if ( inv->AddItem(berries, &stacked) )
 									{
+										if (stacked)
+											delete berries;
+
 										bbActor->SetPicked(true);
 									}
 									else
@@ -1846,34 +1869,6 @@ void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int item
 			}
 		}
 	}
-	else if (BerryBushActor* bbActor = dynamic_cast<BerryBushActor*>(actor))
-	{
-		const Food* berry_temp = GetItemLookup()->GetFood(ITEM_SUB_TYPE_BERRY_BUSH);
-		if (berry_temp)
-		{
-			Food* berry = new Food(*berry_temp);
-			if (berry)
-			{
-				if (berry->GetItemType() == itemType)// && item->GetItemSubType() == subType)
-				{
-					//Add item
-					if(pActor->GetInventory()->AddItem(berry, &stacked))
-					{
-						if( stacked && item->GetStackSize() == 0 )
-						{
-							SAFE_DELETE(item);
-						}
-						bbActor->SetPicked(true);
-					}
-					else
-					{
-						cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Inventory is Full"));
-						return;
-					}
-				}
-			}
-		}
-	}
 }
 
 void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
@@ -1945,7 +1940,7 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 	//cd->Send(NMC.Convert(MESSAGE_TYPE_REMOVE_INVENTORY_ITEM, (float)item->GetID()));
 }
 
-void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
+bool Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 {
 	auto playerIterator = this->zPlayers.find(cd);
 	auto playerBehavior = playerIterator->second->GetBehavior();
@@ -1986,6 +1981,8 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 
 							cd->Send(msg);
+
+							return true;
 						}
 						else
 						{
@@ -2028,6 +2025,8 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 							ID = container->GetID();
 							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 							cd->Send(msg);
+
+							return true;
 						}
 						else
 						{
@@ -2046,7 +2045,7 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 				{
 					ID = bandage->GetID();
 					
-					if (pActor->GetBleeding() < 0)
+					if (pActor->GetBleeding() > 0)
 					{
 						if (bandage->Use())
 						{				
@@ -2065,6 +2064,8 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 							msg = NMC.Convert(MESSAGE_TYPE_ITEM_USE, (float)ID);
 
 							cd->Send(msg);
+
+							return true;
 						}
 						else
 						{
@@ -2090,6 +2091,7 @@ void Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 			}
 		}
 	}
+	return false;
 }
 
 void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
@@ -2320,7 +2322,7 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 						//Try to add the crafted item to the inventory.
 						bool stacked = false;
 						if (inv->AddItem(craftedItem, &stacked))
-						{					
+						{
 							if (stacked)
 							{
 								if (craftedItem->GetStackSize() <= 0)
@@ -2382,20 +2384,20 @@ bool Game::HandleCraftItem(ClientData* cd, const unsigned int itemType, const un
 	return false;
 }
 
-void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
+bool Game::HandleFillItem(ClientData* cd, const unsigned int itemID)
 {
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
 	PlayerActor* pActor = dynamic_cast<PlayerActor*>(actor);
 
 	if (!pActor)
-		return;
+		return false;
 
 	Item* item = pActor->GetInventory()->SearchAndGetItem(itemID);
 
 	if (!item)
 	{
 		MaloW::Debug("Failed to find item in Game::HandleFillItem");
-		return;
+		return false;
 	}
 
 	//Logic for filling container here.
@@ -2403,17 +2405,20 @@ void Game::HandleFillItem( ClientData* cd, const unsigned int itemID )
 	float depth = this->zWorld->GetWaterDepthAt(position);
 	if(depth > 0.2f)
 	{
-		dynamic_cast<Container*>(item)->SetRemainingUses(dynamic_cast<Container*>(item)->GetMaxUses());
-	}
-	//Sending Message to client
-	NetworkMessageConverter NMC;
-	std::string msg = NMC.Convert(MESSAGE_TYPE_ITEM_FILL, (float)itemID);
+		if (Container* container = dynamic_cast<Container*>(item))
+		{
+			container->SetRemainingUses(container->GetMaxUses());
+			//Sending Message to client
+			NetworkMessageConverter NMC;
+			std::string msg = NMC.Convert(MESSAGE_TYPE_ITEM_FILL, (float)itemID);
+			msg += NMC.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)container->GetRemainingUses());
+			cd->Send(msg);
 
-	if (Container* container = dynamic_cast<Container*>(item))
-	{
-		msg += NMC.Convert(MESSAGE_TYPE_CONTAINER_CURRENT, (float)container->GetRemainingUses());
-		cd->Send(msg);
+			return true;
+		}
 	}
+
+	return false;
 }
 
 void Game::HandleDrinkWater( ClientData* cd )
@@ -2750,6 +2755,7 @@ void Game::CheckPlayerUseBow(Player* player)
 					std::string msg = NMC.Convert(MESSAGE_TYPE_PLAY_SOUND, EVENTID_NOTDEADYET_BOW_BOWSTRETCH);
 					msg += NMC.Convert(MESSAGE_TYPE_POSITION, bActor->GetPosition());
 					this->SendToAll(msg);
+					bActor->SetState(STATE_DRAW_BOW);
 				}
 			}
 		}
