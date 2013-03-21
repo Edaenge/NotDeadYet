@@ -2731,7 +2731,7 @@ void Game::RestartGame()
 	//Debug
 
 	//SpawnItemsDebug();
-	//SpawnAnimalsDebug();
+	SpawnAnimalsDebug();
 	//SpawnHumanDebug();
 
 	this->ResetSunDirection();
