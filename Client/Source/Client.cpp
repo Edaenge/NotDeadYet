@@ -514,30 +514,30 @@ void Client::UpdateGame()
 	// 50 updates per second
 	static const float UPDATE_DELAY = 0.020f;
 	static const float FPS_DELAY = 1.0f;
-	static float fps_Delay_Timer = 0.0f;
+	//static float fps_Delay_Timer = 0.0f;
 
 	this->CheckKeyboardInput();
 	if(this->zCreated)
 	{
 		this->zSendUpdateDelayTimer += this->zDeltaTime;
 		this->zTimeSinceLastPing += this->zDeltaTime;
-		fps_Delay_Timer += this->zDeltaTime;
-		
-		if (fps_Delay_Timer >= FPS_DELAY)
-		{
-			std::stringstream ss;
-			ss << this->zGameTimer->GetFPS() <<" CLIENT FPS";
-			this->zClientUpsText->SetText(ss.str().c_str());
-
-			if (this->zGameTimer->GetFPS() < 30)
-				this->zClientUpsText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
-			else if (this->zGameTimer->GetFPS() > 30 && this->zGameTimer->GetFPS() < 60)
-				this->zClientUpsText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
-			else
-				this->zClientUpsText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
-
-			fps_Delay_Timer = 0.0f;
-		}
+		//fps_Delay_Timer += this->zDeltaTime;
+		//
+		//if (fps_Delay_Timer >= FPS_DELAY)
+		//{
+		//	std::stringstream ss;
+		//	ss << this->zGameTimer->GetFPS() <<" CLIENT FPS";
+		//	this->zClientUpsText->SetText(ss.str().c_str());
+		//
+		//	if (this->zGameTimer->GetFPS() < 30)
+		//		this->zClientUpsText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
+		//	else if (this->zGameTimer->GetFPS() > 30 && this->zGameTimer->GetFPS() < 60)
+		//		this->zClientUpsText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
+		//	else
+		//		this->zClientUpsText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
+		//
+		//	fps_Delay_Timer = 0.0f;
+		//}
 
 		this->zActorManager->SetUpdatesPerSec(this->zGameTimer->GetFPS());
 
@@ -1779,17 +1779,17 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		float latency = this->zMsgHandler.ConvertStringToFloat(M_CLIENT_LATENCY, msgArray[0]);
 
-		std::stringstream ss;
-
-		ss << (int)latency <<" MS";
-		zLatencyText->SetText(ss.str().c_str());
-
-		if (latency > 300)
-			this->zLatencyText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
-		else if (latency > 200 && latency < 300)
-			this->zLatencyText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
-		else
-			this->zLatencyText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
+		//std::stringstream ss;
+		//
+		//ss << (int)latency <<" MS";
+		//zLatencyText->SetText(ss.str().c_str());
+		//
+		//if (latency > 300)
+		//	this->zLatencyText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
+		//else if (latency > 200 && latency < 300)
+		//	this->zLatencyText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
+		//else
+		//	this->zLatencyText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
 
 		this->zActorManager->SetLatency((int)latency);
 	}
@@ -1797,20 +1797,20 @@ void Client::HandleNetworkMessage( const std::string& msg )
 	{
 		int updatesPerSec = this->zMsgHandler.ConvertStringToInt(M_SERVER_UPDATES_PER_SEC, msgArray[0]);
 
-		std::stringstream ss;
+		//std::stringstream ss;
 
-		ss << updatesPerSec <<" SERVER FPS";
-		if ( this->zServerUpsText )
-		{
-			this->zServerUpsText->SetText(ss.str().c_str());
+		//ss << updatesPerSec <<" SERVER FPS";
+		//if ( this->zServerUpsText )
+		//{
+		//	this->zServerUpsText->SetText(ss.str().c_str());
 
-			if (updatesPerSec < 30)
-				this->zServerUpsText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
-			else if (updatesPerSec > 30 && updatesPerSec < 60)
-				this->zServerUpsText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
-			else
-				this->zServerUpsText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
-		}
+		//	if (updatesPerSec < 30)
+		//		this->zServerUpsText->SetColor(Vector3(0.0f, -255.0f, -255.0f));
+		//	else if (updatesPerSec > 30 && updatesPerSec < 60)
+		//		this->zServerUpsText->SetColor(Vector3(0.0f, 0.0f, -255.0f));
+		//	else
+		//		this->zServerUpsText->SetColor(Vector3(-255.0f, 0.0f, -255.0f));
+		//}
 
 		if ( zActorManager )
 		{
