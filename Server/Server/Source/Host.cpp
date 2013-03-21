@@ -332,7 +332,7 @@ void Host::ReadMessages()
 
 	for (unsigned int i = 0; i < nrOfMessages; i++)
 	{
-		MaloW::ProcessEvent* pe = PeekEvent();
+		MaloW::ProcessEvent* pe = this->PeekEvent();
 
 		if ( MaloW::ClientConnectedEvent* CCE = dynamic_cast<MaloW::ClientConnectedEvent*>(pe) )
 		{

@@ -2595,12 +2595,22 @@ void Game::HandleBindings(const unsigned int ID, Item* item)
 			this->SendToAll(msg);
 		}
 	}
-	else if (item->GetItemType() == ITEM_TYPE_PROJECTILE && item->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
+	else if (item->GetItemType() == ITEM_TYPE_PROJECTILE)
 	{
-		msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
-		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
-		msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
-		this->SendToAll(msg);
+		if (item->GetItemSubType() == ITEM_SUB_TYPE_ROCK)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_L_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
+		else if (item->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+		{
+			msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
+			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
+			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+			this->SendToAll(msg);
+		}
 	}
 }
 

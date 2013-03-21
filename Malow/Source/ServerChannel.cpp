@@ -14,13 +14,14 @@ ServerChannel::ServerChannel( MaloW::Process* observerProcess)
 
 ServerChannel::~ServerChannel()
 {
+	if (zSocket)
+		shutdown(zSocket, SD_BOTH);
+
 	this->Close();
 	this->WaitUntillDone();
 	
 	if(zSocket)
-	{
 		closesocket(zSocket);
-	}
 }
 
 bool MaloW::ServerChannel::Connect( const std::string &IP, const unsigned int &port )
@@ -87,23 +88,5 @@ void ServerChannel::Life()
 	catch(...)
 	{
 		zNotifier->PutEvent(new DisconnectedEvent(this, "Unknown Reason"));
-	}
-}
-
-void ServerChannel::CloseSpecific()
-{
-	if(zSocket)
-	{
-		try
-		{
-			if( shutdown(zSocket, SD_BOTH) == SOCKET_ERROR )
-			{
-				throw( NetworkException("Failed Shutting Down Socket!", WSAGetLastError()) );
-			}
-		}
-		catch (...)
-		{
-			
-		}
 	}
 }

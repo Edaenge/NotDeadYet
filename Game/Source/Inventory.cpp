@@ -332,13 +332,15 @@ Item* Inventory::EquipRangedWeapon(RangedWeapon* weapon, bool& success)
 		InventoryBindPrimaryWeapon e;
 		e.ID = this->zOwnerID;
 		e.item = this->zPrimaryEquip;
-		//if (this->zPrimaryEquip->GetItemType() == ITEM_TYPE_WEAPON_RANGED && this->zPrimaryEquip->GetItemSubType() == ITEM_SUB_TYPE_BOW)
-		//	e.model = "media/models/bow_anims.fbx";
-		//else
-		//	e.model = this->zPrimaryEquip->GetModel();
-		//e.type = this->zPrimaryEquip->GetItemType();
-		//e.subType = this->zPrimaryEquip->GetItemSubType();
 		NotifyObservers(&e);
+
+		if (this->zProjectile)
+		{
+			InventoryBindPrimaryWeapon e1;
+			e1.ID = this->zOwnerID;
+			e1.item = this->zPrimaryEquip;
+			NotifyObservers(&e1);
+		}
 	}
 	else if(zPrimaryEquip->GetItemSubType() == weapon->GetItemSubType())
 	{
@@ -481,12 +483,6 @@ Item* Inventory::EquipProjectile(Projectile* projectile)
 			InventoryBindPrimaryWeapon e2;
 			e2.ID = this->zOwnerID;
 			e2.item = this->zPrimaryEquip;
-			//if (this->zPrimaryEquip->GetItemType() == ITEM_TYPE_WEAPON_RANGED && this->zPrimaryEquip->GetItemSubType() == ITEM_SUB_TYPE_BOW)
-			//	e2.model = "media/models/bow_anims.fbx";
-			//else
-			//	e2.model = this->zPrimaryEquip->GetModel();
-			//e2.type = this->zPrimaryEquip->GetItemType();
-			//e2.subType = this->zPrimaryEquip->GetItemSubType();
 
 			NotifyObservers(&e2);
 		}
@@ -535,7 +531,7 @@ void Inventory::UnEquipRangedWeapon()
 	if (Messages::FileWrite())
 		Messages::Debug("UnEquipped Ranged Weapon");
 
-	Item* item = dynamic_cast<RangedWeapon*>(this->zRangedWeapon);
+	Item* item = this->zRangedWeapon;
 
 	if (!item)
 		return;
@@ -557,6 +553,14 @@ void Inventory::UnEquipRangedWeapon()
 			e1.ID = this->zOwnerID;
 			e1.item = this->zPrimaryEquip;
 			NotifyObservers(&e1);
+
+			if (this->zPrimaryEquip->GetItemSubType() == ITEM_SUB_TYPE_BOW && this->zProjectile && this->zProjectile->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+			{
+				InventoryBindPrimaryWeapon e3;
+				e3.ID = this->zOwnerID;
+				e3.item = this->zProjectile;
+				NotifyObservers(&e3);
+			}
 		}
 	}
 	else if(this->zSecondaryEquip == item)
