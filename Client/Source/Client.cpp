@@ -2632,7 +2632,14 @@ void Client::AddDisplayText(const std::string& msg, bool bError)
 	if (bError)
 		text->SetColor(Vector3(0.0f, -255.0f, -255.0f));
 	else
+	{
+		if (newString.find("The Winner Is:") == 0)
+		{
+			text->SetSize(2.0f);
+			text->SetPosition(Vector2(position.x, position.y + 50.0f));
+		}
 		text->SetColor(Vector3(0.0f, 0.0f, -255.0f));
+	}
 
 	TextDisplay* displayedText = new TextDisplay(text, START_TEXT_TIMER, bError);
 

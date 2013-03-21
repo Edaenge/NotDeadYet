@@ -2729,7 +2729,6 @@ void Game::RestartGame()
 	this->zGameMode->StopGameMode();
 
 	//Debug
-	SpawnAnimalsDebug();
 
 	//SpawnItemsDebug();
 	//SpawnAnimalsDebug();
