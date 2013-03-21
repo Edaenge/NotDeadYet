@@ -121,6 +121,7 @@ void FootStepClient::PlaceFootStep( Actor* actor )
 			{
 				iDecal* data = zGraphics->CreateDecal(Vector3(printPos.x, groundHeight, printPos.y), name, Vector3(0.0f, -1.0f, 0.0f), Vector3(forwardDir.x, 0.0f, forwardDir.y));
 				data->SetSize(0.5f);
+				data->SetOpacity(0.4f);
 				zFootSteps.insert(std::pair<unsigned int, iDecal*>(++zCurrentDecal, data));
 			}
 		}	
