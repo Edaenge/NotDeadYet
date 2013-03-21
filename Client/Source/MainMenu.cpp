@@ -11,17 +11,22 @@ MainMenu::MainMenu()
 	this->zGame			= new Game();
 	this->zPrimarySet	= MAINMENU;
 	this->zSecondarySet = NOMENU;
+
 	float width = GetGraphics()->GetEngineParameters().WindowWidth;
 	float height = GetGraphics()->GetEngineParameters().WindowHeight;
+	float dx = ((float)width * 10.0f) / 16.0f;
+	float offSet = (float)(height - dx) / 2.0f;
 	string filePath = "";
 	string ending = ".png";
 	for(int i = 0; i < BGSCREENSHOTS; i++)
 	{
 		filePath = "media/screens/ScreenShot" + MaloW::convertNrToString(i+1) + ending;
-		this->zBGScreens[i] = GetGraphics()->CreateImage(Vector2(0.0f, 0.0f), Vector2(width, height), filePath.c_str());
+		this->zBGScreens[i] = GetGraphics()->CreateImage(Vector2(0.0f, offSet), Vector2(width, dx), filePath.c_str());
 		this->zBGScreens[i]->SetStrata(800.0f);
 		this->zBGScreens[i]->SetOpacity(0.0f);
 	}
+	this->zBGScreens[9] = GetGraphics()->CreateImage(Vector2(0.0f, 0.0f), Vector2(width, height), "Media/LoadingScreen/FadeTexture.png");
+	this->zBGScreens[9]->SetStrata(850.0f);
 	this->zPause = PAUSEBETWEENIMAGES;
 	this->zCurrentImage = 0;
 	this->zNextImage = 1;
@@ -43,7 +48,7 @@ MainMenu::~MainMenu()
 	menuSound = NULL;
 
 	AudioManager::ReleaseInstance();
-	for(int i = 0; i < BGSCREENSHOTS; i++)
+	for(int i = 0; i < BGSCREENSHOTS+1; i++)
 	{
 		GetGraphics()->DeleteImage(this->zBGScreens[i]);
 		this->zBGScreens[i] = NULL;
@@ -317,21 +322,21 @@ void MainMenu::Init()
 
 	//Sound tech
 	//Master volume
-	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 1.0f, "", 
 		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(20), 
-		"MasterVolume", 1.0f, 2, NR);
+		"MasterVolume", 2.0f, 2, NR);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Music Volume
-	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 1.0f, "", 
 		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(20), 
-		"MusicVolume", 1.0f, 2, NR);
+		"MusicVolume", 2.0f, 2, NR);
 	zSets[OPTIONS].AddElement(temp);
 
 	//Normal Volume
-	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 1.0f, "", 
 		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(20), 
-		"NormalVolume", 1.0f, 2, NR);
+		"NormalVolume", 2.0f, 2, NR);
 	zSets[OPTIONS].AddElement(temp);
 
 	this->zPrimarySet = MAINMENU;
@@ -526,6 +531,7 @@ void MainMenu::Run()
 						}
 						GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
 					}
+					this->ResizeWallpapers();
 					// Getting shadow
 					std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");
 					ge->ChangeShadowQuality(MaloW::convertStringToInt(tbTemp));
@@ -754,10 +760,10 @@ void MainMenu::StartGameWithIPField()
 	bool result = false;
 	try
 	{
-		string lPlayerModel = "FEMALEMODEL";
+		string lPlayerModel = "media/models/token_anims.fbx";
 		if(this->zSets[GETIPADRESS].GetCheckBox("MaleCheckBox")->GetOn() == true)
 		{
-			lPlayerModel = "MALEMODEL";
+			lPlayerModel = "media/models/token_anims.fbx";
 		}
 		result = zGame->InitGameClient(temp, 11521, lPlayerModel);	 // Save to connect IP
 	}
@@ -790,8 +796,10 @@ void MainMenu::StartGameWithIPField()
 		menuSound->Stop();
 		this->zBGScreens[this->zCurrentImage]->SetOpacity(0.0f);
 		this->zBGScreens[this->zNextImage]->SetOpacity(0.0f);
+		this->zBGScreens[9]->SetOpacity(0.0f);
 		this->zGame->Run();
 		this->zBGScreens[this->zCurrentImage]->SetOpacity(1.0f);
+		this->zBGScreens[9]->SetOpacity(1.0f);
 		menuSound->Play();
 	}
 
@@ -825,4 +833,20 @@ void MainMenu::UpdateBackground( float dt )
 	}
 	this->zBGScreens[this->zCurrentImage]->SetOpacity(this->zBGScreens[this->zCurrentImage]->GetOpacity() - (dt * OPACITYDIVIDERSPEED));
 	this->zBGScreens[this->zNextImage]->SetOpacity(this->zBGScreens[this->zNextImage]->GetOpacity() + (dt * OPACITYDIVIDERSPEED));
+}
+
+void MainMenu::ResizeWallpapers()
+{
+	float width = GetGraphics()->GetEngineParameters().WindowWidth;
+	float height = GetGraphics()->GetEngineParameters().WindowHeight;
+	float dx = ((float)width * 10.0f) / 16.0f;
+	float offSet = (float)(height - dx) / 2.0f;
+
+	for(int i = 0; i < BGSCREENSHOTS; i++)
+	{
+		this->zBGScreens[i]->SetPosition(Vector2(0.0f, offSet));
+		this->zBGScreens[i]->SetDimensions(Vector2(width, dx));
+	}
+	this->zBGScreens[BGSCREENSHOTS]->SetPosition(Vector2(0.0f, 0.0f));
+	this->zBGScreens[BGSCREENSHOTS]->SetDimensions(Vector2(width, height));
 }

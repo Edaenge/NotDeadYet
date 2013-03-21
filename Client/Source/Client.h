@@ -224,7 +224,6 @@ private:
 	bool zGameStarted;
 
 	std::string zIP;
-	std::string zMeshID;
 	std::string zName;
 
 	std::set<Entity*> zPreviousEntities;

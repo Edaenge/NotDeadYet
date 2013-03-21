@@ -38,15 +38,6 @@ Client::Client(std::string playerModel) :
 	this->zTimeSinceLastPing = 0.0f;
 	this->zName		= GetPlayerSettings()->GetPlayerName();
 
-	if (this->zPlayerModel == "MALEMODEL")
-	{
-		this->zMeshID = "media/models/token_anims.fbx";
-	}
-	else if (this->zPlayerModel == "FEMALEMODEL")
-	{
-		this->zMeshID = "media/models/bear_anims.fbx";
-	}
-
 	//Temporary Ghost Model
 	this->zMeshfirstPersonMap["media/models/ghost.obj"] = "media/models/ghost.obj";
 	this->zMeshfirstPersonMap["media/models/token_anims.fbx"] = "media/models/token_anims_fpp.fbx";
@@ -409,7 +400,7 @@ void Client::InitGraphics(const std::string& mapName)
 	
 	while(this->zWorldRenderer->Update())
 	{
-
+		static const unsigned short int meaningOfLife = 42;
 	}
 	
 	
@@ -2033,7 +2024,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 		std::string serverMessage = "";
 		serverMessage = this->zMsgHandler.Convert(MESSAGE_TYPE_USER_DATA);
-		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_MESH_MODEL, this->zMeshID);
+		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_MESH_MODEL, this->zPlayerModel);
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, camDir);
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_UP, camUp);
 		serverMessage += this->zMsgHandler.Convert(MESSAGE_TYPE_USER_NAME, zName);
