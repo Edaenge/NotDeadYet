@@ -680,6 +680,7 @@ void GameModeFFA::OnPlayerHumanDeath(PlayerActor* pActor)
 
 	//Gather Actor Physical Conditions
 	PCP->zEnergy = newActor->GetEnergy();
+	/*PCP->zBleedingLevel = 0;*/
 
 	if( bioActor )
 	{

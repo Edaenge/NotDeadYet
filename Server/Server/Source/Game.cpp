@@ -181,7 +181,7 @@ void Game::SpawnAnimalsDebug()
 	srand((unsigned int)time(0));
 	
 	unsigned int increment = 0;
-	for(unsigned int i = 0; i < 18; i++)
+	for(unsigned int i = 0; i < 5; i++)
 	{
 		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
@@ -636,35 +636,35 @@ bool Game::Update( float dt )
 		}
 	}
 	
-	static float testUpdater = 0.0f;
+	//static float testUpdater = 0.0f;
 
-	testUpdater += dt;
+	//testUpdater += dt;
 
-	if(testUpdater > 4.0f)
-	{
-		if ( zPerf ) this->zPerf->PreMeasure("Updating animal targets", 2);
-		//Creating targets to insert into the animals' behaviors
-		std::set<Actor*> aSet;
-		auto it_behaviors_end = behaviors.end();
-		for(i = behaviors.begin(); i != it_behaviors_end; i++)
-		{
-			if( dynamic_cast<BioActor*>((*i)->GetActor()) )
-			{
-				aSet.insert( (*i)->GetActor());
-			}
-		}
+	//if(testUpdater > 4.0f)
+	//{
+	//	if ( zPerf ) this->zPerf->PreMeasure("Updating animal targets", 2);
+	//	//Creating targets to insert into the animals' behaviors
+	//	std::set<Actor*> aSet;
+	//	auto it_behaviors_end = behaviors.end();
+	//	for(i = behaviors.begin(); i != it_behaviors_end; i++)
+	//	{
+	//		if( dynamic_cast<BioActor*>((*i)->GetActor()) )
+	//		{
+	//			aSet.insert( (*i)->GetActor());
+	//		}
+	//	}
 
-		//Updating animals' targets
-		for(i = behaviors.begin(); i != it_behaviors_end; i++)
-		{
-			if(AIBehavior* animalBehavior = dynamic_cast<AIBehavior*>( (*i) ))
-			{
-				animalBehavior->SetTargets(aSet);
-			}
-		}
-		testUpdater = 0.0f;
-		if ( zPerf ) this->zPerf->PostMeasure("Updating animal targets", 2);
-	}
+	//	//Updating animals' targets
+	//	for(i = behaviors.begin(); i != it_behaviors_end; i++)
+	//	{
+	//		if(AIBehavior* animalBehavior = dynamic_cast<AIBehavior*>( (*i) ))
+	//		{
+	//			animalBehavior->SetTargets(aSet);
+	//		}
+	//	}
+	//	testUpdater = 0.0f;
+	//	if ( zPerf ) this->zPerf->PostMeasure("Updating animal targets", 2);
+	//}
 
 	// Game Still Active
 	return true;

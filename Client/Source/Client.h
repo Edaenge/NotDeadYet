@@ -223,6 +223,8 @@ private:
 	bool zShowCursor;
 	bool zGameStarted;
 
+	bool zBleedingShouldBeZero;
+
 	std::string zIP;
 	std::string zName;
 

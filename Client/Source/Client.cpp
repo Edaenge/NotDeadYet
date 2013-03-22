@@ -24,6 +24,7 @@ Client::Client(std::string playerModel) :
 	Messages::ClearDebug();
 
 	this->zPlayerModel = playerModel;
+	zBleedingShouldBeZero = false;
 
 	this->zID = 0;
 	this->zIP = "";
@@ -2296,7 +2297,10 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 			}
 		}
 		//Set the opacity
+		if(this->zDamageIndicator)
+		{
 		this->zDamageIndicator->SetOpacity(this->zDamageOpacity);
+		}
 
 	}
 	return true;
@@ -2304,7 +2308,14 @@ bool Client::HandleTakeDamage( const unsigned int ID, float damageTaken )
 
 void Client::UpdateHealthAndBleedingImage()
 {
-	this->zHealthOpacity = this->zHealth / 100;
+
+	if(this->zBleedingShouldBeZero)
+	{
+		this->zBleedingShouldBeZero = false;
+		this->zBleedingLevel = 0;
+	}
+
+	this->zHealthOpacity = this->zHealth / 100.0f;
 
 	float goalOffset = 200.0f + 300.0f * this->zHealthOpacity;
 	
@@ -2319,7 +2330,7 @@ void Client::UpdateHealthAndBleedingImage()
 	}
 
 
-	this->zHealthOpacity = 1 - this->zHealthOpacity;
+	this->zHealthOpacity = 1.0f - this->zHealthOpacity;
 	if(this->zHealthOpacity > 0.44f)
 	{
 		this->zHealthOpacity = 0.44f;
@@ -2336,7 +2347,7 @@ void Client::UpdateHealthAndBleedingImage()
 		this->zBleedingAndHealthIndicator = this->zEng->CreateImage(Vector2(0 - this->zCurrentOffset,0 - this->zCurrentOffset), Vector2(windowWidth + this->zCurrentOffset*2, windowHeight + this->zCurrentOffset*2), "Media/Icons/HealthAndBleeding_Small_Temp.png" );
 	}
 
-	if(this->zBleedingLevel > 1)
+	if(this->zBleedingLevel > 1.0f)
 	{
 		if(!this->zDroppingPulse)
 		{
@@ -2684,7 +2695,8 @@ void Client::ResetPhysicalConditions()
 {
 	this->zHealth = 100;
 	this->zEnergy = zEnergy;
-	this->zBleedingLevel = 0;
+	this->zBleedingLevel = 0.0f;
+	this->zBleedingShouldBeZero = true;
 	this->zHunger = 100;
 	this->zHydration = 100;
 	this->zStamina = 100;
