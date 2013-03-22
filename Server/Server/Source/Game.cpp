@@ -92,7 +92,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zCraftingManager = new CraftingManager();
 
 	// Load Entities
-	LoadEntList("Entities.txt");
+	LoadEntList("EntitiesServer.txt");
 
 	// Actor Manager
 	this->zActorManager = new ActorManager(syncher);
@@ -1265,9 +1265,24 @@ void Game::OnEvent( Event* e )
 
 		std::string model;
 		if (IUBPW->item->GetItemType() == ITEM_TYPE_WEAPON_RANGED && IUBPW->item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
-			model = "media/models/bow_anims.fbx";
+		{
+			model = BOW_MODEL;//"media/models/bow_anims.fbx";
+		}
+		else if(IUBPW->item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
+		{
+			if (IUBPW->item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+			{
+				model = MACHETE_MODEL;
+			}
+			else if (IUBPW->item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+			{
+				model = PKNIFE_MODEL;
+			}
+		}
 		else
+		{
 			model = IUBPW->item->GetModel();
+		}
 
 		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)IUBPW->ID);
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
@@ -2584,6 +2599,10 @@ void Game::HandleBindings(const unsigned int ID, Item* item)
 	std::string msg;
 	NetworkMessageConverter NMC;
 	std::string model;
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActorManager->GetActor(ID));
+
+	if (!pActor)
+		return;
 
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED && item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
 		model = "media/models/bow_anims.fbx";
@@ -2598,6 +2617,16 @@ void Game::HandleBindings(const unsigned int ID, Item* item)
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
+
+			Item* projectile = pActor->GetInventory()->GetProjectile();
+			if (projectile && projectile->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+			{
+				msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
+				msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, projectile->GetModel());
+				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+				this->SendToAll(msg);
+			}
+
 		}
 	}
 	else if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
