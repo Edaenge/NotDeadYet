@@ -103,7 +103,6 @@ void MainMenu::Init()
 		"media/models/bear_dead.obj",
 		"media/models/deer_dead.obj",
 		"media/models/arrow_v01.obj",
-		"media/models/deer_temp.obj",
 		"media/models/canteen_01.obj",
 		"media/models/token_dead.obj",
 		"media/models/Thread_v01.obj",
@@ -130,7 +129,7 @@ void MainMenu::Init()
 		"media/models/berrybush/berrybush_02.obj"
 	};
 
-	eng->PreLoadResources(41, object);
+	eng->PreLoadResources(40, object);
 
 	Element* temp;
 

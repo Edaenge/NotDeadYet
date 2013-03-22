@@ -42,7 +42,7 @@ Client::Client(std::string playerModel) :
 	this->zMeshfirstPersonMap["media/models/ghost.obj"] = "media/models/ghost.obj";
 	this->zMeshfirstPersonMap["media/models/token_anims.fbx"] = "media/models/token_anims_fpp.fbx";
 	this->zMeshfirstPersonMap["media/models/deer_anims.fbx"] = "media/models/deer_anims.fbx";
-	this->zMeshfirstPersonMap["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.fbx";
+	//this->zMeshfirstPersonMap["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.fbx";
 	this->zMeshfirstPersonMap["media/models/bear_anims.fbx"] = "media/models/bear_anims.fbx";
 
 	this->zAnimationFileReader[0] = AnimationFileReader("media/models/token_anims.cfg");
