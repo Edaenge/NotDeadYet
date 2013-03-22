@@ -2810,18 +2810,28 @@ void Game::RestartGame()
 		message += NMC.Convert(MESSAGE_TYPE_ACTOR_TYPE, (float)1);
 		(*it).first->Send(message);
 	}
-	
+	//Re-create Bush / Materials
+	SAFE_DELETE(this->zBerryBushSpawner);
+	SAFE_DELETE(this->zMaterialSpawnManager);
+
+	// Material Spawner
+	this->zMaterialSpawnManager = new MaterialSpawnManager(zWorld, zActorManager);
+
+	// Berry Bush Spawner
+	this->zBerryBushSpawner = new BerryBushSpawner(zWorld, zActorManager);
+
 	this->zGameMode->StopGameMode();
 
 	//Debug
 
 	//SpawnItemsDebug();
-	SpawnAnimalsDebug();
+	//SpawnAnimalsDebug();
 	//SpawnHumanDebug();
 
 	this->ResetSunDirection();
 
 	this->ResetFogEnclosement();
+
 }
 
 void Game::CheckPlayerUseBow(Player* player)

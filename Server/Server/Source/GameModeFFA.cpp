@@ -36,7 +36,7 @@ static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 
 static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 1;
 
-#define DEBUGGING true
+#define DEBUGGING false
 
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
@@ -1191,8 +1191,7 @@ bool GameModeFFA::CheckEndCondition()
 		zGame->SendToAll(message);
 		return true;
 	}
-
-	else if( zPlayers.size() == 0 )
+	else if( zPlayers.size() == 0 || zAlivePlayers == 0 )
 	{
 		this->zGameEnd = true;
 		return true;
