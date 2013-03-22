@@ -154,6 +154,20 @@ void GameModeTest::OnEvent( Event* e )
 		}
 		this->zPlayers.erase(PRE->player);
 	}
+	else if (BioActorDeathEvent* BADE = dynamic_cast<BioActorDeathEvent*>(e))
+	{
+		if( !BADE->zActor )
+			return;
+
+		auto models = this->zGame->GetDeadActorModels();
+
+		auto models_it = models.find(BADE->zActor->GetModel());
+		if (models_it != models.end())
+		{			
+			BADE->zActor->SetModel(models_it->second);
+		}
+
+	}
 }
 
 void GameModeTest::OnPlayerDeath(PlayerActor* pActor)

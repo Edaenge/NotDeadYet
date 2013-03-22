@@ -92,7 +92,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zCraftingManager = new CraftingManager();
 
 	// Load Entities
-	LoadEntList("Entities.txt");
+	LoadEntList("EntitiesServer.txt");
 
 	// Actor Manager
 	this->zActorManager = new ActorManager(syncher);
