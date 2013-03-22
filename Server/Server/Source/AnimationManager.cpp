@@ -64,7 +64,7 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 	switch (currState)
 	{
 	case STATE_IDLE:
-		if (prevState != STATE_EQUIP_WEAPON && prevState != STATE_UNEQUIP_WEAPON && prevState != STATE_ATTACK && 
+		if (prevState != STATE_EQUIP_WEAPON && prevState != STATE_UNEQUIP_WEAPON && prevState != STATE_ATTACK_P && 
 			prevState != STATE_DRAW_BOW && prevState != STATE_USE && prevState != STATE_CRAFTING && prevState != STATE_FILLING_BOTTLE)
 		{
 			item = bActor->GetInventory()->GetPrimaryEquip();
@@ -255,7 +255,7 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 			}
 		}
 		break;
-	case STATE_ATTACK:
+	case STATE_ATTACK_P:
 		item = bActor->GetInventory()->GetPrimaryEquip();
 		if (item)
 		{
@@ -381,7 +381,7 @@ AnimationQueue AnimationManager::CreateAnimalAnimationQueue(BioActor* bActor)
 	switch (currState)
 	{
 	case STATE_IDLE:
-		if (prevState != STATE_EAT || prevState != STATE_ATTACK)
+		if (prevState != STATE_EAT || prevState != STATE_ATTACK_P)
 		{
 			fRand = (float)rand() / (float)RAND_MAX;
 
@@ -426,7 +426,7 @@ AnimationQueue AnimationManager::CreateAnimalAnimationQueue(BioActor* bActor)
 		}
 		
 		break;
-	case STATE_ATTACK:
+	case STATE_ATTACK_P:
 		animation = reader.GetAnimation(ANIMAL_ATTACK_01);
 
 		queue.zAnimations.push_back(animation);
