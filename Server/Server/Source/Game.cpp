@@ -1255,9 +1255,24 @@ void Game::OnEvent( Event* e )
 
 		std::string model;
 		if (IUBPW->item->GetItemType() == ITEM_TYPE_WEAPON_RANGED && IUBPW->item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
-			model = "media/models/bow_anims.fbx";
+		{
+			model = BOW_MODEL;//"media/models/bow_anims.fbx";
+		}
+		else if(IUBPW->item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
+		{
+			if (IUBPW->item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+			{
+				model = MACHETE_MODEL;
+			}
+			else if (IUBPW->item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+			{
+				model = PKNIFE_MODEL;
+			}
+		}
 		else
+		{
 			model = IUBPW->item->GetModel();
+		}
 
 		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)IUBPW->ID);
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
