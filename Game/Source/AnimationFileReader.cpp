@@ -5,6 +5,7 @@
 static const std::string ANIMATIONS		= "[Animations]";
 static const std::string ANIMATIONTIMES = "[AnimationTimes]";
 static const std::string BINDINGBONES	= "[BindingBones]";
+static const std::string SUBMESHES		= "[SubMesh]";
 static const std::string MISCELLANEOUS	= "[Misc]";
 static const std::string END			= "#END";
 
@@ -66,6 +67,17 @@ bool AnimationFileReader::ReadFromFile()
 				TrimAndSet(line, key, value);
 
 				this->zAnimationTimes[key] = MaloW::convertStringToFloat(value);
+			}
+		}
+		else if (line == SUBMESHES)
+		{
+			while (!read.eof() && line != END)
+			{
+				std::getline(read, line);
+
+				TrimAndSet(line, key, value);
+
+				this->zSubMeshes[key] = value;
 			}
 		}
 		else if(line == BINDINGBONES)
@@ -154,4 +166,17 @@ const float AnimationFileReader::GetAnimationTime( const std::string& animationN
 
 	static const float zero = 0.0f;
 	return zero;
+}
+
+const std::string& AnimationFileReader::GetSubMeshName( const std::string& name )
+{
+	auto it = this->zSubMeshes.find(name);
+	if (it != this->zSubMeshes.end())
+	{
+		return it->second;
+	}
+
+	static const std::string none = "";
+
+	return none;
 }

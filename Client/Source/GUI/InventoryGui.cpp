@@ -128,7 +128,7 @@ bool InventoryGui::AddItemToGui(Gui_Item_Data gid, bool open, GraphicsEngine* ge
 			{
 				if(!this->zSlotGui.at(k)->GetBlocked())
 				{
-					Gui_Item_Data blockedGid = Gui_Item_Data(0, -1, -1, 0, 0, 0, false, "Blocked", "Media/InGameUI/Unavailable.png", "");
+					Gui_Item_Data blockedGid = Gui_Item_Data(0, 0, 0, 0, 0, 0, false, "Blocked", "Media/InGameUI/Unavailable.png", "");
 					for(unsigned int m = 0; m < gid.zSlots - 1; m++)
 					{
 						this->zSlotGui.at(k-m)->AddItemToSlot(blockedGid, open, ge);
@@ -155,7 +155,7 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 			{
 				this->zSlotGui.at(i)->SetStacks(this->zSlotGui.at(i)->GetGid().zStacks - gid.zStacks);
 
-				if(this->zSlotGui.at(i)->GetGid().zStacks <= 0) // Remove item if it has less than or zero stacks
+				if(this->zSlotGui.at(i)->GetGid().zStacks == 0) // Remove item if it has less than or zero stacks
 				{
 					this->RemoveBlockers(i, open, ge, 0);
 					this->zSlotGui.at(i)->RemoveItemFromSlot(open, ge);
@@ -375,7 +375,7 @@ void InventoryGui::EquipItem( const Gui_Item_Data gid, bool guiOpen )
 		{
 			if(!this->zSlotGui.at(k)->GetBlocked())
 			{
-				Gui_Item_Data blockedGid = Gui_Item_Data(0, -1, -1, 0, 0, 0, false, "Blocked", "Media/InGameUI/Unavailable.png", "");
+				Gui_Item_Data blockedGid = Gui_Item_Data(0, 0, 0, 0, 0, 0, false, "Blocked", "Media/InGameUI/Unavailable.png", "");
 				for(unsigned int m = 0; m < gid.zSlots - 1; m++)
 				{
 					this->zSlotGui.at(k-m)->AddItemToSlot(blockedGid, guiOpen, GetGraphics());
@@ -396,7 +396,7 @@ void InventoryGui::UnEquipItem(Gui_Item_Data gid, bool open, GraphicsEngine* ge)
 	}
 }
 
-void InventoryGui::Resize(float windowWidth, float windowHeight, float dx)
+void InventoryGui::Resize(float, float windowHeight, float dx)
 {
 	// Calcs that is needed for resize
 	float startOffsetX = (XOFFSETINV / 1024.0f) * dx;

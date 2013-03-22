@@ -98,7 +98,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zActorManager = new ActorManager(syncher);
 	
 	// Behavior Manager
-	zBehaviorManager = new BehaviorManager();
+	zBehaviorManager = new BehaviorManager(this);
 
 	// Create sound handler and let it observe game and actors.
 	this->zSoundHandler = new SoundHandler(this, zActorManager);
@@ -131,16 +131,17 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	//this->SpawnItemsDebug();
-    //this->SpawnAnimalsDebug();
-//	this->SpawnHumanDebug();
-// Sun Direction
+	// this->SpawnItemsDebug();
+    // this->SpawnAnimalsDebug();
+	// this->SpawnHumanDebug();
+
+	// Sun Direction
 	this->ResetSunDirection();
 
 	// Fog Enclosement
 	this->ResetFogEnclosement();
 
-	//Used for caching fbx files dont change the function.
+	// Used for caching fbx files dont change the function.
 	//this->Caching("media/models/token_anims.fbx");
 }
 
@@ -529,14 +530,8 @@ bool Game::Update( float dt )
 	NetworkMessageConverter NMC;
 	std::string msg;
 
-	if ( zPerf ) this->zPerf->PreMeasure("Updating Behaviors", 1);
-	std::set<Behavior*> &behaviors = this->zActorManager->GetBehaviors();
-
-	// Update Behaviors
-	auto i = behaviors.begin();
-	int counter = 0;
-	auto it_zplayers_end = this->zPlayers.end();
-	for(auto it = this->zPlayers.begin(); it != it_zplayers_end; it++)
+	// Player Shoot Bows
+	for(auto it = zPlayers.begin(); it != zPlayers.end(); it++)
 	{
 		PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>(it->second->GetBehavior());
 		if(playerBehavior != NULL)
@@ -552,6 +547,12 @@ bool Game::Update( float dt )
 		}
 	}
 
+	// Update Behaviors
+	if ( zPerf ) this->zPerf->PreMeasure("Updating Behaviors", 1);
+	std::set<Behavior*> &behaviors = this->zActorManager->GetBehaviors();
+	
+	int counter = 0;
+	auto i = behaviors.begin();
 	while( i != behaviors.end() )
 	{
 		if (!(*i)->Removed())
@@ -594,10 +595,18 @@ bool Game::Update( float dt )
 			i = behaviors.erase(i);
 			this->zActorManager->RemoveBehavior(temp);
 		}
-		
 	}
 
 	if ( zPerf ) this->zPerf->PostMeasure("Updating Behaviors", 1);
+
+	// Update Behaviors
+	if ( zBehaviorManager )
+	{
+		if ( zPerf ) this->zPerf->PreMeasure("Behavior Manager", 1);
+		zBehaviorManager->Update(dt);
+		if ( zPerf ) this->zPerf->PostMeasure("Behavior Manager", 1);
+	}
+
 	if ( zPerf ) this->zPerf->PreMeasure("Updating GameMode", 4);
 
 	// Update Game Mode, Might Notify That GameMode is Finished
@@ -612,15 +621,12 @@ bool Game::Update( float dt )
 
 	if ( zPerf ) this->zPerf->PostMeasure("Updating World", 4);
 
-	//Updating animals and Check fog.
-
-	//Check if Players Are in Fog.
-	auto it_behaviors_end = behaviors.end();
-	for(i = behaviors.begin(); i != it_behaviors_end; i++)
+	// Hurt player actors in fog.
+	for(auto i = behaviors.begin(); i != behaviors.end(); i++)
 	{
-		if (PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>( (*i) ))
+		if ( PlayerBehavior* playerBehavior = dynamic_cast<PlayerBehavior*>(*i) )
 		{
-			if (BioActor* bActor = dynamic_cast<BioActor*>( (*i)->GetActor() ))
+			if ( BioActor* bActor = dynamic_cast<BioActor*>(playerBehavior->GetActor()) )
 			{
 				Vector2 center = this->zWorld->GetWorldCenter();
 
@@ -690,6 +696,10 @@ void Game::OnEvent( Event* e )
 			this->HandleConnection(PCE->clientData);
 		else
 			PCE->clientData->Kick();
+	}
+	else if ( BehaviorRemovedEvent* BRE = dynamic_cast<BehaviorRemovedEvent*>(e) )
+	{
+		
 	}
 	else if( UserReadyEvent* URE = dynamic_cast<UserReadyEvent*>(e) )
 	{
@@ -1255,9 +1265,24 @@ void Game::OnEvent( Event* e )
 
 		std::string model;
 		if (IUBPW->item->GetItemType() == ITEM_TYPE_WEAPON_RANGED && IUBPW->item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
-			model = "media/models/bow_anims.fbx";
+		{
+			model = BOW_MODEL;//"media/models/bow_anims.fbx";
+		}
+		else if(IUBPW->item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
+		{
+			if (IUBPW->item->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+			{
+				model = MACHETE_MODEL;
+			}
+			else if (IUBPW->item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
+			{
+				model = PKNIFE_MODEL;
+			}
+		}
 		else
+		{
 			model = IUBPW->item->GetModel();
+		}
 
 		msg = NMC.Convert(MESSAGE_TYPE_MESH_UNBIND, (float)IUBPW->ID);
 		msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
@@ -1275,7 +1300,7 @@ void Game::OnEvent( Event* e )
 		this->zPerf->PostMeasure("Game Event Handling", 2);
 }
 
-void Game::PrintDebugData(ClientData* cd, int type)
+void Game::PrintDebugData(ClientData* cd, int)
 {
 	Actor* actor = this->zPlayers[cd]->GetBehavior()->GetActor();
 
@@ -1723,7 +1748,7 @@ void Game::HandleLootObject( ClientData* cd, std::vector<unsigned int>& actorID 
 	}
 }
 
-void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType )
+void Game::HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int )
 {
 	Actor* actor = this->zActorManager->GetActor(objID);
 	NetworkMessageConverter NMC;
@@ -2574,6 +2599,10 @@ void Game::HandleBindings(const unsigned int ID, Item* item)
 	std::string msg;
 	NetworkMessageConverter NMC;
 	std::string model;
+	PlayerActor* pActor = dynamic_cast<PlayerActor*>(this->zActorManager->GetActor(ID));
+
+	if (!pActor)
+		return;
 
 	if (item->GetItemType() == ITEM_TYPE_WEAPON_RANGED && item->GetItemSubType() == ITEM_SUB_TYPE_BOW)
 		model = "media/models/bow_anims.fbx";
@@ -2588,6 +2617,16 @@ void Game::HandleBindings(const unsigned int ID, Item* item)
 			msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, model);
 			msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
 			this->SendToAll(msg);
+
+			Item* projectile = pActor->GetInventory()->GetProjectile();
+			if (projectile && projectile->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+			{
+				msg = NMC.Convert(MESSAGE_TYPE_MESH_BINDING, BONE_R_WEAPON);
+				msg += NMC.Convert(MESSAGE_TYPE_MESH_MODEL, projectile->GetModel());
+				msg += NMC.Convert(MESSAGE_TYPE_OBJECT_ID, (float)ID);
+				this->SendToAll(msg);
+			}
+
 		}
 	}
 	else if (item->GetItemType() == ITEM_TYPE_WEAPON_MELEE)
@@ -2893,7 +2932,9 @@ void Game::CheckToShotArrow(ClientData* cd)
 				pActor->SetState(STATE_ATTACK);
 			}
 			else
+			{
 				cd->Send(NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "No_Arrows_Equipped"));
+			}
 		}
 	}
 }
@@ -2901,7 +2942,9 @@ void Game::CheckToShotArrow(ClientData* cd)
 bool Game::IsFull() const
 {
 	if(zPlayers.size() == zMaxNrOfPlayers)
+	{
 		return true;
+	}
 
 	return false;
 }

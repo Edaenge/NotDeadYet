@@ -52,11 +52,14 @@ bool PlayerBehavior::Update(float dt)
 	float energy = zActor->GetEnergy();
 
 	if (energy < 200.0f)
-
+	{
 		energy += energy_Coeff * dt;
+	}
 
 	if (energy >= 200.0f)
+	{
 		energy = 200.0f;
+	}
 
 	zActor->SetEnergy(energy);
 

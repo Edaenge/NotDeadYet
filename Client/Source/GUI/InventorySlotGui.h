@@ -19,38 +19,44 @@ struct Gui_Item_Data
 		this->zSubType = -1;
 
 		this->zWeight = -1;
-		this->zStacks = -1;
+		this->zStacks = 0;
 		this->zCanStack = false;
 
 		this->zName = "Unknown";
 		this->zFilePath = "Unknown";
 		this->zDescription = "Unknown";
 	}
-	Gui_Item_Data(const unsigned int ID, const unsigned int Type, const unsigned int subType, const float weight, 
-		const unsigned int stack, const unsigned int Slots, const bool canStack, const std::string& name,const std::string& filePath, 
-		const std::string& description)
+
+	Gui_Item_Data(const unsigned int& ID, 
+		const unsigned int& Type, 
+		const unsigned int& subType, 
+		const float& weight, 
+		const unsigned int stack, 
+		const unsigned int& Slots, 
+		const bool& canStack, 
+		const std::string& name, 
+		const std::string& filePath, 
+		const std::string& description) :
+		zID(ID),
+		zSlots(Slots),
+		zType(Type),
+		zSubType(subType),
+		zWeight(weight),
+		zStacks(stack),
+		zCanStack(canStack),
+		zName(name),
+		zFilePath(filePath),
+		zDescription(description)
 	{
-		this->zID = ID;
-		this->zSlots = Slots;
-
-		this->zType = Type;
-		this->zSubType = subType;
-
-		this->zWeight = weight;
-		this->zStacks = stack;
-		this->zCanStack = canStack;
-
-		this->zName = name;
-		this->zFilePath = filePath;
-		this->zDescription = description;
 	}
+
 	int zID;
 	int zSlots;
 	int zType;
 	int zSubType;
 
 	float zWeight;
-	int zStacks;
+	unsigned int zStacks;
 	bool zCanStack;
 
 	std::string zName;
@@ -83,18 +89,26 @@ public:
 	void ShowGui();
 	void HideGui();
 
-	inline Gui_Item_Data GetGid(){ return this->zGid; }
+	inline const Gui_Item_Data& GetGid() const { return this->zGid; }
 
-	inline bool GetBlocked(){ return this->zBlocked; }
-	inline void SetBlocked(bool value){ this->zBlocked = value; }
+	inline const bool& GetBlocked() const { return this->zBlocked; }
+	inline void SetBlocked(const bool& value) { this->zBlocked = value; }
 
-	inline bool GetEquipped(){ return this->zEquipped; }
-	inline void SetEquipped(bool value){ this->zEquipped = value; }
+	inline const bool& GetEquipped() const { return this->zEquipped; }
+	inline void SetEquipped(const bool& value) { this->zEquipped = value; }
 
-	inline bool GetBlocker() { return this->zBlocker; }
-	inline void SetBlocker(bool value){ this->zBlocker = value; }
+	inline const bool& GetBlocker() const { return this->zBlocker; }
+	inline void SetBlocker(const bool& value) { this->zBlocker = value; }
 
-	void SetStacks(int stacks) { this->zGid.zStacks = stacks; if(this->zStackText) this->zStackText->SetText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str()); }
+	void SetStacks(const int& stacks) 
+	{ 
+		this->zGid.zStacks = stacks; 
+
+		if(this->zStackText)
+		{
+			this->zStackText->SetText(MaloW::convertNrToString((float)this->zGid.zStacks).c_str()); 
+		}
+	}
 
 	void AddItemToSlot(Gui_Item_Data gid, bool invOpen, GraphicsEngine* ge);
 	void RemoveItemFromSlot(bool invOpen, GraphicsEngine* ge);

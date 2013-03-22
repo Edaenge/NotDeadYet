@@ -1777,6 +1777,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 
 	if (Messages::MsgFileWrite())
 		Messages::Debug(msg);
+
 	this->zPerf->PreMeasure("Network Message Handling", 1);
 
 	//Checks what type of message was sent
@@ -1826,9 +1827,7 @@ void Client::HandleNetworkMessage( const std::string& msg )
 		//}
 
 		if ( zActorManager )
-		{
 			this->zActorManager->SetUpdatesPerSec(updatesPerSec);
-		}
 	}
 	else if (msgArray[0].find(M_SERVER_RESTART.c_str()) == 0)
 	{
@@ -1882,33 +1881,35 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			{
 				std::string boneName = it->second.GetBindingBone(bone);
 
-				if (boneName != "")
-				{
-					iMesh* mesh = NULL;
+				//if (boneName != "")
+				//{
+					//iMesh* mesh = NULL;
 
-					if (model.length() > 4)
-					{
-						std::string substr = model.substr(model.length() - 4);
-						
-						if (substr == ".obj")
-							mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
-						else if (substr == ".fbx")
-							mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
+					//if (model.length() > 4)
+					//{
+					//	std::string substr = model.substr(model.length() - 4);
+					//	
+					//	if (substr == ".obj")
+					//		mesh = this->zEng->CreateStaticMesh(model.c_str(), Vector3());
+					//	else if (substr == ".fbx")
+					//		mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
 
-					}
+					//}
 					
-					if (mesh)
-					{
+					//if (mesh)
+					//{
 						if (iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(actor->GetMesh()))
 						{
-							mesh->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-							if(fbxMesh->BindMesh(boneName.c_str(), mesh))
-							{
-								actor->AddSubMesh(model, mesh);
-							}
+							std::string name = it->second.GetSubMeshName(model);
+							//mesh->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+							//if(fbxMesh->BindMesh(boneName.c_str(), mesh))
+							//{
+							//	actor->AddSubMesh(model, mesh);
+							//}
+							fbxMesh->HideModel(name.c_str(), false);
 						}
-					}
-				}
+					//}
+				//}
 			}
 		}
 	}
@@ -1925,16 +1926,23 @@ void Client::HandleNetworkMessage( const std::string& msg )
 			{
 				if (iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(actor->GetMesh()))
 				{
-					iMesh* mesh = actor->GetSubMesh(model);
+					//iMesh* mesh = actor->GetSubMesh(model);
 
-					if (mesh)
+					//if (mesh)
+					//{
+						//mesh->SetScale(Vector3(0.05f, 0.05f, 0.05f));
+
+					auto it = this->zModelToReaderMap.find(actor->GetModel());
+					if (it != this->zModelToReaderMap.end())
 					{
-						mesh->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-						fbxMesh->UnbindMesh(mesh);
-						
-						this->zEng->DeleteMesh(mesh);
-						actor->RemoveSubMesh(model);
+						std::string name = it->second.GetSubMeshName(model);
+						if (name != "")
+							fbxMesh->HideModel(name.c_str(), true);
 					}
+						
+						//this->zEng->DeleteMesh(mesh);
+						//actor->RemoveSubMesh(model);
+					//}
 				}
 			}
 		}
