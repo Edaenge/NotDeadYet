@@ -84,8 +84,8 @@ void FootStepClient::PlaceFootStep( Actor* actor )
 	const char* name = 0;
 
 	// Make Prints
-	if ( actor->GetModel() == "media/models/token_anims.fbx" 
-		|| actor->GetModel() == "media/models/token_anims_fpp.fbx" )
+	if ( actor->GetModel() == "media/models/token_anims.fbx" || 
+		 actor->GetModel() == "media/models/token_anims_fpp.fbx" )
 	{
 		unsigned int lastFoot = zLastFoot[actor];
 
@@ -187,9 +187,9 @@ void FootStepClient::OnEvent(Event* e)
 	else if ( ActorChangedModelEvent* ACME = dynamic_cast<ActorChangedModelEvent*>(e) )
 	{
 		if ( ACME->zActor->GetModel() == "media/models/token_anims.fbx" || 
-			ACME->zActor->GetModel() == "media/models/token_anims_fpp.fbx" ||
-			ACME->zActor->GetModel() == "media/models/bear_anims.fbx" ||
-			ACME->zActor->GetModel() == "media/models/deer_anims.fbx" )
+			 ACME->zActor->GetModel() == "media/models/token_anims_fpp.fbx" ||
+			 ACME->zActor->GetModel() == "media/models/bear_anims.fbx" ||
+			 ACME->zActor->GetModel() == "media/models/deer_anims.fbx" )
 		{
 			zLastPositions[ACME->zActor] = Vector2(0.0f, 0.0f);
 		}
@@ -205,9 +205,9 @@ void FootStepClient::OnEvent(Event* e)
 	else if ( ActorAddedEvent* AEE = dynamic_cast<ActorAddedEvent*>(e) )
 	{
 		if ( AEE->zActor->GetModel() == "media/models/token_anims.fbx" || 
-			AEE->zActor->GetModel() == "media/models/token_anims_fpp.fbx" ||
-			AEE->zActor->GetModel() == "media/models/bear_anims.fbx" ||
-			AEE->zActor->GetModel() == "media/models/deer_anims.fbx" )
+			 AEE->zActor->GetModel() == "media/models/token_anims_fpp.fbx" ||
+			 AEE->zActor->GetModel() == "media/models/bear_anims.fbx" ||
+			 AEE->zActor->GetModel() == "media/models/deer_anims.fbx" )
 		{
 			zLastPositions[AEE->zActor] = Vector2(0.0f, 0.0f);
 			AEE->zActor->AddObserver(this);
