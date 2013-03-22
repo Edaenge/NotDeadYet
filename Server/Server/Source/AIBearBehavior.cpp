@@ -346,12 +346,19 @@ bool AIBearBehavior::Update( float dt )
 	int nrOfPredators = 0;
 	bool nearbyPredatorsExist = false;
 
+
+	Vector3 bearTestPos = bActor->GetPosition();
+	if(bearTestPos.x <= 0.0f)
+	{
+		int testVAlue = 0;
+		testVAlue = 23;
+	}
+
+
 	//Perform checking for entities here.
 
 	int shortestDistance = 99999;
 
-	float xDistance = 0.0f;
-	float zDistance = 0.0f;
 	float finalDistance = 0.0f;
 
 	int maximumNodesTest = 5;
@@ -383,14 +390,11 @@ bool AIBearBehavior::Update( float dt )
 	//	
 	//}
 
-	std::set<Actor*> aSet = this->GetTargets();
-	for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
+	//std::set<Actor*> aSet = this->GetTargets();
+	for(auto i = this->zNearDynamicActors.cbegin(); i != this->zNearDynamicActors.cend(); i++)//for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
 	{
-		xDistance = bActor->GetPosition().x - (*i)->GetPosition().x; //Math, could use optimization, I think.
-		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
-		zDistance = bActor->GetPosition().z - (*i)->GetPosition().z;
-		finalDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
-		if( finalDistance < this->zMinimumDistance && bActor->GetPosition().x != (*i)->GetPosition().x && bActor->GetPosition().z != (*i)->GetPosition().z && dynamic_cast<BioActor*>((*i)))  //Since everything could be prey to a bear, even other bears, this check is needed to make sure he does not make himself his enemy.
+		finalDistance = (bActor->GetPosition().GetXZ() - (*i)->GetPosition().GetXZ()).GetLength();
+		if( finalDistance < this->zMinimumDistance && dynamic_cast<BioActor*>((*i)) && !dynamic_cast<BearActor*>((*i)) && dynamic_cast<BioActor*>((*i))->IsAlive())  //Since everything could be prey to a bear, even other bears, this check is needed to make sure he does not make himself his enemy.
 		{
 			dynamic_cast<BioActor*>((*i))->zValid = true;
 
@@ -446,8 +450,8 @@ bool AIBearBehavior::Update( float dt )
 				fear += this->zExtraFearWithCloseProximity;
 			}
 
-			std::set<Actor*> aSet = this->GetTargets();
-			for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
+			//std::set<Actor*> aSet = this->GetTargets();
+			for(auto i = this->zNearDynamicActors.cbegin(); i != this->zNearDynamicActors.cend(); i++)//for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
 			{
 				if(dynamic_cast<BioActor*>((*i)))
 				{
@@ -583,10 +587,6 @@ bool AIBearBehavior::Update( float dt )
 		this->zCurrentDistanceFled = 0;
 		this->zPanic = false;
 
-		xDistance = bActor->GetPosition().x - this->zMainActorTarget->GetPosition().x;
-		//yDistance = this->GetPosition().y - this->zMainTarget.position.y;
-		zDistance = bActor->GetPosition().z - this->zMainActorTarget->GetPosition().z;
-		float lastDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
 		if(this->GetIfNeedPath() == true)
 		{
 			this->SetIfNeedPath(false);
@@ -605,62 +605,28 @@ bool AIBearBehavior::Update( float dt )
 
 			this->zDestination = this->zMainActorTarget->GetPosition();
 
-			//if( lastDistance < this->GetLastDistanceCheck() / 2) // The animal has traveled towards its goal halfway, at this point, it is safe to asume the goal has moved.
-			//{
-			//	this->zCurrentPath.clear();
-			//	this->zPathfinder.Pathfinding(bActor->GetPosition().x, bActor->GetPosition().z, this->zMainActorTarget->GetPosition().x, this->zMainActorTarget->GetPosition().z, this->zCurrentPath, maximumNodesTest);
-			//	//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40);
-			//}
-
-			xDistance = 0;
-			zDistance = 0;
 			float distance;
-			float shortestDistance = 99999;
-			//Target mostLikelyTarget = this->zMainTarget;
-			Actor* mostLikelyTarget = this->zMainActorTarget; 
 
+			distance = (bActor->GetPosition().GetXZ() - this->zDestination.GetXZ()).GetLength();
 
-			std::set<Actor*> aSet = this->GetTargets();
-			for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
+			if(distance < 1.5f)
 			{
-				if(dynamic_cast<BioActor*>((*i)))
-				{
-				
-					if(dynamic_cast<BioActor*>((*i))->zValid == true)
+				//Vector3 direction = (*i)->GetPosition() - bActor->GetPosition();
+				//direction.Normalize();
+				//bActor->SetDir( direction ); 
+				//float dotProduct = bActor->GetDir().GetDotProduct( (*i)->GetPosition() - bActor->GetPosition() );
+				//if(dotProduct > this->zFieldOfView)//It is looking at the target.
+				//{
+					//Attack!
+					attackAnim = true;
+					Damage bearAttack;
+					bearAttack.slashing = 15;
+					if(dynamic_cast<BioActor*>(this->zMainActorTarget)->IsAlive())
 					{
-						xDistance = bActor->GetPosition().x - (*i)->GetPosition().x;
-						//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
-						zDistance = bActor->GetPosition().z - (*i)->GetPosition().z;
-						distance = sqrt(xDistance * xDistance + zDistance * zDistance);
-					
-						if(distance < shortestDistance) //Something that is a larger threat is based on distance.
-						{
-							shortestDistance = distance;
-							mostLikelyTarget = (*i);
-						}
-						if(distance < 1.5f)
-						{
-							//Vector3 direction = (*i)->GetPosition() - bActor->GetPosition();
-							//direction.Normalize();
-							//bActor->SetDir( direction ); 
-
-							//float dotProduct = bActor->GetDir().GetDotProduct( (*i)->GetPosition() - bActor->GetPosition() );
-
-							//if(dotProduct > this->zFieldOfView)//It is looking at the target.
-							//{
-								//Attack!
-								attackAnim = true;
-								Damage bearAttack;
-								bearAttack.slashing = 15;
-								if(dynamic_cast<BioActor*>(this->zMainActorTarget)->IsAlive())
-								{
-									dynamic_cast<BioActor*>(this->zMainActorTarget)->TakeDamage(bearAttack,this->GetActor());
-								}
-							//}
-							
-						}
+						dynamic_cast<BioActor*>(this->zMainActorTarget)->TakeDamage(bearAttack,this->GetActor());
 					}
-				}
+				//}	
+							
 			}
 		}
 	}
@@ -732,7 +698,10 @@ bool AIBearBehavior::Update( float dt )
 				Vector2 testProperDirection;
 				testProperDirection.x = bActor->GetDir().x;
 				testProperDirection.y = bActor->GetDir().z;
-				testProperDirection.Normalize();
+				if(testProperDirection.GetLength() > 0.0f)
+				{
+					testProperDirection.Normalize();
+				}
 				bActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
 
 			}
@@ -745,8 +714,6 @@ bool AIBearBehavior::Update( float dt )
 		else if(this->GetMentalState() == AGGRESSIVE /* && this->zCurrentPath.size() > 0*/)
 		{
 
-			
-			
 			//Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
 			//Vector3 direction = goal - dActor->GetPosition();
 			
@@ -791,7 +758,11 @@ bool AIBearBehavior::Update( float dt )
 				Vector2 testProperDirection;
 				testProperDirection.x = bActor->GetDir().x;
 				testProperDirection.y = bActor->GetDir().z;
-				testProperDirection.Normalize();
+				if(testProperDirection.GetLength() > 0.0f)
+				{
+					testProperDirection.Normalize();
+				}
+				
 				bActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
 
 				dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
@@ -804,7 +775,10 @@ bool AIBearBehavior::Update( float dt )
 				Vector2 testProperDirection;
 				testProperDirection.x = bActor->GetDir().x;
 				testProperDirection.y = bActor->GetDir().z;
-				testProperDirection.Normalize();
+				if(testProperDirection.GetLength() > 0.0f)
+				{
+					testProperDirection.Normalize();
+				}
 				bActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
 
 				dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_RUNNING);
@@ -956,135 +930,4 @@ bool AIBearBehavior::Update( float dt )
 
 	return false;
 
-	/*
-	////Move the animal along path.
-	//if(this->zCurrentPath.size() > 0)
-	//{
-	//	this->zPreviousVelocity = bActor->GetVelocity();
-	//	this->zPanic = false;
-
-	////	this->zPreviousPos = bActor->GetPosition();
-
-	//	bool reachedNode = false;
-	//	if( (bActor->GetPosition().x > this->zCurrentPath.back().x - 0.2 && bActor->GetPosition().x < this->zCurrentPath.back().x + 0.2) && ( bActor->GetPosition().z > this->zCurrentPath.back().y - 0.2 && bActor->GetPosition().z < this->zCurrentPath.back().y + 0.2 ) )
-	//	{
-	//		reachedNode = true;
-	//	}
-
-	//	if(reachedNode)
-	//	{
-	//		this->zCurrentPath.pop_back();
-	//		//reachedNode = false;
-	//	}
-
-	//	if(this->GetMentalState() == CALM && this->zCurrentPath.size() > 0 )
-	//	{
-
-	//		/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
-
-	//		result = result;
-	//		this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
-
-
-	//		Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
-	//		Vector3 direction = goal - bActor->GetPosition();
-	//		direction.Normalize();
-	//		bActor->SetDir( direction ); 
-	//		bActor->SetVelocity(this->zWalkingVelocity);
-	//		//if(testInterval > 1.0) //Mainly for testing purposes.
-	//		//{
-	//		//	testInterval = 0;
-	//		//	this->SetPosition(Vector3(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y) );
-	//		//}
-	//		
-	//		bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
-	//	
-	//	}
-	//	else if(this->GetMentalState() == AGGRESSIVE  && this->zCurrentPath.size() > 0)
-	//	{
-	//		/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
-
-	//		result = result;
-	//		this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
-
-
-	//		//Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
-	//		//
-	//		//Vector3 ADirection = bActor->GetDir();
-	//		//Vector3 BDirection = goal - bActor->GetPosition();
-	//		//BDirection.Normalize();
-
-	//		//float factor = 0.98f;
-	//		////float factorTwo = 0.0f;
-
-	//		////factor = ADirection.GetDotProduct(BDirection);
-	//		////factorTwo = BDirection.GetDotProduct(ADirection);
-
-
-	//		//Vector3 CDirection = ADirection * (1.0 - factor) + BDirection * factor;
-
-	//		//CDirection.Normalize();
-
-	//		//bActor->SetDir( CDirection ); 
-
-	//		Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
-	//		Vector3 direction = goal - bActor->GetPosition();
-	//		direction.Normalize();
-	//		bActor->SetDir( direction ); 
-	//		bActor->SetVelocity(this->zAttackingVelocity);
-
-	//		bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
-
-	//	}
-	//	else if(this->GetMentalState() == AFRAID && this->zCurrentPath.size() > 0)
-	//	{
-	//		/*double result = atan2( (this->zCurrentPath.back().y - this->GetPosition().z), (this->zCurrentPath.back().x - this->GetPosition().x) );
-
-	//		result = result;
-	//		this->SetDirection( Vector3( cos(result), 0.0f, sin(result) )); */
-
-	//		Vector3 goal(this->zCurrentPath.back().x, 0, this->zCurrentPath.back().y);
-	//		Vector3 direction = goal - bActor->GetPosition();
-	//		direction.Normalize();
-	//		bActor->SetDir( direction ); 
-	//		bActor->SetVelocity(this->zFleeingVelocity);
-
-	//		bActor->SetPosition(bActor->GetPosition() + bActor->GetDir() * dt * bActor->GetVelocity());
-	//		zCurrentDistanceFled += dt * bActor->GetVelocity();
-
-	//	}
-	//	else if(this->GetMentalState() == AFRAID && this->zCurrentDistanceFled < this->zFleeDistance)
-	//	{
-	//		this->SetIfNeedPath(true);
-	//	}
-	//
-	//}
-	//else
-	//{
-	//	this->SetIfNeedPath(true);
-	//}
-	
-	//float height = this->zWorld->CalcHeightAtWorldPos( Vector2(bActor->GetPosition().x, bActor->GetPosition().z));
-
-	//Vector3 actorPosition = bActor->GetPosition();
-	//actorPosition.y = height;
-	//bActor->SetPosition(actorPosition);
-
-	//
-	////Rotate Animal
-	//static Vector3 defaultMeshDir = Vector3(0.0f, 0.0f, -1.0f);
-	//Vector3 meshDirection = bActor->GetDir();
-	//meshDirection.y = 0;
-	//meshDirection.Normalize();
-
-	//Vector3 around = Vector3(0.0f, 1.0f, 0.0f);
-	//float angle = acos(meshDirection.GetDotProduct(defaultMeshDir));
-
-	//if (meshDirection.x > 0.0f)
-	// angle *= -1;
-
-	//bActor->SetRotation(Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-	//bActor->SetRotation(around, angle);
-
-	//return false;
 }
