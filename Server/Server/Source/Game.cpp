@@ -1224,7 +1224,7 @@ void Game::OnEvent( Event* e )
 		message = NMC.Convert(MESSAGE_TYPE_FOG_ENCLOSEMENT, this->zCurrentFogEnclosement);
 		this->SendToAll(message);
 
-		message = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "\"" + UDE->playerName + "\"" + " Has Connected with ip: " + UDE->clientData->GetChannel()->GetIP());
+		message = NMC.Convert(MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "\"" + UDE->playerName + "\"" + " HAS CONNECTED");
 		SendToAll(message);
 
 		if ( zPerf ) this->zPerf->PostMeasure("Player Connecting", 2);

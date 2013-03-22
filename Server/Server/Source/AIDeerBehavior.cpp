@@ -463,9 +463,9 @@ bool AIDeerBehavior::Update( float dt )
 			{
 				fear += zExtraFearWithCloseProximity;
 			}
-			
-			auto i = this->GetTargets().begin();
-			for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
+
+			std::set<Actor*> aSet = this->GetTargets();
+			for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
 			{
 				if(dynamic_cast<BioActor*>((*i)))
 				{
@@ -602,8 +602,8 @@ bool AIDeerBehavior::Update( float dt )
 			float shortestDistance = 99999;
 			Actor* mostLikelyTarget = this->zMainActorTarget;
 
-			auto i = this->GetTargets().begin();
-			for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
+			std::set<Actor*> aSet = this->GetTargets();
+			for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
 			{
 				if(dynamic_cast<BioActor*>((*i)))
 				{

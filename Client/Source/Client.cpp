@@ -260,6 +260,10 @@ void Client::Update()
 	{
 		this->zIgg->Update(this->zHealth, this->zHunger, this->zHydration);
 	}
+	else if(this->zActorType == HUMAN)
+	{
+		this->zIgg = new InGameGui();
+	}
 	// Anchors with the world to decide what to render.
 	if(zWorld)
 	{
@@ -285,7 +289,7 @@ void Client::Update()
 	//	this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
 	
-	if(this->zHealth > 0.0f)
+	if(this->zActorType == HUMAN)
 	{
 		this->UpdateHealthAndBleedingImage();
 	}
@@ -294,6 +298,12 @@ void Client::Update()
 		if(this->zBleedingAndHealthIndicator)
 		{
 			this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
+		}
+		
+		if(this->zIgg)
+		{
+			delete this->zIgg;
+			this->zIgg = NULL;
 		}
 	}
 
