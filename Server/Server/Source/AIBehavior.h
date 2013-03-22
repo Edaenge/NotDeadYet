@@ -36,12 +36,11 @@ enum MentalState
 
 class AIBehavior : public Behavior
 {
+	std::set<Actor*> zTargetSet;
+
 public:
 	AIBehavior(Actor* actor, World* world);
 	virtual ~AIBehavior();
-	std::set<Actor*>& GetTargets() {return this->zTargetSet;}
-	void SetTargets(std::set<Actor*> allTargets) {this->zTargetSet = allTargets;}
-protected:
-	std::set<Actor*> zTargetSet;
-private:
+	inline const std::set<Actor*>& GetTargets() const { return this->zTargetSet; }
+	inline void SetTargets(const std::set<Actor*>& allTargets) {this->zTargetSet = allTargets;}
 };

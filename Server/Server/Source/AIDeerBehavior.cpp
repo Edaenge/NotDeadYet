@@ -259,8 +259,7 @@ void AIDeerBehavior::SetFearLevel(float fear)
 
 bool AIDeerBehavior::InitPathfinder()
 {
-	this->zPathfinder.InitAI(0.5,3840); //For big map.
-	//this->zPathfinder.InitAI(0.5,90); //For small testing map.
+	this->zPathfinder.InitAI(0.5f, zWorld->GetWorldSize().x);
 	this->zPathfinder.SetWorldPointer(this->zWorld);
 	return true;
 }
@@ -386,26 +385,25 @@ bool AIDeerBehavior::Update( float dt )
 	
 	std::set<Actor*> aSet = this->GetTargets();
 
-	auto i = aSet.begin();
-	for(i = aSet.begin(); i != aSet.end(); i++)
+	for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
 	{
-		xDistance = dActor->GetPosition().x - (*i)->GetPosition().x; //Math, could use optimization, I think.
-		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
+		xDistance = dActor->GetPosition().x - (*i)->GetPosition().x;
 		zDistance = dActor->GetPosition().z - (*i)->GetPosition().z;
-		finalDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
+		finalDistance = sqrtf(xDistance * xDistance + zDistance * zDistance);
+
 		if( finalDistance < this->zMinimumDistance && !dynamic_cast<DeerActor*>((*i)) && dynamic_cast<BioActor*>((*i))) 
-		{	
-				dynamic_cast<BioActor*>((*i))->zValid = true;
-				if(finalDistance < shortestDistance)
-				{
-					shortestDistance = finalDistance;
-					this->zMainActorTarget = (*i); //Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.
-				}
-				nrOfPredators++;
-		}
-		else if(dynamic_cast<BioActor*>((*i)))
 		{
-			dynamic_cast<BioActor*>((*i))->zValid = false;
+			dynamic_cast<BioActor*>(*i)->zValid = true;
+			if(finalDistance < shortestDistance)
+			{
+				shortestDistance = finalDistance;
+				this->zMainActorTarget = (*i); //Decide which is the biggest threat here, i.e. the main target. For the moment, proximity is the deciding factor. Could use some more complexity.
+			}
+			nrOfPredators++;
+		}
+		else if( BioActor* bioActor = dynamic_cast<BioActor*>(*i) )
+		{
+			bioActor->zValid = false;
 		}
 	}
 
@@ -654,8 +652,8 @@ bool AIDeerBehavior::Update( float dt )
 				//Get random direction and run there.
 				float awayFromThreatX;
 				float awayFromThreatZ;
-				int directionX = rand() % 1; 
-				int directionZ = rand() % 1; 
+				int directionX = rand() % 2; 
+				int directionZ = rand() % 2; 
 				if(directionX == 0)
 				{
 					awayFromThreatX = dActor->GetPosition().x + this->zFleeDistance;

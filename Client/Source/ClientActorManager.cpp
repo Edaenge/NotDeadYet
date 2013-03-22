@@ -36,6 +36,12 @@ ClientActorManager::~ClientActorManager()
 	{
 		if(it->second)
 		{
+			// GTFO, this stays HERE
+			ActorRemovedEvent ARE;
+			ARE.zActor = it->second;
+			ARE.zActorManager = this;
+			NotifyObservers(&ARE);
+
 			delete it->second;
 			it->second = NULL;
 		}

@@ -105,7 +105,7 @@ AnimationQueue AnimationManager::CreatePlayerAnimationQueue( BioActor* bActor)
 					}
 					else if (item->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
 					{
-						animation = reader.GetAnimation(PKNIFE_IDLE);
+						animation = reader.GetAnimation(MACHETE_IDLE_01);
 
 						queue.zAnimations.push_back(animation);
 						queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));

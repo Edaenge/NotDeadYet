@@ -256,8 +256,10 @@ void Client::Update()
 		this->zGuiManager->Update(this->zDeltaTime);
 	this->zPerf->PostMeasure("Gui Updates", 3);
 
-	this->zIgg->Update(this->zHealth, this->zHunger, this->zHydration);
-
+	if(this->zIgg)
+	{
+		this->zIgg->Update(this->zHealth, this->zHunger, this->zHydration);
+	}
 	// Anchors with the world to decide what to render.
 	if(zWorld)
 	{
@@ -282,7 +284,7 @@ void Client::Update()
 
 	//	this->IgnoreRender( 50.0f, zEng->GetCamera()->GetPosition().GetXZ() );
 	}		
-
+	
 	if(this->zHealth > 0.0f)
 	{
 		this->UpdateHealthAndBleedingImage();
