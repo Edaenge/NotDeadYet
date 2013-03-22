@@ -5,11 +5,12 @@
 #include "Game.h"
 #include "GUI/GUISet.h"
 
-#define BGSCREENSHOTS 9
-#define PAUSEBETWEENIMAGES 8
-#define OPACITYDIVIDERSPEED 0.001
+static const unsigned int BGSCREENSHOTS = 9;
+static const unsigned int PAUSEBETWEENIMAGES = 8;
+static const float OPACITYDIVIDERSPEED = 0.001f;
 
-enum SET{
+enum SET
+{
 	NOMENU,
 	MAINMENU,
 	FIND_SERVER,

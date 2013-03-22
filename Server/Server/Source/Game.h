@@ -90,7 +90,7 @@ public:
 	// Sets The Behavior Of Player
 	void SetPlayerBehavior( Player* player, PlayerBehavior* behavior );
 
-	/*! Converts an item to ItemActor*/
+	// Converts an item to ItemActor
 	ItemActor* ConvertToItemActor(Behavior* behavior,  Actor*& oldActorOut);
 	
 	// Spawn Points
@@ -112,7 +112,7 @@ public:
 	// Restart Game Logic
 	void RestartGame();	
 
-	//Return tru if the server is full.
+	// Return true if the server is full.
 	bool IsFull() const;
 
 	// Current Fog Enclosement
@@ -123,8 +123,8 @@ public:
 	void CheckPlayerUseBow(Player* player);
 	void CheckToShotArrow(ClientData* cd);
 	const std::map<std::string, std::string>& GetPlayerModels() const {return this->zPlayerModels;}
-	const std::map<std::string, Vector3> GetCameraOffsets() const {return this->zCameraOffset;}
-	const std::map<std::string, std::string> GetDeadActorModels() const {return this->zDeadActorModels;}
+	const std::map<std::string, Vector3>& GetCameraOffsets() const {return this->zCameraOffset;}
+	const std::map<std::string, std::string>& GetDeadActorModels() const {return this->zDeadActorModels;}
 private:
 	//Test functions, spawns items/Animals
 	void SpawnItemsDebug();
@@ -145,6 +145,7 @@ private:
 	void HandleEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleUnEquipItem(ClientData* cd, unsigned int itemID);
 	void HandleBindings(const unsigned int ID, Item* item);
+
 	// Game Stuff
 	void UpdateSunDirection(float dt);
 	void UpdateFogEnclosement(float dt);
