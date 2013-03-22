@@ -19,12 +19,12 @@ void Client::AddActor( NewActorPacket* NAP )
 			//Creates a Mesh from the given Filename
 			if (model.length() > 4)
 			{
-				if (this->zID == ID)
-				{
-					auto it = this->zMeshfirstPersonMap.find(model);
-					if (it != this->zMeshfirstPersonMap.end())
-						model = it->second;
-				}
+				//if (this->zID == ID)
+				//{
+				//	auto it = this->zMeshfirstPersonMap.find(model);
+				//	if (it != this->zMeshfirstPersonMap.end())
+				//		model = it->second;
+				//}
 				std::string substring = model.substr(model.length() - 4);
 				if (substring == ".obj")
 				{
@@ -33,6 +33,18 @@ void Client::AddActor( NewActorPacket* NAP )
 				else if (substring == ".fbx")
 				{
 					mesh = this->zEng->CreateFBXMesh(model.c_str(), Vector3());
+					if (iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(mesh))
+					{
+						auto it = this->zModelToReaderMap.find(model);
+						if (it != this->zModelToReaderMap.end())
+						{
+							fbxMesh->HideModel(it->second.GetSubMeshName(BOW_MODEL).c_str(), true);
+							fbxMesh->HideModel(it->second.GetSubMeshName(ARROW_MODEL).c_str(), true);
+							fbxMesh->HideModel(it->second.GetSubMeshName(MACHETE_MODEL).c_str(), true);
+							fbxMesh->HideModel(it->second.GetSubMeshName(PKNIFE_MODEL).c_str(), true);
+							fbxMesh->HideModel(it->second.GetSubMeshName(CANTEEN_MODEL).c_str(), true);
+						}
+					}
 				}
 				else if (substring == ".ani")
 				{
@@ -98,6 +110,7 @@ void Client::AddActor( NewActorPacket* NAP )
 							zShowCursor = false;
 					}
 				}
+				
 			}
 			else
 				MaloW::Debug("Failed to load mesh with Model: " + model);
@@ -117,7 +130,12 @@ void Client::AddActor( NewActorPacket* NAP )
 
 		if (actor)
 		{
-			actor->SetPosition(position);
+			
+
+			if (this->zID == ID)
+				this->zEng->GetCamera()->SetPosition(position);
+			else
+				actor->SetPosition(position);
 		}
 		else
 			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));

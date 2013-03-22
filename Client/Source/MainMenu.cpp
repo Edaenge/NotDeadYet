@@ -12,15 +12,15 @@ MainMenu::MainMenu()
 	this->zPrimarySet	= MAINMENU;
 	this->zSecondarySet = NOMENU;
 
-	float width = GetGraphics()->GetEngineParameters().WindowWidth;
-	float height = GetGraphics()->GetEngineParameters().WindowHeight;
+	float width = (float)GetGraphics()->GetEngineParameters().WindowWidth;
+	float height = (float)GetGraphics()->GetEngineParameters().WindowHeight;
 	float dx = ((float)width * 10.0f) / 16.0f;
 	float offSet = (float)(height - dx) / 2.0f;
 	string filePath = "";
 	string ending = ".png";
-	for(int i = 0; i < BGSCREENSHOTS; i++)
+	for(unsigned int i = 0; i < BGSCREENSHOTS; i++)
 	{
-		filePath = "media/screens/ScreenShot" + MaloW::convertNrToString(i+1) + ending;
+		filePath = "media/screens/ScreenShot" + MaloW::convertNrToString((float)i+1) + ending;
 		this->zBGScreens[i] = GetGraphics()->CreateImage(Vector2(0.0f, offSet), Vector2(width, dx), filePath.c_str());
 		this->zBGScreens[i]->SetStrata(800.0f);
 		this->zBGScreens[i]->SetOpacity(0.0f);
@@ -817,7 +817,7 @@ void MainMenu::UpdateBackground( float dt )
 {
 	if(this->zPause > 0)
 	{
-		this->zPause -= dt*0.001;
+		this->zPause -= dt * 0.001f;
 		return;
 	}
 	if(this->zBGScreens[this->zCurrentImage]->GetOpacity() < 0)
@@ -838,8 +838,8 @@ void MainMenu::UpdateBackground( float dt )
 
 void MainMenu::ResizeWallpapers()
 {
-	float width = GetGraphics()->GetEngineParameters().WindowWidth;
-	float height = GetGraphics()->GetEngineParameters().WindowHeight;
+	float width = (float)GetGraphics()->GetEngineParameters().WindowWidth;
+	float height = (float)GetGraphics()->GetEngineParameters().WindowHeight;
 	float dx = ((float)width * 10.0f) / 16.0f;
 	float offSet = (float)(height - dx) / 2.0f;
 

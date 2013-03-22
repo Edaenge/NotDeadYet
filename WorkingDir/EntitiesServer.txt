@@ -1,0 +1,126 @@
+Number:1
+Name:Scale
+BlockRadius:0.5
+Model:Media/Scale.obj
+
+Number:2
+Name:Tree_2_LOD
+BlockRadius:0.7
+Model:Media/MapModels/Tree_02.ani 25.0
+Model:Media/MapModels/Tree_02_01.obj
+Billboard:Media/TreeBillboard.png
+BillboardDistance:100
+
+Number:3
+Name:Bush
+Model:Media/MapModels/Bush_03.ani 25.0
+Model:Media/MapModels/Bush_03.obj 55.0
+
+Number:4
+Name:Fern
+Model:Media/MapModels/Fern_02.ani 10.0
+Model:Media/MapModels/Fern_02_01.obj 45.0
+
+Number:5
+Name:Tree_1_LOD
+BlockRadius:0.7
+Model:Media/MapModels/Tree_01_01.obj
+Billboard:Media/TreeBillboard.png
+BillboardDistance:100
+
+Number:6
+Name:Stone
+Model:Media/MapModels/Stone_01.obj
+
+Number:7
+Name:Tree_4
+BlockRadius:0.7
+Model:Media/MapModels/Tree_04.ani 25.0
+Model:Media/MapModels/Tree_04_01.obj
+Billboard:Media/TreeBillboard.png
+BillboardDistance:100
+
+Number:8
+Name:Placeholder
+Model:Media/Scale.obj
+
+Number:9
+Name:Placeholder
+Model:Media/Scale.obj
+
+Number:10
+Name:Veins
+Model:Media/MapModels/Veins_01.obj
+
+Number:11
+Name:Placeholder
+Model:Media/Scale.obj
+
+Number:12
+Name:Spawn
+Model:Media/MapModels/SPAWN.obj
+
+Number:13
+Name:Plant-Grass
+Model:Media/MapModels/GrassPlant_01.ani 10.0
+Model:Media/MapModels/GrassPlant_01_01.obj 35.0
+
+Number:14
+Name:Placeholder
+Model:Media/Scale.obj
+
+Number:15
+Name:Stone_02
+Model:Media/MapModels/Stone_02.obj 55.0
+
+Number:16
+Name:WaterGrass_01
+Model:Media/MapModels/WaterGrass_01.obj 55.0
+
+Number:17
+Name:WaterGrass_02
+Model:Media/MapModels/WaterGrass_02.ani 25.0
+Model:Media/MapModels/WaterGrass_02_01.obj
+
+Number:18
+Name:Placeholder
+Model:Media/Scale.obj
+
+Number:19
+Name:Bush_02
+Model:Media/MapModels/Bush_02.ani 25.0
+Model:Media/MapModels/Bush_02.obj 55.0
+
+Number:20
+Name:Tree_3
+BlockRadius:0.7
+Model:Media/MapModels/Tree_03.ani 25.0
+Model:Media/MapModels/Tree_03_01.obj
+Billboard:Media/TreeBillboard.png
+BillboardDistance:100
+
+Number:22
+Name:WaterStones
+Model:Media/MapModels/Stone_03.obj 55.0
+
+Number:23
+Name:Bush_misc_01	
+Model:Media/MapModels/Bush_01.ani 25.0
+Model:Media/MapModels/Bush_01_01.obj
+
+Number:24
+Name:Target	
+Model:Media/MapModels/Target.obj 55.0
+
+
+Number:200
+Name:Deer Spawnpoint
+Model:Media/MapModels/Deer.obj
+
+Number:201
+Name:Wolf Spawnpoint
+Model:Media/Scale.obj
+
+Number:202
+Name:Bear Spawnpoint
+Model:Media/Scale.obj

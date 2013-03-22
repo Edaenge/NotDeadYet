@@ -31,6 +31,7 @@ public:
 	{
 		this->zID = ID;
 		this->zPositionChange = false;
+		this->zStateChange = false;
 	}
 
 	inline const unsigned int& GetID() const { return this->zID; }
@@ -41,8 +42,13 @@ public:
 
 	void SetPosition(const Vector3& position) 
 	{
-		this->zNextPosition = position;
-		this->zPositionChange = true;
+		if( this->zNextPosition != position )
+		{
+
+			this->zNextPosition = position;
+			this->zPositionChange = true;
+		}
+
 	}
 
 	bool ComparePosition(const Vector3& position)
@@ -57,8 +63,11 @@ public:
 
 	void SetState(const unsigned int& state) 
 	{
-		this->zState = state;
-		this->zStateChange = true;
+		if( this->zState != state )
+		{
+			this->zState = state;
+			this->zStateChange = true;
+		}
 	}
 
 	void SetStateChange(const bool& value)

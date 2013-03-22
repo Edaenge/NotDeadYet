@@ -74,7 +74,13 @@ static const std::string ANIMAL_ATTACK_02		= "attack_02";
 static const std::string BUSY					= "idle_03";
 static const std::string DEAD					= "final_rest";
 static const std::string DEATH					= "death";
-	
+
+static const std::string BOW_MODEL				= "BOW";
+static const std::string PKNIFE_MODEL			= "PKNIFE";
+static const std::string MACHETE_MODEL			= "MACHETE";
+static const std::string ARROW_MODEL			= "ARROW";
+static const std::string CANTEEN_MODEL			= "CANTEEN";
+
 class AnimationFileReader : public FileReader
 {
 public:
@@ -88,6 +94,8 @@ public:
 	const std::string& GetAnimation(const std::string& animationName) const;
 	const std::string& GetBindingBone(const unsigned int bone) const;
 	const float GetAnimationTime(const std::string& animationName);
+	const std::string& GetSubMeshName(const std::string& name);
+
 private:
 	std::string zFileName;
 
@@ -96,4 +104,5 @@ private:
 	std::map<std::string, float> zAnimationTimes;
 	std::map<unsigned int, std::string> zBindingBones;
 	std::map<unsigned int, Vector3> zMiscStuff;
+	std::map<std::string, std::string> zSubMeshes;
 };

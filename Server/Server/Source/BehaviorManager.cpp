@@ -2,6 +2,12 @@
 #include "Behavior.h"
 
 
+BehaviorManager::BehaviorManager(Observer* observer) : 
+	Observed(observer)
+{
+
+}
+
 BehaviorManager::~BehaviorManager()
 {
 	for( auto i = zBehaviors.cbegin(); i != zBehaviors.cend(); ++i )
@@ -100,6 +106,8 @@ void BehaviorManager::Update(float dt)
 			BehaviorRemovedEvent BRE;
 			BRE.zBehavior = i->first;
 			NotifyObservers(&BRE);
+
+			delete i->first;
 		}
 	}
 	zBehaviorsUpdates.clear();

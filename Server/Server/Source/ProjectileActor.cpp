@@ -2,7 +2,8 @@
 
 
 ProjectileActor::ProjectileActor(Actor* owner, PhysicsObject* pObj) :
-	zOwner(owner), Actor()
+	Actor(),
+	zOwner(owner)
 {
 	this->SetPhysicsObject(pObj);
 	this->SetScale(Vector3(0.05f, 0.05f, 0.05f), false);

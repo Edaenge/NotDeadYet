@@ -392,12 +392,6 @@ Item* Inventory::EquipMeleeWeapon(MeleeWeapon* weapon, bool& success)
 		InventoryBindPrimaryWeapon e;
 		e.ID = this->zOwnerID;
 		e.item = this->zPrimaryEquip;
-		//if (this->zPrimaryEquip->GetItemType() == ITEM_TYPE_WEAPON_RANGED && this->zPrimaryEquip->GetItemSubType() == ITEM_SUB_TYPE_BOW)
-		//	e.model = "media/models/bow_anims.fbx";
-		//else
-		//	e.model = this->zPrimaryEquip->GetModel();
-		//e.type = this->zPrimaryEquip->GetItemType();
-		//e.subType = this->zPrimaryEquip->GetItemSubType();
 		NotifyObservers(&e);
 	}
 	else if(zPrimaryEquip->GetItemSubType() == weapon->GetItemSubType())
@@ -428,8 +422,6 @@ Item* Inventory::EquipMeleeWeapon(MeleeWeapon* weapon, bool& success)
 
 		InventoryEquipItemEvent e;
 		e.item = weapon;
-		//e.id = weapon->GetID();
-		//e.slot = EQUIPMENT_SLOT_MELEE_WEAPON;
 		NotifyObservers(&e);
 	}
 
@@ -554,13 +546,13 @@ void Inventory::UnEquipRangedWeapon()
 			e1.item = this->zPrimaryEquip;
 			NotifyObservers(&e1);
 
-			if (this->zPrimaryEquip->GetItemSubType() == ITEM_SUB_TYPE_BOW && this->zProjectile && this->zProjectile->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
-			{
-				InventoryBindPrimaryWeapon e3;
-				e3.ID = this->zOwnerID;
-				e3.item = this->zProjectile;
-				NotifyObservers(&e3);
-			}
+			//if (this->zPrimaryEquip->GetItemSubType() == ITEM_SUB_TYPE_BOW && this->zProjectile && this->zProjectile->GetItemSubType() == ITEM_SUB_TYPE_ARROW)
+			//{
+			//	InventoryBindPrimaryWeapon e3;
+			//	e3.ID = this->zOwnerID;
+			//	e3.item = this->zProjectile;
+			//	NotifyObservers(&e3);
+			//}
 		}
 	}
 	else if(this->zSecondaryEquip == item)
@@ -706,13 +698,13 @@ bool Inventory::SwapWeapon()
 	e.item = this->zPrimaryEquip;
 	NotifyObservers(&e);
 	
-	if (this->zRangedWeapon == this->zPrimaryEquip && this->zProjectile)
-	{
-		InventoryUnBindPrimaryWeapon e1;
-		e1.ID = this->zOwnerID;
-		e1.item = this->zProjectile;
-		NotifyObservers(&e1);
-	}
+	//if (this->zRangedWeapon == this->zPrimaryEquip && this->zProjectile)
+	//{
+	//	InventoryUnBindPrimaryWeapon e1;
+	//	e1.ID = this->zOwnerID;
+	//	e1.item = this->zProjectile;
+	//	NotifyObservers(&e1);
+	//}
 
 	this->zPrimaryEquip = this->zSecondaryEquip;
 
@@ -723,13 +715,13 @@ bool Inventory::SwapWeapon()
 	e2.item = this->zPrimaryEquip;
 	NotifyObservers(&e2);
 	
-	if (this->zRangedWeapon == this->zPrimaryEquip && this->zProjectile)
-	{
-		InventoryUnBindPrimaryWeapon e3;
-		e3.ID = this->zOwnerID;
-		e3.item = this->zProjectile;
-		NotifyObservers(&e3);
-	}
+	//if (this->zRangedWeapon == this->zPrimaryEquip && this->zProjectile)
+	//{
+	//	InventoryUnBindPrimaryWeapon e3;
+	//	e3.ID = this->zOwnerID;
+	//	e3.item = this->zProjectile;
+	//	NotifyObservers(&e3);
+	//}
 
 	this->zSecondaryEquip = item;
 
