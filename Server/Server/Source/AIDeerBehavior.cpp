@@ -374,24 +374,19 @@ bool AIDeerBehavior::Update( float dt )
 	//Perform checking for entities here.
 	float shortestDistance = 99999;
 
-	float xDistance = 0;
-	float yDistance = 0;
-	float zDistance = 0;
 	float finalDistance = 0;
 
 	int maximumNodesTest = 5;
 
 	//Determine closest threat/target
 	
-	std::set<Actor*> aSet = this->GetTargets();
+	//std::set<Actor*> aSet = this->GetTargets();
 
-	for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
+	for(auto i = this->zNearDynamicActors.cbegin(); i != this->zNearDynamicActors.cend(); i++)//for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
 	{
-		xDistance = dActor->GetPosition().x - (*i)->GetPosition().x;
-		zDistance = dActor->GetPosition().z - (*i)->GetPosition().z;
-		finalDistance = sqrtf(xDistance * xDistance + zDistance * zDistance);
+		finalDistance = (dActor->GetPosition().GetXZ() - (*i)->GetPosition().GetXZ()).GetLength();
 
-		if( finalDistance < this->zMinimumDistance && !dynamic_cast<DeerActor*>((*i)) && dynamic_cast<BioActor*>((*i))) 
+		if( finalDistance < this->zMinimumDistance && !dynamic_cast<DeerActor*>((*i)) && dynamic_cast<BioActor*>((*i)) && dynamic_cast<BioActor*>((*i))->IsAlive() ) 
 		{
 			dynamic_cast<BioActor*>(*i)->zValid = true;
 			if(finalDistance < shortestDistance)
@@ -464,8 +459,8 @@ bool AIDeerBehavior::Update( float dt )
 				fear += zExtraFearWithCloseProximity;
 			}
 
-			std::set<Actor*> aSet = this->GetTargets();
-			for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
+			//std::set<Actor*> aSet = this->GetTargets();
+			for(auto i = this->zNearDynamicActors.cbegin(); i != this->zNearDynamicActors.cend(); i++)//for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
 			{
 				if(dynamic_cast<BioActor*>((*i)))
 				{
@@ -570,10 +565,7 @@ bool AIDeerBehavior::Update( float dt )
 	{
 		this->zCurrentDistanceFled = 0;
 		this->zPanic = false;
-		xDistance = dActor->GetPosition().x - this->zMainActorTarget->GetPosition().x;
-		//yDistance = this->GetPosition().y - this->zMainTarget.position.y;
-		zDistance = dActor->GetPosition().z - this->zMainActorTarget->GetPosition().z;
-		float lastDistance = sqrt(xDistance * xDistance + zDistance * zDistance);
+		float lastDistance = (dActor->GetPosition().GetXZ() - this->zMainActorTarget->GetPosition().GetXZ()).GetLength();
 		if( this->GetIfNeedPath() == true )
 		{
 			this->SetIfNeedPath(false);
@@ -595,24 +587,18 @@ bool AIDeerBehavior::Update( float dt )
 				//this->zPathfinder.Pathfinding(this->GetPosition().z, this->GetPosition().x, this->zMainTarget.position.x, this->zMainTarget.position.z, this->zCurrentPath, 40);
 			}
 
-			xDistance = 0;
-			yDistance = 0;
-			zDistance = 0;
 			float distance;
 			float shortestDistance = 99999;
 			Actor* mostLikelyTarget = this->zMainActorTarget;
 
-			std::set<Actor*> aSet = this->GetTargets();
-			for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
+			//std::set<Actor*> aSet = this->GetTargets();
+			for(auto i = this->zNearDynamicActors.cbegin(); i != this->zNearDynamicActors.cend(); i++)//for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
 			{
 				if(dynamic_cast<BioActor*>((*i)))
 				{
 					if(dynamic_cast<BioActor*>((*i))->zValid == true)
 					{
-						xDistance = dActor->GetPosition().x - (*i)->GetPosition().x;
-						//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
-						zDistance = dActor->GetPosition().z - (*i)->GetPosition().z;
-						distance = sqrt(xDistance * xDistance + zDistance * zDistance);
+						distance = (dActor->GetPosition().GetXZ() - (*i)->GetPosition().GetXZ()).GetLength();
 					
 						if(distance < shortestDistance) //Something that is a larger threat is based on distance.
 						{
@@ -795,7 +781,10 @@ bool AIDeerBehavior::Update( float dt )
 				Vector2 testProperDirection;
 				testProperDirection.x = dActor->GetDir().x;
 				testProperDirection.y = dActor->GetDir().z;
-				testProperDirection.Normalize();
+				if(testProperDirection.GetLength() > 0.0f)
+				{
+					testProperDirection.Normalize();
+				}
 				dActor->SetDir(Vector3(testProperDirection.x, 0.0f, testProperDirection.y));
 			
 			}

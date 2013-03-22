@@ -254,6 +254,7 @@ void ClientActorManager::RemoveActor( const unsigned int& ID )
 		ActorRemovedEvent ARE;
 		ARE.zActorManager = this;
 		ARE.zActor = actor;
+		NotifyObservers(&ARE);
 
 		// State
 		auto actorStateIterator = this->zState.find(actor);

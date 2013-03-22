@@ -20,8 +20,15 @@ Actor::~Actor()
 
 void Actor::SetPosition( const Vector3& pos, const bool notify /*= true*/ )
 {
+	if(pos.x != pos.x || pos.y != pos.y || pos.z != pos.z)
+	{
+		throw "Invalid position";
+	}
+
 	this->zPreviousPos = this->zPos;
 	this->zPos = pos;
+
+	
 	
 	if (this->zPhysicsObject)
 	{
@@ -87,6 +94,11 @@ void Actor::SetScale( const Vector3& scale, const bool notify /*= true*/ )
 
 void Actor::SetDir( const Vector3& dir, const bool notify /*= true*/ )
 {
+	if(dir.x != dir.x || dir.y != dir.y || dir.z != dir.z)
+	{
+		throw "Invalid direction";
+	}
+
 	zDir = dir;
 	if(notify)
 	{
