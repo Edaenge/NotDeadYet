@@ -1970,6 +1970,13 @@ void Game::HandleDropItem(ClientData* cd, unsigned int objectID)
 	if(!item)
 		return;
 
+	//IF berry is being dropped, do not create a new actor
+	if( item->GetItemSubType() == ITEM_SUB_TYPE_BERRY_BUSH )
+	{
+		SAFE_DELETE(item);
+		return;
+	}
+
 	actor = NULL;
 	actor = new ItemActor(item);
 	actor->SetPosition(pActor->GetPosition(), false);
