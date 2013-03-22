@@ -384,9 +384,7 @@ bool AIBearBehavior::Update( float dt )
 	//}
 
 	std::set<Actor*> aSet = this->GetTargets();
-
-	auto i = aSet.begin();
-	for(i = aSet.begin(); i != aSet.end(); i++)
+	for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
 	{
 		xDistance = bActor->GetPosition().x - (*i)->GetPosition().x; //Math, could use optimization, I think.
 		//yDistance = this->GetPosition().y - this->zTargets[i].position.y;
@@ -448,8 +446,8 @@ bool AIBearBehavior::Update( float dt )
 				fear += this->zExtraFearWithCloseProximity;
 			}
 
-			auto i = this->GetTargets().begin();
-			for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
+			std::set<Actor*> aSet = this->GetTargets();
+			for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
 			{
 				if(dynamic_cast<BioActor*>((*i)))
 				{
@@ -622,8 +620,8 @@ bool AIBearBehavior::Update( float dt )
 			Actor* mostLikelyTarget = this->zMainActorTarget; 
 
 
-			auto i = this->GetTargets().begin();
-			for(i = this->GetTargets().begin(); i != this->GetTargets().end(); i++)
+			std::set<Actor*> aSet = this->GetTargets();
+			for(auto i = aSet.cbegin(); i != aSet.cend(); i++)
 			{
 				if(dynamic_cast<BioActor*>((*i)))
 				{

@@ -14,7 +14,7 @@ BillboardDistance:100
 Number:3
 Name:Bush
 Model:Media/MapModels/Bush_03.ani 25.0
-Model:Media/MapModels/Bush_03.obj
+Model:Media/MapModels/Bush_03.obj 55.0
 
 Number:4
 Name:Fern
@@ -72,11 +72,11 @@ Model:Media/Scale.obj
 
 Number:15
 Name:Stone_02
-Model:Media/MapModels/Stone_02.obj
+Model:Media/MapModels/Stone_02.obj 55.0
 
 Number:16
 Name:WaterGrass_01
-Model:Media/MapModels/WaterGrass_01.obj
+Model:Media/MapModels/WaterGrass_01.obj 55.0
 
 Number:17
 Name:WaterGrass_02
@@ -90,7 +90,7 @@ Model:Media/Scale.obj
 Number:19
 Name:Bush_02
 Model:Media/MapModels/Bush_02.ani 25.0
-Model:Media/MapModels/Bush_02.obj
+Model:Media/MapModels/Bush_02.obj 55.0
 
 Number:20
 Name:Tree_3
@@ -102,7 +102,7 @@ BillboardDistance:100
 
 Number:22
 Name:WaterStones
-Model:Media/MapModels/Stone_03.obj
+Model:Media/MapModels/Stone_03.obj 55.0
 
 Number:23
 Name:Bush_misc_01	
@@ -111,7 +111,7 @@ Model:Media/MapModels/Bush_01_01.obj
 
 Number:24
 Name:Target	
-Model:Media/MapModels/Target.obj
+Model:Media/MapModels/Target.obj 55.0
 
 
 Number:200
