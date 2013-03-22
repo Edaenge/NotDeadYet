@@ -131,6 +131,11 @@ void Client::AddActor( NewActorPacket* NAP )
 		if (actor)
 		{
 			actor->SetPosition(position);
+
+			if (this->zID == ID)
+				this->zEng->GetCamera()->SetPosition(position);
+			
+			
 		}
 		else
 			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));
