@@ -129,24 +129,15 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 
 			if (update->HasPositionChanged())
 			{
+				// New Position
+				Vector3 actorPosition = actor->GetPosition();
+				Vector3 position = this->InterpolatePosition(actorPosition, update->GetPosition(), t);
+
 				// Check if this is me
 				if(update->GetID() == clientID)
 				{
-					//if (dynamic_cast<iFBXMesh*>(actor->GetMesh()))
-					//{
-					//	// New Position
-					//	Vector3 position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
-
-					//	actor->SetPosition(position);
-					//}
-					//else
-					//{
-						// New Position
-						Vector3 position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
-
-						gEng->GetCamera()->SetPosition(position);
-					//}
-
+					gEng->GetCamera()->SetPosition(position);
+					
 					AudioManager::GetInstance()->SetPlayerPosition(ConvertToFmodVector(position), ConvertToFmodVector(gEng->GetCamera()->GetForward()), ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
 					if(actor->GetModel() != "media/models/ghost.obj")
 					{
@@ -166,9 +157,6 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 				}
 				else 
 				{
-					// New Position
-					Vector3 position = this->InterpolatePosition(actor->GetPosition(), update->GetPosition(), t);
-
 					actor->SetPosition(position);
 					if((playerActor->GetPosition() - position).GetLength() < 100.0f)
 					{
@@ -325,9 +313,7 @@ bool ClientActorManager::AddActor(Actor* actor)
 void ClientActorManager::AddUpdate( Updates* update )
 {
 	if (update)
-	{
 		this->zUpdates[update->GetID()] = update;
-	}
 }
 
 float ClientActorManager::GetInterpolationType(const float& deltaTime, const unsigned int& type)

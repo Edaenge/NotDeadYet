@@ -411,6 +411,7 @@ AnimationQueue AnimationManager::CreateAnimalAnimationQueue(BioActor* bActor)
 
 		queue.zAnimations.push_back(animation);
 		queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
+
 		bActor->SetPreviousAnimation(animation);
 		break;
 	case STATE_ATTACK:

@@ -19,12 +19,12 @@ void Client::AddActor( NewActorPacket* NAP )
 			//Creates a Mesh from the given Filename
 			if (model.length() > 4)
 			{
-				if (this->zID == ID)
-				{
-					auto it = this->zMeshfirstPersonMap.find(model);
-					if (it != this->zMeshfirstPersonMap.end())
-						model = it->second;
-				}
+				//if (this->zID == ID)
+				//{
+				//	auto it = this->zMeshfirstPersonMap.find(model);
+				//	if (it != this->zMeshfirstPersonMap.end())
+				//		model = it->second;
+				//}
 				std::string substring = model.substr(model.length() - 4);
 				if (substring == ".obj")
 				{
@@ -130,12 +130,12 @@ void Client::AddActor( NewActorPacket* NAP )
 
 		if (actor)
 		{
-			actor->SetPosition(position);
+			
 
 			if (this->zID == ID)
 				this->zEng->GetCamera()->SetPosition(position);
-			
-			
+			else
+				actor->SetPosition(position);
 		}
 		else
 			MaloW::Debug("Failed to find Actor with ID: " + MaloW::convertNrToString((float)ID));

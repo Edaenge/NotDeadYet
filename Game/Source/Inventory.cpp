@@ -392,12 +392,6 @@ Item* Inventory::EquipMeleeWeapon(MeleeWeapon* weapon, bool& success)
 		InventoryBindPrimaryWeapon e;
 		e.ID = this->zOwnerID;
 		e.item = this->zPrimaryEquip;
-		//if (this->zPrimaryEquip->GetItemType() == ITEM_TYPE_WEAPON_RANGED && this->zPrimaryEquip->GetItemSubType() == ITEM_SUB_TYPE_BOW)
-		//	e.model = "media/models/bow_anims.fbx";
-		//else
-		//	e.model = this->zPrimaryEquip->GetModel();
-		//e.type = this->zPrimaryEquip->GetItemType();
-		//e.subType = this->zPrimaryEquip->GetItemSubType();
 		NotifyObservers(&e);
 	}
 	else if(zPrimaryEquip->GetItemSubType() == weapon->GetItemSubType())
@@ -428,8 +422,6 @@ Item* Inventory::EquipMeleeWeapon(MeleeWeapon* weapon, bool& success)
 
 		InventoryEquipItemEvent e;
 		e.item = weapon;
-		//e.id = weapon->GetID();
-		//e.slot = EQUIPMENT_SLOT_MELEE_WEAPON;
 		NotifyObservers(&e);
 	}
 
