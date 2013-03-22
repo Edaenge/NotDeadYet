@@ -858,18 +858,20 @@ void Game::OnEvent( Event* e )
 
 			float range = 0.0f;
 			Damage damage;
-
+			bool primary = false;
 			if(BearActor* bActor = dynamic_cast<BearActor*>(self))
 			{
 				if(player)
 				{
 					if(PAAE->mouseButton == MOUSE_LEFT_PRESS)
 					{
+						primary = true;
 						range = 2.2f;
 						damage.blunt = 10.0f;
 					}
 					else if(PAAE->mouseButton == MOUSE_RIGHT_PRESS)
 					{
+						primary = false;
 						range = 1.5f;
 						damage.piercing = 5.0f;
 						damage.slashing = 25.0f;
@@ -880,7 +882,11 @@ void Game::OnEvent( Event* e )
 						BioActor* bActor = dynamic_cast<BioActor*>(target);
 						if(bActor->IsAlive())
 						{
-							bActor->TakeDamage(damage,self);
+							bActor->TakeDamage(damage, self);
+							if (primary)
+								bActor->SetState(STATE_ATTACK_P);
+							else
+								bActor->SetState(STATE_ATTACK_S);
 						}
 					}
 				}
@@ -1091,7 +1097,11 @@ void Game::OnEvent( Event* e )
 		}
 
 		if(bEaten)
+		{
 			this->zActorManager->RemoveActor(toBeRemoved);
+
+			thePlayerActor->SetState(STATE_EAT);
+		}
 	}
 	else if ( EntityUpdatedEvent* EUE = dynamic_cast<EntityUpdatedEvent*>(e) )
 	{
@@ -2278,7 +2288,7 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 
 			victim->TakeDamage(dmg, pActor);
 
-			pActor->SetState(STATE_ATTACK);
+			pActor->SetState(STATE_ATTACK_P);
 		}
 	}
 }
@@ -2942,7 +2952,7 @@ void Game::CheckToShotArrow(ClientData* cd)
 				msg += NMC.Convert(MESSAGE_TYPE_POSITION, pActor->GetPosition());
 				this->SendToAll(msg);
 
-				pActor->SetState(STATE_ATTACK);
+				pActor->SetState(STATE_ATTACK_P);
 			}
 			else
 			{

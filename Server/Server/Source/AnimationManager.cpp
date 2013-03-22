@@ -375,44 +375,56 @@ AnimationQueue AnimationManager::CreateAnimalAnimationQueue(BioActor* bActor)
 
 	float fRand = 0.0f;
 	const unsigned int currState = bActor->GetState();
+	unsigned int prevState = bActor->GetPreviousState();
 	std::string animation = "";
 
 	switch (currState)
 	{
 	case STATE_IDLE:
-		fRand = (float)rand() / (float)RAND_MAX;
+		if (prevState != STATE_EAT || prevState != STATE_ATTACK)
+		{
+			fRand = (float)rand() / (float)RAND_MAX;
 
-		if (fRand > 0.0f && fRand <= 0.5f)//Very High Chance 50%
-			animation = reader.GetAnimation(IDLE_O1);
-		else if (fRand > 0.5f && fRand <= 0.66f)//Medium Chance 10%
-			animation = reader.GetAnimation(IDLE_O2);
-		else if (fRand > 0.66f && fRand <= 0.83f)//Medium Chance 4%
-			animation = reader.GetAnimation(IDLE_O3);
-		else if (fRand > 0.83f && fRand <= 1.0f)//Medium Chance 27%
-			animation = reader.GetAnimation(IDLE_O4);
-		else 
-			break;
+			if (fRand > 0.0f && fRand <= 0.5f)//Very High Chance 50%
+				animation = reader.GetAnimation(IDLE_O1);
+			else if (fRand > 0.5f && fRand <= 0.66f)//Medium Chance 10%
+				animation = reader.GetAnimation(IDLE_O2);
+			else if (fRand > 0.66f && fRand <= 0.83f)//Medium Chance 4%
+				animation = reader.GetAnimation(IDLE_O3);
+			else if (fRand > 0.83f && fRand <= 1.0f)//Medium Chance 27%
+				animation = reader.GetAnimation(IDLE_O4);
+			else 
+				break;
 
-		queue.zAnimations.push_back(animation);
-		queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
+			queue.zAnimations.push_back(animation);
+			queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
 
-		bActor->SetPreviousAnimation(animation);
+			bActor->SetPreviousAnimation(animation);
+		}
+		
 		break;
 	case STATE_WALKING:
 		animation = reader.GetAnimation(WALK_FORWARD);
 
-		queue.zAnimations.push_back(animation);
-		queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
-		
-		bActor->SetPreviousAnimation(animation);
+		if (animation != bActor->GetPreviousAnimation())
+		{
+			queue.zAnimations.push_back(animation);
+			queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
+
+			bActor->SetPreviousAnimation(animation);
+		}
 		break;
 	case STATE_RUNNING:
 		animation = reader.GetAnimation(SPRINT);
 
-		queue.zAnimations.push_back(animation);
-		queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
+		if (animation != bActor->GetPreviousAnimation())
+		{
+			queue.zAnimations.push_back(animation);
+			queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
 
-		bActor->SetPreviousAnimation(animation);
+			bActor->SetPreviousAnimation(animation);
+		}
+		
 		break;
 	case STATE_ATTACK:
 		animation = reader.GetAnimation(ANIMAL_ATTACK_01);
@@ -423,6 +435,15 @@ AnimationQueue AnimationManager::CreateAnimalAnimationQueue(BioActor* bActor)
 		queue.zAnimations.push_back(bActor->GetPreviousAnimation());
 		queue.zAnimationTimes.push_back(reader.GetAnimationTime(bActor->GetPreviousAnimation()));
 		
+		break;
+	case STATE_EAT:
+		animation = reader.GetAnimation(IDLE_O3);
+
+		queue.zAnimations.push_back(animation);
+		queue.zAnimationTimes.push_back(reader.GetAnimationTime(animation));
+
+		queue.zAnimations.push_back(bActor->GetPreviousAnimation());
+		queue.zAnimationTimes.push_back(reader.GetAnimationTime(bActor->GetPreviousAnimation()));
 		break;
 	case STATE_DEAD:
 		animation = reader.GetAnimation(DEATH);

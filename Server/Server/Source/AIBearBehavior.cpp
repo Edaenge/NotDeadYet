@@ -936,7 +936,7 @@ bool AIBearBehavior::Update( float dt )
 
 	if(attackAnim)
 	{
-		dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_ATTACK);
+		dynamic_cast<BioActor*>(this->GetActor())->SetState(STATE_ATTACK_P);
 	}
 
 	//Rotate Animal
