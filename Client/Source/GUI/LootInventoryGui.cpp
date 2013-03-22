@@ -167,7 +167,7 @@ bool LootInventoryGui::RemoveFromRenderer(GraphicsEngine* ge)
 	return true;
 }
 
-Selected_Item_ReturnData LootInventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
+Selected_Item_ReturnData LootInventoryGui::CheckCollision(float mouseX, float mouseY, bool mousePressed, GraphicsEngine*)
 {
 	Vector2 dimension = this->GetDimension();
 	bool bCollision = false;
@@ -245,7 +245,7 @@ std::string LootInventoryGui::GetImageName( unsigned int position )
 	return ret;
 }
 
-void LootInventoryGui::Resize(float windowWidth, float windowHeight, float dx)
+void LootInventoryGui::Resize(float, float windowHeight, float dx)
 {
 	// Calcs that is needed for resize
 	float startOffsetX = (XOFFSETINV / 1024.0f) * dx;

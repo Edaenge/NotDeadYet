@@ -81,7 +81,7 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 	return true;
 }
 
- void TextBox::GoingToBeFocused(float mouseX, float mouseY, bool mousePressed, GraphicsEngine* ge)
+ void TextBox::GoingToBeFocused(float mouseX, float mouseY, bool mousePressed, GraphicsEngine*)
  {
 	if((mouseX < this->mActiveX || mouseX > (this->mActiveX+this->mActiveWidth)) || (mouseY < this->mActiveY || mouseY > (this->mActiveY+this->mActiveHeight)))
 	{

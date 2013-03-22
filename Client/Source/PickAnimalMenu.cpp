@@ -31,7 +31,6 @@ int PickAnimalMenu::Run(int energy)
 
 	this->Resize();
 	int returnValue = PICKNOTHING;
-	bool removeMenu = false;
 
 	Vector2 mousePos = this->zEng->GetKeyListener()->GetMousePosition();
 	bool mousePressed = this->zEng->GetKeyListener()->IsClicked(1);

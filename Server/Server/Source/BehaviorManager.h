@@ -31,6 +31,8 @@ class BehaviorManager : public Observed
 	bool zBehaviorsInUse;
 
 public:
+	BehaviorManager(Observer* observer);
+
 	// Destructor deletes remaining behaviors
 	virtual ~BehaviorManager();
 

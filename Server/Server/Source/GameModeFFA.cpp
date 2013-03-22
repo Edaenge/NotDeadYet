@@ -282,9 +282,13 @@ void GameModeFFA::OnEvent( Event* e )
 					counter++;
 			}
 
+			NetworkMessageConverter NMC;
+			this->zGame->SendToAll(NMC.Convert( MESSAGE_TYPE_SERVER_ANNOUNCEMENT, PLRE->player->GetPlayerName() + " is ready!  " + MaloW::convertNrToString(counter) + "/" + MaloW::convertNrToString(zPlayers.size())) );
+
 			unsigned int nrOfNoneClickers = this->zPlayers.size() - counter;
 			if( nrOfNoneClickers < counter )
 			{
+				this->zGame->SendToAll(NMC.Convert( MESSAGE_TYPE_SERVER_ANNOUNCEMENT, "All Ready To Play!") );
 				StartGameMode();
 			}
 		}
