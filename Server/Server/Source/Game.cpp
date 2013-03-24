@@ -72,6 +72,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	//Models
 	//this->zPlayerModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zPlayerModels["media/models/token_anims.fbx"] = "media/models/hitbox_token.obj";
+	this->zPlayerModels["media/models/diana_anims.fbx"] = "media/models/hitbox_token.obj";
 	this->zPlayerModels["media/models/deer_anims.fbx"] = "media/models/deer_hitbox.obj";
 	this->zPlayerModels["media/models/bear_anims.fbx"] = "media/models/bear_hitbox.obj"; 
 	this->zPlayerModels["media/models/ghost.obj"] = "media/models/ghost.obj";
@@ -79,14 +80,17 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	//Dead Actor Model Maps
 	//this->zDeadActorModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zDeadActorModels["media/models/token_anims.fbx"] = "media/models/token_dead.obj";
+	this->zDeadActorModels["media/models/diana_anims.fbx"] = "media/models/token_dead.obj";
 	this->zDeadActorModels["media/models/deer_anims.fbx"] = "media/models/deer_dead.obj";
 	this->zDeadActorModels["media/models/bear_anims.fbx"] = "media/models/bear_dead.obj";
 
 	this->zAnimationFileReader[0] = AnimationFileReader("media/models/token_anims.cfg");
+	this->zAnimationFileReader[1] = AnimationFileReader("media/models/diana_anims.cfg");
 	this->zAnimationFileReader[2] = AnimationFileReader("media/models/deer_anims.cfg");
 	this->zAnimationFileReader[3] = AnimationFileReader("media/models/bear_anims.cfg");
 
 	this->zModelToReaderMap["media/models/token_anims.fbx"] = zAnimationFileReader[0];
+	this->zModelToReaderMap["media/models/diana_anims.fbx"] = zAnimationFileReader[1];
 	this->zModelToReaderMap["media/models/deer_anims.fbx"] = zAnimationFileReader[2];
 	this->zModelToReaderMap["media/models/bear_anims.fbx"] = zAnimationFileReader[3];
 

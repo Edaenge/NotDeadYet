@@ -761,7 +761,7 @@ void MainMenu::StartGameWithIPField()
 	bool result = false;
 	try
 	{
-		string lPlayerModel = "media/models/token_anims.fbx";
+		string lPlayerModel = "media/models/diana_anims.fbx";
 		if(this->zSets[GETIPADRESS].GetCheckBox("MaleCheckBox")->GetOn() == true)
 		{
 			lPlayerModel = "media/models/token_anims.fbx";

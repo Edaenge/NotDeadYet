@@ -4,10 +4,12 @@
 AnimationManager::AnimationManager()
 {
 	this->zAnimationFileReader[0] = AnimationFileReader("media/models/token_anims.cfg");
+	this->zAnimationFileReader[1] = AnimationFileReader("media/models/diana_anims.cfg");
 	this->zAnimationFileReader[2] = AnimationFileReader("media/models/deer_anims.cfg");
 	this->zAnimationFileReader[3] = AnimationFileReader("media/models/bear_anims.cfg");
 
 	this->zModelToReaderMap["media/models/token_anims.fbx"] = zAnimationFileReader[0];
+	this->zModelToReaderMap["media/models/diana_anims.fbx"] = zAnimationFileReader[1];
 	this->zModelToReaderMap["media/models/deer_anims.fbx"] = zAnimationFileReader[2];
 	this->zModelToReaderMap["media/models/bear_anims.fbx"] = zAnimationFileReader[3];
 
