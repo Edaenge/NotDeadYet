@@ -72,6 +72,22 @@ bool GameModeFFA::Update( float dt )
 			this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX * 0.5f;
 	}
 
+	for (auto it = this->zToBeDeadActors.begin(); it != this->zToBeDeadActors.end(); it++)
+	{
+		if (it->time <= 0.0f)
+		{
+			auto models = this->zGame->GetDeadActorModels();
+
+			auto models_it = models.find(it->bActor->GetModel());
+			if (models_it != models.end())
+			{			
+				it->bActor->SetModel(models_it->second);
+			}
+		}
+		it->time -= dt;
+	}
+
+
 	if( CheckEndCondition() )
 		return true;
 
@@ -231,16 +247,19 @@ void GameModeFFA::OnEvent( Event* e )
 			this->OnPlayerHumanDeath(pActor);
 		}
 
-		auto models = this->zGame->GetDeadActorModels();
-
-		auto models_it = models.find(BADE->zActor->GetModel());
-		if (models_it != models.end())
-		{			
-			BADE->zActor->SetModel(models_it->second);
-		}
-
 		zDeadActors.push_back(BADE->zActor);
 		
+		AnimationFileReader animReader = this->zGame->GetAnimationReader(BADE->zActor->GetModel());
+
+		std::string animationName = animReader.GetAnimation(DEATH);
+		std::string animationName2 = animReader.GetAnimation(DEAD);
+
+		float time = animReader.GetAnimationTime(animationName) + animReader.GetAnimationTime(animationName2);
+		DeadActors temp;
+		temp.bActor = dynamic_cast<BioActor*>(BADE->zActor);
+		temp.time = time;
+
+		zToBeDeadActors.push_back(temp);
 	}
 	else if (PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
 	{

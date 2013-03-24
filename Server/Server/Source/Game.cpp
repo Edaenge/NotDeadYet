@@ -82,6 +82,14 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zDeadActorModels["media/models/deer_anims.fbx"] = "media/models/deer_dead.obj";
 	this->zDeadActorModels["media/models/bear_anims.fbx"] = "media/models/bear_dead.obj";
 
+	this->zAnimationFileReader[0] = AnimationFileReader("media/models/token_anims.cfg");
+	this->zAnimationFileReader[2] = AnimationFileReader("media/models/deer_anims.cfg");
+	this->zAnimationFileReader[3] = AnimationFileReader("media/models/bear_anims.cfg");
+
+	this->zModelToReaderMap["media/models/token_anims.fbx"] = zAnimationFileReader[0];
+	this->zModelToReaderMap["media/models/deer_anims.fbx"] = zAnimationFileReader[2];
+	this->zModelToReaderMap["media/models/bear_anims.fbx"] = zAnimationFileReader[3];
+
 	// Create World
 	if(worldFile != "")
 		this->zWorld = new World(this, worldFile.c_str());
@@ -2981,4 +2989,15 @@ bool Game::IsFull() const
 	}
 
 	return false;
+}
+
+const AnimationFileReader& Game::GetAnimationReader(const std::string& model)
+{
+	auto it = this->zModelToReaderMap.find(model);
+	if (it != this->zModelToReaderMap.end())
+		return it->second;
+
+	static const AnimationFileReader temp;
+
+	return temp;
 }
