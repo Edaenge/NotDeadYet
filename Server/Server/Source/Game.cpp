@@ -131,7 +131,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	// this->SpawnItemsDebug();
+	 //this->SpawnItemsDebug();
     // this->SpawnAnimalsDebug();
 	// this->SpawnHumanDebug();
 
@@ -2916,6 +2916,7 @@ void Game::CheckToShotArrow(ClientData* cd)
 				//create projectileActor
 				PhysicsObject* pObj = this->zPhysicsEngine->CreatePhysicsObject(arrow->GetModel());
 				ProjectileActor* projActor = new ProjectileActor(pActor, pObj);
+				projActor->SetModel( arrow->GetModel() );
 
 				ProjectileArrowBehavior* projBehavior = NULL;
 				Damage damage;
