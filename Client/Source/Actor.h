@@ -53,7 +53,7 @@ public:
 	void SetModel(const std::string& model);
 	
 	// Set Actor Position
-	void SetPosition(const Vector3& pos);
+	void SetPosition(const Vector3& pos, const bool& updateMesh = true);
 
 	// Set Scale
 	void SetScale(const Vector3& scale);
