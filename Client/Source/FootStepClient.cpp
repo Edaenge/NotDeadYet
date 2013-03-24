@@ -178,10 +178,15 @@ void FootStepClient::OnEvent(Event* e)
 {
 	if ( ActorMovedEvent* AME = dynamic_cast<ActorMovedEvent*>(e) )
 	{
-		if ( (AME->zActor->GetPosition().GetXZ() - zLastPositions[AME->zActor]).GetLength() > 1.0f )
+		auto i = zLastPositions.find(AME->zActor);
+		
+		if ( i != zLastPositions.cend() )
 		{
-			PlaceFootStep(AME->zActor);
-			zLastPositions[AME->zActor] = AME->zActor->GetPosition().GetXZ();
+			if ( (AME->zActor->GetPosition().GetXZ() - i->second).GetLength() > 1.0f )
+			{
+				PlaceFootStep(AME->zActor);
+				i->second = AME->zActor->GetPosition().GetXZ();
+			}
 		}
 	}
 	else if ( ActorChangedModelEvent* ACME = dynamic_cast<ActorChangedModelEvent*>(e) )
@@ -219,7 +224,7 @@ void FootStepClient::OnEvent(Event* e)
 		auto i = zLastPositions.find(ARE->zActor);
 		if ( i != zLastPositions.cend() )
 		{
-			AEE->zActor->RemoveObserver(this);
+			ARE->zActor->RemoveObserver(this);
 			zLastPositions.erase(i);
 		}
 	}

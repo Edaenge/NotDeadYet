@@ -1,10 +1,10 @@
 #include "Actor.h"
 
 
-Actor::Actor(const unsigned int& ID)
+Actor::Actor(const unsigned int& ID) :
+	zMesh(0),
+	zID(ID)
 {
-	this->zMesh = 0; 
-	this->zID = ID;
 }
 
 Actor::~Actor()
@@ -21,9 +21,11 @@ Actor::~Actor()
 		{
 			graphics->DeleteMesh(this->zMesh);
 		}
+
+		this->zMesh = NULL;
 	}
 
-	this->zMesh = NULL;
+	
 
 	for (auto it = this->zSubMeshes.begin(); it != this->zSubMeshes.end(); it++)
 	{
@@ -83,14 +85,33 @@ void Actor::SetScale(const Vector3& scale)
 
 void Actor::SetRotation(const Vector4& rot)
 {
-	this->zMesh->ResetRotation();
-	this->zMesh->SetQuaternion(rot);
+	if (
+		zRotation.x != rot.x || 
+		zRotation.y != rot.y || 
+		zRotation.z != rot.z || 
+		zRotation.w != rot.w
+		)
+	{
+		zRotation = rot;
+
+		this->zMesh->ResetRotation();
+		this->zMesh->SetQuaternion(rot);
+	}
 }
 
 void Actor::SetMesh(iMesh* mesh) 
 { 
-	this->zMesh = mesh;
-	if ( zMesh ) zMesh->SetPosition(zPosition);
+	if ( zMesh != mesh )
+	{
+		this->zMesh = mesh;
+
+		if ( zMesh ) 
+		{
+			zMesh->SetPosition(zPosition);
+			zMesh->ResetRotation();
+			zMesh->SetQuaternion(zRotation);
+		}
+	}
 }
 
 void Actor::SetID(const int clientID) 
@@ -107,7 +128,9 @@ iMesh* Actor::GetSubMesh(const std::string& model)
 {
 	auto it = this->zSubMeshes.find(model);
 	if (it != this->zSubMeshes.end())
+	{
 		return it->second;
+	}
 
 	return NULL;
 }

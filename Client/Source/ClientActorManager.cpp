@@ -132,12 +132,14 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 				// New Position
 				Vector3 actorPosition = actor->GetPosition();
 				Vector3 position = this->InterpolatePosition(actorPosition, update->GetPosition(), t);
+				
 
 				// Check if this is me
 				if(update->GetID() == clientID)
 				{
 					gEng->GetCamera()->SetPosition(position);
-					
+					actor->SetPosition(position);
+
 					AudioManager::GetInstance()->SetPlayerPosition(ConvertToFmodVector(position), ConvertToFmodVector(gEng->GetCamera()->GetForward()), ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
 					if(actor->GetModel() != "media/models/ghost.obj")
 					{
@@ -152,7 +154,6 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 							this->zFootStepsOnDirt[MAXFOOTSTEPS-1]->SetPosition(position);
 							this->zFootStepsOnDirt[MAXFOOTSTEPS-1]->Play();
 						}
-
 					}
 				}
 				else 
