@@ -72,8 +72,10 @@ bool GameModeFFA::Update( float dt )
 			this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX * 0.5f;
 	}
 
-	for (auto it = this->zToBeDeadActors.begin(); it != this->zToBeDeadActors.end(); it++)
+	auto it = this->zToBeDeadActors.begin();
+	while (it != this->zToBeDeadActors.end())
 	{
+		it->time -= dt;
 		if (it->time <= 0.0f)
 		{
 			auto models = this->zGame->GetDeadActorModels();
@@ -83,10 +85,13 @@ bool GameModeFFA::Update( float dt )
 			{			
 				it->bActor->SetModel(models_it->second);
 			}
+			it = this->zToBeDeadActors.erase(it);
 		}
-		it->time -= dt;
+		else
+		{
+			it++;
+		}
 	}
-
 
 	if( CheckEndCondition() )
 		return true;
@@ -851,6 +856,7 @@ bool GameModeFFA::StartGameMode()
 		}
 	}
 	zDeadActors.clear();
+	this->zToBeDeadActors.clear();
 
 	this->zSupplyDrop->SpawnSupplyDrop(center, items, 50.0f);
 

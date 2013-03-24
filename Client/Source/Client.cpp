@@ -566,21 +566,20 @@ void Client::UpdateGame()
 	}
 	else
 	{
-			this->zHealth = 0.0f;
-			this->zBleedingLevel = 0.0f;
-			this->zCurrentOffset = 0.0f;
+		this->zHealth = 0.0f;
+		this->zBleedingLevel = 0.0f;
+		this->zCurrentOffset = 0.0f;
 
-			if(this->zDamageIndicator)
-			{
-				this->zEng->DeleteImage(this->zDamageIndicator);
-				this->zDamageIndicator = NULL;
-			}
-			if(this->zBleedingAndHealthIndicator)
-			{
-				this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
-				this->zBleedingAndHealthIndicator = NULL;
-			}
-
+		if(this->zDamageIndicator)
+		{
+			this->zEng->DeleteImage(this->zDamageIndicator);
+			this->zDamageIndicator = NULL;
+		}
+		if(this->zBleedingAndHealthIndicator)
+		{
+			this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
+			this->zBleedingAndHealthIndicator = NULL;
+		}
 	}
 
 	AudioManager* am = AudioManager::GetInstance();

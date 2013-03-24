@@ -2288,15 +2288,28 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 		if(victim)
 		{
 			Damage dmg;
-
+			//float time = 0.0f;
 			if(meele->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+			{
+				//AnimationFileReader reader = this->GetAnimationReader(pActor->GetModel());
+				//std::string animation = reader.GetAnimation(MACHETE_ATTACK_01);
+				
+				//time = reader.GetAnimationTime(animation);
 				dmg.slashing = meele->GetDamage();
+			}
 			else if(meele->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
-				dmg.piercing = meele->GetDamage();
+			{
+				//AnimationFileReader reader = this->GetAnimationReader(pActor->GetModel());
+				//std::string animation = reader.GetAnimation(MACHETE_ATTACK_01);
 
+				//time = reader.GetAnimationTime(animation);
+				dmg.piercing = meele->GetDamage();
+			}
 			victim->TakeDamage(dmg, pActor);
 
 			pActor->SetState(STATE_ATTACK_P);
+
+
 		}
 	}
 }
