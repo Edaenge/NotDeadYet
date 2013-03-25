@@ -35,6 +35,7 @@ void MaloWPerformance::PreMeasure( string perfName, int tier )
 		pm.totalTime = 0.0f;
 		pm.measures = 1;
 		pm.lastClock = Timer;
+		pm.maxTime = 0.0f;
 		this->perfs[tier].add(pm);
 	}
 }
@@ -52,6 +53,8 @@ void MaloWPerformance::PostMeasure( string perfName, int tier )
 			float timeDiff = Timer - this->perfs[tier][i].lastClock;
 			this->perfs[tier][i].totalTime += timeDiff;
 			this->perfs[tier][i].measures++;
+			if (timeDiff > this->perfs[tier][i].maxTime)
+				this->perfs[tier][i].maxTime = timeDiff;
 		}
 	}
 }
@@ -82,8 +85,8 @@ void MaloWPerformance::GenerateReport(iGraphicsEngineParams& gep)
 		writeFile << "           Tier " << u + 1 << ": " << endl;
 		for(int i = 0; i < this->perfs[u].size(); i++)
 		{
-			writeFile << this->perfs[u][i].name << ": " << endl << 
-				"Avg: " << this->perfs[u][i].totalTime / this->perfs[u][i].measures << "     Tot:" <<
+			writeFile << this->perfs[u][i].name << ": " << endl << "Max: " << this->perfs[u][i].maxTime <<
+				"     Avg: " << this->perfs[u][i].totalTime / this->perfs[u][i].measures << "     Tot:" <<
 				this->perfs[u][i].totalTime << ", Measures: " << this->perfs[u][i].measures << endl << endl;
 		}
 		writeFile << endl;

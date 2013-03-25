@@ -306,6 +306,9 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 				subMesh->SetAnimationQueue(queueNames, queueTimes, size);
 			}
 		}
+		delete queueTimes;
+
+		delete []queueNames;
 	}
 
 	auto it_mesh_end = SFP->newMesh.end();

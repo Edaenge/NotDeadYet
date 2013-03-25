@@ -36,7 +36,7 @@ static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 
 static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 1;
 
-#define DEBUGGING false
+#define DEBUGGING true
 
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
@@ -307,7 +307,7 @@ void GameModeFFA::OnEvent( Event* e )
 			}
 
 			NetworkMessageConverter NMC;
-			this->zGame->SendToAll(NMC.Convert( MESSAGE_TYPE_SERVER_ANNOUNCEMENT, PLRE->player->GetPlayerName() + " is ready!  " + MaloW::convertNrToString(counter) + "/" + MaloW::convertNrToString(zPlayers.size())) );
+			this->zGame->SendToAll(NMC.Convert( MESSAGE_TYPE_SERVER_ANNOUNCEMENT, PLRE->player->GetPlayerName() + " is ready!  " + MaloW::convertNrToString((float)counter) + "/" + MaloW::convertNrToString((float)this->zPlayers.size())) );
 
 			unsigned int nrOfNoneClickers = this->zPlayers.size() - counter;
 			if( nrOfNoneClickers < counter )

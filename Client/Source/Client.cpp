@@ -3,7 +3,7 @@
 #include "DebugMessages.h"
 #include "PlayerConfig/PlayerSettings.h"
 #include "FootStepClient.h"
-
+#include "PlayerConfigReader.h"
 #include <ClientServerMessages.h>
 #include <ClientServerMessages.h>
 #include <DisconnectedEvent.h>
@@ -22,6 +22,8 @@ Client::Client(std::string playerModel) :
 	zFootSteps(0)
 {
 	Messages::ClearDebug();
+
+	InitCraftingRecipes();
 
 	this->zPlayerModel = playerModel;
 	zBleedingShouldBeZero = false;
@@ -108,8 +110,6 @@ Client::Client(std::string playerModel) :
 	am->GetEventHandle(EVENTID_NOTDEADYET_AMBIENCE_FOREST, ambientMusic);
 	
 	this->zIgg = new InGameGui();
-
-	InitCraftingRecipes();
 }
 
 Client::~Client()

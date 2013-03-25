@@ -143,9 +143,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	 //this->SpawnItemsDebug();
+	 this->SpawnItemsDebug();
     // this->SpawnAnimalsDebug();
-	// this->SpawnHumanDebug();
+	 this->SpawnHumanDebug();
 
 	// Sun Direction
 	this->ResetSunDirection();
@@ -174,13 +174,15 @@ Game::~Game()
 	this->zPlayers.clear();
 
 	// Delete Subsystems
-	SAFE_DELETE(zSoundHandler);
-	SAFE_DELETE(zBerryBushSpawner);
-	SAFE_DELETE(zMaterialSpawnManager);
-	SAFE_DELETE(zCraftingManager);
-	SAFE_DELETE(zActorManager);
-	SAFE_DELETE(zWorld);
-	SAFE_DELETE(zGameMode);
+	SAFE_DELETE(this->zBerryBushSpawner);
+	SAFE_DELETE(this->zMaterialSpawnManager);
+	SAFE_DELETE(this->zCraftingManager);
+	SAFE_DELETE(this->zSoundHandler);
+	SAFE_DELETE(this->zActorManager);
+	SAFE_DELETE(this->zBehaviorManager);
+
+	SAFE_DELETE(this->zWorld);
+	SAFE_DELETE(this->zGameMode);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -196,7 +198,7 @@ void Game::SpawnAnimalsDebug()
 	unsigned int increment = 0;
 	for(unsigned int i = 0; i < 5; i++)
 	{
-		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
+		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_hitbox.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
 
 		dActor->AddObserver(this->zGameMode);
@@ -235,7 +237,7 @@ void Game::SpawnAnimalsDebug()
 
 	for(unsigned int i = 0; i < 1; i++)		
 	{
-		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
+		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/bear_hitbox.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
 
 		bActor->AddObserver(this->zGameMode);

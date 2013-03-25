@@ -13,6 +13,7 @@ struct PerformanceMeasurement
 	float lastClock;
 	float totalTime;
 	int measures;
+	float maxTime;
 
 	PerformanceMeasurement()
 	{
@@ -20,6 +21,7 @@ struct PerformanceMeasurement
 		name = "";
 		totalTime = 0.0f;
 		measures = 0;
+		maxTime = 0.0f;
 	}
 };
 
