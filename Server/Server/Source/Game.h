@@ -143,7 +143,7 @@ private:
 	void HandleLootItem(ClientData* cd, unsigned int itemID, unsigned int itemType, unsigned int objID, unsigned int subType );
 	void HandleDropItem(ClientData* cd, unsigned int objectID);
 	bool HandleUseItem(ClientData* cd, unsigned int itemID);
-	void HandleUseWeapon(ClientData* cd, unsigned int itemID);
+	void HandleUseWeapon(ClientData* cd, unsigned int itemID, const Vector3& direction, bool useDir = false);
 	bool HandleCraftItem(ClientData* cd, const unsigned int itemType, const unsigned int itemSubType);
 	bool HandleFillItem(ClientData* cd, const unsigned int itemID);
 	bool HandleDrinkWater(ClientData* cd);

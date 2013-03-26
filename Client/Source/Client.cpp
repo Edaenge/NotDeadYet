@@ -1016,11 +1016,6 @@ void Client::CheckPlayerSpecificKeys()
 			{
 				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 
-				std::string msg = "";
-				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)MOUSE_LEFT_PRESS);
-
-				this->zServerChannel->Send(msg);
-
 				Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
 				if (!primaryWeapon)
 				{
@@ -1029,8 +1024,14 @@ void Client::CheckPlayerSpecificKeys()
 				else
 				{
 					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)primaryWeapon->GetID());
+					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, zEng->GetCamera()->GetForward());
 					this->zServerChannel->Send(msg);
 				}
+
+				std::string msg = "";
+				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)MOUSE_LEFT_PRESS);
+
+				this->zServerChannel->Send(msg);
 			}
 		}
 	}

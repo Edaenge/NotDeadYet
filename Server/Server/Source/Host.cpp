@@ -496,9 +496,24 @@ void Host::HandleReceivedMessage( MaloW::NetworkChannel* cc, const std::string &
 	{
 		PlayerUseEquippedWeaponEvent e;
 		int _itemID = this->zMessageConverter.ConvertStringToInt(M_WEAPON_USE, msgArray[0]);
+		Vector3 eDir;
+
+		bool direction = false;
+		//Find a direction
+		for (auto it = msgArray.begin() + 1; it < msgArray.end() && !direction; it++)
+		{
+			if( (*it).find(M_DIRECTION.c_str()) == 0)
+			{
+				eDir = this->zMessageConverter.ConvertStringToVector(M_DIRECTION, *it);
+				direction = true;
+			}
+	
+		}
 
 		e.clientData = cd;
 		e.itemID = _itemID;
+		e.useDir = direction;
+		e.dir = eDir;
 		NotifyObservers(&e);
 	}
 	else if(msgArray[0].find(M_LOOT_OBJECT.c_str()) == 0)
