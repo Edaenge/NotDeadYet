@@ -120,6 +120,10 @@ Number:28
 Name:Grave wilhem
 Model:Media/MapModels/Gravestones/wilhem.obj
 
+Number:29
+Name:LightPole
+Model:Media/MapModels/LightPole.obj
+
 Number:200
 Name:Deer Spawnpoint
 Model:Media/MapModels/Deer.obj

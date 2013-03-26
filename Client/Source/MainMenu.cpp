@@ -76,7 +76,7 @@ void MainMenu::Init()
 
 	GraphicsEngine* eng = GetGraphics();
 
-	eng->CreateSkyBox("Media/skymap.dds");
+	eng->ChangeSkyBox("Media/skymap.dds");
 
 
 	float windowWidth = (float)eng->GetEngineParameters().WindowWidth;
@@ -526,6 +526,8 @@ void MainMenu::Run()
 							i++;
 						}
 						GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
+						this->zSizedForWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
+						this->zSizedForHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
 					}
 					else if(maximized)
 					{
@@ -552,6 +554,8 @@ void MainMenu::Run()
 							i++;
 						}
 						GetGraphics()->ResizeGraphicsEngine((int)width, (int)height);
+						this->zSizedForWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
+						this->zSizedForHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
 					}
 					this->ResizeWallpapers();
 					// Getting shadow
@@ -604,8 +608,9 @@ void MainMenu::Run()
 			{
 				//Returned no event
 			}
-			Sleep(50);
 		}
+
+		Sleep(50);
 	}
 
 	/*
@@ -761,11 +766,15 @@ void MainMenu::Resize()
 		this->zSizedForHeight == GetGraphics()->GetEngineParameters().WindowHeight)
 		return;
 
-	this->zSets[MAINSET].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
-	this->zSets[FIND_SERVER].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
-	this->zSets[OPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
-	this->zSets[GETIPADRESS].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight);
+	float width = GetGraphics()->GetEngineParameters().WindowWidth;
+	float height = GetGraphics()->GetEngineParameters().WindowHeight;
 
+	this->zSets[MAINSET].Resize(this->zSizedForWidth, this->zSizedForHeight, width, height);
+	this->zSets[FIND_SERVER].Resize(this->zSizedForWidth, this->zSizedForHeight, width, height);
+	this->zSets[OPTIONS].Resize(this->zSizedForWidth, this->zSizedForHeight, width, height);
+	this->zSets[GETIPADRESS].Resize(this->zSizedForWidth, this->zSizedForHeight, width, height);
+	
+	ResizeWallpapers();
 
 	this->zSizedForWidth = (float)GetGraphics()->GetEngineParameters().WindowWidth;
 	this->zSizedForHeight = (float)GetGraphics()->GetEngineParameters().WindowHeight;
@@ -819,9 +828,14 @@ void MainMenu::StartGameWithIPField()
 		this->zBGScreens[this->zCurrentImage]->SetOpacity(0.0f);
 		this->zBGScreens[this->zNextImage]->SetOpacity(0.0f);
 		this->zBGScreens[9]->SetOpacity(0.0f);
+		GetGraphics()->ShowLoadingScreen("media/loadingScreen/loadingscreenbg.png", "media/loadingscreen/loadingscreenpb.png", 0.0f, 0.2f);
+		Sleep(500);
 		this->zGame->Run();
+		this->Resize();
+		this->SwapMenus(MAINMENU, this->zSecondarySet);
 		this->zBGScreens[this->zCurrentImage]->SetOpacity(1.0f);
 		this->zBGScreens[9]->SetOpacity(1.0f);
+		this->zPause = PAUSEBETWEENIMAGES;
 		menuSound->Play();
 	}
 
@@ -831,7 +845,6 @@ void MainMenu::StartGameWithIPField()
 
 	this->EnableMouse(true);
 
-	this->SwapMenus(MAINMENU, this->zSecondarySet);
 }
 
 void MainMenu::UpdateBackground( float dt )
@@ -863,6 +876,7 @@ void MainMenu::ResizeWallpapers()
 	float height = (float)GetGraphics()->GetEngineParameters().WindowHeight;
 	float dx = ((float)width * 10.0f) / 16.0f;
 	float offSet = (float)(height - dx) / 2.0f;
+
 
 	for(int i = 0; i < BGSCREENSHOTS; i++)
 	{

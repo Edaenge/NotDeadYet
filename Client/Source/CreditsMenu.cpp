@@ -2,12 +2,12 @@
 
 CreditsMenu::CreditsMenu()
 {
-	
+	//this->camRec = CamRecording();
 }
 
 CreditsMenu::~CreditsMenu()
 {
-
+	
 }
 
 void CreditsMenu::PreRun()
@@ -18,10 +18,12 @@ void CreditsMenu::PreRun()
 	GetGraphics()->SetGrassFilePath("Media/GrassGY.png");
 	
 	GetGraphics()->ShowLoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f);
-
+	GetGraphics()->ChangeSkyBox("Media/StarMap.dds");
+	this->previousFarClip = GetGraphics()->GetEngineParameters().FarClip;
+	GetGraphics()->GetEngineParameters().FarClip = 300;
 	GetGraphics()->GetCamera()->SetUpdateCamera(true);
 	GetGraphics()->GetKeyListener()->SetCursorVisibility(false);
-
+	GetGraphics()->SetFogColor(Vector3(0.1f, 0.1f, 0.1f));
 
 	unsigned int nrOfResources = 6;
 	const char* resourceFileNames[6];
@@ -48,11 +50,34 @@ void CreditsMenu::PreRun()
 
 
 	// Create lights
-	iLight* l1 = GetGraphics()->CreateLight(Vector3(55, 4, 55));
-	l1->SetLookAt(Vector3(45, 0, 45));
+	Vector3 LightColor = Vector3(0.1f, 0.095f, 0.0f);
+	float yoffset = 3.0f;
+	float intensity = 10.0f;
+	l1 = GetGraphics()->CreateLight(Vector3(51, 3.25 + yoffset, 39.8));
+	l1->SetLookAt(l1->GetPosition() - Vector3(0, 1, 0));
 	l1->SetUp(Vector3(1, 0, 0));
-	l1->SetIntensity(10.0f);
+	l1->SetIntensity(intensity);
+	l1->SetColor(LightColor);
 
+	l2 = GetGraphics()->CreateLight(Vector3(40.3, 3.2 + yoffset, 43));
+	l2->SetLookAt(l2->GetPosition() - Vector3(0, 1, 0));
+	l2->SetUp(Vector3(1, 0, 0));
+	l2->SetIntensity(intensity);
+	l2->SetColor(LightColor);
+	
+	l3 = GetGraphics()->CreateLight(Vector3(41.3, 3.2 + yoffset, 61));
+	l3->SetLookAt(l3->GetPosition() - Vector3(0, 1, 0));
+	l3->SetUp(Vector3(1, 0, 0));
+	l3->SetIntensity(intensity);
+	l3->SetColor(LightColor);
+
+	l4 = GetGraphics()->CreateLight(Vector3(55.6, 3.3 + yoffset, 57.3));
+	l4->SetLookAt(l4->GetPosition() - Vector3(0, 1, 0));
+	l4->SetUp(Vector3(1, 0, 0));
+	l4->SetIntensity(intensity);
+	l4->SetColor(LightColor);
+
+	GetGraphics()->SetSunLightDisabled();
 	
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -128,4 +153,10 @@ void CreditsMenu::Run()
 void CreditsMenu::PostRun()
 {
 	delete this->world;
+	GetGraphics()->GetEngineParameters().FarClip = this->previousFarClip;
+	GetGraphics()->GetCamera()->SetUpdateCamera(false);
+	GetGraphics()->GetKeyListener()->SetCursorVisibility(true);
+	GetGraphics()->SetGrassFilePath("Media/Grass.png");
+	GetGraphics()->ChangeSkyBox("Media/skymap.dds"); 
+	GetGraphics()->SetFogColor(Vector3(0.45f, 0.45f, 0.45f));
 }

@@ -16,6 +16,11 @@ private:
 	WorldRenderer* wr;
 	int mode;
 	CamRecording camRec;
+	int previousFarClip;
+	iLight* l1;
+	iLight* l2;
+	iLight* l3;
+	iLight* l4;
 
 public:
 	CreditsMenu();

@@ -24,6 +24,7 @@ InGameMenu::~InGameMenu()
 int InGameMenu::Run()
 {
 	this->Resize();
+	bool resize = false;
 	int returnValue = IGNOTHING;
 	bool removeMenu = false;
 	GUIEvent* guiEvent = NULL;
@@ -83,7 +84,9 @@ int InGameMenu::Run()
 					zSets[i].Resize((float)GetGraphics()->GetEngineParameters().WindowWidth, (float)GetGraphics()->GetEngineParameters().WindowHeight, width, height);
 					i++;
 				}
-				zEng->ResizeGraphicsEngine((int)width, (int)height);
+				resize = true;
+				this->zSizedForWidth = width;
+				this->zSizedForHeight = height;
 			}
 			else if(maximized)
 			{
@@ -109,7 +112,9 @@ int InGameMenu::Run()
 					zSets[i].Resize(oldWidth, oldHeight, width, height);
 					i++;
 				}
-				zEng->ResizeGraphicsEngine((int)width, (int)height);
+				resize = true;
+				this->zSizedForWidth = width;
+				this->zSizedForHeight = height;
 			}
 			// Getting shadow
 			std::string tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ShadowQuality");
@@ -129,10 +134,29 @@ int InGameMenu::Run()
 			tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("ViewDistance");
 			GEP.FarClip = MaloW::convertStringToFloat(tbTemp);
 
+			AudioManager* am = AudioManager::GetInstance();
+			//Master Volume
+			tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MasterVolume");
+			float masterVolume = MaloW::convertStringToFloat(tbTemp) / 100;
+
+			//Music Volume
+			tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("MusicVolume");
+			float temp = (MaloW::convertStringToFloat(tbTemp) * masterVolume) / 100;
+			am->SetVolume(EVENTCATEGORY_NOTDEADYET_MASTER_MUSIC, temp);
+
+			//Normal Volume
+			tbTemp = this->zSets[this->zPrimarySet].GetTextFromField("NormalVolume");
+			temp = (MaloW::convertStringToFloat(tbTemp) * masterVolume) / 100;
+			am->SetVolume(EVENTCATEGORY_NOTDEADYET_MASTER_SOUND, temp);
+
 			GEP.SaveToFile("Config.cfg");
 
 			this->SwapMenus(cEvent->GetSet());
 			zPrimarySet = cEvent->GetSet();
+			if(resize)
+			{
+				returnValue = IGRESIZE;
+			}
 		}
 	}
 	if(this->zEng->GetKeyListener()->IsPressed(VK_ESCAPE))
@@ -272,32 +296,32 @@ void InGameMenu::Init()
 	zSets[IGOPTIONS].AddElement(temp);
 
 	//TextBox View Distance
-	temp = new TextBox(offSet + (278.0f / 1024.0f) * dx, (470.0f / 768.0f) * windowHeight, 2.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (278.0f / 1024.0f) * dx, (470.0f / 768.0f) * windowHeight, 2.0f, "", 
 		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString((float)GetGraphics()->GetEngineParameters().FarClip), 
 		"ViewDistance", 2.0f, 3, NR, 0, 9);
 	zSets[IGOPTIONS].AddElement(temp);
 
 	//TextBox Shadow
-	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (412.0f / 768.0f) * windowHeight, 2.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (295.0f / 1024.0f) * dx, (412.0f / 768.0f) * windowHeight, 2.0f, "", 
 		(40.0f / 1024.0f) * dx, (32.0f / 768.0f) * windowHeight, MaloW::convertNrToString((float)GetGraphics()->GetEngineParameters().ShadowMapSettings), 
 		"ShadowQuality", 2.0f, 1, NR, 0, 9);
 	zSets[IGOPTIONS].AddElement(temp);
 
 	//Sound tech
 	//Master volume
-	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 2.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (690.0f / 1024.0f) * dx, (235.0f / 768.0f) * windowHeight, 2.0f, "", 
 		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
 		"MasterVolume", 2.0f, 2, NR);
 	zSets[IGOPTIONS].AddElement(temp);
 
 	//Music Volume
-	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 2.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (680.0f / 1024.0f) * dx, (295.0f / 768.0f) * windowHeight, 2.0f, "", 
 		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
 		"MusicVolume", 2.0f, 2, NR);
 	zSets[IGOPTIONS].AddElement(temp);
 
 	//Normal Volume
-	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 2.0f, "Media/Menu/Options/TextBox4032.png", 
+	temp = new TextBox(offSet + (695.0f / 1024.0f) * dx, (355.0f / 768.0f) * windowHeight, 2.0f, "", 
 		(40.0f / 1024.0f) * dx, (float)(32.0f / 768.0f) * windowHeight, MaloW::convertNrToString(100), 
 		"NormalVolume", 2.0f, 2, NR);
 	zSets[IGOPTIONS].AddElement(temp);
