@@ -24,7 +24,7 @@ void CreditsMenu::PreRun()
 	GetGraphics()->GetEngineParameters().FarClip = 300;
 	GetGraphics()->GetCamera()->SetUpdateCamera(true);
 	GetGraphics()->GetKeyListener()->SetCursorVisibility(false);
-
+	GetGraphics()->SetFogColor(Vector3(0.1f, 0.1f, 0.1f));
 
 	unsigned int nrOfResources = 6;
 	const char* resourceFileNames[6];
@@ -145,4 +145,5 @@ void CreditsMenu::PostRun()
 	GetGraphics()->GetKeyListener()->SetCursorVisibility(true);
 	GetGraphics()->SetGrassFilePath("Media/Grass.png");
 	GetGraphics()->ChangeSkyBox("Media/skymap.dds"); 
+	GetGraphics()->SetFogColor(Vector3(0.45f, 0.45f, 0.45f));
 }
