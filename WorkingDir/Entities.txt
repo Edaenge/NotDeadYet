@@ -138,6 +138,10 @@ Number:30
 Name:Grave Paya
 Model:Media/MapModels/Gravestones/paya.obj
 
+Number:31
+Name:Grave MaloW
+Model:Media/MapModels/Gravestones/MaloWGravestone.obj
+
 Number:200
 Name:Deer Spawnpoint
 Model:Media/MapModels/Deer.obj
