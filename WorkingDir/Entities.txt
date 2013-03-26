@@ -127,8 +127,8 @@ Name:Grave tille
 Model:Media/MapModels/Gravestones/tille.obj
 
 Number:28
-Name:Grave wilhem
-Model:Media/MapModels/Gravestones/wilhem.obj
+Name:Grave wilhelm
+Model:Media/MapModels/Gravestones/wilhelm.obj
 
 Number:29
 Name:LightPole
