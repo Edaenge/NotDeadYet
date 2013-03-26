@@ -22,6 +22,8 @@ private:
 	iLight* l3;
 	iLight* l4;
 
+	iLight* selfLight;
+
 public:
 	CreditsMenu();
 	virtual ~CreditsMenu();
