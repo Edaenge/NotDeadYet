@@ -6,6 +6,7 @@
 #include "World\Observer.h"
 #include "World\World.h"
 #include "World\WorldRenderer.h"
+#include "CamRecording.h"
 
 class CreditsMenu : public Observer
 {
@@ -14,6 +15,7 @@ private:
 	WorldAnchor* wa;
 	WorldRenderer* wr;
 	int mode;
+	CamRecording camRec;
 
 public:
 	CreditsMenu();

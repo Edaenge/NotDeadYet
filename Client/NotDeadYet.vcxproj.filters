@@ -168,6 +168,12 @@
     <ClCompile Include="Source\CreditsMenu.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\CamRecording.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TCBSpline.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Client.h">
@@ -312,6 +318,12 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\CreditsMenu.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CamRecording.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TCBSpline.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
