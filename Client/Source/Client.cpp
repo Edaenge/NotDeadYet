@@ -3,7 +3,7 @@
 #include "DebugMessages.h"
 #include "PlayerConfig/PlayerSettings.h"
 #include "FootStepClient.h"
-
+#include "PlayerConfigReader.h"
 #include <ClientServerMessages.h>
 #include <ClientServerMessages.h>
 #include <DisconnectedEvent.h>
@@ -22,6 +22,8 @@ Client::Client(std::string playerModel) :
 	zFootSteps(0)
 {
 	Messages::ClearDebug();
+
+	InitCraftingRecipes();
 
 	this->zPlayerModel = playerModel;
 	zBleedingShouldBeZero = false;
@@ -43,15 +45,17 @@ Client::Client(std::string playerModel) :
 	this->zMeshfirstPersonMap["media/models/ghost.obj"] = "media/models/ghost.obj";
 	this->zMeshfirstPersonMap["media/models/token_anims.fbx"] = "media/models/token_anims_fpp.fbx";
 	this->zMeshfirstPersonMap["media/models/deer_anims.fbx"] = "media/models/deer_anims.fbx";
-	//this->zMeshfirstPersonMap["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.fbx";
+	this->zMeshfirstPersonMap["media/models/diana_anims.fbx"] = "media/models/diana_anims.fbx";
 	this->zMeshfirstPersonMap["media/models/bear_anims.fbx"] = "media/models/bear_anims.fbx";
 
 	this->zAnimationFileReader[0] = AnimationFileReader("media/models/token_anims.cfg");
+	this->zAnimationFileReader[1] = AnimationFileReader("media/models/diana_anims.cfg");
 	this->zAnimationFileReader[2] = AnimationFileReader("media/models/deer_anims.cfg");
 	this->zAnimationFileReader[3] = AnimationFileReader("media/models/bear_anims.cfg");
 
 	this->zModelToReaderMap["media/models/token_anims.fbx"] = zAnimationFileReader[0];
 	this->zModelToReaderMap["media/models/token_anims_fpp.fbx"] = zAnimationFileReader[0];
+	this->zModelToReaderMap["media/models/diana_anims.fbx"] = zAnimationFileReader[1];
 	this->zModelToReaderMap["media/models/deer_anims.fbx"] = zAnimationFileReader[2];
 	this->zModelToReaderMap["media/models/bear_anims.fbx"] = zAnimationFileReader[3];
 
@@ -106,8 +110,6 @@ Client::Client(std::string playerModel) :
 	am->GetEventHandle(EVENTID_NOTDEADYET_AMBIENCE_FOREST, ambientMusic);
 	
 	this->zIgg = new InGameGui();
-
-	InitCraftingRecipes();
 }
 
 Client::~Client()
@@ -566,21 +568,20 @@ void Client::UpdateGame()
 	}
 	else
 	{
-			this->zHealth = 0.0f;
-			this->zBleedingLevel = 0.0f;
-			this->zCurrentOffset = 0.0f;
+		this->zHealth = 0.0f;
+		this->zBleedingLevel = 0.0f;
+		this->zCurrentOffset = 0.0f;
 
-			if(this->zDamageIndicator)
-			{
-				this->zEng->DeleteImage(this->zDamageIndicator);
-				this->zDamageIndicator = NULL;
-			}
-			if(this->zBleedingAndHealthIndicator)
-			{
-				this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
-				this->zBleedingAndHealthIndicator = NULL;
-			}
-
+		if(this->zDamageIndicator)
+		{
+			this->zEng->DeleteImage(this->zDamageIndicator);
+			this->zDamageIndicator = NULL;
+		}
+		if(this->zBleedingAndHealthIndicator)
+		{
+			this->zEng->DeleteImage(this->zBleedingAndHealthIndicator);
+			this->zBleedingAndHealthIndicator = NULL;
+		}
 	}
 
 	AudioManager* am = AudioManager::GetInstance();

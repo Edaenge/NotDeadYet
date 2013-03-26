@@ -58,7 +58,7 @@ void Actor::SetModel(const std::string& model)
 	}
 }
 
-void Actor::SetPosition(const Vector3& pos)
+void Actor::SetPosition(const Vector3& pos, const bool& updateMesh)
 {
 	if ( zPosition != pos )
 	{
@@ -66,7 +66,7 @@ void Actor::SetPosition(const Vector3& pos)
 		zPosition = pos;
 
 		// Update Mesh
-		if (this->zMesh)
+		if ( updateMesh && this->zMesh )
 		{
 			this->zMesh->SetPosition(pos);
 		}

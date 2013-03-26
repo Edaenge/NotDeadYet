@@ -77,6 +77,10 @@ private:
 	/*! Counter that counts up until next fog update.*/
 	float zFogTimer;
 
+	//Used for getting correct time when to change to Obj model;
+	AnimationFileReader zAnimationFileReader[4];
+	std::map<std::string, AnimationFileReader> zModelToReaderMap;
+
 public:
 	Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* syncher, const std::string& mode, const std::string& worldFile);
 	virtual ~Game();
@@ -125,6 +129,7 @@ public:
 	const std::map<std::string, std::string>& GetPlayerModels() const {return this->zPlayerModels;}
 	const std::map<std::string, Vector3>& GetCameraOffsets() const {return this->zCameraOffset;}
 	const std::map<std::string, std::string>& GetDeadActorModels() const {return this->zDeadActorModels;}
+	const AnimationFileReader& GetAnimationReader(const std::string& model);
 private:
 	//Test functions, spawns items/Animals
 	void SpawnItemsDebug();

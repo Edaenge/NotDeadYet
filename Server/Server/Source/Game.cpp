@@ -72,6 +72,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	//Models
 	//this->zPlayerModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zPlayerModels["media/models/token_anims.fbx"] = "media/models/hitbox_token.obj";
+	this->zPlayerModels["media/models/diana_anims.fbx"] = "media/models/hitbox_token.obj";
 	this->zPlayerModels["media/models/deer_anims.fbx"] = "media/models/deer_hitbox.obj";
 	this->zPlayerModels["media/models/bear_anims.fbx"] = "media/models/bear_hitbox.obj"; 
 	this->zPlayerModels["media/models/ghost.obj"] = "media/models/ghost.obj";
@@ -79,8 +80,19 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	//Dead Actor Model Maps
 	//this->zDeadActorModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zDeadActorModels["media/models/token_anims.fbx"] = "media/models/token_dead.obj";
+	this->zDeadActorModels["media/models/diana_anims.fbx"] = "media/models/token_dead.obj";
 	this->zDeadActorModels["media/models/deer_anims.fbx"] = "media/models/deer_dead.obj";
 	this->zDeadActorModels["media/models/bear_anims.fbx"] = "media/models/bear_dead.obj";
+
+	this->zAnimationFileReader[0] = AnimationFileReader("media/models/token_anims.cfg");
+	this->zAnimationFileReader[1] = AnimationFileReader("media/models/diana_anims.cfg");
+	this->zAnimationFileReader[2] = AnimationFileReader("media/models/deer_anims.cfg");
+	this->zAnimationFileReader[3] = AnimationFileReader("media/models/bear_anims.cfg");
+
+	this->zModelToReaderMap["media/models/token_anims.fbx"] = zAnimationFileReader[0];
+	this->zModelToReaderMap["media/models/diana_anims.fbx"] = zAnimationFileReader[1];
+	this->zModelToReaderMap["media/models/deer_anims.fbx"] = zAnimationFileReader[2];
+	this->zModelToReaderMap["media/models/bear_anims.fbx"] = zAnimationFileReader[3];
 
 	// Create World
 	if(worldFile != "")
@@ -131,9 +143,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	 //this->SpawnItemsDebug();
+	 this->SpawnItemsDebug();
     // this->SpawnAnimalsDebug();
-	// this->SpawnHumanDebug();
+	 this->SpawnHumanDebug();
 
 	// Sun Direction
 	this->ResetSunDirection();
@@ -162,13 +174,15 @@ Game::~Game()
 	this->zPlayers.clear();
 
 	// Delete Subsystems
-	SAFE_DELETE(zSoundHandler);
-	SAFE_DELETE(zBerryBushSpawner);
-	SAFE_DELETE(zMaterialSpawnManager);
-	SAFE_DELETE(zCraftingManager);
-	SAFE_DELETE(zActorManager);
-	SAFE_DELETE(zWorld);
-	SAFE_DELETE(zGameMode);
+	SAFE_DELETE(this->zBerryBushSpawner);
+	SAFE_DELETE(this->zMaterialSpawnManager);
+	SAFE_DELETE(this->zCraftingManager);
+	SAFE_DELETE(this->zSoundHandler);
+	SAFE_DELETE(this->zActorManager);
+	SAFE_DELETE(this->zBehaviorManager);
+
+	SAFE_DELETE(this->zWorld);
+	SAFE_DELETE(this->zGameMode);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -184,7 +198,7 @@ void Game::SpawnAnimalsDebug()
 	unsigned int increment = 0;
 	for(unsigned int i = 0; i < 5; i++)
 	{
-		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
+		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_hitbox.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
 
 		dActor->AddObserver(this->zGameMode);
@@ -223,7 +237,7 @@ void Game::SpawnAnimalsDebug()
 
 	for(unsigned int i = 0; i < 1; i++)		
 	{
-		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
+		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/bear_hitbox.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
 
 		bActor->AddObserver(this->zGameMode);
@@ -2280,15 +2294,28 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 		if(victim)
 		{
 			Damage dmg;
-
+			//float time = 0.0f;
 			if(meele->GetItemSubType() == ITEM_SUB_TYPE_MACHETE)
+			{
+				//AnimationFileReader reader = this->GetAnimationReader(pActor->GetModel());
+				//std::string animation = reader.GetAnimation(MACHETE_ATTACK_01);
+				
+				//time = reader.GetAnimationTime(animation);
 				dmg.slashing = meele->GetDamage();
+			}
 			else if(meele->GetItemSubType() == ITEM_SUB_TYPE_POCKET_KNIFE)
-				dmg.piercing = meele->GetDamage();
+			{
+				//AnimationFileReader reader = this->GetAnimationReader(pActor->GetModel());
+				//std::string animation = reader.GetAnimation(MACHETE_ATTACK_01);
 
+				//time = reader.GetAnimationTime(animation);
+				dmg.piercing = meele->GetDamage();
+			}
 			victim->TakeDamage(dmg, pActor);
 
 			pActor->SetState(STATE_ATTACK_P);
+
+
 		}
 	}
 }
@@ -2981,4 +3008,15 @@ bool Game::IsFull() const
 	}
 
 	return false;
+}
+
+const AnimationFileReader& Game::GetAnimationReader(const std::string& model)
+{
+	auto it = this->zModelToReaderMap.find(model);
+	if (it != this->zModelToReaderMap.end())
+		return it->second;
+
+	static const AnimationFileReader temp;
+
+	return temp;
 }

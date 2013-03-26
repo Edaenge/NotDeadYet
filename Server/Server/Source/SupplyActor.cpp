@@ -22,7 +22,19 @@ SupplyActor::~SupplyActor()
 
 bool SupplyActor::AddItem( Item* item )
 {
-	return this->zInventory->AddItem(item);
+	bool stacked;
+	if(this->zInventory->AddItem(item, &stacked))
+	{
+		if (stacked && item->GetStackSize() == 0)
+			SAFE_DELETE(item);
+
+		return true;
+	}
+
+		
+	
+	
+	return false;
 }
 
 Item* SupplyActor::DropItem( Item* item )

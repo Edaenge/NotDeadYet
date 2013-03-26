@@ -15,7 +15,8 @@ PlayerConfigReader* GetPlayerConfig()
 
 void InitPlayerConfig()
 {
-	playerConfig = new PlayerConfigReader();
+	if (playerConfig == NULL)
+		playerConfig = new PlayerConfigReader();
 }
 
 void FreePlayerConfig()
@@ -109,9 +110,12 @@ bool PlayerConfigReader::ReadFromFile()
 		float fValue;
 		ss << value;
 		ss >> fValue;
-		//this->InterpCommand(key, fValue);
+		
 		this->zVariables[key] = fValue;
 	}
+
+	read.close();
+
 	return true;
 }
 
@@ -124,62 +128,3 @@ float PlayerConfigReader::GetVariable( std::string mappedName )
 
 	return 1.0f;
 }
-
-//void PlayerConfigReader::InterpCommand(std::string key, float value)
-//{
-//	if (key == FULLNESS_MAX)
-//		zFullnessMax = value;
-//	else if (key == HUNGER_COEFF)
-//		zHungerCof = value;
-//	else if (key == HUNGER_SPRINT_COEFF)
-//		zHungerSprintingCof = value;
-//	else if (key == HYDRATION_MAX)
-//		zHydrationMax = value;
-//	else if (key == HYDRATION_COEFF)
-//		zHydrationCof = value;
-//	else if (key == HYDRATION_SPRINT_COEFF)
-//		zHydrationSprintingCof = value;
-//	else if (key == STAMINA_SPRINT_COEFF)
-//		zStaminaSprintingCof = value;
-//	else if (key == DAMAGE_AT_STARVATON_COEFF)
-//		zDamageAtStarvationCof = value;
-//	else if (key == DAMAGE_AT_THIRST_COEFF)
-//		zDamageAtThirstCof = value;
-//	else if (key == STAMINA_DECREASE_COEFF_HUNGER)
-//		zStaminaDecreaseCofWithHunger = value;
-//	else if (key == STAMINA_DECREASE_COEFF_HYDRATION)
-//		zStaminaDecreaseCofWithHydration = value;
-//	else if (key == STAMINA_DECREASE_BLEEDING_COEF)
-//		zStaminaDecreaseWithBleedingCof = value;
-//	else if (key == HUNGER_DECREASE_BLEEDING_COEFF)
-//		zHungerDecreaseWithBleedingCof = value;
-//	else if (key == HYDRATION_DECREASE_BLEEDING_COEFF)
-//		zHydrationDecreaseWithBleedingCof = value;
-//	else if (key == HUNGER_FOR_STAMINA_COEFF)
-//		zHungerForStaminaCof = value;
-//	else if (key == HYDRATION_FOR_STAMINA_COEFF)
-//		zHydrationForStaminaCof = value;
-//	else if (key == UPPER_HUNGER)
-//		zUpperHunger = value;
-//	else if (key == LOWER_HUNGER)
-//		zLowerHunger = value;
-//	else if (key == UPPER_HYDRATION)
-//		zUpperHydration = value;
-//	else if (key == LOWER_HYDRATION)
-//		zLowerHydration = value;
-//	else if (key == UPPER_STAMINA)
-//		zUpperStamina = value;
-//	else if (key == LOWER_STAMINA)
-//		zLowerStamina = value;
-//	else if (key == REGEN_SCALE)
-//		zRegenerationScale = value;
-//	else if (key == REGEN_HUNGER_ADD)
-//		zRegenerationHungerAddition = value;
-//	else if (key == REGEN_HYDRATION_ADD)
-//		zRegenerationHydrationAddition = value;
-//	else if (key == REGEN_STAMINA_ADD)
-//		zRegenerationStaminaAddition = value;
-//	else if (key == ENERGY_COEFF)
-//		zEnergyCoeff = value;
-//	
-//}

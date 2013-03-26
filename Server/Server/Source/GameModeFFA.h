@@ -5,6 +5,12 @@
 class GhostActor;
 class SupplyDrop;
 
+struct DeadActors
+{
+	BioActor* bActor;
+	float time;
+};
+
 class GameModeFFA : public GameMode
 {
 private:
@@ -13,7 +19,7 @@ private:
 	SupplyDrop* zSupplyDrop;
 	float zCurrentRSPTime;
 	unsigned int zAlivePlayers;
-
+	std::vector<DeadActors> zToBeDeadActors;
 public:
 	GameModeFFA(Game* game);
 	virtual ~GameModeFFA();

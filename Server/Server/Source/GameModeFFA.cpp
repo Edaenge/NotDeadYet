@@ -36,7 +36,7 @@ static const float SPAWN_DROP_TIMER_MAX	= 600.0f;
 
 static const unsigned int NR_PLAYERS_ALIVE_GAME_END_CONDITION = 1;
 
-#define DEBUGGING false
+#define DEBUGGING true
 
 GameModeFFA::GameModeFFA( Game* game) : GameMode(game)
 {
@@ -70,6 +70,27 @@ bool GameModeFFA::Update( float dt )
 			this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX;
 		else
 			this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX * 0.5f;
+	}
+
+	auto it = this->zToBeDeadActors.begin();
+	while (it != this->zToBeDeadActors.end())
+	{
+		it->time -= dt;
+		if (it->time <= 0.0f)
+		{
+			auto models = this->zGame->GetDeadActorModels();
+
+			auto models_it = models.find(it->bActor->GetModel());
+			if (models_it != models.end())
+			{			
+				it->bActor->SetModel(models_it->second);
+			}
+			it = this->zToBeDeadActors.erase(it);
+		}
+		else
+		{
+			it++;
+		}
 	}
 
 	if( CheckEndCondition() )
@@ -231,16 +252,19 @@ void GameModeFFA::OnEvent( Event* e )
 			this->OnPlayerHumanDeath(pActor);
 		}
 
-		auto models = this->zGame->GetDeadActorModels();
-
-		auto models_it = models.find(BADE->zActor->GetModel());
-		if (models_it != models.end())
-		{			
-			BADE->zActor->SetModel(models_it->second);
-		}
-
 		zDeadActors.push_back(BADE->zActor);
 		
+		AnimationFileReader animReader = this->zGame->GetAnimationReader(BADE->zActor->GetModel());
+
+		std::string animationName = animReader.GetAnimation(DEATH);
+		std::string animationName2 = animReader.GetAnimation(DEAD);
+
+		float time = animReader.GetAnimationTime(animationName) + animReader.GetAnimationTime(animationName2);
+		DeadActors temp;
+		temp.bActor = dynamic_cast<BioActor*>(BADE->zActor);
+		temp.time = time;
+
+		zToBeDeadActors.push_back(temp);
 	}
 	else if (PlayerAnimalSwapEvent* PASE = dynamic_cast<PlayerAnimalSwapEvent*>(e))
 	{
@@ -283,7 +307,7 @@ void GameModeFFA::OnEvent( Event* e )
 			}
 
 			NetworkMessageConverter NMC;
-			this->zGame->SendToAll(NMC.Convert( MESSAGE_TYPE_SERVER_ANNOUNCEMENT, PLRE->player->GetPlayerName() + " is ready!  " + MaloW::convertNrToString(counter) + "/" + MaloW::convertNrToString(zPlayers.size())) );
+			this->zGame->SendToAll(NMC.Convert( MESSAGE_TYPE_SERVER_ANNOUNCEMENT, PLRE->player->GetPlayerName() + " is ready!  " + MaloW::convertNrToString((float)counter) + "/" + MaloW::convertNrToString((float)this->zPlayers.size())) );
 
 			unsigned int nrOfNoneClickers = this->zPlayers.size() - counter;
 			if( nrOfNoneClickers < counter )
@@ -832,6 +856,7 @@ bool GameModeFFA::StartGameMode()
 		}
 	}
 	zDeadActors.clear();
+	this->zToBeDeadActors.clear();
 
 	this->zSupplyDrop->SpawnSupplyDrop(center, items, 50.0f);
 

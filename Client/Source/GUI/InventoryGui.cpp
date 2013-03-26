@@ -153,7 +153,11 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 			bool removed = false;
 			if(this->zSlotGui.at(i)->GetGid().zCanStack) // remove the stacks
 			{
-				this->zSlotGui.at(i)->SetStacks(this->zSlotGui.at(i)->GetGid().zStacks - gid.zStacks);
+				int newStack = this->zSlotGui.at(i)->GetGid().zStacks - gid.zStacks;
+				if (newStack < 0)
+					newStack = 0;
+
+				this->zSlotGui.at(i)->SetStacks(newStack);
 
 				if(this->zSlotGui.at(i)->GetGid().zStacks == 0) // Remove item if it has less than or zero stacks
 				{
@@ -196,7 +200,11 @@ bool InventoryGui::RemoveItemFromGui(Gui_Item_Data gid, bool open, GraphicsEngin
 	{
 		if(this->zWeaponSlotGui[gid.zType]->GetGid().zCanStack == true)
 		{
-			this->zWeaponSlotGui[gid.zType]->SetStacks(this->zWeaponSlotGui[gid.zType]->GetGid().zStacks - gid.zStacks);
+			int newStack = this->zWeaponSlotGui[gid.zType]->GetGid().zStacks - gid.zStacks;
+			if (newStack < 0)
+				newStack = 0;
+
+			this->zWeaponSlotGui[gid.zType]->SetStacks(newStack);
 			if(this->zWeaponSlotGui[gid.zType]->GetGid().zStacks <= 0)
 			{
 				this->RemoveBlockers(gid.zType, open, ge, 1);

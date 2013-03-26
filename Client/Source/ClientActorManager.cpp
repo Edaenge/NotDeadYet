@@ -138,7 +138,7 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 				if(update->GetID() == clientID)
 				{
 					gEng->GetCamera()->SetPosition(position);
-					actor->SetPosition(position);
+					actor->SetPosition(position, false);
 
 					AudioManager::GetInstance()->SetPlayerPosition(ConvertToFmodVector(position), ConvertToFmodVector(gEng->GetCamera()->GetForward()), ConvertToFmodVector(gEng->GetCamera()->GetUpVector()));
 					if(actor->GetModel() != "media/models/ghost.obj")
