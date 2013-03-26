@@ -51,8 +51,8 @@ void CreditsMenu::PreRun()
 
 	// Create lights
 	Vector3 LightColor = Vector3(0.1f, 0.095f, 0.0f);
-	float yoffset = 3.0f;
-	float intensity = 10.0f;
+	float yoffset = 5.0f;
+	float intensity = 13.0f;
 	l1 = GetGraphics()->CreateLight(Vector3(51, 3.25 + yoffset, 39.8));
 	l1->SetLookAt(l1->GetPosition() - Vector3(0, 1, 0));
 	l1->SetUp(Vector3(1, 0, 0));
@@ -77,6 +77,10 @@ void CreditsMenu::PreRun()
 	l4->SetIntensity(intensity);
 	l4->SetColor(LightColor);
 
+	selfLight = GetGraphics()->CreateLight(Vector3(0, 0, 0));
+	selfLight->SetIntensity(4.0f);
+	selfLight->SetColor(Vector3(0, 0, 0));
+
 
 	GetGraphics()->SetSunLightDisabled();
 	
@@ -98,6 +102,7 @@ void CreditsMenu::Run()
 		float diff = GetGraphics()->Update();
 		world->Update();
 		wr->Update();
+		selfLight->SetPosition(GetGraphics()->GetCamera()->GetPosition());
 
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
 			go = false;
@@ -165,4 +170,5 @@ void CreditsMenu::PostRun()
 	GetGraphics()->DeleteLight(l2);
 	GetGraphics()->DeleteLight(l3);
 	GetGraphics()->DeleteLight(l4);
+	GetGraphics()->DeleteLight(selfLight);
 }
