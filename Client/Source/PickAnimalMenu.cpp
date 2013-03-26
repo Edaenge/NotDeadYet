@@ -137,6 +137,7 @@ void PickAnimalMenu::Resize()
 	this->zSets[MAINSET].Resize(this->zSizedForWidth, this->zSizedForHeight, (float)this->zEng->GetEngineParameters().WindowWidth, (float)this->zEng->GetEngineParameters().WindowHeight);
 
 	this->zTextPos = Vector2(offSet + (338.0f / 1024.0f) * dx, (287.0f / 768.0f) * windowHeight);
+	this->zEnergyText->SetPosition(this->zTextPos);
 
 	this->zSizedForWidth = (float)this->zEng->GetEngineParameters().WindowWidth;
 	this->zSizedForHeight = (float)this->zEng->GetEngineParameters().WindowHeight;

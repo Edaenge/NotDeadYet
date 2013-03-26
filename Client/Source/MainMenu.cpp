@@ -149,9 +149,9 @@ void MainMenu::Init()
 		"Media/Menu/MainMenu/OptionsOver.png", offSet + (350.0f / 1024.0f) * dx, (430.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
-	temp = new SimpleButton(offSet + (350.0f / 1024.0f) * dx, (510.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Quit.png", 
-		(300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight, new ChangeSetEvent(CREDITS), "Media/Menu/MainMenu/CreditClick.png", 
-		"Media/Menu/MainMenu/CreditOver.png", offSet + (350.0f / 1024.0f) * dx, (510.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
+	temp = new SimpleButton(offSet + (350.0f / 1024.0f) * dx, (510.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Credits.png", 
+		(300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight, new ChangeSetEvent(CREDITS), "Media/Menu/MainMenu/CreditsClick.png", 
+		"Media/Menu/MainMenu/CreditsOver.png", offSet + (350.0f / 1024.0f) * dx, (510.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
 	temp = new SimpleButton(offSet + (350.0f / 1024.0f) * dx, (590.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Quit.png", 
