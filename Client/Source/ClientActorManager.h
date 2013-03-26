@@ -53,7 +53,7 @@ public:
 
 	bool ComparePosition(const Vector3& position)
 	{
-		if ((this->zNextPosition - position).GetLength() < 0.5f)
+		if ((this->zNextPosition - position).GetLength() < 0.2f)
 		{
 			this->zPositionChange = false;
 		}

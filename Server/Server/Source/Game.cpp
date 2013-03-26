@@ -2730,7 +2730,7 @@ void Game::SendToAll( const std::string& msg)
 void Game::ResetFogEnclosement()
 {
 	//Expected playtime
-	static const float EXPECTED_PLAYTIME = 60.0f * 10.0f;
+	static const float EXPECTED_PLAYTIME = 60.0f * (60.0f * 2.0f);
 
 	Vector2 worldSize = this->zWorld->GetWorldSize();
 
