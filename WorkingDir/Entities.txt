@@ -128,11 +128,15 @@ Model:Media/MapModels/Gravestones/tille.obj
 
 Number:28
 Name:Grave wilhem
-Model:Media/MapModels/Gravestones/wilhem.obj
+Model:Media/MapModels/Gravestones/wilhem.objpaya.obj
 
 Number:29
 Name:LightPole
 Model:Media/MapModels/LightPole.obj
+
+Number:30
+Name:Grave Paya
+Model:Media/MapModels/Gravestones/paya.obj
 
 Number:200
 Name:Deer Spawnpoint
