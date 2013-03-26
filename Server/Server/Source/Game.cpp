@@ -725,7 +725,7 @@ void Game::OnEvent( Event* e )
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
-		if(KDE->key == MOUSE_LEFT_PRESS)
+		if(KDE->key == MOUSE_LEFT_PRESS) // THE FUCK IS THIS DOING HERE
 			this->CheckPlayerUseBow(this->zPlayers[KDE->clientData]);
 	}
 	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )
@@ -2730,7 +2730,7 @@ void Game::SendToAll( const std::string& msg)
 void Game::ResetFogEnclosement()
 {
 	//Expected playtime
-	static const float EXPECTED_PLAYTIME = 60.0f * (60.0f * 2.0f);
+	static const float EXPECTED_PLAYTIME = 60.0f * (60.0f);
 
 	Vector2 worldSize = this->zWorld->GetWorldSize();
 

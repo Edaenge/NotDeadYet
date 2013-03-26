@@ -6,7 +6,7 @@
 #include <sstream>
 #include <math.h>
 #include <windows.h>
-
+#include "../../Client/Source/MaloWPerformance.h"
 
 World::World( Observer* observer, const std::string& fileName, bool readOnly) throw(...) : 
 	Observed(observer),

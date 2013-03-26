@@ -74,6 +74,10 @@ public:
 	void SetBlackImage(iImage* image){ this->zBlackImage = image; }
 	void SetConnectingText(iText* text){ this->zConnectingText = text; }
 
+	bool GetNeedResize(){ return this->zNeedResize; }
+	void SetNeedResize(bool value){ this->zNeedResize = value; }
+	Vector2 GetCurrScreenDim(){ return Vector2(this->zCurrentWidth, this->zCurrentHeight); }
+
 private:
 
 	//////////////////////
@@ -198,6 +202,10 @@ protected:
 	virtual void OnEvent(Event* e);
 	
 private:
+	bool zNeedResize;
+	float zCurrentWidth;
+	float zCurrentHeight;
+
 	string zPlayerModel;
 	//Sound
 	IEventHandle* ambientMusic;
