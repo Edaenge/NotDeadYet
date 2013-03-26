@@ -1,6 +1,7 @@
 #include "MainMenu.h"
 #include "Safe.h"
 #include "NetworkException.h"
+#include "CreditsMenu.h"
 
 MainMenu::MainMenu()
 {
@@ -149,8 +150,13 @@ void MainMenu::Init()
 	zSets[MAINMENU].AddElement(temp);
 
 	temp = new SimpleButton(offSet + (350.0f / 1024.0f) * dx, (510.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Quit.png", 
+		(300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight, new ChangeSetEvent(CREDITS), "Media/Menu/MainMenu/CreditClick.png", 
+		"Media/Menu/MainMenu/CreditOver.png", offSet + (350.0f / 1024.0f) * dx, (510.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
+	zSets[MAINMENU].AddElement(temp);
+
+	temp = new SimpleButton(offSet + (350.0f / 1024.0f) * dx, (590.0f / 768.0f) * windowHeight, 1.0f, "Media/Menu/MainMenu/Quit.png", 
 		(300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight, new ChangeSetEvent(QUIT), "Media/Menu/MainMenu/QuitClick.png", 
-		"Media/Menu/MainMenu/QuitOver.png", offSet + (350.0f / 1024.0f) * dx, (510.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
+		"Media/Menu/MainMenu/QuitOver.png", offSet + (350.0f / 1024.0f) * dx, (590.0f / 768.0f) * windowHeight, (300.0f / 1024.0f) * dx, (60.0f / 768.0f) * windowHeight);
 	zSets[MAINMENU].AddElement(temp);
 
 	//Get IP
@@ -421,7 +427,7 @@ void MainMenu::Run()
 
 					this->SwapMenus((SET)setEvent->GetSet(), this->zSecondarySet); // THIS IS ALWAYS DONE IN THIS FUNCTION!
 					zPrimarySet = (SET)setEvent->GetSet(); // THIS IS ALWAYS DONE IN THIS FUNCTION!
-
+					CreditsMenu* cm = NULL;
 					//Special Menu Things Are Done Below.
 					switch(setEvent->GetSet())
 					{
@@ -437,8 +443,23 @@ void MainMenu::Run()
 					case QUIT:
 						run = false;
 						break;
-					default:
+					case CREDITS:
+						this->zBGScreens[this->zCurrentImage]->SetOpacity(0.0f);
+						this->zBGScreens[this->zNextImage]->SetOpacity(0.0f);
+						this->zBGScreens[9]->SetOpacity(0.0f);
 
+						cm = new CreditsMenu();
+						cm->Run();
+						delete cm;
+
+						this->zBGScreens[this->zCurrentImage]->SetOpacity(1.0f);
+						this->zBGScreens[9]->SetOpacity(1.0f);
+
+						this->SwapMenus(MAINMENU, this->zSecondarySet);
+						zPrimarySet = MAINMENU;
+
+						break;
+					default:
 						break;
 					}
 				}

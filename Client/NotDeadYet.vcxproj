@@ -29,6 +29,7 @@
     <ClCompile Include="Source\Client.cpp" />
     <ClCompile Include="Source\ClientItemHandler.cpp" />
     <ClCompile Include="Source\ClientObjectHandler.cpp" />
+    <ClCompile Include="Source\CreditsMenu.cpp" />
     <ClCompile Include="Source\FootStepClient.cpp" />
     <ClCompile Include="Source\Game.cpp" />
     <ClCompile Include="Source\GuiManager.cpp" />
@@ -73,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Client.h" />
+    <ClInclude Include="Source\CreditsMenu.h" />
     <ClInclude Include="Source\FootStepClient.h" />
     <ClInclude Include="Source\Game.h" />
     <ClInclude Include="Source\GuiManager.h" />
