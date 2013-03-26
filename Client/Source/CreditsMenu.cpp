@@ -45,11 +45,14 @@ void CreditsMenu::PreRun()
 
 
 	// Create lights
-	iLight* l1 = GetGraphics()->CreateLight(Vector3(55, 4, 55));
+	iLight* l1 = GetGraphics()->CreateLight(Vector3(45, 5, 45));
 	l1->SetLookAt(Vector3(45, 0, 45));
 	l1->SetUp(Vector3(1, 0, 0));
 	l1->SetIntensity(10.0f);
+	l1->SetColor(Vector3(0.0f, 1.0f, 1.0f));
 
+
+	GetGraphics()->SetSunLightDisabled();
 	
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 
