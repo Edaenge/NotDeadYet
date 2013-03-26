@@ -266,7 +266,7 @@ private:
 	float zHunger;
 	float zHydration;
 	float zEnergy;
-	InGameGui* zIgg;
+	InGameGui* zIgg; //I could use one right about now...
 	
 	std::map<std::string, std::string> zMeshfirstPersonMap;
 	
