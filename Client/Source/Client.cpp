@@ -21,6 +21,9 @@ static const float TIMEOUT_VALUE = 10.0f;
 Client::Client(std::string playerModel) :
 	zFootSteps(0)
 {
+	this->zNeedResize = false;
+	this->zCurrentWidth = GetGraphics()->GetEngineParameters().WindowWidth;
+	this->zCurrentHeight = GetGraphics()->GetEngineParameters().WindowHeight;
 	Messages::ClearDebug();
 
 	InitCraftingRecipes();
@@ -114,47 +117,7 @@ Client::Client(std::string playerModel) :
 
 Client::~Client()
 {
-	this->zPerf->PreMeasure("Deleting Client", 4);
-	this->zEng->GetCamera()->RemoveMesh();
-
-	this->Close();
-	this->WaitUntillDone();
-
-	// Delete Footsteps
-	if ( zFootSteps ) 
-		delete zFootSteps;
-
-	this->zPerf->PreMeasure("Deleting Actors", 5);
-
-	if(this->zActorManager)
-		delete this->zActorManager;
-
-	this->zPerf->PostMeasure("Deleting Actors", 5);
-
-	this->zPerf->PreMeasure("Deleting ServerChannel", 5);
-
-	if(this->zServerChannel)
-		delete this->zServerChannel;
-
-	this->zPerf->PostMeasure("Deleting ServerChannel", 5);
-
-	if(this->zPlayerInventory)
-		delete this->zPlayerInventory;
-
-	this->zPerf->PreMeasure("Deleting World", 5);
-
-	if(this->zWorld)
-		delete this->zWorld;
-
-	this->zPerf->PostMeasure("Deleting World", 5);
-
-	if(this->zGameTimer)
-		delete this->zGameTimer;
-
-	this->zMeshfirstPersonMap.clear();
 	
-	this->zPerf->PreMeasure("Deleting Gui", 5);
-
 	//Close Gui's that are still open
 	if ( zGuiManager )
 	{
@@ -169,6 +132,23 @@ Client::~Client()
 
 		delete this->zGuiManager;
 	}
+
+	this->zEng->GetCamera()->RemoveMesh();
+
+	this->Close();
+	this->WaitUntillDone();
+
+	// Delete Footsteps
+	if ( zFootSteps ) 
+		delete zFootSteps;
+
+	if(this->zGameTimer)
+		delete this->zGameTimer;
+
+	this->zMeshfirstPersonMap.clear();
+	
+	this->zPerf->PreMeasure("Deleting Gui", 5);
+
 	
 	if(this->zIgm)
 		delete this->zIgm;
@@ -214,6 +194,34 @@ Client::~Client()
 	this->zDisplayedText.clear();
 	
 	this->zPerf->PostMeasure("Deleting Gui", 5);
+
+	this->zPerf->PreMeasure("Deleting Client", 4);
+
+	this->zPerf->PreMeasure("Deleting Actors", 5);
+
+	if(this->zActorManager)
+		delete this->zActorManager;
+
+	this->zPerf->PostMeasure("Deleting Actors", 5);
+
+	this->zPerf->PreMeasure("Deleting ServerChannel", 5);
+
+	if(this->zServerChannel)
+		delete this->zServerChannel;
+
+	this->zPerf->PostMeasure("Deleting ServerChannel", 5);
+
+	if(this->zPlayerInventory)
+		delete this->zPlayerInventory;
+
+	this->zPerf->PreMeasure("Deleting World", 5);
+
+	if(this->zWorld)
+		delete this->zWorld;
+
+	this->zPerf->PostMeasure("Deleting World", 5);
+
+	
 
 	ambientMusic->Stop();
 	ambientMusic->Release();
@@ -663,6 +671,26 @@ void Client::CheckMenus()
 			this->zEng->GetKeyListener()->SetMousePosition(
 				Vector2((float)(this->zEng->GetEngineParameters().WindowWidth/2), 
 				(float)(this->zEng->GetEngineParameters().WindowHeight/2)));
+		}
+		else if(returnValue == IGRESIZE)
+		{
+			this->zNeedResize = true;
+			this->zCurrentWidth = this->zIgm->GetScreenDim().x;
+			this->zCurrentHeight = this->zIgm->GetScreenDim().y;
+
+			int windowWidth = this->zCurrentWidth;
+			int windowHeight = this->zCurrentHeight;	
+			float dx = ((float)windowHeight * 4.0f) / 3.0f;
+			float offSet = (float)(windowWidth - dx) / 2.0f;
+			float length = ((25.0f / 1024.0f) * dx);
+			float xPos = offSet + (0.5f * dx) - length * 0.5f;
+			float yPos = (windowHeight / 2.0f) - length * 0.5f;
+
+			this->zCrossHair->SetPosition(Vector2(xPos, yPos));
+			this->zCrossHair->SetDimensions(Vector2(length, length));
+			this->zGuiManager->Resize(windowWidth, windowHeight);
+			this->zIgg;
+
 		}
 	}
 }

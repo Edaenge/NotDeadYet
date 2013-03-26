@@ -725,7 +725,7 @@ void Game::OnEvent( Event* e )
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
-		if(KDE->key == MOUSE_LEFT_PRESS)
+		if(KDE->key == MOUSE_LEFT_PRESS) // THE FUCK IS THIS DOING HERE
 			this->CheckPlayerUseBow(this->zPlayers[KDE->clientData]);
 	}
 	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )
