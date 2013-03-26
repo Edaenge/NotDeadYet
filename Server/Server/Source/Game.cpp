@@ -2063,22 +2063,22 @@ bool Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 
 							cd->Send(msg);
 
+							if (food->GetStackSize() <= 0)
+							{
+								item = inv->RemoveItem(food);
+
+								if(item)
+								{
+									delete item, item = NULL;
+								}
+							}
+
 							return true;
 						}
 						else
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Food_Stack_is_Empty");
 							cd->Send(msg);
-						}
-
-						if (food->GetStackSize() <= 0)
-						{
-							item = inv->RemoveItem(food);
-
-							if(item)
-							{
-								delete item, item = NULL;
-							}
 						}
 					}
 					else
@@ -2146,21 +2146,22 @@ bool Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 
 							cd->Send(msg);
 
+							if (bandage->GetStackSize() <= 0)
+							{
+								item = inv->RemoveItem(bandage);
+
+								if(item)
+								{
+									delete item, item = NULL;
+								}
+							}
+
 							return true;
 						}
 						else
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Bandage_Stack_is_Empty");
 							cd->Send(msg);
-						}
-						if (bandage->GetStackSize() <= 0)
-						{
-							item = inv->RemoveItem(bandage);
-
-							if(item)
-							{
-								delete item, item = NULL;
-							}
 						}
 					}
 					else
@@ -2729,7 +2730,7 @@ void Game::SendToAll( const std::string& msg)
 void Game::ResetFogEnclosement()
 {
 	//Expected playtime
-	static const float EXPECTED_PLAYTIME = 60.0f * 10.0f;
+	static const float EXPECTED_PLAYTIME = 60.0f * (60.0f * 2.0f);
 
 	Vector2 worldSize = this->zWorld->GetWorldSize();
 
