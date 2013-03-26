@@ -202,7 +202,7 @@ void Host::Life()
 void Host::UpdateGame()
 {
 	// 50 updates per sec
-	static const float UPDATE_DELAY = 0.010f;
+	static const float UPDATE_DELAY = 0.02f;
 	static const float FPS_DELAY = 1.0f;
 	static float fpsDelayTimer = 0.0f;
 

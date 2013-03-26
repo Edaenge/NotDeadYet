@@ -2,7 +2,7 @@
 
 CreditsMenu::CreditsMenu()
 {
-
+	this->camRec = CamRecording();
 }
 
 CreditsMenu::~CreditsMenu()
@@ -12,6 +12,9 @@ CreditsMenu::~CreditsMenu()
 
 void CreditsMenu::PreRun()
 {
+	this->camRec.Init(GetGraphics()->GetCamera());
+	this->camRec.Open("Media/camPathCredits.txt");
+
 	GetGraphics()->SetGrassFilePath("Media/GrassGY.png");
 	
 	GetGraphics()->ShowLoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f);
@@ -65,6 +68,7 @@ void CreditsMenu::Run()
 	this->PreRun();
 	bool go = true;
 	bool cameraPathDone = false;
+	this->camRec.Play(); //Start playing record
 	while(go)
 	{
 		Sleep(5);
@@ -78,11 +82,13 @@ void CreditsMenu::Run()
 
 		if(this->mode == 0)
 		{
-			cameraPathDone = true;	////////
+			//cameraPathDone = camRec.Play();	////////
+			this->camRec.Update(diff);
 
-
-			if(cameraPathDone)
+			if(!this->camRec.IsPlaying())
+			{
 				this->mode++;
+			}
 		}
 		else if(this->mode == 1)
 		{
