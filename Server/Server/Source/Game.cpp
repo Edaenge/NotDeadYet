@@ -460,7 +460,7 @@ void Game::SpawnHumanDebug()
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/hitbox_token.obj");
 	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics, this);
-	pActor->SetModel("media/models/token_anims_fpp.fbx");
+	pActor->SetModel("media/models/token_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
 	pActor->SetHealth(1000);
@@ -858,7 +858,7 @@ void Game::OnEvent( Event* e )
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
 		if ( zPerf ) this->zPerf->PreMeasure("Weapon Use Event Handling", 3);
-		this->HandleUseWeapon(PUEWE->clientData, PUEWE->itemID);
+		this->HandleUseWeapon(PUEWE->clientData, PUEWE->itemID, PUEWE->dir, PUEWE->useDir);
 		if ( zPerf ) this->zPerf->PostMeasure("Weapon Use Event Handling", 3);
 	}
 	else if(PlayerAnimalAttackEvent* PAAE = dynamic_cast<PlayerAnimalAttackEvent*>(e))
@@ -2175,7 +2175,7 @@ bool Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 	return false;
 }
 
-void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
+void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID, const Vector3& direction, bool useDir /*= false*/)
 {
 	Actor* actor = NULL;
 
@@ -2188,7 +2188,6 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 		MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
-
 
 	Inventory* inventory = pActor->GetInventory();
 	if( !(inventory) )
@@ -2209,6 +2208,9 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 		return;
 	}
 	NetworkMessageConverter NMC;
+
+	if(useDir)
+		pActor->SetDir(direction);
 
 	/*if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
 	{
