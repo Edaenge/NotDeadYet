@@ -684,11 +684,11 @@ void Client::ReadMessages()
 			{
 				this->HandleNetworkMessage(np->GetMessage());
 			}
-			else if ( DisconnectedEvent* np = dynamic_cast<DisconnectedEvent*>(ev) )
+			else if ( DisconnectedEvent* dc = dynamic_cast<DisconnectedEvent*>(ev) )
 			{
-				this->AddDisplayText(np->GetReason(), true);
+				this->AddDisplayText(dc->GetReason(), true);
 				Sleep(5000);
-				this->CloseConnection(np->GetReason());
+				this->CloseConnection(dc->GetReason());
 			}
 
 			SAFE_DELETE(ev);
