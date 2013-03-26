@@ -2,8 +2,7 @@
 
 CreditsMenu::CreditsMenu()
 {
-	this->camRec = CamRecording();
-	
+	//this->camRec = CamRecording();
 }
 
 CreditsMenu::~CreditsMenu()
@@ -14,7 +13,7 @@ CreditsMenu::~CreditsMenu()
 void CreditsMenu::PreRun()
 {
 	this->camRec.Init(GetGraphics()->GetCamera());
-	this->camRec.Open("Media/camPathCredits.txt");
+	//this->camRec.Open("Media/camPathCredits");
 
 	GetGraphics()->SetGrassFilePath("Media/GrassGY.png");
 	
@@ -92,7 +91,7 @@ void CreditsMenu::Run()
 	this->PreRun();
 	bool go = true;
 	bool cameraPathDone = false;
-	this->camRec.Play(); //Start playing record
+	//this->camRec.Play(); //Start playing record
 	while(go)
 	{
 		Sleep(5);
@@ -107,12 +106,13 @@ void CreditsMenu::Run()
 		if(this->mode == 0)
 		{
 			//cameraPathDone = camRec.Play();	////////
-			this->camRec.Update(diff);
+			//this->camRec.Update(diff);
 
-			if(!this->camRec.IsPlaying())
-			{
-				this->mode++;
-			}
+			//if(!this->camRec.IsPlaying())
+			//{
+			//	this->mode++;
+			//}
+			this->mode++;
 		}
 		else if(this->mode == 1)
 		{
@@ -133,6 +133,19 @@ void CreditsMenu::Run()
 				GetGraphics()->GetCamera()->MoveUp(diff * 10.0f);
 			if(GetGraphics()->GetKeyListener()->IsPressed(VK_CONTROL))
 				GetGraphics()->GetCamera()->MoveDown(diff * 10.0f);
+
+			if(GetGraphics()->GetKeyListener()->IsPressed('R'))	
+				this->camRec.Record(true);
+			if(GetGraphics()->GetKeyListener()->IsPressed('E'))	
+				this->camRec.Record(false);
+			if(GetGraphics()->GetKeyListener()->IsPressed('V'))	
+				this->camRec.Save("creditsCamPath");
+			if(GetGraphics()->GetKeyListener()->IsPressed('B'))	
+				this->camRec.Open("creditsCamPath");
+			if(GetGraphics()->GetKeyListener()->IsPressed('N'))	
+				this->camRec.Play();
+
+			this->camRec.Update(diff);
 		}
 	}
 	this->PostRun();

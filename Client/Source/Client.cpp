@@ -689,7 +689,6 @@ void Client::CheckMenus()
 			this->zCrossHair->SetPosition(Vector2(xPos, yPos));
 			this->zCrossHair->SetDimensions(Vector2(length, length));
 			this->zGuiManager->Resize(windowWidth, windowHeight);
-			this->zIgg;
 
 		}
 	}
