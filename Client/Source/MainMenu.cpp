@@ -604,8 +604,9 @@ void MainMenu::Run()
 			{
 				//Returned no event
 			}
-			Sleep(50);
 		}
+
+		Sleep(50);
 	}
 
 	/*
