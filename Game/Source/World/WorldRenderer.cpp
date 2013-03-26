@@ -62,6 +62,7 @@ WorldRenderer::WorldRenderer(World* world, GraphicsEngine* graphics) :
 	zGrassHeightMin = zSettings.GetSetting("GrassHeightMin");
 	zGrassHeightMax = zSettings.GetSetting("GrassHeightMax");
 	zGrassNeightbourDistance = zSettings.GetSetting("GrassMinNeightbourDistance");
+	this->zGrassTexture = "Media/Grass.png";
 }
 
 WorldRenderer::~WorldRenderer()
@@ -1097,7 +1098,7 @@ void WorldRenderer::GenerateGrass(const Vector2UINT& sectorCoords)
 	//No offset vector needed since grass positions is in world space.
 	if(index > 0)
 	{
-		this->zGrass[sectorCoords] = this->zGraphics->CreateBillboardCollection(index, positions, sizes, colors, Vector3(0.0f, 0.0f, 0.0f), "Media/Grass.png"); 
+		this->zGrass[sectorCoords] = this->zGraphics->CreateBillboardCollection(index, positions, sizes, colors, Vector3(0.0f, 0.0f, 0.0f), this->zGrassTexture.c_str()); 
 		this->zGrass[sectorCoords]->SetRenderShadowFlag(false); //Don't render shadows.
 		this->zGrass[sectorCoords]->SetCullFarDistance(zGrassFarDistance);
 		this->zGrass[sectorCoords]->SetCullNearDistance(zGrassNearDistance);
