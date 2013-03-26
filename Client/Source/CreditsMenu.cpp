@@ -2,17 +2,21 @@
 
 CreditsMenu::CreditsMenu()
 {
-	//this->camRec = CamRecording();
+	this->camRec = new CamRecording(500, false);
 }
 
 CreditsMenu::~CreditsMenu()
 {
-	
+	if(this->camRec)
+	{
+		delete this->camRec;
+		this->camRec = NULL;
+	}
 }
 
 void CreditsMenu::PreRun()
 {
-	this->camRec.Init(GetGraphics()->GetCamera());
+	this->camRec->Init(GetGraphics()->GetCamera());
 	//this->camRec.Open("Media/camPathCredits");
 
 	GetGraphics()->SetGrassFilePath("Media/GrassGY.png");
@@ -140,17 +144,17 @@ void CreditsMenu::Run()
 				GetGraphics()->GetCamera()->MoveDown(diff * 10.0f);
 
 			if(GetGraphics()->GetKeyListener()->IsPressed('R'))	
-				this->camRec.Record(true);
+				this->camRec->Record(true);
 			if(GetGraphics()->GetKeyListener()->IsPressed('E'))	
-				this->camRec.Record(false);
+				this->camRec->Record(false);
 			if(GetGraphics()->GetKeyListener()->IsPressed('V'))	
-				this->camRec.Save("creditsCamPath");
+				this->camRec->Save("creditsCamPath");
 			if(GetGraphics()->GetKeyListener()->IsPressed('B'))	
-				this->camRec.Open("creditsCamPath");
+				this->camRec->Open("creditsCamPath");
 			if(GetGraphics()->GetKeyListener()->IsPressed('N'))	
-				this->camRec.Play();
+				this->camRec->Play();
 
-			this->camRec.Update(diff);
+			this->camRec->Update(diff);
 		}
 	}
 	this->PostRun();

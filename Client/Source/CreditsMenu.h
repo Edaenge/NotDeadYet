@@ -15,7 +15,7 @@ private:
 	WorldAnchor* wa;
 	WorldRenderer* wr;
 	int mode;
-	CamRecording camRec;
+	CamRecording* camRec;
 	int previousFarClip;
 	iLight* l1;
 	iLight* l2;
