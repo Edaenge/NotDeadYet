@@ -79,6 +79,7 @@ void Client::AddActor( NewActorPacket* NAP )
 						ambientMusic->Play();
 						ambientMusic->Setvolume(0.2f);
 
+						this->zPerf->ResetAll();
 						this->zReady = true;
 					}
 

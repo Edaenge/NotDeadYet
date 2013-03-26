@@ -243,6 +243,7 @@
             this.textBox_Port.Location = new System.Drawing.Point(80, 53);
             this.textBox_Port.MaxLength = 6;
             this.textBox_Port.Name = "textBox_Port";
+            this.textBox_Port.ReadOnly = true;
             this.textBox_Port.Size = new System.Drawing.Size(100, 20);
             this.textBox_Port.TabIndex = 10;
             this.textBox_Port.Text = "11521";
