@@ -47,7 +47,7 @@ void CreditsMenu::PreRun()
 
 
 	Vector3 fogCenter = Vector3(world->GetWorldCenter().x, 0, world->GetWorldCenter().y);
-	GetGraphics()->SetEnclosingFogEffect(fogCenter, 40, 0.2f);
+	GetGraphics()->SetEnclosingFogEffect(fogCenter, 35, 0.3f);
 
 
 	// Create lights
@@ -77,6 +77,7 @@ void CreditsMenu::PreRun()
 	l4->SetUp(Vector3(1, 0, 0));
 	l4->SetIntensity(intensity);
 	l4->SetColor(LightColor);
+
 
 	GetGraphics()->SetSunLightDisabled();
 	
@@ -146,4 +147,9 @@ void CreditsMenu::PostRun()
 	GetGraphics()->SetGrassFilePath("Media/Grass.png");
 	GetGraphics()->ChangeSkyBox("Media/skymap.dds"); 
 	GetGraphics()->SetFogColor(Vector3(0.45f, 0.45f, 0.45f));
+
+	GetGraphics()->DeleteLight(l1);
+	GetGraphics()->DeleteLight(l2);
+	GetGraphics()->DeleteLight(l3);
+	GetGraphics()->DeleteLight(l4);
 }
