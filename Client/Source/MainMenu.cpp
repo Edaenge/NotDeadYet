@@ -76,7 +76,7 @@ void MainMenu::Init()
 
 	GraphicsEngine* eng = GetGraphics();
 
-	eng->CreateSkyBox("Media/skymap.dds");
+	eng->ChangeSkyBox("Media/skymap.dds");
 
 
 	float windowWidth = (float)eng->GetEngineParameters().WindowWidth;
