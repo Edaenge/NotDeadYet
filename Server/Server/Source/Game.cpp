@@ -460,7 +460,7 @@ void Game::SpawnHumanDebug()
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/hitbox_token.obj");
 	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics, this);
-	pActor->SetModel("media/models/token_anims_fpp.fbx");
+	pActor->SetModel("media/models/token_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
 	pActor->SetHealth(1000);
