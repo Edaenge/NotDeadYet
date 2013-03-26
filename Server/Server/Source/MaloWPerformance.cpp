@@ -94,6 +94,7 @@ void MaloWPerformance::ResetAll()
 			this->perfs[u][i].measures = 1;
 			this->perfs[u][i].totalTime = 0.0f;
 			this->perfs[u][i].lastClock = Timer;
+			this->perfs[u][i].maxTime = 0.0f;
 		}
 	}
 }
