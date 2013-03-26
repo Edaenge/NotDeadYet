@@ -43,6 +43,13 @@ void CreditsMenu::PreRun()
 	Vector3 fogCenter = Vector3(world->GetWorldCenter().x, 0, world->GetWorldCenter().y);
 	GetGraphics()->SetEnclosingFogEffect(fogCenter, 40, 0.2f);
 
+
+	// Create lights
+	iLight* l1 = GetGraphics()->CreateLight(Vector3(55, 4, 55));
+	l1->SetLookAt(Vector3(45, 0, 45));
+	l1->SetUp(Vector3(1, 0, 0));
+	l1->SetIntensity(10.0f);
+
 	
 	GetGraphics()->LoadingScreen("Media/LoadingScreen/LoadingScreenBG.png", "Media/LoadingScreen/LoadingScreenPB.png", 1.0f, 1.0f, 1.0f, 1.0f);
 
