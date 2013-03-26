@@ -128,7 +128,7 @@ Model:Media/MapModels/Gravestones/tille.obj
 
 Number:28
 Name:Grave wilhem
-Model:Media/MapModels/Gravestones/wilhem.objpaya.obj
+Model:Media/MapModels/Gravestones/wilhem.obj
 
 Number:29
 Name:LightPole
