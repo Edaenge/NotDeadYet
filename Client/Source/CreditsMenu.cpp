@@ -17,7 +17,7 @@ CreditsMenu::~CreditsMenu()
 void CreditsMenu::PreRun()
 {
 	this->camRec->Init(GetGraphics()->GetCamera());
-	//this->camRec.Open("Media/camPathCredits");
+	this->camRec->Open("creditsCamPath");
 
 	GetGraphics()->SetGrassFilePath("Media/GrassGY.png");
 	
@@ -98,8 +98,8 @@ void CreditsMenu::Run()
 {
 	this->PreRun();
 	bool go = true;
-	bool cameraPathDone = false;
-	//this->camRec.Play(); //Start playing record
+	this->camRec->Play(); //Start playing record
+
 	while(go)
 	{
 		Sleep(5);
@@ -111,17 +111,14 @@ void CreditsMenu::Run()
 		if(GetGraphics()->GetKeyListener()->IsPressed(VK_ESCAPE))
 			go = false;
 
-
 		if(this->mode == 0)
 		{
-			//cameraPathDone = camRec.Play();	////////
-			//this->camRec.Update(diff);
-
-			//if(!this->camRec.IsPlaying())
-			//{
-			//	this->mode++;
-			//}
-			this->mode++;
+			this->camRec->Update(diff);
+			
+			if(!this->camRec->IsPlaying())
+			{
+				this->mode++;
+			}
 		}
 		else if(this->mode == 1)
 		{
@@ -143,6 +140,12 @@ void CreditsMenu::Run()
 			if(GetGraphics()->GetKeyListener()->IsPressed(VK_CONTROL))
 				GetGraphics()->GetCamera()->MoveDown(diff * 10.0f);
 
+			/* FOR RECORDING:
+			float y = world->GetHeightAt(Vector2(GetGraphics()->GetCamera()->GetPosition().x, GetGraphics()->GetCamera()->GetPosition().z));
+			GetGraphics()->GetCamera()->SetPosition(Vector3(GetGraphics()->GetCamera()->GetPosition().x,
+				y + 1.7f,
+				GetGraphics()->GetCamera()->GetPosition().z));
+
 			if(GetGraphics()->GetKeyListener()->IsPressed('R'))	
 				this->camRec->Record(true);
 			if(GetGraphics()->GetKeyListener()->IsPressed('E'))	
@@ -155,6 +158,7 @@ void CreditsMenu::Run()
 				this->camRec->Play();
 
 			this->camRec->Update(diff);
+			*/
 		}
 	}
 	this->PostRun();
