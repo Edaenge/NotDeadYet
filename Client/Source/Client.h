@@ -127,11 +127,8 @@ private:
 	void CheckMovementKeys();
 	/*! Handle Keyboard Input */
 	void CheckKeyboardInput();
-	/*! Used to Equip weapons with Keyboard*/
-	void CheckLogicDebug();
 	/*! Check if the key is pressed and potentially sends a message to the server*/
 	bool CheckKey(const unsigned int ID);
-	void HandleDebugInfo();
 	//////////////////////
 	//					//
 	//	   Updates		//
@@ -168,7 +165,6 @@ private:
 	bool RemoveActor(const unsigned int ID);
 	bool HandleTakeDamage(const unsigned int ID, float damageTaken);
 
-	void HandleDeadPlayerMessage(const int ID);
 	//////////////////////
 	//					//
 	//		Items		//

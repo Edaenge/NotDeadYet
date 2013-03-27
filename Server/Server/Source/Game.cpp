@@ -65,6 +65,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	// Camera Offsets
 	//this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.6f, 0.0f);	
 	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
+    this->zCameraOffset["media/models/diana_anims.fbx"] = Vector3(0.0f, 1.5f, 0.0f);
 	this->zCameraOffset["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.41f, 0.0f);
 	this->zCameraOffset["media/models/bear_anims.fbx"] = Vector3(0.0f, 0.92f, 0.0f);
 	this->zCameraOffset["media/models/ghost.obj"] = Vector3(0.0f, 0.0f, 0.0f);
@@ -72,7 +73,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	//Models
 	//this->zPlayerModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zPlayerModels["media/models/token_anims.fbx"] = "media/models/hitbox_token.obj";
-	this->zPlayerModels["media/models/diana_anims.fbx"] = "media/models/hitbox_token.obj";
+	this->zPlayerModels["media/models/diana_anims.fbx"] = "media/models/diana_hitbox.obj";
 	this->zPlayerModels["media/models/deer_anims.fbx"] = "media/models/deer_hitbox.obj";
 	this->zPlayerModels["media/models/bear_anims.fbx"] = "media/models/bear_hitbox.obj"; 
 	this->zPlayerModels["media/models/ghost.obj"] = "media/models/ghost.obj";
@@ -80,7 +81,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	//Dead Actor Model Maps
 	//this->zDeadActorModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zDeadActorModels["media/models/token_anims.fbx"] = "media/models/token_dead.obj";
-	this->zDeadActorModels["media/models/diana_anims.fbx"] = "media/models/token_dead.obj";
+	this->zDeadActorModels["media/models/diana_anims.fbx"] = "media/models/diana_dead.obj";
 	this->zDeadActorModels["media/models/deer_anims.fbx"] = "media/models/deer_dead.obj";
 	this->zDeadActorModels["media/models/bear_anims.fbx"] = "media/models/bear_dead.obj";
 
@@ -143,10 +144,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	 this->SpawnItemsDebug();
-    // this->SpawnAnimalsDebug();
-	 this->SpawnHumanDebug();
-
+	//this->SpawnItemsDebug();
+	// this->SpawnAnimalsDebug();
+	// this->SpawnHumanDebug();
 	// Sun Direction
 	this->ResetSunDirection();
 
@@ -154,7 +154,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->ResetFogEnclosement();
 
 	// Used for caching fbx files dont change the function.
-	//this->Caching("media/models/token_anims.fbx");
+	
+	//this->Caching("media/models/diana_anims.fbx");
+	//this->Caching("media/models/diana_anims_fpp.fbx");
 }
 
 Game::~Game()
@@ -273,212 +275,6 @@ void Game::SpawnAnimalsDebug()
 
 		this->zActorManager->AddActor(bActor);
 	}
-}
-
-void Game::SpawnItemsDebug()
-{
-	//ITEMS
-	const Food*			temp_food		= GetItemLookup()->GetFood(ITEM_SUB_TYPE_DEER_FOOD);
-	const RangedWeapon* temp_R_weapon	= GetItemLookup()->GetRangedWeapon(ITEM_SUB_TYPE_BOW);
-	const Projectile*	temp_Arrow		= GetItemLookup()->GetProjectile(ITEM_SUB_TYPE_ARROW);
-	const MeleeWeapon*	temp_M_weapon	= GetItemLookup()->GetMeleeWeapon(ITEM_SUB_TYPE_MACHETE);
-	const Material*		temp_material_S	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_SMALL_STICK);
-	const Material*		temp_material_M	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_MEDIUM_STICK);
-	const Material*		temp_material_T	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_THREAD);
-	const Material*		temp_material_L	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_LARGE_STICK);
-	const Material*		temp_material_D	= GetItemLookup()->GetMaterial(ITEM_SUB_TYPE_DISENFECTANT_LEAF);
-	const Bandage*		temp_bandage	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_POOR);
-	const Bandage*		temp_bandage_G	= GetItemLookup()->GetBandage(ITEM_SUB_TYPE_BANDAGE_GREAT);
-	const Container*	temp_waterBottle= GetItemLookup()->GetContainer(ITEM_SUB_TYPE_CANTEEN);
-	const Misc*			temp_Trap		= GetItemLookup()->GetMisc(ITEM_SUB_TYPE_REGULAR_TRAP);
-
-	unsigned int increment = 0;
-	unsigned int maxPoints = 10;
-	float radius = 3.5f;
-	int numberOfObjects = 12;
-	int total = 0;
-	Vector3 center;
-	Vector3 position;
-	Vector2 tempCenter = this->zWorld->GetWorldCenter();
-	for (unsigned int i = 0; i < maxPoints; i++)
-	{
-		center = Vector3(tempCenter.x, 0, tempCenter.y);
-		unsigned int currentPoint = i % maxPoints;
-
-		center = this->CalcPlayerSpawnPoint(currentPoint, maxPoints, 17.0f, center);
-
-		//Food
-		if (temp_food)
-		{
-			Food* new_Item = new Food((*temp_food));
-			ItemActor* actor = new ItemActor(new_Item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-		//Weapon_ranged
-		if(temp_R_weapon)
-		{
-			RangedWeapon* new_item = new RangedWeapon((*temp_R_weapon));
-			ItemActor* actor = new ItemActor(new_item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-		//Arrows
-		if(temp_Arrow)
-		{
-			Projectile* new_item = new Projectile((*temp_Arrow));
-			ItemActor* actor = new ItemActor(new_item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-		//Melee_weapon
-		if(temp_M_weapon)
-		{
-			MeleeWeapon* new_item = new MeleeWeapon((*temp_M_weapon));
-			ItemActor* actor = new ItemActor(new_item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-		//Small_stick
-		if(temp_material_S)
-		{
-			Material* new_item = new Material((*temp_material_S));
-			ItemActor* actor = new ItemActor(new_item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-		//Medium_stick
-		if(temp_material_M)
-		{
-			Material* new_item = new Material((*temp_material_M));
-			ItemActor* actor = new ItemActor(new_item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-		//Large Stick
-		if(temp_material_L)
-		{
-			Material* new_item = new Material((*temp_material_L));
-			ItemActor* actor = new ItemActor(new_item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-		//Disenfectant Leaf
-		if(temp_material_D)
-		{
-			Material* new_item = new Material((*temp_material_D));
-			ItemActor* actor = new ItemActor(new_item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-		//Thread
-		if(temp_material_T)
-		{
-			Material* new_item = new Material((*temp_material_T));
-			ItemActor* actor = new ItemActor(new_item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-		//Bandage
-		if(temp_bandage)
-		{
-			Bandage* new_item = new Bandage((*temp_bandage));
-			ItemActor* actor = new ItemActor(new_item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-		if(temp_bandage_G)
-		{
-			Bandage* new_item = new Bandage((*temp_bandage_G));
-			ItemActor* actor = new ItemActor(new_item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-
-		if(temp_Trap)
-		{
-			Misc* new_item = new Misc((*temp_Trap));
-			ItemActor* actor = new ItemActor(new_item);
-			//center = CalcPlayerSpawnPoint(increment++);
-			position = this->CalcPlayerSpawnPoint(increment++, numberOfObjects, radius, center);
-			actor->SetPosition(position);
-			actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-			this->zActorManager->AddActor(actor);
-		}
-
-		total += increment;
-		increment = 0;
-	}
-	Container* new_item = new Container((*temp_waterBottle));
-	new_item->SetRemainingUses(3);
-	ItemActor* actor = new ItemActor(new_item);
-	//center = CalcPlayerSpawnPoint(increment++);
-	Vector2 tempVetc = this->zWorld->GetWorldCenter();
-	position = Vector3(tempVetc.x, 0, tempVetc.y);
-	actor->SetPosition(position);
-	actor->SetScale(Vector3(0.05f, 0.05f, 0.05f));
-	this->zActorManager->AddActor(actor);
-}
-
-void Game::SpawnHumanDebug()
-{
-	srand((unsigned int)time(0));
-	int increment = 10;
-	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/hitbox_token.obj");
-	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics, this);
-	pActor->SetModel("media/models/token_anims.fbx");
-	pActor->AddObserver(this->zGameMode);
-	pActor->SetPosition(position);
-	pActor->SetHealth(1000);
-	pActor->SetScale(pActor->GetScale());
-	this->zActorManager->AddActor(pActor);
-}
-
-void Game::Caching( const std::string& modelName )
-{
-	srand((unsigned int)time(0));
-	int increment = 10;
-	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PlayerActor* pActor = new PlayerActor(NULL, NULL, this);
-	pActor->SetModel(modelName);
-	pActor->AddObserver(this->zGameMode);
-	pActor->SetPosition(position);
-	pActor->SetHealth(100000);
-	this->zActorManager->AddActor(pActor);
 }
 
 void Game::UpdateSunDirection(float dt)
