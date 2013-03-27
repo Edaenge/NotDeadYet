@@ -55,22 +55,6 @@ GameModeFFA::~GameModeFFA()
 
 bool GameModeFFA::Update( float dt )
 {
-	if(!this->zGameStarted)
-		return false;
-
-	if( this->zGameEnd )
-		return true;
-
-	//Spawn random supply
-	this->zCurrentRSPTime -= dt;
-	if( zCurrentRSPTime <= 0.0f )
-	{
-		if( this->SpawnRandomDrop() )
-			this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX;
-		else
-			this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX * 0.5f;
-	}
-
 	auto it = this->zToBeDeadActors.begin();
 	while (it != this->zToBeDeadActors.end())
 	{
@@ -90,6 +74,22 @@ bool GameModeFFA::Update( float dt )
 		{
 			it++;
 		}
+	}
+
+	if(!this->zGameStarted)
+		return false;
+
+	if( this->zGameEnd )
+		return true;
+
+	//Spawn random supply
+	this->zCurrentRSPTime -= dt;
+	if( zCurrentRSPTime <= 0.0f )
+	{
+		if( this->SpawnRandomDrop() )
+			this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX;
+		else
+			this->zCurrentRSPTime = SPAWN_DROP_TIMER_MAX * 0.5f;
 	}
 
 	if( CheckEndCondition() )
