@@ -26,8 +26,8 @@ MainMenu::MainMenu()
 		this->zBGScreens[i]->SetStrata(800.0f);
 		this->zBGScreens[i]->SetOpacity(0.0f);
 	}
-	this->zBGScreens[9] = GetGraphics()->CreateImage(Vector2(0.0f, 0.0f), Vector2(width, height), "Media/LoadingScreen/FadeTexture.png");
-	this->zBGScreens[9]->SetStrata(850.0f);
+	this->zBGScreens[BGSCREENSHOTS] = GetGraphics()->CreateImage(Vector2(0.0f, 0.0f), Vector2(width, height), "Media/LoadingScreen/FadeTexture.png");
+	this->zBGScreens[BGSCREENSHOTS]->SetStrata(850.0f);
 	this->zPause = PAUSEBETWEENIMAGES;
 	this->zCurrentImage = 0;
 	this->zNextImage = 1;
@@ -446,14 +446,14 @@ void MainMenu::Run()
 					case CREDITS:
 						this->zBGScreens[this->zCurrentImage]->SetOpacity(0.0f);
 						this->zBGScreens[this->zNextImage]->SetOpacity(0.0f);
-						this->zBGScreens[9]->SetOpacity(0.0f);
+						this->zBGScreens[BGSCREENSHOTS]->SetOpacity(0.0f);
 
 						cm = new CreditsMenu();
 						cm->Run();
 						delete cm;
 
 						this->zBGScreens[this->zCurrentImage]->SetOpacity(1.0f);
-						this->zBGScreens[9]->SetOpacity(1.0f);
+						this->zBGScreens[BGSCREENSHOTS]->SetOpacity(1.0f);
 
 						this->SwapMenus(MAINMENU, this->zSecondarySet);
 						zPrimarySet = MAINMENU;
@@ -827,14 +827,14 @@ void MainMenu::StartGameWithIPField()
 		menuSound->Stop();
 		this->zBGScreens[this->zCurrentImage]->SetOpacity(0.0f);
 		this->zBGScreens[this->zNextImage]->SetOpacity(0.0f);
-		this->zBGScreens[9]->SetOpacity(0.0f);
+		this->zBGScreens[BGSCREENSHOTS]->SetOpacity(0.0f);
 		GetGraphics()->ShowLoadingScreen("media/loadingScreen/loadingscreenbg.png", "media/loadingscreen/loadingscreenpb.png", 0.0f, 0.2f);
 		Sleep(500);
 		this->zGame->Run();
 		this->Resize();
 		this->SwapMenus(MAINMENU, this->zSecondarySet);
 		this->zBGScreens[this->zCurrentImage]->SetOpacity(1.0f);
-		this->zBGScreens[9]->SetOpacity(1.0f);
+		this->zBGScreens[BGSCREENSHOTS]->SetOpacity(1.0f);
 		this->zPause = PAUSEBETWEENIMAGES;
 		menuSound->Play();
 	}
