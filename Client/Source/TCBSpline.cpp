@@ -40,7 +40,7 @@ void TCBSpline::CalculateTangents(int i)
 			sv1 = (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]) * s1; 
 			dv1 = (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]) * d1;
 		}
-		else
+		/*else
 		{
 			sv1 = (*this->mControlPoints[0] - Vector3(0.0f, 0.0f, 0.0f)) * s1;
 			dv1 = (*this->mControlPoints[0] - Vector3(0.0f, 0.0f, 0.0f)) * d1;
@@ -52,7 +52,9 @@ void TCBSpline::CalculateTangents(int i)
 		//destination tangent
 		dv2 = (*this->mControlPoints[1] - *this->mControlPoints[0]) * d2;
 		src = dv1 + dv2;
-		this->mDestination[0] = new Vector3(src);
+		this->mDestination[0] = new Vector3(src);*/
+		//Note 1: this is (temporary?) to avoid a too curved intro
+
 	}
 	else if(i == (this->mNrOfControlPoints - 1)) //last control point
 	{
@@ -61,7 +63,7 @@ void TCBSpline::CalculateTangents(int i)
 			sv2 = (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]) * s2;
 			dv2 = (*this->mControlPoints[0] - *this->mControlPoints[this->mNrOfControlPoints - 1]) * d2;
 		}
-		else
+		/*else
 		{
 			sv2 = (Vector3(0.0f, 0.0f, 0.0f) - *this->mControlPoints[this->mNrOfControlPoints - 1]) * s2;
 			dv2 = (Vector3(0.0f, 0.0f, 0.0f) - *this->mControlPoints[this->mNrOfControlPoints - 1]) * d2;
@@ -73,7 +75,10 @@ void TCBSpline::CalculateTangents(int i)
 		//destination-tangent
 		dv1 = (*this->mControlPoints[this->mNrOfControlPoints - 1] - *this->mControlPoints[this->mNrOfControlPoints - 2]) * d1;
 		src = dv1 + dv2;
-		this->mDestination[this->mNrOfControlPoints - 1] = new Vector3(src);
+		this->mDestination[this->mNrOfControlPoints - 1] = new Vector3(src);*/
+		//Note: this is (temporary?) to avoid a too curved outro
+		this->mSource[this->mNrOfControlPoints - 1] = new Vector3(*this->mSource[this->mNrOfControlPoints - 2]);
+		this->mDestination[this->mNrOfControlPoints - 1] = new Vector3(*this->mDestination[this->mNrOfControlPoints - 2]);
 	}
 	else //rest
 	{
@@ -87,6 +92,13 @@ void TCBSpline::CalculateTangents(int i)
 		dv2 = (*this->mControlPoints[i + 1] - *this->mControlPoints[i]) * d2;
 		dst = dv1 + dv2;
 		this->mDestination[i] = new Vector3(dst);
+
+		//Note 1: this is (temporary?) to avoid a too curved intro
+		if(i == 1)
+		{	
+			this->mSource[0] = new Vector3(*this->mSource[i]);
+			this->mDestination[0] = new Vector3(*this->mDestination[i]);
+		}
 	}
 }
 
