@@ -3,7 +3,7 @@
 #include "DebugMessages.h"
 #include "PlayerConfig/PlayerSettings.h"
 #include "FootStepClient.h"
-
+#include "PlayerConfigReader.h"
 #include <ClientServerMessages.h>
 #include <ClientServerMessages.h>
 #include <DisconnectedEvent.h>
@@ -21,7 +21,12 @@ static const float TIMEOUT_VALUE = 10.0f;
 Client::Client(std::string playerModel) :
 	zFootSteps(0)
 {
+	this->zNeedResize = false;
+	this->zCurrentWidth = GetGraphics()->GetEngineParameters().WindowWidth;
+	this->zCurrentHeight = GetGraphics()->GetEngineParameters().WindowHeight;
 	Messages::ClearDebug();
+
+	InitCraftingRecipes();
 
 	this->zPlayerModel = playerModel;
 	zBleedingShouldBeZero = false;
@@ -109,53 +114,11 @@ Client::Client(std::string playerModel) :
 	am->GetEventHandle(EVENTID_NOTDEADYET_AMBIENCE_FOREST, ambientMusic);
 	
 	this->zIgg = new InGameGui();
-
-	InitCraftingRecipes();
 }
 
 Client::~Client()
 {
-	this->zPerf->PreMeasure("Deleting Client", 4);
-	this->zEng->GetCamera()->RemoveMesh();
-
-	this->Close();
-	this->WaitUntillDone();
-
-	// Delete Footsteps
-	if ( zFootSteps ) 
-		delete zFootSteps;
-
-	this->zPerf->PreMeasure("Deleting Actors", 5);
-
-	if(this->zActorManager)
-		delete this->zActorManager;
-
-	this->zPerf->PostMeasure("Deleting Actors", 5);
-
-	this->zPerf->PreMeasure("Deleting ServerChannel", 5);
-
-	if(this->zServerChannel)
-		delete this->zServerChannel;
-
-	this->zPerf->PostMeasure("Deleting ServerChannel", 5);
-
-	if(this->zPlayerInventory)
-		delete this->zPlayerInventory;
-
-	this->zPerf->PreMeasure("Deleting World", 5);
-
-	if(this->zWorld)
-		delete this->zWorld;
-
-	this->zPerf->PostMeasure("Deleting World", 5);
-
-	if(this->zGameTimer)
-		delete this->zGameTimer;
-
-	this->zMeshfirstPersonMap.clear();
 	
-	this->zPerf->PreMeasure("Deleting Gui", 5);
-
 	//Close Gui's that are still open
 	if ( zGuiManager )
 	{
@@ -170,6 +133,23 @@ Client::~Client()
 
 		delete this->zGuiManager;
 	}
+
+	this->zEng->GetCamera()->RemoveMesh();
+
+	this->Close();
+	this->WaitUntillDone();
+
+	// Delete Footsteps
+	if ( zFootSteps ) 
+		delete zFootSteps;
+
+	if(this->zGameTimer)
+		delete this->zGameTimer;
+
+	this->zMeshfirstPersonMap.clear();
+	
+	this->zPerf->PreMeasure("Deleting Gui", 5);
+
 	
 	if(this->zIgm)
 		delete this->zIgm;
@@ -215,6 +195,34 @@ Client::~Client()
 	this->zDisplayedText.clear();
 	
 	this->zPerf->PostMeasure("Deleting Gui", 5);
+
+	this->zPerf->PreMeasure("Deleting Client", 4);
+
+	this->zPerf->PreMeasure("Deleting Actors", 5);
+
+	if(this->zActorManager)
+		delete this->zActorManager;
+
+	this->zPerf->PostMeasure("Deleting Actors", 5);
+
+	this->zPerf->PreMeasure("Deleting ServerChannel", 5);
+
+	if(this->zServerChannel)
+		delete this->zServerChannel;
+
+	this->zPerf->PostMeasure("Deleting ServerChannel", 5);
+
+	if(this->zPlayerInventory)
+		delete this->zPlayerInventory;
+
+	this->zPerf->PreMeasure("Deleting World", 5);
+
+	if(this->zWorld)
+		delete this->zWorld;
+
+	this->zPerf->PostMeasure("Deleting World", 5);
+
+	
 
 	ambientMusic->Stop();
 	ambientMusic->Release();
@@ -665,6 +673,25 @@ void Client::CheckMenus()
 				Vector2((float)(this->zEng->GetEngineParameters().WindowWidth/2), 
 				(float)(this->zEng->GetEngineParameters().WindowHeight/2)));
 		}
+		else if(returnValue == IGRESIZE)
+		{
+			this->zNeedResize = true;
+			this->zCurrentWidth = this->zIgm->GetScreenDim().x;
+			this->zCurrentHeight = this->zIgm->GetScreenDim().y;
+
+			int windowWidth = this->zCurrentWidth;
+			int windowHeight = this->zCurrentHeight;	
+			float dx = ((float)windowHeight * 4.0f) / 3.0f;
+			float offSet = (float)(windowWidth - dx) / 2.0f;
+			float length = ((25.0f / 1024.0f) * dx);
+			float xPos = offSet + (0.5f * dx) - length * 0.5f;
+			float yPos = (windowHeight / 2.0f) - length * 0.5f;
+
+			this->zCrossHair->SetPosition(Vector2(xPos, yPos));
+			this->zCrossHair->SetDimensions(Vector2(length, length));
+			this->zGuiManager->Resize(windowWidth, windowHeight);
+
+		}
 	}
 }
 
@@ -685,11 +712,11 @@ void Client::ReadMessages()
 			{
 				this->HandleNetworkMessage(np->GetMessage());
 			}
-			else if ( DisconnectedEvent* np = dynamic_cast<DisconnectedEvent*>(ev) )
+			else if ( DisconnectedEvent* dc = dynamic_cast<DisconnectedEvent*>(ev) )
 			{
-				this->AddDisplayText(np->GetReason(), true);
+				this->AddDisplayText(dc->GetReason(), true);
 				Sleep(5000);
-				this->CloseConnection(np->GetReason());
+				this->CloseConnection(dc->GetReason());
 			}
 
 			SAFE_DELETE(ev);
@@ -1017,11 +1044,6 @@ void Client::CheckPlayerSpecificKeys()
 			{
 				this->zKeyInfo.SetKeyState(MOUSE_LEFT_PRESS, false);
 
-				std::string msg = "";
-				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)MOUSE_LEFT_PRESS);
-
-				this->zServerChannel->Send(msg);
-
 				Item* primaryWeapon = this->zPlayerInventory->GetPrimaryEquip();
 				if (!primaryWeapon)
 				{
@@ -1030,8 +1052,14 @@ void Client::CheckPlayerSpecificKeys()
 				else
 				{
 					std::string msg = this->zMsgHandler.Convert(MESSAGE_TYPE_WEAPON_USE, (float)primaryWeapon->GetID());
+					msg += this->zMsgHandler.Convert(MESSAGE_TYPE_DIRECTION, zEng->GetCamera()->GetForward());
 					this->zServerChannel->Send(msg);
 				}
+
+				std::string msg = "";
+				msg = this->zMsgHandler.Convert(MESSAGE_TYPE_KEY_UP, (float)MOUSE_LEFT_PRESS);
+
+				this->zServerChannel->Send(msg);
 			}
 		}
 	}

@@ -33,6 +33,11 @@ void Game::Run()
 			eng->GetCamera()->SetUpdateCamera(!bCurrentCursorVisible);
 			eng->GetKeyListener()->SetCursorVisibility(bCurrentCursorVisible);
 		}
+		if(this->zClient->GetNeedResize())
+		{
+			GetGraphics()->ResizeGraphicsEngine(this->zClient->GetCurrScreenDim().x, this->zClient->GetCurrScreenDim().y);
+			this->zClient->SetNeedResize(false);
+		}
 		
 		Sleep(5);
 	}

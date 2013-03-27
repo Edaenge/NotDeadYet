@@ -42,24 +42,24 @@ Billboard:Media/TreeBillboard.png
 BillboardDistance:100
 
 Number:8
-Name:Placeholder
-Model:Media/Scale.obj
+Name:Grave Alex
+Model:Media/MapModels/Gravestones/alex.obj
 
 Number:9
-Name:Placeholder
-Model:Media/Scale.obj
+Name:Grave Crant
+Model:Media/MapModels/Gravestones/crant.obj
 
 Number:10
 Name:Veins
 Model:Media/MapModels/Veins_01.obj
 
 Number:11
-Name:Placeholder
-Model:Media/Scale.obj
+Name:Grave Filip
+Model:Media/MapModels/Gravestones/filip.obj
 
 Number:12
-Name:Spawn
-Model:Media/MapModels/SPAWN.obj
+Name:Grave henke
+Model:Media/MapModels/Gravestones/henke.obj
 
 Number:13
 Name:Plant-Grass
@@ -67,8 +67,8 @@ Model:Media/MapModels/GrassPlant_01.ani 10.0
 Model:Media/MapModels/GrassPlant_01_01.obj 35.0
 
 Number:14
-Name:Placeholder
-Model:Media/Scale.obj
+Name:Grave Boom
+Model:Media/MapModels/Gravestones/klover.obj
 
 Number:15
 Name:Stone_02
@@ -84,8 +84,8 @@ Model:Media/MapModels/WaterGrass_02.ani 25.0
 Model:Media/MapModels/WaterGrass_02_01.obj
 
 Number:18
-Name:Placeholder
-Model:Media/Scale.obj
+Name:Grave maxUtbult
+Model:Media/MapModels/Gravestones/max_utbult.obj
 
 Number:19
 Name:Bush_02
@@ -114,6 +114,33 @@ Name:Target
 BlockRadius:0.7
 Model:Media/MapModels/Target.obj 55.0
 
+Number:25
+Name:Grave rille	
+Model:Media/MapModels/Gravestones/rille.obj
+
+Number:26
+Name:Grave simon	
+Model:Media/MapModels/Gravestones/simon.obj
+
+Number:27
+Name:Grave tille 	
+Model:Media/MapModels/Gravestones/tille.obj
+
+Number:28
+Name:Grave wilhelm
+Model:Media/MapModels/Gravestones/wilhelm.obj
+
+Number:29
+Name:LightPole
+Model:Media/MapModels/LightPole.obj
+
+Number:30
+Name:Grave Paya
+Model:Media/MapModels/Gravestones/paya.obj
+
+Number:31
+Name:Grave MaloW
+Model:Media/MapModels/Gravestones/MaloWGravestone.obj
 
 Number:200
 Name:Deer Spawnpoint

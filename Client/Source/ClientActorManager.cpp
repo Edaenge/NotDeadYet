@@ -133,6 +133,10 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 				Vector3 actorPosition = actor->GetPosition();
 				Vector3 position = this->InterpolatePosition(actorPosition, update->GetPosition(), t);
 				
+				if( !update->ComparePosition(position) )
+				{
+					position = update->GetPosition();
+				}
 
 				// Check if this is me
 				if(update->GetID() == clientID)
@@ -158,6 +162,7 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 				}
 				else 
 				{
+
 					actor->SetPosition(position);
 					if((playerActor->GetPosition() - position).GetLength() < 100.0f)
 					{
@@ -180,7 +185,6 @@ void ClientActorManager::UpdateObjects( const float& deltaTime, const unsigned i
 					}
 				}
 
-				update->ComparePosition(position);
 			}
 			//if((*it_Update)->GetID() != clientID)
 			//{

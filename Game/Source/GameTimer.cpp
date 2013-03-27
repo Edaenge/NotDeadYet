@@ -43,7 +43,7 @@ float GameTimer::Frame()
 
 void GameTimer::CalculateFps(float deltaTime)
 {
-	static const unsigned int MAX_SAMPLES = 100;
+	static const unsigned int MAX_SAMPLES = 50;
 
 	if (this->zDt.size() >= MAX_SAMPLES)
 		this->zDt.erase(this->zDt.begin());

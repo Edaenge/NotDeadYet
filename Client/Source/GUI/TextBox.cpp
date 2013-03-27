@@ -15,6 +15,7 @@ TextBox::TextBox() : Element()
 	this->mPressed = false;
 	this->mPressedOutside = false;
 	this->mTextSize = 0;
+	this->mPointText = NULL;
 }
 TextBox::TextBox(float x, float y, float z, string textureName, float width, float height, string text, string name, float textSize, int maxNrOfChars, int allowedKeys) : Element(x, y, z, textureName, width, height)
 {
@@ -58,6 +59,7 @@ TextBox::TextBox(float x, float y, float z, string textureName, float width, flo
 	this->mPressed = false;
 	this->mPressedOutside = false;
 	this->mTextSize = textSize;
+	this->mPointText = NULL;
 }
 TextBox::~TextBox()
 {
@@ -238,6 +240,6 @@ bool TextBox::AddToRenderer(GraphicsEngine* ge)
 
 	 if(this->mPointText)
 	 {
-		 this->mPointText->SetPosition(this->GetPosition());
+		 this->mPointText->SetPosition(Element::GetPosition());
 	 }
  }

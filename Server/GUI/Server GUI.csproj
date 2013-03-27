@@ -69,7 +69,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Server CLI, Version=1.0.4833.33300, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Server CLI, Version=1.0.4834.21252, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Bin\Release\Server CLI.dll</HintPath>
     </Reference>

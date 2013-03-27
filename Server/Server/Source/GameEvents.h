@@ -164,7 +164,10 @@ public:
 	virtual ~PlayerUseEquippedWeaponEvent() {}
 
 	ClientData* clientData;
+	Vector3 dir;
+	bool useDir;
 	unsigned int itemID;
+	
 };
 
 class PlayerAnimalAttackEvent : public Event

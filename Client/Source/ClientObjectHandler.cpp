@@ -79,6 +79,7 @@ void Client::AddActor( NewActorPacket* NAP )
 						ambientMusic->Play();
 						ambientMusic->Setvolume(0.2f);
 
+						this->zPerf->ResetAll();
 						this->zReady = true;
 					}
 
@@ -306,6 +307,9 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 				subMesh->SetAnimationQueue(queueNames, queueTimes, size);
 			}
 		}
+		delete queueTimes;
+
+		delete []queueNames;
 	}
 
 	auto it_mesh_end = SFP->newMesh.end();

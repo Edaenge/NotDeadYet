@@ -144,10 +144,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	this->SpawnItemsDebug();
-    // this->SpawnAnimalsDebug();
-	this->SpawnHumanDebug();
-
+	//this->SpawnItemsDebug();
+	// this->SpawnAnimalsDebug();
+	// this->SpawnHumanDebug();
 	// Sun Direction
 	this->ResetSunDirection();
 
@@ -177,13 +176,15 @@ Game::~Game()
 	this->zPlayers.clear();
 
 	// Delete Subsystems
-	SAFE_DELETE(zSoundHandler);
-	SAFE_DELETE(zBerryBushSpawner);
-	SAFE_DELETE(zMaterialSpawnManager);
-	SAFE_DELETE(zCraftingManager);
-	SAFE_DELETE(zActorManager);
-	SAFE_DELETE(zWorld);
-	SAFE_DELETE(zGameMode);
+	SAFE_DELETE(this->zBerryBushSpawner);
+	SAFE_DELETE(this->zMaterialSpawnManager);
+	SAFE_DELETE(this->zCraftingManager);
+	SAFE_DELETE(this->zSoundHandler);
+	SAFE_DELETE(this->zActorManager);
+	SAFE_DELETE(this->zBehaviorManager);
+
+	SAFE_DELETE(this->zWorld);
+	SAFE_DELETE(this->zGameMode);
 
 	FreeItemLookup();
 	FreePlayerConfig();
@@ -199,7 +200,7 @@ void Game::SpawnAnimalsDebug()
 	unsigned int increment = 0;
 	for(unsigned int i = 0; i < 5; i++)
 	{
-		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
+		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_hitbox.obj");
 		DeerActor* dActor  = new DeerActor(deerPhysics);
 
 		dActor->AddObserver(this->zGameMode);
@@ -238,7 +239,7 @@ void Game::SpawnAnimalsDebug()
 
 	for(unsigned int i = 0; i < 1; i++)		
 	{
-		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/deer_temp.obj");
+		PhysicsObject* deerPhysics = GetPhysics()->CreatePhysicsObject("media/models/bear_hitbox.obj");
 		BearActor* bActor  = new BearActor(deerPhysics);
 
 		bActor->AddObserver(this->zGameMode);
@@ -461,8 +462,7 @@ void Game::SpawnHumanDebug()
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
 	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/diana_hitbox.obj");
 	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics, this);
-	pActor->SetModel("media/models/diana_anims.fbx");
-	pActor->AddObserver(this->zGameMode);
+	pActor->SetModel("media/models/diana_anims.fbx");	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
 	pActor->SetHealth(1000);
 	pActor->SetScale(pActor->GetScale());
@@ -726,7 +726,7 @@ void Game::OnEvent( Event* e )
 	else if( KeyDownEvent* KDE = dynamic_cast<KeyDownEvent*>(e) )
 	{
 		zPlayers[KDE->clientData]->GetKeys().SetKeyState(KDE->key, true);
-		if(KDE->key == MOUSE_LEFT_PRESS)
+		if(KDE->key == MOUSE_LEFT_PRESS) // THE FUCK IS THIS DOING HERE
 			this->CheckPlayerUseBow(this->zPlayers[KDE->clientData]);
 	}
 	else if( KeyUpEvent* KUE = dynamic_cast<KeyUpEvent*>(e) )
@@ -859,7 +859,7 @@ void Game::OnEvent( Event* e )
 	else if ( PlayerUseEquippedWeaponEvent* PUEWE = dynamic_cast<PlayerUseEquippedWeaponEvent*>(e) )
 	{
 		if ( zPerf ) this->zPerf->PreMeasure("Weapon Use Event Handling", 3);
-		this->HandleUseWeapon(PUEWE->clientData, PUEWE->itemID);
+		this->HandleUseWeapon(PUEWE->clientData, PUEWE->itemID, PUEWE->dir, PUEWE->useDir);
 		if ( zPerf ) this->zPerf->PostMeasure("Weapon Use Event Handling", 3);
 	}
 	else if(PlayerAnimalAttackEvent* PAAE = dynamic_cast<PlayerAnimalAttackEvent*>(e))
@@ -2064,22 +2064,22 @@ bool Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 
 							cd->Send(msg);
 
+							if (food->GetStackSize() <= 0)
+							{
+								item = inv->RemoveItem(food);
+
+								if(item)
+								{
+									delete item, item = NULL;
+								}
+							}
+
 							return true;
 						}
 						else
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Food_Stack_is_Empty");
 							cd->Send(msg);
-						}
-
-						if (food->GetStackSize() <= 0)
-						{
-							item = inv->RemoveItem(food);
-
-							if(item)
-							{
-								delete item, item = NULL;
-							}
 						}
 					}
 					else
@@ -2147,21 +2147,22 @@ bool Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 
 							cd->Send(msg);
 
+							if (bandage->GetStackSize() <= 0)
+							{
+								item = inv->RemoveItem(bandage);
+
+								if(item)
+								{
+									delete item, item = NULL;
+								}
+							}
+
 							return true;
 						}
 						else
 						{
 							msg = NMC.Convert(MESSAGE_TYPE_ERROR_MESSAGE, "Bandage_Stack_is_Empty");
 							cd->Send(msg);
-						}
-						if (bandage->GetStackSize() <= 0)
-						{
-							item = inv->RemoveItem(bandage);
-
-							if(item)
-							{
-								delete item, item = NULL;
-							}
 						}
 					}
 					else
@@ -2176,7 +2177,7 @@ bool Game::HandleUseItem(ClientData* cd, unsigned int itemID)
 	return false;
 }
 
-void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
+void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID, const Vector3& direction, bool useDir /*= false*/)
 {
 	Actor* actor = NULL;
 
@@ -2189,7 +2190,6 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 		MaloW::Debug("Actor cannot be found in Game.cpp, onEvent, PlayerUseEquippedWeaponEvent.");
 		return;
 	}
-
 
 	Inventory* inventory = pActor->GetInventory();
 	if( !(inventory) )
@@ -2210,6 +2210,9 @@ void Game::HandleUseWeapon(ClientData* cd, unsigned int itemID)
 		return;
 	}
 	NetworkMessageConverter NMC;
+
+	if(useDir)
+		pActor->SetDir(direction);
 
 	/*if(RangedWeapon* ranged = dynamic_cast<RangedWeapon*>(item))
 	{
@@ -2728,7 +2731,7 @@ void Game::SendToAll( const std::string& msg)
 void Game::ResetFogEnclosement()
 {
 	//Expected playtime
-	static const float EXPECTED_PLAYTIME = 60.0f * 10.0f;
+	static const float EXPECTED_PLAYTIME = 60.0f * (60.0f);
 
 	Vector2 worldSize = this->zWorld->GetWorldSize();
 
