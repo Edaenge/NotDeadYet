@@ -55,8 +55,8 @@ void CreditsMenu::PreRun()
 
 	// Create lights
 	Vector3 LightColor = Vector3(0.1f, 0.095f, 0.0f);
-	float yoffset = 5.0f;
-	float intensity = 13.0f;
+	float yoffset = 6.0f;
+	float intensity = 16.0f;
 	l1 = GetGraphics()->CreateLight(Vector3(51, 3.25 + yoffset, 39.8));
 	l1->SetLookAt(l1->GetPosition() - Vector3(0, 1, 0));
 	l1->SetUp(Vector3(1, 0, 0));
@@ -114,6 +114,9 @@ void CreditsMenu::Run()
 		if(this->mode == 0)
 		{
 			this->camRec->Update(diff);
+
+			if(GetGraphics()->GetKeyListener()->IsPressed(VK_RETURN))
+				this->mode++;
 			
 			if(!this->camRec->IsPlaying())
 			{
