@@ -79,9 +79,8 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->zPlayerModels["media/models/ghost.obj"] = "media/models/ghost.obj";
 	
 	//Dead Actor Model Maps
-	//this->zDeadActorModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
-	this->zDeadActorModels["media/models/token_anims.fbx"] = "media/models/token_dead.obj";
-	this->zDeadActorModels["media/models/diana_anims.fbx"] = "media/models/diana_dead.obj";
+	//this->zDeadActorModels["media/models/token_anims.fbx"] = "media/models/token_dead.obj";
+	//this->zDeadActorModels["media/models/diana_anims.fbx"] = "media/models/diana_dead.obj";
 	this->zDeadActorModels["media/models/deer_anims.fbx"] = "media/models/deer_dead.obj";
 	this->zDeadActorModels["media/models/bear_anims.fbx"] = "media/models/bear_dead.obj";
 
@@ -145,7 +144,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 
 	// Debug Functions
 	//this->SpawnItemsDebug();
-	// this->SpawnAnimalsDebug();
+	 this->SpawnAnimalsDebug();
 	// this->SpawnHumanDebug();
 	// Sun Direction
 	this->ResetSunDirection();

@@ -363,7 +363,6 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 				std::string boneName = reader->second.GetBindingBone(BONE_CAMERA_OFFSET);
 				if (boneName != "")
 					this->zEng->GetCamera()->SetMesh(mesh, &boneName[0], Vector3(0.0f, 0.0f, 1.0f));
-
 				else 
 				{
 					this->zEng->GetCamera()->SetMesh(mesh, Vector3(), Vector3(0.0f, 0.0f, 1.0f));
@@ -376,7 +375,10 @@ void Client::UpdateActors(ServerFramePacket* SFP)
 				this->zEng->GetCamera()->SetPosition(position);
 			}
 		}
-		this->zEng->DeleteMesh(oldMesh);
+		if (iFBXMesh* fbxMesh = dynamic_cast<iFBXMesh*>(oldMesh))
+			this->zEng->DeleteFBXMesh(fbxMesh);
+		else
+			this->zEng->DeleteMesh(oldMesh);
 		
 		actor->SetMesh(mesh);
 		actor->SetPosition(position);
