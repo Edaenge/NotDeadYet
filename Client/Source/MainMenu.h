@@ -5,7 +5,7 @@
 #include "Game.h"
 #include "GUI/GUISet.h"
 
-static const unsigned int BGSCREENSHOTS = 9;
+static const unsigned int BGSCREENSHOTS = 8;
 static const unsigned int PAUSEBETWEENIMAGES = 8;
 static const float OPACITYDIVIDERSPEED = 0.001f;
 

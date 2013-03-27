@@ -132,9 +132,7 @@ public:
 	const AnimationFileReader& GetAnimationReader(const std::string& model);
 private:
 	//Test functions, spawns items/Animals
-	void SpawnItemsDebug();
 	void SpawnAnimalsDebug();
-	void SpawnHumanDebug();
 
 	// Handle Incoming Messages
 	void HandleConnection(ClientData* cd);
@@ -154,7 +152,6 @@ private:
 	// Game Stuff
 	void UpdateSunDirection(float dt);
 	void UpdateFogEnclosement(float dt);
-	void Caching(const std::string& modelName);
 	void PrintDebugData(ClientData* cd, int type);
 	void ResetFogEnclosement();
 	void ResetSunDirection();
