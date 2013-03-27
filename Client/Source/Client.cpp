@@ -43,7 +43,7 @@ Client::Client(std::string playerModel) :
 	this->zMeshfirstPersonMap["media/models/ghost.obj"] = "media/models/ghost.obj";
 	this->zMeshfirstPersonMap["media/models/token_anims.fbx"] = "media/models/token_anims_fpp.fbx";
 	this->zMeshfirstPersonMap["media/models/deer_anims.fbx"] = "media/models/deer_anims.fbx";
-	this->zMeshfirstPersonMap["media/models/diana_anims.fbx"] = "media/models/diana_anims.fbx";
+	this->zMeshfirstPersonMap["media/models/diana_anims.fbx"] = "media/models/diana_anims_fpp.fbx";
 	this->zMeshfirstPersonMap["media/models/bear_anims.fbx"] = "media/models/bear_anims.fbx";
 
 	this->zAnimationFileReader[0] = AnimationFileReader("media/models/token_anims.cfg");
@@ -54,6 +54,7 @@ Client::Client(std::string playerModel) :
 	this->zModelToReaderMap["media/models/token_anims.fbx"] = zAnimationFileReader[0];
 	this->zModelToReaderMap["media/models/token_anims_fpp.fbx"] = zAnimationFileReader[0];
 	this->zModelToReaderMap["media/models/diana_anims.fbx"] = zAnimationFileReader[1];
+	this->zModelToReaderMap["media/models/diana_anims_fpp.fbx"] = zAnimationFileReader[1];
 	this->zModelToReaderMap["media/models/deer_anims.fbx"] = zAnimationFileReader[2];
 	this->zModelToReaderMap["media/models/bear_anims.fbx"] = zAnimationFileReader[3];
 

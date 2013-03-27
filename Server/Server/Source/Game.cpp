@@ -65,6 +65,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	// Camera Offsets
 	//this->zCameraOffset["media/models/temp_guy_movement_anims.fbx"] = Vector3(0.0f, 1.6f, 0.0f);	
 	this->zCameraOffset["media/models/token_anims.fbx"] = Vector3(0.0f, 1.7f, 0.0f);
+    this->zCameraOffset["media/models/diana_anims.fbx"] = Vector3(0.0f, 1.5f, 0.0f);
 	this->zCameraOffset["media/models/deer_anims.fbx"] = Vector3(0.0f, 1.41f, 0.0f);
 	this->zCameraOffset["media/models/bear_anims.fbx"] = Vector3(0.0f, 0.92f, 0.0f);
 	this->zCameraOffset["media/models/ghost.obj"] = Vector3(0.0f, 0.0f, 0.0f);
@@ -72,7 +73,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	//Models
 	//this->zPlayerModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zPlayerModels["media/models/token_anims.fbx"] = "media/models/hitbox_token.obj";
-	this->zPlayerModels["media/models/diana_anims.fbx"] = "media/models/hitbox_token.obj";
+	this->zPlayerModels["media/models/diana_anims.fbx"] = "media/models/diana_hitbox.obj";
 	this->zPlayerModels["media/models/deer_anims.fbx"] = "media/models/deer_hitbox.obj";
 	this->zPlayerModels["media/models/bear_anims.fbx"] = "media/models/bear_hitbox.obj"; 
 	this->zPlayerModels["media/models/ghost.obj"] = "media/models/ghost.obj";
@@ -80,7 +81,7 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	//Dead Actor Model Maps
 	//this->zDeadActorModels["media/models/temp_guy_movement_anims.fbx"] = "media/models/temp_guy_movement_anims.obj";
 	this->zDeadActorModels["media/models/token_anims.fbx"] = "media/models/token_dead.obj";
-	this->zDeadActorModels["media/models/diana_anims.fbx"] = "media/models/token_dead.obj";
+	this->zDeadActorModels["media/models/diana_anims.fbx"] = "media/models/diana_dead.obj";
 	this->zDeadActorModels["media/models/deer_anims.fbx"] = "media/models/deer_dead.obj";
 	this->zDeadActorModels["media/models/bear_anims.fbx"] = "media/models/bear_dead.obj";
 
@@ -143,9 +144,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	}
 
 	// Debug Functions
-	 //this->SpawnItemsDebug();
+	this->SpawnItemsDebug();
     // this->SpawnAnimalsDebug();
-	// this->SpawnHumanDebug();
+	this->SpawnHumanDebug();
 
 	// Sun Direction
 	this->ResetSunDirection();
@@ -154,7 +155,9 @@ Game::Game(const int maxClients, PhysicsEngine* physics, ActorSynchronizer* sync
 	this->ResetFogEnclosement();
 
 	// Used for caching fbx files dont change the function.
-	//this->Caching("media/models/token_anims.fbx");
+	
+	//this->Caching("media/models/diana_anims.fbx");
+	//this->Caching("media/models/diana_anims_fpp.fbx");
 }
 
 Game::~Game()
@@ -456,9 +459,9 @@ void Game::SpawnHumanDebug()
 	srand((unsigned int)time(0));
 	int increment = 10;
 	Vector3 position = this->CalcPlayerSpawnPoint(increment++);
-	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/hitbox_token.obj");
+	PhysicsObject* humanPhysics = GetPhysics()->CreatePhysicsObject("media/models/diana_hitbox.obj");
 	PlayerActor* pActor = new PlayerActor(NULL, humanPhysics, this);
-	pActor->SetModel("media/models/token_anims_fpp.fbx");
+	pActor->SetModel("media/models/diana_anims.fbx");
 	pActor->AddObserver(this->zGameMode);
 	pActor->SetPosition(position);
 	pActor->SetHealth(1000);
