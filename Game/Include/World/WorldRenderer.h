@@ -74,7 +74,6 @@ class WorldRenderer : Observer
 	float zGrassNeightbourDistance;	// Minimal distance between grass
 	Vector2 zLastGrassUpdatePos;	// Last camera position when grass was generated
 	std::map<Vector2UINT, iBillboardCollection*> zGrass;
-	std::string zGrassTexture;
 	
 public:
 	WorldRenderer(World* world, GraphicsEngine* graphics);
@@ -93,8 +92,6 @@ public:
 	
 	// Show or don't show water corner boxes
 	void ToggleWaterBoxes(bool flag);
-
-	void SetGrassTexturePath(std::string path) { this->zGrassTexture = path; }
 
 protected:
 	virtual void OnEvent( Event* e );
